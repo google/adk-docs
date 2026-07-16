@@ -44,10 +44,6 @@ com.google.adk.kt.examples.structural
 com.google.adk.kt.examples.telemetry
 com.google.adk.kt.examples.tools
 com.google.adk.kt.examples.transfer
-module:google-adk-kotlin-examples-android
-com.google.adk.kt.examples.android.roomsession
-module:google-adk-kotlin-firebase
-com.google.adk.firebase.models
 module:google-adk-kotlin-litertlm
 com.google.adk.kt.litertlm
 module:google-adk-kotlin-processor

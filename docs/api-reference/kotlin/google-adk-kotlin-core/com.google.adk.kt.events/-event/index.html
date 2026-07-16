@@ -50,7 +50,7 @@
 <a class="library-name--link" href="../../../index.html">
                             google-adk-kotlin
                     </a>            </div>
-            <div class="library-version">0.4.0
+            <div class="library-version">0.5.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -317,7 +317,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-final-response.html">isFinalResponse</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this is a final response.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-final-response.html">isFinalResponse</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if this event is the final response of an agent turn — i.e. it terminates the per-turn model loop in <a href="../../../google-adk-kotlin-core/com.google.adk.kt.agents/-llm-agent/execute-turns.html">com.google.adk.kt.agents.LlmAgent.executeTurns</a>. Matches ADK Python's <code class="lang-kotlin">Event.is_final_response()</code>: <code class="lang-kotlin">skipSummarization</code> or a non-empty <code class="lang-kotlin">longRunningToolIds</code> set both mark the event as final, otherwise the event is final iff it carries no function calls, no function responses, is not a partial streaming chunk, and has no trailing code-execution-result part.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -442,6 +442,21 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="function-responses.html"><span class="token function">functionResponses</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.google.adk.kt.types/-function-response/index.html">FunctionResponse</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns all function responses from this event.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="372265335%2FFunctions%2F-1644122207" anchor-label="hasTrailingCodeExecutionResult" id="372265335%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-trailing-code-execution-result.html"><span>has</span><wbr><span>Trailing</span><wbr><span>Code</span><wbr><span>Execution</span><wbr><span><span>Result</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="372265335%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-trailing-code-execution-result.html"><span class="token function">hasTrailingCodeExecutionResult</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns true if the last part of this event is a code-execution result. Mirrors ADK Java's <code class="lang-kotlin">Event.hasTrailingCodeExecutionResult()</code>.</p></div></div></div>
                 </div>
               </div>
             </div>
