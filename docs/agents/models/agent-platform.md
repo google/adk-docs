@@ -260,6 +260,40 @@ Agent Platform.
     }
     ```
 
+### Adaptive thinking
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.34.0</span>
+</div>
+
+Newer Claude models support *adaptive* extended thinking, where the model chooses
+its reasoning depth itself rather than using a fixed token budget. On the native
+Claude path, a negative `thinking_budget` maps to adaptive thinking.
+
+The recommended way to control reasoning depth is the `effort` field on
+`AnthropicGenerateContentConfig` (available in ADK Python v2.4.0 and later):
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.models import AnthropicGenerateContentConfig
+from google.adk.models.anthropic_llm import Claude
+from google.adk.models.registry import LLMRegistry
+
+LLMRegistry.register(Claude)
+
+agent = LlmAgent(
+    model="claude-sonnet-4@20250514",  # Your Agent Platform Claude model ID.
+    name="claude_reasoning_agent",
+    instruction="You are a helpful assistant.",
+    generate_content_config=AnthropicGenerateContentConfig(
+        effort="high",  # One of: "low", "medium", "high", "xhigh", "max".
+    ),
+)
+```
+
+*   The standard `thinking_config.thinking_level` is not supported for Claude and
+    is ignored (with a warning). Use `effort` instead.
+
 ## Open Models on Agent Platform {#open-models}
 
 <div class="language-support-tag">
