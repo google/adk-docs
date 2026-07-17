@@ -1,27 +1,43 @@
 # Deploy to Google Kubernetes Engine (GKE)
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span>
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python</span>
+  <span class="lst-go">Go</span>
 </div>
 
-[GKE](https://cloud.google.com/gke) is the Google Cloud managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
+[GKE](https://cloud.google.com/gke) is the Google Cloud managed Kubernetes
+service. It allows you to deploy and manage containerized applications using
+Kubernetes.
 
-To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
+To deploy your agent you will need to have a Kubernetes cluster running on
+GKE. You can create a cluster using the Google Cloud Console or the `gcloud`
+command line tool.
 
-In this example deploys a simple agent to GKE. The Python agent is a FastAPI application that uses `Gemini Flash` as the LLM. The Go agent uses the ADK launcher and a statically-linked binary in a minimal container. We can use Vertex AI or AI Studio as the LLM provider. You can use Agent Platform or AI Studio as the LLM provider with the environment variable `GOOGLE_GENAI_USE_ENTERPRISE`.
+The following example shows you how to deploy a simple agent to GKE. The Python agent is a
+FastAPI application that uses `Gemini Flash` as the LLM. The Go agent uses the
+ADK launcher and a statically-linked binary in a minimal container. You can
+use Agent Platform or AI Studio as the LLM provider with the environment
+variable `GOOGLE_GENAI_USE_ENTERPRISE`.
 
-## Environment variables
+## Set environment variables
 
-Set your environment variables as described in the [Setup and Installation](../get-started/installation.md) guide. You also need to install the `kubectl` command line tool. You can find instructions to do so in the [Google Kubernetes Engine Documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl).
+Set the variables as described in the
+[Setup and Installation](../get-started/installation.md) guide. You will also
+need to install the `kubectl` command line tool. You can find instructions to
+do so in the
+[Google Kubernetes Engine Documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl).
 
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id # Your GCP project ID
 export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
 export GOOGLE_GENAI_USE_ENTERPRISE=true # Set to true if using Agent Platform
-export GOOGLE_CLOUD_PROJECT_NUMBER=$(gcloud projects describe --format json $GOOGLE_CLOUD_PROJECT | jq -r ".projectNumber")
+export GOOGLE_CLOUD_PROJECT_NUMBER=$(gcloud projects describe \
+  --format json $GOOGLE_CLOUD_PROJECT | jq -r ".projectNumber")
 ```
 
-If you don't have `jq` installed, you can use the following command to get the project number:
+If you don't have jq installed, you can use the following command to get the
+project number:
 
 ```bash
 gcloud projects describe $GOOGLE_CLOUD_PROJECT
@@ -33,13 +49,10 @@ And copy the project number from the output.
 export GOOGLE_CLOUD_PROJECT_NUMBER=YOUR_PROJECT_NUMBER
 ```
 
+## Enable APIs and permissions
 
-
-## Enable APIs and Permissions
-
-Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
-
-Enable the necessary APIs for your project. You can do this using the `gcloud` command line tool.
+* Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+* Enable the necessary APIs for your project. You can do this using the `gcloud` command line tool.
 
 ```bash
 gcloud services enable \
@@ -49,9 +62,8 @@ gcloud services enable \
     aiplatform.googleapis.com
 ```
 
-Grant necessary roles to the default compute engine service account required by the `gcloud builds submit` command.
-
-
+Grant necessary roles to the default compute engine service account required by
+the `gcloud builds submit` command.
 
 ```bash
 ROLES_TO_ASSIGN=(
@@ -73,9 +85,9 @@ done
 When you deploy your ADK agent workflow to the Google Cloud GKE,
 the following content is uploaded to the service:
 
-- Your ADK agent code
-- Any dependencies declared in your ADK agent code
-- ADK API server code version used by your agent
+* Your ADK agent code
+* Any dependencies declared in your ADK agent code
+* ADK API server code version used by your agent
 
 The default deployment *does not* include the ADK web user interface libraries,
 unless you specify it as deployment setting, such as the `--with_ui` option for
@@ -83,16 +95,21 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
 ## Deployment options
 
-You can deploy your agent to GKE either **manually using Kubernetes manifests** or **automatically using the `adk deploy gke` command**. Choose the approach that best suits your workflow.
+You can deploy your agent to GKE either **manually using Kubernetes
+manifests** or **automatically using the `adk deploy gke` command**.
+Choose the approach that best suits your workflow.
 
-
-## Option 1: Manual Deployment using gcloud and kubectl
+## Option 1: Manual deployment using gcloud and kubectl
 
 ### Create a GKE cluster
 
-You can create a GKE cluster using the `gcloud` command line tool. This example creates an Autopilot cluster named `adk-cluster` in the `us-central1` region.
+You can create a GKE cluster using the `gcloud` command line tool. This example
+creates an Autopilot cluster named `adk-cluster` in the `us-central1` region.
 
-> If creating a GKE Standard cluster, make sure [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is enabled. Workload Identity is enabled by default in an AutoPilot cluster.
+!!! note "If you're creating a GKE Standard cluster"
+    
+    Make sure [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)
+    is enabled. Workload Identity is enabled by default in an AutoPilot cluster.
 
 ```bash
 gcloud container clusters create-auto adk-cluster \
@@ -100,7 +117,8 @@ gcloud container clusters create-auto adk-cluster \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-After creating the cluster, you need to connect to it using `kubectl`. This command configures `kubectl` to use the credentials for your new cluster.
+After creating the cluster, you need to connect to it using `kubectl`. This
+command configures `kubectl` to use the credentials for your new cluster.
 
 ```bash
 gcloud container clusters get-credentials adk-cluster \
@@ -108,9 +126,9 @@ gcloud container clusters get-credentials adk-cluster \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-### Create Your Agent
+### Create your agent
 
-We will reference the `capital_agent` example defined on the [LLM agents](../agents/llm-agents.md) page.
+Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents.md) page as a reference.
 
 === "Python"
 
@@ -326,8 +344,8 @@ We will reference the `capital_agent` example defined on the [LLM agents](../age
         }
         ```
 
-        To use Vertex AI instead of AI Studio, set `genai.ClientConfig` to use
-        the Vertex AI backend:
+        To use Agent Platform instead of AI Studio, set `genai.ClientConfig` to use
+        the Agent Platform backend:
 
         ```go
         model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
@@ -365,7 +383,8 @@ We will reference the `capital_agent` example defined on the [LLM agents](../age
 
 ### Build the container image
 
-You need to create a Google Artifact Registry repository to store your container images. You can do this using the `gcloud` command line tool.
+You need to create a Google Artifact Registry repository to store your
+container images. You can do this using the `gcloud` command line tool.
 
 ```bash
 gcloud artifacts repositories create adk-repo \
@@ -419,26 +438,37 @@ gcloud artifacts docker images list \
   --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-### Configure Kubernetes Service Account for Agent Platform
+### Configure Kubernetes service account for Agent Platform
 
-If your agent uses Agent Platform, you need to create a Kubernetes service account with the necessary permissions. This example creates a service account named `adk-agent-sa` and binds it to the `Agent Platform User` role.
+If your agent uses Agent Platform, you need to create a Kubernetes service
+account with the necessary permissions. This example creates a service account
+named `adk-agent-sa` and binds it to the `Agent Platform User` role.
 
-> If you are using AI Studio and accessing the model with an API key you can skip this step.
+!!! note "Skip if using AI Studio"
+
+    If you are using AI Studio and accessing the model with an API key you can skip this step.
 
 ```bash
 kubectl create serviceaccount adk-agent-sa
 ```
 
 ```bash
-gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
+PROJECT_ID=${GOOGLE_CLOUD_PROJECT}
+PROJECT_NUM=${GOOGLE_CLOUD_PROJECT_NUMBER}
+IAM_URL="principal://[iam.googleapis.com/projects/$](https://iam.googleapis.com/projects/$){PROJECT_NUM}"
+WIP="locations/global/workloadIdentityPools/${PROJECT_ID}.svc.id.goog"
+SA="subject/ns/default/sa/adk-agent-sa"
+
+gcloud projects add-iam-policy-binding projects/${PROJECT_ID} \
     --role=roles/aiplatform.user \
-    --member=principal://iam.googleapis.com/projects/${GOOGLE_CLOUD_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GOOGLE_CLOUD_PROJECT}.svc.id.goog/subject/ns/default/sa/adk-agent-sa \
+    --member="${IAM_URL}/${WIP}/${SA}" \
     --condition=None
 ```
 
 ### Create the Kubernetes manifest files
 
-Create a Kubernetes deployment manifest file named `deployment.yaml` in your project directory. This file defines how to deploy your application on GKE.
+Create a Kubernetes deployment manifest file named `deployment.yaml` in your
+project directory. This file defines how to deploy your application on GKE.
 
 ```yaml title="deployment.yaml"
 cat <<  EOF > deployment.yaml
@@ -502,7 +532,8 @@ EOF
 
 ### Deploy the Application
 
-Deploy the application using the `kubectl` command line tool. This command applies the deployment and service manifest files to your GKE cluster.
+Deploy the application using the `kubectl` command line tool. This command
+applies the deployment and service manifest files to your GKE cluster.
 
 ```bash
 kubectl apply -f deployment.yaml
@@ -514,7 +545,8 @@ After a few moments, you can check the status of your deployment using:
 kubectl get pods -l=app=adk-agent
 ```
 
-This command lists the pods associated with your deployment. You should see a pod with a status of `Running`.
+This command lists the pods associated with your deployment. You should see a
+pod with a status of `Running`.
 
 Once the pod is running, you can check the status of the service using:
 
@@ -522,8 +554,8 @@ Once the pod is running, you can check the status of the service using:
 kubectl get service adk-agent
 ```
 
-If the output shows a `External IP`, it means your service is accessible from the internet. It may take a few minutes for the external IP to be assigned.
-
+If the output shows a `External IP`, it means your service is accessible from
+the internet. It may take a few minutes for the external IP to be assigned.
 You can get the external IP address of your service using:
 
 ```bash
@@ -533,11 +565,14 @@ kubectl get svc adk-agent -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ## Option 2: Automated Deployment using `adk deploy gke`
 
 !!! note "Python only"
+
     The `adk deploy gke` command is available for Python only. Go does not have
     an equivalent CLI command. Go agents must be deployed using the manual
     approach described in [Option 1](#option-1-manual-deployment-using-gcloud-and-kubectl).
 
-ADK provides a CLI command to streamline GKE deployment. This avoids the need to manually build images, write Kubernetes manifests, or push to Artifact Registry.
+ADK provides a CLI command to streamline GKE deployment. This avoids the need
+to manually build images, write Kubernetes manifests, or push to Artifact
+Registry.
 
 #### Prerequisites
 
@@ -579,7 +614,9 @@ gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
     --condition=None
 ```
 
-If you are using a Google Cloud project and skip this step, the agent's pods start successfully, but requests to the model fail with a `403 PERMISSION_DENIED` error when verifying your deployment.
+If you are using a Google Cloud project and skip this step, the agent's pods
+start successfully, but requests to the model fail with a
+`403 PERMISSION_DENIED` error when verifying your deployment.
 
 ### The `deploy gke` Command
 
@@ -591,7 +628,7 @@ The command takes the path to your agent and parameters specifying the target GK
 adk deploy gke [OPTIONS] AGENT_PATH
 ```
 
-### Arguments & Options
+### Arguments & options
 
 | Argument    | Description | Required |
 | -------- | ------- | ------  |
@@ -599,27 +636,27 @@ adk deploy gke [OPTIONS] AGENT_PATH
 | --project | The Google Cloud Project ID where your GKE cluster is located.     | Yes | 
 | --cluster_name   | The name of your GKE cluster.    | Yes |
 | --region    | The Google Cloud region of your cluster (e.g., us-central1).    | Yes |
+| --service_type | The type of Kubernetes service to create. Accepts `ClusterIP` (default) or `LoadBalancer`. | No |
 | --with_ui   | Deploys both the agent's back-end API and a companion front-end user interface.    | No |
 | --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
 
 
-### How It Works
+### How it works
 When you run the `adk deploy gke` command, the ADK performs the following steps automatically:
 
-- Containerization: It builds a Docker container image from your agent's source code.
-
-- Image Push: It tags the container image and pushes it to your project's Artifact Registry.
-
-- Manifest Generation: It dynamically generates the necessary Kubernetes manifest files (a `Deployment` and a `Service`).
-
-- Cluster Deployment: It applies these manifests to your specified GKE cluster, which triggers the following:
+* Containerization: It builds a Docker container image from your agent's source code.
+* Image Push: It tags the container image and pushes it to your project's Artifact Registry.
+* Manifest Generation: It dynamically generates the necessary Kubernetes manifest files (a `Deployment` and a `Service`).
+* Cluster Deployment: It applies these manifests to your specified GKE cluster, which triggers the following:
 
 The `Deployment` instructs GKE to pull the container image from Artifact Registry and run it in one or more Pods.
 
-The `Service` creates a stable network endpoint for your agent. By default, this is a LoadBalancer service, which provisions a public IP address to expose your agent to the internet.
+The `Service` creates a stable network endpoint for your agent. It defaults to
+a `ClusterIP` service, which is only accessible within the cluster. To expose
+your agent to the internet with a public IP address, you must specify
+`--service_type=LoadBalancer`.
 
-
-### Example Usage
+### Example of use
 Here is a practical example of deploying an agent located at `~/agents/multi_tool_agent/` to a GKE cluster named test.
 
 ```bash
@@ -632,30 +669,47 @@ adk deploy gke \
     ~/agents/multi_tool_agent/
 ```
 
-### Verifying Your Deployment
+### Verify your deployment
 If you used `adk deploy gke`, verify the deployment using `kubectl`:
 
-1. Check the Pods: Ensure your agent's pods are in the Running state.
+1. **Check the Pods**: Ensure your agent's pods are in the Running state.
 
 ```bash
 kubectl get pods
 ```
+
 You should see output like `adk-default-service-name-xxxx-xxxx ... 1/1 Running` in the default namespace.
 
-2. Find the External IP: Get the public IP address for your agent's service.
+2. **Find the External IP**: Get the public IP address for your agent's service.
 
 ```bash
 kubectl get service
-NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-adk-default-service-name   LoadBalancer   34.118.228.70   34.63.153.253   80:32581/TCP   5d20h
 ```
 
-We can navigate to the external IP and interact with the agent via UI
+By default, the service type is `ClusterIP`, and `EXTERNAL-IP` will be `<none>`.
+
+```bash
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+adk-default-service-name   ClusterIP   10.12.1.2       <none>        80/TCP    2m
+```
+
+To test your agent, you can use port-forwarding:
+
+```bash
+kubectl port-forward svc/adk-default-service-name 8080:80
+```
+
+You can then access your agent at `http://localhost:8080`.
+
+If you deployed with `--service_type=LoadBalancer`, it may take a few minutes for an external IP to be assigned.
+Once the `EXTERNAL-IP` is available, you can navigate to it to interact with your agent.
 ![alt text](../assets/agent-gke-deployment.png)
 
-## Testing your agent
+## Test your agent
 
-Once your agent is deployed to GKE, you can interact with it via the deployed UI (if enabled) or directly with its API endpoints using tools like `curl`. You'll need the service URL provided after deployment.
+Once your agent is deployed to GKE, you can interact with it via the deployed
+UI (if enabled) or directly with its API endpoints using tools like `curl`.
+You'll need the service URL provided after deployment.
 
 === "UI Testing"
 
@@ -781,9 +835,18 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
 
 These are some common issues you might encounter when deploying your agent to GKE:
 
-### 403 Permission Denied for `Gemini 2.0 Flash`
+### 403 Permission Denied for Gemini's models
 
-This usually means that the Kubernetes service account does not have the necessary permission to access the Agent Platform API. Ensure that you have created the service account and bound it to the `Agent Platform User` role as described in the [Configure Kubernetes Service Account for Agent Platform](#configure-kubernetes-service-account-for-agent-platform) section. If you deployed with `adk deploy gke`, bind the `default` service account instead, as described in the [Configure Workload Identity for Agent Platform](#configure-workload-identity-for-agent-platform) section. If you are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment variable in the deployment manifest and it is valid.
+This usually means that the Kubernetes service account does not have the
+necessary permission to access the Agent Platform API. Ensure that you have
+created the service account and bound it to the `Agent Platform User` role as
+described in the [Configure Kubernetes Service Account for Agent
+Platform](#configure-kubernetes-service-account-for-agent-platform) section.
+If you deployed with `adk deploy gke`, bind the `default` service account
+instead, as described in the [Configure Workload Identity for Agent
+Platform](#configure-workload-identity-for-agent-platform) section. If you
+are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment
+variable in the deployment manifest and it is valid.
 
 ### 404 or Not Found response
 
@@ -802,7 +865,11 @@ kubectl logs $POD_NAME
     Go deployments use an in-memory session service by default and are not
     affected by this issue.
 
-You might see there is no session id created in the UI and the agent does not respond to any messages. This is usually caused by the SQLite database being read-only. This can happen if you run the agent locally and then create the container image which copies the SQLite database into the container. The database is then read-only in the container.
+You might see there is no session id created in the UI and the agent does not
+respond to any messages. This is usually caused by the SQLite database being
+read-only. This can happen if you run the agent locally and then create the
+container image which copies the SQLite database into the container. The
+database is then read-only in the container.
 
 ```bash
 sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) attempt to write a readonly database
@@ -811,13 +878,16 @@ sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) attempt to write a r
 
 To fix this issue, you can either:
 
-Delete the SQLite database file from your local machine before building the container image. This will create a new SQLite database when the container is started.
+Delete the SQLite database file from your local machine before building the
+container image. This will create a new SQLite database when the container is
+started.
 
 ```bash
 rm -f sessions.db
 ```
 
-or (recommended) you can add a `.dockerignore` file to your project directory to exclude the SQLite database from being copied into the container image.
+or (recommended) you can add a `.dockerignore` file to your project directory
+to exclude the SQLite database from being copied into the container image.
 
 ```txt title=".dockerignore"
 sessions.db
@@ -827,17 +897,26 @@ Build the container image and deploy the application again.
 
 ### Insufficient Permission to Stream Logs `ERROR: (gcloud.builds.submit)`
 
-This error can occur when you don't have sufficient permissions to stream build logs, or your VPC-SC security policy restricts access to the default logs bucket.
+This error can occur when you don't have sufficient permissions to stream build
+logs, or your VPC-SC security policy restricts access to the default logs
+bucket. To check the progress of the build, follow the link provided in the error
+message or navigate to the Cloud Build page in the Google Cloud Console.
 
-To check the progress of the build, follow the link provided in the error message or navigate to the Cloud Build page in the Google Cloud Console.
+You can also verify the image was built and pushed to the Artifact Registry
+using the command under the
+[Build the container image](#build-the-container-image) section.
 
-You can also verify the image was built and pushed to the Artifact Registry using the command under the [Build the container image](#build-the-container-image) section.
+### Gemini models not supported in Live Api
 
-### Gemini-2.0-Flash Not Supported in Live Api
+When using the ADK Dev UI for your deployed agent, text-based chat works, but
+voice (e.g., clicking the microphone button) fail. You might see a
+`websockets.exceptions.ConnectionClosedError` in the pod logs indicating that
+your model is "not supported in the live api".
 
-When using the ADK Dev UI for your deployed agent, text-based chat works, but voice (e.g., clicking the microphone button) fail. You might see a `websockets.exceptions.ConnectionClosedError` in the pod logs indicating that your model is "not supported in the live api".
-
-This error occurs because the agent is configured with a model (like `gemini-flash-latest` in the example) that does not support the Gemini Live API. The Live API is required for real-time, bidirectional streaming of audio and video.
+This error occurs because the agent is configured with a model (like
+`gemini-flash-latest` in the example) that does not support the Gemini Live
+API. The Live API is required for real-time, bidirectional streaming of audio
+and video.
 
 ## Cleanup
 
@@ -857,7 +936,9 @@ gcloud artifacts repositories delete adk-repo \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-You can also delete the project if you no longer need it. This will delete all resources associated with the project, including the GKE cluster, Artifact Registry repository, and any other resources you created.
+You can also delete the project if you no longer need it. This will delete all
+resources associated with the project, including the GKE cluster, Artifact
+Registry repository, and any other resources you created.
 
 ```bash
 gcloud projects delete $GOOGLE_CLOUD_PROJECT
