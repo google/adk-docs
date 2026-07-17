@@ -644,10 +644,10 @@ adk deploy gke [OPTIONS] AGENT_PATH
 ### How it works
 When you run the `adk deploy gke` command, the ADK performs the following steps automatically:
 
-* Containerization: It builds a Docker container image from your agent's source code.
-* Image Push: It tags the container image and pushes it to your project's Artifact Registry.
-* Manifest Generation: It dynamically generates the necessary Kubernetes manifest files (a `Deployment` and a `Service`).
-* Cluster Deployment: It applies these manifests to your specified GKE cluster, which triggers the following:
+* **Containerization:** It builds a Docker container image from your agent's source code.
+* **Image Push:** It tags the container image and pushes it to your project's Artifact Registry.
+* **Manifest Generation:** It dynamically generates the necessary Kubernetes manifest files (a `Deployment` and a `Service`).
+* **Cluster Deployment:** It applies these manifests to your specified GKE cluster, which triggers the following:
 
 The `Deployment` instructs GKE to pull the container image from Artifact Registry and run it in one or more Pods.
 
@@ -672,7 +672,7 @@ adk deploy gke \
 ### Verify your deployment
 If you used `adk deploy gke`, verify the deployment using `kubectl`:
 
-1. **Check the Pods**: Ensure your agent's pods are in the Running state.
+* **Check the Pods:** Ensure your agent's pods are in the Running state.
 
 ```bash
 kubectl get pods
@@ -680,7 +680,7 @@ kubectl get pods
 
 You should see output like `adk-default-service-name-xxxx-xxxx ... 1/1 Running` in the default namespace.
 
-2. **Find the External IP**: Get the public IP address for your agent's service.
+* **Find the External IP:** Get the public IP address for your agent's service.
 
 ```bash
 kubectl get service
