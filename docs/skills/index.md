@@ -27,8 +27,7 @@ You can define [skills in code](#inline-skills) or load
 
 !!! note "Check your working directory"
 
-        Ensure that 'skills/weather_skill' exist in your current working directory
-        and contains the necessary files.
+        Ensure that 'skills/weather_skill' exist in your current working directory and contains the necessary files.
 
 === "Python"
 
