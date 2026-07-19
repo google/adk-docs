@@ -19,11 +19,15 @@ catalog_tags: ["observability", "google"]
     the Java plugin. As of this writing that support is present on
     `google/adk-java` `main` but is **not yet in a published release** (it is
     not in `v1.6.0`, the latest release).
-    <!-- TODO(publish): replace the sentence above with the first adk-java
-         release that includes the July 2026 "BQAA Java preview-readiness
-         fixes" (google/adk-java@c685ece46b and google/adk-java@2027a4b53d)
-         once it is tagged, and update the "builds newer than v1.6.0" /
-         "first release after v1.6.0" phrasings throughout this page. -->
+    <!-- TODO(publish): once the first adk-java release that includes the
+         July 2026 "BQAA Java preview-readiness fixes"
+         (google/adk-java@c685ece46b and google/adk-java@2027a4b53d) is
+         tagged: DELETE this admonition entirely and convert the gated
+         sections to the section-level language-support-tag convention from
+         PR #1942 — add a "Java vX.Y.0" chip to the affected sections (e.g.
+         the ADK 2.0 workflow section next to its Python chip) and remove
+         the inline "builds newer than v1.6.0" / "first release after
+         v1.6.0" prose callouts throughout this page (grep: v1.6.0). -->
 
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
 (ADK) by providing a robust solution for in-depth agent behavior analysis. Using
@@ -2281,7 +2285,7 @@ on, and ship the counts to its own monitoring.
 | Reason | Cause |
 |---|---|
 | `queue_full` | The in-memory batch queue overflowed. Increase `queueMaxSize` on `BigQueryLoggerConfig`, raise `batchSize`, or scale the consumer side. |
-| `append_error` | The Storage Write API append ultimately failed — retries exhausted or a non-retryable error (permissions, quota, schema rejection). |
+| `append_error` | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
 | `serialization_error` | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
 | `after_close` | A row reached an already-closed per-invocation processor. |
 | `shutdown_timeout` | Queued rows remained when the bounded final drain expired. |
@@ -2336,9 +2340,10 @@ async def export_loop(plugin):
         await asyncio.sleep(60)
 ```
 
-A non-zero `queue_full` or `retry_exhausted` (Java: `append_error`) count on a
-sustained basis is the clearest signal that BQAA is at risk of data loss —
-surface it on a dashboard or alert.
+Any non-zero count means analytics rows were dropped before reaching BigQuery.
+Alert on every reason; sustained `queue_full` or write-error counts
+(`retry_exhausted` / `non_retryable` in Python, `append_error` in Java)
+generally indicate throughput or Storage Write health problems.
 
 ### Multiprocessing and fork safety
 
