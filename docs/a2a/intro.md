@@ -86,6 +86,17 @@ interacting with the remote agent feels just like interacting with a local tool
 or function. The ADK abstracts away the network layer, making distributed agent
 systems as easy to work with as local ones.
 
+!!! note "A2A SDK version compatibility"
+
+    ADK's A2A integration works with both major versions of the A2A Python SDK
+    (`a2a-sdk` **0.3.x** and **1.x.x**) without requiring changes to your ADK
+    application code — the SDK version is selected at runtime. Note that
+    `a2a-sdk` 0.3.x is deprecated; new integrations should target **1.x.x**. If
+    your code references `a2a-sdk` types directly (for example, custom executors
+    or hand-constructed `AgentCard` instances), see the
+    [A2A SDK v1.0 migration guide](https://github.com/a2aproject/a2a-python/tree/main/docs/migrations/v1_0)
+    when moving to 1.x.x.
+
 ## Visualizing the A2A Workflow
 
 To further clarify the A2A workflow, let's look at the "before and after" for

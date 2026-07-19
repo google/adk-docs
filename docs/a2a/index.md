@@ -23,11 +23,6 @@ Navigate through the guides below to learn about ADK's A2A capabilities:
   *   **[A2A Quickstart (Consuming) for Go](./quickstart-consuming-go.md)**
   *   **[A2A Quickstart (Consuming) for Java](./quickstart-consuming-java.md)**
 
-  These guides explain how ADK's A2A integration stays compatible across a2a-sdk major versions:
-
-  *   **[A2A SDK Compatibility for Python](./a2a-sdk-compatibility.md)**
-
-
   [**Official Website for Agent2Agent (A2A) Protocol**](https://a2a-protocol.org/)
 
   The official website for A2A Protocol.
