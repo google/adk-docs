@@ -13,15 +13,16 @@
 # limitations under the License.
 
 import asyncio
-from typing import Any
 from google.adk.agents import Agent
 from google.adk.events import Event
 from google.adk.runners import Runner
-from google.adk.tools import LongRunningFunctionTool
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
 # --8<-- [start:define_long_running_function]
+
+from typing import Any
+from google.adk.tools import LongRunningFunctionTool
 
 # 1. Define the long running function
 def ask_for_approval(
@@ -32,7 +33,7 @@ def ask_for_approval(
     # Send a notification to the approver with the link of the ticket
     return {'status': 'pending', 'approver': 'Sean Zhou', 'purpose' : purpose, 'amount': amount, 'ticket-id': 'approval-ticket-1'}
 
-def reimburse(purpose: str, amount: float) -> str:
+def reimburse(purpose: str, amount: float) -> dict[str, Any]:
     """Reimburse the amount of money to the employee."""
     # send the reimbrusement request to payment vendor
     return {'status': 'ok'}
