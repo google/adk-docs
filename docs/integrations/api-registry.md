@@ -67,7 +67,7 @@ API Registry. This agent is designed to interact with BigQuery:
 
 ```python
 import os
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.tools.api_registry import ApiRegistry
 
 # Configure with your Google Cloud Project ID and registered MCP server name

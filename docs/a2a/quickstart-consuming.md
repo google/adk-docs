@@ -168,7 +168,7 @@ prime_agent = RemoteA2aAgent(
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent
 from google.genai import types
 
 root_agent = Agent(
