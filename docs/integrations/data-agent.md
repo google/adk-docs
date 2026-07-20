@@ -8,12 +8,15 @@ catalog_tags: ["data", "google"]
 # Google Cloud Data Agents tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 These are a set of tools aimed to provide integration with Data Agents powered by [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
 
 Data Agents are AI-powered agents that help you analyze your data using natural language. When configuring a Data Agent, you can choose from supported data sources, including **BigQuery**, **Looker**, and **Looker Studio**.
+
+!!! example "Experimental"
+    This feature is experimental and may be updated in future releases.
 
 **Prerequisites**
 

@@ -1,4 +1,4 @@
-# Authenticating with Tools
+# Authenticating with tools
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -157,15 +157,17 @@ see the [ADK Integrations](/integrations) catalog.
 
 ---
 
-## Journey 1: Building Agentic Applications with Authenticated Tools
+## Build agentic applications with authenticated tools
 
 This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
 
-### 1. Configuring Tools with Authentication
+### Configure tools with authentication
 
 When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
 
-**A. Using OpenAPI-based Toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)**
+You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
+
+#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -279,7 +281,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-**B. Using Google API Toolsets (e.g., `calendar_tool_set`)**
+#### Use Google API toolsets (e.g., `calendar_tool_set`)
 
 These toolsets often have dedicated configuration methods.
 
@@ -300,12 +302,79 @@ calendar_tool_set.configure_auth(
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
 ```
 
-The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
+#### Use ID token
+
+If your agent calls a restricted service, for example a private Cloud Run or Cloud Function, the agent needs to prove your identity, not just your permissions. If you are calling a service that is accessed using Cloud IAM, you should use an ID token.
+
+* **Access Token (Default)**: It calls Google APIs (Drive, BigQuery). Think of it as your keycard.
+    
+* **ID Token**: It calls your own services secured by IAM. Think of it as your passport.
+
+##### Configuration
+
+To implement ID token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
+
+```python
+from google.adk.auth.auth_credential import ServiceAccount
+from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_scheme_credential
+from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+# Configure the ServiceAccount to use ID token authentication.
+# Replace <YOUR_AUDIENCE_URL> with the URL of the service you are calling.
+sa_config = ServiceAccount(
+    use_default_credential=True,
+    use_id_token=True,
+    audience="<YOUR_AUDIENCE_URL>",
+)
+
+auth_scheme, auth_credential = service_account_scheme_credential(sa_config)
+
+sample_toolset = OpenAPIToolset(
+    spec_str=sa_openapi_spec_str, # Fill this with an OpenAPI spec
+    spec_str_type="json",
+    auth_scheme=auth_scheme,
+    auth_credential=auth_credential,
+)
+
+```
+
+!!! tip "Troubleshooting authentication errors"
+
+    If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' or equivalent role on the target service.
+
+##### Key takeaways
+
+* **Audience Requirement**: The `audience` is a security feature that binds the token to a specific destination, preventing it from being "replayed" against other services.
+  
+* **No Auto-Refresh**: Unlike standard OAuth2 access tokens for users, service-account ID tokens are fetched at the time of the request. They do not auto-refresh on a background timer.
+  
+* **The Flow**: You define the intent and ADK handles the handshake, fetches the token from Google's auth servers, and injects it into your outgoing HTTP headers.
+
+##### ServiceAccount configuration parameters
+
+* `service_account_credential` (Optional): Provide the path or dict for your service account JSON key file. Use this if you are running locally or outside of Google Cloud.
+  
+* `use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud, for example on Cloud Run or Cloud Functions, as it avoids the need for local key files.
+  
+* `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token, for Google APIs, to an ID Token, for your own IAM-secured services.
+  
+* `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, `https://my-service.run.app`. This is a security binding that ensures the token is valid only for that specific destination.
+  
+* `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication.
+
+!!! tip "Pair `use_id_token` with `audience`"
+
+    Always use `use_id_token=True` and `audience` together. If you provide one without the other, the ADK will raise an error to prevent accidental misconfiguration.
+
+#### Authentication request flow
+
+This diagram visualizes the end-to-end authentication handshake, tracing the path from the initial user query to the point where the ADK captures a credential request,
+handles the redirection flow, and retries the tool call once authorized.
 
 ![Authentication](../assets/auth_part1.svg)
 
 
-### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
+### Handle the interactive OAuth/OIDC flow (client-side)
 
 If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
 
@@ -327,7 +396,7 @@ Here's the step-by-step process for your client application:
 * Iterate through the yielded events.
 * Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
 
-```py
+```python
 
 # runner = Runner(...)
 # session = await session_service.create_session(...)
@@ -511,7 +580,7 @@ The sequence diagram of auth response flow, where the ***Agent Client*** sends b
 
 ![Authentication](../assets/auth_part2.svg)
 
-## Journey 2: Building Custom Tools (`FunctionTool`) Requiring Authentication
+## Build custom tools (`FunctionTool`) requiring authentication
 
 This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
 
@@ -619,7 +688,7 @@ If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the 
 
 **Step 4: Exchange Authorization Code for Tokens**
 
-ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in Journey 1 to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
+ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in [Build agentic applications with authenticated tools](#build-agentic-applications-with-authenticated-tools) to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
 
 **Step 5: Cache Obtained Credentials**
 
