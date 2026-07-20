@@ -585,6 +585,61 @@ For example, you can automate this step with a callback:
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
     ```
 
+
+## Extend memory capabilities
+
+When you use `VertexAiMemoryBankService`, you can provide additional
+configuration to the underlying Agent Platform API via the
+`custom_metadata` parameter. This parameter controls advanced features like
+Time-to-Live (TTL) and is supported in both `add_session_to_memory` and
+`add_events_to_memory`.
+
+**Supported Metadata Keys:**
+
+* `ttl`: Sets the expiration time for the memory.
+* `revision_ttl`: Sets the expiration time for the revision of the memory.
+
+Use the following example to configure expiration times for your memory records:
+
+```python
+import asyncio
+from google.adk.memory import VertexAiMemoryBankService
+
+# Assume my_memory_service is an instance of VertexAiMemoryBankService
+# and my_latest_events is a list of new adk.Event objects from the latest turn.
+my_latest_events = [...]
+
+async def update_incremental_memory(my_memory_service, my_latest_events):
+    # Example 1: Basic incremental update
+    await my_memory_service.add_events_to_memory(
+        app_name="my-app",
+        user_id="my-user",
+        events=my_latest_events,
+        session_id="my-optional-session-id"
+    )
+
+    # Example 2: Incremental update with Custom Metadata (TTL)
+    await my_memory_service.add_events_to_memory(
+        app_name="my-app",
+        user_id="my-user",
+        events=my_latest_events,
+        session_id="my-optional-session-id",
+        custom_metadata={
+            "ttl": "3600s" # Expire memory in 1 hour
+        }
+    )
+
+async def update_session_memory(my_memory_service, my_completed_session):
+    # Example 3: Applying custom metadata to a full session
+    await my_memory_service.add_session_to_memory(
+        session=my_completed_session,
+        custom_metadata={
+            "revision_ttl": "7200s" # Expire revision in 2 hours
+        }
+    )
+
+```
+
 ## Advanced concepts
 
 ### How memory works in practice
