@@ -83,7 +83,7 @@ instruction = schema_manager.generate_system_prompt(
 Use the generated instruction as the agent's system prompt:
 
 ```python
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 
 agent = LlmAgent(
     model="gemini-flash-latest",

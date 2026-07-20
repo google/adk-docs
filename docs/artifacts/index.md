@@ -931,7 +931,7 @@ artifact in a later turn.
     === "Python"
 
         ```python
-        from google.adk.tools.tool_context import ToolContext
+        from google.adk.tools import ToolContext
 
         def list_user_files_py(tool_context: ToolContext) -> str:
             """Tool to list available artifacts for the user."""

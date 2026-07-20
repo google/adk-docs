@@ -323,7 +323,7 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
@@ -762,7 +762,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from google.genai import types
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
@@ -861,7 +861,7 @@ When deploying ADK agents that use MCP tools to production environments like Clo
 ```python
 # ✅ CORRECT: Synchronous agent definition for deployment
 import os
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
