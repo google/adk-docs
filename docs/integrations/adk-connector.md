@@ -76,7 +76,7 @@ messaging channels.
     ```python
     import os
     from dotenv import load_dotenv
-    from google.adk.agents.llm_agent import Agent
+    from google.adk.agents import Agent
     from adk_connectors.telegram import TelegramConnector
 
     # Load environment variables
@@ -108,7 +108,7 @@ messaging channels.
     ```python
     import os
     from dotenv import load_dotenv
-    from google.adk.agents.llm_agent import Agent
+    from google.adk.agents import Agent
     from adk_connectors.discord import DiscordConnector
 
     # Load environment variables
