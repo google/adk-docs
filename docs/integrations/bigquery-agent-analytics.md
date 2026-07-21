@@ -11,24 +11,6 @@ catalog_tags: ["observability", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
-!!! important "ADK Java version requirement"
-
-    The Java-specific behavior called out in this document — `TOOL_PAUSED`
-    pause/resume pairing, `getDropStats()`, built-in redaction, cross-region
-    write routing, and the JVM shutdown-hook drain — requires a newer build of
-    the Java plugin. As of this writing that support is present on
-    `google/adk-java` `main` but is **not yet in a published release** (it is
-    not in `v1.6.0`, the latest release).
-    <!-- TODO(publish): once the first adk-java release that includes the
-         July 2026 "BQAA Java preview-readiness fixes"
-         (google/adk-java@c685ece46b and google/adk-java@2027a4b53d) is
-         tagged: DELETE this admonition entirely and convert the gated
-         sections to the section-level language-support-tag convention from
-         PR #1942 — add a "Java vX.Y.0" chip to the affected sections (e.g.
-         the ADK 2.0 workflow section next to its Python chip) and remove
-         the inline "builds newer than v1.6.0" / "first release after
-         v1.6.0" prose callouts throughout this page (grep: v1.6.0). -->
-
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
 (ADK) by providing a robust solution for in-depth agent behavior analysis. Using
 the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures
@@ -52,8 +34,8 @@ tool to the row that resumes it. In **Java**, this support currently covers the
 `attributes.adk` envelope). See [Agent workflow and pause/resume events
 (ADK 2.0)](#adk-2-events) for details.
 
-The plugin includes three reliability and observability fixes (in Java these
-land in the first release after `v1.6.0`):
+The plugin includes three reliability and observability fixes (Java: v1.7.0 or
+later):
 
 - **Cross-region Storage Write API routing.** Writes to BigQuery datasets
   outside the `US` multi-region (for example `EU` or `northamerica-northeast1`)
@@ -869,7 +851,7 @@ columns:
 The four workflow views (`v_agent_transfer`, `v_agent_state_checkpoint`,
 `v_event_compaction`, `v_tool_paused`) and the `pause_kind` / `function_call_id`
 columns on `v_tool_completed` come with the [ADK 2.0 workflow event
-support](#adk-2-events). In **Java** (builds newer than `v1.6.0`), only
+support](#adk-2-events). In **Java** (v1.7.0+), only
 `v_tool_paused` and the `pause_kind` / `function_call_id` columns on
 `v_tool_completed` are created; `v_agent_transfer`, `v_agent_state_checkpoint`,
 and `v_event_compaction` are Python-only (the Java plugin does not emit those
@@ -1166,15 +1148,15 @@ Logged when an A2A remote agent call completes.
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 !!! note "Java support"
 
-    The **Java** plugin supports a subset of this section: builds newer than
-    `v1.6.0` emit `TOOL_PAUSED` and the pause/resume pairing described below,
-    but do **not** emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or
-    `EVENT_COMPACTION`, and do not write the `attributes.adk` envelope — the
+    The **Java** plugin supports a subset of this section: it emits
+    `TOOL_PAUSED` and the pause/resume pairing described below,
+    but does **not** emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or
+    `EVENT_COMPACTION`, and does not write the `attributes.adk` envelope — the
     Java plugin stores `pause_kind` and `function_call_id` at the **top level**
     of `attributes` instead (see the query note below).
 
@@ -1975,7 +1957,7 @@ by credential services) is never persisted in BigQuery.
 
 !!! note "Built-in redaction in Java"
 
-    The Java plugin includes built-in redaction in builds newer than `v1.6.0`.
+    The Java plugin includes built-in redaction in v1.7.0 and later.
     It redacts the same six key names (case-insensitive) recursively across the
     assembled `attributes` tree — including session state and state deltas —
     and any key prefixed with **`temp:`**. Unlike Python, the Java plugin does
@@ -2184,8 +2166,8 @@ call) reconstructs cleanly from BigQuery.
   exporter — this is what prevents duplicate spans in Cloud Trace when Agent
   Engine telemetry is enabled (`GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`)
   or when you wire any other Cloud Trace exporter into the host process. The
-  same internal, ID-only span tracking applies to the Java plugin in builds
-  newer than `v1.6.0`; earlier Java builds created plugin-owned OpenTelemetry
+  same internal, ID-only span tracking applies to the Java plugin in v1.7.0
+  and later; earlier Java builds created plugin-owned OpenTelemetry
   spans that could surface as duplicates next to framework spans.
 - **`trace_id` inherited from the ambient OTel span when present.** If the
   surrounding runtime has already started an OTel span — Agent Engine's
@@ -2249,10 +2231,10 @@ call) reconstructs cleanly from BigQuery.
 
     - **`plugin.close()`**: Gracefully shuts down the plugin, flushing pending events and releasing resources (including the BigQuery write client and executors).
     - **Automatic Closure**: If you are using `InMemoryRunner`, calling `runner.close()` will automatically close all registered plugins, including the BigQuery Agent Analytics plugin.
-    - **`plugin.getDropStats()`** (builds newer than `v1.6.0`): Returns an
+    - **`plugin.getDropStats()`** (v1.7.0+): Returns an
       `ImmutableMap<String, Long>` of dropped-event counts per drop reason. See
       [Dropped-event observability](#dropped-event-observability).
-    - **JVM shutdown hook** (builds newer than `v1.6.0`): The plugin registers
+    - **JVM shutdown hook** (v1.7.0+): The plugin registers
       a shutdown hook at construction, so pending events are drained
       (best-effort, bounded by `shutdownTimeout`) at JVM exit even if `close()`
       is never called. An explicit `close()` deregisters the hook. Still prefer
@@ -2280,7 +2262,7 @@ on, and ship the counts to its own monitoring.
 | `non_retryable` | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
 | `unexpected_error` | Any other exception caught while preparing or writing the batch. |
 
-**Drop reasons (Java, builds newer than `v1.6.0`):**
+**Drop reasons (Java, v1.7.0+):**
 
 | Reason | Cause |
 |---|---|
