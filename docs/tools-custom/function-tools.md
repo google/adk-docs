@@ -762,36 +762,29 @@ behavior:
     agent's execution is self-contained and unaffected by the parent's
     plugin environment.
 
-??? "Example"
-
-=== "Python"
-
 ```python
-    from google.adk.tools import agent_tool
+from google.adk.tools import agent_tool
 
-    # Placeholder definition for MyImageAgent
-    class MyImageAgent:
-        def __init__(
-            self, name="My Agent", description="A simple image agent."
-        ):
-            self.name = name
-            # Added description attribute
-            self.description = description 
+# Placeholder definition for MyImageAgent
+class MyImageAgent:
+    def __init__(self, name="My Agent", description="A simple image agent."):
+        self.name = name
+        self.description = description # Added description attribute
 
-    # Example 1: Isolate MyImageAgent from parent plugins 
-    # (blocks inherited observability)
-    my_isolated_tool = agent_tool.AgentTool(
-        agent=MyImageAgent(), # Instantiate MyImageAgent
-        include_plugins=False
-    )
+# Example 1: Isolate MyImageAgent from parent plugins 
+# (blocks inherited observability)
+my_isolated_tool = agent_tool.AgentTool(
+    agent=MyImageAgent(), # Instantiate MyImageAgent
+    include_plugins=False
+)
 
-    # Example 2: Inherit plugins (Default behavior, preserves trace 
-    # spans and event streaming)
-    my_observable_tool = agent_tool.AgentTool(
-        agent=MyImageAgent(), # Instantiate MyImageAgent
-        include_plugins=True
-    )
- ```
+# Example 2: Inherit plugins (Default behavior, preserves trace spans 
+# and event streaming)
+my_observable_tool = agent_tool.AgentTool(
+    agent=MyImageAgent(), # Instantiate MyImageAgent
+    include_plugins=True
+)
+  ```
 
 - **skip_summarization** (Python/TypeScript) / **skipSummarization**
   (Kotlin/Java): (boolean) If set to True, the framework will **bypass the
