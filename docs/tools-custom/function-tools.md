@@ -803,37 +803,7 @@ behavior:
         --8<-- "examples/kotlin/snippets/tools/function-tools/AgentTool.kt:agent_tool"
         ```
         
-- **include_plugins**: (boolean) If set to True, the child agent inherits all plugins
-    from the parent. If set to False, the child agent runs in an isolated environment
-    without inheriting any plugins from the parent. Use this setting to ensure an
-    agent's execution is self-contained and unaffected by the parent's
-    plugin environment.
-
-```python
-from google.adk.tools import agent_tool
-
-# Placeholder definition for MyImageAgent
-class MyImageAgent:
-    def __init__(self, name="My Agent", description="A simple image agent."):
-        self.name = name
-        self.description = description # Added description attribute
-
-# Example 1: Isolate MyImageAgent from parent plugins 
-# (blocks inherited observability)
-my_isolated_tool = agent_tool.AgentTool(
-    agent=MyImageAgent(), # Instantiate MyImageAgent
-    include_plugins=False
-)
-
-# Example 2: Inherit plugins (Default behavior, preserves trace spans 
-# and event streaming)
-my_observable_tool = agent_tool.AgentTool(
-    agent=MyImageAgent(), # Instantiate MyImageAgent
-    include_plugins=True
-)
-  ```
-
-### How it works
+#### How it works
 
 1. When the `root_agent` receives the long text, its instruction tells it to use
    the 'summarize' tool for long texts.
@@ -847,3 +817,45 @@ my_observable_tool = agent_tool.AgentTool(
    `root_agent`.**
 6. The `root_agent` can then take the summary and formulate its final response
    to the user (e.g., "Here's a summary of the text: ...")
+        
+#### Control plugin inheritance
+
+When you wrap an agent with `AgentTool`, you can control whether it
+inherits plugins from the parent runner using the `include_plugins`
+parameter.
+
+* **`include_plugins=True` (default):** The child agent inherits all
+  plugins from the parent.
+* **`include_plugins=False`:** The child agent runs in an isolated
+  environment without inheriting any plugins from the parent. Use this
+  setting to ensure an agent's execution is self-contained and unaffected
+  by the parent's plugin environment.
+
+=== "Python"
+
+    ```python
+    from google.adk.tools import agent_tool
+
+    # Placeholder definition for MyImageAgent
+    class MyImageAgent:
+        def __init__(
+            self, name="My Agent", description="A simple image agent."
+        ):
+            self.name = name
+            # Added description attribute
+            self.description = description 
+
+    # Example 1: Isolate MyImageAgent from parent plugins 
+    # (blocks inherited observability)
+    my_isolated_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=False
+    )
+
+    # Example 2: Inherit plugins (Default behavior, preserves trace 
+    # spans and event streaming)
+    my_observable_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=True
+    )
+    ```
