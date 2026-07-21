@@ -751,10 +751,47 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
     AgentTool(agent = agentB)
     ```
 
-### Customization
+### Customize your agent tool
 
 The `AgentTool` class provides the following attributes for customizing its
 behavior:
+
+- **include_plugins**: (boolean) If set to True, the child agent inherits all plugins
+    from the parent. If set to False, the child agent runs in an isolated environment
+    without inheriting any plugins from the parent. Use this setting to ensure an
+    agent's execution is self-contained and unaffected by the parent's
+    plugin environment.
+
+??? "Example"
+
+=== "Python"
+
+```python
+    from google.adk.tools import agent_tool
+
+    # Placeholder definition for MyImageAgent
+    class MyImageAgent:
+        def __init__(
+            self, name="My Agent", description="A simple image agent."
+        ):
+            self.name = name
+            # Added description attribute
+            self.description = description 
+
+    # Example 1: Isolate MyImageAgent from parent plugins 
+    # (blocks inherited observability)
+    my_isolated_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=False
+    )
+
+    # Example 2: Inherit plugins (Default behavior, preserves trace 
+    # spans and event streaming)
+    my_observable_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=True
+    )
+ ```
 
 - **skip_summarization** (Python/TypeScript) / **skipSummarization**
   (Kotlin/Java): (boolean) If set to True, the framework will **bypass the
