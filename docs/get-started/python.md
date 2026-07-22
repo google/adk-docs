@@ -70,7 +70,7 @@ use. Update the generated `agent.py` code to include a `get_current_time` tool
 for use by the agent, as shown in the following code:
 
 ```python
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent
 
 # Mock tool implementation
 def get_current_time(city: str) -> dict:
