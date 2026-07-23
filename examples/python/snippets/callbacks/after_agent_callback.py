@@ -98,7 +98,7 @@ async def main():
     session_service = runner.session_service
 
     # Create session 1: Agent output will be used as is (default empty state)
-    session_service.create_session(
+    await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
         session_id=session_id_normal,
@@ -107,7 +107,7 @@ async def main():
     # print(f"Session '{session_id_normal}' created with default state.")
 
     # Create session 2: Agent output will be replaced by the callback
-    session_service.create_session(
+    await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
         session_id=session_id_modify,
