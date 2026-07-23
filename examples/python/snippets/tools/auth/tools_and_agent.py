@@ -33,7 +33,7 @@ auth_credential = AuthCredential(
   auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
   oauth2=OAuth2Auth(
     client_id="CLIENT_ID",
-    client_secret="CIENT_SECRET",
+    client_secret="CLIENT_SECRET",
   )
 )
 
@@ -61,7 +61,7 @@ root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='enterprise_assistant',
     instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',
-    tools=userinfo_toolset.get_tools(),
+    tools=[userinfo_toolset],
 )
 
 # --- Ready for Use ---
