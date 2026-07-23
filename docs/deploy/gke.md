@@ -686,7 +686,7 @@ You should see output like `adk-default-service-name-xxxx-xxxx ... 1/1 Running` 
 kubectl get service
 ```
 
-By default, the service type is `ClusterIP`, and `EXTERNAL-IP` will be `<none>`.
+By default, the service type is `ClusterIP`, and `EXTERNAL-IP` is `<none>`.
 
 ```bash
 NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
