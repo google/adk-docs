@@ -4,9 +4,8 @@ Usage guide for the `api-reference-audit` skill.
 
 **What it does:** Audits whether the generated API reference docs in
 `docs/api-reference/` and the hardcoded version strings across the docs are up
-to date with the latest release of each language SDK (Python, TypeScript, Go,
-Java, Kotlin). It reports what needs bumping and which release process to
-follow, and changes nothing unless you ask.
+to date with the latest release of each language SDK. It reports what needs
+bumping and which release process to follow, and changes nothing unless you ask.
 
 **Audience:** Maintainers.
 
