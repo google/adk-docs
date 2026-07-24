@@ -92,19 +92,19 @@ to set environment variables:
 === "MacOS / Linux"
 
     ```bash title="Update: my-agent/.env"
-    echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
 === "Windows PowerShell"
 
     ```console title="Update: my-agent/.env"
-    echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
 === "Windows Command Prompt"
 
     ```console title="Update: my-agent/.env"
-    echo GEMINI_API_KEY="YOUR_API_KEY" > .env
+    echo GOOGLE_API_KEY="YOUR_API_KEY" > .env
     ```
 
 ??? tip "Using other AI models with ADK"
