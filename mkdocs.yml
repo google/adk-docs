@@ -395,6 +395,7 @@ nav:
       - Memory: sessions/memory.md
     - MCP:
       - mcp/index.md
+      - Expose an agent as an MCP server: mcp/expose-agent-as-mcp-server.md
     - A2A Protocol:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
