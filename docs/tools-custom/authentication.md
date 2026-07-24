@@ -134,7 +134,7 @@ specific interactive process with your ***Agent Client*** application.
 *   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
     JSON key or Application Default Credentials. This type typically exchanges a
     Bearer token.
-
+    
 ## Tools and integrations quick guide
 
 Here is a quick guide to authentication for key ADK toolsets:
@@ -263,7 +263,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OpenIdConnectWithConfig(
           authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
           token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
+          scopes=['openid', 'YOUR_OAUTH_SCOPES']
       )
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
@@ -365,6 +365,35 @@ sample_toolset = OpenAPIToolset(
 !!! tip "Pair `use_id_token` with `audience`"
 
     Always use `use_id_token=True` and `audience` together. If you provide one without the other, the ADK will raise an error to prevent accidental misconfiguration.
+
+#### Use external access tokens
+
+The `external_access_token_key` feature allows your agent to use an existing
+access token provided by the runtime environment, such as a token provided by
+a frontend application, instead of starting a new authentication flow.
+When configured, the credential manager skips standard OAuth flows. Instead, 
+retrieves the key in the agent's `tool_context.state` and directly uses the 
+token for authentication.
+The use of this configuration parameter is mutually exclusive, and cannot
+include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
+configuration block.
+
+Follow this example to configure the key:
+
+```python
+from google.adk.auth.auth_credential import AuthCredential
+from google.adk.auth.auth_credential import AuthCredentialTypes
+
+# Configure the tool to look for "my_frontend_token" in the session state
+credentials_config = AuthCredential(
+    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
+    google_credentials_config={
+        # Do not hardcode authentication keys in production code
+        "external_access_token_key": "get_my_frontend_token" 
+    }
+)
+
+```
 
 #### Authentication request flow
 
