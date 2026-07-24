@@ -26,8 +26,6 @@ The authoritative sources of truth for this review are:
 > Read this skill and follow its steps whenever asked to review an integration
 > page or an integration PR.
 
----
-
 ## Review workflow
 
 ### Step 1: Gather the change
@@ -72,8 +70,6 @@ If, and only if, the user explicitly asks you to fix findings: apply precise
 edits, keep the contributor's wording where possible, fix only ADK-owned issues
 unless told otherwise (leave vendor-SDK bugs for the author), and verify with
 `mkdocs serve` where practical.
-
----
 
 ## Review checklist
 
@@ -198,8 +194,6 @@ catalog_tags: ["<tag>", "<tag>"]
 - Adding a new integration requires only the `.md` file with correct frontmatter
   plus the icon asset in `assets/`.
 
----
-
 ## Deep verification
 
 Verify all code samples against actual APIs and library code. The canonical
@@ -218,8 +212,6 @@ source repositories are listed in `docs/community/contributing-guide.md`.
   issues (flag and leave for the author).
 - **Test by hand** when practical: run the example with a real ADK agent, or at
   minimum `mkdocs serve` to confirm the card renders and the icon loads.
-
----
 
 ## Acceptance and rejection
 
@@ -244,8 +236,6 @@ for MCP); relative internal links, working external links, valid icon asset; no
 verbose AI-generated language, correct use when referring to "ADK", no
 overclaims or marketing bias; auto-discovered with no nav edits.
 
----
-
 ## Report format
 
 Produce a Markdown report categorized by priority, each finding with `file:line`
@@ -262,8 +252,6 @@ and context:
   pages, image size, heading-capitalization variants.
 
 After the report, **stop**. Do not modify files unless the user explicitly asks.
-
----
 
 ## Feedback tone (for PR comments you draft)
 
