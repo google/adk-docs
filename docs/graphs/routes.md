@@ -154,6 +154,10 @@ A sequential route runs each node once, in the listed order.
     `Event(route=...)` value, which the `edges` dict dispatches to different nodes.
 
     ```python
+    from google.adk import Event, Workflow
+    from google.adk.agents import Agent
+
+
     def router(node_input: str):
         """Route to task B or C based on node_input."""
         if condition(node_input):
@@ -407,6 +411,9 @@ lifecycle on each iteration.
 === "Python"
 
     ```python
+    from google.adk import Event, Workflow
+
+
     def router(node_input: str):
         """Route to task B or C based on node_input."""
         if condition(node_input):
