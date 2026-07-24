@@ -29,6 +29,9 @@ The audit covers three kinds of drift:
 
 ## Version map (in-repo version vs. upstream truth)
 
+Each **surface** is one API reference output this repo ships: Python API, Python
+CLI, Python REST API, Python Agent Config, TypeScript, Go, Java, and Kotlin.
+
 For each surface, read the in-repo version from the file listed, then compare it
 against the latest upstream release and package registry.
 
@@ -249,8 +252,9 @@ surface:
   on the owning team's asset PR and what to request or wait for.
 - For hardcoded versions, the precise `file:line` edits (old -> new), including
   `examples/java/**/pom.xml`.
-- Which surfaces move together (Python API + CLI + REST on one `adk-python`
-  version) so they are bumped in one coordinated pass.
+- Which surfaces move together (Python API, CLI, and REST share one `adk-python`
+  version) so they ship as separate PRs, one per surface, bumped in the same
+  sitting.
 - A PR description per stale surface, following the repo convention:
     - a short bullet summary of what changed
     - `Rendered page:` <preview link, where applicable>
