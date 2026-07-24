@@ -9,12 +9,12 @@ ADK simplifies interacting with external REST APIs by automatically generating c
 !!! tip "Core Benefit"
     Use `OpenAPIToolset` to instantly create agent tools (`RestApiTool`) from your existing API documentation (OpenAPI spec), enabling agents to seamlessly call your web services.
 
-## Key Components
+## Key components
 
 * **`OpenAPIToolset`**: This is the primary class you'll use. You initialize it with your OpenAPI specification, and it handles the parsing and generation of tools.
 * **`RestApiTool`**: This class represents a single, callable API operation (like `GET /pets/{petId}` or `POST /pets`). `OpenAPIToolset` creates one `RestApiTool` instance for each operation defined in your spec.
 
-## How it Works
+## How it works
 
 The process involves these main steps when you use `OpenAPIToolset`:
 
@@ -32,13 +32,22 @@ The process involves these main steps when you use `OpenAPIToolset`:
     * **API Details**: Stores the required HTTP method, path, server base URL, parameters (path, query, header, cookie), and request body schema internally.
 
 4. **`RestApiTool` Functionality**: Each generated `RestApiTool`:
-    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on the operation's parameters and request body. This schema tells the LLM how to call the tool (what arguments are expected).
-    * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `requests` library.
+    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on
+   the operation's parameters and request body. This schema tells the LLM how
+   to call the tool (what arguments are expected).
+    * **Execution**: When the LLM calls the tool, the tool constructs the HTTP
+  request, including the URL, headers, query parameters, and body, using the
+  LLM's arguments and the OpenAPI specification. The tool handles
+  authentication if configured, and executes the API call asynchronously using
+  the `httpx` library instead of `requests`.
     * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
 
-5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](/tools-custom/authentication/) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
+5. **Authentication**: You can configure global authentication (like API keys or
+   OAuth - see [Authentication](/tools-custom/authentication/) for details)
+   when initializing `OpenAPIToolset`. This authentication configuration is
+   automatically applied to all generated `RestApiTool` instances.
 
-## Usage Workflow
+## Usage workflow
 
 Follow these steps to integrate an OpenAPI spec into your agent:
 
@@ -70,10 +79,10 @@ Follow these steps to integrate an OpenAPI spec into your agent:
     )
     ```
 
-4. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
-5. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
+4. **Instruct agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
+5. **Run agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
 
-## Example
+## See it in action
 
 This example demonstrates generating tools from a simple Pet Store OpenAPI spec (using `httpbin.org` for mock responses) and interacting with them via an agent.
 
