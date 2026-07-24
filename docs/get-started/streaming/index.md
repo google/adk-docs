@@ -24,4 +24,11 @@ This page provides quickstart examples to get you up and running with streaming 
     [:octicons-arrow-right-24: View Java Streaming Quickstart](quickstart-streaming-java.md) <br>
     <!-- [:octicons-arrow-right-24: View Java Streaming Quickstart](java/quickstart-streaming-java.md)) -->
 
+-   :fontawesome-brands-golang:{ .lg .middle } **Go ADK: Streaming agent**
+
+    ---
+    This example demonstrates how to set up a basic streaming interaction with an agent using Go ADK. It typically involves using the `Runner.RunLive()` method and handling asynchronous events.
+
+    [:octicons-arrow-right-24: View Go Streaming Quickstart](quickstart-streaming-go.md) <br>
+
 </div>
