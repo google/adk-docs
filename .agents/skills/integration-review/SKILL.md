@@ -210,10 +210,14 @@ source repositories are listed in `docs/community/contributing-guide.md`.
 - **Package reality**: confirm the PyPI (or npm) package exists and that any
   stated version and Python requirement match the prose.
 - **ADK API**: verify every ADK symbol and pattern used in the code samples
-  against `~/Repos/adk-python` or the relevant language SDK (e.g. `Runner`,
-  `run_async`, `create_session`, `append_event`, `save_artifact`,
+  against the canonical source repositories (listed in
+  `docs/community/contributing-guide.md`) for the relevant language SDK (e.g.
+  `Runner`, `run_async`, `create_session`, `append_event`, `save_artifact`,
   session/artifact service URIs, `adk web` / `adk run` CLI flags, genai types).
-  Flag mismatches.
+  Do not assume a local checkout: fetch the source with `gh` or `git` (or use a
+  local clone if one exists), and check the **released version** the docs target
+  rather than a main branch that may be ahead of or behind the release. Note the
+  version you verified against, and flag mismatches.
 - **Vendor SDK**: verify the vendor's classes, methods, and arguments against
   the vendor SDK source or docs.
 - **Ownership of bugs**: distinguish ADK-owned issues from vendor-SDK-owned
@@ -302,11 +306,14 @@ overclaims or marketing bias; auto-discovered with no nav edits.
 
 ## Report format
 
-Produce a Markdown report categorized by priority, each finding with `file:line`
-and context. **Always list all four tiers in order and print `None` under any
-tier with no findings**, so the absence of Critical issues is stated, not merely
-implied. A finding you consider genuinely take-or-leave belongs under 🔵
-**Nits**; keep 🟠 and 🟡 reserved for items that must be fixed before merge.
+Produce a Markdown report categorized by priority, each finding with an exact
+`file:line` and context. Derive line numbers from the file under review (the
+local page, or the PR via `gh pr diff` or a fetched copy) using a line-numbered
+read, `grep -n`, or the diff's hunk headers; never approximate (no `~`).
+**Always list all four tiers in order and print `None` under any tier with no
+findings**, so the absence of Critical issues is stated, not merely implied. A
+finding you consider genuinely take-or-leave belongs under 🔵 **Nits**; keep 🔴,
+🟠, and 🟡 reserved for items that must be fixed before merge.
 
 - 🔴 **Critical**: fabricated/unreleased APIs, non-working code, broken or
   hallucinated links, unsigned CLA, wrong destination directory, duplicate page.
@@ -318,8 +325,9 @@ implied. A finding you consider genuinely take-or-leave belongs under 🔵
 - 🔵 **Nits**: tag comma spacing, absolute-vs-relative ADK links on vendor-owned
   pages, image size, heading-capitalization variants.
 
-Every finding you list here must produce a matching line-anchored comment in
-output 3; the report and the comments must cover the same items.
+Every finding you list here must produce at least one line-anchored comment in
+output 3 (a finding that spans multiple locations gets one comment per
+location); the report and the comments must cover the same items.
 
 After the tiers, add a short **Developer value and maturity** narrative
 paragraph: summarize the evidence gathered in the "Research developer value and
@@ -373,23 +381,36 @@ stated reason the review genuinely cannot land on one of the three above.
 ### 3. Line-anchored comments
 
 A copy-pasteable list of inline PR comments a maintainer can drop onto the diff.
-Produce **exactly one comment for every finding in the report, across all four
-tiers (🔴 🟠 🟡 🔵)**. Do not filter by severity or decide that some categories
-are not worth commenting: every flagged item, down to the last nit, gets a
-comment so the maintainer can relay all of it and nothing is silently dropped.
+Cover **every finding in the report, across all four tiers (🔴 🟠 🟡 🔵)**. Do
+not filter by severity or decide that some categories are not worth commenting:
+every flagged item, down to the last nit, gets a comment so the maintainer can
+relay all of it and nothing is silently dropped.
 
-- Each entry is a `file:line` (or `file:start-end` range), the tier emoji, and a
-  one- to two-sentence suggestion in the "Feedback tone". Give the contributor
-  an out where appropriate (e.g. "remove this link and the page serves as the
-  sample").
-- Group the comments by tier in the same order as the report so they can be
-  checked against it one to one.
-- Never drop a finding because it lacks a precise line. Anchor it to the nearest
-  relevant line, or mark it as a page-level or frontmatter-level comment (for
-  example, a missing section, or the maturity/value judgment call).
-- Reconcile before finishing: the number of comments must equal the total number
-  of findings in the report. If the counts differ, close the gap rather than
-  shipping a partial list.
+- **Format each comment to be pasted as-is** into a GitHub inline comment: a
+  `file:line` (or `file:start-end`) locator with the tier emoji on its own line,
+  then the one- to two-sentence suggestion as a blockquote so it copies cleanly.
+  For example:
+
+    `docs/integrations/weave.md:76` 🟡 Style
+
+    > Use `model="gemini-flash-latest"` instead of the pinned
+    > `model="gemini-2.5-flash"` to match repo convention and avoid
+    > model-version churn.
+
+- Use the exact `file:line` for the finding, taken from the file under review
+  (the local page or the PR diff), never approximated (no `~`). Only when a
+  finding genuinely maps to no line (for example, a missing section, or the
+  value and maturity judgment call) fall back to a page-level or
+  frontmatter-level comment, and say so explicitly.
+- Give the contributor an out where appropriate (e.g. "remove this link and the
+  page serves as the sample").
+- Group the comments by tier in the same order as the report.
+- One finding can produce more than one comment: a finding that spans multiple
+  locations (e.g. the same issue in the Python and TypeScript samples) gets one
+  comment per location.
+- Reconcile before finishing: every finding in the report has at least one
+  comment (so comments equal or outnumber findings). If any finding lacks one,
+  add it rather than shipping a partial list.
 
 These are drafts only; do not post them.
 
