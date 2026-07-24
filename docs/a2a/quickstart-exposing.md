@@ -261,6 +261,13 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 *   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
 *   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
 
+!!! tip "Suppress experimental warnings"
+
+    ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
+
+    ```bash
+    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true```
+
 ## Agent Executor V2
 
 The new version of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) is typically enabled when a client sends the required [A2A extension](a2a-extension.md).
