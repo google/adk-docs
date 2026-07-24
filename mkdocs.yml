@@ -234,6 +234,7 @@ plugins:
         - integrations/*.md
         Run Agents:
         - runtime/*.md
+        - runtime/*/*.md
         - visual-builder/*.md
         - deploy/*.md
         - observability/*.md
@@ -328,6 +329,26 @@ nav:
           - Visual Builder: visual-builder/index.md
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
+      - Frontend:
+          - Overview: runtime/frontend/index.md
+          - A2UI: runtime/frontend/a2ui.md
+          - AG-UI (Clients):
+              - Overview: runtime/frontend/ag-ui/index.md
+              - React: runtime/frontend/ag-ui/react.md
+              - Angular: runtime/frontend/ag-ui/angular.md
+              - Vue: runtime/frontend/ag-ui/vue.md
+              - React Native: runtime/frontend/ag-ui/react-native.md
+              - Slack: runtime/frontend/ag-ui/slack.md
+          - Patterns:
+              - Generative UI:
+                  - Controlled: runtime/frontend/patterns/generative-ui/controlled-generative-ui.md
+                  - Declarative (A2UI): runtime/frontend/patterns/generative-ui/a2ui.md
+                  - Open: runtime/frontend/patterns/generative-ui/open-generative-ui.md
+                  - MCP Apps: runtime/frontend/patterns/generative-ui/mcp-apps.md
+                  - Tool Rendering: runtime/frontend/patterns/generative-ui/tool-rendering.md
+              - Shared State: runtime/frontend/patterns/shared-state.md
+              - In-app Actions: runtime/frontend/patterns/in-app-actions.md
+              - Human-in-the-loop: runtime/frontend/patterns/human-in-the-loop.md
       - Ambient Agents: runtime/ambient-agents.md
       - Resume Agents: runtime/resume.md
       - Cancel Agent Runs: runtime/cancel.md

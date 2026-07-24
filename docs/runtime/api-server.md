@@ -231,6 +231,9 @@ There are two ways to send queries via POST to your agent, via the `/run` or
   the event is available. With `/run_sse`, you can also set `streaming` to
   `true` to enable token-level streaming.
 
+If your frontend needs a stable client-facing event contract on top of this
+stream, see [Frontend](frontend/index.md).
+
 **Using `/run`**
 
 ```shell
