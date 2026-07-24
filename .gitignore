@@ -203,3 +203,5 @@ docs/site
 # Compiled Go example binaries (accidentally committed build artifacts)
 /examples/go/index
 /examples/go/main
+
+# Playwright MCP.playwright-mcp/
