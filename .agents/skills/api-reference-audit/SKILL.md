@@ -1,5 +1,5 @@
 ---
-name: api-ref-audit
+name: api-reference-audit
 description: Audits whether ADK API reference docs and version-pinned strings are up to date across all language SDKs. Compares in-repo versions against upstream releases and package registries, then reports what needs bumping and which process to follow, and emits an executable plan only when asked. Triggers on "audit API reference", "check API ref docs", "are API docs up to date", "bump API doc versions", "check SDK doc versions".
 ---
 
