@@ -25,10 +25,6 @@ Use the `SkillToolset` class to make one or more Skills available to your agent.
 You can define [skills in code](#inline-skills) or load
 [skills from a filesystem](#filesystem-skills).
 
-!!! note "Check your working directory"
-
-        Ensure that 'skills/weather_skill' exist in your current working directory and contains the necessary files.
-
 === "Python"
 
     ```python
@@ -105,7 +101,11 @@ You can define [skills in code](#inline-skills) or load
     For a complete example, see the code sample in
     [skills](https://github.com/google/adk-go/tree/main/examples/skills).
 
-## Understand Skills
+!!! note "Check your working directory"
+
+        Ensure that 'skills/' directory exist in your current working directory and contains the sub-directories for the Skills you want to use in your agent.
+
+## Skill structure
 
 The Skills feature allows you to create modular packages of Skill instructions
 and resources that agents can load on demand. This approach helps you organize
@@ -128,14 +128,7 @@ three levels:
         documentation, templates, or examples.
     -   `scripts/`: Executable scripts supported by the agent runtime.
 
-### Skill processing and validation
-
-When you include skills in your agent, the agent uses a standardized process
-to interact with them. This process includes a system-level instruction for
-how to use skills, a defined format for how skills are represented, and a set
-of validation rules for skill definitions.
-
-#### System instructions for using skills
+### System instructions for using skills
 
 The `SkillToolset` provides a default system instruction to the agent that
 outlines how it should interact with skills. These instructions include the
@@ -149,7 +142,7 @@ following key points:
 *   You must use the `run_skill_script` to run scripts from a skill's `scripts/`
     directory.
 
-#### Skill validation
+### Skill validation
 
 The frontmatter of a skill's `SKILL.md` file is validated to ensure that it
 meets the following requirements:
@@ -350,6 +343,12 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+## Skill processing and validation
+
+When you include skills in your agent, the agent uses a standardized process
+to interact with them. This process includes a system-level instruction for
+how to use skills, a defined format for how skills are represented, and a set
+of validation rules for skill definitions.
 
 ## Next steps
 
