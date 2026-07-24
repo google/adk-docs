@@ -262,6 +262,10 @@ plugins:
         Community:
         - community/*.md
 
+# Hooks
+hooks:
+  - scripts/flatten_md.py
+
 # Navigation
 nav:
   - Home: index.md
