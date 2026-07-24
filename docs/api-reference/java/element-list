@@ -24,6 +24,7 @@ com.google.adk.flows
 com.google.adk.flows.llmflows
 com.google.adk.flows.llmflows.audio
 com.google.adk.google_adk_maven_plugin
+com.google.adk.internal.http
 com.google.adk.maven
 com.google.adk.memory
 com.google.adk.models
