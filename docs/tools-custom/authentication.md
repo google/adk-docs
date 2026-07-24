@@ -134,9 +134,7 @@ specific interactive process with your ***Agent Client*** application.
 *   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
     JSON key or Application Default Credentials. This type typically exchanges a
     Bearer token.
-
-### 
-
+    
 ## Tools and integrations quick guide
 
 Here is a quick guide to authentication for key ADK toolsets:
@@ -371,16 +369,14 @@ sample_toolset = OpenAPIToolset(
 #### Use external access tokens
 
 The `external_access_token_key` feature allows your agent to use an existing
-access token provided by the runtime environment (for example, passed in from
-a frontend application) instead of starting a new authentication flow.
-
+access token provided by the runtime environment, such as a token provided by
+a frontend application, instead of starting a new authentication flow.
 When configured, the credential manager skips standard OAuth flows. Instead, 
 retrieves the key in the agent's `tool_context.state` and directly uses the 
 token for authentication.
-
-This configuration is mutually exclusive. When using an external 
-access token key, you must not provide `credentials`, `client_id`, 
-`client_secret`, or `scopes` in the same configuration block.
+The use of this configuration parameter is mutually exclusive, and cannot
+include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
+configuration block.
 
 Follow this example to configure the key:
 
@@ -392,8 +388,8 @@ from google.adk.auth.auth_credential import AuthCredentialTypes
 credentials_config = AuthCredential(
     auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
     google_credentials_config={
-        # This value is an example, replace with your actual key
-        "external_access_token_key": "my_frontend_token" 
+        # Do not hardcode authentication keys in production code
+        "external_access_token_key": "get_my_frontend_token" 
     }
 )
 
