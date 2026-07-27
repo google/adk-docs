@@ -4,11 +4,14 @@ site_url: https://adk.dev
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
-exclude_docs:
+# `_includes/**` holds homepage partials that are pulled into index.md by the
+# macros plugin. They must be excluded from the build, not merely hidden from
+# the nav, or each partial is also published as its own standalone page.
+exclude_docs: |
   api-reference/java/legal/*
+  /_includes/**
 not_in_nav: |
   /integrations/*.md
-  /_includes/**
 
 # Repository
 repo_name: adk-docs
