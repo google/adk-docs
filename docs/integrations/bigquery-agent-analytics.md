@@ -1763,7 +1763,7 @@ app = App(
 ```
 
 ```text title="my_bq_agent/requirements.txt"
-google-adk[bigquery]
+google-adk[gcp]
 google-cloud-bigquery-storage
 pyarrow
 opentelemetry-api
@@ -1868,7 +1868,7 @@ remote_app = client.agent_engines.create(
         "display_name": "My BQ Analytics Agent",
         "staging_bucket": STAGING_BUCKET,
         "requirements": [
-            "google-adk[bigquery]",
+            "google-adk[gcp]",
             "google-cloud-aiplatform[agent_engines]",
             "google-cloud-bigquery-storage",
             "pyarrow",

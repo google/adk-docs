@@ -73,7 +73,7 @@ with the GKE Code Executor tool:
 [deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/integrations/gke_agent_sandbox/deployment_rbac.yaml)
 sample.
     - **Sandbox Mode:** Permissions to create, get, watch, and delete **SandboxClaim** and **Sandbox** resources within the namespace where the Agent Sandbox is deployed.
-- Install the client library with the appropriate extras: `pip install google-adk[gke]`
+- Install the client library with the appropriate extras: `pip install google-adk[extensions]`
 
 ## Configuration parameters
 
@@ -101,7 +101,7 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
-    from google.adk.code_executors import CodeExecutionInput
+    from google.adk.code_executors.code_execution_utils import CodeExecutionInput
     from google.adk.agents.invocation_context import InvocationContext
 
     # Initialize the executor for Sandbox Mode
@@ -132,7 +132,7 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
-    from google.adk.code_executors import CodeExecutionInput
+    from google.adk.code_executors.code_execution_utils import CodeExecutionInput
     from google.adk.agents.invocation_context import InvocationContext
 
     # Initialize the executor for Job Mode
