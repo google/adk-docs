@@ -804,7 +804,6 @@ behavior:
         ```
         
 #### How it works
-
 1. When the `root_agent` receives the long text, its instruction tells it to use
    the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the
@@ -825,7 +824,7 @@ inherits plugins from the parent runner using the `include_plugins`
 parameter.
 
 * **`include_plugins=True` (default):** The child agent inherits all
-  plugins from the parent.
+  plugins from the parent, preserving trace spans and event streaming.
 * **`include_plugins=False`:** The child agent runs in an isolated
   environment without inheriting any plugins from the parent. Use this
   setting to ensure an agent's execution is self-contained and unaffected
@@ -846,14 +845,12 @@ parameter.
             self.description = description 
 
     # Example 1: Isolate MyImageAgent from parent plugins 
-    # (blocks inherited observability)
     my_isolated_tool = agent_tool.AgentTool(
         agent=MyImageAgent(), # Instantiate MyImageAgent
         include_plugins=False
     )
 
-    # Example 2: Inherit plugins (Default behavior, preserves trace 
-    # spans and event streaming)
+    # Example 2: Inherit plugins
     my_observable_tool = agent_tool.AgentTool(
         agent=MyImageAgent(), # Instantiate MyImageAgent
         include_plugins=True
