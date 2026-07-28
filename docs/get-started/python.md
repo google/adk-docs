@@ -59,7 +59,6 @@ file containing the main control code for the agent.
 my_agent/
     agent.py      # main agent code
     .env          # API keys or project IDs
-    .gitignore    # keeps .env out of source control
     __init__.py
 ```
 
