@@ -285,7 +285,6 @@ nav:
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
       - Code with AI: tutorials/coding-with-ai.md
-      - Agent Config: agents/config.md
     - Agents:
       - agents/index.md
       - Simple agents: agents/llm-agents.md
