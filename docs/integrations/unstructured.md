@@ -35,6 +35,10 @@ to install or run locally.
 - **OCR at agent runtime**: Extract text and structure from images and scanned
   documents as a step inside a larger agent workflow.
 
+- **Structured data extraction**: Pull named fields out of forms, invoices, and
+  contracts as JSON matching a schema, either one you supply or one the server
+  drafts from the document.
+
 ## Prerequisites
 
 - An [Unstructured account](https://transform.unstructured.io) and API key.
@@ -104,9 +108,20 @@ the agent pause between status checks, because parsing jobs run asynchronously:
                 "accepts an optional stages config; it auto-selects a parse "
                 "strategy by default, but if the output looks low quality "
                 "(garbled text or lost tables), re-run the file with a hi_res "
-                "partition strategy for a cleaner result. If asked to parse a "
-                "local file, explain that this requires the upload helper from the "
-                "Unstructured ADK guide."
+                "partition strategy for a cleaner result. If the user wants "
+                "specific fields rather than the whole document, extract "
+                "instead of just parsing. The extraction tools read the element "
+                "JSON a parse produces, so parse the file first and keep the "
+                "output_ref that get_job_results returns for it. Call "
+                "suggest_extraction_schema_for_file with that output_ref when "
+                "you need a schema, then start_extraction_job with "
+                "element_json_refs set to the output_refs and schema_to_extract "
+                "set to a JSON Schema passed as a JSON string. Poll and read an "
+                "extraction job with check_job_status and get_job_results like "
+                "any other job; its results come back inline, wrapped with the "
+                "source filename, so report that filename with each object. If "
+                "asked to parse a local file, explain that this requires the "
+                "upload helper from the Unstructured ADK guide."
             ),
             tools=[
                 wait_seconds,
@@ -122,6 +137,8 @@ the agent pause between status checks, because parsing jobs run asynchronously:
                     tool_filter=[
                         "request_file_upload_url",
                         "start_transform_job",
+                        "suggest_extraction_schema_for_file",
+                        "start_extraction_job",
                         "check_job_status",
                         "get_job_results",
                     ],
@@ -138,6 +155,12 @@ the agent pause between status checks, because parsing jobs run asynchronously:
     pause between status checks, as shown above, so a polling loop does not
     burn through model rate limits.
 
+    Structured-data extraction is a second asynchronous job that runs on the
+    element JSON of a completed parse, identified by the `output_ref` that
+    `get_job_results` returns for each file. A prompt that parses and then
+    extracts therefore runs two polling loops, so allow for the extra time and
+    model steps.
+
     To parse **local** files, the agent also needs a plain function tool that
     HTTP `PUT`s the file bytes to the pre-signed URL returned by
     `request_file_upload_url` (this upload is not an MCP call, and it must not
@@ -151,8 +174,10 @@ Tool | Description
 ---- | -----------
 `request_file_upload_url` | Returns a pre-signed upload URL and file reference for a local file.
 `start_transform_job` | Starts a parsing job for uploaded files or public HTTP(S) URLs; returns a `job_id`.
-`check_job_status` | Reports whether a job is `SCHEDULED`, `IN_PROGRESS`, or `COMPLETED`.
-`get_job_results` | Returns the parsed output and pre-signed download URLs for a completed job.
+`suggest_extraction_schema_for_file` | Drafts a JSON Schema from one parsed document's element JSON, for when you do not have a schema yet.
+`start_extraction_job` | Starts a structured-data extraction job over parsed element JSON against a JSON Schema; returns a `job_id`.
+`check_job_status` | Reports whether a job is `SCHEDULED`, `IN_PROGRESS`, or `COMPLETED`. Serves both parsing and extraction jobs.
+`get_job_results` | Returns a completed job's output: pre-signed download URLs for a parsing job, or the extracted data inline for an extraction job.
 
 ## Resources
 
