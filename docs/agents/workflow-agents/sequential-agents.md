@@ -22,6 +22,9 @@ object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
+    In Python, `SequentialAgent` is deprecated: constructing one emits a
+    `DeprecationWarning`, and the class will be removed in a future release.
+
 ### Example scenario
 
 You want to build an agent that can summarize any webpage, using two tools:
@@ -59,7 +62,7 @@ in the following code snippet:
 SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
-This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/##data-handling)**.
+This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/#data-handling)**.
 
 ???+ "Code"
 

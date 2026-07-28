@@ -26,8 +26,8 @@ First, you need to establish what the agent *is* and what it's *for*.
   `name` is crucial for internal operations, especially in multi-agent systems
   where agents need to refer to or delegate tasks to each other. Choose a
   descriptive name that reflects the agent's function (e.g.,
-  `customer_support_router`, `billing_inquiry_agent`). Avoid reserved names like
-  `user`.
+  `customer_support_router`, `billing_inquiry_agent`). In Python, the name must
+  be a valid Python identifier, and ADK rejects the reserved name `user`.
 
 - **`description` (Optional, Recommended for Multi-Agent):** Provide a concise
   summary of the agent's capabilities. This description is primarily used by
@@ -35,11 +35,13 @@ First, you need to establish what the agent *is* and what it's *for*.
   Make it specific enough to differentiate it from peers (e.g., "Handles
   inquiries about current billing statements," not just "Billing agent").
 
-- **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-flash-latest"`.
-  The choice of model impacts the agent's capabilities, cost, and performance.
-  See the [Models](/agents/models/) page for available options and
-  considerations.
+- **`model` (Optional in Python):** Specify the underlying LLM that will power
+  this agent's reasoning. This is a string identifier like
+  `"gemini-flash-latest"`. If you omit `model`, the agent inherits the model of
+  its nearest ancestor agent, or falls back to ADK's built-in default model
+  (see [Configure a default model](#configure-a-default-model)). The choice of
+  model impacts the agent's capabilities, cost, and performance. See the
+  [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
@@ -141,7 +143,7 @@ tells the agent:
     1. Identify the country name from the user's query.
     2. Use the `get_capital_city` tool to find the capital.
     3. Respond clearly to the user, stating the capital city.
-    Example Query: "What's the capital of {country}?"
+    Example Query: "What's the capital of France?"
     Example Response: "The capital of France is Paris."
     """,
         # tools will be added next
@@ -223,9 +225,11 @@ calculations, fetch real-time data, or execute specific actions.
       In Kotlin, you can use the `@Tool` annotation to automatically generate a
       `FunctionTool` at compile-time.
     - An instance of a class inheriting from `BaseTool`.
-    - An instance of another agent (`AgentTool`, enabling agent-to-agent
+    - An `AgentTool` wrapping another agent, enabling agent-to-agent
       delegation - see [Custom agent
-      workflows](/agents/custom-agents/#delegation)).
+      workflows](/agents/custom-agents/#delegation). In Python, wrap the agent
+      as `AgentTool(agent=...)`, or add it to `sub_agents` to delegate without
+      a tool.
 
 The LLM uses the function/tool names, descriptions (from docstrings or the
 `description` field), and parameter schemas to decide which tool to call based
@@ -354,7 +358,10 @@ You can adjust how the underlying AI model generates responses using
 - **`generate_content_config` (Optional):** Pass an instance of
   [`google.genai.types.GenerateContentConfig`](https://googleapis.github.io/python-genai/genai.html#genai.types.GenerateContentConfig)
   to control parameters like `temperature` (randomness), `max_output_tokens`
-  (response length), `top_p`, `top_k`, and safety settings.
+  (response length), `top_p`, `top_k`, and safety settings. In Python, ADK
+  raises a `ValueError` if `generate_content_config` sets `tools`,
+  `system_instruction`, or `response_schema`. Set those through the agent's
+  `tools`, `instruction`, and `output_schema` fields instead.
 
 === "Python"
 
@@ -462,9 +469,10 @@ provides mechanisms to define expected input and desired output formats using
 schema definitions.
 
 - **`input_schema` (Optional):** Define a schema representing the expected input
-  structure. If set, the user message content passed to this agent *must* be a
-  JSON string conforming to this schema. Your instructions should guide the user
-  or preceding agent accordingly.
+  structure when this agent is invoked *as a tool*. In Python, `AgentTool`
+  validates the calling agent's arguments against the schema and passes the
+  result as this agent's input. The schema does not apply to user messages sent
+  directly to the agent.
 
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
@@ -505,7 +513,7 @@ schema definitions.
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
         output_schema=CapitalOutput, # Enforce JSON output
         output_key="found_capital"  # Store result in state['found_capital']
-        # Cannot use tools=[get_capital_city] effectively here
+        # tools=[...] may be combined with output_schema; see the warning above
     )
     ```
 
@@ -670,6 +678,7 @@ reasoning and planning before execution. There are two main planners:
     from google.genai import types
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
@@ -691,6 +700,7 @@ reasoning and planning before execution. There are two main planners:
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here
@@ -816,7 +826,9 @@ agent = LlmAgent(
 
 # Session and Runner
 session_service = InMemorySessionService()
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+session = asyncio.run(
+    session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+)
 runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
 
 # Agent Interaction

@@ -42,9 +42,10 @@ details on what you must install and configure before you can run agents with
 the Agent Config files.
 
 !!! note
-    The Agent Config feature currently only supports Gemini models. For more
-    information about additional; functional restrictions, see
-    [Known limitations](#known-limitations).
+    The `model:` key of an Agent Config takes a Gemini model name. To use
+    another model, construct a `BaseLlm` instance in Python and reference it
+    from the `model_code:` key. For more information about additional;
+    functional restrictions, see [Known limitations](#known-limitations).
 
 To set up ADK for use with Agent Config:
 
@@ -275,8 +276,10 @@ deployment guides.
 The Agent Config feature is experimental and includes the following
 limitations:
 
--   **Model support:** Only Gemini models are currently supported.
-    Integration with third-party models is in progress.
+-   **Model support:** The `model:` key only accepts a Gemini model name. To use
+    another model, such as `LiteLlm`, construct it in Python and reference it
+    from the `model_code:` key, which takes the fully qualified name of the
+    `BaseLlm` instance. The `model:` and `model_code:` keys cannot both be set.
 -   **Programming language:** The Agent Config feature currently supports
     Python and Java code for tools and other functionality requiring programming code.
 -   **ADK Tool support:** The following ADK tools are supported by the Agent

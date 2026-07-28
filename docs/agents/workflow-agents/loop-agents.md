@@ -22,6 +22,9 @@ the ***LoopAgent*** object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
+    In Python, `LoopAgent` is deprecated: constructing one emits a
+    `DeprecationWarning`, and the class will be removed in a future release.
+
 ### Example scenario
 
 You want to build an agent that can generate images of food, but sometimes when
@@ -41,8 +44,8 @@ When the `LoopAgent`'s `Run Async` method is called, it performs the following a
 
     _Crucially_, the `LoopAgent` itself does _not_ inherently decide when to stop looping. You _must_ implement a termination mechanism to prevent infinite loops.  Common strategies include:
 
-    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**.
-    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent can signal termination (e.g., by raising a custom event, setting a flag in a shared context, or returning a specific value).
+    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**. In Python, `max_iterations` defaults to `None`, which means the loop only stops on escalation.
+    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent signals termination by emitting an event whose actions set `escalate` to true. In Python, a custom agent yields an `Event` with `actions=EventActions(escalate=True)`, while a callback or tool sets `ctx.actions.escalate = True`. The built-in `exit_loop` tool sets that flag for you.
 
 ![Loop Agent](/assets/loop-agent.png)
 
@@ -57,7 +60,7 @@ Imagine a scenario where you want to iteratively improve a document:
     LoopAgent(sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
     ```
 
-In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **designed to return a "STOP" signal when the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
+In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **given an escalation tool such as `exit_loop`, which it calls once the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max_iterations` parameter could be used to limit the process to a fixed number of cycles. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
 
 ???+ "Full Code"
 

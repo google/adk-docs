@@ -29,19 +29,22 @@ ultimately managed by the ***ParallelAgent*** object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
+    In Python, `ParallelAgent` is deprecated: constructing one emits a
+    `DeprecationWarning`, and the class will be removed in a future release.
+
 ### How it works
 
 When the `ParallelAgent`'s `run_async()` method is called:
 
 1. **Concurrent Execution:** It initiates the `run_async()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
-2. **Independent Branches:**  Each sub-agent operates in its own execution branch.  There is ***no* automatic sharing of conversation history or state between these branches** during execution.
+2. **Independent Branches:**  Each sub-agent operates in its own execution branch, and there is ***no* automatic sharing of conversation history between these branches** during execution. A sub-agent sees only the events on its own branch. Session state is shared: all branches run against the same session, so a value one sub-agent writes (e.g., through `output_key`) is visible to the other branches and to later agents.
 3. **Result Collection:** The `ParallelAgent` manages the parallel execution and, typically, provides a way to access the results from each sub-agent after they have completed (e.g., through a list of results or events). The order of results may not be deterministic.
 
 ### Independent Execution and State Management
 
 It's *crucial* to understand that sub-agents within a `ParallelAgent` run independently.  If you *need* communication or data sharing between these agents, you must implement it explicitly.  Possible approaches include:
 
-* **Shared `InvocationContext`:** You could pass a shared `InvocationContext` object to each sub-agent.  This object could act as a shared data store.  However, you'd need to manage concurrent access to this shared context carefully (e.g., using locks) to avoid race conditions.
+* **Shared session state:** All branches run against the same session, so give each sub-agent an `output_key` and read those keys from a later agent's instruction. Because the branches run concurrently, do not rely on one branch reading a key another branch is still writing.
 * **External State Management:**  Use an external database, message queue, or other mechanism to manage shared state and facilitate communication between agents.
 * **Post-Processing:** Collect results from each branch, and then implement logic to coordinate data afterwards.
 
