@@ -157,7 +157,7 @@ In essence, the entire process, from a user's query to the agent's final answer,
 As a developer, you'll primarily interact with the stream of events yielded by the `Runner`. Here's how to understand and extract information from them:
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `event.content()` in Python, `event.content().get().parts()` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., the `event.content` attribute in Python, `event.content().get().parts()` in Java). Refer to the language-specific API documentation for details.
 
 ### Identifying Event Origin and Type
 
@@ -733,9 +733,9 @@ The `event.actions` object signals changes that occurred or should occur. Always
 
 Use the built-in helper method `event.is_final_response()` to identify events suitable for display as the agent's complete output for a turn.
 
-*   **Purpose:** Filters out intermediate steps (like tool calls, partial streaming text, internal state updates) from the final user-facing message(s).
+*   **Purpose:** Filters out intermediate steps (like tool calls and partial streaming text) from the final user-facing message(s).
 *   **When `True`?**
-    1.  The event contains a tool result (`function_response`) and `skip_summarization` is `True`.
+    1.  The `skip_summarization` action is `True`. In Python this flag alone is enough; the event does not need to carry a tool result (`function_response`).
     2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty:
         *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
     3.  OR, **all** of the following are met:
@@ -1018,7 +1018,7 @@ Here are concise examples of typical events you might see in the stream:
       // actions might have skip_summarization=True
     }
     ```
-*   **State/Artifact Update Only:** (`is_final_response() == False`)
+*   **State/Artifact Update Only:** (`is_final_response() == True`: no function call or function response, and not partial)
     ```json
     {
       "author": "InternalUpdater",
@@ -1039,7 +1039,7 @@ Here are concise examples of typical events you might see in the stream:
       "actions": {"transfer_to_agent": "BillingAgent"} // Added by framework
     }
     ```
-*   **Loop Escalation Signal:** (`is_final_response() == False`)
+*   **Loop Escalation Signal:** (`is_final_response() == True`: the `escalate` action does not affect the check)
     ```json
     {
       "author": "CheckerAgent",

@@ -54,6 +54,7 @@ Prefixes on state keys define their scope and persistence behavior, especially w
     * **Scope:** Tied to the `user_id`, shared across *all* sessions for that user (within the same `app_name`).
     * **Persistence:** Persistent with `Database` or `VertexAI`. (Stored by `InMemory` but lost on restart).
     * **Use Cases:** User preferences (e.g., `'user:theme'`), profile details (e.g., `'user:name'`).
+    * **Reading without a session:** In Python, `await session_service.get_user_state(app_name=..., user_id=...)` returns the user-scoped keys with the `user:` prefix stripped, so you can read them before a session exists.
     * **Example:** `session.state['user:preferred_language'] = 'fr'`
 
 * **`app:` Prefix (App State):**
@@ -553,7 +554,7 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 
 *(Note: In TypeScript, this is done via the unified `Context` type.)*
 
-Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
+Modifying state within agent callbacks (e.g., `before_agent_callback`, `after_agent_callback`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
 *   `callback_context.state['my_key'] = my_value`
 *   `tool_context.state['my_key'] = my_value`
@@ -568,7 +569,7 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```python
     # In an agent callback or tool function
-    from google.adk.agents import CallbackContext # or ToolContext
+    from google.adk.agents.callback_context import CallbackContext # or ToolContext
 
     def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
                                      # ... other parameters ...
@@ -646,7 +647,7 @@ For more comprehensive details on context objects, refer to the [Context documen
 * Reads the `state_delta` from the event's `actions`.
 * Applies these changes to the state managed by the `SessionService`, correctly handling prefixes and persistence based on the service type.
 * Updates the session's `last_update_time`.
-* Ensures thread-safety for concurrent updates.
+* Serializes concurrent updates to the same session where the service supports it: `DatabaseSessionService` takes a per-session lock, while `InMemorySessionService` is not safe for multi-threaded use.
 
 ### ⚠️ A Warning About Direct State Modification
 

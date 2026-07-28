@@ -52,8 +52,9 @@ to decide which is the best fit for your agent.
 | **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Knowledge Engine, the Agent Platform SDK (optional install). |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
 
-`VertexAiRagMemoryService` is only exported from `google.adk.memory` when the
-Agent Platform SDK is installed. Memory Bank and RAG-backed memory are
+You can always import `VertexAiRagMemoryService` from `google.adk.memory`, but
+constructing it raises `ImportError` unless the Agent Platform SDK is installed
+(`pip install google-adk[gcp]`). Memory Bank and RAG-backed memory are
 documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
 
 
