@@ -6,9 +6,7 @@ Google's Agent Development Kit ([ADK](https://adk.dev)) provides a production-re
 
 ## ADK Gemini Live API Toolkit Demo
 
-To help you understand the concepts in this guide, we provide a working demo application that showcases ADK bidirectional streaming in action. This FastAPI-based demo implements the complete streaming lifecycle with a practical, real-world architecture.
-
-**Demo Repository**: [adk-samples/python/agents/bidi-demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
+To help you understand the concepts in this guide, we reference a demo application that showcases ADK bidirectional streaming in action. This FastAPI-based demo implements the complete streaming lifecycle with a practical, real-world architecture.
 
 ![ADK Gemini Live API Toolkit Demo](assets/bidi-demo-screen.png)
 
@@ -20,9 +18,7 @@ The demo features:
 - **Interactive UI**: Web interface with event console for monitoring Live API events
 - **Google Search Integration**: Agent equipped with tool calling capabilities
 
-**We strongly recommend installing and running this demo** before diving into the guide. Hands-on experimentation will help you understand the concepts more deeply, and the demo code serves as a practical reference throughout all parts of this guide.
-
-For installation instructions and usage details, see the [demo README](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo).
+The demo code serves as a practical reference throughout all parts of this guide, with code snippets linked inline as each concept is introduced.
 
 ## 1.1 What is Bidi-streaming?
 
