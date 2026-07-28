@@ -216,8 +216,9 @@ With an account-scoped key that owns more than one agent, pass `email` (or
 
 ## Available tools
 
-The hosted server exposes roughly 60 tools, grouped below. Call `tools/list`
-against the endpoint for the authoritative set your credential can see.
+The hosted server exposes 60+ tools, grouped below. The surface grows over
+time — call `tools/list` against the endpoint for the authoritative set your
+credential can see.
 
 ### Runtime — inbox tools (agent- and account-scoped)
 
@@ -264,8 +265,23 @@ an agent. Pick whichever fits your deployment:
 
 - **Poll** with `list_messages` (default `read_status: unread`). Simplest, and
   all an ADK agent needs to get started.
-- **Subscribe** with `create_webhook` to have deliveries pushed to you. This is
-  the production path — handle it with the SDK, as shown above.
+- **Open a WebSocket** with the SDK's `listen()`. Push delivery with **no
+  public URL required**, so it works from a laptop, a notebook, or anywhere
+  behind a firewall — often the right choice while developing an ADK agent, or
+  for a long-running agent that isn't a web service.
+- **Subscribe** with `create_webhook` to have deliveries pushed to an HTTPS
+  endpoint. The production path for a deployed service — handle it with the
+  SDK, as shown above.
+
+```python
+# WebSocket: same versioned event envelope as a webhook delivery.
+async for event in client.listen("bot@your-domain.com"):
+    if event.type != "email.received":
+        continue
+    msg = await client.messages.get(
+        event.data["delivered_to"], event.data["message_id"]
+    )
+```
 
 !!! warning "Webhook handlers must verify the HMAC signature"
 
