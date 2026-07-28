@@ -187,7 +187,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     # same as before
   },
   "user_simulator_config": {
-    "model": "gemini-flash-latest",
+    "model": "gemini-2.5-flash",
     "model_configuration": {
       "thinking_config": {
         "include_thoughts": true,
@@ -206,7 +206,11 @@ The below `EvalConfig` shows the default user simulator configuration:
 *   `max_allowed_invocations`: The maximum user-agent interactions allowed
     before the conversation is forcefully terminated. This should be set to be
     greater than the longest reasonable user-agent interaction in your
-    `EvalSet`.
+    `EvalSet`. The initial fixed prompt counts as an invocation. Set it to `-1`
+    for no limit (not recommended).
+*   `include_function_calls`: Optional. Whether to include function calls and
+    responses in the conversation history prompt given to the user simulator.
+    Defaults to `false`.
 *   `custom_instructions`: Optional. Overrides the default instructions for the
     user simulator. The instruction string must contain the following formatting
     placeholders using

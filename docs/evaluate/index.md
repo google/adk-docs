@@ -338,11 +338,13 @@ tests
 
 In your target test folder, create a `spec.yaml` file. This file outlines the initial conditions, configurations, and user prompts that the agent will execute during the baseline recording and subsequent conformance runs. Ensure your file matches the following basic schema, this is an example only:
 
-```
-# Example spec.yaml for a Weather Agent name: "current_weather_check" description:
-"Verifies the agent correctly identifies location and calls the weather tool."
-user_prompts: - "What's the temperature in San Francisco right now?" expected_tools:
- - "get_weather_api"
+```yaml
+# Example spec.yaml for a Weather Agent.
+# The test case name and category are inferred from the folder structure.
+description: "Verifies the agent correctly identifies location and calls the weather tool."
+agent: "weather_agent"
+user_messages:
+  - text: "What's the temperature in San Francisco right now?"
 ```
 
 #### Automate the baseline
@@ -358,8 +360,10 @@ adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPl
    2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
 
 ```shell
-adk conformance create tests/category/test_name
+adk conformance record tests/category/test_name none
 ```
+
+   The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
 
 This automatically runs the scenario, records all the interactions, and saves the generated-recordings.yaml and generated-session.yaml files exactly where they need to be.
 
@@ -387,6 +391,8 @@ Here is a summary of all the available criteria:
     quality based on custom rubrics.
 *   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
     custom rubrics.
+*   **rubric_based_multi_turn_trajectory_quality_v1**: LLM-judged multi-turn
+    trajectory quality based on custom rubrics.
 *   **hallucinations_v1**: LLM-judged groundedness of agent response against
     context.
 *   **safety_v1**: Safety/harmlessness of agent response.
@@ -462,7 +468,9 @@ Choose criteria based on your evaluation goals:
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
 [User Simulation](./user-sim.md).
-Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+The affected criteria are `tool_trajectory_avg_score`, `response_match_score`
+and `final_response_match_v2`. Every other criterion supports user simulation,
+as shown in the support column of [Evaluation Criteria](./criteria.md).
 
 ### User simulation
 
@@ -582,7 +590,7 @@ Here is the command:
 ```shell
 adk eval \
     <AGENT_MODULE_FILE_PATH> \
-    <EVAL_SET_FILE_PATH> \
+    <EVAL_SET_FILE_PATH_OR_ID>... \
     [--config_file_path=<PATH_TO_TEST_JSON_CONFIG_FILE>] \
     [--print_detailed_results]
 ```
@@ -598,7 +606,7 @@ adk eval \
 Here are the details for each command line argument:
 
 * `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a module by the name "agent". "agent" module contains a `root_agent`.
-* `EVAL_SET_FILE_PATH`: The path to evaluations file(s). You can specify one or more eval set file paths. For each file, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name, demarcated by a colon `:` .
+* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK (as created by `adk eval_set create`). You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
 * For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`
 * `CONFIG_FILE_PATH`: The path to the config file.

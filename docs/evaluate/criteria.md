@@ -231,10 +231,9 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-flash-latest",
-            "num_samples": 5
-          }
-        }
+        "judge_model": "gemini-flash-latest",
+        "num_samples": 5
+      }
     }
   }
 }
@@ -337,7 +336,7 @@ The merged rubric list passed to the judge is the union of the criterion-level l
 
 #### Notes On Rubrics
 
-- Rubrics on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
 - Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"FINAL_RESPONSE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
@@ -439,7 +438,7 @@ The merged rubric list passed to the judge is the union of the criterion-level l
 
 #### Notes On Rubrics
 
-- Rubrics on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
 - Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TOOL_USE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
@@ -538,7 +537,7 @@ The merged rubric list passed to the judge is the union of the criterion-level l
 
 #### Notes On Rubrics
 
-- Rubrics on `EvalConfig.criteria["rubric_based_multi_turn_trajectory_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_multi_turn_trajectory_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
 - Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TRAJECTORY_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
@@ -592,8 +591,8 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-flash-latest",
-          },
+        "judge_model": "gemini-flash-latest"
+      },
       "evaluate_intermediate_nl_responses": true
     }
   }
