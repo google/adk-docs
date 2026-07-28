@@ -146,9 +146,10 @@ overview of the common routing patterns.
 
 !!! caution "Caution: Workflow agent limitations"
 
-    You can add ***LlmAgents*** to graph-based workflows. However, they must
-    be configured for single-turn or task mode. For more information about
-    agent modes, see
+    You can add ***LlmAgents*** to graph-based workflows. An agent used as a
+    graph node defaults to `single_turn` mode; a `chat` mode agent is only
+    allowed directly after `START`, because it consumes conversational history
+    rather than a node input. For more information about agent modes, see
     [Build collaborative agent teams](/workflows/collaboration/#mode-configuration-and-behaviors).
 
 ### Route sequences
@@ -433,8 +434,14 @@ accomplish this goal.
     transmits data to the next node in the nested workflow's graph *and* the
     system bubbles up the Event for that node to the parent workflow for
     process traceability. When the nested workflow completes the last node in
-    its process, the parent node extracts data from the final leaf nodes and
+    its process, the parent node extracts data from the final leaf node and
     emits it as the output of the nested workflow.
+
+    A workflow must have at most *one* terminal node that produces output. If
+    two or more terminal nodes produce output — for example the ends of two
+    parallel branches — the workflow fails with a `ValueError`. Merge those
+    branches with a ***JoinNode*** so the graph ends in a single terminal
+    output.
 
 === "TypeScript"
 
@@ -495,24 +502,28 @@ lifecycle on each iteration.
 
 
     def router(node_input: str):
-        """Route to task B or C based on node_input."""
+        """Exit the loop when the task is done, otherwise iterate again."""
         if condition(node_input):
-            return Event(route="RUN_TASK_C")
-        return Event(route="RUN_TASK_B")
+            return Event(route="DONE")
+        return Event(route="RETRY")
 
     root_agent = Workflow(
-        name="routing_workflow",
+        name="looping_workflow",
         edges=[
             ("START", task_A_node, router),
             (router,
               {
-                "RUN_TASK_B": task_B_node,
-                "RUN_TASK_C": task_C_node,
+                # Back-edge: re-runs task_A_node for another iteration.
+                "RETRY": task_A_node,
+                "DONE": final_task_node,
               },
             ),
         ],
     )
     ```
+
+    A cycle must contain at least one routed (conditional) edge; a cycle made
+    only of unconditional edges is rejected when the `Workflow` is built.
 
 === "TypeScript"
 

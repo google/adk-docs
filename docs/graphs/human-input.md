@@ -218,24 +218,34 @@ specific tool call.
 
 === "Python"
 
-    The following code sample shows how to construct a ***RequestInput*** object
-    in a workflow node, including a ***response schema***:
+    Wrap the tool with ***FunctionTool*** and set `require_confirmation=True`
+    for a static yes/no approval before the tool runs, or call
+    `tool_context.request_confirmation()` from inside the tool for a custom
+    hint message. Guard that call with `tool_context.tool_confirmation` so the
+    tool asks once and proceeds after the user approves:
 
     ```python
-    async def initial_prompt(ctx: Context):
-       """Ask the user for itinerary information"""
-       input_message = """
-           This is an interactive concierge workflow tasked with making you a great
-           itinerary for you in your city of choice. If you give some details about
-           yourself or what you are generally looking for I can better personalize
-           your itinerary.
-           For example, input your:
-               City (Required),
-               Age,
-               Hobby,
-               Example of attraction you liked
-       """
-       yield RequestInput(message=input_message, response_schema=str)
+    from google.adk.agents import Agent
+    from google.adk.tools import FunctionTool, ToolContext
+
+    def book_flight(flight_id: str) -> str:
+       """Books the selected flight."""
+       ...
+
+    def refund(amount: float, tool_context: ToolContext) -> str:
+       """Refunds an order."""
+       if not tool_context.tool_confirmation:
+           tool_context.request_confirmation(
+               hint=f"Approve a refund of {amount}?"
+           )
+           return "Waiting for approval."
+       ...
+
+    root_agent = Agent(
+       name="concierge",
+       model="gemini-flash-latest",
+       tools=[FunctionTool(book_flight, require_confirmation=True), refund],
+    )
     ```
 
 === "TypeScript"
@@ -265,3 +275,7 @@ specific tool call.
     ```go
     --8<-- "examples/go/snippets/graphs/human-input/main.go:hitl-with-hint"
     ```
+
+For the full tool-confirmation workflow, including dynamic confirmation and how
+the client replies, see
+[Get action confirmation for ADK Tools](/tools-custom/confirmation/).

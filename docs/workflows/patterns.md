@@ -9,6 +9,15 @@ Agent Development Kit (ADK), including code examples. These patterns are useful
 across a broad set of applications and you should evaluate and test them against
 your project requirements before committing to a full implementation.
 
+!!! note "Python: template workflow agents are deprecated"
+
+    In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
+    deprecated: constructing one emits a `DeprecationWarning`, and the classes
+    will be removed in a future release. The Python examples below still run.
+    For new code, express these patterns with a
+    [graph-based workflow](/graphs/), which cannot yet be used as an `LlmAgent`
+    sub-agent.
+
 ## Coordinator and dispatcher
 
 * **Structure:** A central [`LlmAgent`](/agents/llm-agents/) (Coordinator) manages several specialized `sub_agents`.
