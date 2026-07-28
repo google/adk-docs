@@ -36,8 +36,15 @@ You can define [skills in code](#inline-skills) or load
     from google.adk.tools import skill_toolset
 
     weather_skill = load_skill_from_dir(
-        pathlib.Path(__file__).parent / "skills" / "weather_skill"
+        pathlib.Path(__file__).parent / "skills" / "weather-skill"
     )
+
+    def get_weather_tool(city: str) -> dict:
+        """Retrieves the current weather report for a specified city."""
+        return {
+            "status": "success",
+            "report": f"The weather in {city} is sunny with a temperature of 25°C.",
+        }
 
     my_skill_toolset = skill_toolset.SkillToolset(
         skills=[weather_skill],
@@ -164,6 +171,9 @@ meets the following requirements:
 *   **description**:
     *   Must not be empty.
     *   Must be 1024 characters or less.
+
+When loading a Skill from the filesystem, the directory name must match the
+**name** in the frontmatter, or loading fails.
 
 ### Skills directory structure
 
