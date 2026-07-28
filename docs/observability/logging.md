@@ -83,6 +83,13 @@ prompt logging using the environment variable:
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 ```
 
+The available values for this variable are: `NO_CONTENT`, `EVENT_ONLY`,
+`SPAN_ONLY`, and `SPAN_AND_EVENT`. A boolean `true` or `1` means `EVENT_ONLY`,
+which records content on the emitted log events; any other value means
+`NO_CONTENT`. To record content on the inference span, `SPAN_ONLY` and
+`SPAN_AND_EVENT` also require
+`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
+
 !!! warning
     The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` setting logs the
     full content of user prompts and agent responses. This is useful for
@@ -141,6 +148,20 @@ variable:
 import os
 
 os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
+```
+
+To scope content capture to a single run instead of the whole process, set
+`RunConfig.telemetry` rather than the environment variable:
+
+```python
+from google.adk.agents.run_config import RunConfig
+from google.adk.telemetry import ContentCapturingMode, TelemetryConfig
+
+run_config = RunConfig(
+    telemetry=TelemetryConfig(
+        capture_message_content=ContentCapturingMode.SPAN_AND_EVENT,
+    ),
+)
 ```
 
 #### OTLP export
@@ -273,23 +294,28 @@ standard Go `log` package. These logs are written to `stderr` by default.
 ### Sample Python log entry
 
 ```text
-2025-07-08 11:22:33,456 - DEBUG - google_adk.models.google_llm - LLM Request: contents { ... }
+2025-07-08 11:22:33,456 - DEBUG - google_adk.google.adk.models.google_llm - LLM Request: contents { ... }
 ```
 
 | Log Segment                     | Format Specifier | Meaning                                        |
 | ------------------------------- | ---------------- | ---------------------------------------------- |
 | `2025-07-08 11:22:33,456`       | `%(asctime)s`    | Timestamp                                      |
 | `DEBUG`                         | `%(levelname)s`  | Severity level                                 |
-| `google_adk.models.google_llm`  | `%(name)s`       | Logger name (the module that produced the log) |
+| `google_adk.google.adk.models.google_llm`  | `%(name)s`       | Logger name (the module that produced the log) |
 | `LLM Request: contents { ... }` | `%(message)s`    | The actual log message                         |
 
 By reading the logger name, you can immediately pinpoint the source of the log
 and understand its context within the agent's architecture.
 
+ADK loggers are named `google_adk.` followed by the module's fully-qualified
+name, so every ADK logger is a child of the `google_adk` logger. Configure them
+as a group with `logging.getLogger("google_adk")`.
+
 ### Debugging example
 
 After enabling `DEBUG` logging (see [Logging level](#logging-level) above), run
-your agent and look for messages from the `google.adk.models.google_llm` logger.
+your agent and look for messages from the
+`google_adk.google.adk.models.google_llm` logger.
 The output shows the full LLM request and response:
 
 ```text
