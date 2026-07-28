@@ -113,15 +113,15 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
 
-### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
+### 3. Look out for the required agent card (`agent.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
+If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent.json`). The `adk api_server --a2a` command exposes over A2A only the agent folders that contain a file named exactly `agent.json`.
 
 In the sample, the `check_prime_agent` already has an agent card provided:
 
-```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
+```json title="a2a_basic/remote_a2a/check_prime_agent/agent.json"
 
 {
   "capabilities": {},
@@ -150,12 +150,12 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
   ```bash
   # In a separate terminal, run the adk web server
-  adk web contributing/samples/
+  adk web contributing/samples/a2a/
   ```
 
 #### How it works
 
-The main agent uses the `RemoteA2aAgent()` function to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent()` requires the `name`, `description`, and the URL of the `agent_card`.
+The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and the URL of the `agent_card`; the `description` field is optional and defaults to an empty string.
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
@@ -248,6 +248,7 @@ Through interceptors, you can also modify the `ParametersConfig` for the A2A req
 ```python
 <...code truncated...>
 
+from google.adk.a2a.agent import A2aRemoteAgentConfig
 from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 
