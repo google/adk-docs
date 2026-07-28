@@ -109,7 +109,7 @@ The `run_live()` event loop can exit under various conditions. Understanding the
 | **Manual close** | `live_request_queue.close()` | ✅ Yes | User explicitly closes the queue, sending `LiveRequest(close=True)` signal |
 | **All agents complete** | Last agent in SequentialAgent calls `task_completed()` | ✅ Yes | After all sequential agents finish their tasks |
 | **Session timeout** | Live API duration limit reached | ⚠️ Connection closed | Session exceeds maximum duration (see limits below) |
-| **Early exit** | `end_invocation` flag set | ✅ Yes | Set during preprocessing or by tools/callbacks to terminate early |
+| **Early exit** | `end_invocation` flag set | ✅ Yes | Set during preprocessing, or by an agent's own `_run_live_impl()`, to terminate early |
 | **Empty event** | Queue closure signal | ✅ Yes | Internal signal indicating event stream has ended |
 | **Errors** | Connection errors, exceptions | ❌ No | Unhandled exceptions or connection failures |
 
@@ -259,7 +259,7 @@ async for event in runner.run_live(...):
         if event.content.parts[0].text:
             text = event.content.parts[0].text
 
-            if not event.partial:
+            if event.partial:
                 # Your logic to update streaming display
                 update_streaming_display(text)
 ```
@@ -365,7 +365,7 @@ async for event in runner.run_live(
 - **Inline Data** (`part.inline_data`): Raw audio bytes streamed in real-time; ephemeral and not saved to session
 - **File Data** (`part.file_data`): Reference to audio file stored in artifacts; can be persisted to session history
 
-Both input and output audio data are aggregated into audio files and saved in the artifact service. The file reference is included in the event as `file_data`, allowing you to retrieve the audio later.
+When `RunConfig.save_live_blob` is `True`, both input and output audio data are aggregated into audio files and saved in the artifact service. The file reference is included in the event as `file_data`, allowing you to retrieve the audio later.
 
 !!! note "Session Persistence"
 
@@ -410,7 +410,7 @@ async for event in runner.run_live(
 
 ### Transcription Events
 
-When transcription is enabled in `RunConfig`, you receive transcriptions as separate events:
+Input and output transcription are enabled by default in `RunConfig`, and you receive transcriptions as separate events:
 
 **Configuration:**
 
@@ -687,11 +687,11 @@ async for event in runner.run_live(...):
 
 !!! note
 
-    The `partial` flag is only meaningful for text content (`event.content.parts[].text`). For other content types:
+    The `partial` flag is meaningful for text content (`event.content.parts[].text`) and for transcriptions. For each content type:
 
     - **Audio events**: Each audio chunk in `inline_data` is independent (no merging occurs)
     - **Tool calls**: Function calls and responses are always complete (partial doesn't apply)
-    - **Transcriptions**: Transcription events are always complete when yielded
+    - **Transcriptions**: Incremental transcription chunks are yielded with `partial=True`; the final accumulated transcription is yielded with `partial=False`
 
 **Example Stream:**
 
@@ -714,7 +714,7 @@ Event 4: partial=False, text="",             turn_complete=True  # Turn done
 
     - You can safely ignore all `partial=True` events and only process `partial=False` events if you don't need streaming display
     - If you do display `partial=True` events, the `partial=False` event provides the complete merged text for validation or storage
-    - This accumulation is handled automatically by ADK's `StreamingResponseAggregator`—you don't need to manually concatenate partial text chunks
+    - This accumulation is handled automatically by ADK's live connection layer (`GeminiLlmConnection.receive()`)—you don't need to manually concatenate partial text chunks
 
 #### Handling `interrupted` Flag
 
@@ -816,10 +816,9 @@ async for event in runner.run_live(...):
 - **Conversation logging**: Mark clear boundaries between turns for history/analytics
 - **Streaming optimization**: Stop buffering when turn is complete
 
-**Turn completion and caching:** Audio/transcript caches are flushed automatically at specific points during streaming:
+**Turn completion and caching:** When `RunConfig.save_live_blob` is enabled, audio caches are flushed automatically at specific points during streaming:
 - **On turn completion** (`turn_complete=True`): Both user and model audio caches are flushed
 - **On interruption** (`interrupted=True`): Model audio cache is flushed
-- **On generation completion**: Model audio cache is flushed
 
 ## Serializing Events to JSON
 
@@ -1095,15 +1094,15 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
 !!! note "How Streaming Tools Work"
 
-    When you call `runner.run_live()`, ADK inspects your agent's tools at initialization (lines 828-865 in `runners.py`) to identify streaming tools by checking parameter type annotations for `LiveRequestQueue`.
+    When the model calls a tool, ADK identifies it as a streaming tool by looking for an `input_stream` parameter annotated with `LiveRequestQueue`.
 
     **Queue creation and lifecycle**:
 
-    1. **Creation**: ADK creates an `ActiveStreamingTool` with a dedicated `LiveRequestQueue` for each streaming tool at the start of `run_live()` (before processing any events)
+    1. **Creation**: ADK lazily registers an `ActiveStreamingTool` with a dedicated `LiveRequestQueue` the first time the model calls the streaming tool
     2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
-    3. **Injection**: When the model calls the tool, ADK automatically injects the tool's queue as the `input_stream` parameter (lines 238-253 in `function_tool.py`)
+    3. **Injection**: ADK automatically injects the tool's queue as the `input_stream` parameter when it invokes the tool
     4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
-    5. **Lifecycle**: The queues persist for the entire `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits
+    5. **Lifecycle**: The queues persist for the rest of the `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits. The built-in `stop_streaming(function_name=...)` tool clears a tool's queue earlier
 
     **Queue distinction**:
 
@@ -1114,7 +1113,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
     This enables tools to provide incremental updates, progress notifications, or partial results during long-running operations.
 
-    **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
+    **Code reference**: See `_process_function_live_helper()` in `flows/llm_flows/functions.py` (tool detection and queue creation) and `FunctionTool._call_live()` in `tools/function_tool.py` (parameter injection) for implementation details.
 
     See the [Tools Guide](/integrations/) for implementation examples.
 
@@ -1170,63 +1169,64 @@ InvocationContext serves different audiences at different levels:
 
 - **Application developers** (indirect beneficiaries): You don't typically create or manipulate InvocationContext directly in your application code. Instead, you benefit from the clean, simplified APIs that InvocationContext enables behind the scenes—like the elegant `async for event in runner.run_live()` pattern.
 
-- **Tool and callback developers** (direct access): When you implement custom tools or callbacks, you receive InvocationContext as a parameter. This gives you direct access to conversation state, session services, and control flags (like `end_invocation`) to implement sophisticated behaviors.
+- **Tool and callback developers** (indirect access): When you implement custom tools or callbacks, ADK injects a `ToolContext` or `CallbackContext`, not the InvocationContext itself. That context gives you the invocation's conversation state and services, but not its control flags—see the warning below on `end_invocation`.
 
 #### What InvocationContext Contains
 
-When you implement custom tools or callbacks, you receive InvocationContext as a parameter. Here's what's available to you:
+When you implement custom tools or callbacks, you receive the invocation state through a `ToolContext` or `CallbackContext` parameter. Here's what's available to you:
 
 **Essential Fields for Tool/Callback Developers:**
 
-- **`context.invocation_id`**: Current invocation identifier (unique per `run_live()` call)
-- **`context.session`**:
-  - **`context.session.events`**: All events in the session history (across all invocations)
-  - **`context.session.state`**: Persistent key-value store for session data
-  - **`context.session.user_id`**: User identity
-- **`context.run_config`**: Current streaming configuration (response modalities, transcription settings, cost limits)
-- **`context.end_invocation`**: Set this to `True` to immediately terminate the conversation (useful for error handling or policy enforcement)
+- **`tool_context.invocation_id`**: Current invocation identifier (unique per `run_live()` call)
+- **`tool_context.session`**:
+  - **`tool_context.session.events`**: All events in the session history (across all invocations)
+  - **`tool_context.session.user_id`**: User identity
+- **`tool_context.state`**: Delta-aware key-value store for session data; mutate it directly and ADK persists the change
+- **`tool_context.run_config`**: Current streaming configuration (response modalities, transcription settings, cost limits)
+- **`tool_context.actions`**: Event actions for this call (`skip_summarization`, `transfer_to_agent`, `escalate`, `state_delta`, `artifact_delta`)
+
+!!! warning "Tools Cannot Set end_invocation"
+
+    The `end_invocation` flag lives on the InvocationContext, and `tool_context.get_invocation_context()` returns a **copy** of it, so setting the flag on the returned object is a silent no-op. To stop early, set `ctx.end_invocation = True` inside the agent's own `_run_live_impl()`, or return content from a `before_agent_callback` and let ADK set the flag for you.
 
 **Example Use Cases in Tool Development:**
 
 ```python
-# Example: Comprehensive tool implementation showing common InvocationContext patterns
-def my_tool(context: InvocationContext, query: str):
+# Example: Comprehensive tool implementation showing common context patterns
+from google.adk.tools import ToolContext
+from google.genai import types
+
+async def my_tool(tool_context: ToolContext, query: str):
     # Access user identity
-    user_id = context.session.user_id
+    user_id = tool_context.session.user_id
 
     # Check if this is the user's first message
-    event_count = len(context.session.events)
+    event_count = len(tool_context.session.events)
     if event_count == 0:
         return "Welcome! This is your first message."
 
     # Access conversation history
-    recent_events = context.session.events[-5:]  # Last 5 events
+    recent_events = tool_context.session.events[-5:]  # Last 5 events
 
     # Access persistent session state
     # Session state persists across invocations (not just this streaming session)
-    user_preferences = context.session.state.get('user_preferences', {})
+    user_preferences = tool_context.state.get('user_preferences', {})
 
     # Update session state (will be persisted)
-    context.session.state['last_query_time'] = datetime.now().isoformat()
+    tool_context.state['last_query_time'] = datetime.now().isoformat()
 
-    # Access services for persistence
-    if context.artifact_service:
-        # Store large files/audio
-        await context.artifact_service.save_artifact(
-            app_name=context.session.app_name,
-            user_id=context.session.user_id,
-            session_id=context.session.id,
-            filename="result.bin",
-            artifact=types.Part(inline_data=types.Blob(mime_type="application/octet-stream", data=data)),
-        )
+    # Store large files/audio in the artifact service
+    await tool_context.save_artifact(
+        filename="result.bin",
+        artifact=types.Part(inline_data=types.Blob(mime_type="application/octet-stream", data=data)),
+    )
 
     # Process the query with context
     result = process_query(query, context=recent_events, preferences=user_preferences)
 
-    # Terminate conversation in specific scenarios
+    # Return the error to the model; a tool cannot end the invocation itself
     if result.get('error'):
-        # Processing error - stop conversation
-        context.end_invocation = True
+        tool_context.actions.skip_summarization = True
 
     return result
 ```
@@ -1307,7 +1307,7 @@ async def handle_sequential_workflow():
                     # Check for audio data
                     if part.inline_data and part.inline_data.mime_type.startswith("audio/"):
                         # Your logic to play audio
-            await play_audio(part.inline_data.data)
+                        await play_audio(part.inline_data.data)
 
                     # Check for text data
                     if part.text:

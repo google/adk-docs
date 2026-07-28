@@ -169,7 +169,7 @@ Both APIs provide the same core Live API technology, but differ in deployment pl
 | **Concurrent Sessions** | Tier-based quotas (see [API quotas](https://ai.google.dev/gemini-api/docs/quota)) | Up to 1,000 per project (configurable via quota requests) |
 | **Enterprise Features** | Basic | Advanced monitoring, logging, SLAs, session resumption (24h) |
 | **Setup Complexity** | Minimal (API key only) | Requires Google Cloud project setup |
-| **API Version** | `v1beta` | `v1beta1` |
+| **API Version** | `v1alpha` | `v1beta1` |
 | **API Endpoint** | `generativelanguage.googleapis.com` | `{location}-aiplatform.googleapis.com` |
 | **Billing** | Usage tracked via API key | Google Cloud project billing |
 
@@ -552,7 +552,7 @@ This pattern works correctly in all scenarios:
 - **Resuming conversations**: If the session already exists (e.g., reconnection after network interruption), the existing session is reused with full conversation history
 - **Idempotent**: Safe to call multiple times without errors
 
-**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session doesn't exist, `run_live()` will raise `ValueError: Session not found`.
+**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session doesn't exist, `run_live()` raises `SessionNotFoundError: Session not found: <session_id>` (a subclass of `ValueError`). Alternatively, construct the runner with `Runner(..., auto_create_session=True)` and ADK creates the missing session for you instead of raising.
 
 #### Create RunConfig
 

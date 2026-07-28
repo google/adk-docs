@@ -14,7 +14,7 @@ This table provides a quick reference for all RunConfig parameters covered in th
 
 | Parameter | Type | Purpose | Platform Support | Reference |
 |-----------|------|---------|------------------|-----------|
-| **response_modalities** | list[str] | Control output format (TEXT or AUDIO) | Both | [Details](#response-modalities) |
+| **response_modalities** | list[Modality] | Control output format (TEXT or AUDIO) | Both | [Details](#response-modalities) |
 | **streaming_mode** | StreamingMode | Choose BIDI or SSE mode | Both | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](#live-api-session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](#live-api-context-window-compression) |
@@ -60,7 +60,7 @@ The `RunConfig` class itself and `StreamingMode` enum are imported from `google.
 
 ## Response Modalities
 
-Response modalities control how the model generates output—as text or audio. Both Gemini Live API and Gemini Live API (Agent Platform) have the same restriction: only one response modality per session.
+Response modalities control how the model generates output—as text or audio. Both Gemini Live API and Gemini Live API (Agent Platform) have the same restriction: only one response modality per session. The `response_modalities` field is typed `list[Modality]` and also accepts plain strings like `"TEXT"`.
 
 **Configuration:**
 
@@ -117,14 +117,14 @@ When `response_modalities` is not specified, ADK's `run_live()` method automatic
 
 ADK supports two distinct streaming modes that use different API endpoints and protocols:
 
-- `StreamingMode.BIDI`: ADK uses WebSocket to connect to the **Live API** (the bidirectional streaming endpoint via `live.connect()`)
-- `StreamingMode.SSE`: ADK uses HTTP streaming to connect to the **standard Gemini API** (the unary/streaming endpoint via `generate_content_async()`)
+- `StreamingMode.BIDI`: bidirectional streaming, driven by `runner.run_live()`—ADK uses WebSocket to connect to the **Live API** (the bidirectional streaming endpoint via `live.connect()`)
+- `StreamingMode.SSE`: HTTP streaming, driven by `runner.run_async()`—ADK connects to the **standard Gemini API** (the unary/streaming endpoint via `generate_content_async()`)
 
 "Live API" refers specifically to the bidirectional WebSocket endpoint (`live.connect()`), while "Gemini API" or "standard Gemini API" refers to the traditional HTTP-based endpoint (`generate_content()` / `generate_content_async()`). Both are part of the broader Gemini API platform but use different protocols and capabilities.
 
 **Note:** These modes refer to the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either mode.
 
-This guide focuses on `StreamingMode.BIDI`, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences between BIDI and SSE modes to choose the right approach for your use case.
+This guide focuses on `StreamingMode.BIDI`, the mode that pairs with `runner.run_live()` and the Live API. Setting `BIDI` documents intent rather than switching the transport—`run_live()` always connects to the Live API and does not read `streaming_mode`, which selects `NONE` vs `SSE` behavior for `runner.run_async()`. It's still worth understanding the differences between BIDI and SSE modes to choose the right approach for your use case.
 
 **Configuration:**
 
@@ -223,22 +223,22 @@ sequenceDiagram
 
 ### Progressive SSE Streaming
 
-**Progressive SSE streaming** is an experimental feature that enhances how SSE mode delivers streaming responses. When enabled, this feature improves response aggregation by:
+**Progressive SSE streaming** is an experimental feature that enhances how SSE mode delivers streaming responses. The feature improves response aggregation by:
 
 - **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
 - **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
 - **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
 - **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
 
-**Enabling the feature:**
+**Controlling the feature:**
 
-This is an experimental (WIP stage) feature disabled by default. Enable it via environment variable:
+Progressive SSE streaming is enabled by default. Disable it with an environment variable to fall back to simple text accumulation:
 
 ```bash
-export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
+export ADK_DISABLE_PROGRESSIVE_SSE_STREAMING=1
 ```
 
-**When to use:**
+**When it applies:**
 
 - You're using `StreamingMode.SSE` and need better handling of mixed content types (text + function calls)
 - Your responses include thought text (extended thinking) mixed with regular text
@@ -465,7 +465,7 @@ While session resumption is supported by both Gemini Live API and Gemini Live AP
 
 !!! note "Implementation Detail"
 
-    During reconnection, ADK retrieves the cached handle from `InvocationContext.live_session_resumption_handle` and includes it in the new `LiveConnectConfig` for the `live.connect()` call. This is handled entirely by ADK's internal reconnection loop—developers never need to access or manage these handles directly.
+    During reconnection, ADK retrieves the cached handle from `InvocationContext.live_session_resumption_handle` and includes it in the new `LiveConnectConfig` for the `live.connect()` call. This is handled entirely by ADK's internal reconnection loop—developers never need to access or manage these handles directly. The loop gives up and re-raises after 5 consecutive failed reconnection attempts; the counter resets on every successful reconnect.
 
 ### Sequence Diagram: Automatic Reconnection
 
@@ -918,7 +918,8 @@ The metadata is a flexible dictionary accepting any JSON-serializable values (st
 
 ```python
 async for event in runner.run_live(
-    session=session,
+    user_id=user_id,
+    session_id=session_id,
     live_request_queue=queue,
     run_config=RunConfig(
         custom_metadata={"user_id": "user_123", "experiment": "new_ui"}

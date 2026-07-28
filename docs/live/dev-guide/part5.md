@@ -1019,6 +1019,7 @@ custom_llm = Gemini(
 
 # Pass the Gemini instance to the agent
 agent = Agent(
+    name="my_agent",
     model=custom_llm,
     tools=[google_search],
     instruction="You are a helpful assistant."
@@ -1081,6 +1082,7 @@ custom_llm = Gemini(
 
 # Agent uses the Gemini instance with custom voice
 agent = Agent(
+    name="my_agent",
     model=custom_llm,
     tools=[google_search],
     instruction="You are a helpful assistant."
