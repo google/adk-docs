@@ -69,6 +69,7 @@ The core of any custom agent is the method where you define its unique asynchron
       * **Signature:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
       * **Asynchronous Generator:** It must be an `async def` function and return an `AsyncGenerator`. This allows it to `yield` events produced by sub-agents or its own logic back to the runner.
       * **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
+      * **Live (audio/video) runs:** The `_run_async_impl` method only covers text-based runs. To support `run_live()`, also override `_run_live_impl`, which has the same signature. Without that override, live runs raise `NotImplementedError`.
 
 === "TypeScript"
 
@@ -246,7 +247,7 @@ The core of any custom agent is the method where you define its unique asynchron
 
 Typically, a custom agent orchestrates other agents (like `LlmAgent`, `LoopAgent`, etc.).
 
-* **Initialization:** You usually pass instances of these sub-agents into your custom agent's constructor and store them as instance fields/attributes (e.g., `this.story_generator = story_generator_instance` or `self.story_generator = story_generator_instance`). This makes them accessible within the custom agent's core asynchronous execution logic (such as: `_run_async_impl` method).
+* **Initialization:** You usually pass instances of these sub-agents into your custom agent's constructor and store them as instance fields/attributes (e.g., `this.story_generator = story_generator_instance` or `self.story_generator = story_generator_instance`). This makes them accessible within the custom agent's core asynchronous execution logic (such as: `_run_async_impl` method). In Python, `BaseAgent` is a Pydantic model configured with `extra='forbid'`, so declare each sub-agent you keep as an annotated class-level field (e.g., `story_generator: LlmAgent`) and pass it to `super().__init__(...)`. Assigning an undeclared attribute in `__init__` raises a `ValueError`.
 * **Sub Agents List:** When initializing the `BaseAgent` using it's `super()` constructor, you should pass a `sub agents` list. This list tells the ADK framework about the agents that are part of this custom agent's immediate hierarchy. It's important for framework features like lifecycle management, introspection, and potentially future routing capabilities, even if your core execution logic (`_run_async_impl`) calls the agents directly via `self.xxx_agent`. Include the agents that your custom logic directly invokes at the top level.
 * **State:** As mentioned, `ctx.session.state` is the standard way sub-agents (especially `LlmAgent`s using `output key`) communicate results back to the orchestrator and how the orchestrator passes necessary inputs down.
 
@@ -881,7 +882,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
             prompt = ctx.session.state.get("image_prompt", "default prompt")
             # ... generate image bytes ...
             image_bytes = b"..."
-            yield Event(author=self.name, content=types.Content(parts=[types.Part.from_bytes(image_bytes, "image/png")]))
+            yield Event(author=self.name, content=types.Content(parts=[types.Part.from_bytes(data=image_bytes, mime_type="image/png")]))
 
 
     image_agent = ImageGeneratorAgent()
