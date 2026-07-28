@@ -638,7 +638,7 @@ adk deploy gke [OPTIONS] AGENT_PATH
 | --region    | The Google Cloud region of your cluster (e.g., us-central1).    | Yes |
 | --service_type | The type of Kubernetes service to create. Accepts `ClusterIP` (default) or `LoadBalancer`. | No |
 | --with_ui   | Deploys both the agent's back-end API and a companion front-end user interface.    | No |
-| --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
+| --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error, critical.     | No |
 
 
 ### How it works
