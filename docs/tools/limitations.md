@@ -23,6 +23,12 @@ a single agent object:
 * [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
   TypeScript)
 
+!!! note "Python: code execution and URL context need a versioned model name"
+
+    In ADK Python, the built-in code executor and the `url_context` tool raise a
+    `ValueError` for the `-latest` model aliases. An agent that uses either one
+    needs a versioned Gemini model name, such as `gemini-2.5-flash`.
+
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:
 
@@ -31,7 +37,7 @@ other tools, within a single agent, is ***not supported***:
     ```py
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-flash-latest",
+        model="gemini-2.5-flash",
         description="Code Agent",
         tools=[custom_function],
         code_executor=BuiltInCodeExecutor() # <-- NOT supported when used with tools
@@ -101,7 +107,7 @@ to use built-in tools with other tools by using multiple agents:
         tools=[google_search],
     )
     coding_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -207,6 +213,13 @@ to use built-in tools with other tools by using multiple agents:
     --8<-- "examples/kotlin/snippets/tools/LimitationsWorkaround.kt:workaround_1"
     ```
 
+In ADK Python, an `AgentTool` does not pass the wrapped agent's grounding
+metadata back to the calling agent. Set `propagate_grounding_metadata=True` on
+the `AgentTool` to store that metadata in session state under the
+`temp:_adk_grounding_metadata` key. ADK attaches it to the parent agent's own
+response only when the parent has a tool named `google_search_agent`, which is
+the tool that Workaround #2 below creates for you.
+
 ### Workaround #2: bypass_multi_tools_limit
 
 <div class="language-support-tag">
@@ -218,6 +231,12 @@ ADK Python has a built-in workaround which bypasses this limitation for
 as shown in the
 [built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools).
 sample agent.
+
+Set the flag on a tool instance you construct yourself, for example
+`GoogleSearchTool(bypass_multi_tools_limit=True)` imported from
+`google.adk.tools.google_search_tool`. The shared `google_search` instance
+exported from `google.adk.tools` leaves the flag off. The bypass takes effect
+only when the agent declares more than one entry in its `tools` list.
 
 !!! warning
 
@@ -232,7 +251,7 @@ is **not supported**:
 
     ```py
     url_context_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='UrlContextAgent',
         instruction="""
         You're a specialist in URL Context
@@ -240,7 +259,7 @@ is **not supported**:
         tools=[url_context],
     )
     coding_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution

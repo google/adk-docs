@@ -140,10 +140,11 @@ correctly.
 
 === "Python"
 
-    A parameter is considered **optional** if you provide a **default value**.
-    This is the standard Python way to define optional arguments. You can also
-    mark a parameter as optional using `typing.Optional[SomeType]` or the `|
-    None` syntax (Python 3.10+).
+    A parameter is considered **optional** only if you provide a **default
+    value**. This is the standard Python way to define optional arguments.
+    Annotating a parameter with `typing.Optional[SomeType]` or the `| None`
+    syntax (Python 3.10+) does **not** make it optional on its own: without a
+    default value, the parameter stays required.
 
     Use defaults only for values that are truly optional. Do not add defaults
     for information the model should derive from the user request or ask the
@@ -239,10 +240,10 @@ correctly.
 
 ##### Optional parameters with `typing.Optional`
 
-You can also mark a parameter as optional using `typing.Optional[SomeType]` or
-the `| None` syntax (Python 3.10+). This signals that the parameter can be
-`None`. When combined with a default value of `None`, it behaves as a standard
-optional parameter.
+Use `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+) to signal
+that the parameter can be `None`. Combine it with a default value of `None` to
+get a standard optional parameter; the annotation alone leaves the parameter
+required.
 
 ???+ "Example: `typing.Optional`"
     === "Python"
@@ -262,6 +263,36 @@ optional parameter.
             if bio:
                 return {"status": "success", "message": f"Profile for {username} created with a bio."}
             return {"status": "success", "message": f"Profile for {username} created."}
+        ```
+
+##### Pydantic model parameters
+
+Annotate a parameter with a `pydantic.BaseModel` subclass, or with
+`list[Model]`, `Optional[Model]`, or a union of models. ADK nests the model's
+schema inside the tool declaration and converts the object the LLM supplies into
+an instance of your class before your function runs.
+
+???+ "Example: Pydantic model parameter"
+    === "Python"
+
+        ```python
+        import pydantic
+
+        class UserProfile(pydantic.BaseModel):
+            """A user's profile."""
+
+            name: str
+            age: int
+
+        def create_user(profile: UserProfile):
+            """
+            Creates a user account.
+
+            Args:
+                profile (UserProfile): The profile to create the account from.
+            """
+            # 'profile' receives a UserProfile instance, not a dict.
+            return {"status": "success", "name": profile.name}
         ```
 
 ##### Variadic parameters (`*args` and `**kwargs`)
@@ -693,13 +724,14 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
 
 #### Key aspects of this example
 
-- **`LongRunningFunctionTool`**: Wraps the supplied method/function; the
-  framework handles sending yielded updates and the final return value as
-  sequential FunctionResponses.
+- **`LongRunningFunctionTool`**: Wraps the supplied method/function and marks it
+  as long running. The framework calls the function once, like any other
+  function tool, and does not consume values yielded from a generator.
 - **Agent instruction**: Directs the LLM to use the tool and understand the
   incoming FunctionResponse stream (progress vs. completion) for user updates.
-- **Final return**: The function returns the final result dictionary, which is
-  sent in the concluding FunctionResponse to indicate completion.
+- **Initial return**: Whatever the function returns is sent as the first
+  FunctionResponse, and a function that returns nothing emits none. Every later
+  progress or completion update is a FunctionResponse sent by the agent client.
 
 ## Agent-as-a-Tool {#agent-tool}
 
@@ -756,6 +788,14 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
     ```kotlin
     AgentTool(agent = agentB)
     ```
+
+!!! note "Python: prefer a `single_turn` sub-agent"
+
+    ADK Python discourages direct use of `AgentTool`. To expose an agent as an
+    inline tool of a parent `LlmAgent`, set `mode="single_turn"` on the
+    sub-agent and attach it with `sub_agents=[...]`. ADK then exposes it as a
+    tool and runs it inline in the parent's session. See [Agent
+    collaboration](/workflows/collaboration/).
 
 ### Customize your agent tool
 
