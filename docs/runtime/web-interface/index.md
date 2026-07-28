@@ -164,9 +164,12 @@ browser to use the web interface:
     |--------|-------------|---------|
     | `--port` | Port to run the server on | `8000` |
     | `--host` | Host binding address | `127.0.0.1` |
-    | `--session_service_uri` | Custom session storage URI | In-memory |
+    | `--session_service_uri` | Custom session storage URI | SQLite under `.adk/session.db` |
     | `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
     | `--reload/--no-reload` | Enable auto-reload on code changes | `true` |
+
+    Pass `--no_use_local_storage` to fall back to in-memory session and
+    artifact services instead of the local `.adk` folder.
 
     For example:
 

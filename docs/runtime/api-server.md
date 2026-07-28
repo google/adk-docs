@@ -456,8 +456,9 @@ curl -X DELETE http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s
 ```
 
 **Example Response**
-A successful deletion returns an empty response. Python and TypeScript return a
-`204 No Content` status code. Go returns `200 OK` with an empty body.
+A successful deletion returns no session data. Python returns `200 OK` with a
+`null` body. TypeScript returns a `204 No Content` status code. Go returns
+`200 OK` with an empty body.
 
 ---
 
