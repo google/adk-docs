@@ -38,8 +38,7 @@ The process involves these main steps when you use `OpenAPIToolset`:
     * **Execution**: When the LLM calls the tool, the tool constructs the HTTP
   request, including the URL, headers, query parameters, and body, using the
   LLM's arguments and the OpenAPI specification. The tool handles
-  authentication if configured, and executes the API call asynchronously using
-  the `httpx` library instead of `requests`.
+  authentication if configured, and executes the API call asynchronously using the `httpx` library.
     * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
 
 5. **Authentication**: You can configure global authentication (like API keys or
