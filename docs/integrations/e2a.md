@@ -11,11 +11,15 @@ catalog_tags: ["mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [e2a MCP Server](https://github.com/Mnexa-AI/e2a/tree/main/mcp) connects
+The [e2a MCP Server](https://github.com/tokencanopy/e2a/tree/main/mcp) connects
 your ADK agent to [e2a](https://e2a.dev), an authenticated email gateway built
 for AI agents. This integration gives your agent its own email inbox to send,
-receive, and reply to messages using natural language, with SPF/DKIM-verified
-inbound mail and optional human-in-the-loop approval on outbound messages.
+receive, and reply to messages using natural language, with SPF/DKIM/DMARC
+verification on inbound mail and an optional human review hold on outbound
+messages.
+
+The server is hosted at `https://api.e2a.dev/mcp` and speaks Streamable HTTP —
+there is nothing to install or run locally.
 
 ## Use cases
 
@@ -23,65 +27,25 @@ inbound mail and optional human-in-the-loop approval on outbound messages.
   `support-bot@your-domain.com`) and let agents send and receive mail just like
   a teammate.
 
-- **Authenticated inbound**: Every incoming message arrives with SPF and DKIM
-  verification results so your agent knows whether the sender is who they claim
-  to be.
+- **Authenticated inbound**: Every incoming message carries SPF, DKIM, and
+  DMARC evidence, so your agent can tell whether the sender is who they claim
+  to be before acting on the content.
 
-- **Human-in-the-loop approval**: Configure HITL on any agent and outbound
-  messages are held in a pending queue until a reviewer approves them,
-  optionally with edits to subject, body, or recipients before sending.
+- **Human-in-the-loop review**: Turn on a review hold and outbound messages are
+  parked as `pending_review` until a human approves them — optionally with
+  edits to the subject, body, or recipients before sending.
 
-- **Automate threaded conversations**: Reply to received emails with proper
-  In-Reply-To and References headers preserved, so threads stay intact across
-  multiple turns.
+- **Automate threaded conversations**: Reply with `In-Reply-To` and
+  `References` headers preserved, so threads stay intact across multiple turns
+  in the recipient's mail client.
 
 ## Prerequisites
 
 - A free [e2a account](https://e2a.dev) and an API key from the dashboard
-- Node.js 18+ (only required for the local MCP server)
 
 ## Use with agent
 
 === "Python"
-
-    === "Local MCP Server"
-
-        ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        E2A_API_KEY = "YOUR_E2A_API_KEY"
-        E2A_AGENT_EMAIL = "your-bot@your-domain.com"  # optional default inbox
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="e2a_agent",
-            instruction=(
-                "You manage email through the e2a tools. Call whoami once "
-                "to find your inbox address. Use list_messages and "
-                "get_message to read; use reply_to_message (not "
-                "send_email) when replying to an existing thread so "
-                "threading headers are preserved."
-            ),
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=["-y", "@e2a/mcp-server"],
-                            env={
-                                "E2A_API_KEY": E2A_API_KEY,
-                                "E2A_AGENT_EMAIL": E2A_AGENT_EMAIL,
-                            },
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
-        ```
 
     === "Remote MCP Server"
 
@@ -98,16 +62,18 @@ inbound mail and optional human-in-the-loop approval on outbound messages.
             model="gemini-flash-latest",
             name="e2a_agent",
             instruction=(
-                "You manage email through the e2a tools. Call whoami once "
-                "to find your inbox address. Use list_messages and "
-                "get_message to read; use reply_to_message (not "
-                "send_email) when replying to an existing thread so "
-                "threading headers are preserved."
+                "You manage email through the e2a tools. Call whoami once to "
+                "learn your identity and inbox address. Use list_messages and "
+                "get_message to read; use reply_to_message when replying to an "
+                "existing thread (it preserves In-Reply-To and References), and "
+                "send_message only to start a new thread. Both 'accepted' and "
+                "'pending_review' are successful outcomes — never re-send after "
+                "either one."
             ),
             tools=[
                 McpToolset(
                     connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.e2a.dev/mcp",
+                        url="https://api.e2a.dev/mcp",
                         headers={"Authorization": f"Bearer {E2A_API_KEY}"},
                         timeout=30,
                     ),
@@ -117,41 +83,6 @@ inbound mail and optional human-in-the-loop approval on outbound messages.
         ```
 
 === "TypeScript"
-
-    === "Local MCP Server"
-
-        ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const E2A_API_KEY = "YOUR_E2A_API_KEY";
-        const E2A_AGENT_EMAIL = "your-bot@your-domain.com"; // optional default inbox
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "e2a_agent",
-            instruction:
-                "You manage email through the e2a tools. Call whoami once " +
-                "to find your inbox address. Use list_messages and " +
-                "get_message to read; use reply_to_message (not " +
-                "send_email) when replying to an existing thread so " +
-                "threading headers are preserved.",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "@e2a/mcp-server"],
-                        env: {
-                            E2A_API_KEY: E2A_API_KEY,
-                            E2A_AGENT_EMAIL: E2A_AGENT_EMAIL,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
-        ```
 
     === "Remote MCP Server"
 
@@ -164,15 +95,17 @@ inbound mail and optional human-in-the-loop approval on outbound messages.
             model: "gemini-flash-latest",
             name: "e2a_agent",
             instruction:
-                "You manage email through the e2a tools. Call whoami once " +
-                "to find your inbox address. Use list_messages and " +
-                "get_message to read; use reply_to_message (not " +
-                "send_email) when replying to an existing thread so " +
-                "threading headers are preserved.",
+                "You manage email through the e2a tools. Call whoami once to " +
+                "learn your identity and inbox address. Use list_messages and " +
+                "get_message to read; use reply_to_message when replying to an " +
+                "existing thread (it preserves In-Reply-To and References), and " +
+                "send_message only to start a new thread. Both 'accepted' and " +
+                "'pending_review' are successful outcomes — never re-send after " +
+                "either one.",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.e2a.dev/mcp",
+                    url: "https://api.e2a.dev/mcp",
                     transportOptions: {
                         requestInit: {
                             headers: {
@@ -187,66 +120,119 @@ inbound mail and optional human-in-the-loop approval on outbound messages.
         export { rootAgent };
         ```
 
+## Key scope determines the tool surface
+
+e2a issues two kinds of API key, and the MCP server exposes a different set of
+tools to each:
+
+- **Agent-scoped** (`e2a_agt_…`) — the credential *is* one agent. It sees only
+  the runtime inbox tools below. Prefer this for a deployed ADK agent: it can
+  act as its own inbox and nothing else.
+- **Account-scoped** (`e2a_acct_…`) — sees the runtime tools plus every admin
+  tool. Use it for provisioning and setup.
+
+Scope is enforced server-side per handler, so an agent-scoped credential is
+rejected on admin operations regardless of which tools were listed. Call
+`whoami` to see which scope you are holding.
+
+With an account-scoped key that owns more than one agent, pass `email` (or
+`agent_email` on the compatibility aliases) to identify which inbox you mean.
+
+!!! note "Interactive clients can use OAuth instead"
+
+    ADK connects with a Bearer API key, which is the right choice for a
+    deployed agent. Interactive MCP clients can instead add
+    `https://api.e2a.dev/mcp` as an OAuth 2.1 connector and authorize in the
+    browser — no key to paste. The endpoint advertises this via
+    `/.well-known/oauth-protected-resource`.
+
 ## Available tools
 
-### Identity
+The hosted server exposes roughly 60 tools, grouped below. Call `tools/list`
+against the endpoint for the authoritative set your credential can see.
+
+### Runtime — inbox tools (agent- and account-scoped)
 
 Tool | Description
 ---- | -----------
-`whoami` | Return the default agent's full record (requires `E2A_AGENT_EMAIL` when the account has more than one agent)
-`list_agents` | List every agent inbox owned by the authenticated user
-`create_agent` | Register a new inbox using a slug on the shared domain; defaults to `local` mode so the agent receives mail by polling and no webhook is required
-`update_agent` | Update an existing agent's webhook URL, mode, or HITL setting
-`delete_agent` | Permanently delete an agent (requires `confirm: true`) and stop accepting mail for that address
+`whoami` | Return the authenticated identity: user, credential scope, plan and usage limits, plus `agent_email` for an agent-scoped credential
+`get_agent` | Fetch one agent's full record
+`list_messages` | List inbox or sent mail with `direction`, `read_status`, search filters (`from_`, `subject_contains`, `conversation_id`, `since`, `until`) and cursor pagination
+`get_message` | Full body, headers, attachment metadata, and SPF/DKIM/DMARC evidence for one message
+`get_message_lifecycle` | Reconstructed delivery history for one message
+`get_attachment` | Attachment metadata, or the bytes inline with `inline: true`
+`send_message` | Send a new email; returns `accepted`, or `pending_review` when a review hold catches it
+`reply_to_message` | Reply in-thread; preserves `In-Reply-To` and `References`
+`forward_message` | Forward a message to new recipients
+`list_conversations` / `get_conversation` | Browse threads rather than individual messages
+`update_message_labels` | Add or remove labels on a message
+`delete_message` / `restore_message` | Soft-delete to trash, and restore
 
-!!! warning "Cloud-mode agents must verify webhook signatures"
-
-    Agents created with `agent_mode: "cloud"` receive mail via webhooks instead
-    of polling. Your webhook handler must verify the HMAC signature on every
-    delivery. See the [cloud-mode webhook
-    example](https://github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook)
-    for a complete setup with signature verification.
-
-### Messages
-
-Tool | Description
----- | -----------
-`send_email` | Send a new email; returns `status: pending_approval` instead of `sent` when HITL is enabled
-`reply_to_message` | Reply to an inbound message; preserves In-Reply-To and References headers
-`list_messages` | List inbound mail with `status` filter (unread / read / all) and pagination
-`get_message` | Fetch full body, headers, and attachment metadata for one message
-`get_attachment_data` | Download an attachment's bytes by message id and 0-based attachment index (returned as base64)
-
-### Human-in-the-loop approval
+### Admin — provisioning and setup (account-scoped only)
 
 Tool | Description
 ---- | -----------
-`list_pending_messages` | List outbound mail awaiting human approval, soonest-expiring first
-`get_pending_message` | Get the full draft (subject, recipients, body) of a pending message
-`approve_pending_message` | Send a held message, optionally with reviewer edits (subject / body / recipients)
-`reject_pending_message` | Discard a held message; optional `reason` stored for audit
+`list_agents`, `create_agent`, `update_agent`, `delete_agent`, `restore_agent` | Manage agent inboxes. `create_agent` takes a full email address on a verified custom domain or on the deployment's shared domain
+`get_protection`, `update_protection` | Per-agent screening and review-hold configuration
+`list_domains`, `register_domain`, `get_domain`, `verify_domain`, `delete_domain` | Custom domain registration and DNS verification
+`list_reviews`, `get_review`, `approve_review`, `reject_review` | Work the human review queue; approve optionally with edits to subject, body, or recipients
+`list_webhooks`, `create_webhook`, `update_webhook`, `delete_webhook`, `rotate_webhook_secret`, `test_webhook`, `list_webhook_deliveries` | Webhook subscriptions and delivery history
+`list_events`, `get_event`, `redeliver_event` | Event log and replay
+`list_templates`, `create_template`, `update_template`, `delete_template`, `validate_template`, `list_starter_templates` | Server-side email templates (beta)
+`list_api_keys`, `create_api_key`, `delete_api_key` | API key management
 
-### Domains
+!!! note "Compatibility aliases"
 
-Tool | Description
----- | -----------
-`list_domains` | List every custom domain registered to the authenticated user, with verification state
-`register_domain` | Add a custom domain and receive the DNS records needed to prove ownership
-`verify_domain` | Re-run DNS verification on a registered domain after the records are in place
-`delete_domain` | Remove a custom domain (requires `confirm: true`; agents on the shared domain are unaffected)
+    `send_email`, `get_attachment_data`, `list_pending_messages`,
+    `get_pending_message`, `approve_pending_message`, and
+    `reject_pending_message` remain registered as frozen v1 aliases and keep
+    working. New agents should prefer `send_message`, `get_attachment`, and the
+    `*_review` tools.
+
+## Receiving mail
+
+Inbound is always available — there is no delivery mode to choose when creating
+an agent. Pick whichever fits your deployment:
+
+- **Poll** with `list_messages` (default `read_status: unread`). Simplest, and
+  all an ADK agent needs to get started.
+- **Subscribe** with `create_webhook` to have deliveries pushed to you.
+
+!!! warning "Webhook handlers must verify the HMAC signature"
+
+    Every webhook delivery is signed. Your handler must verify that signature
+    before trusting the payload. See the [ADK webhook
+    example](https://github.com/tokencanopy/e2a/tree/main/examples/adk-cloud-webhook)
+    for a complete setup — signature verification, typed event decoding, and
+    mapping e2a's `conversation_id` onto an ADK `session_id` so each thread
+    keeps its own session.
+
+## Sending and review holds
+
+`send_message` and `reply_to_message` return one of two successful outcomes:
+
+- `accepted` — durably persisted and queued for submission.
+- `pending_review` — a human review hold caught it first; it sends once a
+  reviewer approves.
+
+**Neither is a failure, and neither should be retried.** The terminal outcome
+arrives later through the `email.sent` / `email.failed` webhook events, or by
+polling `get_message`. An agent should never approve or reject its own held
+mail — the review tools are account-scoped precisely so a gated agent cannot
+self-approve.
 
 ## Configuration
 
-Variable | Required | Default | Description
--------- | -------- | ------- | -----------
-`E2A_API_KEY` | Yes | — | Your e2a API key
-`E2A_AGENT_EMAIL` | No | — | Default agent inbox; scopes tools so the LLM doesn't need to specify it on every call
-`E2A_BASE_URL` | No | `https://e2a.dev` | Self-hosted deployment URL (local MCP server only)
+The hosted endpoint needs no environment variables beyond your API key, which
+ADK passes in the `Authorization` header shown above.
+
+To point at a self-hosted e2a deployment, change the `url` passed to
+`StreamableHTTPConnectionParams` to that deployment's `/mcp` endpoint.
 
 ## Additional resources
 
-- [e2a MCP Server source](https://github.com/Mnexa-AI/e2a/tree/main/mcp)
-- [Runnable ADK example](https://github.com/Mnexa-AI/e2a/tree/main/mcp/examples/adk)
-- [Cloud-mode webhook example](https://github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook)
+- [e2a MCP Server source](https://github.com/tokencanopy/e2a/tree/main/mcp)
+- [Runnable ADK example](https://github.com/tokencanopy/e2a/tree/main/mcp/examples/adk)
+- [ADK webhook example](https://github.com/tokencanopy/e2a/tree/main/examples/adk-cloud-webhook)
 - [e2a documentation](https://e2a.dev)
-- [npm package](https://www.npmjs.com/package/@e2a/mcp-server)
+- [e2a in the MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=e2a) (`dev.e2a/mcp-server`)
