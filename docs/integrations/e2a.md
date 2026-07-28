@@ -120,6 +120,74 @@ there is nothing to install or run locally.
         export { rootAgent };
         ```
 
+## For production: pair the MCP toolset with the SDK
+
+The MCP toolset hands the inbox to the *model* — the right shape for turns
+where the LLM decides what to read, whom to reply to, and what to say. It is
+the wrong shape for the parts of a production system that must be
+deterministic: verifying webhook signatures, deduplicating deliveries, and
+sending idempotently. Those belong in your application code, not in a tool the
+model chooses to call.
+
+For anything beyond a demo, run both layers:
+
+- **e2a SDK** owns the boundary — receive the webhook, verify its HMAC, decode
+  the typed event, and send with an idempotency key.
+- **MCP toolset** (optional) stays inside the agent, for model-driven inbox
+  actions during a turn.
+
+=== "Python"
+
+    ```bash
+    pip install e2a
+    ```
+
+    ```python
+    # Excerpt from the ADK webhook example linked below.
+    import os
+
+    from e2a.v1 import (
+        AsyncE2AClient,
+        E2AWebhookSignatureError,
+        construct_event,
+    )
+
+    client = AsyncE2AClient(api_key=os.environ["E2A_API_KEY"])
+
+    # In your webhook route: parse + HMAC-verify in one call.
+    try:
+        event = construct_event(
+            body, request.headers.get("X-E2A-Signature", ""), WEBHOOK_SECRET
+        )
+    except E2AWebhookSignatureError:
+        return Response(status_code=401)
+
+    email = await client.inbound.from_event(event)   # normalized InboundEmail
+    # ... run your ADK turn, then reply on the same thread ...
+    await email.reply(
+        {"text": reply_text, "conversation_id": conversation_id},
+        idempotency_key=event.id,                    # safe under redelivery
+    )
+    ```
+
+=== "TypeScript"
+
+    ```bash
+    npm install @e2a/sdk
+    ```
+
+    The TypeScript SDK exposes the same surface — a typed client, webhook
+    signature verification, and idempotent sends — from `@e2a/sdk`.
+
+Passing `idempotency_key=event.id` is what makes the handler safe to retry:
+e2a delivers webhooks at least once, so the same event can legitimately arrive
+twice, and the key collapses the duplicate into one send.
+
+The [ADK webhook example](https://github.com/tokencanopy/e2a/tree/main/examples/adk-cloud-webhook)
+is a complete working version of this shape, including the
+`conversation_id` ↔ ADK `session_id` mapping that lets a thread accumulate
+context across email turns.
+
 ## Key scope determines the tool surface
 
 e2a issues two kinds of API key, and the MCP server exposes a different set of
@@ -196,16 +264,16 @@ an agent. Pick whichever fits your deployment:
 
 - **Poll** with `list_messages` (default `read_status: unread`). Simplest, and
   all an ADK agent needs to get started.
-- **Subscribe** with `create_webhook` to have deliveries pushed to you.
+- **Subscribe** with `create_webhook` to have deliveries pushed to you. This is
+  the production path — handle it with the SDK, as shown above.
 
 !!! warning "Webhook handlers must verify the HMAC signature"
 
-    Every webhook delivery is signed. Your handler must verify that signature
-    before trusting the payload. See the [ADK webhook
-    example](https://github.com/tokencanopy/e2a/tree/main/examples/adk-cloud-webhook)
-    for a complete setup — signature verification, typed event decoding, and
-    mapping e2a's `conversation_id` onto an ADK `session_id` so each thread
-    keeps its own session.
+    Every webhook delivery is signed, and deliveries are at-least-once. Your
+    handler must verify the signature before trusting the payload, and must
+    tolerate the same event arriving twice. The SDK's `construct_event` does
+    parse and verification in one call and raises on a bad signature; pairing
+    it with `idempotency_key=event.id` on the reply covers redelivery.
 
 ## Sending and review holds
 
@@ -232,6 +300,8 @@ To point at a self-hosted e2a deployment, change the `url` passed to
 ## Additional resources
 
 - [e2a MCP Server source](https://github.com/tokencanopy/e2a/tree/main/mcp)
+- [Python SDK](https://pypi.org/project/e2a/) (`pip install e2a`) — recommended for production handlers
+- [TypeScript SDK](https://www.npmjs.com/package/@e2a/sdk) (`npm install @e2a/sdk`)
 - [Runnable ADK example](https://github.com/tokencanopy/e2a/tree/main/mcp/examples/adk)
 - [ADK webhook example](https://github.com/tokencanopy/e2a/tree/main/examples/adk-cloud-webhook)
 - [e2a documentation](https://e2a.dev)
