@@ -96,11 +96,11 @@ the agent pause between status checks, because parsing jobs run asynchronously:
             name="transform_agent",
             instruction=(
                 "You parse documents with the Unstructured Transform MCP server. "
-                "Pass public https:// file URLs straight to transform_files. It "
-                "returns a job_id; poll with check_transform_status, calling "
+                "Pass public https:// file URLs straight to start_transform_job. It "
+                "returns a job_id; poll with check_job_status, calling "
                 "wait_seconds(30) between checks (jobs take 30 seconds to a few "
-                "minutes). When the job completes, call get_transform_results and "
-                "report the parsed content back to the user. transform_files "
+                "minutes). When the job completes, call get_job_results and "
+                "report the parsed content back to the user. start_transform_job "
                 "accepts an optional stages config; it auto-selects a parse "
                 "strategy by default, but if the output looks low quality "
                 "(garbled text or lost tables), re-run the file with a hi_res "
@@ -121,9 +121,9 @@ the agent pause between status checks, because parsing jobs run asynchronously:
                     ),
                     tool_filter=[
                         "request_file_upload_url",
-                        "transform_files",
-                        "check_transform_status",
-                        "get_transform_results",
+                        "start_transform_job",
+                        "check_job_status",
+                        "get_job_results",
                     ],
                 )
             ],
@@ -132,9 +132,9 @@ the agent pause between status checks, because parsing jobs run asynchronously:
 
 !!! note
 
-    Transforming a document is asynchronous: `transform_files` starts a job,
-    the agent polls `check_transform_status`, and `get_transform_results`
-    returns pre-signed download URLs for the output. Instruct your agent to
+    Transforming a document is asynchronous: `start_transform_job` starts a
+    job, the agent polls `check_job_status`, and `get_job_results` returns
+    pre-signed download URLs for the output. Instruct your agent to
     pause between status checks, as shown above, so a polling loop does not
     burn through model rate limits.
 
@@ -150,9 +150,9 @@ the agent pause between status checks, because parsing jobs run asynchronously:
 Tool | Description
 ---- | -----------
 `request_file_upload_url` | Returns a pre-signed upload URL and file reference for a local file.
-`transform_files` | Starts a parsing job for uploaded files or public HTTP(S) URLs; returns a `job_id`.
-`check_transform_status` | Reports whether a job is `SCHEDULED`, `IN_PROGRESS`, or `COMPLETED`.
-`get_transform_results` | Returns the parsed output and pre-signed download URLs for a completed job.
+`start_transform_job` | Starts a parsing job for uploaded files or public HTTP(S) URLs; returns a `job_id`.
+`check_job_status` | Reports whether a job is `SCHEDULED`, `IN_PROGRESS`, or `COMPLETED`.
+`get_job_results` | Returns the parsed output and pre-signed download URLs for a completed job.
 
 ## Resources
 
