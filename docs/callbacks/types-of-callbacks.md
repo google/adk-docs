@@ -37,8 +37,29 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     | `after_agent_callback` | `callback_context` |
     | `before_model_callback` | `callback_context`, `llm_request` |
     | `after_model_callback` | `callback_context`, `llm_response` |
+    | `on_model_error_callback` | `callback_context`, `llm_request`, `error` |
     | `before_tool_callback` | `tool`, `args`, `tool_context` |
     | `after_tool_callback` | `tool`, `args`, `tool_context`, `tool_response` |
+    | `on_tool_error_callback` | `tool`, `args`, `tool_context`, `error` |
+
+??? note "Python: `async` callbacks and lists of callbacks"
+
+    In Python, a callback may be a plain `def` or an `async def`. ADK awaits
+    the result either way.
+
+    Every callback field also accepts a list of functions instead of a single
+    function. ADK invokes them in the order listed and stops at the first one
+    that returns a truthy value: that value becomes the callback result, and
+    the remaining callbacks are skipped. A callback that returns `None`, or
+    another falsy value such as an empty `dict`, lets the next one run.
+
+    ```python
+    root_agent = LlmAgent(
+        name="my_agent",
+        model="gemini-flash-latest",
+        before_model_callback=[check_policy, log_request],
+    )
+    ```
 
 ### Before Agent Callback
 
@@ -138,7 +159,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ## LLM Interaction Callbacks
 
-These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model.
+These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model. In Python, `LlmAgent` also accepts an `on_model_error_callback`, which runs when the model call raises an exception. If it returns an `LlmResponse`, the exception is suppressed and that response is used instead.
 
 ### Before Model Callback
 
@@ -217,7 +238,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ## Tool Execution Callbacks
 
-These callbacks are also specific to `LlmAgent` and trigger around the execution of tools (including `FunctionTool`, `AgentTool`, etc.) that the LLM might request.
+These callbacks are also specific to `LlmAgent` and trigger around the execution of tools (including `FunctionTool`, `AgentTool`, etc.) that the LLM might request. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that dict is used as the tool result.
 
 ### Before Tool Callback
 
@@ -268,6 +289,13 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 
 1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.
 2. If a new dictionary is returned, it **replaces** the original `tool_response`. This allows modifying or filtering the result seen by the LLM.
+
+!!! note "Python: `tool_response` is the tool's raw return value"
+
+    ADK wraps a non-`dict` result into `{"result": <value>}` only *after* the
+    callback has run, so a tool annotated `-> str` hands your
+    `after_tool_callback` a `str`, not a `dict`. Check the type before calling
+    dictionary methods on it.
 
 ??? "Code"
     === "Python"

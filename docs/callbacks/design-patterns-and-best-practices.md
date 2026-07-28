@@ -76,7 +76,7 @@ Alter data just before it's sent to the LLM/tool or just after it's received.
 - **`before_model_callback`:** Modify `llm_request` (e.g., add system instructions based on `state`)
 - **`after_model_callback`:** Modify the returned `LlmResponse` (e.g., format text, filter content)
 - **`before_tool_callback`:** Modify the tool `args` dictionary (or Map in Java)
-- **`after_tool_callback`:** Modify the `tool_response` dictionary (or Map in Java)
+- **`after_tool_callback`:** Modify the `tool_response` (the tool's raw return value in Python, or a Map in Java)
 
 **Example Use Case:**
 `before_model_callback` appends "User language preference: Spanish" to `llm_request.config.system_instruction` if `context.state['lang'] == 'es'`.
@@ -116,15 +116,15 @@ A `before_tool_callback` for a secure API checks for an auth token in state; if 
 Save or load session-related files or large data blobs during the agent lifecycle.
 
 **Implementation:**
-- **Saving:** Use `callback_context.save_artifact` / `await tool_context.save_artifact` to store data:
+- **Saving:** Use `await callback_context.save_artifact` / `await tool_context.save_artifact` to store data:
   - Generated reports
   - Logs
   - Intermediate data
-- **Loading:** Use `load_artifact` to retrieve previously stored artifacts
+- **Loading:** Use `await callback_context.load_artifact` / `await tool_context.load_artifact` to retrieve previously stored artifacts
 - **Tracking:** Changes are tracked via `Event.actions.artifact_delta`
 
 **Example Use Case:**
-An `after_tool_callback` for a "generate_report" tool saves the output file using `await tool_context.save_artifact("report.pdf", report_part)`. A `before_agent_callback` might load a configuration artifact using `callback_context.load_artifact("agent_config.json")`.
+An `after_tool_callback` for a "generate_report" tool saves the output file using `await tool_context.save_artifact("report.pdf", report_part)`. A `before_agent_callback` might load a configuration artifact using `await callback_context.load_artifact("agent_config.json")`.
 
 ## Best Practices for Callbacks
 
@@ -134,7 +134,7 @@ An `after_tool_callback` for a "generate_report" tool saves the output file usin
 Design each callback for a single, well-defined purpose (e.g., just logging, just validation). Avoid monolithic callbacks.
 
 **Mind Performance:**
-Callbacks execute synchronously within the agent's processing loop. Avoid long-running or blocking operations (network calls, heavy computation). Offload if necessary, but be aware this adds complexity.
+Callbacks execute inline within the agent's processing loop, and the loop waits for each one to finish. In Python, declare a callback `async def` when it must `await` something itself, such as `save_artifact`; ADK awaits it. Either way, avoid long-running or blocking operations (network calls, heavy computation). Offload if necessary, but be aware this adds complexity.
 
 ### Error Handling
 
@@ -168,6 +168,6 @@ If a callback performs actions with external side effects (e.g., incrementing an
 - Add clear docstrings explaining their purpose, when they run, and any side effects (especially state modifications)
 
 **Use Correct Context Type:**
-Always use the specific context type provided (`CallbackContext` for agent/model, `ToolContext` for tools) to ensure access to the appropriate methods and properties.
+Always use the specific context type named for the hook you are implementing (`CallbackContext` for agent/model, `ToolContext` for tools). In Python both names are aliases of the same `Context` class and expose identical methods, but matching the name to the hook keeps your code readable and portable across SDK languages.
 
 By applying these patterns and best practices, you can effectively use callbacks to create more robust, observable, and customized agent behaviors in ADK.

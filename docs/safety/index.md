@@ -168,10 +168,10 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     ```py
     def query(query: str, tool_context: ToolContext) -> str | dict:
       # Assume 'policy' is retrieved from context, e.g., via session state:
-      # policy = tool_context.invocation_context.session.state.get('query_tool_policy', {})
+      # policy = tool_context.state.get('query_tool_policy', {})
 
       # --- Placeholder Policy Enforcement ---
-      policy = tool_context.invocation_context.session.state.get('query_tool_policy', {}) # Example retrieval
+      policy = tool_context.state.get('query_tool_policy', {}) # Example retrieval
       actual_tables = explainQuery(query) # Hypothetical function call
 
       if not set(actual_tables).issubset(set(policy.get('tables', []))):
@@ -383,7 +383,6 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     ```py
     # Hypothetical callback function
     def validate_tool_params(
-        callback_context: CallbackContext, # Correct context type
         tool: BaseTool,
         args: Dict[str, Any],
         tool_context: ToolContext
@@ -392,7 +391,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
       print(f"Callback triggered for tool: {tool.name}, args: {args}")
 
       # Example validation: Check if a required user ID from state matches an arg
-      expected_user_id = callback_context.state.get("session_user_id")
+      expected_user_id = tool_context.state.get("session_user_id")
       actual_user_id_in_args = args.get("user_id_param") # Assuming tool takes 'user_id_param'
 
       if actual_user_id_in_args != expected_user_id:

@@ -79,18 +79,18 @@ When the ADK framework encounters a point where a callback can run (e.g., just b
 
     * The specific return type can vary depending on the language. In Java, the equivalent return type is `Optional.empty()`. In Kotlin, it is `CallbackChoice.Continue(value)` (for `before_*` callbacks) or returning the original object (for `after_*` callbacks). Refer to the API documentation for language specific guidance.
     * This is the standard way to signal that your callback has finished its work (e.g., logging, inspection, minor modifications to input arguments) and that the ADK agent should **proceed with its normal operation**.
-    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `CallbackChoice.Continue(...)` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.
+    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `None` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.
     * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning the result just produced (the agent's output, the LLM's response, the tool's result) as is means the framework will continue processing.
 
 2. **`return <Specific Object>` (Override Default Behavior):**
 
     * Returning a *specific type of object* (instead of signaling "Continue") is how you **override** the ADK agent's default behavior. In Kotlin, this is achieved by returning `CallbackChoice.Break(value)` (for `before_*` callbacks) or a replacement object (for `after_*` callbacks). The framework will use the object you return and *skip* the step that would normally follow or *replace* the result that was just generated.
-    * **`before_agent_callback` → `CallbackChoice.Break(Content)`**: Skips the agent's main execution logic. The returned `Content` object is immediately treated as the agent's final output for this turn. Useful for handling simple requests directly or enforcing access control.
-    * **`before_model_callback` → `CallbackChoice.Break(LlmResponse)`**: Skips the call to the external Large Language Model. The returned `LlmResponse` object is processed as if it were the actual response from the LLM. Ideal for implementing input guardrails, prompt validation, or serving cached responses.
-    * **`before_tool_callback` → `CallbackChoice.Break(Map<String, Any>)`**: Skips the execution of the actual tool function (or sub-agent). The returned `Map` is used as the result of the tool call, which is then typically passed back to the LLM. Perfect for validating tool arguments, applying policy restrictions, or returning mocked/cached tool results.
+    * **`before_agent_callback` → `Content`**: Skips the agent's main execution logic. The returned `Content` object is immediately treated as the agent's final output for this turn. Useful for handling simple requests directly or enforcing access control.
+    * **`before_model_callback` → `LlmResponse`**: Skips the call to the external Large Language Model. The returned `LlmResponse` object is processed as if it were the actual response from the LLM. Ideal for implementing input guardrails, prompt validation, or serving cached responses.
+    * **`before_tool_callback` → `dict`**: Skips the execution of the actual tool function (or sub-agent). The returned `dict` is used as the result of the tool call, which is then typically passed back to the LLM. Perfect for validating tool arguments, applying policy restrictions, or returning mocked/cached tool results.
     * **`after_agent_callback` → `Content`**: *Replaces* the `Content` that the agent's run logic just produced.
     * **`after_model_callback` → `LlmResponse`**: *Replaces* the `LlmResponse` received from the LLM. Useful for sanitizing outputs, adding standard disclaimers, or modifying the LLM's response structure.
-    * **`after_tool_callback` → `Map<String, Any>`**: *Replaces* the `Map` result returned by the tool. Allows for post-processing or standardization of tool outputs before they are sent back to the LLM.
+    * **`after_tool_callback` → `dict`**: *Replaces* the result returned by the tool. Allows for post-processing or standardization of tool outputs before they are sent back to the LLM.
 
 **Conceptual Code Example (Guardrail):**
 
