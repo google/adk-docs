@@ -28,8 +28,6 @@ See `CONTRIBUTING.md` (the "Integrations" section) for the human-facing
 contract. For the full rulebook applied during review, see the
 `integration-review` skill.
 
----
-
 ## Step 1: Gather inputs
 
 Ask the user for whatever is not already provided:
@@ -74,8 +72,6 @@ Tell the user this is a draft, then:
 - Recommend running the `integration-review` skill on the new page.
 - Recommend `mkdocs serve` to confirm the card renders and the icon loads.
 
----
-
 ## Frontmatter (all categories)
 
 ```yaml
@@ -113,8 +109,6 @@ the TypeScript span if Python-only):
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 ```
-
----
 
 ## Skeleton: MCP tool
 
@@ -270,8 +264,6 @@ Tool | Description
 ````
 
 Add a `## Configuration` section for environment variables when relevant.
-
----
 
 ## Style rules to bake in
 
