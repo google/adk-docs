@@ -135,14 +135,16 @@ Agent Platform.
 === "Python"
 
     **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
+    `"claude-3-sonnet@20240229"`).
 
-    **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
-    and standard Agent Platform endpoint strings (`projects/.../endpoints/...`) and
-    routes them via the `google-genai` library. For other model types used directly
-    via Agent Platform (like Claude), you must explicitly tell the ADK registry which
-    specific wrapper class (`Claude` in this case) knows how to handle that model
-    identifier string with the Agent Platform backend.
+    **How Resolution Works:** ADK's registry automatically recognizes `gemini-*`
+    strings and standard Agent Platform endpoint strings
+    (`projects/.../endpoints/...`) and routes them via the `google-genai`
+    library. Claude model strings matching `claude-3-*` or `claude-*-4*` route
+    to the `Claude` wrapper class the same way. For a Claude model identifier
+    that does not match those patterns, import `Claude` from
+    `google.adk.models` and pass an instance instead of a string:
+    `LlmAgent(model=Claude(model="..."), ...)`.
 
     **Setup:**
 
@@ -156,25 +158,11 @@ Agent Platform.
         pip install "anthropic[vertex]"
         ```
 
-    3. **Register Model Class:** Add this code near the start of your application,
-       *before* creating an agent using the Claude model string:
-
-        ```python
-        # Required for using Claude model strings directly via Agent Platform with LlmAgent
-        from google.adk.models.anthropic_llm import Claude
-        from google.adk.models.registry import LLMRegistry
-
-        LLMRegistry.register(Claude)
-        ```
+    3. **Create the Agent:** Pass the Claude model string to `LlmAgent`:
 
        ```python
        from google.adk.agents import LlmAgent
-       from google.adk.models.anthropic_llm import Claude # Import needed for registration
-       from google.adk.models.registry import LLMRegistry # Import needed for registration
        from google.genai import types
-
-       # --- Register Claude class (do this once at startup) ---
-       LLMRegistry.register(Claude)
 
        # --- Example Agent using Claude 3 Sonnet on Agent Platform ---
 
@@ -182,7 +170,7 @@ Agent Platform.
        claude_model_vertexai = "claude-3-sonnet@20240229"
 
        agent_claude_vertexai = LlmAgent(
-           model=claude_model_vertexai, # Pass the direct string after registration
+           model=claude_model_vertexai, # Pass the direct model string
            name="claude_vertexai_agent",
            instruction="You are an assistant powered by Claude 3 Sonnet on Agent Platform.",
            generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
@@ -276,10 +264,6 @@ The recommended way to control reasoning depth is the `effort` field on
 ```python
 from google.adk.agents import LlmAgent
 from google.adk.models import AnthropicGenerateContentConfig
-from google.adk.models.anthropic_llm import Claude
-from google.adk.models.registry import LLMRegistry
-
-LLMRegistry.register(Claude)
 
 agent = LlmAgent(
     model="claude-sonnet-4@20250514",  # Your Agent Platform Claude model ID.
@@ -291,8 +275,10 @@ agent = LlmAgent(
 )
 ```
 
-*   The standard `thinking_config.thinking_level` is not supported for Claude and
-    is ignored (with a warning). Use `effort` instead.
+*   The standard `thinking_config.thinking_level` is not supported for Claude.
+    Setting it on `AnthropicGenerateContentConfig` raises a validation error; on
+    a plain `types.GenerateContentConfig` it is ignored with a warning. Use
+    `effort` instead.
 
 ## Open Models on Agent Platform {#open-models}
 
@@ -314,9 +300,9 @@ Agent Platform offers a curated selection of open-source models, such as Meta Ll
     1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
        Vars, `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`) is complete.
 
-    2. **Install LiteLLM:**
+    2. **Install LiteLLM:** ADK requires `litellm>=1.84`.
             ```shell
-            pip install litellm
+            pip install "litellm>=1.84"
             ```
 
     **Example:**

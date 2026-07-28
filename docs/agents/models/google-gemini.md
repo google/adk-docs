@@ -230,7 +230,8 @@ To mitigate this, you can do one of the following:
                     # ...
                 ),
                 # ...
-            )
+            ),
+        )
         ```
 
     === "Java"

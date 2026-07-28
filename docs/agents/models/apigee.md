@@ -18,7 +18,7 @@ Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
 
-   The `ApigeeLLM` wrapper is designed for use with Agent Platform
+   The `ApigeeLlm` wrapper is designed for use with Agent Platform
    and the Gemini API (generateContent). We are continually expanding support for
    other models and interfaces. For OpenAI compatible models, including self-hosted or 
    other providers, use the `CompletionsHTTPClient` to route traffic through your Apigee proxy.
