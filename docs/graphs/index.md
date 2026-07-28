@@ -217,7 +217,10 @@ For information about building advanced pipelines, see
 There are some known limitations with graph-based workflows. They
 are *not compatible* with the following ADK features:
 
--   **Live streaming:** Not supported in graph-based workflows.
+-   **Live streaming:** An ***LlmAgent*** node in `single_turn` mode — the
+    default for a graph node — always runs in non-live mode and ignores the
+    live request queue, even inside a live session. Use `task` or `chat` mode
+    for nodes that must stream.
 -   **Integrations:** Some third-party
     [integrations](/integrations/) may not be compatible with graph-based
     workflows.

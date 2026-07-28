@@ -84,8 +84,9 @@ Each step in a workflow produces output for its successor.
     Use the ***return*** syntax when outputting ***Event*** data that does not
     require additional processing. When emitting data that requires additional
     processing, or if you are generating more than one data item, you can use
-    more than one ***yield*** command. Each ***yield*** call adds to a list of
-    data objects on the Event which is passed to the next node of a graph. A
+    more than one ***yield*** command. Each ***yield*** call emits a separate
+    ***Event***, but only one of those events may carry an `output`, and that
+    single value is what the next node of the graph receives. A
     ***return*** or ***yield*** command without a parameter passes a `None` value
     to the next node.
 
@@ -216,7 +217,7 @@ inside tools and callbacks regardless of which agent style you use.
           },
       )
 
-    async def task_attempt_node(node_input: Content, attempts: int):
+    async def task_attempt_node(node_input, attempts: int):
       yield Event(
           state={
               "attempts": attempts + 1,
@@ -224,7 +225,7 @@ inside tools and callbacks regardless of which agent style you use.
       )
 
     async def read_state_node(ctx: Context):
-      print(f"attempts state: {ctx.state}") # attempts state: attempts: 1
+      print(f"attempts state: {ctx.state['attempts']}") # attempts state: 1
 
     root_agent = Workflow(
         name="root_agent",
@@ -328,35 +329,26 @@ accepted and produced by any agent node.
 
 === "Python"
 
-    Use the curly-brace `{ }` syntax to select properties from the input
-    schema, or `< >` to select a property and also qualify it by the name
-    of the source node:
+    Use `input_schema` on an agent to validate the structured output of the
+    preceding node and deliver it as the agent's input. Refer to the fields of
+    that input by name in the instruction:
 
     ```python
     class CityTime(BaseModel):
         time_info: str  # time information
         city: str       # city name
 
-    def lookup_time_function(city: str):
+    def lookup_time_function(node_input: str):
         """Simulate returning the current time in the specified city."""
-        return Event(output=CityTime(time_info='10:10 AM', city=city))
+        return Event(output=CityTime(time_info='10:10 AM', city=node_input))
 
     city_report_agent = Agent(
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-
-        # data selection based on class and parameter
-        # instruction="""
-        #     Return a sentence in the following format:
-        #     It is {CityTime.time_info} in {CityTime.city} right now.
-        # """,
-
-        # more restrictive data selection based on source node name
         instruction="""
-            Return a sentence in the following format:
-            It is <CityTime.time_info from lookup_time_function> in
-            <CityTime.city from lookup_time_function> right now.
+            You receive a CityTime with time_info and city fields. Reply with a
+            single sentence stating that it is that time in that city right now.
         """,
     )
 
@@ -367,6 +359,12 @@ accepted and produced by any agent node.
         ],
     )
     ```
+
+    The curly-brace `{key}` placeholders that an `instruction` supports are
+    substituted from *session state*, not from the node input, so a
+    placeholder such as `{CityTime.time_info}` is left in the prompt verbatim.
+    To template a value into an instruction, write it to state first — with
+    `output_key` or `Event(state=...)` — and reference it as `{time_info}`.
 
 === "Go"
 

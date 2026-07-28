@@ -114,7 +114,7 @@ run within a workflow.
 
     # FunctionNode wrapper with options
     success_node = FunctionNode(
-        my_function_node,
+        func=my_function_node,
         name="hello",
         rerun_on_resume=True,
     )
@@ -245,9 +245,9 @@ manually read and write session state keys for data transfer.
         city: str       # city name
 
     @node
-    def city_time_function(city: str):
+    def city_time_function(node_input: str):
         """Simulate returning the current time in a specified city."""
-        return CityTime(time_info="10:10 AM", city=city)
+        return CityTime(time_info="10:10 AM", city=node_input)
 
     city_report_agent = Agent(
         name="city_report_agent",
@@ -256,7 +256,7 @@ manually read and write session state keys for data transfer.
         instruction="""output the data provided by the previous node.""",
     )
 
-    @node # workflow node
+    @node(rerun_on_resume=True) # workflow node
     async def city_workflow(ctx: Context):
         city_time = await ctx.run_node(city_time_function, "Paris")
         report_text = await ctx.run_node(city_report_agent, city_time)
@@ -296,7 +296,7 @@ as you can with graph-based workflows.
     function node, and a second agent:
 
     ```python
-    @node # workflow node
+    @node(rerun_on_resume=True) # workflow node
     async def city_workflow(ctx: Context):
         city = await ctx.run_node(city_generator_agent)
         city_time = await ctx.run_node(city_time_function, city)
@@ -352,7 +352,7 @@ workflows offer much more flexibility to define the routing logic you need.
         output_schema=str,
     )
 
-    @node # workflow node
+    @node(rerun_on_resume=True) # workflow node
     async def code_workflow(ctx: Context, user_request: str):
       code = await ctx.run_node(coder_agent, user_request)
       check_resp = await ctx.run_node(compile_lint_check, code)
@@ -363,7 +363,9 @@ workflows offer much more flexibility to define the routing logic you need.
 
         check_resp = await ctx.run_node(compile_lint_check, code)
 
-      return code
+      # A node that yields is an async generator, so emit the final output
+      # as an event instead of returning it.
+      yield Event(output=code)
     ```
 
 === "Go"
@@ -388,18 +390,23 @@ Dynamic workflows in ADK can support parallel execution.
     import asyncio
     from typing import Any
     from google.adk import Context
-    from google.adk.workflow import BaseNode, node
+    from google.adk.workflow import node
+
+
+    @node
+    def worker_node(node_input: Any):
+        """Processes a single item."""
+        return f"done {node_input}"
 
 
     @node(rerun_on_resume=True)
-    async def parallel_supervisor(
-        ctx: Context, node_input: list[Any], real_node: BaseNode
-    ):
-        """Runs a worker node in parallel for each item in the input list."""
+    async def parallel_supervisor(ctx: Context, node_input: list[Any]):
+        """Runs worker_node in parallel for each item in the input list."""
         tasks = []
         for item in node_input:
-            # ctx.run_node returns a future. Append instead of awaiting immediately.
-            tasks.append(ctx.run_node(real_node, item))
+            # ctx.run_node returns a coroutine. Append instead of awaiting
+            # immediately, and use a sub-branch to isolate each run's events.
+            tasks.append(ctx.run_node(worker_node, item, use_sub_branch=True))
 
         # Collect all results in parallel
         results = await asyncio.gather(*tasks)
