@@ -9,7 +9,7 @@ agent. Just like you wouldn't start every text message from scratch, agents need
 context regarding the ongoing interaction. The `Session` object in ADK is
 designed specifically to track and manage these individual conversation threads.
 
-## The `Session` object
+## `Session` objects
 
 When a user starts interacting with your agent, the `SessionService` creates a
 `Session` object (`google.adk.sessions.Session`). This object acts as the
@@ -36,6 +36,9 @@ are its key properties:
   an event occurred in this conversation thread.
 
 ### Example: Examining session properties
+
+The following code example demonstrates how to list various values stored in a
+session object:
 
 === "Python"
 
@@ -165,6 +168,41 @@ are its key properties:
 
 *(**Note:** The state shown above is only the initial state. State updates
 happen via events, as discussed in the State section.)*
+
+## Session lifecycle
+
+<img src="../../assets/event-loop.png" alt="Session lifecycle">
+
+Here’s a simplified flow of how `Session` and `SessionService` work together
+during a conversation turn:
+
+1. **Start or Resume:** Your application needs to use the `SessionService` to
+   either `create_session` (for a new chat) or use an existing session id.
+2. **Context Provided:** The `Runner` gets the appropriate `Session` object from
+   the appropriate service method, providing the agent with access to the
+   corresponding Session's `state` and `events`.
+3. **Agent Processing:** The user prompts the agent with a query. The agent
+   analyzes the query and potentially the session `state` and `events` history
+   to determine the response.
+4. **Response & State Update:** The agent generates a response (and potentially
+   flags data to be updated in the `state`). The `Runner` packages this as an
+   `Event`.
+5. **Save Interaction:** The `Runner` calls
+   `sessionService.append_event(session, event)` with the `session` and the new
+   `event` as the arguments. The service adds the `Event` to the history and
+   updates the session's `state` in storage based on information within the
+   event. The session's `last_update_time` also get updated.
+6. **Ready for Next:** The agent's response goes to the user. The updated
+   `Session` is now stored by the `SessionService`, ready for the next turn
+   (which restarts the cycle at step 1, usually with the continuation of the
+   conversation in the current session).
+7. **End Conversation:** When the conversation is over, your application calls
+   `sessionService.delete_session(...)` to clean up the stored session data if
+   it is no longer required.
+
+This cycle highlights how the `SessionService` ensures conversational continuity
+by managing the history and state associated with each `Session` object.
+
 
 ## Managing sessions with a `SessionService`
 
@@ -371,40 +409,6 @@ through a two-tiered locking architecture:
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
-
-## The session lifecycle
-
-<img src="../../assets/event-loop.png" alt="Session lifecycle">
-
-Here’s a simplified flow of how `Session` and `SessionService` work together
-during a conversation turn:
-
-1. **Start or Resume:** Your application needs to use the `SessionService` to
-   either `create_session` (for a new chat) or use an existing session id.
-2. **Context Provided:** The `Runner` gets the appropriate `Session` object from
-   the appropriate service method, providing the agent with access to the
-   corresponding Session's `state` and `events`.
-3. **Agent Processing:** The user prompts the agent with a query. The agent
-   analyzes the query and potentially the session `state` and `events` history
-   to determine the response.
-4. **Response & State Update:** The agent generates a response (and potentially
-   flags data to be updated in the `state`). The `Runner` packages this as an
-   `Event`.
-5. **Save Interaction:** The `Runner` calls
-   `sessionService.append_event(session, event)` with the `session` and the new
-   `event` as the arguments. The service adds the `Event` to the history and
-   updates the session's `state` in storage based on information within the
-   event. The session's `last_update_time` also get updated.
-6. **Ready for Next:** The agent's response goes to the user. The updated
-   `Session` is now stored by the `SessionService`, ready for the next turn
-   (which restarts the cycle at step 1, usually with the continuation of the
-   conversation in the current session).
-7. **End Conversation:** When the conversation is over, your application calls
-   `sessionService.delete_session(...)` to clean up the stored session data if
-   it is no longer required.
-
-This cycle highlights how the `SessionService` ensures conversational continuity
-by managing the history and state associated with each `Session` object.
 
 ## Troubleshoot session errors
 
