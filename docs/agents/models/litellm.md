@@ -4,11 +4,22 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
+??? danger "ADK Python Security Advisory: LiteLLM supply chain compromise"
+
+    Unauthorized code was identified in LiteLLM versions 1.82.7 and 1.82.8 on
+    PyPI on March 24, 2026. If you use ADK Python with the `eval` or
+    `extensions` extras, update to the latest version of ADK Python immediately.
+    If you installed or upgraded LiteLLM during this period, rotate all secrets
+    and credentials. For details and required actions, refer to the [ADK
+    security advisory](https://github.com/google/adk-python/issues/5005) and
+    [LiteLLM's Security Update: Suspected Supply Chain
+    Incident](https://docs.litellm.ai/blog/security-update-march-2026).
+
 [LiteLLM](https://docs.litellm.ai/) is a Python library that acts as a
 translation layer for models and model hosting services, providing a
 standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
 integration through the LiteLLM library, allowing you to access a vast range of
-LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many
+LLMs from providers such as OpenAI, Anthropic, Ollama, Mistral, DeepSeek, and Cohere, and many
 others. You can run open-source models locally or self-host them and integrate
 them using LiteLLM for operational control, cost savings, privacy, or offline
 use cases.
@@ -19,8 +30,8 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
     as the `model` parameter of `LlmAgent`.
 *   **Local model host:** Use the `LiteLlm` wrapper class configured to
     point to your local model server. For examples of local model hosting
-    solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
-    or [vLLM](/adk-docs/agents/models/vllm/) documentation.
+    solutions, see the [Ollama](/agents/models/ollama/)
+    or [vLLM](/agents/models/vllm/) documentation.
 
 ??? warning "Windows Encoding with LiteLLM"
 
@@ -54,7 +65,7 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
         export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
         ```
 
-    * *Example for Anthropic (non-Vertex AI):*
+    * *Example for Anthropic (non-Agent Platform):*
 
         ```shell
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
@@ -88,3 +99,20 @@ agent_claude_direct = LlmAgent(
     # ... other agent parameters
 )
 ```
+
+## Anthropic thinking blocks
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.28.0</span>
+</div>
+
+When you use Anthropic Claude models (such as Claude 3.7 Sonnet) through the
+`LiteLlm` connector, ADK supports Anthropic's structured reasoning feature, known
+as "thinking blocks". ADK automatically extracts the `thinking_blocks` and their
+signatures.
+
+Anthropic requires these signatures to be sent back in multi-turn conversations,
+and otherwise silently drops thinking after the first turn. ADK rebuilds the
+`thinking_blocks` with their signatures on each outbound request, so Claude's
+reasoning is preserved across tool calls and multi-turn interactions without any
+custom state management on your part.

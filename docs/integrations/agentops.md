@@ -1,7 +1,7 @@
 ---
 catalog_title: AgentOps
 catalog_description: Session replays, metrics, and monitoring for ADK agents
-catalog_icon: /adk-docs/integrations/assets/agentops.png
+catalog_icon: /integrations/assets/agentops.png
 catalog_tags: ["observability"]
 ---
 
@@ -143,4 +143,4 @@ By integrating AgentOps, ADK developers can significantly enhance their ability 
 To get started, [create an AgentOps account](http://app.agentops.ai). For feature requests or bug reports, please reach out to the AgentOps team on the [AgentOps Repo](https://github.com/AgentOps-AI/agentops).
 
 ### Extra links
-🐦 [Twitter](http://x.com/agentopsai)   •   📢 [Discord](http://x.com/agentopsai)   •   🖇️ [AgentOps Dashboard](http://app.agentops.ai)   •   📙 [Documentation](http://docs.agentops.ai)
+🐦 [X](http://x.com/agentopsai)   •   📢 [Discord](https://discord.gg/UgJyyxx7uc)   •   🖇️ [AgentOps Dashboard](http://app.agentops.ai)   •   📙 [Documentation](http://docs.agentops.ai)

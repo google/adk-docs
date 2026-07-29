@@ -1,0 +1,15 @@
+[*]
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 100
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+# Google Kotlin Style Guide
+# https://android.github.io/kotlin-guides/style.html
+kotlin_imports_layout = google_style
+ktlint_standard_no-wildcard-imports = enabled
+ktlint_standard_indent = enabled
+ktlint_standard_final-newline = enabled
+ktlint_code_style = ktlint_official

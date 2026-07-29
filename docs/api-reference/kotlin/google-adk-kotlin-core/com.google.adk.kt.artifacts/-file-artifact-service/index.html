@@ -1,0 +1,240 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>FileArtifactService</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            google-adk-kotlin
+                    </a>            </div>
+            <div class="library-version">0.5.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.artifacts/FileArtifactService///PointingToDeclaration//752004321">
+  <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.artifacts</a><span class="delimiter">/</span><span class="current">FileArtifactService</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>File</span><wbr><span>Artifact</span><wbr><span><span>Service</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">FileArtifactService</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">baseDir<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span> : <a href="../-artifact-service/index.html">ArtifactService</a></div><p class="paragraph">An <a href="../-artifact-service/index.html">ArtifactService</a> that persists artifacts on the local filesystem.</p><p class="paragraph">The on-disk layout mirrors the other ADK file-backed artifact services so the same directory can be opened interchangeably across language ports. Each artifact version is a directory holding the raw payload (named after the artifact's basename) plus a <code class="lang-kotlin">metadata.json</code> sidecar:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">&lt;baseDir&gt;/users/&lt;userId&gt;/sessions/&lt;sessionId&gt;/artifacts/&lt;artifactPath&gt;/versions/&lt;v&gt;/&lt;basename&gt;<br>&lt;baseDir&gt;/users/&lt;userId&gt;/sessions/&lt;sessionId&gt;/artifacts/&lt;artifactPath&gt;/versions/&lt;v&gt;/metadata.json<br>&lt;baseDir&gt;/users/&lt;userId&gt;/artifacts/&lt;artifactPath&gt;/versions/&lt;v&gt;/&lt;basename&gt;            # user-scoped</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">An artifact is user-scoped when the session id is <code class="lang-kotlin">null</code> or the filename starts with <code class="lang-kotlin">user:</code> (the prefix is stripped from the path and preserved in metadata). <code class="lang-kotlin">&lt;artifactPath&gt;</code> is derived from the filename, so nested names such as <code class="lang-kotlin">images/photo.png</code> create nested directories; absolute paths and names that traverse outside the storage scope (e.g. <code class="lang-kotlin">../secret</code>) are rejected.</p><p class="paragraph">Versions are 0-based and increase monotonically. A version is published atomically by staging its payload and metadata in a temporary directory and renaming it into place, so concurrent readers only ever observe complete versions (payload and metadata together). Writes to the same artifact are additionally serialized by an in-process per-artifact lock; this does not coordinate across separate OS processes.</p><p class="paragraph">This impl lives in <code class="lang-kotlin">commonJvmAndroidMain</code> because it only needs java.io.File, so the same code serves both Android and the JVM. On Android, prefer the <code class="lang-kotlin">fromContext</code> factory (in the <code class="lang-kotlin">androidMain</code> source set) which roots <a href="../../../google-adk-kotlin-core/com.google.adk.kt.artifacts/-file-artifact-service/base-dir.html">baseDir</a> at the app-specific external files directory.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="186228769%2FConstructors%2F752004321" anchor-label="FileArtifactService" id="186228769%2FConstructors%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-file-artifact-service.html"><span>File</span><wbr><span>Artifact</span><wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="186228769%2FConstructors%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">baseDir<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1934792527%2FClasslikes%2F752004321" anchor-label="Companion" id="-1934792527%2FClasslikes%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1934792527%2FClasslikes%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-613140975%2FFunctions%2F752004321" anchor-label="deleteArtifact" id="-613140975%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-artifact.html"><span>delete</span><wbr><span><span>Artifact</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-613140975%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="delete-artifact.html"><span class="token function">deleteArtifact</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a><span class="token punctuation">, </span></span><span class="parameter ">filename<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Deletes an artifact.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1287492941%2FFunctions%2F752004321" anchor-label="listArtifactKeys" id="-1287492941%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="list-artifact-keys.html"><span>list</span><wbr><span>Artifact</span><wbr><span><span>Keys</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1287492941%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="list-artifact-keys.html"><span class="token function">listArtifactKeys</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Lists the filenames of all artifacts within a session.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-229546995%2FFunctions%2F752004321" anchor-label="listVersions" id="-229546995%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="list-versions.html"><span>list</span><wbr><span><span>Versions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-229546995%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="list-versions.html"><span class="token function">listVersions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a><span class="token punctuation">, </span></span><span class="parameter ">filename<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Lists all the versions (as revision IDs) of an artifact.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1513843762%2FFunctions%2F752004321" anchor-label="loadArtifact" id="1513843762%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-artifact.html"><span>load</span><wbr><span><span>Artifact</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1513843762%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="load-artifact.html"><span class="token function">loadArtifact</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a><span class="token punctuation">, </span></span><span class="parameter ">filename<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">version<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-part/index.html">Part</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets an artifact.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1277087583%2FFunctions%2F752004321" anchor-label="saveAndReloadArtifact" id="-1277087583%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-and-reload-artifact.html"><span>save</span><wbr><span>And</span><wbr><span>Reload</span><wbr><span><span>Artifact</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1277087583%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="save-and-reload-artifact.html"><span class="token function">saveAndReloadArtifact</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a><span class="token punctuation">, </span></span><span class="parameter ">filename<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">artifact<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-part/index.html">Part</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-part/index.html">Part</a></div><div class="brief "><p class="paragraph">Saves an artifact and returns it with fileData if available.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1788665155%2FFunctions%2F752004321" anchor-label="saveArtifact" id="-1788665155%2FFunctions%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="save-artifact.html"><span>save</span><wbr><span><span>Artifact</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1788665155%2FFunctions%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="save-artifact.html"><span class="token function">saveArtifact</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sessionKey<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-key/index.html">SessionKey</a><span class="token punctuation">, </span></span><span class="parameter ">filename<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">artifact<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-part/index.html">Part</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Saves an artifact.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

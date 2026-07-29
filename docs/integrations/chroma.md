@@ -1,7 +1,8 @@
 ---
 catalog_title: Chroma
 catalog_description: Store and retrieve information using semantic vector search
-catalog_icon: /adk-docs/integrations/assets/chroma.png
+catalog_icon: /integrations/assets/chroma.png
+catalog_tags: ["data","mcp"]
 ---
 
 # Chroma MCP tool for ADK
@@ -55,7 +56,7 @@ search, and metadata filtering.
         # CHROMA_API_KEY = "your-api-key"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="chroma_agent",
             instruction="Help users store and retrieve information using semantic search",
             tools=[
@@ -104,7 +105,7 @@ search, and metadata filtering.
         // const CHROMA_API_KEY = "your-api-key";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "chroma_agent",
             instruction: "Help users store and retrieve information using semantic search",
             tools: [

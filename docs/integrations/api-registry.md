@@ -1,7 +1,8 @@
 ---
-catalog_title: API Registry
-catalog_description: Dynamically connect with Google Cloud services as MCP tools
-catalog_icon: /adk-docs/integrations/assets/developer-tools-color.svg
+catalog_title: Google Cloud API Registry
+catalog_description: Connect with Google Cloud services as MCP tools
+catalog_icon: /integrations/assets/developer-tools-color.svg
+catalog_tags: ["google", "mcp", "connectors"]
 ---
 
 # Google Cloud API Registry tool for ADK
@@ -92,7 +93,7 @@ registry_tools = api_registry.get_toolset(
 
 # Create an agent with the tools
 root_agent = LlmAgent(
-    model="gemini-1.5-flash", # Or your preferred model
+    model="gemini-flash-latest", # Or your preferred model
     name="bigquery_assistant",
     instruction="""
 Help user access their BigQuery data using the available tools.
@@ -102,7 +103,7 @@ Help user access their BigQuery data using the available tools.
 ```
 
 For the complete code for this example, see the
-[api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
+[api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/api_registry_agent/)
 sample. For information on the configuration options, see
 [Configuration](#configuration).
 For information on the authentication for this tool, see
@@ -177,7 +178,7 @@ The `get_toolset()` function has the following configuration options:
 
 ## Additional resources
 
--   [api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
+-   [api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/api_registry_agent/)
     ADK code sample
 -   [Google Cloud API Registry](https://docs.cloud.google.com/api-registry/docs/overview)
     documentation

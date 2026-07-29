@@ -1,51 +1,60 @@
-# Workflow Agents
+# Template agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-This section introduces "*workflow agents*" - **specialized agents that control the execution flow of its sub-agents**.
+This section introduces *template workflows*, also known as *workflow agents*,
+which are specialized agents that control the execution flow of one or more
+sub-agents. Template workflow agents are specialized components designed for
+orchestrating the execution flow of sub-agents. Their primary role is to manage
+how and when other agents run, defining the control flow of a process.
 
-Workflow agents are specialized components in ADK designed purely for **orchestrating the execution flow of sub-agents**. Their primary role is to manage *how* and *when* other agents run, defining the control flow of a process.
+!!! note "Alternative: graph-based workflows"
 
-Unlike [LLM Agents](../llm-agents.md), which use Large Language Models for dynamic reasoning and decision-making, Workflow Agents operate based on **predefined logic**. They determine the execution sequence according to their type (e.g., sequential, parallel, loop) without consulting an LLM for the orchestration itself. This results in **deterministic and predictable execution patterns**.
+    Starting in ADK 2.0 for Python and Go, template workflows have been superseded
 
-ADK provides three core workflow agent types, each implementing a distinct execution pattern:
+    by more flexible workflow structures, including
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
+    These workflow architectures provide more control, flexibility
+    and capability to evolve your agent workflows over time.
+
+<img src="/assets/template_workflows.svg" alt="Template agent workflows in ADK">
+
+**Figure 1.** Execution patterns of template workflows in ADK
+
+Template workflow agents operate based on predefined logic. They determine the
+execution sequence according to their type, such as sequential, parallel, or
+loop, without consulting an AI model for assistance with the orchestration. This
+approach results in deterministic and predictable execution patterns. Template
+workflows include the following task execution structures, which each implement
+a distinct task completion pattern:
 
 <div class="grid cards" markdown>
 
-- :material-console-line: **Sequential Agents**
+- :material-console-line: **Sequential Agent workflow**
 
     ---
 
-    Executes sub-agents one after another, in **sequence**.
+    Executes sub-agents one after another, in sequence.
 
     [:octicons-arrow-right-24: Learn more](sequential-agents.md)
 
-- :material-console-line: **Loop Agents**
+- :material-console-line: **Loop Agent workflow**
 
     ---
 
-    **Repeatedly** executes its sub-agents until a specific termination condition is met.
+    Repeatedly executes its sub-agents until a specific termination condition is met.
 
     [:octicons-arrow-right-24: Learn more](loop-agents.md)
 
-- :material-console-line: **Parallel Agents**
+- :material-console-line: **Parallel Agent workflow**
 
     ---
 
-    Executes multiple sub-agents in **parallel**.
+    Executes multiple sub-agents in parallel.
 
     [:octicons-arrow-right-24: Learn more](parallel-agents.md)
 
 </div>
-
-## Why Use Workflow Agents?
-
-Workflow agents are essential when you need explicit control over how a series of tasks or agents are executed. They provide:
-
-* **Predictability:** The flow of execution is guaranteed based on the agent type and configuration.
-* **Reliability:** Ensures tasks run in the required order or pattern consistently.
-* **Structure:** Allows you to build complex processes by composing agents within clear control structures.
-
-While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent LLM Agent instances. This allows you to combine structured process control with flexible, LLM-powered task execution.

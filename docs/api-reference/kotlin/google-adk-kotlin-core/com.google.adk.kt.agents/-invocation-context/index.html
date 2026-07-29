@@ -1,0 +1,537 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>InvocationContext</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            google-adk-kotlin
+                    </a>            </div>
+            <div class="library-version">0.5.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.agents/InvocationContext///PointingToDeclaration//-1644122207">
+  <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.agents</a><span class="delimiter">/</span><span class="current">InvocationContext</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Invocation</span><wbr><span><span>Context</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">InvocationContext</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>session<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session/index.html">Session</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>runConfig<span class="token operator">: </span><a href="../-run-config/index.html">RunConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>agent<span class="token operator">: </span><a href="../-base-agent/index.html">BaseAgent</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>branch<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>invocationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>"e-" + Uuid.random()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>artifactService<span class="token operator">: </span><a href="../../com.google.adk.kt.artifacts/-artifact-service/index.html">ArtifactService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>memoryService<span class="token operator">: </span><a href="../../com.google.adk.kt.memory/-memory-service/index.html">MemoryService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sessionService<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-service/index.html">SessionService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>resumabilityConfig<span class="token operator">: </span><a href="../-resumability-config/index.html">ResumabilityConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>userContent<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>agentStates<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../-typed-data/index.html">TypedData</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>endOfAgents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>extraTools<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>isEndOfInvocation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">var </span>isPaused<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>pluginManager<span class="token operator">: </span><a href="../../com.google.adk.kt.plugins/-plugin-manager/index.html">PluginManager</a><span class="token operator"> = </span>PluginManager()<span class="token punctuation">, </span></span><span class="parameter ">invocationCostManager<span class="token operator">: </span><a href="../-invocation-cost-manager/index.html">InvocationCostManager</a><span class="token operator"> = </span>InvocationCostManager()</span></span><span class="token punctuation">)</span></div><p class="paragraph">An invocation context represents the data of a single invocation of an agent.</p><p class="paragraph">An invocation:</p><ol><li><p class="paragraph">Starts with a user message and ends with a final response.</p></li><li><p class="paragraph">Can contain one or multiple agent calls.</p></li><li><p class="paragraph">Is handled by runner.run_async().</p></li></ol><p class="paragraph">An invocation runs an agent until it does not request to transfer to another agent.</p><p class="paragraph">An agent call:</p><ol><li><p class="paragraph">Is handled by agent.run().</p></li><li><p class="paragraph">Ends when agent.run() ends.</p></li></ol><p class="paragraph">An LLM agent call is an agent with a BaseLLMFlow. An LLM agent call can contain one or multiple steps.</p><p class="paragraph">An LLM agent runs steps in a loop until:</p><ol><li><p class="paragraph">A final response is generated.</p></li><li><p class="paragraph">The agent transfers to another agent.</p></li><li><p class="paragraph">The end_invocation is set to true by any callbacks or tools.</p></li></ol><p class="paragraph">A step:</p><ol><li><p class="paragraph">Calls the LLM only once and yields its response.</p></li><li><p class="paragraph">Calls the tools and yields their responses if requested.</p></li></ol><p class="paragraph">The summarization of the function response is considered another step, since it is another llm call. A step ends when it's done calling llm and tools, or if the end_invocation is set to true at any time.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">    ┌─────────────────────── invocation ──────────────────────────┐<br>    ┌──────────── llm_agent_call_1 ────────────┐ ┌─ agent_call_2 ─┐<br>    ┌──── step_1 ────────┐ ┌───── step_2 ──────┐<br>    [call_llm] [call_tool] [call_llm] [transfer]</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1842944035%2FConstructors%2F-1644122207" anchor-label="InvocationContext" id="-1842944035%2FConstructors%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-invocation-context.html"><span>Invocation</span><wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1842944035%2FConstructors%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">session<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session/index.html">Session</a><span class="token punctuation">, </span></span><span class="parameter ">runConfig<span class="token operator">: </span><a href="../-run-config/index.html">RunConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">agent<span class="token operator">: </span><a href="../-base-agent/index.html">BaseAgent</a><span class="token punctuation">, </span></span><span class="parameter ">branch<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">invocationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>"e-" + Uuid.random()<span class="token punctuation">, </span></span><span class="parameter ">artifactService<span class="token operator">: </span><a href="../../com.google.adk.kt.artifacts/-artifact-service/index.html">ArtifactService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">memoryService<span class="token operator">: </span><a href="../../com.google.adk.kt.memory/-memory-service/index.html">MemoryService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">sessionService<span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-service/index.html">SessionService</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">resumabilityConfig<span class="token operator">: </span><a href="../-resumability-config/index.html">ResumabilityConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">userContent<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">agentStates<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../-typed-data/index.html">TypedData</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter ">endOfAgents<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter ">extraTools<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span><span class="token operator"> = </span>concurrentMutableMapOf()<span class="token punctuation">, </span></span><span class="parameter ">isEndOfInvocation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">isPaused<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">pluginManager<span class="token operator">: </span><a href="../../com.google.adk.kt.plugins/-plugin-manager/index.html">PluginManager</a><span class="token operator"> = </span>PluginManager()<span class="token punctuation">, </span></span><span class="parameter ">invocationCostManager<span class="token operator">: </span><a href="../-invocation-cost-manager/index.html">InvocationCostManager</a><span class="token operator"> = </span>InvocationCostManager()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-229961070%2FProperties%2F-1644122207" anchor-label="agent" id="-229961070%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="agent.html"><span><span>agent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-229961070%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="agent.html">agent</a><span class="token operator">: </span><a href="../-base-agent/index.html">BaseAgent</a></div><div class="brief "><p class="paragraph">The current agent of this invocation context. Readonly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-832606480%2FProperties%2F-1644122207" anchor-label="agentStates" id="-832606480%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="agent-states.html"><span>agent</span><wbr><span><span>States</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-832606480%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="agent-states.html">agentStates</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../-typed-data/index.html">TypedData</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The state of the agent for this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="167335508%2FProperties%2F-1644122207" anchor-label="artifactService" id="167335508%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="artifact-service.html"><span>artifact</span><wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="167335508%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="artifact-service.html">artifactService</a><span class="token operator">: </span><a href="../../com.google.adk.kt.artifacts/-artifact-service/index.html">ArtifactService</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1221479777%2FProperties%2F-1644122207" anchor-label="branch" id="1221479777%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="branch.html"><span><span>branch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1221479777%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="branch.html">branch</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The branch of the invocation context.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1566383543%2FProperties%2F-1644122207" anchor-label="endOfAgents" id="1566383543%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="end-of-agents.html"><span>end</span><wbr><span>Of</span><wbr><span><span>Agents</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1566383543%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="end-of-agents.html">endOfAgents</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The end of agent status for each agent in this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1865440376%2FProperties%2F-1644122207" anchor-label="extraTools" id="1865440376%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="extra-tools.html"><span>extra</span><wbr><span><span>Tools</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1865440376%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="extra-tools.html">extraTools</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-map/index.html">MutableMap</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Extra tools injected dynamically during invocation (e.g., by SequentialAgent).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2044578008%2FProperties%2F-1644122207" anchor-label="invocationId" id="2044578008%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="invocation-id.html"><span>invocation</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2044578008%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="invocation-id.html">invocationId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The id of this invocation context. Readonly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-99332545%2FProperties%2F-1644122207" anchor-label="isEndOfInvocation" id="-99332545%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-end-of-invocation.html"><span>is</span><wbr><span>End</span><wbr><span>Of</span><wbr><span><span>Invocation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-99332545%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-end-of-invocation.html">isEndOfInvocation</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether to end this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1994372277%2FProperties%2F-1644122207" anchor-label="isPaused" id="-1994372277%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-paused.html"><span>is</span><wbr><span><span>Paused</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1994372277%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="is-paused.html"><strike>isPaused</strike></a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether this invocation is paused.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="255135983%2FProperties%2F-1644122207" anchor-label="isResumable" id="255135983%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-resumable.html"><span>is</span><wbr><span><span>Resumable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="255135983%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-resumable.html">isResumable</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns whether the current invocation is resumable.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1880012803%2FProperties%2F-1644122207" anchor-label="memoryService" id="1880012803%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="memory-service.html"><span>memory</span><wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1880012803%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="memory-service.html">memoryService</a><span class="token operator">: </span><a href="../../com.google.adk.kt.memory/-memory-service/index.html">MemoryService</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1200463811%2FProperties%2F-1644122207" anchor-label="pluginManager" id="-1200463811%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="plugin-manager.html"><span>plugin</span><wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200463811%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="plugin-manager.html">pluginManager</a><span class="token operator">: </span><a href="../../com.google.adk.kt.plugins/-plugin-manager/index.html">PluginManager</a></div><div class="brief "><p class="paragraph">The manager for keeping track of plugins in this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="52772207%2FProperties%2F-1644122207" anchor-label="resumabilityConfig" id="52772207%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="resumability-config.html"><span>resumability</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="52772207%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="resumability-config.html">resumabilityConfig</a><span class="token operator">: </span><a href="../-resumability-config/index.html">ResumabilityConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">Optional resumability configuration for this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1022582806%2FProperties%2F-1644122207" anchor-label="runConfig" id="-1022582806%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-config.html"><span>run</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1022582806%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="run-config.html">runConfig</a><span class="token operator">: </span><a href="../-run-config/index.html">RunConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">Configurations for live agents under this invocation.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="827007393%2FProperties%2F-1644122207" anchor-label="session" id="827007393%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="session.html"><span><span>session</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="827007393%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="session.html">session</a><span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session/index.html">Session</a></div><div class="brief "><p class="paragraph">The current session of this invocation context. Readonly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1132445596%2FProperties%2F-1644122207" anchor-label="sessionService" id="-1132445596%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="session-service.html"><span>session</span><wbr><span><span>Service</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1132445596%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="session-service.html">sessionService</a><span class="token operator">: </span><a href="../../com.google.adk.kt.sessions/-session-service/index.html">SessionService</a><span class="token operator">?</span><span class="token operator"> = </span>null</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-614015991%2FProperties%2F-1644122207" anchor-label="userContent" id="-614015991%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-content.html"><span>user</span><wbr><span><span>Content</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-614015991%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-content.html">userContent</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The user content that started this invocation. Readonly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-101727914%2FFunctions%2F-1644122207" anchor-label="branch" id="-101727914%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="branch.html"><span><span>branch</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-101727914%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="branch.html"><span class="token function">branch</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">childAgent<span class="token operator">: </span><a href="../-base-agent/index.html">BaseAgent</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">InvocationContext</a></div><div class="brief "><p class="paragraph">Creates a new InvocationContext for a child agent, derived from this context. Appends the given agent's name to the branch path.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1836759899%2FFunctions%2F-1644122207" anchor-label="executeSingleFunctionCall" id="-1836759899%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="execute-single-function-call.html"><span>execute</span><wbr><span>Single</span><wbr><span>Function</span><wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1836759899%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="execute-single-function-call.html"><span class="token function">executeSingleFunctionCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">functionCall<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-function-call/index.html">FunctionCall</a><span class="token punctuation">, </span></span><span class="parameter ">tools<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">toolConfirmation<span class="token operator">: </span><a href="../../com.google.adk.kt.events/-tool-confirmation/index.html">ToolConfirmation</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Executes a single function call synchronously and builds a corresponding response event.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1827735909%2FFunctions%2F-1644122207" anchor-label="findMatchingFunctionCall" id="-1827735909%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="find-matching-function-call.html"><span>find</span><wbr><span>Matching</span><wbr><span>Function</span><wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1827735909%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="find-matching-function-call.html"><span class="token function">findMatchingFunctionCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">functionResponseEvent<span class="token operator">: </span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Finds the function call event in the current invocation that matches the function response id.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-368531076%2FFunctions%2F-1644122207" anchor-label="forAgent" id="-368531076%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="for-agent.html"><span>for</span><wbr><span><span>Agent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-368531076%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="for-agent.html"><span class="token function">forAgent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">childAgent<span class="token operator">: </span><a href="../-base-agent/index.html">BaseAgent</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">InvocationContext</a></div><div class="brief "><p class="paragraph">Creates a new InvocationContext for running <a href="for-agent.html">childAgent</a>, derived from this context, keeping the current <a href="branch.html">branch</a> unchanged.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1421576919%2FFunctions%2F-1644122207" anchor-label="getEvents" id="1421576919%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-events.html"><span>get</span><wbr><span><span>Events</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1421576919%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="get-events.html"><span class="token function">getEvents</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentInvocation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">currentBranch<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns the events from the current session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1176080460%2FFunctions%2F-1644122207" anchor-label="handleFunctionCalls" id="-1176080460%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="handle-function-calls.html"><span>handle</span><wbr><span>Function</span><wbr><span><span>Calls</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1176080460%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="handle-function-calls.html"><span class="token function">handleFunctionCalls</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">functionCalls<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.google.adk.kt.types/-function-call/index.html">FunctionCall</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">tools<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">filters<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()<span class="token punctuation">, </span></span><span class="parameter ">toolConfirmations<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../com.google.adk.kt.events/-tool-confirmation/index.html">ToolConfirmation</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Processes a list of function calls by executing them efficiently and safely.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1010079723%2FFunctions%2F-1644122207" anchor-label="incrementLlmCallsCount" id="1010079723%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="increment-llm-calls-count.html"><span>increment</span><wbr><span>Llm</span><wbr><span>Calls</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1010079723%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="increment-llm-calls-count.html"><span class="token function">incrementLlmCallsCount</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Counts this LLM call and enforces <a href="../-run-config/max-llm-calls.html">RunConfig.maxLlmCalls</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="970851498%2FFunctions%2F-1644122207" anchor-label="populateInvocationAgentStates" id="970851498%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="populate-invocation-agent-states.html"><span>populate</span><wbr><span>Invocation</span><wbr><span>Agent</span><wbr><span><span>States</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="970851498%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="populate-invocation-agent-states.html"><span class="token function">populateInvocationAgentStates</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Populates agent states for the current invocation if it is resumable.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1498750045%2FFunctions%2F-1644122207" anchor-label="resetSubAgentStates" id="-1498750045%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-sub-agent-states.html"><span>reset</span><wbr><span>Sub</span><wbr><span>Agent</span><wbr><span><span>States</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1498750045%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset-sub-agent-states.html"><span class="token function">resetSubAgentStates</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">agentName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resets the state of all sub-agents of the given agent recursively.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1768019366%2FFunctions%2F-1644122207" anchor-label="setAgentState" id="-1768019366%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-agent-state.html"><span>set</span><wbr><span>Agent</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1768019366%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-agent-state.html"><span class="token function">setAgentState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">agentName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">agentState<span class="token operator">: </span><a href="../-typed-data/index.html">TypedData</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">endOfAgent<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set state of an agent explicitly. Does not implicitly initialize.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="149652424%2FFunctions%2F-1644122207" anchor-label="shouldPauseInvocation" id="149652424%2FFunctions%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="should-pause-invocation.html"><span>should</span><wbr><span>Pause</span><wbr><span><span>Invocation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="149652424%2FFunctions%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="should-pause-invocation.html"><span class="token function">shouldPauseInvocation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">event<span class="token operator">: </span><a href="../../com.google.adk.kt.events/-event/index.html">Event</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns whether to pause the invocation right after this event.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

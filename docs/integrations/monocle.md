@@ -1,7 +1,7 @@
 ---
 catalog_title: Monocle
 catalog_description: Open-source observability, tracing, and debugging of LLM applications
-catalog_icon: /adk-docs/integrations/assets/monocle.png
+catalog_icon: /integrations/assets/monocle.png
 catalog_tags: ["observability"]
 ---
 
@@ -112,7 +112,7 @@ def get_weather(city: str) -> dict:
 # Create an agent with tools
 agent = Agent(
     name="weather_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-flash-latest",
     description="Agent to answer questions using weather tools.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather]
