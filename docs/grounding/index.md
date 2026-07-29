@@ -34,14 +34,6 @@ ADK supports multiple grounding approaches:
 
     - [Blog post: 10-minute Agentic RAG with Vector Search 2.0 and ADK](https://medium.com/google-cloud/10-minute-agentic-rag-with-the-new-vector-search-2-0-and-adk-655fff0bacac)
 
--   :material-notebook: **Vector Search 2.0 Travel Agent Notebook**
-
-    ---
-
-    A hands-on Jupyter notebook companion to the Agentic RAG blog post. Build an end-to-end travel agent using real Airbnb data, auto-embeddings, hybrid search with RRF ranking, and ADK tool integration.
-
-    - [Vector Search 2.0 Travel Agent Notebook](https://github.com/google/adk-samples/blob/main/python/notebooks/grounding/vectorsearch2_travel_agent.ipynb)
-
 -   :material-text-search: **Deep Search Agent**
 
     ---
@@ -49,13 +41,5 @@ ADK supports multiple grounding approaches:
     A production-ready fullstack research agent that transforms topics into comprehensive reports with citations. Features a two-phase workflow with human-in-the-loop plan approval, iterative search refinement, and multi-agent architecture for planning, researching, critiquing, and composing.
 
     - [Deep Search Agent](https://github.com/google/adk-samples/tree/main/python/agents/deep-search)
-
--   :material-file-document-multiple: **RAG Agent**
-
-    ---
-
-    A document Q&A agent powered by Knowledge Engine. Upload documents and ask questions to receive accurate answers with citations formatted as URLs pointing to source materials.
-
-    - [RAG Agent](https://github.com/google/adk-samples/tree/main/python/agents/RAG)
 
 </div>

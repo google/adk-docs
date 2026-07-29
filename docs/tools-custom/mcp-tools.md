@@ -738,7 +738,11 @@ This example demonstrates how ADK tools can be encapsulated within an MCP server
 
 Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## Use MCP Tools in your own Agent out of `adk web`
+## Advanced use cases
+
+The following sections describe how to handle more advanced use cases with MCP Tools in agents.
+
+### Use MCP Tools without `adk web`
 
 This section is relevant to you if:
 
@@ -848,6 +852,20 @@ if __name__ == '__main__':
     asyncio.run(async_main())
   except Exception as e:
     print(f"An error occurred: {e}")
+```
+
+### Handling progress updates
+
+For long-running tools, `McpToolset` supports a `progress_callback`. This approach allows you to receive real-time updates from the MCP server. You can provide a simple callback function or a factory that creates callbacks with access to the runtime context, such as updating session state.
+
+```python
+async def my_progress_callback(progress: float, total: float, message: str):
+    print(f"Progress: {progress}/{total} - {message}")
+
+toolset = McpToolset(
+    connection_params=...,
+    progress_callback=my_progress_callback
+)
 ```
 
 ## Deploy Agents with MCP Tools
