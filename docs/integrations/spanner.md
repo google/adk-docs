@@ -145,7 +145,15 @@ The `SpannerVectorStoreSettings` class used above defines how
 
 ## Spanner Admin Toolset
 
-The `SpannerAdminToolset` enables administrative operations on your Spanner instances and databases.
+The `SpannerAdminToolset` enables administrative operations on your Spanner instances and databases. Note that this requires a separate library import. 
+
+!!! warning "Use with caution"
+
+    This toolset can create, inspect, and modify Spanner instances and
+    databases, grant access carefully. Ensure that the executing environment
+    (such as Application Default Credentials or Service Account keys) is
+    restricted only to authorized projects and uses the minimum necessary IAM
+    permissions such as, roles/spanner.admin.
 
 ### Available tools
 
@@ -165,9 +173,8 @@ Set your required environment variables before using this toolset:
 - `SPANNER_INSTANCE` (Optional): The default Spanner instance ID.
 - `SPANNER_DATABASE` (Optional): The default database ID.
 
-!!! note "Authentication"
-    
-    Authentication uses Application Default Credentials (ADC). Ensure the calling principal has appropriate IAM roles, such as roles/spanner.admin.
+### Use with agent
+Initialize the `SpannerAdminToolset` to access Google Cloud Spanner management features. Then, pass it into the `tools` list of your `LlmAgent` to enable your agent to manage Spanner resources.
 
 ```python
 from google.adk.agents import LlmAgent
