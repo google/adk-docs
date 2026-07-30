@@ -5,11 +5,14 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 ## One tool per agent limitation {#one-tool-one-agent}
 
-!!! note "ONLY for Search in ADK Python v1.15.0 and lower"
+!!! note "ADK Python: the built-in Search workaround is opt-in"
 
-    This limitation only applies to the use of Google Search and Agent Search
-    tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
-    provides a built-in workaround to remove this limitation.
+    ADK Python v1.16.0 and higher can bypass this limitation for the Google
+    Search and Agent Search tools, but not by default. You must construct the
+    tool yourself with `bypass_multi_tools_limit=True`; the shared
+    `google_search` instance exported from `google.adk.tools` leaves the flag
+    off. The bypass also only takes effect when the agent declares more than
+    one tool. See Workaround #2 below.
 
 In general, you can use more than one tool in an agent, but use of specific
 tools within an agent excludes the use of any other tools in that agent. The
@@ -81,7 +84,7 @@ other tools, within a single agent, is ***not supported***:
     )
     ```
 
-### Workaround #1: AgentTool.create() method
+### Workaround #1: wrap the agent in an AgentTool
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
@@ -240,9 +243,12 @@ only when the agent declares more than one entry in its `tools` list.
 
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent, with the exception of
-    `GoogleSearchTool` and `VertexAiSearchTool` in ADK Python because of the
-    workaround mentioned above.
+    Built-in tools cannot be used within a sub-agent. In ADK Python,
+    `GoogleSearchTool` and `VertexAiSearchTool` are an exception only when the
+    workaround above actually applies: the sub-agent must construct the tool
+    with `bypass_multi_tools_limit=True` **and** declare more than one tool in
+    its own `tools` list. A sub-agent whose only tool is the built-in keeps the
+    built-in, so the exception does not cover it.
 
 For example, the following approach that uses built-in tools within sub-agents
 is **not supported**:
