@@ -4,11 +4,11 @@ site_url: https://adk.dev
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
-exclude_docs:
+exclude_docs: |
   api-reference/java/legal/*
+  /_includes/**
 not_in_nav: |
   /integrations/*.md
-  /_includes/**
 
 # Repository
 repo_name: adk-docs
@@ -380,12 +380,9 @@ nav:
         - Types of callbacks: callbacks/types-of-callbacks.md
         - Callback patterns: callbacks/design-patterns-and-best-practices.md
       - Plugins: plugins/index.md
-    - Context:
+    - Agent context:
       - context/index.md
-      - Context caching: context/caching.md
-      - Context compression: context/compaction.md
-    - Sessions and Memory:
-      - sessions/index.md
+      - Conversational context: sessions/index.md
       - Sessions:
         - sessions/session/index.md
         - Rewind sessions: sessions/session/rewind.md
@@ -393,6 +390,8 @@ nav:
       - State: sessions/state.md
       - Events: events/index.md
       - Memory: sessions/memory.md
+      - Context compression: context/compaction.md
+      - Model context caching: context/caching.md
     - MCP:
       - mcp/index.md
     - A2A Protocol:

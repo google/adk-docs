@@ -751,7 +751,7 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
     AgentTool(agent = agentB)
     ```
 
-### Customization
+### Customize your agent tool
 
 The `AgentTool` class provides the following attributes for customizing its
 behavior:
@@ -802,9 +802,8 @@ behavior:
         ```kotlin
         --8<-- "examples/kotlin/snippets/tools/function-tools/AgentTool.kt:agent_tool"
         ```
-
-### How it works
-
+        
+#### How it works
 1. When the `root_agent` receives the long text, its instruction tells it to use
    the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the
@@ -817,3 +816,43 @@ behavior:
    `root_agent`.**
 6. The `root_agent` can then take the summary and formulate its final response
    to the user (e.g., "Here's a summary of the text: ...")
+        
+#### Control plugin inheritance
+
+When you wrap an agent with `AgentTool`, you can control whether it
+inherits plugins from the parent runner using the `include_plugins`
+parameter.
+
+* **`include_plugins=True` (default):** The child agent inherits all
+  plugins from the parent, preserving trace spans and event streaming.
+* **`include_plugins=False`:** The child agent runs in an isolated
+  environment without inheriting any plugins from the parent. Use this
+  setting to ensure an agent's execution is self-contained and unaffected
+  by the parent's plugin environment.
+
+=== "Python"
+
+    ```python
+    from google.adk.tools import agent_tool
+
+    # Placeholder definition for MyImageAgent
+    class MyImageAgent:
+        def __init__(
+            self, name="My Agent", description="A simple image agent."
+        ):
+            self.name = name
+            # Added description attribute
+            self.description = description 
+
+    # Example 1: Isolate MyImageAgent from parent plugins 
+    my_isolated_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=False
+    )
+
+    # Example 2: Inherit plugins
+    my_observable_tool = agent_tool.AgentTool(
+        agent=MyImageAgent(), # Instantiate MyImageAgent
+        include_plugins=True
+    )
+    ```

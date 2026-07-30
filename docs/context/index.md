@@ -1,4 +1,4 @@
-# Context
+# Agent context
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
@@ -115,11 +115,11 @@ If you use these specific context types, ADK ensures that your agent has access 
 Here are the primary context flavors you will encounter:
 
 - **`InvocationContext`**: Used during core agent runs (`_run_async_impl`, `_run_live_impl`) to provide a comprehensive view of the entire invocation, including service references and lifecycle management.
-  
+
 - **`ReadonlyContext`**: A lightweight, restricted view of fundamental contextual details used in scenarios where mutation is disallowed, such as within instruction providers.
-  
+
 - **`Context`**: Used in agent lifecycle and model callbacks. It provides a robust set of features for reading/writing session state, managing artifacts, and injecting data into the memory service.
-  
+
 - **`ToolContext`**: Tailored for tool execution and tool-related callbacks. In addition to the capabilities of Context, it includes specialized methods for authentication flows, memory searching, and artifact discovery.
 
 !!! note
@@ -149,7 +149,7 @@ Here are the primary context flavors you will encounter:
                 # ... agent logic using ctx ...
                 yield # ... event ...
         ```
-        
+
     === "TypeScript"
 
         ```typescript
@@ -538,7 +538,7 @@ You'll frequently need to read information stored within the context.
         public void myTool(ToolContext toolContext) {
             String userPref = (String) toolContext.state().getOrDefault("user_display_preference", "default_mode");
             String apiEndpoint = (String) toolContext.state().get("app:api_endpoint"); // Read app-level state
-            
+
             if ("dark_mode".equals(userPref)) {
                 // ... apply dark mode logic ...
             }
@@ -551,7 +551,7 @@ You'll frequently need to read information stored within the context.
 
         public void myCallback(CallbackContext callbackContext) {
             String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Read temporary state
-            
+
             if (lastToolResult != null && !lastToolResult.isEmpty()) {
                 System.out.println("Found temporary result from last tool: " + lastToolResult);
             }
@@ -1288,8 +1288,8 @@ Securely manage API keys or other credentials needed by tools.
     import com.google.adk.tools.ToolContext;
     import java.util.Map;
 
-    // Note: AuthConfig, requestCredential, and getAuthResponse are not yet 
-    // fully implemented in the Java ADK public API. 
+    // Note: AuthConfig, requestCredential, and getAuthResponse are not yet
+    // fully implemented in the Java ADK public API.
     // This example relies on external auth population into the session state.
 
     public class SecureApiTool {
@@ -1513,13 +1513,13 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
         if (criticalError != null && criticalError) {
           System.out.println("Critical error detected, ending invocation.");
           ctx.setEndInvocation(true); // Signal framework to stop processing
-          
+
           Event errorEvent = Event.builder()
               .author(name())
               .invocationId(ctx.invocationId())
               .content(Content.builder().parts(List.of(Part.builder().text("Stopping due to critical error.").build())).build())
               .build();
-              
+
           return Flowable.just(errorEvent); // Stop this agent's execution
         }
 
