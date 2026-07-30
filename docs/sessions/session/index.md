@@ -285,7 +285,8 @@ the storage backend that best suits your needs:
 * **Persistence:** Yes. Data is managed reliably and scalably via [Agent
   Runtime](/deploy/agent-runtime/).
 * **Requires:**
-    * A Google Cloud project (`pip install google-adk[gcp]`)
+    * A Google Cloud project.
+    * The `gcp` extra (`pip install google-adk[gcp]`).
     * A Google Cloud storage bucket that can be configured by this
       [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     * An Agent Runtime resource name/ID that can setup following this

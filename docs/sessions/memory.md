@@ -659,7 +659,7 @@ The memory workflow includes the following steps:
 6. **Results Returned:** The `MemoryService` searches its store, using keyword
    matching or semantic search, and returns matching snippets as a
    `SearchMemoryResponse` containing a list of `MemoryEntry` objects, each
-   holding `content`, and all optional: `author`, `timestamp`, and
+   holding `content`, and all optional: `id`, `author`, `timestamp`, and
    `custom_metadata`.
 7. **Agent Uses Results:** The tool returns these results to the agent, usually
    as part of the context or function response. The agent can then use this

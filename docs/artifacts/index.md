@@ -1168,6 +1168,29 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         ```kotlin
         --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:in_memory_service"
         ```
+### FileArtifactService
+
+*   **Storage Mechanism:** Stores artifacts on the local filesystem, beneath a root directory you choose. Each version of an artifact is a directory holding the payload file plus a `metadata.json` sidecar, so the tree can be inspected with ordinary file tools.
+*   **Key Features:**
+    *   **Persistence:** Artifacts survive application restarts, as long as the root directory does.
+    *   **No external dependencies:** Needs no cloud project, credentials, or network access, only a writable directory. The root directory is created on instantiation if it does not exist.
+*   **Use Cases:**
+    *   Local development and single-machine deployments that need artifacts to outlive the process.
+    *   In Python, this is also the service behind `--artifact_service_uri file://<path>` for `adk web` / `adk run`.
+*   **Instantiation:**
+
+    === "Python"
+
+        ```python
+        from google.adk.artifacts import FileArtifactService
+
+        # Point it at the directory that should hold the artifact tree
+        file_service_py = FileArtifactService(root_dir="/path/to/adk-artifacts")
+
+        # Then pass it to the Runner
+        # runner = Runner(..., artifact_service=file_service_py)
+        ```
+
 ### GcsArtifactService
 
 
@@ -1176,7 +1199,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 *   **Key Features:**
     *   **Persistence:** Artifacts stored in GCS persist across application restarts and deployments.
     *   **Scalability:** Leverages the scalability and durability of Google Cloud Storage.
-    *   **Versioning:** Explicitly stores each version as a distinct GCS object. The `saveArtifact` method in `GcsArtifactService`.
+    *   **Versioning:** Explicitly stores each version as a distinct GCS object. In Python, `save_artifact` assigns the next version number (the first version is `0`) rather than overwriting an existing object.
     *   **Permissions Required:** The application environment needs appropriate credentials (e.g., Application Default Credentials) and IAM permissions to read from and write to the specified GCS bucket.
 *   **Use Cases:**
     *   Production environments requiring persistent artifact storage.

@@ -8,7 +8,7 @@ Events are the fundamental units of information flow within the Agent Developmen
 
 ## What Events Are and Why They Matter
 
-An `Event` in ADK is an immutable record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
+An `Event` in ADK is a record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
 
 === "Python"
     Technically, it's an instance of the `google.adk.events.Event` class, which builds upon the basic `LlmResponse` structure by adding essential ADK-specific metadata and an `actions` payload.
@@ -736,7 +736,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
 *   **Purpose:** Filters out intermediate steps (like tool calls and partial streaming text) from the final user-facing message(s).
 *   **When `True`?**
     1.  The `skip_summarization` action is `True`. In Python this flag alone is enough; the event does not need to carry a tool result (`function_response`).
-    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty:
+    2.  The event's `long_running_tool_ids` is non-empty, meaning a tool marked as `is_long_running=True` was called. In Python this list alone is enough; the event does not need to carry the tool call (`function_call`) itself. In Java, check if the `longRunningToolIds` list is empty:
         *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
     3.  OR, **all** of the following are met:
         *   No function calls (`get_function_calls()` is empty).
@@ -955,7 +955,7 @@ Events are created at different points and processed systematically by the frame
     2.  **Runner Receives:** The main `Runner` executing the agent receives the event.
     3.  **SessionService Processing:** The `Runner` sends the event to the configured `SessionService`. This is a critical step:
         *   **Applies Deltas:** The service merges `event.actions.state_delta` into `session.state` and updates internal records based on `event.actions.artifact_delta`. (Note: The actual artifact *saving* usually happened earlier when `context.save_artifact` was called).
-        *   **Finalizes Metadata:** Assigns a unique `event.id` if not present, may update `event.timestamp`.
+        *   **Event Metadata:** In Python, `event.id` and `event.timestamp` are already populated when the `Event` object is constructed (a random `id` if none was supplied, and the current time), so the service does not assign them; it records the event as it received it.
         *   **Persists to History:** Appends the processed event to the `session.events` list.
     4.  **External Yield:** The `Runner` yields (Python) or returns/emits (Java) the processed event outwards to the calling application (e.g., the code that invoked `runner.run_async`).
 
