@@ -90,7 +90,7 @@ The `CompletionsHTTPClient` is a generic HTTP client designed for compatibility 
 
 - **Payload construction**: Converts LlmRequest objects into the format required by OpenAI-compatible APIs.
 - **Response handling**: Manages streaming and non-streaming responses from the proxy.
-- **Reliability**: Uses `tenacity` for built-in retry logic.
+- **Reliability**: Uses `tenacity` to retry non-streaming requests, but only when you pass `retry_options=types.HttpRetryOptions(...)` to the constructor. By default each request is attempted once, and streaming requests are never retried.
 - **Normalization**: Parses responses and streaming chunks into the standard format expected by the rest of the ADK framework.
 
 ### Implementation example
@@ -117,7 +117,8 @@ async def test_client():
 
     # 3. Execute a non-streaming generation
     async for response in client.generate_content_async(request, stream=False):
-        print(f"Response: {response.text}")
+        if response.content and response.content.parts:
+            print(f"Response: {response.content.parts[0].text}")
 
 if __name__ == "__main__":
     asyncio.run(test_client())

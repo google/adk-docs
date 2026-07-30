@@ -19,6 +19,8 @@ Gemma 3 needs a different model class than the Gemma 4 examples below. It has
 no native function calling or system instruction support, so ADK supplies
 workarounds in dedicated classes: use `Gemma(model="gemma-3-27b-it")` for the
 Gemini API and `Gemma3Ollama()` for Ollama, both from `google.adk.models`.
+`Gemma3Ollama` is only defined when [LiteLLM](/agents/models/litellm/) is
+installed (`litellm>=1.84`).
 
 ## Gemini API Example
 
@@ -249,7 +251,7 @@ import os
 import dotenv
 from google.adk.agents import LlmAgent
 from google.adk.models import Gemini
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 dotenv.load_dotenv()
@@ -278,7 +280,7 @@ def get_maps_mcp_toolset():
         print("Warning: MAPS_API_KEY environment variable not found.")
         maps_api_key = "no_api_found"
 
-    tools = MCPToolset(
+    tools = McpToolset(
         connection_params=StreamableHTTPConnectionParams(
             url=MAPS_MCP_URL,
             headers={

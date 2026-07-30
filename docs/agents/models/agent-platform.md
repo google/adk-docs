@@ -139,7 +139,7 @@ Agent Platform.
 
     **How Resolution Works:** ADK's registry automatically recognizes `gemini-*`
     strings and standard Agent Platform endpoint strings
-    (`projects/.../endpoints/...`) and routes them via the `google-genai`
+    (`projects/.../locations/.../endpoints/...`) and routes them via the `google-genai`
     library. Claude model strings matching `claude-3-*` or `claude-*-4*` route
     to the `Claude` wrapper class the same way. For a Claude model identifier
     that does not match those patterns, import `Claude` from
