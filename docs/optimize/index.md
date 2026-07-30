@@ -166,8 +166,8 @@ Optimized root agent instructions:
 adk optimize [OPTIONS] AGENT_MODULE_FILE_PATH
 ```
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a
-module by the name `agent`.
+* `AGENT_MODULE_FILE_PATH`: The path to the agent directory (not a file) whose
+`__init__.py` exposes a module by the name `agent`.
 The `agent` module must contain a `root_agent`.
 For an example of a valid setup, examine the
 [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)

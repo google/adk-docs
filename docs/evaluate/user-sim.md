@@ -194,7 +194,8 @@ The below `EvalConfig` shows the default user simulator configuration:
         "thinking_budget": 10240
       }
     },
-    "max_allowed_invocations": 20
+    "max_allowed_invocations": 20,
+    "include_function_calls": false
   }
 }
 ```

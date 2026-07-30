@@ -468,9 +468,9 @@ Choose criteria based on your evaluation goals:
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
 [User Simulation](./user-sim.md).
-The affected criteria are `tool_trajectory_avg_score`, `response_match_score`
-and `final_response_match_v2`. Every other criterion supports user simulation,
-as shown in the support column of [Evaluation Criteria](./criteria.md).
+The affected criteria include `tool_trajectory_avg_score`, `response_match_score`
+and `final_response_match_v2`. Support for user simulation is listed per
+criterion in the support column of [Evaluation Criteria](./criteria.md).
 
 ### User simulation
 
@@ -605,7 +605,7 @@ adk eval \
 
 Here are the details for each command line argument:
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a module by the name "agent". "agent" module contains a `root_agent`.
+* `AGENT_MODULE_FILE_PATH`: The path to the agent directory (not a file) whose `__init__.py` exposes a module by the name "agent". "agent" module contains a `root_agent`.
 * `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK (as created by `adk eval_set create`). You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
 * For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`
