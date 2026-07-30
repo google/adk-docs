@@ -302,9 +302,8 @@ limitations:
 
 ## Next steps
 
-For ideas on how and what to build with ADK Agent Configs, see the yaml-based
-agent definitions in the ADK
-[adk-samples](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
-repository. For detailed information on the syntax and settings supported by
+For ideas on what to build, see the
+[sample agent configs](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
+in the `adk-python` repository. For detailed information on the syntax and settings supported by
 the Agent Config format, see the
 [Agent Config syntax reference](/api-reference/agentconfig/).

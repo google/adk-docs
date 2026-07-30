@@ -47,13 +47,6 @@ You can also specify a pre-built `user_persona` in the following manner:
 
 While the conversation plan dictates what must be accomplished, the persona dictates how the model phrases its queries and reacts to the agent's responses.
 
-!!! tip "Try it in Colab"
-
-    Test this entire workflow yourself in an interactive notebook on
-    [Simulating User Conversations to Dynamically Evaluate ADK Agents](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).
-    You'll define a conversation scenario, run a "dry run" to check the
-    dialogue, and then perform a full evaluation to score the agent's responses.
-
 ## User personas
 
 <div class="language-support-tag">
