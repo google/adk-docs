@@ -123,7 +123,7 @@ When you call `to_a2a()`, ADK automatically handles several setup steps to expos
 * **`agent` (required):** The primary ADK agent instance you want to expose via the A2A protocol.
 * **`host` (optional):** The host used to build the A2A RPC URL advertised in the generated agent card. Defaults to `"localhost"`.
 * **`protocol` (optional):** The protocol used in that same URL. Defaults to `"http"`.
-* **`port` (optional):**  The port number the application will run on.
+* **`port` (optional):** The port used in that same URL. Defaults to `8000`. `to_a2a()` does not bind a port itself, so this must match the port you actually serve on (see the `uvicorn --port` flag below), or the advertised card will point somewhere unreachable.
 * **`push_config_store` (optional):** A custom store implementation for managing A2A push notifications. If not provided, the system defaults to an in-memory store (`InMemoryPushNotificationConfigStore`).
 * **`agent_card` (optional):** An `AgentCard` object or a path to a JSON file. If omitted, ADK automatically generates an agent card from your agent's code.
 * **`runner` (optional):** A pre-built `Runner`. If omitted, a default runner backed by in-memory services is created.

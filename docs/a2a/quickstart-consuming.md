@@ -155,7 +155,7 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
 #### How it works
 
-The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and the URL of the `agent_card`; the `description` field is optional and defaults to an empty string.
+The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and an `agent_card`, which can be an `AgentCard` object, a URL (as in the example below), or a path to a local agent card file; the `description` field is optional and defaults to an empty string.
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
@@ -169,14 +169,13 @@ prime_agent = RemoteA2aAgent(
     agent_card=(
         f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
     ),
-    use_legacy=False,
 )
 
 <...code truncated>
 ```
 
 !!! note "Using the new A2A integration"
-    By setting `use_legacy=False`, the agent will use the new ADK-A2A integration, as it will send the [A2A extension](a2a-extension.md) to the remote agent.
+    `use_legacy` defaults to `True`, so the sample above uses the legacy path. Pass `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
 
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
