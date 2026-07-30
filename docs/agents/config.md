@@ -149,6 +149,10 @@ For more information about the ADK command line options, see the
 
 You can also bypass the CLI and dynamically load and execute a configuration-based agent directly in your code. The utility loads the configuration and instantiates the proper agent class (such as `LlmAgent`) transparently as a `BaseAgent` subclass.
 
+!!! note
+    In Python, `config_agent_utils.from_config` is deprecated: calling it emits
+    a `DeprecationWarning`, and it will be removed in a future version.
+
 === "Python"
 
     ```python
@@ -278,8 +282,13 @@ limitations:
 
 -   **Model support:** The `model:` key only accepts a Gemini model name. To use
     another model, such as `LiteLlm`, construct it in Python and reference it
-    from the `model_code:` key, which takes the fully qualified name of the
-    `BaseLlm` instance. The `model:` and `model_code:` keys cannot both be set.
+    from the `model_code:` key, which takes a mapping whose `name:` sub-key is
+    the fully qualified name of the `BaseLlm` instance:
+
+        model_code:
+          name: my_library.clients.my_litellm
+
+    The `model:` and `model_code:` keys cannot both be set.
 -   **Programming language:** The Agent Config feature currently supports
     Python and Java code for tools and other functionality requiring programming code.
 -   **ADK Tool support:** The following ADK tools are supported by the Agent

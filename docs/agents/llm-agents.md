@@ -36,9 +36,11 @@ First, you need to establish what the agent *is* and what it's *for*.
   inquiries about current billing statements," not just "Billing agent").
 
 - **`model` (Optional in Python):** Specify the underlying LLM that will power
-  this agent's reasoning. This is a string identifier like
-  `"gemini-flash-latest"`. If you omit `model`, the agent inherits the model of
-  its nearest ancestor agent, or falls back to ADK's built-in default model
+  this agent's reasoning. This is either a string identifier like
+  `"gemini-flash-latest"` or a `BaseLlm` instance. If you omit `model`, the
+  agent inherits the model of its nearest `LlmAgent` ancestor — a
+  `SequentialAgent`, `ParallelAgent`, or custom `BaseAgent` parent is skipped
+  over, not consulted — or falls back to ADK's built-in default model
   (see [Configure a default model](#configure-a-default-model)). The choice of
   model impacts the agent's capabilities, cost, and performance. See the
   [Models](/agents/models/) page for available options and considerations.
@@ -125,7 +127,9 @@ tells the agent:
 - The instruction is a string template, you can use the `{var}` syntax to insert
   dynamic values into the instruction.
 - `{var}` is used to insert the value of the state variable named var.
-- `{artifact.var}` is used to insert the text content of the artifact named var.
+- `{artifact.var}` is used to insert the artifact named var. The artifact is
+  loaded as a `google.genai.types.Part` and inserted as `str(part)`, which
+  renders every field of the part, not just its text content.
 - If the state variable or artifact does not exist, the agent will raise an
   error. If you want to ignore the error, you can append a `?` to the variable
   name as in `{var?}`.
@@ -163,7 +167,7 @@ tells the agent:
             1. Identify the country name from the user's query.
             2. Use the \`getCapitalCity\` tool to find the capital.
             3. Respond clearly to the user, stating the capital city.
-            Example Query: "What's the capital of {country}?"
+            Example Query: "What's the capital of France?"
             Example Response: "The capital of France is Paris."
             `,
         // tools will be added next
@@ -192,7 +196,7 @@ tells the agent:
                 1. Identify the country name from the user's query.
                 2. Use the `get_capital_city` tool to find the capital.
                 3. Respond clearly to the user, stating the capital city.
-                Example Query: "What's the capital of {country}?"
+                Example Query: "What's the capital of France?"
                 Example Response: "The capital of France is Paris."
                 """)
             // tools will be added next
@@ -360,8 +364,9 @@ You can adjust how the underlying AI model generates responses using
   to control parameters like `temperature` (randomness), `max_output_tokens`
   (response length), `top_p`, `top_k`, and safety settings. In Python, ADK
   raises a `ValueError` if `generate_content_config` sets `tools`,
-  `system_instruction`, or `response_schema`. Set those through the agent's
-  `tools`, `instruction`, and `output_schema` fields instead.
+  `system_instruction`, `response_schema`, or `http_options.base_url`. Set the
+  first three through the agent's `tools`, `instruction`, and `output_schema`
+  fields instead, and set the base URL on the model or its client.
 
 === "Python"
 
@@ -478,22 +483,26 @@ schema definitions.
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
 
-!!! warning "Warning: Using `output_schema` with `tools`"
+!!! note "Using `output_schema` with `tools`"
 
-    Using `output_schema` with `tools` in the same LLM request is only supported
-    by specific models, including [Gemini
-    3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
-    For other models, workarounds using [function
-    tools](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py))
-    in ADK may not work reliably. In such cases, consider using sub-agents that
-    handle output formatting separately.
+    In Python, ADK supports `output_schema` and `tools` on the same agent: the
+    tools stay available during the agent's thought loop, and the schema is
+    enforced only on the final response. When the model accepts both in a single
+    request — a `LiteLlm` model, or Gemini 2.0 and later on Vertex AI — ADK
+    passes them through directly. Otherwise ADK adds an internal
+    `set_model_response` tool and instructs the model to return its final answer
+    through that tool. See
+    [`_output_schema_processor.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py).
 
-- **`output_key` (Optional):** Provide a string key. If set, the text content of
-  the agent's *final* response will be automatically saved to the session's
-  state dictionary under this key. This is useful for passing results between
-  agents or steps in a workflow.
+- **`output_key` (Optional):** Provide a string key. If set, the agent's *final*
+  response will be automatically saved to the session's state dictionary under
+  this key. This is useful for passing results between agents or steps in a
+  workflow.
     - In Python, this might look like: `session.state[output_key] =
-      agent_response_text`
+      agent_response_text`. If `output_schema` is also set, ADK parses the
+      response against the schema first and stores the parsed value — a `dict`
+      for a `BaseModel` schema, a `list[dict]` for `list[BaseModel]` — rather
+      than the response text.
     - In Java: `session.state().put(outputKey, agentResponseText)`
     - In Golang, within a callback handler: `ctx.State().Set(output_key,
       agentResponseText)`
@@ -513,7 +522,7 @@ schema definitions.
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
         output_schema=CapitalOutput, # Enforce JSON output
         output_key="found_capital"  # Store result in state['found_capital']
-        # tools=[...] may be combined with output_schema; see the warning above
+        # tools=[...] may be combined with output_schema; see the note above
     )
     ```
 
@@ -541,7 +550,6 @@ schema definitions.
         instruction: `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
         outputSchema: CapitalOutputSchema, // Enforce JSON output
         outputKey: 'found_capital', // Store result in state['found_capital']
-        // Cannot use tools effectively here
     });
     ```
 
@@ -578,7 +586,6 @@ schema definitions.
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
             .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
-            // Cannot use tools(getCapitalCity) effectively here
             .build();
     ```
 
@@ -838,7 +845,7 @@ def call_agent(query):
 
     for event in events:
         print(f"\nDEBUG EVENT: {event}\n")
-        if event.is_final_response() and event.content:
+        if event.is_final_response() and event.content and event.content.parts:
             final_answer = event.content.parts[0].text.strip()
             print("\n🟢 FINAL ANSWER\n", final_answer, "\n")
 
