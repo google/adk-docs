@@ -45,6 +45,17 @@ root_agent = Agent(
     name="slack_agent",
     instruction="You are a helpful team assistant running on Slack.",
 )
+
+#Wire it up to Slack over Socket Mode
+runner = Runner(
+    app_name="slack_agent",
+    agent=root_agent,
+    session_service=InMemorySessionService(),
+)
+slack_app = AsyncApp(token=os.environ["SLACK_BOT_TOKEN"])
+slack_runner = SlackRunner(runner, slack_app)
+
+asyncio.run(slack_runner.start(os.environ["SLACK_APP_TOKEN"]))
 ```
 
 ## Available tools
