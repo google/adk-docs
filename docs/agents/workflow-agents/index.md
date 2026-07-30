@@ -21,8 +21,8 @@ how and when other agents run, defining the control flow of a process.
     and capability to evolve your agent workflows over time.
 
     In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
-    deprecated: constructing one emits a `DeprecationWarning`, and the classes
-    will be removed in a future release.
+    deprecated in favor of `Workflow`: constructing one emits a
+    `DeprecationWarning`, and the classes will be removed in a future release.
 
 <img src="/assets/template_workflows.svg" alt="Template agent workflows in ADK">
 

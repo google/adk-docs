@@ -277,12 +277,25 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
     ```python
     # Conceptual Example: Defining Hierarchy
+    from typing import AsyncGenerator
+
     from google.adk.agents import LlmAgent, BaseAgent
+    from google.adk.agents.invocation_context import InvocationContext
+    from google.adk.events import Event
+
+
+    # A custom non-LLM agent must implement _run_async_impl; instantiating
+    # BaseAgent directly raises NotImplementedError when it runs.
+    class TaskExecutor(BaseAgent):
+        async def _run_async_impl(
+            self, ctx: InvocationContext
+        ) -> AsyncGenerator[Event, None]:
+            yield Event(author=self.name)
 
 
     # Define individual agents
     greeter = LlmAgent(name="Greeter", model="gemini-flash-latest")
-    task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
+    task_doer = TaskExecutor(name="TaskExecutor") # Custom non-LLM agent
 
 
     # Create parent agent and assign children via sub_agents
@@ -393,6 +406,12 @@ The foundation for structuring multi-agent systems is the parent-child relations
 ### Workflow agents as orchestrators
 
 ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
+
+!!! note "Deprecated in Python"
+
+    In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
+    deprecated in favor of `Workflow`: constructing one emits a
+    `DeprecationWarning`, and the classes will be removed in a future release.
 
 * **[`SequentialAgent`](workflow-agents/sequential-agents.md):** Executes its `sub_agents` one after another in the order they are listed.
     * **Context:** Passes the *same* [`InvocationContext`](../runtime/index.md) sequentially, allowing agents to easily pass results via shared state.
@@ -663,7 +682,7 @@ Agents within a system often need to exchange data or trigger actions in one ano
 
 The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](/sessions/session/) object via the `InvocationContext`) to communicate passively.
 
-* **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). State changes are tracked via [`CallbackContext`](../callbacks/index.md).
+* **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). In Python, [`CallbackContext`](../callbacks/index.md) and `ToolContext` are the same delta-aware context class, and every write to `context.state` is recorded as a `state_delta` on the event the agent emits.
 * **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.
 * **Nature:** Asynchronous, passive communication. Ideal for pipelines orchestrated by `SequentialAgent` or passing data across `LoopAgent` iterations.
 * **See Also:** [State Management](../sessions/state.md)
@@ -870,7 +889,6 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     from google.adk.agents import LlmAgent, BaseAgent
     from google.adk.tools import agent_tool
     from google.genai import types
-    from pydantic import BaseModel
 
 
     # Define a target agent (could be LlmAgent or custom BaseAgent)
@@ -1157,7 +1175,7 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 === "Python"
 
     ```python
-    GEMINI_2_FLASH = "gemini-flash-latest" # Define model constant
+    GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
 

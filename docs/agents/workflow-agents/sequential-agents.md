@@ -22,8 +22,9 @@ object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
-    In Python, `SequentialAgent` is deprecated: constructing one emits a
-    `DeprecationWarning`, and the class will be removed in a future release.
+    In Python, `SequentialAgent` is deprecated in favor of `Workflow`:
+    constructing one emits a `DeprecationWarning`, and the class will be removed
+    in a future release.
 
 ### Example scenario
 
@@ -59,7 +60,7 @@ Using a `SequentialAgent` makes it simple to define this exection flow, as shown
 in the following code snippet:
 
 ```py
-SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
+SequentialAgent(name="CodePipelineAgent", sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
 This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/#data-handling)**.
