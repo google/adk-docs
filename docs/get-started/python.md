@@ -50,6 +50,11 @@ Run the `adk create` command to start a new agent project.
 adk create my_agent
 ```
 
+The command is interactive: it prompts you to pick a model for the root agent
+and, for a Gemini model, which backend to authenticate against (Google AI,
+Vertex AI, or signing in with Google). Pass `--model` and `--api_key` (or
+`--project` and `--region`) to answer those up front instead.
+
 ### Explore the agent project
 
 The created agent project has the following structure, with the `agent.py`
@@ -59,6 +64,7 @@ file containing the main control code for the agent.
 my_agent/
     agent.py      # main agent code
     .env          # API keys or project IDs
+    .gitignore    # keeps .env out of version control
     __init__.py
 ```
 

@@ -181,7 +181,7 @@ Stop `adk web` by pressing `Ctrl-C` on the console.
 
 ### Note on ADK Streaming
 
-The following features will be supported in the future versions of the ADK Streaming: Callback, LongRunningTool, ExampleTool, and Shell agent (e.g. SequentialAgent).
+Model callbacks (`before_model_callback` and `after_model_callback`) are not invoked on the streaming path; ADK only runs them around the non-live `generate_content` call. Agent callbacks (`before_agent_callback`, `after_agent_callback`) and tool callbacks (`before_tool_callback`, `after_tool_callback`) do run while streaming, as do `LongRunningFunctionTool`, `ExampleTool`, and workflow agents such as `SequentialAgent`.
 
 Congratulations\! You've successfully created and interacted with your first Streaming agent using ADK\!
 
