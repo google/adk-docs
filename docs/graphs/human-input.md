@@ -221,8 +221,10 @@ specific tool call.
     Wrap the tool with ***FunctionTool*** and set `require_confirmation=True`
     for a static yes/no approval before the tool runs, or call
     `tool_context.request_confirmation()` from inside the tool for a custom
-    hint message. Guard that call with `tool_context.tool_confirmation` so the
-    tool asks once and proceeds after the user approves:
+    hint message. ADK only rejects the call for you on the
+    `require_confirmation=True` path, so a tool that asks for its own
+    confirmation must check both: `tool_context.tool_confirmation` to ask
+    once, then `tool_confirmation.confirmed` to handle a rejection:
 
     ```python
     from google.adk.agents import Agent
@@ -239,6 +241,8 @@ specific tool call.
                hint=f"Approve a refund of {amount}?"
            )
            return "Waiting for approval."
+       elif not tool_context.tool_confirmation.confirmed:
+           return "Refund rejected by user."
        ...
 
     root_agent = Agent(
