@@ -67,8 +67,11 @@ ADK project's App object, as shown below:
     ```
 
 
-With this configuration, if any tool called by an agent returns an error, the
-request is updated and tried again, up to a maximum of 3 attempts, per tool.
+With this configuration, if any tool called by an agent *raises* an exception,
+the request is updated and tried again, up to 3 retries per tool, for a maximum
+of 4 attempts. A tool that returns an error value instead of raising is not
+retried by default; see [Advanced
+configuration](#advanced-configuration) for how to opt into that.
 
 ## Configuration settings
 
@@ -79,7 +82,9 @@ The Reflect and Retry Plugin has the following configuration options:
 *   **`throw_exception_if_retry_exceeded`**: (optional) If set to `False`, the
     system does not raise an error if the final retry attempt fails. Default
     value is `True`.
-*   **`tracking_scope`**: (optional)
+*   **`tracking_scope`**: (optional) A `TrackingScope` value, imported from
+    `google.adk.plugins.reflect_retry_tool_plugin` (it is not re-exported from
+    `google.adk.plugins`):
     *   **`TrackingScope.INVOCATION`**: Track tool failures across a single
         invocation and user. This value is the default.
     *   **`TrackingScope.GLOBAL`**: Track tool failures across all invocations

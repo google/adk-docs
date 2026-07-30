@@ -137,10 +137,10 @@ agent using the ADK CLI.
 
 === "Python"
 
-    If you are using the `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
+    If you are using the Vertex AI SDK `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
 
     ```python
-    from google.adk.apps import AdkApp
+    from vertexai.agent_engines import AdkApp
 
     adk_app = AdkApp(
         agent=root_agent,
@@ -155,14 +155,14 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
 === "Python"
 
     ```python
-    from google.adk import telemetry
     from google.adk.telemetry import google_cloud
+    from google.adk.telemetry.setup import maybe_set_otel_providers
 
     # Get GCP exporters configuration
     hooks = google_cloud.get_gcp_exporters(enable_cloud_tracing=True)
 
     # Initialize and set global OTel providers
-    telemetry.maybe_set_otel_providers(otel_hooks_to_setup=[hooks])
+    maybe_set_otel_providers(otel_hooks_to_setup=[hooks])
     ```
 
 === "TypeScript"

@@ -175,21 +175,21 @@ The GCS integration split the capabilities into two main toolsets:
 
 Tool | Description
 ---- | -----------
-`gcs_get_bucket` | Get metadata information about a GCS bucket.
-`gcs_list_objects` | List object names in a GCS bucket. Supports optional prefix filtering and pagination.
-`gcs_get_object_metadata` | Get metadata properties of a specific GCS object (blob).
-`gcs_create_object` | Create a new object (blob) in a bucket from in-memory string data or a local file upload.
-`gcs_get_object_data` | Get content of a GCS object as a string, or download it directly to a local file.
-`gcs_delete_objects` | Delete multiple GCS objects (blobs) from a bucket.
+`get_bucket` | Get metadata information about a GCS bucket.
+`list_objects` | List object names in a GCS bucket. Supports optional prefix filtering and pagination.
+`get_object_metadata` | Get metadata properties of a specific GCS object (blob).
+`create_object` | Create a new object (blob) in a bucket from in-memory string data or a local file upload. Requires `Capabilities.READ_WRITE`.
+`get_object_data` | Get content of a GCS object as a string, or download it directly to a local file.
+`delete_objects` | Delete multiple GCS objects (blobs) from a bucket. Requires `Capabilities.READ_WRITE`.
 
 ### GCS Admin Tools (`GCSAdminToolset`)
 
 Tool | Description
 ---- | -----------
-`gcs_list_buckets` | List GCS bucket names in a Google Cloud project.
-`gcs_create_bucket` | Create a new GCS bucket in a specific location.
-`gcs_update_bucket` | Update properties of a GCS bucket (e.g. versioning or uniform bucket-level access).
-`gcs_delete_bucket` | Delete a GCS bucket (bucket must be empty first).
+`list_buckets` | List GCS bucket names in a Google Cloud project.
+`create_bucket` | Create a new GCS bucket in a specific location. Requires `Capabilities.READ_WRITE`.
+`update_bucket` | Update properties of a GCS bucket (e.g. versioning or uniform bucket-level access). Requires `Capabilities.READ_WRITE`.
+`delete_bucket` | Delete a GCS bucket (bucket must be empty first). Requires `Capabilities.READ_WRITE`.
 
 ## Sample agents
 
