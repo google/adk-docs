@@ -78,7 +78,7 @@ For example, a query tool can be designed to expect a policy to be read from the
 
     ```py
     # Conceptual example: Setting policy data intended for tool context
-    # In a real ADK app, this might be set in InvocationContext.session.state
+    # In a real ADK app, this might be written to session state from a callback,
     # or passed during tool initialization, then retrieved via ToolContext.
 
     policy = {} # Assuming policy is a dictionary
@@ -87,8 +87,10 @@ For example, a query tool can be designed to expect a policy to be read from the
 
     # Conceptual: Storing policy where the tool can access it via ToolContext later.
     # This specific line might look different in practice.
-    # For example, storing in session state:
-    invocation_context.session.state["query_tool_policy"] = policy
+    # For example, storing in session state from a callback. Write through the
+    # context's `state`, not `session.state` directly: only the context records
+    # the change in the event's state_delta so the SessionService persists it.
+    callback_context.state["query_tool_policy"] = policy
 
     # Or maybe passing during tool init:
     query_tool = QueryTool(policy=policy)

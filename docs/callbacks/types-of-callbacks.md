@@ -42,6 +42,10 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     | `after_tool_callback` | `tool`, `args`, `tool_context`, `tool_response` |
     | `on_tool_error_callback` | `tool`, `args`, `tool_context`, `error` |
 
+    Only `before_agent_callback` and `after_agent_callback` are fields on every
+    `BaseAgent`. The six model and tool callbacks in this table are fields on
+    `LlmAgent` only.
+
 ??? note "Python: `async` callbacks and lists of callbacks"
 
     In Python, a callback may be a plain `def` or an `async def`. ADK awaits
@@ -49,9 +53,14 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
     Every callback field also accepts a list of functions instead of a single
     function. ADK invokes them in the order listed and stops at the first one
-    that returns a truthy value: that value becomes the callback result, and
-    the remaining callbacks are skipped. A callback that returns `None`, or
-    another falsy value such as an empty `dict`, lets the next one run.
+    that returns a result: that value becomes the callback result, and the
+    remaining callbacks are skipped. What counts as a result differs by family.
+    The six `before_`/`after_` agent, model and tool hooks stop only on a
+    *truthy* value, so a callback returning `None`, or another falsy value such
+    as an empty `dict`, lets the next one run. `on_model_error_callback` and
+    `on_tool_error_callback` stop on any value that is not `None`, so an empty
+    `dict` from an `on_tool_error_callback` ends the chain, suppresses the
+    exception, and becomes the tool result.
 
     ```python
     root_agent = LlmAgent(
@@ -110,7 +119,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ### After Agent Callback
 
-**When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content or if `end_invocation` was set during the agent's run.
+**When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content. In Python, setting `end_invocation` during the agent's run also skips it, but only on the `run_async` path; `run_live` does not re-check `end_invocation` after `_run_live_impl` finishes, so the callback still runs there.
 
 **Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, or modifying final state.
 
@@ -155,7 +164,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 *   **Expected Outcome:** You'll see two scenarios:
     1. In the session *without* the `add_concluding_note: True` state, the callback allows the agent's original output ("Processing complete!") to be used.
     2. In the session *with* that state flag, the callback intercepts the agent's original output and appends it with its own message ("Concluding note added...").
-* **Understanding Callbacks:** This highlights how `after_` callbacks allow **post-processing** or **modification**. You can inspect the result of a step (the agent's run) and decide whether to let it pass through, change it, or completely replace it based on your logic.
+* **Understanding Callbacks:** This highlights how `after_` callbacks allow **post-processing**. You can inspect the result of a step and decide whether to let it pass through or add to it. As the note above says, an `after_agent_callback` cannot replace the agent's output: the content it returns is emitted as an *additional* event after the agent's own events. `after_model_callback` and `after_tool_callback` do replace the value they are given.
 
 ## LLM Interaction Callbacks
 
@@ -251,6 +260,14 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the tool's `run_async` method is executed with the (potentially modified) `args`.
 2. If a dictionary (or `Map` in Java) is returned, the tool's `run_async` method is **skipped**. The returned dictionary is used directly as the result of the tool call. This is useful for caching or overriding tool behavior.
 
+!!! note "Python: only `None` lets the tool run"
+
+    ADK compares the returned value against `None`, so an empty `dict` counts
+    as an override: the tool is skipped and `{}` becomes the tool result.
+    Return `None`, not `{}`, when you want the tool to execute. With a list of
+    callbacks this applies to the last value produced, because an empty `dict`
+    does not stop the chain and is discarded if a later callback returns
+    something else.
 
 ??? "Code"
     === "Python"
@@ -296,6 +313,11 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
     callback has run, so a tool annotated `-> str` hands your
     `after_tool_callback` a `str`, not a `dict`. Check the type before calling
     dictionary methods on it.
+
+!!! note "Python: an empty `dict` still replaces the response"
+
+    ADK compares the returned value against `None`, so returning `{}` replaces
+    the tool response with `{}`. Return `None` to keep the original.
 
 ??? "Code"
     === "Python"

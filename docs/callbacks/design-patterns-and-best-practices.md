@@ -168,6 +168,6 @@ If a callback performs actions with external side effects (e.g., incrementing an
 - Add clear docstrings explaining their purpose, when they run, and any side effects (especially state modifications)
 
 **Use Correct Context Type:**
-Always use the specific context type named for the hook you are implementing (`CallbackContext` for agent/model, `ToolContext` for tools). In Python both names are aliases of the same `Context` class and expose identical methods, but matching the name to the hook keeps your code readable and portable across SDK languages.
+Use the context type your SDK documents for the hook you are implementing. In Python, `CallbackContext` and `ToolContext` are aliases of the same `Context` class and expose identical methods, so prefer `Context` for new code; the older names are kept for backward compatibility and you will still meet them in existing code. See [Context objects](../context/index.md) for the full set of context types.
 
 By applying these patterns and best practices, you can effectively use callbacks to create more robust, observable, and customized agent behaviors in ADK.
