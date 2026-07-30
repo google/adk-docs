@@ -236,7 +236,6 @@ food_tour_app/
 ├── __init__.py
 └── agent.py
 ```
-**Full project can be found [here](https://github.com/google/adk-samples/tree/main/python/agents/gemma-food-tour-guide)**
 
 `agent.py`
 ```python
