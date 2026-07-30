@@ -45,8 +45,9 @@ correctly.
 
     A parameter is considered **required** if it has a type hint but **no
     default value**. The LLM must provide a value for this argument when it
-    calls the tool. The parameter's description is taken from the function's
-    docstring.
+    calls the tool. ADK does not emit a per-parameter description: the whole
+    docstring becomes the tool's single top-level `description`, so describe
+    each parameter there.
 
     ???+ "Example: Required Parameters"
         ```python
@@ -716,7 +717,7 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:call_reimbursement_tool"
     ```
 
-??? "Python complete example: File Processing Simulation"
+??? "Python complete example: Reimbursement Approval"
 
     ```python
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
@@ -727,8 +728,9 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
 - **`LongRunningFunctionTool`**: Wraps the supplied method/function and marks it
   as long running. The framework calls the function once, like any other
   function tool, and does not consume values yielded from a generator.
-- **Agent instruction**: Directs the LLM to use the tool and understand the
-  incoming FunctionResponse stream (progress vs. completion) for user updates.
+- **Agent instruction**: Directs the LLM to use the tool and to interpret the
+  FunctionResponses the agent client sends afterwards (progress vs. completion)
+  for user updates.
 - **Initial return**: Whatever the function returns is sent as the first
   FunctionResponse, and a function that returns nothing emits none. Every later
   progress or completion update is a FunctionResponse sent by the agent client.

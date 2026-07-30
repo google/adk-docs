@@ -118,7 +118,9 @@ methods and managing credential data:
 *   ***BaseCredentialService***: Controls *where* ADK stores a credential once
     it has been exchanged. Pass an implementation to the runner with
     `Runner(credential_service=...)`; ADK provides `InMemoryCredentialService`
-    and `SessionStateCredentialService` in `google.adk.auth.credential_service`.
+    in `google.adk.auth.credential_service.in_memory_credential_service` and
+    `SessionStateCredentialService` in
+    `google.adk.auth.credential_service.session_state_credential_service`.
     This component is experimental and may change in future releases.
 
 The general authentication flow involves providing these details when
@@ -642,7 +644,7 @@ Your function signature *must* include [`tool_context: ToolContext`](../tools-cu
 from google.adk.tools import FunctionTool, ToolContext
 from typing import Dict
 
-def my_authenticated_tool_function(param1: str, ..., tool_context: ToolContext) -> dict:
+def my_authenticated_tool_function(param1: str, tool_context: ToolContext) -> dict:
     # ... your logic ...
     pass
 
@@ -693,7 +695,7 @@ else:
 
 **Step 2: Check for Auth Response from Client**
 
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.
+* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response(auth_config)`.
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py
@@ -727,11 +729,12 @@ If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the 
 ```py
 # Use auth_scheme and auth_credential configured in the tool.
 
-  tool_context.request_credential(AuthConfig(
-    auth_scheme=auth_scheme,
-    raw_auth_credential=auth_credential,
-  ))
-  return {'pending': True, 'message': 'Awaiting user authentication.'}
+def my_authenticated_tool_function(tool_context: ToolContext) -> dict:
+    tool_context.request_credential(AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    ))
+    return {'pending': True, 'message': 'Awaiting user authentication.'}
 
 # By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
 ```
