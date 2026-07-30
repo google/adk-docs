@@ -263,10 +263,10 @@ of the agent.
 ### Register Plugin class
 
 Integrate your Plugin class by registering it during your agent initialization
-as part of your `Runner` class, using the `plugins` parameter. You can specify
-multiple Plugins with this parameter. The following code example shows how to
-register the `CountInvocationPlugin` plugin defined in the previous section with
-a simple ADK agent.
+as part of your `Runner` class (in Python, your `App` object), using the
+`plugins` parameter. You can specify multiple Plugins with this parameter. The
+following code example shows how to register the `CountInvocationPlugin` plugin
+defined in the previous section with a simple ADK agent.
 
 !!! note "Python: prefer `App(plugins=...)` over `Runner(plugins=...)`"
 
@@ -281,6 +281,7 @@ a simple ADK agent.
     ```py
     from google.adk.runners import InMemoryRunner
     from google.adk import Agent
+    from google.adk.apps import App
     from google.adk.tools.tool_context import ToolContext
     from google.genai import types
     import asyncio
@@ -300,16 +301,18 @@ a simple ADK agent.
         tools=[hello_world],
     )
 
+    app = App(
+        name='test_app_with_plugin',
+        root_agent=root_agent,
+
+        # Add your plugin here. You can add multiple plugins.
+        plugins=[CountInvocationPlugin()],
+    )
+
     async def main():
         """Main entry point for the agent."""
         prompt = 'hello world'
-        runner = InMemoryRunner(
-            agent=root_agent,
-            app_name='test_app_with_plugin',
-
-            # Add your plugin here. You can add multiple plugins.
-            plugins=[CountInvocationPlugin()],
-        )
+        runner = InMemoryRunner(app=app)
 
         # The rest is the same as starting a regular ADK runner.
         session = await runner.session_service.create_session(
@@ -721,9 +724,10 @@ state of a single agent.</td>
 You define when a Plugin is called with the callback functions to define in
 your Plugin class. Callbacks are available when a user message is received,
 before and after an `Runner`, `Agent`, `Model`, or `Tool` is called, for
-`Events`, and when a `Model`, or `Tool` error occurs. These callbacks include,
-and take precedence over, the any callbacks defined within your Agent, Model,
-and Tool classes.
+`Events`, and when a `Model`, or `Tool` error occurs. In Python, error
+callbacks also run when an `Agent` raises an exception and when the run itself
+fails. These callbacks include, and take precedence over, the any callbacks
+defined within your Agent, Model, and Tool classes.
 
 The following diagram illustrates callback points where you can attach and run
 Plugin functionality during your agents workflow:
@@ -740,6 +744,7 @@ more detail.
 -   [Agent execution callbacks](#agent-execution-callbacks)
 -   [Model callbacks](#model-callbacks)
 -   [Tool callbacks](#tool-callbacks)
+-   [Event callbacks](#event-callbacks)
 -   [Runner end callbacks](#runner-end-callbacks)
 
 ### User Message callbacks
@@ -811,7 +816,12 @@ logic begins.
 -   **Purpose:** Global setup or initialization before the invocation runs.
 -   **Flow Control:** Return a `types.Content` object to **halt execution**:
     the `Runner` exits early and ends the run with that content as the result.
-    Return `None` to proceed normally.
+    Return `None` to proceed normally. In Python, `run_async()` honors this
+    return value only when the root agent is a `BaseAgent` that is not an
+    `LlmAgent`. When the root agent is an `LlmAgent` or a `Workflow`, the
+    returned content is ignored and the run proceeds as if you had returned
+    `None`; use `before_agent_callback` or `before_model_callback` to
+    short-circuit those runs instead.
 
 The following code example shows the basic syntax of this callback:
 
@@ -858,7 +868,7 @@ before the agent's main work begins. The main work encompasses the agent's
 entire process for handling the request, which could involve calling models or
 tools. After the agent has finished all its steps and prepared a result, the
 `after_agent_callback` runs. In Python, if the agent's run raises an exception,
-`on_agent_error_callback(agent, callback_context, error)` runs instead of
+`on_agent_error_callback(*, agent, callback_context, error)` runs instead of
 `after_agent_callback`. That callback only observes the failure: its return
 value is ignored and the original exception is still raised.
 
@@ -1139,7 +1149,7 @@ The following code example shows the basic syntax of this callback:
 
 In Python, ADK notifies your Plugin of two more end-of-life events:
 
--   **`on_run_error_callback(invocation_context, error)`**: Runs instead of
+-   **`on_run_error_callback(*, invocation_context, error)`**: Runs instead of
     `after_run_callback` when the run fails with an unhandled exception. This
     callback only observes the failure: its return value is ignored and the
     original exception is still raised.
