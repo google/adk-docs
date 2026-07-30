@@ -94,7 +94,7 @@ The `run_live()` method yields a stream of `Event` objects in real-time as the a
 | **[Metadata Events](#metadata-events)** | Token usage information (`prompt_token_count`, `candidates_token_count`, `total_token_count`) for cost monitoring and quota tracking |
 | **[Transcription Events](#transcription-events)** | Speech-to-text for user input (`input_transcription`) and model output (`output_transcription`) when transcription is enabled in `RunConfig` |
 | **[Tool Call Events](#tool-call-events)** | Function call requests from the model; ADK handles execution automatically |
-| **[Error Events](#error-events)** | Model errors and connection issues with `error_code` and `error_message` fields |
+| **[Error Events](#error-events)** | Not an event type: model and connection failures are raised out of the `async for` loop rather than yielded |
 
 !!! note "Source Reference"
 
@@ -137,7 +137,7 @@ These events are persisted to the ADK `Session` and available in session history
 - **Usage Metadata Events**: Always saved to track token consumption across the ADK `Session`
 - **Non-Partial Transcription Events**: Final transcriptions are saved; partial transcriptions are not persisted
 - **Function Call and Response Events**: Always saved to maintain tool execution history
-- **Other Control Events**: Most control events (e.g., `turn_complete`, `finish_reason`) are saved
+- **Other Control Events**: Most control events (e.g., `turn_complete`, `interrupted`) are saved
 
 **Events NOT Saved to the ADK `Session`:**
 
@@ -184,8 +184,8 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 **For debugging and diagnostics:**
 - `usage_metadata`: Token counts and billing information
 - `cache_metadata`: Context cache hit/miss statistics
-- `finish_reason`: Why the model stopped generating (e.g., STOP, MAX_TOKENS, SAFETY)
-- `error_code` / `error_message`: Failure diagnostics
+- `turn_complete_reason`: Why the Live API ended the turn, when it reports one (e.g., RESPONSE_REJECTED, BLOCKLIST); `None` on a normal turn
+- `finish_reason` / `error_code` / `error_message`: Inherited from `LlmResponse` and populated on the `run_async()` path only; always `None` under `run_live()`
 
 !!! note "Author Semantics"
 
@@ -318,7 +318,7 @@ async for event in runner.run_live(..., run_config=run_config):
         if part.inline_data:
             # Audio event structure:
             # part.inline_data.data: bytes (raw PCM audio)
-            # part.inline_data.mime_type: str (e.g., "audio/pcm")
+            # part.inline_data.mime_type: str (e.g., "audio/pcm;rate=24000")
             audio_data = part.inline_data.data
             mime_type = part.inline_data.mime_type
 
@@ -458,203 +458,84 @@ ADK processes tool calls automatically—you typically don't need to handle thes
 
 ### Error Events
 
-Production applications need robust error handling to gracefully handle model errors and connection issues. ADK surfaces errors through the `error_code` and `error_message` fields:
+Failures in a live session are raised, not yielded. `run_live()` does not emit an error event—when the live connection fails, the exception propagates out of the `async for` loop. Error handling therefore belongs in a `try`/`except` around the loop, not in an `if` inside it.
+
+!!! warning "`event.error_code` is not set by `run_live()`"
+
+    `Event` inherits `error_code` and `error_message` from `LlmResponse`, so both attributes exist on every live event—but nothing on the `run_live()` path assigns them. `GeminiLlmConnection.receive()` never sets them, and `_postprocess_live()` only reads them. They are populated on the `run_async()` path only, where a blocking `finish_reason` or `prompt_feedback.block_reason` is mapped onto them. An `if event.error_code:` check inside a `run_live()` loop never fires.
 
 **Usage:**
 
 ```python
 import logging
 
+from google.genai import errors
+from websockets.exceptions import ConnectionClosed
+
 logger = logging.getLogger(__name__)
 
 try:
     async for event in runner.run_live(...):
-        # Handle errors from the model or connection
-        if event.error_code:
-            logger.error(f"Model error: {event.error_code} - {event.error_message}")
-
-            # Send error notification to client
-            await websocket.send_json({
-                "type": "error",
-                "code": event.error_code,
-                "message": event.error_message
-            })
-
-            # Decide whether to continue or break based on error severity
-            if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
-                # Content policy violations - usually cannot retry
-                break  # Terminal error - exit loop
-            elif event.error_code == "MAX_TOKENS":
-                # Token limit reached - may need to adjust configuration
-                break
-            # For other errors, you might continue or implement retry logic
-            continue  # Transient error - keep processing
-
-        # Normal event processing only if no error
         if event.content and event.content.parts:
             # ... handle content
             pass
+except ConnectionClosed as e:
+    # The WebSocket dropped and ADK could not resume the session
+    logger.error(f"Live connection closed: {e}")
+    await websocket.send_json({"type": "error", "message": "Connection lost"})
+except errors.APIError as e:
+    # The Live API rejected or failed the request (auth, quota, bad model, ...)
+    logger.error(f"Live API error {e.code}: {e.message}")
+    await websocket.send_json({"type": "error", "message": "Service error"})
 finally:
     queue.close()  # Always cleanup connection
 ```
 
-!!! note
+Whether the loop finishes naturally, breaks, or raises, `finally` ensures the connection closes properly.
 
-    The above example shows the basic structure for checking `error_code` and `error_message`. For production-ready error handling with user notifications, retry logic, and context logging, see the real-world scenarios below.
+**What ADK retries before the exception reaches you:**
 
-**When to use `break` vs `continue`:**
+ADK's live flow retries a dropped connection itself, but only when session resumption is enabled and a handle has already been cached:
 
-The key decision is: *Can the model's response continue meaningfully?*
+| Failure | ADK behavior |
+|---------|--------------|
+| `ConnectionClosed` / `ConnectionClosedOK`, resumption handle cached | Reconnects with the handle, up to 5 times, then re-raises (the counter resets on every successful connect) |
+| `ConnectionClosed` / `ConnectionClosedOK`, no handle | Re-raised immediately |
+| `errors.APIError` with close code 1000, 1006 or 1011, resumption handle cached | Treated as a recoverable drop and reconnected the same way |
+| Any other `errors.APIError` (including 1000/1006/1011 with no handle) | Re-raised immediately |
+| Any other exception | Logged and re-raised |
 
-**Scenario 1: Content Policy Violation (Use `break`)**
+!!! note "Learn More"
 
-You're building a customer support chatbot. A user asks an inappropriate question that triggers a SAFETY filter:
+    To let ADK ride out transient drops instead of raising, enable session resumption. See [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption).
 
-**Example:**
+**Reading why a turn ended:**
 
-```python
-if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
-    # Model has stopped generating - continuation is impossible
-    await websocket.send_json({
-        "type": "error",
-        "message": "I can't help with that request. Please ask something else."
-    })
-    break  # Exit loop - model won't send more events for this turn
-```
+A model-side termination is not a transport error and does not raise. It arrives on the event itself:
 
-**Why `break`?** The model has terminated its response. No more events will come for this turn. Continuing would just waste resources waiting for events that won't arrive.
-
----
-
-**Scenario 2: Network Hiccup During Streaming (Use `continue`)**
-
-You're building a voice transcription service. Midway through transcribing, there's a brief network glitch:
-
-**Example:**
-
-```python
-if event.error_code == "UNAVAILABLE":
-    # Temporary network issue
-    logger.warning(f"Network hiccup: {event.error_message}")
-    # Don't notify user for brief transient issues that may self-resolve
-    continue  # Keep listening - model may recover and continue
-```
-
-**Why `continue`?** This is a transient error. The connection might recover, and the model may continue streaming the transcription. Breaking would prematurely end a potentially recoverable stream.
-
-!!! note "User Notifications"
-
-    For brief transient errors (lasting <1 second), don't notify the user—they won't notice the hiccup. But if the error persists or impacts the user experience (e.g., streaming pauses for >3 seconds), notify them gracefully: "Experiencing connection issues, retrying..."
-
----
-
-**Scenario 3: Token Limit Reached (Use `break`)**
-
-You're generating a long-form article and hit the maximum token limit:
-
-**Example:**
-
-```python
-if event.error_code == "MAX_TOKENS":
-    # Model has reached output limit
-    await websocket.send_json({
-        "type": "complete",
-        "message": "Response reached maximum length",
-        "truncated": True
-    })
-    break  # Model has finished - no more tokens will be generated
-```
-
-**Why `break`?** The model has reached its output limit and stopped. Continuing won't yield more tokens.
-
----
-
-**Scenario 4: Rate Limit with Retry Logic (Use `continue` with backoff)**
-
-You're running a high-traffic application that occasionally hits rate limits:
-
-**Example:**
-
-```python
-retry_count = 0
-max_retries = 3
-
-async for event in runner.run_live(...):
-    if event.error_code == "RESOURCE_EXHAUSTED":
-        retry_count += 1
-        if retry_count > max_retries:
-            logger.error("Max retries exceeded")
-            break  # Give up after multiple failures
-
-        # Wait and retry
-        await asyncio.sleep(2 ** retry_count)  # Exponential backoff
-        continue  # Keep listening - rate limit may clear
-
-    # Reset counter on successful event
-    retry_count = 0
-```
-
-**Why `continue` (initially)?** Rate limits are often temporary. With exponential backoff, the stream may recover. But after multiple failures, `break` to avoid infinite waiting.
-
----
-
-**Decision Framework:**
-
-| Error Type | Action | Reason |
-|------------|--------|--------|
-| `SAFETY`, `PROHIBITED_CONTENT` | `break` | Model terminated response |
-| `MAX_TOKENS` | `break` | Model finished generating |
-| `UNAVAILABLE`, `DEADLINE_EXCEEDED` | `continue` | Transient network/timeout issue |
-| `RESOURCE_EXHAUSTED` (rate limit) | `continue` with retry logic | May recover after brief wait |
-| Unknown errors | `continue` (with logging) | Err on side of caution |
-
-**Critical: Always use `finally` for cleanup**
+- `event.turn_complete_reason`: a `types.TurnCompleteReason` carried on the `turn_complete=True` event when the Live API reports why generation stopped (for example `RESPONSE_REJECTED`, `PROHIBITED_INPUT_CONTENT`, `BLOCKLIST`, `GENERATED_CONTENT_SAFETY`, `MALFORMED_FUNCTION_CALL`). It is `None` when the turn ended normally.
+- `event.interrupted`: `True` when the user barged in and the model stopped mid-response. See [Handling `interrupted` Flag](#handling-interrupted-flag).
 
 **Usage:**
 
 ```python
-try:
-    async for event in runner.run_live(...):
-        # ... error handling ...
-finally:
-    queue.close()  # Cleanup runs whether you break or finish normally
+async for event in runner.run_live(...):
+    if event.turn_complete and event.turn_complete_reason:
+        logger.warning(f"Turn ended early: {event.turn_complete_reason}")
+        await websocket.send_json({
+            "type": "turn_ended",
+            "reason": event.turn_complete_reason.name
+        })
 ```
-
-Whether you `break` or the loop finishes naturally, `finally` ensures the connection closes properly.
-
-**Error Code Reference:**
-
-ADK error codes come from the underlying Gemini API. Here are the most common error codes you'll encounter:
-
-| Error Code | Category | Description | Recommended Action |
-|------------|----------|-------------|-------------------|
-| `SAFETY` | Content Policy | Content violates safety policies | `break` - Inform user, log incident |
-| `PROHIBITED_CONTENT` | Content Policy | Content contains prohibited material | `break` - Show policy violation message |
-| `BLOCKLIST` | Content Policy | Content matches blocklist | `break` - Alert user, don't retry |
-| `MAX_TOKENS` | Limits | Output reached maximum token limit | `break` - Truncate gracefully, summarize |
-| `RESOURCE_EXHAUSTED` | Rate Limiting | Quota or rate limit exceeded | `continue` with backoff - Retry after delay |
-| `UNAVAILABLE` | Transient | Service temporarily unavailable | `continue` - Retry, may self-resolve |
-| `DEADLINE_EXCEEDED` | Transient | Request timeout exceeded | `continue` - Consider retry with backoff |
-| `CANCELLED` | Client | Client cancelled the request | `break` - Clean up resources |
-| `UNKNOWN` | System | Unspecified error occurred | `continue` with logging - Log for analysis |
-
-For complete error code listings and descriptions, refer to the official documentation:
-
-!!! note "Official Documentation"
-
-    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
-    - **ADK Implementation**: [`llm_response.py:145-200`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/models/llm_response.py#L145-L200)
 
 **Best practices for error handling:**
 
-- **Always check for errors first**: Process `error_code` before handling content to avoid processing invalid events
+- **Wrap the loop, not the events**: put the `try`/`except` around `async for`, and always close the queue in `finally`
 - **Log errors with context**: Include session_id and user_id in error logs for debugging
-- **Categorize errors**: Distinguish between retryable errors (transient failures) and terminal errors (content policy violations)
-- **Notify users gracefully**: Show user-friendly error messages instead of raw error codes
-- **Implement retry logic**: For transient errors, consider automatic retry with exponential backoff
-- **Monitor error rates**: Track error types and frequencies to identify systemic issues
-- **Handle content policy errors**: For `SAFETY`, `PROHIBITED_CONTENT`, and `BLOCKLIST` errors, inform users that their content violates policies
+- **Distinguish transport failures from turn terminations**: an exception ends the whole `run_live()` call, while `turn_complete_reason` only ends the current turn
+- **Notify users gracefully**: Show user-friendly error messages instead of raw exception text
+- **Enable session resumption**: it is what lets ADK reconnect instead of raising on a dropped connection
+- **Monitor error rates**: Track exception types and frequencies to identify systemic issues
 
 ## Handling Text Events
 
@@ -696,10 +577,10 @@ async for event in runner.run_live(...):
 **Example Stream:**
 
 ```text
-Event 1: partial=True,  text="Hello",        turn_complete=False
-Event 2: partial=True,  text=" world",       turn_complete=False
-Event 3: partial=False, text="Hello world",  turn_complete=False
-Event 4: partial=False, text="",             turn_complete=True  # Turn done
+Event 1: partial=True,  text="Hello",        turn_complete=None
+Event 2: partial=True,  text=" world",       turn_complete=None
+Event 3: partial=False, text="Hello world",  turn_complete=None
+Event 4: partial=None,  content=None,        turn_complete=True  # Turn done
 ```
 
 **Important timing relationships**:
@@ -845,7 +726,7 @@ async def downstream_task() -> None:
 
 **What gets serialized:**
 
-- Event metadata (author, server_content fields)
+- Event metadata (id, invocation_id, author, timestamp)
 - Content (text, audio data, function calls)
 - Event flags (partial, turn_complete, interrupted)
 - Transcription data (input_transcription, output_transcription)
@@ -1088,7 +969,7 @@ You don't need to handle the execution yourself—ADK does it automatically. You
 
 ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
-**Long-Running Tools**: Tools that require human approval or take extended time to complete. Mark them with `is_long_running=True`. In resumable async flows, ADK can pause after long-running calls. In live flows, streaming continues; `long_running_tool_ids` indicate pending operations and clients can display appropriate UI.
+**Long-Running Tools**: Tools that require human approval or take extended time to complete. Wrap the function in `LongRunningFunctionTool`, which sets the tool's `is_long_running` attribute (a plain function in `tools=[...]` cannot carry it). In resumable async flows, ADK can pause after long-running calls. In live flows, streaming continues; `long_running_tool_ids` indicate pending operations and clients can display appropriate UI.
 
 **Streaming Tools**: Tools that accept an `input_stream` parameter with type `LiveRequestQueue` can send real-time updates back to the model during execution, enabling progressive responses.
 
@@ -1102,7 +983,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
     2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
     3. **Injection**: ADK automatically injects the tool's queue as the `input_stream` parameter when it invokes the tool
     4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
-    5. **Lifecycle**: The queues persist for the rest of the `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits. The built-in `stop_streaming(function_name=...)` tool clears a tool's queue earlier
+    5. **Lifecycle**: The queues persist for the rest of the `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits. A queue can be cleared earlier by a `stop_streaming(function_name=...)` call: ADK special-cases that function *name*, but ships no such tool—you define and register it yourself (see [Streaming Tools](/streaming/streaming-tools/))
 
     **Queue distinction**:
 
@@ -1193,6 +1074,8 @@ When you implement custom tools or callbacks, you receive the invocation state t
 
 ```python
 # Example: Comprehensive tool implementation showing common context patterns
+from datetime import datetime
+
 from google.adk.tools import ToolContext
 from google.genai import types
 
@@ -1216,18 +1099,17 @@ async def my_tool(tool_context: ToolContext, query: str):
     tool_context.state['last_query_time'] = datetime.now().isoformat()
 
     # Store large files/audio in the artifact service
+    result_bytes = b"..."  # Your generated bytes
     await tool_context.save_artifact(
         filename="result.bin",
-        artifact=types.Part(inline_data=types.Blob(mime_type="application/octet-stream", data=data)),
+        artifact=types.Part(inline_data=types.Blob(mime_type="application/octet-stream", data=result_bytes)),
     )
 
     # Process the query with context
     result = process_query(query, context=recent_events, preferences=user_preferences)
 
-    # Return the error to the model; a tool cannot end the invocation itself
-    if result.get('error'):
-        tool_context.actions.skip_summarization = True
-
+    # Whatever you return goes back to the model, errors included; a tool
+    # cannot end the invocation itself
     return result
 ```
 
@@ -1286,7 +1168,7 @@ async def handle_sequential_workflow():
             # Your logic to read audio from microphone
             audio_chunk = await microphone.read()
             queue.send_realtime(
-                blob=types.Blob(data=audio_chunk, mime_type="audio/pcm")
+                blob=types.Blob(data=audio_chunk, mime_type="audio/pcm;rate=16000")
             )
 
     input_task = asyncio.create_task(capture_user_input())

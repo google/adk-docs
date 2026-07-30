@@ -458,9 +458,9 @@ For production applications, choose a persistent session service based on your i
 - You need persistent storage with SQLite, PostgreSQL, or MySQL
 - You're building single-server apps (SQLite) or multi-server deployments (PostgreSQL/MySQL)
 - You want full control over data storage and backups
-- Examples:
-    - SQLite: `DatabaseSessionService(db_url="sqlite:///./sessions.db")`
-    - PostgreSQL: `DatabaseSessionService(db_url="postgresql://user:pass@host/db")`
+- Examples (ADK builds an **async** SQLAlchemy engine, so `db_url` must name an async driver—a sync URL such as `sqlite:///...` raises `ValueError`):
+    - SQLite: `DatabaseSessionService(db_url="sqlite+aiosqlite:///./sessions.db")`
+    - PostgreSQL: `DatabaseSessionService(db_url="postgresql+asyncpg://user:pass@host/db")`
 
 **Use `VertexAiSessionService` if:**
 
@@ -844,7 +844,7 @@ This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is
 
 This example shows the core pattern. For production applications, consider:
 
-- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
+- **Error handling (ADK)**: Wrap the `run_live()` loop in `try`/`except`—ADK raises live failures rather than yielding them as events. For details, see [Part 3: Error Events](part3.md#error-events).
     - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
     - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
 - **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:

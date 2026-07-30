@@ -764,15 +764,14 @@ run_config = RunConfig(
 Transcriptions are delivered as `types.Transcription` objects on the `Event` object:
 
 ```python
-from dataclasses import dataclass
 from typing import Optional
+from google.adk.models.llm_response import LlmResponse
 from google.genai import types
 
-@dataclass
-class Event:
-    content: Optional[Content]  # Audio/text content
-    input_transcription: Optional[types.Transcription]  # User speech → text
-    output_transcription: Optional[types.Transcription]  # Model speech → text
+class Event(LlmResponse):  # Pydantic model, not a dataclass
+    content: Optional[types.Content] = None  # Audio/text content
+    input_transcription: Optional[types.Transcription] = None  # User speech → text
+    output_transcription: Optional[types.Transcription] = None  # Model speech → text
     # ... other fields
 ```
 
@@ -780,9 +779,11 @@ class Event:
 
     For complete Event structure, see [Part 3: The Event Class](part3.md#the-event-class).
 
-Each `Transcription` object has two attributes:
+The two `Transcription` attributes you normally need are:
 - **`.text`**: The transcribed text (string)
 - **`.finished`**: Boolean indicating if transcription is complete (True) or partial (False)
+
+`types.Transcription` also carries `.language_code`, `.speaker_label` and `.words`, each `None` unless the backend populates it.
 
 **How Transcriptions Are Delivered**:
 
@@ -965,20 +966,20 @@ For multi-agent scenarios (agents with `sub_agents`), ADK automatically enables 
 
 **Automatic Enablement Behavior:**
 
-When an agent has `sub_agents` defined, ADK's `run_live()` method automatically enables both input and output audio transcription **even if you explicitly set them to `None`**. This ensures that agent transfers work correctly by providing text context to the next agent.
+When an agent has `sub_agents` defined, ADK's `run_live()` method automatically enables **input** audio transcription **even if you explicitly set it to `None`**. **Output** transcription is re-enabled the same way, but only when `response_modalities` includes `AUDIO`—in a TEXT-only session an explicit `output_audio_transcription=None` is left alone. This ensures that agent transfers work correctly by providing text context to the next agent.
 
 **Why This Matters:**
 
-1. **Cannot be disabled**: You cannot turn off transcription in multi-agent scenarios
+1. **Cannot be disabled**: You cannot turn off input transcription in multi-agent scenarios
 2. **Required for functionality**: Agent transfer breaks without text context
 3. **Transparent to developers**: Transcription events are automatically available
 4. **Plan for data handling**: Your application will receive transcription events that must be processed
 
 **Implementation Details:**
 
-The automatic enablement happens in `Runner.run_live()` when both conditions are met:
-- The agent has `sub_agents` defined
-- A `LiveRequestQueue` is provided (bidirectional streaming mode)
+The automatic enablement happens when `Runner.run_live()` builds the invocation context:
+- **Input** transcription: re-enabled whenever the agent has `sub_agents` defined
+- **Output** transcription: re-enabled only when the agent has `sub_agents` **and** `response_modalities` includes `AUDIO`
 
 !!! note "Source"
 
@@ -1327,6 +1328,11 @@ run_config = RunConfig(
 **Implementation:**
 
 ```python
+from fastapi import WebSocket, WebSocketDisconnect
+from google.adk.agents.live_request_queue import LiveRequestQueue
+from google.genai import types
+
+
 async def upstream_task(websocket: WebSocket, live_request_queue: LiveRequestQueue):
     """Receives audio and activity signals from client."""
     try:

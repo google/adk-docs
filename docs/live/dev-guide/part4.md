@@ -18,7 +18,7 @@ This table provides a quick reference for all RunConfig parameters covered in th
 | **streaming_mode** | StreamingMode | Choose BIDI or SSE mode | Both | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](#live-api-session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](#live-api-context-window-compression) |
-| **max_llm_calls** | int | Limit total LLM calls per session | Both | [Details](#max_llm_calls) |
+| **max_llm_calls** | int | Limit total LLM calls per run | Both | [Details](#max_llm_calls) |
 | **save_live_blob** | bool | Persist audio/video streams | Both | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | Both | [Details](#custom_metadata) |
 | **support_cfc** | bool | Enable compositional function calling | Gemini (2.x models only) | [Details](#support_cfc-experimental) |
@@ -271,9 +271,9 @@ Your choice between BIDI and SSE depends on your application requirements and th
 !!! note "Streaming Mode and Model Compatibility"
     SSE mode uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while BIDI mode uses the Live API (`live.connect()`) via WebSocket. Gemini 1.5 models (Pro, Flash) don't support the Live API protocol and therefore must be used with SSE mode. Gemini 2.0/2.5 Live models support both protocols but are typically used with BIDI mode to access real-time audio/video features.
 
-### Standard Gemini Models (1.5 Series) Accessed via SSE
+### Standard Gemini Models Accessed via SSE
 
-While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also supports the Gemini 1.5 model family through SSE streaming. These models offer different trade-offs—larger context windows and proven stability, but without real-time audio/video features. Here's what the 1.5 series supports when accessed via SSE:
+While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also supports non-Live Gemini models through SSE streaming. These models offer different trade-offs—proven stability, but without real-time audio/video features. Here's what they support when accessed via SSE:
 
 **Models:**
 
@@ -285,7 +285,6 @@ While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also
 - ✅ Text input/output (`response_modalities=["TEXT"]`)
 - ✅ SSE streaming (`StreamingMode.SSE`)
 - ✅ Function calling with automatic execution
-- ✅ Large context windows (up to 2M tokens for 1.5-pro)
 
 **Not Supported:**
 
@@ -932,7 +931,7 @@ async for event in runner.run_live(
 
 **Agent-to-Agent (A2A) integration:**
 
-When using `RemoteA2AAgent`, ADK automatically extracts metadata from A2A requests and populates `custom_metadata`:
+A2A metadata propagation happens on the **serving** side. When your agent is exposed over A2A (via `to_a2a()` or `A2aAgentExecutor`), ADK copies the incoming A2A request's `metadata` into the run request's `custom_metadata`:
 
 ```python
 # A2A request metadata is automatically mapped to custom_metadata
@@ -943,6 +942,8 @@ custom_metadata = {
     }
 }
 ```
+
+On the **calling** side, `RemoteA2AAgent` does not produce an `a2a_metadata` key. It stamps the events it yields with `"a2a:task_id"` and, when the response carries one, `"a2a:context_id"`.
 
 This enables seamless metadata propagation across agent boundaries in multi-agent architectures.
 
