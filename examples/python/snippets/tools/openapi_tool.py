@@ -147,7 +147,7 @@ petstore_toolset = OpenAPIToolset(
 root_agent = LlmAgent(
     name=AGENT_NAME_OPENAPI,
     model=GEMINI_MODEL,
-    tools=[petstore_toolset], # Pass the list of RestApiTool objects
+    tools=[petstore_toolset], # Pass the toolset; it supplies the RestApiTool objects
     instruction="""You are a Pet Store assistant managing pets via an API.
     Use the available tools to fulfill user requests.
     When creating a pet, confirm the details echoed back by the API.
