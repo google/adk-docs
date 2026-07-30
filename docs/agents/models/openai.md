@@ -9,12 +9,10 @@
     The `openaimodel` package is experimental and its behavior may change or be removed in the future. We welcome your
 		[feedback](https://github.com/google/adk-go/issues/new?template=feature_request.md)!
 
-You can use OpenAI models (such as GPT-4o and GPT-4o Mini) with ADK. How you connect depends on the language:
+You can use OpenAI models with ADK. How you connect depends on the language:
 
-- **Go — native support (this page):** ADK Go provides a direct `openaimodel` package that implements the `model.LLM` interface, targeting the OpenAI Responses API. It is currently experimental.
+- **Go — native support:** ADK Go provides a direct `openaimodel` package that implements the `model.LLM` interface, targeting the OpenAI Responses API. [Get started](#get-started).
 - **Python — via LiteLLM:** ADK Python accesses OpenAI models (and many other providers) through the LiteLLM connector. See [LiteLLM](/agents/models/litellm/).
-
-The rest of this page covers the Go-native integration.
 
 ## Get started
 
