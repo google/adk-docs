@@ -85,9 +85,9 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
 The available values for this variable are: `NO_CONTENT`, `EVENT_ONLY`,
 `SPAN_ONLY`, and `SPAN_AND_EVENT`. A boolean `true` or `1` means `EVENT_ONLY`,
-which records content on the emitted log events; any other value means
-`NO_CONTENT`. To record content on the inference span, `SPAN_ONLY` and
-`SPAN_AND_EVENT` also require
+which records content on the emitted log events; any value outside these four
+falls back to `NO_CONTENT`. To record content on the inference span, `SPAN_ONLY`
+and `SPAN_AND_EVENT` also require
 `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
 
 !!! warning

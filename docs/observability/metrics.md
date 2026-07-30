@@ -53,7 +53,11 @@ adk web path/to/your/agents_dir
 
 #### GCP export
 
-The `--otel_to_cloud` flag exports traces to Cloud Trace and logs to Cloud Logging, but not metrics to Cloud Monitoring. To export metrics to Cloud Monitoring, use the [programmatic setup](#programmatic-metrics-export) with `enable_cloud_metrics=True`.
+To enable metrics export to Google Cloud Monitoring, use the `--otel_to_cloud` flag:
+
+```bash
+adk web --otel_to_cloud path/to/your/agents_dir
+```
 
 ### Programmatic metrics export
 
