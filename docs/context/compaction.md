@@ -17,6 +17,10 @@ Compaction runs automatically based on the rules you set in the
 integrated into SingleFlow via the `CompactionRequestProcessor`. Sliding-window
 compaction runs in the `Runner` after each invocation completes.
 
+!!! example "Experimental"
+    The `EventsCompactionConfig` class is experimental and its API or behavior
+    may change in future releases. Constructing one emits a warning.
+
 ## Choose your strategy
 
 You can manage your session's data using the following strategies within `EventsCompactionConfig`:
@@ -70,7 +74,7 @@ The Context Compaction feature uses a *sliding window* approach for collecting
 and summarizing agent workflow event data within a
 [Session](/sessions/session/). When you configure this feature in your
 agent, it summarizes data from older events once it reaches a threshold of a
-specific number of workflow events, or invocations, with the current Session.
+specific number of new invocations within the current Session.
 
 ```python
 # (Optional) Invocation-based, sliding window as supplementary setting
