@@ -49,16 +49,16 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 
     ```py
     # Simplified view of Runner's main loop logic
-    def run(new_query, ...) -> Generator[Event]:
+    async def run_async(new_query, ...) -> AsyncGenerator[Event, None]:
         # 1. Append new_query to session event history (via SessionService)
-        session_service.append_event(session, Event(author='user', content=new_query))
+        await session_service.append_event(session, Event(author='user', content=new_query))
 
         # 2. Kick off event loop by calling the agent
         agent_event_generator = agent_to_run.run_async(context)
 
         async for event in agent_event_generator:
             # 3. Process the generated event and commit changes
-            session_service.append_event(session, event) # Commits state/artifact deltas etc.
+            await session_service.append_event(session, event) # Commits state/artifact deltas etc.
             # memory_service.update_memory(...) # If applicable
             # artifact_service might have already been called via context during agent run
 

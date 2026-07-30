@@ -1,7 +1,7 @@
 # Resume stopped agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An ADK agent's execution can be interrupted by various factors including
@@ -182,6 +182,8 @@ class WorkflowStep(int, Enum):
 
 class StoryFlowAgentState(BaseAgentState):
   step: WorkflowStep
+
+# In the StoryFlowAgent class, replace the existing run implementation with:
 
 @override
 async def _run_async_impl(

@@ -176,8 +176,8 @@ The input file should contain initial state and queries:
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--session_service_uri` | Custom session storage URI | SQLite under `.adk/session.db` |
-| `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
+| `--session_service_uri` | Custom session storage URI | Per-agent SQLite at `<agents_dir>/<agent>/.adk/session.db` |
+| `--artifact_service_uri` | Custom artifact storage URI | Per-agent directory at `<agents_dir>/<agent>/.adk/artifacts` |
 | `--memory_service_uri` | Custom memory service URI | In-memory |
 
 ### Example with storage options
