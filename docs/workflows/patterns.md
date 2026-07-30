@@ -42,7 +42,7 @@ your project requirements before committing to a full implementation.
         model="gemini-flash-latest",
         instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
         description="Main help desk router.",
-        # allow_transfer=True is often implicit with sub_agents in AutoFlow
+        # Setting sub_agents selects AutoFlow, which adds transfer_to_agent
         sub_agents=[billing_agent, support_agent]
     )
     # User asks "My payment failed" -> Coordinator's LLM should call transfer_to_agent(agent_name='Billing')
@@ -802,7 +802,7 @@ your project requirements before committing to a full implementation.
     * **Interaction:** Can be implemented using a custom **Tool** that pauses execution and sends a request to an external system (e.g., a UI, ticketing system) waiting for human input. The tool then returns the human's response to the agent.
     * **Workflow:** Could use **LLM-Driven Delegation** (`transfer_to_agent`) targeting a conceptual "Human Agent" that triggers the external workflow, or use the custom tool within an `LlmAgent`.
     * **State/Callbacks:** State can hold task details for the human; callbacks can manage the interaction flow.
-    * **Note:** ADK doesn't have a built-in "Human Agent" type, so this requires custom integration.
+    * **Note:** ADK has no "Human Agent" agent type, but in Python you do not have to build the pause yourself: yield a `RequestInput` event from a [graph workflow node](/graphs/human-input/), or set `require_confirmation=True` on a `FunctionTool` (or call `tool_context.request_confirmation()` inside the tool) for a yes/no approval.
 
 === "Python"
 

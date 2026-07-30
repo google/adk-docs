@@ -108,15 +108,16 @@ run within a workflow.
     ***@node*** annotation:
 
     ```python
+    from google.adk.workflow import FunctionNode
+
     # base function
-    def my_function_node(node_input: Any):
+    def hello_world(node_input: Any):
         return "Hello World"
 
     # FunctionNode wrapper with options
-    success_node = FunctionNode(
-        func=my_function_node,
-        name="hello",
-        rerun_on_resume=True,
+    my_function_node = FunctionNode(
+        func=hello_world,
+        name="hello_node",
     )
     ```
 
@@ -210,9 +211,9 @@ execution logic (order and paths) for those nodes.
 ## Data handling
 
 When using dynamic workflows with ADK, passing data is simpler than
-[graph-based workflows](/graphs/) because `workflow.RunNode` returns the
-child node's output directly as a typed Go value — eliminating the need to
-manually read and write session state keys for data transfer.
+[graph-based workflows](/graphs/) because running a child node returns that
+node's output directly to the caller — eliminating the need to manually read
+and write session state keys for data transfer.
 
 === "Python"
 
@@ -528,9 +529,22 @@ and logically remain the same for the input.
     from typing import Any
     import asyncio
 
+    class Product(BaseModel):
+      sku: str
+      quantity: int
+
     class Order(BaseModel):
       order_id: str
       cart_items: list[Product]
+
+    async def get_orders() -> list[Order]:
+      """Fetch the orders to process from your own data source."""
+      ...
+
+    @node
+    async def process_order(node_input: Order):
+      """Processes a single order."""
+      return f"processed {node_input.order_id}"
 
     @node(rerun_on_resume=True)
     async def process_all_orders(ctx: Context, node_input: Any):

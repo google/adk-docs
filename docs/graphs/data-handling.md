@@ -276,6 +276,8 @@ accepted and produced by any agent node.
     ***BaseModel*** to constrain any agent's input and output:
 
     ```python
+    from datetime import date
+
     from google.adk import Agent
     from pydantic import BaseModel
 
@@ -296,14 +298,14 @@ accepted and produced by any agent node.
         output_schema=FlightSearchOutput,
         tools=[search_flights_api],
         mode="single_turn",
-        ...
+        # ...
     )
 
     assistant = Agent(
         name="assistant",
         instruction="You help users plan trips.",
         sub_agents=[flight_searcher],
-        ...
+        # ...
     )
     ```
 
@@ -355,7 +357,7 @@ accepted and produced by any agent node.
     root_agent = Workflow(
         name="root_agent",
         edges=[
-            (START, city_generator_agent, lookup_time_function, city_report_agent)
+            ("START", city_generator_agent, lookup_time_function, city_report_agent)
         ],
     )
     ```
@@ -372,9 +374,9 @@ accepted and produced by any agent node.
     framework serializes it into `Event.Output`. The successor `AgentNode`
     receives the struct as its user content — the fields are available to the
     agent's `Instruction` without any `{key}` template syntax. This is the
-    direct equivalent of Python's `input_schema=CityTime` with
-    `{CityTime.time_info}` template placeholders: the struct fields are
-    delivered as typed input rather than looked up by name from state.
+    direct equivalent of Python's `input_schema=CityTime`: in both languages
+    the struct fields are delivered as typed input rather than looked up by
+    name from state.
 
     ```go
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:structured-output"

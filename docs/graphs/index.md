@@ -82,8 +82,9 @@ function, and the final agent reports the information.
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-        instruction="""Output following line:
-        It is {CityTime.time_info} in {CityTime.city} right now.""",
+        instruction="""You receive a CityTime with time_info and city fields.
+        Output a single line stating that it is that time in that city right
+        now.""",
         output_schema=str,
     )
 
@@ -219,8 +220,9 @@ are *not compatible* with the following ADK features:
 
 -   **Live streaming:** An ***LlmAgent*** node in `single_turn` mode — the
     default for a graph node — always runs in non-live mode and ignores the
-    live request queue, even inside a live session. Use `task` or `chat` mode
-    for nodes that must stream.
+    live request queue, even inside a live session. Use `task` mode for nodes
+    that must stream, or `chat` mode, which is only allowed directly after
+    `START`.
 -   **Integrations:** Some third-party
     [integrations](/integrations/) may not be compatible with graph-based
     workflows.
