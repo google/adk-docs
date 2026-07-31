@@ -865,8 +865,10 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```python
     # Conceptual Setup: Agent as a Tool
+    from google.adk import Event
     from google.adk.agents import LlmAgent, BaseAgent
     from google.adk.tools import agent_tool
+    from google.genai import types
     from pydantic import BaseModel
 
 

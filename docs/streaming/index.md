@@ -41,17 +41,6 @@ text, audio, and video inputs, and they can provide text and audio output.
     - [LensMosaic Demo](https://lens-mosaic-nhhfh7g7iq-uc.a.run.app)
     - [Source Code](https://github.com/kazunori279/lens-mosaic)
 
--   :material-microphone-outline: **ADK Gemini Live API Toolkit Demo**
-
-    ---
-
-    [![Bidi Demo screenshot](https://raw.githubusercontent.com/google/adk-samples/main/python/agents/bidi-demo/assets/bidi-demo-screen.png)](https://bidi-demo-761793285222.us-central1.run.app/)
-
-    A production-ready reference implementation showcasing ADK Gemini Live API Toolkit with multimodal support (text, audio, image). This FastAPI-based demo demonstrates real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management.
-
-    - [Bidi Demo](https://bidi-demo-761793285222.us-central1.run.app/)
-    - [Source Code](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
-
 </div>
 
 <div class="grid cards" markdown>
@@ -64,14 +53,6 @@ text, audio, and video inputs, and they can provide text and audio output.
     implement low-latency and bidirectional voice and video communication.
 
     - [Quickstart (Gemini Live API Toolkit)](../get-started/streaming/quickstart-streaming.md)
-
--   :material-console-line: **Gemini Live API Toolkit Demo Application**
-
-    ---
-
-    A production-ready reference implementation showcasing ADK Gemini Live API Toolkit with multimodal support (text, audio, image). This FastAPI-based demo demonstrates real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management. This demo is extensively referenced throughout the development guide series.
-
-    - [ADK Gemini Live API Toolkit Demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
 
 -   :material-console-line: **Blog post: ADK Gemini Live API Toolkit Visual Guide**
 

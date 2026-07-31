@@ -15,9 +15,7 @@ The `vertex_ai_rag_retrieval` tool allows the agent to perform private data
 retrieval using Knowledge Engine.
 
 When you use grounding with Knowledge Engine, you need to prepare a RAG corpus
-beforehand. Please refer to the [RAG ADK agent
-sample](https://github.com/google/adk-samples/blob/main/python/agents/RAG/rag/shared_libraries/prepare_corpus_and_data.py)
-or [Knowledge Engine
+beforehand. Please refer to the [Knowledge Engine
 page](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-quickstart)
 for setting it up.
 
