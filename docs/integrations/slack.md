@@ -1,29 +1,31 @@
 ---
 catalog_title: Slack
-catalog_description: Deploy ADK agents directly to Slack using Socket Mode.
-catalog_icon: /integrations/assets/slack-runner.png
-catalog_tags: ["runner", "slack"]
+catalog_description: Run agents as bots that reply to mentions, DMs, and threads
+catalog_icon: /integrations/assets/slack.png
+catalog_tags: ["plugin"]
 ---
 
 # Slack runner for ADK
 
 <div class="language-support-tag"><span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span></div>
 
-ADK provides the `SlackRunner` class to easily deploy your agents directly on Slack using [Socket Mode](https://api.slack.com/apis/connections/socket). This integration acts as an adapter that handles event listening, response dispatching, and automated conversation thread management.
+ADK provides the `SlackRunner` class to allow you to deploy your agents directly on Slack using [Socket Mode](https://api.slack.com/apis/connections/socket). This integration acts as an adapter that handles event listening, response dispatching, and automated conversation thread management.
 
 ## Use cases
 
-- **Socket Mode deployment**: Route workspace events securely to your agent without exposing public HTTP endpoints.
+- **Socket Mode deployment**: Route workspace events to your agent without exposing public HTTP endpoints.
 - **Thread management**: Maintain continuous conversation context across direct messages and nested thread replies.
 - **Event-driven triggers**: Activate agent workflows automatically using direct messages or app mentions.
 
 ## Prerequisites
 
-- A Slack App configured in your [Slack API Dashboard](https://api.slack.com/apps). You must sign in to your Slack account first.
-- A **Bot User OAuth Token** (`xoxb-...`) with `app_mentions:read`, `chat:write`, and `im:history` bot token scopes.
-- A **Websocket App-Level Token** (`xapp-...`) with the `connections:write` scope.
+- Slack App configured in your [Slack API Dashboard](https://api.slack.com/apps). You must sign in to your Slack account first.
+- Bot User OAuth Token (`xoxb-...`) with `app_mentions:read`, `chat:write`, and `im:history` bot token scopes.
+- Websocket App-Level Token (`xapp-...`) with the `connections:write` scope.
 
 ## Installation
+
+Run the following command in your terminal to install the ADK along with all necessary Slack Socket Mode dependencies
 
 ```bash
 pip install "google-adk[slack]"
@@ -31,11 +33,14 @@ pip install "google-adk[slack]"
 
 ## Use with agent
 
+This example shows you the end-to-end setup for deploying an agent to Slack. It configures a core agent, establishes an in-memory session to manage conversation history, and uses SlackRunner with Socket Mode to connect to your workspace and handle incoming events.
+
 ```python
 import asyncio
 import os
 from google.adk.agents import Agent
 from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
 from google.adk.integrations.slack import SlackRunner
 from slack_bolt.app.async_app import AsyncApp
 
@@ -46,24 +51,18 @@ root_agent = Agent(
     instruction="You are a helpful team assistant running on Slack.",
 )
 
-#Wire it up to Slack over Socket Mode
+# Wire it up to Slack over Socket Mode
 runner = Runner(
     app_name="slack_agent",
     agent=root_agent,
     session_service=InMemorySessionService(),
+    auto_create_session=True,
 )
 slack_app = AsyncApp(token=os.environ["SLACK_BOT_TOKEN"])
 slack_runner = SlackRunner(runner, slack_app)
 
 asyncio.run(slack_runner.start(os.environ["SLACK_APP_TOKEN"]))
 ```
-
-## Available tools
-
-Tool | Description
------- | -----------
-`__init__(runner, slack_app)` | Starts the Slack runner adapter with an ADK `Runner` and a Slack `AsyncApp`.
-`start(app_token)` | Starts the Slack runner listener in Socket Mode using your app-level websocket token.
 
 ## Additional resources
 
