@@ -826,8 +826,6 @@ If set to `True`, the tool automatically forwards any grounding metadata, such a
 
 === "Python"
 
-=== "Python"
-
     ```python
     from google.adk.agents import Agent
     from google.adk.tools import AgentTool
