@@ -30,6 +30,6 @@ Ask the agent naturally, for example:
 
 - Ask for the executable plan (commands, `file:line` edits, PR titles); it emits
   this only when you ask.
-- Run the self-serve scripts (Python, Kotlin), wait on the owning team's PR
-  (Java, TypeScript), or update manually (Agent Config).
+- Run the self-serve scripts (Python, Kotlin, TypeScript), wait on the owning
+  team's PR (Java), or update manually (Agent Config).
 - Have the agent execute the plan.
