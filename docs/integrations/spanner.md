@@ -142,3 +142,55 @@ The `SpannerVectorStoreSettings` class used above defines how
   as `COSINE` or `EUCLIDEAN`.
 - **`additional_filter`**: An optional SQL filter string to apply during the
   search, for example: "inventoryCount > 0".
+
+## Spanner Admin Toolset
+
+The `SpannerAdminToolset` enables administrative operations on your Spanner instances and databases. Note that this requires a separate library import. 
+
+!!! warning "Use with caution"
+
+    This toolset can create, inspect, and modify Spanner instances and
+    databases, grant access carefully. Ensure that the executing environment
+    (such as Application Default Credentials or Service Account keys) is
+    restricted only to authorized projects and uses the minimum necessary IAM
+    permissions such as, roles/spanner.admin.
+
+### Available tools
+
+* **`list_instances`**: Lists Spanner instances within a project.
+* **`get_instance`**: Retrieves details of a Spanner instance.
+* **`create_database`**: Creates a new Spanner database.
+* **`list_databases`**: Lists Spanner databases within an instance.
+* **`create_instance`**: Creates a new Spanner instance.
+* **`list_instance_configs`**: Lists available Spanner instance configs.
+* **`get_instance_config`**: Retrieves details of a Spanner instance config.
+
+### Configuration
+
+Set your required environment variables before using this toolset:
+
+- `SPANNER_PROJECT`: The GCP project ID for operations.
+- `SPANNER_INSTANCE` (Optional): The default Spanner instance ID.
+- `SPANNER_DATABASE` (Optional): The default database ID.
+
+### Use with agent
+Initialize the `SpannerAdminToolset` to access Google Cloud Spanner management features. Then, pass it into the `tools` list of your `LlmAgent` to enable your agent to manage Spanner resources.
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.tools.spanner import SpannerAdminToolset
+
+# Initialize the Spanner admin toolset
+spanner_admin_tools = SpannerAdminToolset()
+
+# Register the toolset with your agent, ensuring model and instructions are provided
+agent = LlmAgent(
+    name="SpannerAdminAgent",
+    model="gemini-flash-latest",
+    instruction=(
+        "You are a helpful database administrator. Use the SpannerAdminToolset "
+        "to manage and query Spanner instances and databases in the project."
+    ),
+    tools=[spanner_admin_tools]
+)
+```
