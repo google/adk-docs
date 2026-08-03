@@ -106,6 +106,6 @@ dive deeper into how they work and how to use them effectively:
 * [**Multi-agent workflows:**](/workflows/) Explore how to build agent
   applications that combine multiple agents, execution nodes, a variety of task
   execution control mechanisms to fit the needs of your project.
-* [**Agent optimization:**](/agents/optimization/) Discover methodologies
+* [**Agent optimization:**](/optimize/) Discover methodologies
   to evaluate, test, and enhance the performance, reliability, and
   cost-efficiency of your agent applications.
