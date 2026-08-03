@@ -29,13 +29,11 @@ transfers, state checkpoints, event compaction, and long-running tools. It adds
 four new event types — `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
 `EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an `attributes.adk` envelope
 on every row so you can reconstruct the agent execution graph and join a paused
-tool to the row that resumes it. In **Java**, this support currently covers the
-`TOOL_PAUSED` event and its pause/resume pairing keys only (without the
-`attributes.adk` envelope). See [Agent workflow and pause/resume events
+tool to the row that resumes it. Java emits `TOOL_PAUSED` and its pause/resume
+keys only. See [Agent workflow and pause/resume events
 (ADK 2.0)](#adk-2-events) for details.
 
-The plugin includes three reliability and observability fixes (Java: v1.7.0 or
-later):
+The plugin includes three reliability and observability fixes:
 
 - **Cross-region Storage Write API routing.** Writes to BigQuery datasets
   outside the `US` multi-region (for example `EU` or `northamerica-northeast1`)
@@ -851,11 +849,10 @@ columns:
 The four workflow views (`v_agent_transfer`, `v_agent_state_checkpoint`,
 `v_event_compaction`, `v_tool_paused`) and the `pause_kind` / `function_call_id`
 columns on `v_tool_completed` come with the [ADK 2.0 workflow event
-support](#adk-2-events). In **Java** (v1.7.0+), only
-`v_tool_paused` and the `pause_kind` / `function_call_id` columns on
-`v_tool_completed` are created; `v_agent_transfer`, `v_agent_state_checkpoint`,
-and `v_event_compaction` are Python-only (the Java plugin does not emit those
-events).
+support](#adk-2-events). In **Java**, only `v_tool_paused` and the `pause_kind` /
+`function_call_id` columns on `v_tool_completed` are created;
+`v_agent_transfer`, `v_agent_state_checkpoint`, and `v_event_compaction` are
+Python-only (the Java plugin does not emit those events).
 
 ## Event types and payloads {#event-types}
 
@@ -1154,11 +1151,9 @@ Logged when an A2A remote agent call completes.
 !!! note "Java support"
 
     The **Java** plugin supports a subset of this section: it emits
-    `TOOL_PAUSED` and the pause/resume pairing described below,
-    but does **not** emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or
-    `EVENT_COMPACTION`, and does not write the `attributes.adk` envelope — the
-    Java plugin stores `pause_kind` and `function_call_id` at the **top level**
-    of `attributes` instead (see the query note below).
+    `TOOL_PAUSED` and the pause/resume pairing described below, but does **not**
+    emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or `EVENT_COMPACTION`, and
+    does not write the `attributes.adk` envelope.
 
 ADK 2.0 introduced multi-agent workflows (agents that transfer control,
 checkpoint their state, and compact long histories) and long-running tools that
@@ -1169,8 +1164,8 @@ rows back to the ADK event that produced them.
 #### The `attributes.adk` envelope
 
 The envelope is written by the **Python** plugin only. Every row now carries an
-`attributes.adk` object. `schema_version` and
-`app_name` are always present; the remaining fields are added only for rows that
+`attributes.adk` object. `schema_version` and `app_name` are always present;
+the remaining fields are added only for rows that
 originate from an ADK event (lifecycle and workflow events), so on a callback-only
 row they are simply absent (and resolve to SQL `NULL` when queried).
 
@@ -1936,6 +1931,10 @@ secrets. For additional control, you can layer custom redaction on top.
 
 ### Built-in redaction {#built-in-redaction}
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java v1.7.0</span>
+</div>
+
 The plugin automatically redacts values for the following well-known key names
 (case-insensitive) wherever they appear in `content` or `attributes` JSON:
 
@@ -1957,12 +1956,11 @@ by credential services) is never persisted in BigQuery.
 
 !!! note "Built-in redaction in Java"
 
-    The Java plugin includes built-in redaction in v1.7.0 and later.
-    It redacts the same six key names (case-insensitive) recursively across the
-    assembled `attributes` tree — including session state and state deltas —
-    and any key prefixed with **`temp:`**. Unlike Python, the Java plugin does
-    **not** redact keys prefixed `secret:`; keep secrets out of non-`temp:`
-    state scopes or mask them with a custom `contentFormatter`.
+    The Java plugin redacts the same six key names (case-insensitive)
+    recursively across the assembled `attributes` tree — including session state
+    and state deltas — and any key prefixed with **`temp:`**. Unlike Python, the
+    Java plugin does **not** redact keys prefixed `secret:`; keep secrets out of
+    non-`temp:` state scopes or mask them with a custom `contentFormatter`.
 
     A custom Java `contentFormatter` must be **thread-safe** (it is called
     concurrently across invocations) and **fast/non-blocking** (it runs on the
@@ -2166,9 +2164,7 @@ call) reconstructs cleanly from BigQuery.
   exporter — this is what prevents duplicate spans in Cloud Trace when Agent
   Engine telemetry is enabled (`GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`)
   or when you wire any other Cloud Trace exporter into the host process. The
-  same internal, ID-only span tracking applies to the Java plugin in v1.7.0
-  and later; earlier Java builds created plugin-owned OpenTelemetry
-  spans that could surface as duplicates next to framework spans.
+  Java plugin uses the same internal, ID-only span tracking.
 - **`trace_id` inherited from the ambient OTel span when present.** If the
   surrounding runtime has already started an OTel span — Agent Engine's
   invocation span, the ADK `Runner` invocation span, or any span you opened
@@ -2231,14 +2227,14 @@ call) reconstructs cleanly from BigQuery.
 
     - **`plugin.close()`**: Gracefully shuts down the plugin, flushing pending events and releasing resources (including the BigQuery write client and executors).
     - **Automatic Closure**: If you are using `InMemoryRunner`, calling `runner.close()` will automatically close all registered plugins, including the BigQuery Agent Analytics plugin.
-    - **`plugin.getDropStats()`** (v1.7.0+): Returns an
-      `ImmutableMap<String, Long>` of dropped-event counts per drop reason. See
-      [Dropped-event observability](#dropped-event-observability).
-    - **JVM shutdown hook** (v1.7.0+): The plugin registers
-      a shutdown hook at construction, so pending events are drained
-      (best-effort, bounded by `shutdownTimeout`) at JVM exit even if `close()`
-      is never called. An explicit `close()` deregisters the hook. Still prefer
-      calling `close()` for a deterministic flush.
+    - **`plugin.getDropStats()`**: Returns an `ImmutableMap<String, Long>` of
+      dropped-event counts per drop reason. See [Dropped-event
+      observability](#dropped-event-observability).
+    - **JVM shutdown hook**: The plugin registers a shutdown hook at
+      construction, so pending events are drained (best-effort, bounded by
+      `shutdownTimeout`) at JVM exit even if `close()` is never called. An
+      explicit `close()` deregisters the hook. Still prefer calling `close()`
+      for a deterministic flush.
 
     ```java
     // Manual shutdown
@@ -2247,33 +2243,31 @@ call) reconstructs cleanly from BigQuery.
 
 ### Dropped-event observability {#dropped-event-observability}
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java v1.7.0</span>
+</div>
+
 BigQuery logging is best-effort — events can be dropped when the in-memory
 queue overflows or when a write ultimately fails. The plugin tracks dropped
 rows per `drop_reason` and exposes a polling API so a host can detect, alert
 on, and ship the counts to its own monitoring.
 
-**Drop reasons (Python):**
+**Drop reasons:**
 
-| Reason | Cause |
-|---|---|
-| `queue_full` | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` on `BigQueryLoggerConfig`, raise `batch_size` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
-| `arrow_prep_failed` | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
-| `retry_exhausted` | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
-| `non_retryable` | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
-| `unexpected_error` | Any other exception caught while preparing or writing the batch. |
-
-**Drop reasons (Java, v1.7.0+):**
-
-| Reason | Cause |
-|---|---|
-| `queue_full` | The in-memory batch queue overflowed. Increase `queueMaxSize` on `BigQueryLoggerConfig`, raise `batchSize`, or scale the consumer side. |
-| `append_error` | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
-| `serialization_error` | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
-| `after_close` | A row reached an already-closed per-invocation processor. |
-| `shutdown_timeout` | Queued rows remained when the bounded final drain expired. |
-| `writer_permit_exhausted` | The live-writer safety cap was exhausted — normally during a Storage Write outage or delayed cleanup. |
-| `writer_create_error` | `StreamWriter` construction or processor startup failed. |
-| `late_after_finalize` | Async work completed after its invocation was finalized or while the plugin was closing. |
+| Reason | Language | Cause |
+|---|---|---|
+| `queue_full` | Python, Java | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` / `queueMaxSize` on `BigQueryLoggerConfig`, raise `batch_size` / `batchSize` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
+| `arrow_prep_failed` | Python | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
+| `retry_exhausted` | Python | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
+| `non_retryable` | Python | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
+| `unexpected_error` | Python | Any other exception caught while preparing or writing the batch. |
+| `serialization_error` | Java | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
+| `append_error` | Java | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
+| `after_close` | Java | A row reached an already-closed per-invocation processor. |
+| `shutdown_timeout` | Java | Queued rows remained when the bounded final drain expired. |
+| `writer_permit_exhausted` | Java | The live-writer safety cap was exhausted — normally during a Storage Write outage or delayed cleanup. |
+| `writer_create_error` | Java | `StreamWriter` construction or processor startup failed. |
+| `late_after_finalize` | Java | Async work completed after its invocation was finalized or while the plugin was closing. |
 
 **Reading the counts:**
 
