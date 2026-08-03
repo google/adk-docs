@@ -41,7 +41,7 @@ against the latest upstream release and package registry.
 | Python CLI | `docs/api-reference/cli/_static/documentation_options.js` (`VERSION:`) and `docs/api-reference/cli/index.html` ("ADK X.Y.Z") | `google/adk-python` | PyPI `google-adk` |
 | Python REST API | `docs/api-reference/rest/openapi.json` (`info.version`) | `google/adk-python` | PyPI `google-adk` |
 | Python Agent Config | no version marker; diff the type set in `agentconfig/index.html` against upstream `AgentConfig.json` | `google/adk-python` (same release as Python API/CLI/REST) | n/a |
-| TypeScript | `docs/api-reference/typescript/variables/version.html` (the `version` const) | `google/adk-js` (monorepo; see note) | npm `@google/adk` (authoritative) |
+| TypeScript | `docs/api-reference/typescript/variables/version.html` (the `version` const); cross-check `docs/api-reference/typescript/index.html` (`<title>` "... - vX.Y.Z") | `google/adk-js` (monorepo; see note) | npm `@google/adk` (authoritative) |
 | Go | external, hosted on `pkg.go.dev`; verify links in `docs/api-reference/index.md` | `google/adk-go` | `pkg.go.dev` |
 | Java | `docs/api-reference/java/index.html` (`<title>` "Maven Parent POM X.Y.Z API") | `google/adk-java` (authoritative) | Maven Central `com.google.adk:google-adk` (lags; cross-check only) |
 | Kotlin | `docs/api-reference/kotlin/index.html` (version string near the header) | `google/adk-kotlin` (authoritative) | Maven Central `com.google.adk:google-adk-kotlin-core` (lags; cross-check only) |
@@ -60,9 +60,12 @@ Notes:
   vice versa) is drift.
 - TypeScript: use npm `@google/adk` `dist-tags.latest` as the authoritative
   version. adk-js is a monorepo with package-prefixed tags (e.g. `main-v1.4.0`,
-  `integrations-v1.4.0`), so `gh ... releases/latest` can return an unrelated
-  package. The in-repo const and npm share one scheme (`0.5.0` -> `1.4.0`), so a
-  large gap means the docs are genuinely stale, not mis-versioned.
+  `integrations-v1.4.0`), so `gh ... releases/latest` can return a release for a
+  different package instead of `@google/adk`. The in-repo `version` const tracks
+  the same `@google/adk` package npm publishes and releases together with it, so
+  compare the two directly: any version difference means the docs are behind.
+  The generate script clones the `adk-v<version>` tag (the core `@google/adk`
+  package tag).
 - Go docs are not built into this repo. Confirm the release version and that the
   `index.md` links point at the correct major versions (e.g. v2.x and v1.x). Go
   versions are also pinned in `examples/go/go.mod` / `go.sum` and appear as
@@ -117,8 +120,12 @@ process.
 - **Python Agent Config**: regenerated from the adk-python schema with
   `json-schema-for-humans`; no `tools/` generate script exists yet, so treat the
   update as manual.
-- **TypeScript**: the adk-js team opens a PR in this repo with the built TypeDoc
-  assets. Not self-serve here.
+- **TypeScript**: self-serve, one PR. Run `bash
+  tools/typescript-api-docs/generate.sh <version>` (where `<version>` is the npm
+  `@google/adk` version from the audit), then open a PR. The script clones the
+  adk-js `adk-v<version>` tag, adds the version to the page title via TypeDoc's
+  `--includeVersion`, and injects the Google Analytics tag into every HTML file
+  (awk post-processing).
 - **Java**: two separate PRs per release. The adk-java team pushes the built
   Javadoc assets (title `chore: update ADK Java doc to version <X>`); the docs
   maintainer bumps the hardcoded dependency versions and `pom.xml` values (title
@@ -137,6 +144,7 @@ process.
     - `gh pr list --repo google/adk-docs --state merged --search "Kotlin"`
     - `gh pr list --repo google/adk-docs --state merged --search "CLI reference"`
     - `gh pr list --repo google/adk-docs --state merged --search "Java"`
+    - `gh pr list --repo google/adk-docs --state merged --search "TypeScript"`
 
 ## Audit workflow
 
@@ -248,8 +256,9 @@ surface:
     - `bash tools/python-cli-docs/generate.sh <new-version>`
     - `bash tools/python-rest-api-docs/generate.sh <new-version>`
     - `bash tools/kotlin-api-docs/generate.sh <new-version>`
-- For team-owned surfaces (Java, TypeScript), state that the update is blocked
-  on the owning team's asset PR and what to request or wait for.
+    - `bash tools/typescript-api-docs/generate.sh <new-version>`
+- For team-owned surfaces (Java), state that the update is blocked on the owning
+  team's asset PR and what to request or wait for.
 - For hardcoded versions, the precise `file:line` edits (old -> new), including
   `examples/java/**/pom.xml`.
 - Which surfaces move together (Python API, CLI, and REST share one `adk-python`
@@ -269,6 +278,7 @@ Match the established titles so history stays searchable:
 - Python API: `Update API reference docs for ADK Python <X.Y.Z>`
 - Python CLI: `Update CLI reference docs for ADK Python <X.Y.Z>`
 - Python REST API: `Update REST API reference docs for ADK Python <X.Y.Z>`
+- TypeScript: `Update API reference docs for ADK TypeScript <X.Y.Z>`
 - Java dependency bump: `Update ADK Java dependency versions to <X.Y.Z>`
 - Kotlin: `Update ADK Kotlin to <X.Y.Z>`
 
