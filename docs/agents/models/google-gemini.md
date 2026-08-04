@@ -213,12 +213,16 @@ To mitigate this, you can do one of the following:
 
     **Option 1:** Set retry options on the Agent as a part of `generate_content_config`.
 
-    You would use this option if you are instantiating this model adapter by
-    yourself.
+    You would use this option if you are passing the model as a name string and
+    letting ADK create the model adapter for you.
 
     === "Python"
 
         ```python
+        from google.genai import types
+
+        # ...
+
         root_agent = Agent(
             model='gemini-flash-latest',
             # ...
@@ -230,7 +234,8 @@ To mitigate this, you can do one of the following:
                     # ...
                 ),
                 # ...
-            )
+            ),
+        )
         ```
 
     === "Java"
