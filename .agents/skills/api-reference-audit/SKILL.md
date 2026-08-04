@@ -90,7 +90,7 @@ trust the file list alone, as new pages might appear over time.
     - `docs/get-started/installation.md`
     - `docs/get-started/java.md`
     - `docs/get-started/kotlin.md`
-    - `docs/get-started/streaming/quickstart-streaming-java.md`
+    - `docs/live/get-started/streaming-java.md`
     - `docs/deploy/cloud-run.md`
     - `docs/agents/models/litert-lm.md`
     - `docs/integrations/firestore-session-service.md`

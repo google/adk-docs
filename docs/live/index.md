@@ -52,7 +52,7 @@ text, audio, and video inputs, and they can provide text and audio output.
     In this quickstart, you'll build a simple agent and use streaming in ADK to
     implement low-latency and bidirectional voice and video communication.
 
-    - [Quickstart (Gemini Live API Toolkit)](../get-started/streaming/quickstart-streaming.md)
+    - [Quickstart (Gemini Live API Toolkit)](get-started/streaming-python.md)
 
 -   :material-console-line: **Blog post: ADK Gemini Live API Toolkit Visual Guide**
 
