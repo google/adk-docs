@@ -21,6 +21,7 @@ import com.google.adk.kt.agents.ResumabilityConfig
 import com.google.adk.kt.agents.RunConfig
 import com.google.adk.kt.agents.StreamingMode
 import com.google.adk.kt.annotations.ExperimentalResumabilityFeature
+import com.google.adk.kt.apps.App
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
@@ -81,10 +82,13 @@ private val rootAgent =
 @OptIn(ExperimentalResumabilityFeature::class)
 val runner =
     InMemoryRunner(
-        agent = rootAgent,
-        appName = "my_resumable_agent",
+        app =
+            App(
+                appName = "my_resumable_agent",
+                rootAgent = rootAgent,
+                resumabilityConfig = ResumabilityConfig(isResumable = true),
+            ),
         sessionService = InMemorySessionService(),
-        resumabilityConfig = ResumabilityConfig(isResumable = true),
     )
 // --8<-- [end:resumability_config]
 

@@ -21,7 +21,7 @@ retrieval index, no embeddings, and no extra LLM round-trip. Everything runs
 locally.
 
 Perseus is a context compiler, not a memory or RAG backend. For persistent
-cross-session memory, pair it with its companion, [Mimir](/integrations/mimir/).
+cross-session memory, pair it with its companion, [Perseus Vault](/integrations/perseus-vault/).
 
 ## Use cases
 
@@ -164,4 +164,4 @@ agent = Agent(
 - [adk-perseus-context on GitHub](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
 - [adk-perseus-context on PyPI](https://pypi.org/project/adk-perseus-context/)
 - [Perseus (context engine)](https://github.com/Perseus-Computing-LLC/perseus)
-- [Mimir Memory integration](/integrations/mimir/)
+- [Perseus Vault Memory integration](/integrations/perseus-vault/)

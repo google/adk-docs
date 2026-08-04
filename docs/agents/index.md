@@ -97,6 +97,9 @@ dive deeper into how they work and how to use them effectively:
 * [**Simple agents:**](/agents/llm-agents/) Explore how to configure agents
   powered by AI models, including setting instructions, providing tools, and
   enabling advanced features like planning and code execution.
+* [**Managed agents:**](/agents/managed-agents/) Use Google's first-party,
+  out-of-the-box agents (backed by the Managed Agents API) directly in your ADK
+  flows, with built-in server-side tools like web search and code execution.
 * [**Graph workflows:**](/graphs/) Discover how evolve your agents from
   plain language instructions to composable, reliable execution paths that
   combine AI reasoning with deterministic code logic.

@@ -50,8 +50,8 @@ Use the following command to start the ADK web interface:
 
     ```go title="main.go"
     import (
-        "google.golang.org/adk/cmd/launcher"
-        "google.golang.org/adk/cmd/launcher/full"
+        "google.golang.org/adk/v2/cmd/launcher"
+        "google.golang.org/adk/v2/cmd/launcher/full"
     )
 
     func main() {

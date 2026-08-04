@@ -50,7 +50,7 @@
 <a class="library-name--link" href="../../../index.html">
                             google-adk-kotlin
                     </a>            </div>
-            <div class="library-version">0.2.0
+            <div class="library-version">0.5.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -71,7 +71,7 @@
   <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.telemetry</a><span class="delimiter">/</span><span class="current">TelemetryConfig</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Telemetry</span><wbr><span><span>Config</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">TelemetryConfig</a></div><p class="paragraph">Global configuration for ADK telemetry behavior.</p><p class="paragraph">This is a singleton to maintain architectural parity with the Java and Python ADKs.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">TelemetryConfig</a></div><p class="paragraph">Global configuration for ADK telemetry behavior.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -88,7 +88,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="capture-message-content.html">captureMessageContent</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether to capture raw prompts and payloads into traces. Defaults to false to prevent PII leakage and OOM errors. This is marked as @Volatile to ensure visibility across concurrent agent executions.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="capture-message-content.html">captureMessageContent</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether to capture raw prompts and payloads into spans. Seeded at startup from the <a href="../../../google-adk-kotlin-core/com.google.adk.kt.telemetry/index.html">ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS</a> env var (<code class="lang-kotlin">true</code>/<code class="lang-kotlin">1</code> enables it); defaults to <code class="lang-kotlin">false</code> when unset, diverging from Python/Java/JS (which default to <code class="lang-kotlin">true</code>) to avoid recording PII or large payloads. <code class="lang-kotlin">@Volatile</code> for cross-thread visibility.</p></div></div></div>
                 </div>
               </div>
             </div>

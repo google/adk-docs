@@ -6,6 +6,19 @@
 
 This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
+!!! note "A2A Python SDK version compatibility"
+
+    ADK's A2A integration works with both major versions of the A2A SDK
+    (`a2a-sdk` 0.3.x and 1.x.x). The installed A2A SDK version is detected
+    automatically, so no changes to your ADK application code are needed.
+
+    Although `a2a-sdk` 0.3.x is supported in compatibility mode, new
+    integrations should target 1.x.x. If your code references `a2a-sdk` types
+    directly (for example, custom executors or hand-constructed `AgentCard`
+    instances), see the [A2A SDK v1.0 migration
+    guide](https://github.com/a2aproject/a2a-python/tree/main/docs/migrations/v1_0)
+    when moving to 1.x.x.
+
 ## Overview
 
 This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
@@ -99,7 +112,7 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
-  
+
 ### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
@@ -131,7 +144,7 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
 ??? note "More info on agent cards in ADK"
 
-    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial. 
+    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial.
 
 ### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
 

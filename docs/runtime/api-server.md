@@ -34,8 +34,8 @@ Use the following command to run your agent in an ADK API server:
 
     ```go title="main.go"
     import (
-        "google.golang.org/adk/cmd/launcher"
-        "google.golang.org/adk/cmd/launcher/full"
+        "google.golang.org/adk/v2/cmd/launcher"
+        "google.golang.org/adk/v2/cmd/launcher/full"
     )
 
     func main() {

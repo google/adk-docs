@@ -25,12 +25,13 @@
 //   - "chat" (ModeChat, default): full user interaction; agent controls
 //     flow until it explicitly calls transfer_to_agent.
 //   - "task" (ModeTask): agent may ask the user clarifying questions and
-//     automatically returns control to the parent when it calls complete_task.
+//     automatically returns control to the parent when it calls finish_task.
 //   - "single_turn" (ModeSingleTurn): no user interaction; executes one turn
 //     and returns automatically; can run in parallel with peer agents.
 //
 // When a coordinator llmagent declares SubAgents, ADK automatically generates
-// request_task_<name> tools for each subagent, wiring the delegation pattern.
+// a delegation tool for each subagent, named after the subagent itself,
+// wiring the delegation pattern.
 //
 // When an llmagent is used as a node in the v2 workflow graph engine
 // (workflow.NewAgentNode), the engine automatically applies ModeSingleTurn
@@ -130,8 +131,8 @@ func newCollaborativeTeam(ctx context.Context) (agent.Agent, error) {
 	}
 
 	// The coordinator agent declares SubAgents. ADK automatically generates
-	// request_task_weather_checker and request_task_flight_booker tools so the
-	// coordinator can delegate work to each subagent.
+	// weather_checker and flight_booker delegation tools, named after each
+	// subagent, so the coordinator can delegate work to each one.
 	return llmagent.New(llmagent.Config{
 		Name:        "travel_planner",
 		Model:       model,
