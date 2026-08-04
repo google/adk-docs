@@ -65,10 +65,11 @@ For more information on connecting to Google Cloud from ADK agents, see
 ## Prerequisites
 
 You should have a Google Cloud project. You need to know your:
-1. Project name (for example, "my-project")
-2. Project location (for example, "us-central1")
-3. Service account (for example, "1234567890-compute@developer.gserviceaccount.com")
-4. GOOGLE_API_KEY
+
+  1. Project name (for example, "my-project")
+  2. Project location (for example, "us-central1")
+  3. Service account (for example, "1234567890-compute@developer.gserviceaccount.com")
+  4. GOOGLE_API_KEY
 
 ## Secret
 
