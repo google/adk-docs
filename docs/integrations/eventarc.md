@@ -1,5 +1,5 @@
 ---
-catalog_title: Eventarc Tools
+catalog_title: Google Cloud Eventarc Tools
 catalog_description: Publish structured CloudEvents to message buses with schema validation
 catalog_icon: /integrations/assets/eventarc.png
 catalog_tags: ["google"]
