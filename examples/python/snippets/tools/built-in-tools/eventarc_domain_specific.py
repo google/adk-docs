@@ -36,7 +36,7 @@ USER_ID = "user1234"
 SESSION_ID = "1234"
 GEMINI_MODEL = "gemini-flash-latest"
 
-PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "my-project")
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
 BUS_NAME = os.getenv("EVENTARC_BUS_NAME", "outreach-bus")
 BUS_URI = f"projects/{PROJECT_ID}/locations/us-central1/messageBuses/{BUS_NAME}"
 
@@ -119,7 +119,7 @@ complete_outreach_lambda_tool = eventarc_toolset.create_publish_tool(
 )
 
 # 4. Equip the agent with the domain-specific tools
-domain_agent = Agent(
+root_agent = Agent(
     model=GEMINI_MODEL,
     name=AGENT_NAME,
     description="Agent for recording customer outreach completion events.",
@@ -142,7 +142,7 @@ session = asyncio.run(
     )
 )
 runner = Runner(
-    agent=domain_agent, app_name=APP_NAME, session_service=session_service
+    agent=root_agent, app_name=APP_NAME, session_service=session_service
 )
 
 

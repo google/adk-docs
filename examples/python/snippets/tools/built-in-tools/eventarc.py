@@ -49,7 +49,7 @@ eventarc_toolset = EventarcToolset(
 )
 
 # Agent Definition
-eventarc_agent = Agent(
+root_agent = Agent(
     model=GEMINI_MODEL,
     name=AGENT_NAME,
     description=(
@@ -71,7 +71,7 @@ session = asyncio.run(
     )
 )
 runner = Runner(
-    agent=eventarc_agent, app_name=APP_NAME, session_service=session_service
+    agent=root_agent, app_name=APP_NAME, session_service=session_service
 )
 
 

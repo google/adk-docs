@@ -8,7 +8,7 @@ catalog_tags: ["google"]
 # Google Cloud Eventarc tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.6.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The `EventarcToolset` allows agents to interact with [Google Cloud Eventarc](https://cloud.google.com/eventarc) to asynchronously publish structured [CloudEvents](https://cloudevents.io) to Eventarc Message Buses. The toolset provides built-in connection pooling and caching across invocations, and it supports both general-purpose event publishing and domain-specific, schema-enforced event tools.
@@ -35,7 +35,7 @@ Before using the `EventarcToolset`, you need to complete the following setup ste
         --logging-config=DEBUG
     ```
 
-## Usage
+## Use with agent
 
 The following example shows how to configure and equip an agent with the `EventarcToolset` to publish CloudEvents:
 
@@ -62,8 +62,9 @@ Publishes a structured CloudEvent to a Google Cloud Eventarc Advanced Message Bu
 | `id`                | `str`              | (Optional) A unique identifier for the event. If not provided, a UUID is automatically generated.                                                        |
 | `time`              | `str`              | (Optional) Timestamp of when the occurrence happened in RFC 3339 format. If not provided, the current UTC timestamp is used.                             |
 | `specversion`       | `str`              | (Optional) The CloudEvents specification version. Defaults to `1.0`.                                                                                     |
-| `is_base64_encoded` | `bool`             | (Optional) Whether `data` is base64-encoded binary data. Defaults to `False`.                                                                            |
-| `custom_attributes` | `dict[str, str]`   | (Optional) Additional custom CloudEvent extension attributes to attach to the event.                                                                     |
+| `is_base64_encoded`         | `bool`             | (Optional) Whether `data` is base64-encoded binary data. Defaults to `False`.                                                                            |
+| `include_tracing_extension` | `bool`             | (Optional) Whether to automatically extract and inject distributed tracing context into the CloudEvent's extension attributes. Defaults to `False`.      |
+| `custom_attributes`         | `dict[str, str]`   | (Optional) Additional custom CloudEvent extension attributes to attach to the event.                                                                     |
 
 ## Domain-specific publish tools
 
@@ -71,7 +72,7 @@ In production multi-agent architectures, allowing an LLM to freely populate rout
 
 By creating a domain-specific tool, you can bind routing attributes using `CloudEventAttributesBinding` while enforcing a strict Pydantic model for the event payload (`payload_schema`). This guarantees that generated events match your business domain and are routed only to authorized message buses.
 
-### Usage
+### Use with agent
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/eventarc_domain_specific.py"
@@ -86,12 +87,12 @@ The `create_publish_tool` method accepts the following keyword-only arguments:
 | `name`                  | `str`                                                                      | The function tool name exposed to the LLM (for example, `complete_outreach_static`).                                                                                                         |
 | `description`           | `str`                                                                      | A natural-language description instructing the LLM when to call this tool and what action it performs.                                                                                     |
 | `bus`                   | `str \| Callable[[Any], str] \| AgentProvided`                             | The target Eventarc Message Bus. Can be a static URI string, a runtime callable evaluated against tool context, or an `AgentProvided` instance to prompt the LLM to supply it.             |
-| `ce_attributes_binding` | `CloudEventAttributesBinding`                                              | Binding rules for CloudEvent attributes (`type`, `source`, `subject`, `datacontenttype`, `time`, `id`, `custom_attributes`).                                                               |
+| `ce_attributes_binding` | `CloudEventAttributesBinding`                                              | Binding rules for CloudEvent attributes (`type`, `source`, `subject`, `datacontenttype`, `time`, `id`, `specversion`, `custom_attributes`).                                                               |
 | `payload_schema`        | `type[pydantic.BaseModel] \| None`                                         | (Optional) A Pydantic schema class defining the structured event payload. When specified, the tool signature requires an `event_data` parameter conforming to this model. If not provided (or `None`), no `event_data` parameter is added to the tool signature, and the tool publishes a notification-only CloudEvent without a data payload body. |
 
 ### CloudEvent attribute bindings and sentinels
 
-The `CloudEventAttributesBinding` dataclass configures how individual CloudEvent fields are populated. Each attribute (`type`, `source`, `datacontenttype`, `subject`, `time`, `id`, `custom_attributes`) can be assigned one of the following binding mechanisms:
+The `CloudEventAttributesBinding` dataclass configures how individual CloudEvent fields are populated. Each attribute (`type`, `source`, `datacontenttype`, `subject`, `time`, `id`, `specversion`, `custom_attributes`) can be assigned one of the following binding mechanisms:
 
 | Binding Type       | Example                                     | Exposed to LLM | Description                                                                                                                                           |
 | ------------------ | ------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -129,3 +130,8 @@ binding_without_timestamp = CloudEventAttributesBinding(
     time=OMIT,  # The 'time' field is excluded from the published event
 )
 ```
+
+## Additional resources
+
+- [Google Cloud Eventarc documentation](https://cloud.google.com/eventarc/docs).
+- [ADK Python GitHub repository](https://github.com/google/adk-python).
