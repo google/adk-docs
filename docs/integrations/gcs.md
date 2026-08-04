@@ -132,7 +132,7 @@ storage toolset with write access enabled.
 
 ```python
 import google.auth
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.integrations.gcs import GCSToolset
 from google.adk.integrations.gcs.settings import GCSToolSettings, Capabilities
 from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig

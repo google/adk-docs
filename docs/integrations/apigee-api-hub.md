@@ -100,7 +100,7 @@ you only need to follow a subset of these steps.
    definition:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
+    from google.adk.agents import LlmAgent
     from .tools import sample_toolset
 
     root_agent = LlmAgent(

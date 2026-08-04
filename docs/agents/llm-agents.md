@@ -721,7 +721,7 @@ import asyncio
 import os
 
 from google.genai import types
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional

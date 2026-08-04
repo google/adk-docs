@@ -296,7 +296,7 @@ client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
 
 # Use the specific configure method for this toolset type
 calendar_tool_set.configure_auth(
-    client_id=oauth_client_id, client_secret=oauth_client_secret
+    client_id=client_id, client_secret=client_secret
 )
 
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))

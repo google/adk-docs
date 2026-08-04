@@ -50,7 +50,7 @@ To use the Code Execution tool with your ADK agent:
     resource name you created.
 
 ```python
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent
 from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
 
 root_agent = Agent(
@@ -158,7 +158,7 @@ the operating guidelines for code execution. This instruction clause is
 optional, but strongly recommended for getting the best results from this tool.
 
 ```python
-from google.adk.agents.llm_agent import Agent
+from google.adk.agents import Agent
 from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
 
 def base_system_instruction():

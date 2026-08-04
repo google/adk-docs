@@ -157,7 +157,7 @@ snippet:
 === "Python"
 
     ```python
-    from google.adk.agents.llm_agent import Agent
+    from google.adk.agents import Agent
     from google.adk.models.google_llm import Gemini
     from google.adk.tools.google_search_tool import GoogleSearchTool
 

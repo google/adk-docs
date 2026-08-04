@@ -223,7 +223,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 2. Update the `agent.py` file and add tool to your agent:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
+    from google.adk.agents import LlmAgent
     from .tools import connector_tool
 
     root_agent = LlmAgent(
@@ -329,7 +329,7 @@ workflow as a tool for your agent or create a new one.
     To update the `agent.py` file and add the tool to your agent, use the following code:
 
       ```py
-          from google.adk.agents.llm_agent import LlmAgent
+          from google.adk.agents import LlmAgent
           from .tools import integration_tool, connector_tool
 
           root_agent = LlmAgent(

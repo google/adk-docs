@@ -56,7 +56,7 @@ sample code:
 === "Python"
 
     ```python title="agent.py"
-    from google.adk.agents.llm_agent import Agent
+    from google.adk.agents import Agent
     from google.adk.apps import App
 
     root_agent = Agent(

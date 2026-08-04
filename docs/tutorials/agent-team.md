@@ -998,7 +998,7 @@ Now, we create a new version of the weather tool. Its key feature is accepting `
 
 
 ```python
-from google.adk.tools.tool_context import ToolContext
+from google.adk.tools import ToolContext
 
 def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
     """Retrieves weather, converts temp unit based on session state."""
@@ -1615,7 +1615,7 @@ This function targets the `get_weather_stateful` tool. It checks the `city` argu
 
 # Ensure necessary imports are available
 from google.adk.tools.base_tool import BaseTool
-from google.adk.tools.tool_context import ToolContext
+from google.adk.tools import ToolContext
 from typing import Optional, Dict, Any # For type hints
 
 def block_paris_tool_guardrail(

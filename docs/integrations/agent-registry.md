@@ -80,7 +80,7 @@ The primary way to use the Agent Registry integration within an ADK agent is to
 dynamically fetch remote agents or toolsets using the AgentRegistry client.
 
 ```py
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent
 from google.adk.integrations.agent_registry import AgentRegistry
 import os
 
