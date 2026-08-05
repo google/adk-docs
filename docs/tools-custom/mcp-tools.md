@@ -501,14 +501,19 @@ export const rootAgent = new LlmAgent({
     description: "A helpful assistant for planning travel.",
     tools: [
         new MCPToolset({
-            // Using SseConnectionParams to connect to the remote Grounding Lite service,
-            // mirroring Python's StreamableHTTPConnectionParams.
-            type: "SseConnectionParams",
+            // Grounding Lite is a remote MCP server reached over streamable HTTP,
+            // so the connection is a StreamableHTTPConnectionParams. Custom headers
+            // travel on every request via transportOptions.requestInit; the
+            // transport sets Accept and Content-Type itself, so only the API key
+            // needs to be supplied here.
+            type: "StreamableHTTPConnectionParams",
             url: "https://mapstools.googleapis.com/mcp",
-            headers: {
-                "X-Goog-Api-Key": googleMapsApiKey,
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream"
+            transportOptions: {
+                requestInit: {
+                    headers: {
+                        "X-Goog-Api-Key": googleMapsApiKey
+                    }
+                }
             }
         })
     ],
