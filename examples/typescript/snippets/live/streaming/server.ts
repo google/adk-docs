@@ -14,23 +14,14 @@
 
 // --8<-- [start:full]
 import {StreamingMode} from '@google/adk';
-import type {Event} from '@google/adk';
 import express from 'express';
 import type {Request, Response} from 'express';
 
-import {APP_NAME, runner} from './agent.js';
+import {APP_NAME, runner, textOf} from './agent.js';
 
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
-
-/** Joins the answer text in an event, skipping tool calls and reasoning. */
-function textOf(event: Event): string {
-  return (event.content?.parts ?? [])
-    .filter((part) => part.text && !part.thought)
-    .map((part) => part.text)
-    .join('');
-}
 
 app.post('/api/chat', async (req: Request, res: Response) => {
   const {userId, sessionId, message} = req.body as {

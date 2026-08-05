@@ -13,29 +13,14 @@
 // limitations under the License.
 
 // --8<-- [start:full]
-import {InMemoryRunner, LlmAgent, StreamingMode} from '@google/adk';
-import type {Event} from '@google/adk';
+import {StreamingMode} from '@google/adk';
 
-const agent = new LlmAgent({
-  name: 'explainer',
-  model: 'gemini-2.5-flash',
-  description: 'Explains things clearly and at length.',
-  instruction: 'You are a patient explainer. Answer in three short paragraphs.',
-});
+import {APP_NAME, runner, textOf} from './agent.js';
 
-const runner = new InMemoryRunner({appName: 'streaming_quickstart', agent});
 const session = await runner.sessionService.createSession({
-  appName: 'streaming_quickstart',
+  appName: APP_NAME,
   userId: 'user_1',
 });
-
-/** Joins the answer text in an event, skipping tool calls and reasoning. */
-function textOf(event: Event): string {
-  return (event.content?.parts ?? [])
-    .filter((part) => part.text && !part.thought)
-    .map((part) => part.text)
-    .join('');
-}
 
 let answer = '';
 

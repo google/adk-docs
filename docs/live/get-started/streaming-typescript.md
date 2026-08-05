@@ -22,9 +22,11 @@ and one static HTML file that reads them with `fetch`.
 
 ## The complete program {#complete-program}
 
-Here is the whole idea in one file: build an agent, run it in streaming mode,
-write each chunk to standard output as it arrives. You will save it as
-`stream-to-console.ts` in [step 4](#step-4).
+The whole idea is two files. `agent.ts` builds the agent, which you will write
+in [step 3](#step-3); the file below imports it, runs it in streaming mode, and
+writes each chunk to standard output as it arrives. Everything specific to
+streaming is here. You will save it as `stream-to-console.ts` in
+[step 4](#step-4).
 
 ```typescript title="stream-to-console.ts"
 --8<-- "examples/typescript/snippets/live/streaming/stream-to-console.ts:full"
@@ -44,6 +46,8 @@ Here is what is happening in this code:
     that has `text` and drops parts flagged `thought` (thinking models emit
     those) — so `parts[0]` is not assumed to be the answer. Events produced by
     tool calls have no text at all, which is why the loop skips empty results.
+    It is imported, not redefined, because `server.ts` needs the same extraction
+    in [step 5](#step-5).
 5.  `event.partial` distinguishes a chunk from the end. When it is `true`, the
     text is a **delta** and you append it. On the last event ADK re-sends the
     **entire** accumulated answer with `partial: false`, so you *replace*
@@ -64,20 +68,11 @@ audio today, see [Build a streaming agent with Python](streaming-python.md).
 ## Prerequisites {#prerequisites}
 
 *   **Node.js 22 or later.** Check with `node --version`.
-*   **A Gemini API key.** Create one on the
-    [API keys](https://aistudio.google.com/app/apikey) page in Google AI Studio.
-*   The key goes in a file named **`.env`** in your project root, as this exact
-    line:
-
-    ```bash title=".env"
-    GEMINI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-    ```
-
-    Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual key. ADK reads
-    `GEMINI_API_KEY` (or `GOOGLE_GENAI_API_KEY`); no other spelling works.
-
-If you would rather run against Google Cloud than an API key, skip to
-[Run on Google Cloud instead](#google-cloud) and come back.
+*   **Access to a Gemini model, by either route.** A
+    [Google AI Studio API key](https://aistudio.google.com/app/apikey), or a
+    Google Cloud project with the Vertex AI API enabled and the `gcloud` CLI
+    installed. [Step 2](#step-2) sets up whichever one you have; nothing else on
+    this page differs between them.
 
 ## 1. Create the project {#step-1}
 
@@ -93,22 +88,22 @@ Then install the dependencies:
 === "npm"
 
     ```bash
-    npm install @google/adk express
-    npm install -D typescript tsx @types/node @types/express
+    npm install @google/adk@^1.5.0 express@^5.1.0
+    npm install -D typescript@^5.9.2 tsx@^4.20.0 @types/node@^22.0.0 @types/express@^5.0.0
     ```
 
 === "pnpm"
 
     ```bash
-    pnpm add @google/adk express
-    pnpm add -D typescript tsx @types/node @types/express
+    pnpm add @google/adk@^1.5.0 express@^5.1.0
+    pnpm add -D typescript@^5.9.2 tsx@^4.20.0 @types/node@^22.0.0 @types/express@^5.0.0
     ```
 
 === "yarn"
 
     ```bash
-    yarn add @google/adk express
-    yarn add -D typescript tsx @types/node @types/express
+    yarn add @google/adk@^1.5.0 express@^5.1.0
+    yarn add -D typescript@^5.9.2 tsx@^4.20.0 @types/node@^22.0.0 @types/express@^5.0.0
     ```
 
 `@google/adk` is the agent framework. `express` serves the HTTP endpoint and the
@@ -116,9 +111,15 @@ static HTML file — ADK ships no HTTP layer of its own, so this part is yours t
 choose. `tsx` runs `.ts` files directly so there is no build step, and
 `@types/node` and `@types/express` give you types for both.
 
+The versions are pinned because the `package.json` below declares those same
+ranges, and because `@types/node` should track the Node.js major you actually
+run. Leave them off and npm installs today's `typescript` and `@types/node`
+majors, which do not satisfy the file you are about to paste: `npm ls` then
+reports `ELSPROBLEMS` on a project that has not even run yet.
+
 Add the scripts and a TypeScript config. The `--env-file=.env` flag on the
-`console` and `start` scripts is what loads your API key; without it, nothing
-reads the file.
+`console` and `start` scripts is what loads the credentials you add in
+[step 2](#step-2); without it, nothing reads the file.
 
 ```json title="package.json"
 --8<-- "examples/typescript/snippets/live/streaming/package.json"
@@ -134,15 +135,52 @@ The two settings that matter in `tsconfig.json` are `"module": "nodenext"` and
 `await`. Set `"module": "commonjs"` instead and `tsc` reports
 `error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to …`.
 
-## 2. Add your API key {#step-2}
+## 2. Add your credentials {#step-2}
 
-Create a `.env` file next to `package.json`:
+Pick the tab for the credentials you have. Each one is complete: create a file
+named `.env` next to `package.json` containing exactly the lines shown, and
+nothing else on this page changes.
 
-```bash title=".env"
-GEMINI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-```
+=== "Google AI Studio API key"
 
-Add `.env` to your `.gitignore` before you commit anything.
+    Create a key on the [API keys](https://aistudio.google.com/app/apikey) page,
+    then put it in `.env`:
+
+    ```bash title=".env"
+    GEMINI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+    ```
+
+    Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual key. ADK reads
+    `GEMINI_API_KEY` (or `GOOGLE_GENAI_API_KEY`); no other spelling works, and
+    `GOOGLE_API_KEY` in particular is **not** read on this path.
+
+=== "Google Cloud / Vertex AI"
+
+    There is no API key on this path. Authenticate once:
+
+    ```bash
+    gcloud auth application-default login
+    ```
+
+    Then create `.env` with your own project id:
+
+    ```bash title=".env"
+    GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    GOOGLE_CLOUD_PROJECT=your-project-id
+    GOOGLE_CLOUD_LOCATION=global
+    ```
+
+    `GOOGLE_GENAI_USE_VERTEXAI` takes priority: set it and `GEMINI_API_KEY` is
+    ignored, even if it is still in the file. `GOOGLE_CLOUD_LOCATION=global`
+    routes to wherever the model is served; a specific region such as
+    `us-central1` works too, but only for models that region actually carries.
+    For service accounts, Express Mode, and the other authentication options,
+    see
+    [Connect to Google Cloud and Agent Platform](../../get-started/google-cloud.md).
+
+Add `.env` to your `.gitignore` before you commit anything. From here on the two
+paths are identical — the log line ADK prints on every model call is what tells
+you which one you are on, `backend: GEMINI_API` or `backend: VERTEX_AI`.
 
 ## 3. Define the agent {#step-3}
 
@@ -155,27 +193,33 @@ Here is what is happening in this code:
 1.  `explainerAgent` is an `LlmAgent`. Its `instruction` asks for three
     paragraphs purely so there is enough text to watch arrive; a one-word answer
     streams too fast to see.
-2.  `InMemoryRunner` bundles a `Runner` with an in-memory session service. It is
-    perfect for local development and loses everything when the process exits —
-    swap in a persistent `SessionService` before you deploy.
+2.  `InMemoryRunner` bundles a `Runner` with an in-memory session service, so
+    there is nothing to configure for local development. See
+    [Deploying this](#deploying) for what to change before production.
 3.  `APP_NAME` is exported because the runner and every session lookup must use
     the same app name, and `server.ts` needs it too.
+4.  `textOf()` lives here, rather than in each consumer, because both
+    `stream-to-console.ts` and `server.ts` need exactly the same text
+    extraction. `Event` is brought in with `import type`, which keeps it out of
+    the emitted JavaScript.
 
 ## 4. Stream to your terminal {#step-4}
 
 Before wiring up HTTP, confirm that chunks really are arriving. Save
 [the complete program](#complete-program) from the top of this page as
-`stream-to-console.ts`, then run:
+`stream-to-console.ts`, next to `agent.ts`, then run:
 
 ```bash
 npm run console
 ```
 
-You should see the answer type itself out across roughly three to five seconds,
-one burst of text at a time, followed by a line like
-`--- 1096 characters ---`. If instead the terminal sits silent and then prints
-the whole answer at once, `streamingMode` is missing — see
-[Troubleshooting](#troubleshooting).
+There is a pause of a second or two while the model starts, and then the answer
+types itself out in a handful of visible bursts — a few hundred characters at a
+time, not one block — followed by a line like `--- 1273 characters ---`. Watch
+for the *bursts*, not the clock: how long it takes depends on the prompt, the
+model and your network, and a short answer can finish before you register it.
+If instead the terminal sits silent and then prints everything at once,
+`streamingMode` is missing — see [Troubleshooting](#troubleshooting).
 
 ## 5. Serve the stream over HTTP {#step-5}
 
@@ -187,8 +231,8 @@ Here is what is happening in this code:
 
 1.  `req.body` is `any`, so it is annotated on the way out —
     `as {userId: string; sessionId: string; message: string}` — and the three
-    destructured names are typed from there. `Event` is imported with
-    `import type`, which keeps it out of the emitted JavaScript.
+    destructured names are typed from there. `APP_NAME`, `runner` and `textOf`
+    all come from `agent.ts`; the server adds HTTP and nothing else.
 2.  `runner.sessionService.getSession()` runs first because `runAsync` requires a
     session that already exists. If there is none, `createSession()` makes one
     with the `sessionId` the browser sent, so follow-up questions keep their
@@ -241,6 +285,10 @@ Here is what is happening in this code:
 ```bash
 npm start
 ```
+
+If port 3000 is already taken (`Error: listen EADDRINUSE`), pick another —
+`server.ts` reads `PORT`, so `PORT=3100 npm start` serves on
+<http://localhost:3100> instead.
 
 Open <http://localhost:3000>. You should see the heading **Ask the agent**, a
 text box pre-filled with `Why is the sky blue?`, and a **Send** button. Press
@@ -342,30 +390,6 @@ text is empty, as `textOf()` does.
 these files use top-level `await`; the ESM settings from [step 1](#step-1) —
 `"type": "module"` in `package.json` and `"module": "nodenext"` in
 `tsconfig.json` — are both required.
-
-## Run on Google Cloud instead {#google-cloud}
-
-Everything above works unchanged against Gemini models on Google Cloud Agent
-Platform. Authenticate once:
-
-```bash
-gcloud auth application-default login
-```
-
-Then replace the contents of `.env`:
-
-```bash title=".env"
-GOOGLE_GENAI_USE_VERTEXAI=TRUE
-GOOGLE_CLOUD_PROJECT=your-project-id
-GOOGLE_CLOUD_LOCATION=us-central1
-```
-
-`GOOGLE_GENAI_USE_VERTEXAI` takes priority: set it and `GEMINI_API_KEY` is
-ignored, even if it is still in the file. The ADK log line tells you which
-backend you actually reached — `backend: VERTEX_AI` versus
-`backend: GEMINI_API`. For service accounts, Express Mode, and the other
-authentication options, see
-[Connect to Google Cloud and Agent Platform](../../get-started/google-cloud.md).
 
 ## Deploying this {#deploying}
 

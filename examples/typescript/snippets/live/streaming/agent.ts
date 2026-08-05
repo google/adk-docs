@@ -14,6 +14,7 @@
 
 // --8<-- [start:full]
 import {InMemoryRunner, LlmAgent} from '@google/adk';
+import type {Event} from '@google/adk';
 
 export const APP_NAME = 'streaming_quickstart';
 
@@ -30,4 +31,12 @@ export const runner = new InMemoryRunner({
   appName: APP_NAME,
   agent: explainerAgent,
 });
+
+/** Joins the answer text in an event, skipping tool calls and reasoning. */
+export function textOf(event: Event): string {
+  return (event.content?.parts ?? [])
+    .filter((part) => part.text && !part.thought)
+    .map((part) => part.text)
+    .join('');
+}
 // --8<-- [end:full]
