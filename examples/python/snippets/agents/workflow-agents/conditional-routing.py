@@ -48,9 +48,9 @@ def route_weekend(weekend_budget: WeekendBudget):
   if amount < 5:
     yield Event(route="too_low")
   elif amount < 100:
-    yield Event(route="cheap_ideas")
+    yield Event(route="value_ideas")
   else:
-    yield Event(route="fancy_ideas")
+    yield Event(route="premium_ideas")
 
 
 def handle_too_low():
