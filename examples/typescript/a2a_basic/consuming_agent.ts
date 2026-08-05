@@ -22,10 +22,10 @@ import {
   Runner,
 } from '@google/adk';
 import { z } from 'zod';
-// --8<-- [end:imports]
 
 const APP_NAME = 'a2a_basic';
 const USER_ID = 'user_1';
+// --8<-- [end:imports]
 
 // --8<-- [start:roll-agent]
 const rollDie = new FunctionTool({
@@ -41,7 +41,10 @@ const rollAgent = new LlmAgent({
   name: 'roll_agent',
   model: 'gemini-2.5-flash',
   description: 'Rolls dice of any size.',
-  instruction: 'You roll dice. Always call the roll_die tool, then report the number.',
+  instruction:
+    'You roll dice. Always call the roll_die tool first, then report the ' +
+    'number in one short sentence. Never transfer to another agent before ' +
+    'you have reported a number.',
   tools: [rollDie],
 });
 // --8<-- [end:roll-agent]

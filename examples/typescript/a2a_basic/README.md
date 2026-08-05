@@ -20,13 +20,23 @@ one directly, one by routing to it from a local agent.
 npm install
 ```
 
-Create a `.env` file next to `package.json`:
+Create a `.env` file next to `package.json`. Either a Gemini API key:
 
 ```bash
 GOOGLE_GENAI_API_KEY=your-api-key-here
 ```
 
-Get a key at [Google AI Studio](https://aistudio.google.com/apikey).
+Get a key at [Google AI Studio](https://aistudio.google.com/apikey). Or Vertex AI, with
+`gcloud auth application-default login` already run:
+
+```bash
+GOOGLE_GENAI_USE_VERTEXAI=true
+GOOGLE_CLOUD_PROJECT=your-project-id
+GOOGLE_CLOUD_LOCATION=global
+```
+
+Only `remote_prime_agent.ts` and `consuming_agent.ts` read it. `direct_client.ts` needs no
+credentials at all — the remote side owns the model call.
 
 ## Run
 
@@ -57,11 +67,14 @@ npm run consume
 user > Roll a 6-sided die and tell me whether the result is prime.
 root_agent calls transfer_to_agent({"agentName":"roll_agent"})
 roll_agent calls roll_die({"sides":6})
-roll_agent > I rolled a 6-sided die and got a 6.
+roll_agent > The result of your 6-sided die roll is 6.
 roll_agent calls transfer_to_agent({"agentName":"prime_agent"})
 prime_agent calls check_prime({"numbers":[6]})
 prime_agent > 6 is not a prime number.
 ```
+
+The four `calls` lines are the same every run. The number and the wording of the two `>`
+sentences are not — they are model output.
 
 ## Notes
 

@@ -34,22 +34,14 @@ Let's take a look at what is happening in this code:
    so write it for that audience.
 4. **`Runner`** drives the agent exactly as it drives a local one: `runAsync()` returns an
    async iterable of events. There is no separate "A2A client" API to learn.
-5. **`event.errorMessage`** is how remote failures arrive. They are *not* thrown. A loop
-   that only reads `event.content` prints nothing at all when the remote agent fails.
+5. **`event.errorMessage`** is how remote failures arrive. They are *not* thrown, and the
+   process still exits `0`. A loop that only reads `event.content` shows you nothing but
+   your own prompt when the remote agent fails.
 6. **`event.partial`** marks the streamed chunks of an answer that is still being written.
    Skipping them prints the finished sentence once. Drop that line and the same run prints
    `Yes, 7 is a`, then ` prime number.`, then `Yes, 7 is a prime number.` again.
 
 ## What you are building
-
-```text
-┌──────────────────────┐        A2A / JSON-RPC        ┌────────────────────────┐
-│  Your ADK app        │  ──────────────────────────▶ │  prime_agent           │
-│  (direct_client.ts   │                              │  (remote_prime_agent   │
-│   or consuming_      │  ◀────────────────────────── │   .ts, localhost:8001) │
-│   agent.ts)          │        events + answer       │  owns the model call   │
-└──────────────────────┘                              └────────────────────────┘
-```
 
 - **`prime_agent`** — an `LlmAgent` with a `check_prime` tool, published over A2A. It runs
   in its own Node process and makes its own model calls.
@@ -74,18 +66,12 @@ Let's take a look at what is happening in this code:
 - **Node.js 22 or later.** Everything on this page was run on Node v22.22.2 with npm 9.2.0.
   `@google/adk` publishes no `engines` field, so npm will not warn you on an older runtime —
   but the examples use ESM and top-level `await`, which need a current Node.
-- **A Gemini API key.** Get one from [Google AI Studio](https://aistudio.google.com/apikey).
-- **The exact file is `.env`**, in the same directory as `package.json`, containing exactly
-  this line:
-
-    ```bash title="examples/typescript/a2a_basic/.env"
-    GOOGLE_GENAI_API_KEY=your-api-key-here
-    ```
-
-    Replace `your-api-key-here` with the key you just copied. ADK reads
-    `GOOGLE_GENAI_API_KEY` or `GEMINI_API_KEY`, in that order. If neither is set, the first
-    model call throws
-    `Error: API key must be provided via constructor or GOOGLE_GENAI_API_KEY or GEMINI_API_KEY environment variable.`
+- **Credentials for Gemini.** Either a Gemini API key from
+  [Google AI Studio](https://aistudio.google.com/apikey), or a Google Cloud project with the
+  Vertex AI API enabled and `gcloud auth application-default login` already run. Step 3 gives
+  the literal `.env` for both.
+- **The exact file is `.env`**, in the same directory as `package.json`. The examples load it
+  with `dotenv`, which reads that filename and no other.
 
 !!! note "Which process needs the key"
 
@@ -94,14 +80,13 @@ Let's take a look at what is happening in this code:
     agent** (step 8) needs one too, because it runs its own model to decide where to send
     each request.
 
+    The split is identical on Vertex AI: the two processes that call a model need
+    `GOOGLE_CLOUD_PROJECT` and application default credentials, and the direct client still
+    needs nothing. `direct_client.ts` does not even import `dotenv`.
+
 ## Call a remote agent directly
 
 ### 1. Get the example code { #get-the-example-code }
-
-```bash
-git clone https://github.com/google/adk-docs.git
-cd adk-docs/examples/typescript/a2a_basic
-```
 
 Three runnable files, and the two config files they need:
 
@@ -115,7 +100,44 @@ a2a_basic/
 └── README.md
 ```
 
+Everything above except `README.md` is reproduced in full on this page, so you can either
+clone the files or paste them.
+
+=== "Clone them"
+
+    ```bash
+    git clone https://github.com/google/adk-docs.git
+    cd adk-docs/examples/typescript/a2a_basic
+    ```
+
+    `a2a_basic/` was added to `adk-docs` alongside this page. If `cd` fails with
+    `No such file or directory`, your clone predates it — `git pull`, or use the other tab.
+
+=== "Paste them"
+
+    ```bash
+    mkdir a2a_basic && cd a2a_basic
+    ```
+
+    Then create each file as you reach it: `package.json` and `tsconfig.json` in step 2,
+    `remote_prime_agent.ts` in step 4, `direct_client.ts` (shown in full at the top of this
+    page) in step 6, `consuming_agent.ts` in step 7. `README.md` is not needed to run
+    anything.
+
 ### 2. Install the dependencies { #install-the-dependencies }
+
+Both config files in full. `"type": "module"` and `"module": "nodenext"` are what allow the
+top-level `await` the examples use:
+
+```json title="examples/typescript/a2a_basic/package.json"
+--8<-- "examples/typescript/a2a_basic/package.json"
+```
+
+```json title="examples/typescript/a2a_basic/tsconfig.json"
+--8<-- "examples/typescript/a2a_basic/tsconfig.json"
+```
+
+Then install:
 
 === "npm"
 
@@ -141,36 +163,49 @@ a2a_basic/
 `@google/adk` brings the A2A stack with it: both the A2A SDK (`@a2a-js/sdk`) and Express are
 direct dependencies of the package, not peer dependencies, so there is nothing else to
 install to make A2A work. `zod` defines the tool's input schema, and `dotenv` loads `.env`.
-Pin `zod` to **v4** — `@google/adk@1.5.0` depends on `zod@^4.2.1`, and a `zod@3` in your own
-`package.json` produces two incompatible copies (see [Troubleshooting](#troubleshooting)).
+Keep `zod` on **v4**: `@google/adk@1.5.0` depends on `zod@^4.2.1`, and a `zod@3` in your own
+`package.json` puts two incompatible copies in `node_modules`, after which `tsc` rejects
+every tool schema you write.
 
-Two settings the examples depend on, both already set in the checked-in files. Only the
-relevant keys are shown; the rest of each file is unchanged:
+### 3. Add your credentials { #add-your-credentials }
 
-```json title="examples/typescript/a2a_basic/package.json (excerpt)"
-{
-  "type": "module"
-}
-```
+Pick the backend you have access to. Either way the file is `.env`, next to `package.json`,
+and this is its entire contents:
 
-```json title="examples/typescript/a2a_basic/tsconfig.json (excerpt)"
-{
-  "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext"
-  }
-}
-```
+=== "Gemini API key"
 
-`"type": "module"` and `"module": "nodenext"` are what allow the top-level `await` these
-files use. Set `"module": "commonjs"` instead and `tsc` stops with
-`error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', 'nodenext', or 'preserve', and the 'target' option is set to 'es2017' or higher.`
+    ```bash title="examples/typescript/a2a_basic/.env"
+    GOOGLE_GENAI_API_KEY=your-api-key-here
+    ```
 
-### 3. Add your API key { #add-your-api-key }
+    Replace `your-api-key-here` with a key from
+    [Google AI Studio](https://aistudio.google.com/apikey). ADK reads `GOOGLE_GENAI_API_KEY`
+    or `GEMINI_API_KEY`, in that order — and **not** `GOOGLE_API_KEY`.
 
-```bash
-echo "GOOGLE_GENAI_API_KEY=your-api-key-here" > .env
-```
+=== "Vertex AI"
+
+    ```bash title="examples/typescript/a2a_basic/.env"
+    GOOGLE_GENAI_USE_VERTEXAI=true
+    GOOGLE_CLOUD_PROJECT=your-project-id
+    GOOGLE_CLOUD_LOCATION=global
+    ```
+
+    No key. Credentials come from application default credentials, so run this once:
+
+    ```bash
+    gcloud auth application-default login
+    ```
+
+    `GOOGLE_GENAI_USE_VERTEXAI=true` is what switches backends; without it ADK looks for an
+    API key and ignores the project. `global` works for `GOOGLE_CLOUD_LOCATION` unless you
+    need a specific region. To confirm you are on this path, watch for
+    `backend: VERTEX_AI` in the `INFO: [ADK] … Sending out request` line each model call
+    prints — it says `backend: GEMINI_API` on the API-key path.
+
+Get this wrong and the two halves fail in ways that look nothing alike. The **remote agent**
+does not throw: it packages the failure into its A2A reply, so your client prints an error
+event and still exits `0`. The **routing agent** builds its model in-process and really does
+throw, with exit `1`. Both are in [Troubleshooting](#troubleshooting).
 
 ### 4. Start the remote agent { #start-the-remote-agent }
 
@@ -204,9 +239,16 @@ npx tsx remote_prime_agent.ts
 
 ```text
 WARN: [ADK] 2026-08-05T17:27:54.112Z SECURITY WARNING: Mounting the A2A server WITHOUT authentication because `allowUnauthenticated: true` was set. The agent and all of its tools are exposed to any network-reachable caller, which can invoke them with arbitrary input and read the output. Do NOT use this outside of local, trusted development.
+(node:4058702) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
 [server] prime_agent listening on http://localhost:8001
 [server] agent card: http://localhost:8001/.well-known/agent-card.json
 ```
+
+Those two `punycode` lines come from a transitive dependency and are harmless. Node 22 prints
+them on **every** command on this page; the later transcripts leave them out, along with the
+`INFO: [ADK] … Sending out request, model: gemini-2.5-flash …` line each model call emits.
+Extra Node warning lines do not mean you have gone wrong.
 
 ### 5. Confirm the agent card is being served { #confirm-the-agent-card }
 
@@ -302,6 +344,8 @@ like any local sub-agent.
 ### 7. Add a root agent with the remote agent as a sub-agent { #add-a-root-agent }
 
 ```typescript title="examples/typescript/a2a_basic/consuming_agent.ts"
+--8<-- "examples/typescript/a2a_basic/consuming_agent.ts:imports"
+
 --8<-- "examples/typescript/a2a_basic/consuming_agent.ts:roll-agent"
 
 --8<-- "examples/typescript/a2a_basic/consuming_agent.ts:remote-agent"
@@ -343,15 +387,11 @@ npx tsx consuming_agent.ts
 user > Roll a 6-sided die and tell me whether the result is prime.
 root_agent calls transfer_to_agent({"agentName":"roll_agent"})
 roll_agent calls roll_die({"sides":6})
-roll_agent > I rolled a 6-sided die and got a 6.
-
+roll_agent > The result of your 6-sided die roll is 6.
 roll_agent calls transfer_to_agent({"agentName":"prime_agent"})
 prime_agent calls check_prime({"numbers":[6]})
 prime_agent > 6 is not a prime number.
 ```
-
-(ADK also prints `INFO: [ADK] … Sending out request, model: gemini-2.5-flash …` lines
-between these, one per model call. They are left out here for readability.)
 
 Read that trace bottom-up and you can see the whole point: `check_prime({"numbers":[6]})`
 was decided by a model in *your* process, executed by a tool in a *different* process, and
@@ -362,7 +402,20 @@ its half:
 [server] check_prime(6) -> none
 ```
 
-The die roll is random, so your number will differ.
+**Compare the shape, not the words.** The four `calls` lines are the same on every run, in
+that order; that is the part worth checking. The two `>` lines are model prose and will be
+worded differently for you. Across eight consecutive runs here the four `calls` lines were
+identical eight times and the two sentences never were: `roll_agent` said
+`I rolled a 5.`, `The result of your 6-sided die roll is 6.` and
+`I rolled a 6-sided die and got 2.`, and `prime_agent` answered `Yes, 5 is prime.`,
+`4 is not prime.` and `2 is a prime number.` Do not diff this transcript character by
+character.
+
+Routing is still a model decision, and it can go wrong: given a vaguer instruction,
+`roll_agent` sometimes handed straight back to `root_agent` without rolling and the run
+ended with `root_agent` asking what the number was — no A2A call at all. That is what the
+`Never transfer to another agent before you have reported a number` clause in `roll_agent`'s
+instruction is for.
 
 ## Troubleshooting
 
@@ -412,7 +465,7 @@ appears:
 - **The card resolved, but the URL inside it is dead.** This one arrives as an error event:
 
     ```text
-    ERROR: [ADK] A2ARemoteAgent prime_agent failed: TypeError: fetch failed
+    ERROR: [ADK] 2026-08-05T18:41:10.405Z A2ARemoteAgent prime_agent failed: TypeError: fetch failed
     [error] prime_agent: fetch failed
     ```
 
@@ -421,10 +474,10 @@ appears:
     they differ, the card fetch succeeds and every RPC afterwards goes to a port with no
     server on it.
 
-### The client prints your prompt, then nothing, and exits 0
+### The client prints your prompt, then almost nothing, and exits 0
 
 Your event loop reads `event.content` but never `event.errorMessage`. Remote failures do not
-throw and do not produce content, so a loop like this shows you an empty screen:
+throw and do not produce content, so a loop like this shows you a near-empty screen:
 
 ```typescript
 for await (const event of runner.runAsync({ /* ... */ })) {
@@ -435,9 +488,16 @@ for await (const event of runner.runAsync({ /* ... */ })) {
 }
 ```
 
+You are not left with *nothing*, but with almost nothing, and only for some failures.
+A transport failure gets one line out of ADK's own logger before the silence:
+
 ```text
 user > Is 7 a prime number?
+ERROR: [ADK] 2026-08-05T18:41:14.373Z A2ARemoteAgent prime_agent failed: TypeError: fetch failed
 ```
+
+A failure *inside* the remote agent — a bad model call, a throwing tool — prints nothing at
+all. Either way the exit code is `0`.
 
 Always check `errorMessage` first, as `direct_client.ts` does:
 
@@ -461,51 +521,80 @@ code `-32603` and no hint that credentials were the problem. Confusing matters f
 agent card endpoint is *never* authenticated — only `/jsonrpc` and `/rest` are — so
 `curl`ing the card returns `200` even when every call you make is being refused.
 
-`RemoteA2AAgent` has no token option. Credentials go in by building a client whose transport
-uses your own `fetch`:
+`RemoteA2AAgent` has no token option, so there is nowhere obvious to put a credential.
+Attaching one means replacing the client's transport:
 
-```typescript
-import { RemoteA2AAgent } from '@google/adk';
-import {
-  ClientFactory,
-  ClientFactoryOptions,
-  JsonRpcTransportFactory,
-} from '@a2a-js/sdk/client';
+??? note "Sending an Authorization header from a RemoteA2AAgent"
 
-const authFetch: typeof fetch = (input, init = {}) =>
-  fetch(input, {
-    ...init,
-    headers: { ...(init.headers ?? {}), Authorization: `Bearer ${process.env.A2A_TOKEN}` },
-  });
+    Swap the `primeAgent` constant in `direct_client.ts` for the version below. Only the
+    `@a2a-js/sdk/client` import is new — `RemoteA2AAgent` is already imported at the top of
+    that file.
 
-const primeAgent = new RemoteA2AAgent({
-  name: 'prime_agent',
-  description: 'Remote agent that checks whether numbers are prime.',
-  agentCard: 'http://localhost:8001',
-  clientFactory: new ClientFactory(
-    ClientFactoryOptions.createFrom(ClientFactoryOptions.default, {
-      transports: [new JsonRpcTransportFactory({ fetchImpl: authFetch })],
-    }),
-  ),
-});
-```
+    ```typescript title="examples/typescript/a2a_basic/direct_client.ts"
+    import {
+      ClientFactory,
+      ClientFactoryOptions,
+      JsonRpcTransportFactory,
+    } from '@a2a-js/sdk/client';
 
-Add `@a2a-js/sdk` to your own `package.json` if you import from it like this. It resolves
-today through `@google/adk`'s own dependency tree, but that is npm hoisting doing you a
-favour, and pnpm will not.
+    const authFetch: typeof fetch = (input, init = {}) =>
+      fetch(input, {
+        ...init,
+        headers: { ...(init.headers ?? {}), Authorization: `Bearer ${process.env.A2A_TOKEN}` },
+      });
 
-### `error TS2322: … is not assignable to type 'ToolInputParameters'`
+    const primeAgent = new RemoteA2AAgent({
+      name: 'prime_agent',
+      description: 'Remote agent that checks whether numbers are prime.',
+      agentCard: 'http://localhost:8001',
+      clientFactory: new ClientFactory(
+        ClientFactoryOptions.createFrom(ClientFactoryOptions.default, {
+          transports: [new JsonRpcTransportFactory({ fetchImpl: authFetch })],
+        }),
+      ),
+    });
+    ```
 
-Two copies of `zod`. `@google/adk@1.5.0` depends on `zod@^4.2.1`; if your `package.json`
-asks for `zod@^3`, TypeScript compares a `zod@3` schema against a `zod@4` type and reports
-a private-property mismatch:
+    Add `@a2a-js/sdk` to your own `package.json` if you import from it like this. It resolves
+    today through `@google/adk`'s own dependency tree, but that is npm hoisting doing you a
+    favour, and pnpm will not.
+
+### `[error] prime_agent: Agent run failed: API key must be provided …`
+
+The **remote agent** has no credentials. This is the one people expect to throw, and it does
+not:
 
 ```text
-Property '_cached' is private in type 'ZodObject<{ numbers: ZodArray<ZodNumber, "many">; }, …>'
-but not in type 'ZodObject<ZodRawShape, UnknownKeysParam, ZodTypeAny, …>'.
+user > Is 7 a prime number?
+[error] prime_agent: Agent run failed: API key must be provided via constructor or GOOGLE_GENAI_API_KEY or GEMINI_API_KEY environment variable.
 ```
 
-Change your dependency to `"zod": "^4.2.1"` and reinstall.
+Exit code `0`, and the remote terminal logs nothing at all — the error is packaged into the
+A2A response instead. Check that `.env` exists next to `package.json` **in the directory you
+started the remote agent from** (see [step 3](#add-your-credentials)).
+
+The local agents are the opposite. `consuming_agent.ts` builds its own model in-process, so
+missing credentials there really do throw — same message, but as an uncaught
+`Error:` whose first stack frame is `at new Gemini (…/models/google_llm.js:52:13)`, and
+exit `1`.
+
+### A ~30-line JSON dump starting `[error] prime_agent: {`
+
+The remote agent's key exists but is **wrong**. The provider's raw error is passed through
+verbatim, so it does not look like an ADK message at all:
+
+```text
+[error] prime_agent: {
+  "error": {
+    "code": 400,
+    "message": "API key not valid. Please pass a valid API key.",
+    "status": "INVALID_ARGUMENT",
+    …
+```
+
+Exit code `0` again. Twenty or so more lines of `details` follow, ending with a
+`DebugInfo` entry that echoes the key you actually sent — worth reading, because it is
+usually a truncated paste or a stale key rather than the one in `.env`.
 
 ## Next steps
 
