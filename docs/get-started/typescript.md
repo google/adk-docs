@@ -37,7 +37,7 @@ const getCurrentTime = new FunctionTool({
 });
 
 export const rootAgent = new LlmAgent({
-  name: 'hello_time_agent',
+  name: 'helloTimeAgent',
   model: 'gemini-flash-latest',
   description: 'Tells the current time in a specified city.',
   instruction: `You are a helpful assistant that tells the current time in a city.
@@ -90,9 +90,18 @@ Move into the project directory and install:
     pnpm approve-builds --all
     ```
 
-    `esbuild` and `sqlite3` ship install scripts, which pnpm blocks by default.
-    Until you approve them, every `pnpm exec` fails the dependency check with
-    `ERR_PNPM_IGNORED_BUILDS`.
+    Five packages ship install scripts, which pnpm blocks by default. pnpm
+    prints the list after each install; once both are done it reads:
+
+    ```console
+    [ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: @google/genai@1.52.0, @google/genai@2.15.0, esbuild@0.25.12, protobufjs@7.6.5, sqlite3@5.1.7
+    ```
+
+    `@google/genai` is listed twice because `@google/adk` and
+    `@google/adk-devtools` pull different majors of it, and `esbuild` is missing
+    from the earlier list — the one after `pnpm add @google/adk zod` — because it
+    arrives with the devtools. Until you approve them, every `pnpm exec` fails
+    its dependency check with that same message before running anything.
 
 === "yarn"
 
@@ -124,8 +133,9 @@ Three packages, and each one earns its place:
 
 ## 3. Set your credentials
 
-ADK for TypeScript reads its credentials from the environment, and from a
-`.env` file in the same directory as your agent. Create `my-agent/.env`:
+ADK for TypeScript reads its credentials from the process environment, and from
+a `.env` file in the directory you run the command from — which is `my-agent/`,
+because that is where step 4 tells you to run. Create `my-agent/.env`:
 
 === "Gemini API key"
 
@@ -159,6 +169,22 @@ ADK for TypeScript reads its credentials from the environment, and from a
     `GOOGLE_CLOUD_LOCATION` such as `us-central1` also needs a versioned model
     string — change `model` to `gemini-2.5-flash`, because
     `gemini-flash-latest` does not resolve on regional endpoints.
+
+!!! warning "Your shell wins over `.env`"
+
+    `.env` is loaded without overriding, so a variable already exported in your
+    shell keeps its value and the line in `.env` is ignored. This matters most
+    on the Google Cloud path: many Cloud workstations already export
+    `GOOGLE_CLOUD_PROJECT`, so the quickstart can succeed against *that* project
+    while the `.env` you just wrote does nothing — and then fail for the next
+    person who copies your file. Before you run, check what is already set:
+
+    ```console
+    env | grep -E '^(GOOGLE_|GEMINI_)'
+    ```
+
+    Anything printed there overrides `.env`. `unset` it, or set the value you
+    actually want in the shell rather than in the file.
 
 !!! warning "`GOOGLE_API_KEY` is not one of the names"
 
@@ -203,27 +229,37 @@ Run this from `my-agent/`, the directory that has `node_modules/` in it:
     ```
 
 Type a question at the `[user]:` prompt and press Enter. A working session looks
-exactly like this:
+like this:
 
 ```console title="Expected output"
-Running agent hello_time_agent, type exit to exit.
+(node:4048641) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Running agent helloTimeAgent, type exit to exit.
 [user]: What time is it in Paris?
 INFO: [ADK] 2026-08-05T17:41:51.838Z Sending out request, model: gemini-flash-latest, backend: GEMINI_API, stream: false
 INFO: [ADK] 2026-08-05T17:41:52.665Z Sending out request, model: gemini-flash-latest, backend: GEMINI_API, stream: false
-[hello_time_agent]: The current time in Paris is 10:30 AM
+[helloTimeAgent]: The current time in Paris is 10:30 AM
 [user]: exit
 ```
 
-**You should see** two `INFO` lines and then a `[hello_time_agent]:` line
-carrying the answer. Two requests is the tool call working: the first asks the
-model what to do, the model asks for `getCurrentTime`, and the second sends your
-function's result back for the model to phrase. On the Google Cloud path the
-same run prints `backend: VERTEX_AI` instead of `backend: GEMINI_API`.
+Do not compare that character by character. The two `punycode` lines come from
+Node, not from ADK — they precede *every* `adk` command on Node 22, the process
+id in them changes each run, and more Node warnings may join them. The
+timestamps are yours, and the model rephrases the last line freely.
+
+**You should see** two `INFO` lines and then a `[helloTimeAgent]:` line carrying
+the answer. Two requests is the tool call working: the first asks the model what
+to do, the model asks for `getCurrentTime`, and the second sends your function's
+result back for the model to phrase. On the Google Cloud path the same run
+prints `backend: VERTEX_AI` instead of `backend: GEMINI_API`.
 
 **If it fails you will not get an error.** ADK for TypeScript 1.5.0 prints one
 `INFO` line, returns you to the `[user]:` prompt with no answer, and exits with
-status `0`. That silence means the model request was rejected — almost always a
-bad or unauthorized key. See [Troubleshooting](#troubleshooting).
+status `0`. The silence means the model request was rejected and ADK discarded
+the reason. It is *not* specific to a bad key: an unusable API key, a project
+your credentials cannot reach, and a model name that does not exist in your
+region are all indistinguishable at the terminal. See
+[Troubleshooting](#troubleshooting) for a command that prints the real error.
 
 ### Run with the web interface
 
@@ -231,12 +267,13 @@ bad or unauthorized key. See [Troubleshooting](#troubleshooting).
 npx adk web
 ```
 
-This starts a server on `http://localhost:8000`. Open it and you should see a
-dark chat page titled **Agent Development Kit**, with an app selector in the
-top left already showing `agent` — the name comes from your `agent.ts`
-filename, not from `rootAgent.name`. Type into **Type a message...** at the
-bottom. The event list shows your message, then a `getCurrentTime("Paris")`
-call, then the tool's result, then the answer.
+This starts a server on `http://localhost:8000`; pass `--port 8001` (or `-p`) to
+use a different one. Open it and you should see a dark chat page titled
+**Agent Development Kit**, with an app selector in the top left already showing
+`agent` — the name comes from your `agent.ts` filename, not from
+`rootAgent.name`. Type into **Type a message...** at the bottom. The event list
+shows your message, then a `getCurrentTime("Paris")` call, then the tool's
+result, then the answer.
 
 ![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
@@ -249,21 +286,57 @@ call, then the tool's result, then the answer.
 
 **One `INFO` line, no answer, and exit code `0`.**
 
-The model request was rejected and the error was swallowed. Check that your key
-is valid and that the Gemini API is enabled for it. To see whether your key is
-being picked up at all, temporarily remove it: with no credential set, the run
-fails loudly with `API key must be provided` instead of going quiet.
+The model request was rejected and ADK discarded the reason, so the terminal
+shows you nothing. At least three different causes produce this identical
+silence, and you cannot tell them apart from the output:
+
+*   an API key that the Gemini API rejects, or one whose project has the API
+    disabled;
+*   a `GOOGLE_CLOUD_PROJECT` your credentials are not authorized to use;
+*   a `model` string that does not exist at your `GOOGLE_CLOUD_LOCATION` —
+    notably `gemini-flash-latest`, which resolves on `global` but **not** on a
+    regional endpoint such as `us-central1`.
+
+Send the same request yourself to see the error ADK hid. On the Gemini API path:
+
+```console
+curl -s -X POST -H 'Content-Type: application/json' \
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GOOGLE_GENAI_API_KEY" \
+  -d '{"contents":[{"role":"user","parts":[{"text":"hi"}]}]}'
+```
+
+On the Google Cloud path (use `LOCATION-aiplatform.googleapis.com` for a
+regional `GOOGLE_CLOUD_LOCATION`):
+
+```console
+curl -s -X POST -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
+  -H 'Content-Type: application/json' \
+  "https://aiplatform.googleapis.com/v1/projects/$GOOGLE_CLOUD_PROJECT/locations/$GOOGLE_CLOUD_LOCATION/publishers/google/models/gemini-flash-latest:generateContent" \
+  -d '{"contents":[{"role":"user","parts":[{"text":"hi"}]}]}'
+```
+
+You get back the message ADK swallowed — `API key not valid. Please pass a valid
+API key.`, `Permission denied on resource project <id>.`, or ``Publisher model
+`...` was not found or your project does not have access to it``, which each
+point at one of the three causes above. To check whether your credential is
+being read at all, temporarily remove it: with nothing set, the run fails
+loudly with `API key must be provided` instead of going quiet.
 
 **`Error: API key must be provided via constructor or GOOGLE_GENAI_API_KEY or GEMINI_API_KEY environment variable.`**
 
 No credential was found under a name ADK reads. You set `GOOGLE_API_KEY`, or
 you set `GOOGLE_GENAI_USE_ENTERPRISE` instead of `GOOGLE_GENAI_USE_VERTEXAI`,
-or your `.env` is not in the same directory as `agent.ts`.
+or your `.env` is not in the directory you ran the command from.
 
 **`Error: VertexAI project must be provided via constructor or GOOGLE_CLOUD_PROJECT environment variable.`**
 
-`GOOGLE_GENAI_USE_VERTEXAI` is set but `GOOGLE_CLOUD_PROJECT` or
-`GOOGLE_CLOUD_LOCATION` is missing. Both are required on that path.
+`GOOGLE_GENAI_USE_VERTEXAI` is set but `GOOGLE_CLOUD_PROJECT` is missing.
+
+**`Error: VertexAI location must be provided via constructor or GOOGLE_CLOUD_LOCATION environment variable.`**
+
+The same, for `GOOGLE_CLOUD_LOCATION`. Both variables are required on the Google
+Cloud path and each one has its own error; setting only the project gets you
+this one. Use `global` unless you need a specific region.
 
 **`npm ERR! could not determine executable to run`**
 
@@ -284,10 +357,30 @@ will not.
 You are on Yarn's Plug'n'Play linker. Run `yarn config set nodeLinker
 node-modules` and reinstall.
 
-**`[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts:`** listing `esbuild` and `sqlite3`
+**`[ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: @google/genai@1.52.0, @google/genai@2.15.0, esbuild@0.25.12, protobufjs@7.6.5, sqlite3@5.1.7`**
 
 pnpm blocked those install scripts, and that makes `pnpm exec` fail its
 dependency check before it runs anything. Run `pnpm approve-builds --all` once.
+The exact versions move; the set does not.
+
+**`[ADK CLI] Error starting web server: Port 8000 is already in use`**
+
+Something already holds port 8000 — often an `adk web` you left running in
+another terminal. Either serve on another port:
+
+```console
+npx adk web --port 8001
+```
+
+or find and stop what is holding 8000 first:
+
+```console
+lsof -ti :8000        # prints the process id
+kill $(lsof -ti :8000)
+```
+
+`adk web` does not fall back to a free port on its own; it prints that line and
+exits.
 
 **`TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts"`**
 
