@@ -57,8 +57,13 @@ Here is what is happening in this code:
 
 Use this page when you want an agent's text answer to appear progressively in a
 UI you control. If you only want a chat window to poke at your agent during
-development, run `npx adk web` instead — see the
-[TypeScript quickstart](../../get-started/typescript.md).
+development, install the dev tools — `npm install -D @google/adk-devtools` —
+and run `npx adk web` instead; see the
+[TypeScript quickstart](../../get-started/typescript.md). The install is not
+optional and the project on this page does not include it: the `adk` command
+comes from `@google/adk-devtools`, and `npx adk` in a project without it fails
+with `npm ERR! could not determine executable to run` — or fetches an unrelated
+`adk` package from the public registry.
 
 Bidirectional live **audio and video** streaming is not available in the ADK
 TypeScript SDK. `Runner` exposes no live entry point, and the agent-level live
@@ -213,13 +218,21 @@ Before wiring up HTTP, confirm that chunks really are arriving. Save
 npm run console
 ```
 
-There is a pause of a second or two while the model starts, and then the answer
-types itself out in a handful of visible bursts — a few hundred characters at a
-time, not one block — followed by a line like `--- 1273 characters ---`. Watch
-for the *bursts*, not the clock: how long it takes depends on the prompt, the
-model and your network, and a short answer can finish before you register it.
-If instead the terminal sits silent and then prints everything at once,
-`streamingMode` is missing — see [Troubleshooting](#troubleshooting).
+**Expect several seconds of nothing first.** Across the runs behind this page the
+first characters appeared roughly 6 to 11 seconds after pressing Enter, and most
+of that is not the model: `tsx` has to compile, `@google/adk` has to load and
+credentials have to be resolved before the request is even sent — about four
+seconds — and only then does the model spend a further one and a half to seven
+seconds on its first token. Do not conclude it is broken and kill it. The one
+log line ADK prints, `Sending out request, model: …`, is your marker: everything
+before it is startup, everything after it is the model.
+
+Then the answer types itself out in a handful of visible bursts — a few hundred
+characters at a time, not one block — followed by a line like
+`--- 1273 characters ---`. Watch for the *bursts*, not the clock: a short answer
+can finish before you register it. If instead the terminal sits silent and then
+prints everything at once, `streamingMode` is missing — see
+[Troubleshooting](#troubleshooting).
 
 ## 5. Serve the stream over HTTP {#step-5}
 
@@ -241,9 +254,13 @@ Here is what is happening in this code:
     `Cache-Control: no-cache`, `Connection: keep-alive`) tell the browser this is
     a stream. `X-Accel-Buffering: no` stops nginx and similar proxies from
     buffering it back into one response.
-4.  **`res.flushHeaders()` is mandatory.** Without it Node holds the headers
-    until the first flush and the browser receives nothing until the run ends —
-    which looks exactly like streaming being broken.
+4.  `res.flushHeaders()` sends the headers *now*, before the first token exists.
+    Without it Node holds them until the first `res.write()`, so the browser's
+    `fetch` promise does not resolve — and `response.body.getReader()` cannot
+    start reading — until the model has already produced something. Measured on
+    this example: headers within a few tens of milliseconds with
+    `flushHeaders()`, and 2.3–4.0 s without it. It does not change how the body
+    arrives; the deltas stream in five to seven pieces either way.
 5.  `res.on('close')` aborts the `AbortController` whose `signal` was passed to
     `runAsync` as `abortSignal`. Close the browser tab and generation stops;
     leave this out and an abandoned tab keeps burning tokens.
@@ -254,6 +271,14 @@ Here is what is happening in this code:
     deliberately dropped, because it repeats the entire answer — forwarding it
     would print the answer twice in the browser. `send({done: true})` marks the
     end instead.
+8.  The `'error'` handler on the server is **not optional**. Express 5 registers
+    the callback you pass to `app.listen(port, cb)` as an `'error'` listener as
+    well, so the one-line version everyone writes —
+    `app.listen(port, () => console.log('Open …'))` — greets you with
+    `Open http://localhost:3000` and exits `0` when the port is busy. Nothing is
+    listening and nothing said so. Binding `'listening'` and `'error'`
+    separately means the success line only prints on success, and a failure to
+    bind prints why and exits non-zero.
 
 ## 6. Build the browser client {#step-6}
 
@@ -286,15 +311,24 @@ Here is what is happening in this code:
 npm start
 ```
 
-If port 3000 is already taken (`Error: listen EADDRINUSE`), pick another —
+If port 3000 is already taken, nothing starts and you get this on stderr, with
+exit code `1`:
+
+```
+Port 3000 is already in use. Free it, or run PORT=3100 npm start.
+```
+
 `server.ts` reads `PORT`, so `PORT=3100 npm start` serves on
 <http://localhost:3100> instead.
 
 Open <http://localhost:3000>. You should see the heading **Ask the agent**, a
 text box pre-filled with `Why is the sky blue?`, and a **Send** button. Press
-Send. The button greys out, and a second or two later text starts appearing
-below the form and keeps growing in bursts until the button becomes clickable
-again. Ask something else and the agent will remember what you asked before.
+Send. The button greys out — and then **nothing happens for several seconds**.
+That wait was 1.3 to 4.0 seconds on the runs behind this page, and longer is
+normal on a slower link; it is the model's time to its first token and there is
+nothing to see until it passes. Then text starts appearing below the form and
+keeps growing in bursts until the button becomes clickable again. Ask something
+else and the agent will remember what you asked before.
 
 That is a streaming agent UI. The rest of this page is what to do when it
 misbehaves.
@@ -365,10 +399,17 @@ No key reached the process. Either `.env` is missing, or it is spelled
 `GOOGLE_API_KEY` (which ADK does not read for the Gemini API), or you started
 the process without `--env-file=.env`.
 
-**The browser shows nothing until the answer is complete, but `npm run console` streams fine.**
-`res.flushHeaders()` is missing from the route handler. Node buffers the
-response until the first flush, so the whole stream lands in one piece at the
-end.
+**The browser shows nothing for several seconds after you press Send.**
+Usually this is just the model's time to first token — 1.3 to 4.0 seconds here —
+and not a bug. Confirm with `npm run console`: if the terminal pauses too, the
+stream is fine.
+
+If it is longer than that, and `fetch` in the browser does not resolve at all
+until the first text appears, `res.flushHeaders()` is missing from the route
+handler. Node then holds the response headers until the first `res.write()`, so
+the client cannot begin reading until the model has produced something. The
+deltas still arrive in pieces once they start, so this does not look like
+streaming being off — it looks like the endpoint is slow to respond.
 
 **A `SyntaxError` from `JSON.parse` in the browser console, and a chunk of text goes missing.**
 The client parsed a frame that a network read cut in half. The exact message

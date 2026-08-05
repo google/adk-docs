@@ -87,7 +87,21 @@ app.post('/api/chat', async (req: Request, res: Response) => {
 });
 
 const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => {
+const server = app.listen(port);
+
+server.on('listening', () => {
   console.log(`Open http://localhost:${port}`);
+});
+
+// Do not skip this. Express 5 registers the app.listen() success callback as an
+// 'error' listener too, so the obvious one-liner prints "Open http://..." and
+// exits 0 when the port is busy — a failure that looks exactly like a success.
+server.on('error', (err: NodeJS.ErrnoException) => {
+  console.error(
+    err.code === 'EADDRINUSE'
+      ? `Port ${port} is already in use. Free it, or run PORT=3100 npm start.`
+      : `Could not start the server: ${err.message}`,
+  );
+  process.exit(1);
 });
 // --8<-- [end:full]
