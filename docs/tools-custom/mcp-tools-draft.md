@@ -35,14 +35,14 @@ sequenceDiagram
 | Concept | ADK | MCP |
 | :--- | :--- | :--- |
 | **Nature** | Python/TS/Java application framework | Protocol specification (JSON-RPC 2.0 based) |
-| **Tool Definition** | In-process objects (`BaseTool`, `FunctionTool`) | Schema exposed over standard protocol |
+| **Tool Definition** | In-process objects: `BaseTool`, `FunctionTool` | Schema exposed over standard protocol |
 | **Bridge Component** | `McpToolset` translates MCP schemas into ADK `BaseTool` instances transparently |
 | **Execution Context** | In-memory synchronous or async calls | Async IPC (Stdio) or Network RPC (Streamable HTTP / SSE) |
 | **Session Model** | Application state managed by `Runner` | Stateful client-server connection requiring lifecycle management |
 
 !!! warning "Deployment rule"
 
-    Agents deployed to production (Cloud Run, GKE, Agent Runtime) **must define `McpToolset` synchronously** in `agent.py`. Dynamic asynchronous agent initialization is only supported for local debugging or custom standalone runners.
+    Agents deployed to production **must define `McpToolset` synchronously** in `agent.py`. Dynamic asynchronous agent initialization is only supported for local debugging or custom standalone runners.
 
 ---
 
@@ -72,7 +72,7 @@ Before building, verify your local development environment:
 
 ### Universal Setup Rules
 
-  1. **Absolute Paths**: File system MCP servers require absolute path arguments (`os.path.abspath(...)`). Relative paths cause runtime resolution errors in subprocesses.
+  1. **Absolute Paths**: File system MCP servers require absolute path arguments: `os.path.abspath(...)`. Relative paths cause runtime resolution errors in subprocesses.
   2. **Package Discovery**: When running `adk web`, ensure an `__init__.py` file exists inside your agent folder so ADK can import the package.
   3. **Windows Async Bug**: If you encounter `_make_subprocess_transport NotImplementedError` on Windows, start `adk web` with the `--no-reload` flag.
 
@@ -196,8 +196,6 @@ Use `McpToolset` to import tools from an external MCP server into your ADK `LlmA
 
 ### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
 
-## Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
-
 === "Python"
 
 ```python
@@ -227,11 +225,12 @@ root_agent = Agent(
         )
     ],
 )
-    ```
+```
 
 === "TypeScript"
 
-    ```typescript
+```typescript
+
 import { LlmAgent, MCPToolset } from "@google/adk";
 
 export const rootAgent = new LlmAgent({
@@ -252,12 +251,13 @@ export const rootAgent = new LlmAgent({
         }),
     ],
 });
+```
 
 ---
 
 ## Pattern 2: Exposing ADK Tools via a Custom MCP Server
 
-Wrap existing ADK tools (`FunctionTool`) inside an MCP server to make them accessible to external clients (e.g., Claude Desktop, custom hosts).
+Wrap existing ADK tools (`FunctionTool`) inside an MCP server to make them accessible to external clients, such as Claude Desktop or custom hosts.
 
     ```python
     import asyncio
@@ -347,14 +347,14 @@ uv run adk deploy cloud_run \
 
 ## Remote MCP Authentication and resource access
 
-This section shows you how to connect to remote MCP servers using authentication and how to read data **Resources** exposed by an MCP server.When an MCP server requires authentication (for example, over Server-Sent Events `SseConnectionParams` or Streamable HTTP), `McpToolset` handles credential injection and token management automatically.
+This section shows you how to connect to remote MCP servers using authentication and how to read data **Resources** exposed by an MCP server. When an MCP server requires authentication, such as over Server-Sent Events `SseConnectionParams` or Streamable HTTP, `McpToolset` handles credential injection and token management automatically.
 
 ### Key authentication parameters
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `auth_scheme` | `AuthScheme` | The authentication strategy (e.g., `Bearer`, `Basic`, `APIKey`, `OAuth2`). |
-| `auth_credential` | `AuthCredential` | The secret credential payload (e.g., API token, OAuth access token, username/password). |
+| `auth_credential` | `AuthCredential` | The secret credential payload, for example, API token, OAuth access token, username/password. |
 
 ADK automatically constructs the required `Authorization` HTTP headers and manages OAuth 2.0 token refreshes during client requests.
 
@@ -362,7 +362,7 @@ ADK automatically constructs the required `Authorization` HTTP headers and manag
 
 When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
 
-*(For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md))*
+*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md)*
 
 === "Python"
 
@@ -380,11 +380,11 @@ toolset = McpToolset(
     auth_scheme=AuthScheme.BEARER,
     auth_credential=AuthCredential(token="YOUR_ACCESS_TOKEN"),
 )
-    ```
+```
 
 === "TypeScript"
 
-    ```typescript
+```typescript
     import { MCPToolset } from "@google/adk";
 
     // Configure Bearer Token Authentication
@@ -395,7 +395,7 @@ toolset = McpToolset(
             "Authorization": "Bearer YOUR_ACCESS_TOKEN",
         },
     });
-    ```
+```
 
 ---
 
@@ -408,13 +408,13 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 ### Core Methods
 
 * **`list_resources()`**: Returns a list of all available data resources exposed by the MCP server.
-* **`read_resource(name)`**: Retrieves the raw content blocks (text or binary data) for a specific resource by its name or URI.
+* **`read_resource(name)`**: Retrieves the raw content blocks, text or binary data, for a specific resource by its name or URI.
 
 ### Try it out
 
 === "Python"
 
-    ```python
+  ```python
     import asyncio
 
     async def fetch_mcp_data(toolset):
@@ -427,11 +427,11 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
             resource_name = resources[0].name
             content_blocks = await toolset.read_resource(name=resource_name)
             print(f"Content of {resource_name}:", content_blocks)
-    ```
+  ```
 
 === "TypeScript"
 
-    ```typescript
+  ```typescript
     async function fetchMcpData(toolset: any) {
         // 1. Discover available resources
         const resources = await toolset.listResources();
@@ -443,7 +443,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
             console.log(`Content of ${resources[0].name}:`, content);
         }
     }
-    ```
+  ```
 
 ---
 
@@ -452,7 +452,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 * **Security & Scoping**: Always supply `tool_filter=[...]` in `McpToolset` to expose only necessary actions to your LLM.
 * **Timeouts**: Configure explicit timeouts on `StdioConnectionParams(timeout=5)` to prevent hanging subprocesses.
 * **Lifecycle Cleanup**: In non-`adk web` runners, invoke `await toolset.close()` or use async context managers to gracefully shutdown subprocesses.
-* **Environment Detection**: Dynamically pick connection types based on environment variables (e.g., `K_SERVICE` for Cloud Run vs Stdio for local dev).
+* **Environment Detection**: Dynamically pick connection types based on environment variables (for example, `K_SERVICE` for Cloud Run vs Stdio for local dev.
 
 ### Configure the environment-aware connection
 
@@ -491,7 +491,7 @@ else:
 
 ## Experimental UI Rendering (`meta.ui.resourceUri`)
 
-Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets (such as maps, charts, or forms) directly inside the chat interface.
+Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
 
 ```mermaid
 sequenceDiagram
@@ -508,13 +508,11 @@ sequenceDiagram
 ```
 
 ### How It Works
-1. **Metadata Link**: An MCP tool attaches a UI resource link in its output metadata (`meta.ui.resourceUri = "ui://widgets/card"`).
+1. **Metadata Link**: An MCP tool attaches a UI resource link in its output metadata: `meta.ui.resourceUri = "ui://widgets/card"`.
 2. **ADK Detection**: ADK detects `meta.ui.resourceUri` when processing tool execution results.
-3. **Client Display**: ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
+3. **Client Display**: ADK signals the web UI, `adk web` or custom frontend, to fetch the UI resource and render an interactive widget instead of plain text.
 
-=== "Python"
-
-    ```python
+```python
     # MCP Server tool returning a UI metadata link
     @app.call_tool()
     async def get_weather(city: str):
