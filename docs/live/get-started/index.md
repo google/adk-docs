@@ -2,7 +2,7 @@
 
 The Agent Development Kit (ADK) enables real-time, interactive experiences with your AI agents through streaming. This allows for features like live voice conversations, real-time tool use, and continuous updates from your agent.
 
-This page provides quickstart examples to get you up and running with streaming capabilities in both Python and Java ADK.
+This page provides quickstart examples to get you up and running with streaming capabilities in Python, TypeScript, and Java ADK.
 
 <div class.="grid cards" markdown>
 
@@ -12,6 +12,16 @@ This page provides quickstart examples to get you up and running with streaming 
     This example demonstrates how to set up a basic streaming interaction with an agent using Python ADK. It typically involves using the `Runner.run_live()` method and handling asynchronous events.
 
     [:octicons-arrow-right-24: View Python Streaming Quickstart](streaming-python.md) <br>
+
+
+<!-- This comment forces a block separation -->
+
+-   :fontawesome-brands-js:{ .lg .middle } **TypeScript ADK: Streaming agent**
+
+    ---
+    This example streams an agent's text answer token by token into a browser UI. It uses `Runner.runAsync()` with `StreamingMode.SSE`, an Express Server-Sent Events endpoint, and a `fetch` client.
+
+    [:octicons-arrow-right-24: View TypeScript Streaming Quickstart](streaming-typescript.md) <br>
 
 
 <!-- This comment forces a block separation -->

@@ -419,6 +419,7 @@ nav:
       - Get started:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
+        - TypeScript: live/get-started/streaming-typescript.md
         - Java: live/get-started/streaming-java.md
       - Gemini Live API Toolkit development guide:
         - Part 1. Intro to streaming: live/dev-guide/part1.md

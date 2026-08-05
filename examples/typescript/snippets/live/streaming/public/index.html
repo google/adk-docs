@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ADK streaming</title>
+    <style>
+      body { font: 16px/1.6 system-ui, sans-serif; margin: 2rem auto; max-width: 42rem; }
+      #answer { white-space: pre-wrap; min-height: 8rem; }
+      form { display: flex; gap: .5rem; }
+      input { flex: 1; padding: .5rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Ask the agent</h1>
+    <form id="form">
+      <input id="input" value="Why is the sky blue?" autocomplete="off" />
+      <button id="send" type="submit">Send</button>
+    </form>
+    <div id="answer"></div>
+
+    <script type="module">
+      const form = document.getElementById('form');
+      const input = document.getElementById('input');
+      const send = document.getElementById('send');
+      const answer = document.getElementById('answer');
+
+      // One session per page load. Reuse the id to keep conversation history.
+      const userId = 'user_1';
+      const sessionId = crypto.randomUUID();
+
+      form.addEventListener('submit', async (submitEvent) => {
+        submitEvent.preventDefault();
+        send.disabled = true;
+        answer.textContent = '';
+
+        // fetch + getReader, not EventSource: this request POSTs a body.
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({userId, sessionId, message: input.value}),
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const {done, value} = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, {stream: true});
+          const frames = buffer.split('\n\n');
+          // The last piece may be half a frame. Keep it for the next read.
+          buffer = frames.pop() ?? '';
+
+          for (const frame of frames) {
+            if (!frame.startsWith('data: ')) continue;
+            const payload = JSON.parse(frame.slice('data: '.length));
+            if (payload.error) answer.textContent += `\n[error] ${payload.error}`;
+            // The server already dropped the duplicated final event, so a
+            // plain append is correct here.
+            else if (payload.delta) answer.textContent += payload.delta;
+          }
+        }
+
+        send.disabled = false;
+      });
+    </script>
+  </body>
+</html>
