@@ -121,7 +121,7 @@ You can use the ***Runner*** class to run your agent workflow using the
 
     async def main():
         try:  # run_debug() requires ADK Python 1.18 or higher:
-            response = await runner.run_debug("Hello there!")
+            events = await runner.run_debug("Hello there!")
 
         except Exception as e:
             print(f"An error occurred during agent execution: {e}")
@@ -159,7 +159,8 @@ You can use the ***Runner*** class to run your agent workflow using the
 
     The `Runner.run_debug()` command requires ADK Python v1.18.0 or higher.
     You can also use `Runner.run()`, which requires more setup code. For
-    more details, see the
+    more details, see the [Run agents in code](../runtime/run-in-code.md)
+    page.
 
 === "Python"
 
