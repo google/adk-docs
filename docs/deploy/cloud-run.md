@@ -70,6 +70,8 @@ For more information on connecting to Google Cloud from ADK agents, see
     1. Service account (i.e. "1234567890-compute@developer.gserviceaccount.com")
     1. GOOGLE_API_KEY
 
+The Google Cloud CLI (`gcloud`) must be installed. If deploying via the ADK CLI, the `gcloud beta` components are required (install with `gcloud components install beta`).
+
 ## Secret
 
 Please make sure you have created a secret which can be read by your service account.
