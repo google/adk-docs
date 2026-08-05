@@ -62,8 +62,14 @@ Let's take a look at what is happening in this code:
     model, which turns it into the sentence you see.
 4.  `LlmAgent` binds the three things an agent needs: a `model`, an
     `instruction`, and its `tools`.
-5.  The export **must** be named `rootAgent`. Both `adk run` and `adk web` look
-    for that exact export and fail without it.
+5.  Name the export `rootAgent`. That is a convention, not a requirement: the
+    loader takes the export called `rootAgent` if there is one, otherwise a
+    default export, otherwise the only exported agent whatever it is called.
+    The name only decides the winner when one file exports *several* agents —
+    then `rootAgent` wins, and without one the loader picks the alphabetically
+    first export name and warns `Multiple agents found in ... Using the <name>
+    as a root agent.` A file exporting no agent at all fails with
+    `AgentFileLoadingError`.
 
 ## 2. Install dependencies
 
@@ -155,7 +161,15 @@ because that is where step 4 tells you to run. Create `my-agent/.env`:
     gcloud auth application-default login
     ```
 
-    Then create the `.env` file:
+    Then enable the API your agent will call on the project you are about to
+    name. A project without it does not produce an error — it produces the
+    silent failure described in [step 4](#4-run-your-agent):
+
+    ```console
+    gcloud services enable aiplatform.googleapis.com --project=your-project-id
+    ```
+
+    Now create the `.env` file:
 
     ```console title="my-agent/.env"
     GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -257,8 +271,9 @@ prints `backend: VERTEX_AI` instead of `backend: GEMINI_API`.
 `INFO` line, returns you to the `[user]:` prompt with no answer, and exits with
 status `0`. The silence means the model request was rejected and ADK discarded
 the reason. It is *not* specific to a bad key: an unusable API key, a project
-your credentials cannot reach, and a model name that does not exist in your
-region are all indistinguishable at the terminal. See
+your credentials cannot reach, a project without `aiplatform.googleapis.com`
+enabled, and a model name that does not exist in your region are all
+indistinguishable at the terminal. See
 [Troubleshooting](#troubleshooting) for a command that prints the real error.
 
 ### Run with the web interface
@@ -287,12 +302,14 @@ result, then the answer.
 **One `INFO` line, no answer, and exit code `0`.**
 
 The model request was rejected and ADK discarded the reason, so the terminal
-shows you nothing. At least three different causes produce this identical
+shows you nothing. At least four different causes produce this identical
 silence, and you cannot tell them apart from the output:
 
 *   an API key that the Gemini API rejects, or one whose project has the API
     disabled;
 *   a `GOOGLE_CLOUD_PROJECT` your credentials are not authorized to use;
+*   a `GOOGLE_CLOUD_PROJECT` that does not have `aiplatform.googleapis.com`
+    enabled;
 *   a `model` string that does not exist at your `GOOGLE_CLOUD_LOCATION` —
     notably `gemini-flash-latest`, which resolves on `global` but **not** on a
     regional endpoint such as `us-central1`.
@@ -316,11 +333,15 @@ curl -s -X POST -H "Authorization: Bearer $(gcloud auth application-default prin
 ```
 
 You get back the message ADK swallowed — `API key not valid. Please pass a valid
-API key.`, `Permission denied on resource project <id>.`, or ``Publisher model
-`...` was not found or your project does not have access to it``, which each
-point at one of the three causes above. To check whether your credential is
-being read at all, temporarily remove it: with nothing set, the run fails
-loudly with `API key must be provided` instead of going quiet.
+API key.`, `Permission denied on resource project <id>.`, ``Publisher model
+`...` was not found or your project does not have access to it``, or `Agent
+Platform API has not been used in project <id> before or it is disabled.` —
+which each point at one of the four causes above. Fix that last one with
+`gcloud services enable aiplatform.googleapis.com --project=your-project-id`;
+`gcloud services list --enabled --project=your-project-id` shows what a project
+already has. To check whether your credential is being read at all, temporarily
+remove it: with nothing set, the run fails loudly with `API key must be
+provided` instead of going quiet.
 
 **`Error: API key must be provided via constructor or GOOGLE_GENAI_API_KEY or GEMINI_API_KEY environment variable.`**
 
