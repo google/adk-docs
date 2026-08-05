@@ -17,7 +17,7 @@ real request over JSON-RPC and getting a dice roll back.
 ┌─────────────────────┐                             ┌───────────────────────────────┐
 │  Any A2A client     │       A2A Protocol          │  A2A-Exposed Dice Agent       │
 │  (curl, another     │────────────────────────────▶│  toA2a(diceAgent)             │
-│   ADK agent, ...)   │                             │  (localhost:8001)             │
+│   ADK agent)        │                             │  (localhost:8001)             │
 └─────────────────────┘                             └───────────────────────────────┘
 ```
 
@@ -30,9 +30,9 @@ paste it into `server.ts`, add an API key, and it runs:
 
 ## Prerequisites
 
-*   **Node.js 22 or later.** `@google/adk` declares no `engines` field, so npm will not warn
-    you if your Node is too old. The example above uses top-level `await` and
-    `node --env-file`, both of which need Node 22+.
+*   **Node.js 22 or later.** `@google/adk` declares no `engines` field, so nothing will warn you
+    if your Node is too old. This page uses `--env-file` to load your API key, which is stable
+    as of Node 22.
 *   **A Gemini API key.** Create one in Google AI Studio on the
     [API Keys](https://aistudio.google.com/app/apikey) page.
 *   **A `.env` file** in your project root containing exactly this line, with your own key
@@ -128,7 +128,7 @@ Here's what is happening in this code:
     inside `execute`, and it is also what A2A clients see as a declared skill.
 2.  **`diceAgent`** is an ordinary `LlmAgent`. Nothing about it is A2A-specific; any
     `BaseAgent` can be exposed this way.
-3.  **`toA2a(diceAgent, {...})`** returns a `Promise<express.Application>`. It builds the agent
+3.  **`toA2a(diceAgent, options)`** returns a `Promise<express.Application>`. It builds the agent
     card, mounts the A2A routes, and hands the app back to you.
 4.  **`port: PORT`** writes `http://localhost:8001/jsonrpc` into the agent card. It does *not*
     open a socket. It must agree with the port you pass to `app.listen()` below, or clients
@@ -171,7 +171,7 @@ ADK generates it from your agent code; you don't write it by hand. Leave the ser
 in a second terminal:
 
 ```bash
-curl -s http://localhost:8001/.well-known/agent-card.json | python3 -m json.tool
+curl -s http://localhost:8001/.well-known/agent-card.json | jq
 ```
 
 You should see exactly this (the endpoint is served at the `AGENT_CARD_PATH` constant,
@@ -179,53 +179,53 @@ You should see exactly this (the endpoint is served at the `AGENT_CARD_PATH` con
 
 ```json
 {
-    "name": "dice_agent",
-    "description": "An agent that rolls dice on request.",
-    "protocolVersion": "0.3.0",
-    "version": "1.0.0",
-    "skills": [
-        {
-            "id": "dice_agent",
-            "name": "model",
-            "description": "An agent that rolls dice on request. I roll dice for the user. Always use the roll_dice tool. Report the resulting number in one short sentence.",
-            "tags": [
-                "llm"
-            ]
-        },
-        {
-            "id": "dice_agent-roll_dice",
-            "name": "roll_dice",
-            "description": "Rolls an N-sided die and returns the result.",
-            "tags": [
-                "llm",
-                "tools"
-            ]
-        }
-    ],
-    "url": "http://localhost:8001/jsonrpc",
-    "preferredTransport": "JSONRPC",
-    "capabilities": {
-        "extensions": [],
-        "stateTransitionHistory": false,
-        "pushNotifications": false,
-        "streaming": true
+  "name": "dice_agent",
+  "description": "An agent that rolls dice on request.",
+  "protocolVersion": "0.3.0",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "id": "dice_agent",
+      "name": "model",
+      "description": "An agent that rolls dice on request. I roll dice for the user. Always use the roll_dice tool. Report the resulting number in one short sentence.",
+      "tags": [
+        "llm"
+      ]
     },
-    "defaultInputModes": [
-        "text"
-    ],
-    "defaultOutputModes": [
-        "text"
-    ],
-    "additionalInterfaces": [
-        {
-            "url": "http://localhost:8001/jsonrpc",
-            "transport": "JSONRPC"
-        },
-        {
-            "url": "http://localhost:8001/rest",
-            "transport": "HTTP+JSON"
-        }
-    ]
+    {
+      "id": "dice_agent-roll_dice",
+      "name": "roll_dice",
+      "description": "Rolls an N-sided die and returns the result.",
+      "tags": [
+        "llm",
+        "tools"
+      ]
+    }
+  ],
+  "url": "http://localhost:8001/jsonrpc",
+  "preferredTransport": "JSONRPC",
+  "capabilities": {
+    "extensions": [],
+    "stateTransitionHistory": false,
+    "pushNotifications": false,
+    "streaming": true
+  },
+  "defaultInputModes": [
+    "text"
+  ],
+  "defaultOutputModes": [
+    "text"
+  ],
+  "additionalInterfaces": [
+    {
+      "url": "http://localhost:8001/jsonrpc",
+      "transport": "JSONRPC"
+    },
+    {
+      "url": "http://localhost:8001/rest",
+      "transport": "HTTP+JSON"
+    }
+  ]
 }
 ```
 
@@ -259,7 +259,7 @@ curl -s -X POST http://localhost:8001/jsonrpc \
         "parts": [{"kind": "text", "text": "Roll a 20-sided die."}]
       }
     }
-  }' | python3 -m json.tool
+  }' | jq
 ```
 
 The response is an A2A **task**. Its `artifacts` array carries the tool call, the tool result,
@@ -267,79 +267,79 @@ and the agent's final answer:
 
 ```json
 {
-    "jsonrpc": "2.0",
-    "id": "1",
-    "result": {
-        "kind": "task",
-        "id": "56c9f559-f06b-4340-9eae-305fa2915bc4",
-        "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
-        "history": [
-            {
-                "kind": "message",
-                "messageId": "msg-1",
-                "role": "user",
-                "parts": [
-                    {
-                        "kind": "text",
-                        "text": "Roll a 20-sided die."
-                    }
-                ],
-                "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
-                "taskId": "56c9f559-f06b-4340-9eae-305fa2915bc4"
-            }
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "kind": "task",
+    "id": "56c9f559-f06b-4340-9eae-305fa2915bc4",
+    "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
+    "history": [
+      {
+        "kind": "message",
+        "messageId": "msg-1",
+        "role": "user",
+        "parts": [
+          {
+            "kind": "text",
+            "text": "Roll a 20-sided die."
+          }
         ],
-        "status": {
-            "state": "completed",
-            "timestamp": "2026-08-05T17:22:09.580Z"
-        },
-        "artifacts": [
-            {
-                "artifactId": "f891684f-f842-412a-b8bb-5916e5297b6b",
-                "parts": [
-                    {
-                        "kind": "data",
-                        "data": {
-                            "name": "roll_dice",
-                            "args": {
-                                "sides": 20
-                            },
-                            "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0"
-                        },
-                        "metadata": {
-                            "adk_type": "function_call"
-                        }
-                    }
-                ]
+        "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
+        "taskId": "56c9f559-f06b-4340-9eae-305fa2915bc4"
+      }
+    ],
+    "status": {
+      "state": "completed",
+      "timestamp": "2026-08-05T17:22:09.580Z"
+    },
+    "artifacts": [
+      {
+        "artifactId": "f891684f-f842-412a-b8bb-5916e5297b6b",
+        "parts": [
+          {
+            "kind": "data",
+            "data": {
+              "name": "roll_dice",
+              "args": {
+                "sides": 20
+              },
+              "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0"
             },
-            {
-                "artifactId": "90b1d991-692b-45b2-9fb9-48c975210147",
-                "parts": [
-                    {
-                        "kind": "data",
-                        "data": {
-                            "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0",
-                            "name": "roll_dice",
-                            "response": {
-                                "result": 17
-                            }
-                        },
-                        "metadata": {
-                            "adk_type": "function_response"
-                        }
-                    }
-                ]
-            },
-            {
-                "artifactId": "a4ed76ad-ca58-47cd-8e0b-28da13070459",
-                "parts": [
-                    {
-                        "kind": "text",
-                        "text": "You rolled a 17."
-                    }
-                ]
+            "metadata": {
+              "adk_type": "function_call"
             }
+          }
         ]
-    }
+      },
+      {
+        "artifactId": "90b1d991-692b-45b2-9fb9-48c975210147",
+        "parts": [
+          {
+            "kind": "data",
+            "data": {
+              "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0",
+              "name": "roll_dice",
+              "response": {
+                "result": 17
+              }
+            },
+            "metadata": {
+              "adk_type": "function_response"
+            }
+          }
+        ]
+      },
+      {
+        "artifactId": "a4ed76ad-ca58-47cd-8e0b-28da13070459",
+        "parts": [
+          {
+            "kind": "text",
+            "text": "You rolled a 17."
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -386,17 +386,26 @@ request, validates its credentials, and returns the authenticated user. Throw to
 The `req: Request` annotation is why `@types/express` is in the dev dependencies — Express
 ships with `@google/adk` but its type definitions do not.
 
-With that in place:
+Start it with `A2A_SHARED_TOKEN=s3cret-token npx tsx --env-file=.env server.ts`, then reuse the
+request body from step 7 to see all three outcomes:
 
 ```console
+$ BODY='{"jsonrpc":"2.0","id":"1","method":"message/send","params":{"message":{"kind":"message","messageId":"msg-1","role":"user","parts":[{"kind":"text","text":"Roll a 20-sided die."}]}}}'
+
 $ curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8001/.well-known/agent-card.json
 HTTP 200
 
-$ curl -s -X POST http://localhost:8001/jsonrpc -H 'Content-Type: application/json' -d '...'
+$ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8001/jsonrpc \
+    -H "Content-Type: application/json" -d "$BODY"
 {"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
+HTTP 500
 
-$ curl -s -X POST http://localhost:8001/jsonrpc -H 'Authorization: Bearer s3cret-token' -d '...'
-{"jsonrpc":"2.0","id":"1","result":{"kind":"task", ... "state":"completed" ... }}
+$ curl -s -X POST http://localhost:8001/jsonrpc \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer s3cret-token" -d "$BODY" \
+  | jq -c '.result.status.state, .result.artifacts[-1].parts[0].text'
+"completed"
+"You rolled a 13."
 ```
 
 Two things to plan for:
@@ -465,7 +474,7 @@ termination, and the process manager.
     so don't go looking for a 401 in your logs. Check that the caller is sending the header your
     `authentication` callback reads, then log inside the callback to see the value it received.
 
-??? failure "`Failed to fetch Agent Card from .../.well-known/.well-known/agent-card.json: 404`"
+??? failure "`Failed to fetch Agent Card from http://localhost:8001/.well-known/.well-known/agent-card.json: 404`"
 
     A client was given the card URL where it expects the **base URL**. The A2A resolver appends
     `.well-known/agent-card.json` itself, so passing the full card URL doubles the path:
