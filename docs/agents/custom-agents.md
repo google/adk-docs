@@ -1,7 +1,7 @@
 # Custom agent template workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Custom agents and agent-based workflows allow you to define arbitrary
@@ -301,7 +301,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
     # assert task_doer.parent_agent == coordinator
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Example: Defining Hierarchy
@@ -409,7 +409,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     # When pipeline runs, Step2 can access the state['data'] set by Step1.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Example: Sequential Pipeline
@@ -472,7 +472,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     # A subsequent agent could read state['weather'] and state['news'].
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Example: Parallel Execution
@@ -564,7 +564,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
       # until Checker escalates (state['status'] == 'completed') or 10 iterations pass.
       ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Example: Loop with Condition
@@ -686,7 +686,7 @@ The most fundamental way for agents operating within the same invocation (and th
     # AgentB runs, its instruction processor reads state['capital_city'] to get "Paris".
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Example: Using outputKey and reading state
@@ -778,7 +778,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     # ADK framework then routes execution to booking_agent.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Setup: LLM Transfer
@@ -901,7 +901,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     # The resulting image Part is returned to the Artist agent as the tool result.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Setup: Agent as a Tool
