@@ -2285,6 +2285,31 @@ plugin. Use the SDK for:
 
 ### Build a dashboard
 
+Visualize your agent's performance data with a ready-made Looker dashboard, or
+build your own from the example notebook.
+
+#### Looker Block
+
+The [BigQuery Agent Analytics Looker
+Block](https://marketplace.looker.com/marketplace/detail/agent_analytics)
+provides a ready-to-use dashboard for monitoring, debugging, and optimizing your
+agents, with insights into interactions, tool usage, LLM performance, and cost
+footprints. It surfaces:
+
+- **Aggregate metrics**: token consumption, user engagement, and tool execution
+  volumes.
+- **System health**: P50–P99 latency distributions and tool failure tracking to
+  help you pinpoint bottlenecks.
+- **Interactive drilldowns**: click a metric to open context-aware
+  visualizations for root-cause analysis.
+
+The block uses a Native Derived Table architecture that parses the logged JSON
+payloads directly, so no additional data pipelines are required. To get started,
+install it for free from the Looker Marketplace and point it at your BigQuery
+project ID, dataset name, and base table name.
+
+#### Custom dashboard from a notebook
+
 The BigQuery Agent Analytics SDK includes an [example Jupyter
 notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb)
 that demonstrates how to query and visualize your agent's performance data. Use

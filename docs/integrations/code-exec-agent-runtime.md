@@ -1,6 +1,6 @@
 ---
 catalog_title: Code Execution Tool with Agent Runtime
-catalog_description: Run AI-generated code in a secure and scalable GKE environment
+catalog_description: Run AI-generated code in a secure and scalable environment
 catalog_icon: /integrations/assets/agent-platform.svg
 catalog_tags: ["code", "google"]
 ---
