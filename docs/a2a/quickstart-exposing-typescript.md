@@ -22,7 +22,7 @@ real request over JSON-RPC and getting a dice roll back.
 ```
 
 Here is the whole server. The rest of this page walks through it, but this file is complete —
-paste it into `server.ts`, add an API key, and it runs:
+paste it into `server.ts`, add credentials, and it runs:
 
 ```typescript title="my-a2a-agent/server.ts"
 --8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server.ts:full"
@@ -31,19 +31,38 @@ paste it into `server.ts`, add an API key, and it runs:
 ## Prerequisites
 
 *   **Node.js 22 or later.** `@google/adk` declares no `engines` field, so nothing will warn you
-    if your Node is too old. This page uses `--env-file` to load your API key, which is stable
-    as of Node 22.
-*   **A Gemini API key.** Create one in Google AI Studio on the
-    [API Keys](https://aistudio.google.com/app/apikey) page.
-*   **A `.env` file** in your project root containing exactly this line, with your own key
-    substituted for `YOUR_API_KEY`:
+    if your Node is too old. This page uses `--env-file` to load your credentials, which is
+    stable as of Node 22.
+*   **Model credentials** — either a Google AI Studio API key or a Google Cloud project with
+    Vertex AI enabled. Both are shown below, and nothing else on this page changes between them.
+*   **`jq`**, used here to pretty-print and filter the JSON responses (`sudo apt install jq`,
+    `brew install jq`). If you'd rather not install it, drop the `| jq …` from every command —
+    the responses are still valid JSON, and `python3 -m json.tool` pretty-prints them.
+
+Create a **`.env` file** in your project root containing exactly this:
+
+=== "Google AI Studio"
 
     ```bash title="my-a2a-agent/.env"
     GEMINI_API_KEY="YOUR_API_KEY"
     ```
 
-    ADK reads `GOOGLE_GENAI_API_KEY` first and falls back to `GEMINI_API_KEY`. Either name
-    works; `GOOGLE_API_KEY` alone does not.
+    Create the key on the [API Keys](https://aistudio.google.com/app/apikey) page. ADK reads
+    `GOOGLE_GENAI_API_KEY` first and falls back to `GEMINI_API_KEY`. Either name works;
+    `GOOGLE_API_KEY` alone does not.
+
+=== "Google Cloud / Vertex AI"
+
+    ```bash title="my-a2a-agent/.env"
+    GOOGLE_GENAI_USE_VERTEXAI=true
+    GOOGLE_CLOUD_PROJECT="your-project-id"
+    GOOGLE_CLOUD_LOCATION="global"
+    ```
+
+    There is no key on this path: the model call is authenticated with Application Default
+    Credentials, so run `gcloud auth application-default login` once and make sure the Vertex AI
+    API is enabled on the project. `GOOGLE_GENAI_USE_VERTEXAI=true` is the switch — with it set,
+    ADK routes `gemini-2.5-flash` to Vertex AI and ignores `GEMINI_API_KEY` entirely.
 
 !!! note "There is no separate A2A package to install"
 
@@ -147,22 +166,24 @@ Here's what is happening in this code:
 npx tsx --env-file=.env server.ts
 ```
 
-`--env-file=.env` is what loads your API key. ADK does not read `.env` for you when you run a
-script directly, so without this flag the agent starts fine and then fails on the first model
+`--env-file=.env` is what loads your credentials. ADK does not read `.env` for you when you run
+a script directly, so without this flag the agent starts fine and then fails on the first model
 call.
 
-You should see:
+You should see all five of these lines, in this order:
 
 ```console
-WARN: [ADK] SECURITY WARNING: Mounting the A2A server WITHOUT authentication because
-`allowUnauthenticated: true` was set. The agent and all of its tools are exposed to any
-network-reachable caller, which can invoke them with arbitrary input and read the output.
-Do NOT use this outside of local, trusted development.
+WARN: [ADK] 2026-08-05T18:36:22.793Z SECURITY WARNING: Mounting the A2A server WITHOUT authentication because `allowUnauthenticated: true` was set. The agent and all of its tools are exposed to any network-reachable caller, which can invoke them with arbitrary input and read the output. Do NOT use this outside of local, trusted development.
+(node:4060397) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
 [dice_agent] A2A server listening on http://localhost:8001
 [dice_agent] agent card: http://localhost:8001/.well-known/agent-card.json
 ```
 
-The warning is expected — it is `allowUnauthenticated: true` telling you what it did.
+Your timestamp and the `node:NNNNNNN` process id will differ; everything else is byte-for-byte
+what you get. All three warning lines are expected and none of them means you did something
+wrong: the `SECURITY WARNING` is `allowUnauthenticated: true` telling you what it did, and the
+`punycode` deprecation is Node 22 complaining about one of ADK's transitive dependencies.
 
 ### 6. Fetch the agent card
 
@@ -242,7 +263,9 @@ Three things in that card are worth noticing:
 
 ### 7. Send it a real request
 
-Now call the agent over the wire, the same way another agent would:
+Now call the agent over the wire, the same way another agent would. The response is an A2A
+**task**; the `jq` filter below pulls out the three things that prove it worked — the task's
+state, the shape of its `artifacts` array, and the agent's final answer:
 
 ```bash
 curl -s -X POST http://localhost:8001/jsonrpc \
@@ -259,99 +282,111 @@ curl -s -X POST http://localhost:8001/jsonrpc \
         "parts": [{"kind": "text", "text": "Roll a 20-sided die."}]
       }
     }
-  }' | jq
+  }' | jq -c '.result.status.state,
+              [.result.artifacts[].parts[0] | .metadata.adk_type // "text"],
+              .result.artifacts[-1].parts[0].text'
 ```
-
-The response is an A2A **task**. Its `artifacts` array carries the tool call, the tool result,
-and the agent's final answer:
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": "1",
-  "result": {
-    "kind": "task",
-    "id": "56c9f559-f06b-4340-9eae-305fa2915bc4",
-    "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
-    "history": [
-      {
-        "kind": "message",
-        "messageId": "msg-1",
-        "role": "user",
-        "parts": [
-          {
-            "kind": "text",
-            "text": "Roll a 20-sided die."
-          }
-        ],
-        "contextId": "e5d5ebaa-64a6-4e4a-b349-d2b278711784",
-        "taskId": "56c9f559-f06b-4340-9eae-305fa2915bc4"
-      }
-    ],
-    "status": {
-      "state": "completed",
-      "timestamp": "2026-08-05T17:22:09.580Z"
-    },
-    "artifacts": [
-      {
-        "artifactId": "f891684f-f842-412a-b8bb-5916e5297b6b",
-        "parts": [
-          {
-            "kind": "data",
-            "data": {
-              "name": "roll_dice",
-              "args": {
-                "sides": 20
-              },
-              "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0"
-            },
-            "metadata": {
-              "adk_type": "function_call"
-            }
-          }
-        ]
-      },
-      {
-        "artifactId": "90b1d991-692b-45b2-9fb9-48c975210147",
-        "parts": [
-          {
-            "kind": "data",
-            "data": {
-              "id": "adk-cd79ede2-5c93-4e85-9fb8-9adbbbfd80b0",
-              "name": "roll_dice",
-              "response": {
-                "result": 17
-              }
-            },
-            "metadata": {
-              "adk_type": "function_response"
-            }
-          }
-        ]
-      },
-      {
-        "artifactId": "a4ed76ad-ca58-47cd-8e0b-28da13070459",
-        "parts": [
-          {
-            "kind": "text",
-            "text": "You rolled a 17."
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-`"state": "completed"` and `"You rolled a 17."` mean the whole path worked: the request arrived,
-the agent ran, the tool fired, and the model's answer came back over A2A. Your server terminal
-shows the matching tool call:
 
 ```console
-[dice_agent] roll_dice(sides=20) -> 17
+"completed"
+["function_call","function_response","text"]
+"You rolled a 5."
 ```
 
-Your agent is now callable by any A2A client. Roll again and you'll get a different number.
+`"completed"` and `"You rolled a 5."` mean the whole path worked: the request arrived, the agent
+ran, the tool fired, and the model's answer came back over A2A. The middle line is the artifacts
+array — one artifact for the tool call, one for the tool's result, one for the final text, in
+that order. Your server terminal shows the matching tool call:
+
+```console
+[dice_agent] roll_dice(sides=20) -> 5
+```
+
+??? example "The full task JSON, if you want to see everything the filter dropped"
+
+    Drop the filter (`| jq` on its own) to get the whole response. Every `id` is a fresh UUID,
+    so yours will differ:
+
+    ```json
+    {
+      "jsonrpc": "2.0",
+      "id": "1",
+      "result": {
+        "kind": "task",
+        "id": "f8da1506-6992-4c46-9861-863aba63ca37",
+        "contextId": "129d06d3-42f4-4756-8648-dc0cdb0e5157",
+        "history": [
+          {
+            "kind": "message",
+            "messageId": "msg-1",
+            "role": "user",
+            "parts": [
+              {
+                "kind": "text",
+                "text": "Roll a 20-sided die."
+              }
+            ],
+            "contextId": "129d06d3-42f4-4756-8648-dc0cdb0e5157",
+            "taskId": "f8da1506-6992-4c46-9861-863aba63ca37"
+          }
+        ],
+        "status": {
+          "state": "completed",
+          "timestamp": "2026-08-05T18:37:03.703Z"
+        },
+        "artifacts": [
+          {
+            "artifactId": "f50add34-787f-4fd4-bc82-455e05028ab8",
+            "parts": [
+              {
+                "kind": "data",
+                "data": {
+                  "name": "roll_dice",
+                  "args": {
+                    "sides": 20
+                  },
+                  "id": "adk-7f1f2371-1b31-48ec-b417-425a452079f6"
+                },
+                "metadata": {
+                  "adk_type": "function_call"
+                }
+              }
+            ]
+          },
+          {
+            "artifactId": "9ff19b01-2b52-431a-af5f-730b44630bfa",
+            "parts": [
+              {
+                "kind": "data",
+                "data": {
+                  "id": "adk-7f1f2371-1b31-48ec-b417-425a452079f6",
+                  "name": "roll_dice",
+                  "response": {
+                    "result": 5
+                  }
+                },
+                "metadata": {
+                  "adk_type": "function_response"
+                }
+              }
+            ]
+          },
+          {
+            "artifactId": "64dcfddb-c571-4480-a68b-4c2b75159eb1",
+            "parts": [
+              {
+                "kind": "text",
+                "text": "You rolled a 5."
+              }
+            ]
+          }
+        ]
+      }
+    }
+    ```
+
+Your agent is now callable by any A2A client. Roll again and you'll get a different number, and
+possibly a different sentence around it — the last artifact is the model's own wording.
 
 ## What `toA2a` mounted
 
@@ -363,14 +398,14 @@ Your agent is now callable by any A2A client. Roll again and you'll get a differ
 | `/jsonrpc` | JSON-RPC transport (the card's `preferredTransport`) | Yes, once you configure it |
 | `/rest` | HTTP+JSON transport | Yes, once you configure it |
 
-!!! warning "The `basePath` option's documented default is wrong"
+!!! note "Moving the routes with `basePath`"
 
-    The JSDoc on `ToA2aOptions.basePath` says the default is `"a2a"`. The implementation is
-    `options.basePath || ''`, so the real default is an empty string and the routes above sit
-    at the root — which is what the card you just fetched shows. If you *do* set
-    `basePath: '/a2a'`, the routes move to `/a2a/.well-known/agent-card.json` and clients must
-    use a base URL with a **trailing slash** (`http://localhost:8001/a2a/`); without the slash
-    `new URL()` drops the segment and the card fetch 404s.
+    By default there is no prefix: all three routes sit at the root, which is what the card you
+    just fetched shows. Passing `basePath: '/a2a'` moves them — the card is then at
+    `/a2a/.well-known/agent-card.json` and its `url` becomes
+    `http://localhost:8001/a2a/jsonrpc`. Clients must give that base URL a **trailing slash**
+    (`http://localhost:8001/a2a/`); without it `new URL()` drops the last segment and the card
+    fetch 404s.
 
 ## Turn on authentication before you ship
 
@@ -379,17 +414,31 @@ and every one of its tools to any caller who can reach the port. For anything be
 loop, replace it with an `authentication` callback — a `UserBuilder` that receives the Express
 request, validates its credentials, and returns the authenticated user. Throw to reject.
 
-```typescript title="my-a2a-agent/server.ts"
---8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server-with-auth.ts:auth"
+Save the following alongside `server.ts` as `server-with-auth.ts`. This is a **complete file**,
+not a fragment — it is the same dice agent as before, with `allowUnauthenticated: true` replaced
+by a bearer-token `authentication` callback:
+
+```typescript title="my-a2a-agent/server-with-auth.ts"
+--8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server-with-auth.ts:full"
 ```
 
-The `req: Request` annotation is why `@types/express` is in the dev dependencies — Express
-ships with `@google/adk` but its type definitions do not.
+Three details in there are worth copying rather than simplifying:
 
-Start it with `A2A_SHARED_TOKEN=s3cret-token npx tsx --env-file=.env server.ts`, then reuse the
-request body from step 7 to see all three outcomes:
+*   **The `req: Request` annotation** is why `@types/express` is in the dev dependencies —
+    Express ships with `@google/adk` but its type definitions do not.
+*   **The token comes from the environment.** Add `A2A_SHARED_TOKEN="s3cret-token"` to the same
+    `.env` you already have, rather than prefixing the command with it: command-line arguments
+    are visible to anyone who can run `ps`, and they stay in your shell history.
+*   **The comparison is constant-time.** `token === EXPECTED_TOKEN` returns as soon as the two
+    strings diverge, which leaks how much of the secret a caller has guessed. Hashing both sides
+    to a fixed-length digest and comparing them with `crypto.timingSafeEqual` does not.
+
+Start it, then reuse the request body from step 7 to see all four outcomes:
 
 ```console
+$ npx tsx --env-file=.env server-with-auth.ts
+[dice_agent] authenticated A2A server on http://localhost:8001
+
 $ BODY='{"jsonrpc":"2.0","id":"1","method":"message/send","params":{"message":{"kind":"message","messageId":"msg-1","role":"user","parts":[{"kind":"text","text":"Roll a 20-sided die."}]}}}'
 
 $ curl -s -o /dev/null -w "HTTP %{http_code}\n" http://localhost:8001/.well-known/agent-card.json
@@ -400,12 +449,18 @@ $ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8001/jsonrpc \
 {"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
 HTTP 500
 
+$ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8001/jsonrpc \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer wrong-token" -d "$BODY"
+{"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
+HTTP 500
+
 $ curl -s -X POST http://localhost:8001/jsonrpc \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer s3cret-token" -d "$BODY" \
   | jq -c '.result.status.state, .result.artifacts[-1].parts[0].text'
 "completed"
-"You rolled a 13."
+"You rolled a 14."
 ```
 
 Two things to plan for:
@@ -415,6 +470,9 @@ Two things to plan for:
     description, or instruction.
 *   **A rejected request is an HTTP 500, not a 401.** The body is JSON-RPC error code
     `-32603`, `"General processing error."`, with no hint that credentials were the problem.
+    The real reason is only on the server's own stderr, which prints
+    `Unhandled error in JSON-RPC POST handler: Error: A2A request rejected: bad bearer token.`
+    and a stack trace.
 
 ## Should you use `toA2a`?
 
@@ -469,10 +527,24 @@ termination, and the process manager.
     {"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
     ```
 
-    This *is* the authentication failure. A rejected `UserBuilder` surfaces as a generic
-    JSON-RPC internal error, not a 401 or 403, and the message says nothing about credentials —
-    so don't go looking for a 401 in your logs. Check that the caller is sending the header your
-    `authentication` callback reads, then log inside the callback to see the value it received.
+    `-32603` means *your `authentication` callback threw* — it does not say why, and it is not
+    a 401 or 403, so don't go looking for one in your logs. The two causes look identical from
+    the client:
+
+    *   the callback rejected the caller's credentials, which is the intended behaviour; or
+    *   the callback itself crashed — a typo, an undefined variable, a missing import — in which
+        case correctly-authenticated callers get this too.
+
+    The server's own stderr distinguishes them. It logs the thrown error and a stack trace:
+
+    ```console
+    Unhandled error in JSON-RPC POST handler: Error: A2A request rejected: bad bearer token.
+        at Object.authentication (/path/to/server-with-auth.ts:53:13)
+    ```
+
+    If that first line is your own `throw`, the credentials were wrong: check that the caller is
+    sending the header your callback reads. If it is a `ReferenceError` or `TypeError`, the
+    callback is broken and *every* caller is being rejected regardless of their token.
 
 ??? failure "`Failed to fetch Agent Card from http://localhost:8001/.well-known/.well-known/agent-card.json: 404`"
 
@@ -505,7 +577,10 @@ termination, and the process manager.
     The A2A layer is fine; the model call is not. This error arrives as a `"state": "failed"`
     task, which means the request reached your agent and the failure travelled back correctly.
     Either the key in `.env` is wrong, or you started the server without `--env-file=.env` and
-    ADK never saw it.
+    ADK never saw it. On the Vertex AI path the equivalent failure is a credentials or
+    permission error from `aiplatform.googleapis.com`; re-run
+    `gcloud auth application-default login` and check the API is enabled on
+    `GOOGLE_CLOUD_PROJECT`.
 
 ## Next steps
 

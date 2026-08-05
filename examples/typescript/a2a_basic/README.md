@@ -15,11 +15,19 @@ call it. It is the code used by
 ## Prerequisites
 
 - Node.js 22 or later.
-- A Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey), written to
-  a `.env` file in this directory:
+- Model credentials in a `.env` file in this directory — either a Google AI Studio key:
 
   ```bash
   GEMINI_API_KEY="YOUR_API_KEY"
+  ```
+
+  or a Google Cloud project with Vertex AI enabled and Application Default Credentials set up
+  (`gcloud auth application-default login`):
+
+  ```bash
+  GOOGLE_GENAI_USE_VERTEXAI=true
+  GOOGLE_CLOUD_PROJECT="your-project-id"
+  GOOGLE_CLOUD_LOCATION="global"
   ```
 
 ## Run
@@ -35,11 +43,16 @@ Add `--env-file=.env` when running the script directly — ADK does not load `.e
 npx tsx --env-file=.env remote_a2a/dice_agent/server.ts
 ```
 
-To run the authenticated variant instead:
+To run the authenticated variant instead, add the shared secret to the same `.env`
+(`A2A_SHARED_TOKEN="s3cret-token"`) rather than passing it on the command line, where it would
+be visible to `ps` and saved in your shell history:
 
 ```bash
-A2A_SHARED_TOKEN=s3cret-token npx tsx --env-file=.env remote_a2a/dice_agent/server-with-auth.ts
+npx tsx --env-file=.env remote_a2a/dice_agent/server-with-auth.ts
 ```
+
+Then send a request with `-H 'Authorization: Bearer s3cret-token'`. Without the header, or with
+the wrong token, you get JSON-RPC error `-32603` and HTTP 500.
 
 ## Verify
 

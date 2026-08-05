@@ -13,17 +13,26 @@
 // limitations under the License.
 
 // --8<-- [start:full]
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { FunctionTool, LlmAgent, toA2a } from '@google/adk';
 import type { Request } from 'express';
 import { z } from 'zod';
 
 const PORT = 8001;
 
-// Read the shared secret from the environment; never hard-code it.
+// Read the shared secret from the environment; never hard-code it. Put it in
+// .env rather than on the command line: argv is visible to `ps` and lands in
+// your shell history.
 const EXPECTED_TOKEN = process.env.A2A_SHARED_TOKEN;
 if (!EXPECTED_TOKEN) {
-  throw new Error('Set A2A_SHARED_TOKEN before starting the server.');
+  throw new Error('Set A2A_SHARED_TOKEN (e.g. in .env) before starting.');
 }
+
+// Compare fixed-length digests, not the strings themselves: timingSafeEqual
+// requires equal-length inputs, and a plain `===` on a secret leaks how much
+// of it the caller guessed through response timing.
+const sha256 = (value: string) => createHash('sha256').update(value).digest();
+const EXPECTED_DIGEST = sha256(EXPECTED_TOKEN);
 
 const rollDice = new FunctionTool({
   name: 'roll_dice',
@@ -56,7 +65,7 @@ const app = await toA2a(diceAgent, {
     const token = header.toLowerCase().startsWith('bearer ')
       ? header.slice('bearer '.length)
       : '';
-    if (token !== EXPECTED_TOKEN) {
+    if (!timingSafeEqual(sha256(token), EXPECTED_DIGEST)) {
       throw new Error('A2A request rejected: bad bearer token.');
     }
     return { isAuthenticated: true, userName: 'a2a-caller' };
