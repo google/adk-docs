@@ -48,10 +48,40 @@ across supported languages. For a guided introduction, start with the
 
 === "TypeScript"
 
-    **Install ADK and ADK DevTools**
+    **Prerequisites:** Node.js 22 or later.
+
+    **Install ADK, Zod, and ADK DevTools**
+
+    === "npm"
+
+        ```bash
+        npm install @google/adk zod
+        npm install -D @google/adk-devtools
+        ```
+
+    === "pnpm"
+
+        ```bash
+        pnpm add @google/adk zod
+        pnpm add -D @google/adk-devtools
+        pnpm approve-builds --all
+        ```
+
+    === "yarn"
+
+        ```bash
+        yarn config set nodeLinker node-modules
+        yarn add @google/adk zod
+        yarn add -D @google/adk-devtools
+        ```
+
+    Install `zod` explicitly: agents import it directly to declare tool
+    parameters, and pnpm and yarn will not resolve it from `@google/adk`.
+
+    (Optional) Verify your installation:
 
     ```bash
-    npm install @google/adk @google/adk-devtools
+    npx adk --version
     ```
 
 === "Go"
