@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    /* Build options. `module: nodenext` is required: the server uses
+    /* Build options. `module: nodenext` is required: every server here uses
        top-level `await`, which only works in an ES module. */
     "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "outDir": "./dist",
-    "sourceMap": true,
+    "noEmit": true,
 
     /* Strictness */
     "strict": true,
@@ -19,5 +18,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node"]
   },
-  "exclude": ["node_modules", "dist"]
+  "include": ["*.ts", "remote_a2a/**/*.ts"],
+  "exclude": ["node_modules"]
 }

@@ -2,15 +2,20 @@
   "name": "adk-docs-example-a2a-basic",
   "version": "1.0.0",
   "private": true,
-  "description": "Exposing an ADK TypeScript agent over the A2A protocol.",
+  "description": "A2A basic example for the ADK TypeScript documentation: exposing an agent with toA2a() and consuming one with RemoteA2AAgent.",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "serve": "tsx remote_a2a/dice_agent/server.ts",
+    "serve:dice": "tsx --env-file=.env remote_a2a/dice_agent/server.ts",
+    "serve:dice:auth": "tsx --env-file=.env remote_a2a/dice_agent/server-with-auth.ts",
+    "serve:prime": "tsx remote_prime_agent.ts",
+    "direct": "tsx direct_client.ts",
+    "consume": "tsx consuming_agent.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@google/adk": "^1.5.0",
+    "dotenv": "^16.4.5",
     "zod": "^4.2.1"
   },
   "devDependencies": {

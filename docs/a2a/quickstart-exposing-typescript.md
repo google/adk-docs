@@ -591,4 +591,9 @@ termination, and the process manager.
 *   **[Understand how A2A fits into multi-agent systems](./intro.md)** — when to reach for a
     remote agent instead of a sub-agent.
 *   **[Browse the complete runnable example](https://github.com/google/adk-docs/tree/main/examples/typescript/a2a_basic)**
-    — the `server.ts` and authenticated variant from this page, ready to `npm install && npm run serve`.
+    — both servers from this page are there under `remote_a2a/dice_agent/`, ready to
+    `npm install && npm run serve:dice` (or `npm run serve:dice:auth` for the authenticated
+    variant). That directory is shared with
+    [A2A Quickstart (Consuming)](./quickstart-consuming-typescript.md), so it also holds that
+    page's client-side files. Everything in it listens on port 8001, so run one server at a
+    time.
