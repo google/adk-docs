@@ -20,6 +20,7 @@ Navigate through the guides below to learn about ADK's A2A capabilities:
 
   *   **[A2A Quickstart (Consuming) for Python](./quickstart-consuming.md)**
       * **[A2A Extension - V2 Implementation](./a2a-extension.md)**
+  *   **[A2A Quickstart (Consuming) for TypeScript](./quickstart-consuming-typescript.md)**
   *   **[A2A Quickstart (Consuming) for Go](./quickstart-consuming-go.md)**
   *   **[A2A Quickstart (Consuming) for Java](./quickstart-consuming-java.md)**
 
