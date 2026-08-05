@@ -1,0 +1,24 @@
+{
+  "name": "adk-docs-example-a2a-basic",
+  "version": "1.0.0",
+  "description": "A2A basic example for the ADK TypeScript documentation",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "serve": "tsx remote_prime_agent.ts",
+    "direct": "tsx direct_client.ts",
+    "consume": "tsx consuming_agent.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/adk": "^1.5.0",
+    "dotenv": "^16.4.5",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}
