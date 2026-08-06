@@ -61,7 +61,8 @@ model class with the model identifier and local network address.
 
 To use LiteRT-LM with ADK and a Gemma model:
 
-1.  Set `base_url` to the LiteRT-LM server URL, for example: `localhost:8001`.
+1.  Set `base_url` to the LiteRT-LM server URL, including the scheme, for
+    example: `http://localhost:8001`.
 2.  Set `model` to the LiteRT-LM model name, for example: `gemma3n-e2b`.
 
 The following example code shows how to configure an agent to

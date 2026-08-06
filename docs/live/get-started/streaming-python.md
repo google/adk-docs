@@ -58,7 +58,7 @@ root_agent = Agent(
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
    # Please fill in the latest model id that supports live from
-   # https://adk.dev/get-started/streaming/quickstart-streaming/#supported-models
+   # https://adk.dev/live/get-started/streaming-python/#supported-models
    model="...",
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
@@ -187,4 +187,4 @@ Congratulations\! You've successfully created and interacted with your first Str
 
 ## Next steps: build custom streaming app
 
-The [Gemini Live API Toolkit development guide series](../../streaming/dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+The [Gemini Live API Toolkit development guide series](../dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
