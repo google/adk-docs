@@ -26,7 +26,7 @@ pip install google-adk
 
 !!! warning "POSIX-only"
 
-    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS). Executing this tool on a Windows system will result in a hard error.
+    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS. Executing this tool on a Windows system will result in a hard error.
 
 To use the Bash Tool, instantiate `ExecuteBashTool` and include it in your agent's `tools` list. Ensure `my_workspace_path` is defined prior to running the snippet as a valid directory path string:
 
@@ -73,4 +73,4 @@ strict_policy = BashToolPolicy(
 
 | Tool Name | Class Name | Description |
 | :--- | :--- | :--- |
-| `execute_bash` | `ExecuteBashTool` | Executes a bash command within a workspace. (POSIX only) |
+| `execute_bash` | `ExecuteBashTool` | Executes a bash command within a workspace. POSIX only |
