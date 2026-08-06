@@ -11,7 +11,7 @@ catalog_tags: ["google", "search"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.9.0</span><span class="lst-typescript">TypeScript v1.5.0</span>
 </div>
 
-The Enterprise Web Search tool grounds ADK agents with information from the
+  The Google Cloud [Enterprise Web Search](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/rest/Shared.Types/EnterpriseWebSearch) grounds ADK agents with information from the
 web while maintaining enterprise compliance and source control. Designed for
 enterprise-grade workloads, this tool ensures grounding data aligns with
 organizational security and compliance policies.
