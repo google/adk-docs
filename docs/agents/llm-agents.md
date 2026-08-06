@@ -1,7 +1,7 @@
 # Simple agents with LlmAgent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The `LlmAgent` class, often aliased simply as `Agent`, is a core component in
@@ -53,7 +53,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example: Defining the basic identity
@@ -148,7 +148,7 @@ tells the agent:
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example: Adding instructions
@@ -251,7 +251,7 @@ on the conversation and its instructions.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {z} from 'zod';
@@ -376,7 +376,7 @@ You can adjust how the underlying AI model generates responses using
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import { GenerateContentConfig } from '@google/genai';
@@ -509,7 +509,7 @@ schema definitions.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {z} from 'zod';
@@ -594,7 +594,7 @@ Control whether the agent receives the prior conversation history.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     const statelessAgent = new LlmAgent({
@@ -870,9 +870,9 @@ More complex agents might incorporate schemas, context control, and planning.
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
-        ```javascript
+        ```typescript
         --8<-- "examples/typescript/snippets/agents/llm-agent/capital_agent.ts"
         ```
 
