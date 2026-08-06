@@ -68,7 +68,7 @@ agentic applications:
    UI for running agents, inspecting execution steps (events, state changes),
    debugging interactions, and visualizing agent definitions.
 5. **Native Streaming Support:** Build real-time, interactive experiences with
-   [ADK Gemini Live API Toolkit](../streaming/index.md) that provides native support for bidirectional
+   [ADK Gemini Live API Toolkit](../live/index.md) that provides native support for bidirectional
    streaming (text and audio). This integrates seamlessly with underlying
    capabilities like the [Gemini Live API for the Gemini Developer API](https://ai.google.dev/gemini-api/docs/live)
    (or for
