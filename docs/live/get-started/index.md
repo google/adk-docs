@@ -11,8 +11,8 @@ This page provides quickstart examples to get you up and running with streaming 
     ---
     This example demonstrates how to set up a basic streaming interaction with an agent using Python ADK. It typically involves using the `Runner.run_live()` method and handling asynchronous events.
 
-    [:octicons-arrow-right-24: View Python Streaming Quickstart](quickstart-streaming.md) <br>
-    <!-- [:octicons-arrow-right-24: View Python Streaming Quickstart](python/quickstart-streaming.md) -->
+    [:octicons-arrow-right-24: View Python Streaming Quickstart](streaming-python.md) <br>
+
 
 <!-- This comment forces a block separation -->
 
@@ -21,7 +21,6 @@ This page provides quickstart examples to get you up and running with streaming 
     ---
     This example demonstrates how to set up a basic streaming interaction with an agent using Java ADK. It involves using the `Runner.runLive()` method, a `LiveRequestQueue`, and handling the `Flowable<Event>` stream.
 
-    [:octicons-arrow-right-24: View Java Streaming Quickstart](quickstart-streaming-java.md) <br>
-    <!-- [:octicons-arrow-right-24: View Java Streaming Quickstart](java/quickstart-streaming-java.md)) -->
+    [:octicons-arrow-right-24: View Java Streaming Quickstart](streaming-java.md) <br>
 
 </div>
