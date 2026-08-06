@@ -34,8 +34,8 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Artifacts** | [Supported](https://adk.dev/artifacts/#what-are-artifacts) | [Supported](https://adk.dev/artifacts/#what-are-artifacts) |
 | | **Callbacks** | [Supported](https://adk.dev/callbacks/types-of-callbacks/#before-agent-callback) | [Supported](https://adk.dev/callbacks/types-of-callbacks/#before-agent-callback) |
 | | **Plugins** | [Supported](https://adk.dev/plugins/#define-and-register-plugins) | Not Supported |
-| **Advanced Capabilities** | **Streaming (Gemini Live API Toolkit)** | [Supported](https://adk.dev/get-started/streaming/quickstart-streaming/#2-project-structure) | [Supported](https://adk.dev/get-started/streaming/quickstart-streaming-java/#creating-an-agent) |
-| | **Streaming Tools** | [Supported](https://adk.dev/streaming/streaming-tools/) | Not Supported |
+| **Advanced Capabilities** | **Streaming (Gemini Live API Toolkit)** | [Supported](https://adk.dev/live/get-started/streaming-python/#2-project-structure) | [Supported](https://adk.dev/live/get-started/streaming-java/#creating-an-agent) |
+| | **Streaming Tools** | [Supported](https://adk.dev/live/streaming-tools/) | Not Supported |
 | | **Multi-Model: LiteLLM** | [Supported](https://adk.dev/agents/models/#using-cloud-proprietary-models-via-litellm) | Not Supported |
 | | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://adk.dev/agents/models/#using-anthropic-models) |
 | **Development Lifecycle** | **Evaluation** | [Supported](https://adk.dev/evaluate/#how-evaluation-works-with-the-adk) | Not Supported |

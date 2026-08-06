@@ -11,8 +11,8 @@ the path that matches your language and backend below.
 
 You can use Claude models from Python in the following ways:
 
-- **Native, on Agent Platform:** Register the `Claude` wrapper and use a Claude
-  model string. See [Anthropic Claude on Agent
+- **Native, on Agent Platform:** Pass a Claude model string directly; ADK's
+  registry routes it to the `Claude` wrapper. See [Anthropic Claude on Agent
   Platform](/agents/models/agent-platform/#anthropic-claude).
 - **Direct Anthropic API, via LiteLLM:** Use the `LiteLlm` connector with an
   Anthropic API key. See

@@ -2,7 +2,7 @@
 catalog_title: Slack
 catalog_description: Run agents as bots that reply to mentions, DMs, and threads
 catalog_icon: /integrations/assets/slack.png
-catalog_tags: ["plugin"]
+catalog_tags: ["connectors"]
 ---
 
 # Slack runner for ADK

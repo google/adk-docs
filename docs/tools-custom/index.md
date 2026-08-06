@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -499,8 +499,8 @@ By adhering to these guidelines, you provide the LLM with the clarity and struct
 
 ## Toolsets: Grouping and Dynamically Providing Tools
 
-<div class="language-support-tag" title="This feature is currently available for Python and Typescript.">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">Typescript v0.2.0</span>
+<div class="language-support-tag" title="This feature is currently available for Python and TypeScript.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
 
