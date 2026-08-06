@@ -38,20 +38,32 @@ Here is what is happening in this code:
     `for await`. There is no callback and no `EventEmitter`.
 2.  `runConfig: {streamingMode: StreamingMode.SSE}` is what turns streaming on.
     Without it the loop body executes once.
-3.  `event.errorCode` is checked first. A model failure — a bad API key, a model
-    your project cannot access — arrives as an ordinary event with `errorCode`
-    and `errorMessage` set. **`runAsync` does not throw**, so a loop that only
-    reads text sees `undefined` and prints nothing at all.
-4.  `textOf(event)` takes an `Event` and returns a `string`. It joins every part
-    that has `text` and drops parts flagged `thought` (thinking models emit
-    those) — so `parts[0]` is not assumed to be the answer. Events produced by
-    tool calls have no text at all, which is why the loop skips empty results.
-    It is imported, not redefined, because `server.ts` needs the same extraction
-    in [step 5](#step-5).
-5.  `event.partial` distinguishes a chunk from the end. When it is `true`, the
-    text is a **delta** and you append it. On the last event ADK re-sends the
-    **entire** accumulated answer with `partial: false`, so you *replace*
-    `answer` rather than appending — appending there renders the answer twice.
+3.  `TurnText` tracks what has already been printed, and `turn.unshown(event)`
+    returns only what has not — `''` when there is nothing new. It is imported,
+    not redefined, because `server.ts` needs the same bookkeeping in
+    [step 5](#step-5). It is built on `textOf()`, which joins every part that
+    has `text` and drops parts flagged `thought` (thinking models emit those) —
+    so `parts[0]` is not assumed to be the answer. Tool-call and tool-response
+    events carry no text at all, which is why the loop skips empty results.
+4.  That bookkeeping exists because ADK sends the same text in two shapes. Each
+    chunk arrives with `partial: true` and is a **delta**, and then ADK re-sends
+    that whole block in one event with `partial: false`. Appending both renders
+    the answer twice, so `unshown()` appends deltas and returns only the tail of
+    the `partial: false` event — usually nothing. *Usually*, not always: when
+    one model chunk carries text **and** a tool call, ADK splits it into a
+    consolidated text event followed by the tool-call event, and that text was
+    never sent as a delta. Ignoring `partial: false` events outright, rather
+    than de-duplicating them, silently drops it the day your agent gets tools.
+5.  `event.errorCode` is checked on every event, and after the write, because
+    the event that reports a truncated run carries the last of its text too. A
+    model failure — a bad API key, a model your project cannot access — arrives
+    as an ordinary event with `errorCode` set. **Model failures do not throw**,
+    so a loop that only reads text sees `undefined` and prints nothing at all.
+    (`runAsync` itself does throw for other things; see
+    [What the events actually look like](#events).) An `errorMessage` is not
+    guaranteed to come with the code, which is why `detail` appends it only when
+    it is there: print it unconditionally and a run that hits the token limit
+    reports `[MAX_TOKENS] undefined`.
 
 ## Use this page when {#when-to-use}
 
@@ -72,7 +84,9 @@ audio today, see [Build a streaming agent with Python](streaming-python.md).
 
 ## Prerequisites {#prerequisites}
 
-*   **Node.js 22 or later.** Check with `node --version`.
+*   **Node.js 22 or later.** Check with `node --version`. That is the floor this
+    page was written and tested against, not an enforced one — adk-js declares
+    no `engines` field, so npm will not stop you on an older runtime.
 *   **Access to a Gemini model, by either route.** A
     [Google AI Studio API key](https://aistudio.google.com/app/apikey), or a
     Google Cloud project with the Vertex AI API enabled and the `gcloud` CLI
@@ -136,8 +150,10 @@ Add the scripts and a TypeScript config. The `--env-file=.env` flag on the
 
 The two settings that matter in `tsconfig.json` are `"module": "nodenext"` and
 `"moduleResolution": "nodenext"`, paired with `"type": "module"` in
-`package.json`. `@google/adk` is an ES module and these files use top-level
-`await`. Set `"module": "commonjs"` instead and `tsc` reports
+`package.json`. That is not about `@google/adk`, which ships a CommonJS build
+alongside its ES module one and imports fine either way. It is about
+`stream-to-console.ts`, which `await`s at the top level — something only an ES
+module can do. Set `"module": "commonjs"` instead and `tsc` reports
 `error TS1378: Top-level 'await' expressions are only allowed when the 'module' option is set to …`.
 
 ## 2. Add your credentials {#step-2}
@@ -203,10 +219,12 @@ Here is what is happening in this code:
     [Deploying this](#deploying) for what to change before production.
 3.  `APP_NAME` is exported because the runner and every session lookup must use
     the same app name, and `server.ts` needs it too.
-4.  `textOf()` lives here, rather than in each consumer, because both
-    `stream-to-console.ts` and `server.ts` need exactly the same text
-    extraction. `Event` is brought in with `import type`, which keeps it out of
-    the emitted JavaScript.
+4.  `textOf()` and `TurnText` live here, rather than in each consumer, because
+    `stream-to-console.ts` and `server.ts` need exactly the same text extraction
+    and exactly the same "have I shown this already?" bookkeeping. `TurnText`
+    holds per-run state, so each consumer makes its own — one per `runAsync`
+    loop, which for the server means one per request. `Event` is brought in with
+    `import type`, which keeps it out of the emitted JavaScript.
 
 ## 4. Stream to your terminal {#step-4}
 
@@ -244,7 +262,7 @@ Here is what is happening in this code:
 
 1.  `req.body` is `any`, so it is annotated on the way out —
     `as {userId: string; sessionId: string; message: string}` — and the three
-    destructured names are typed from there. `APP_NAME`, `runner` and `textOf`
+    destructured names are typed from there. `APP_NAME`, `runner` and `TurnText`
     all come from `agent.ts`; the server adds HTTP and nothing else.
 2.  `runner.sessionService.getSession()` runs first because `runAsync` requires a
     session that already exists. If there is none, `createSession()` makes one
@@ -267,10 +285,13 @@ Here is what is happening in this code:
 6.  `send()` writes one SSE frame: the literal prefix `data: `, a JSON payload,
     and a **blank line** (`\n\n`) as the frame terminator. The blank line is what
     the client splits on.
-7.  Only `event.partial` deltas are forwarded. The final aggregated event is
-    deliberately dropped, because it repeats the entire answer — forwarding it
-    would print the answer twice in the browser. `send({done: true})` marks the
-    end instead.
+7.  `turn.unshown(event)` picks what to forward, so the browser is sent each
+    piece of the answer exactly once: the delta of a `partial: true` event, and
+    of a `partial: false` event only the part that was never streamed. For the
+    tool-free agent here that part comes out empty. For an agent with tools it
+    is the sentence the model wrote in the same chunk as its tool call — text
+    that a server forwarding only `event.partial` never sends at all.
+    `send({done: true})` marks the end.
 8.  The `'error'` handler on the server is **not optional**. Express 5 registers
     the callback you pass to `app.listen(port, cb)` as an `'error'` listener as
     well, so the one-line version everyone writes —
@@ -300,10 +321,10 @@ Here is what is happening in this code:
     frame can be split across two network reads, and this is what stops you from
     calling `JSON.parse` on half a frame.
 5.  `answer.textContent += payload.delta` is a plain append, which is correct
-    *only because* `server.ts` already dropped the duplicated final event. If you
-    ever forward raw ADK events to the browser, the browser has to do the
-    append-on-`partial`, replace-on-final dance from
-    [the complete program](#complete-program) instead.
+    *only because* `server.ts` never sends the same text twice. If you ever
+    forward raw ADK events to the browser instead, the browser has to do the
+    `TurnText` bookkeeping from [the complete program](#complete-program)
+    itself.
 
 ## 7. Run it {#step-7}
 
@@ -342,8 +363,8 @@ matter:
 | :--- | :--- | :--- |
 | `content.parts[].text` | `string \| undefined` | The text. Absent on tool-call and tool-response events. |
 | `content.parts[].thought` | `boolean \| undefined` | `true` marks a reasoning part from a thinking model, not the answer. Filter these out. |
-| `partial` | `true \| false \| undefined` | `true` = incremental chunk, text is a delta. Otherwise the text is the complete answer so far. |
-| `errorCode` / `errorMessage` | `string \| undefined` | Set when the model call failed. Nothing is thrown. |
+| `partial` | `true \| false \| undefined` | `true` = incremental chunk, text is a delta. Otherwise the text is the whole block since the previous `partial: false` event — for a tool-free agent, the complete answer. |
+| `errorCode` / `errorMessage` | `string \| undefined` | `errorCode` is set when the model call failed **and** whenever the model stopped for any reason other than `STOP` — `MAX_TOKENS`, `SAFETY`. An `errorMessage` is not guaranteed with it, so print the code alone when it is missing: `[MAX_TOKENS]`, not `[MAX_TOKENS] undefined`. Neither case throws. |
 | `author` | `string \| undefined` | The name of the agent that produced the event, or `'user'`. |
 
 Two properties of `partial` catch people out:
@@ -355,6 +376,15 @@ Two properties of `partial` catch people out:
     carries `partial: false` in the middle of a run. If you need a genuine
     end-of-turn signal, import `isFinalResponse` from `@google/adk` and call
     `isFinalResponse(event)`.
+
+The events are the only thing `runAsync` reports a *model* failure through, and
+that is what makes them easy to ignore. It is not a blanket promise that nothing
+throws: `runAsync` throws `Error: Session not found: <id>` if you pass a session
+id that does not exist, and it re-throws anything a model rejected with that is
+not an `Error`. Both surface on the `for await`. `server.ts` wraps its loop in a
+`try` for exactly that reason — a thrown error there would kill the process
+instead of the request; `stream-to-console.ts` lets it crash, which is what you
+want in a one-shot script.
 
 Do not branch on `turnComplete`, and do not depend on where chunk boundaries
 fall — they are an implementation detail of the aggregator and shift between
@@ -376,10 +406,19 @@ INFO: [ADK] 2026-01-01T00:00:00.000Z Sending out request, model: gemini-2.5-flas
 ```
 
 **The answer appears twice, end to end.**
-You are appending the text of every event. The last event carries the full
-answer with `partial: false`, so `text += chunk` over all events yields exactly
-double. Append only when `event.partial` is truthy, and replace on the final
-event — or drop the final event server-side as `server.ts` does.
+You are appending the text of every event. The last event repeats the whole
+block with `partial: false`, so `text += chunk` over all events yields exactly
+double — measured at 2.000× on the runs behind this page. Track what you have
+already shown and take only the new tail from a `partial: false` event, as
+`TurnText` does.
+
+**Text disappears as soon as the agent has a tool.**
+The opposite mistake, and the tempting fix for the one above: skipping every
+`partial: false` event. When a model chunk carries text *and* a tool call — "Let
+me look that up." followed by the call — that text is never sent as a delta, so
+the `partial: false` event is the only event carrying it and skipping it drops
+it. A tool-free agent never shows this, which is why it survives review. Use
+`TurnText` rather than a `partial` check and both cases are right.
 
 **Nothing renders and there is no error anywhere.**
 Model failures are delivered as events, not exceptions: `runAsync` returns
@@ -424,13 +463,18 @@ path, so do not skip it because it worked in development.
 
 **Blank bubbles appear in the UI when the agent uses a tool.**
 Tool-call and tool-response events have no text. Skip any event whose extracted
-text is empty, as `textOf()` does.
+text is empty — `textOf()` returns `''` for them, and so does
+`TurnText.unshown()`.
 
 **`ERROR: Top-level await is currently not supported with the "cjs" output format`.**
-`package.json` is missing `"type": "module"`. `@google/adk` is an ES module and
-these files use top-level `await`; the ESM settings from [step 1](#step-1) —
-`"type": "module"` in `package.json` and `"module": "nodenext"` in
-`tsconfig.json` — are both required.
+`package.json` is missing `"type": "module"`, so `tsx` compiles as CommonJS —
+and `stream-to-console.ts` `await`s at the top level, twice, which CommonJS has
+no equivalent for. Note which file the error names: yours, not the import.
+`@google/adk` is dual-published, its `exports` map resolving `require` to a
+CommonJS build, and it loads fine from CommonJS — which is why `npm start`
+survives this misconfiguration and only `npm run console` dies. Restore the ESM
+settings from [step 1](#step-1): `"type": "module"` in `package.json` and
+`"module": "nodenext"` in `tsconfig.json`.
 
 ## Deploying this {#deploying}
 

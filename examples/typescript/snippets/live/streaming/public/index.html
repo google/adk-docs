@@ -57,7 +57,7 @@
             if (!frame.startsWith('data: ')) continue;
             const payload = JSON.parse(frame.slice('data: '.length));
             if (payload.error) answer.textContent += `\n[error] ${payload.error}`;
-            // The server already dropped the duplicated final event, so a
+            // The server only ever sends text the browser has not seen, so a
             // plain append is correct here.
             else if (payload.delta) answer.textContent += payload.delta;
           }

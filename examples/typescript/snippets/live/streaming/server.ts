@@ -17,7 +17,7 @@ import {StreamingMode} from '@google/adk';
 import express from 'express';
 import type {Request, Response} from 'express';
 
-import {APP_NAME, runner, textOf} from './agent.js';
+import {APP_NAME, runner, TurnText} from './agent.js';
 
 const app = express();
 app.use(express.json());
@@ -57,6 +57,8 @@ app.post('/api/chat', async (req: Request, res: Response) => {
   const send = (payload: unknown) =>
     res.write(`data: ${JSON.stringify(payload)}\n\n`);
 
+  const turn = new TurnText();
+
   try {
     for await (const event of runner.runAsync({
       userId,
@@ -66,17 +68,21 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       runConfig: {streamingMode: StreamingMode.SSE},
       abortSignal: abortController.signal,
     })) {
+      // Forward what the browser has not seen: the chunk itself, or — before a
+      // tool call — the text that only the consolidated event carries. The
+      // repeated part of that event is never forwarded, so nothing renders
+      // twice.
+      const delta = turn.unshown(event);
+      if (delta) send({delta});
+
+      // After the write, because the event that reports a finish reason other
+      // than STOP also carries the last of the answer. errorMessage may be
+      // absent; `[MAX_TOKENS] undefined` in the UI helps nobody.
       if (event.errorCode) {
-        send({error: `[${event.errorCode}] ${event.errorMessage}`});
+        const detail = event.errorMessage ? ` ${event.errorMessage}` : '';
+        send({error: `[${event.errorCode}]${detail}`});
         break;
       }
-
-      const text = textOf(event);
-      if (!text) continue;
-
-      // Forward deltas only. The last event repeats the whole answer, so
-      // forwarding it too would render the answer twice in the browser.
-      if (event.partial) send({delta: text});
     }
     send({done: true});
   } catch (err) {

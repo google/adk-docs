@@ -39,4 +39,33 @@ export function textOf(event: Event): string {
     .map((part) => part.text)
     .join('');
 }
+
+/**
+ * Remembers what has already been shown, so nothing is printed twice and
+ * nothing is dropped. Create one per `runAsync` loop.
+ */
+export class TurnText {
+  private shown = '';
+
+  /** The text in `event` that has not been shown yet; `''` if there is none. */
+  unshown(event: Event): string {
+    const text = textOf(event);
+    if (!text) return '';
+    if (event.partial) {
+      this.shown += text;
+      return text;
+    }
+    // A `partial: false` event repeats every chunk since the previous one, and
+    // ADK then starts a fresh block — so emit only the tail beyond what was
+    // streamed, and reset. Usually the tail is empty. It is not empty when one
+    // model chunk carried text *and* a tool call: that text is never sent as a
+    // delta, and this is the only event that carries it. If the two ever fail
+    // to line up, fall back to the whole thing — better shown twice than lost.
+    const tail = text.startsWith(this.shown)
+      ? text.slice(this.shown.length)
+      : text;
+    this.shown = '';
+    return tail;
+  }
+}
 // --8<-- [end:full]

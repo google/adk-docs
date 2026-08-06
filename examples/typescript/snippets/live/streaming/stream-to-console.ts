@@ -15,13 +15,14 @@
 // --8<-- [start:full]
 import {StreamingMode} from '@google/adk';
 
-import {APP_NAME, runner, textOf} from './agent.js';
+import {APP_NAME, runner, TurnText} from './agent.js';
 
 const session = await runner.sessionService.createSession({
   appName: APP_NAME,
   userId: 'user_1',
 });
 
+const turn = new TurnText();
 let answer = '';
 
 for await (const event of runner.runAsync({
@@ -31,22 +32,21 @@ for await (const event of runner.runAsync({
   // Without this line you get ONE event containing the whole answer.
   runConfig: {streamingMode: StreamingMode.SSE},
 })) {
-  // Model failures arrive as events, not thrown exceptions.
-  if (event.errorCode) {
-    console.error(`\n[${event.errorCode}] ${event.errorMessage}`);
-    break;
-  }
-
-  const text = textOf(event);
-  if (!text) continue;
-
-  if (event.partial) {
-    // An incremental chunk: append it.
+  // Everything not printed yet: the chunk itself, or — before a tool call — the
+  // text that only ever arrives in the consolidated event. Never a repeat.
+  const text = turn.unshown(event);
+  if (text) {
     answer += text;
     process.stdout.write(text);
-  } else {
-    // The last event repeats the WHOLE answer. Replace, never append.
-    answer = text;
+  }
+
+  // Model failures arrive as events, not thrown exceptions. So does any finish
+  // reason other than STOP, which is why this comes after the write: an event
+  // that reports MAX_TOKENS also carries the last of the answer.
+  if (event.errorCode) {
+    const detail = event.errorMessage ? ` ${event.errorMessage}` : '';
+    console.error(`\n[${event.errorCode}]${detail}`);
+    break;
   }
 }
 
