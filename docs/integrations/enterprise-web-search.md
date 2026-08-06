@@ -8,7 +8,7 @@ catalog_tags: ["google", "search"]
 # Enterprise Web Search tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.9.0</span><span class="lst-typescript">TypeScript v1.5.0</span>
 </div>
 
 The Enterprise Web Search tool grounds ADK agents with information from the
@@ -16,11 +16,16 @@ web while maintaining enterprise compliance and source control. Designed for
 enterprise-grade workloads, this tool ensures grounding data aligns with
 organizational security and compliance policies.
 
-!!! note "Enterprise Web Search vs. Agent Platform Search"
-    
-    Enterprise Web Search is distinct from Agent Platform Search. While the Agent Platform
-    Search queries indexed private data stores, Enterprise Web Search
+!!! note "Enterprise Web Search vs. Agent Search"
+
+    Enterprise Web Search is distinct from 
+    [Agent Search](https://adk.dev/integrations/agent-search/). While the Agent 
+    Search queries indexed private data stores, Enterprise Web Search 
     retrieves compliant public web data.
+
+!!! warning "Service Specific Terms"
+    
+    When using the Enterprise Web Search tool, you are obligated to comply with Google's Service Specific Terms, which include properly displaying search suggestions and required Google logos in your UI.
 
 ## Use cases
 
@@ -33,8 +38,9 @@ organizational security and compliance policies.
 
 ## Prerequisites
 
-- Access to Google Cloud Platform with Agent Platform enabled.
+- Access to Google Cloud Platform with Agent Search enabled.
 - Configured GCP project with necessary permissions for Gemini models.
+- The environment variable `GOOGLE_GENAI_USE_ENTERPRISE=TRUE` must be set.
 - The `google-adk` package (Python) or `@google/adk` package (TypeScript) installed:
 
 === "Python"
@@ -49,7 +55,7 @@ organizational security and compliance policies.
     npm install @google/adk
     ```
 
-## Use with ADK
+## Use with agent
 
 The following example demonstrates how to configure an ADK agent with the
 pre-instantiated `enterprise_web_search` tool:
@@ -82,21 +88,7 @@ pre-instantiated `enterprise_web_search` tool:
 
     export { rootAgent };
     ```
-
-Alternatively, instantiate the `EnterpriseWebSearchTool` class directly in Python:
-
-```python
-from google.adk.agents import Agent
-from google.adk.tools.enterprise_search_tool import EnterpriseWebSearchTool
-
-root_agent = Agent(
-    model="gemini-flash-latest",
-    name="enterprise_search_agent",
-    instruction="Answer user questions accurately using enterprise-compliant web search results.",
-    tools=[EnterpriseWebSearchTool()],
-)
-```
-
+    
 ## Selection guidance
 
 - Use standard Google Search for general-purpose applications requiring broad
@@ -106,4 +98,4 @@ root_agent = Agent(
 
 ## Additional resources
 
-- [Agent Platform Web Grounding Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/grounding/web-grounding-enterprise)
+- [Agent Search Web Grounding Overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/grounding/web-grounding-enterprise)
