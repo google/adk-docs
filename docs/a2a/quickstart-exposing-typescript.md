@@ -6,45 +6,109 @@
 
 This quickstart covers the most common starting point for any developer: **"I have an agent. How do I expose it so that other agents can use my agent via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
-## What you'll build
+## Overview
 
-You'll take an ADK agent that rolls dice, wrap it with `toA2a()`, and serve it on
-`http://localhost:8001`. By the end you'll have proved it works twice with `curl`: once by
-fetching the agent card that A2A clients use to discover your agent, and once by sending it a
-real request over JSON-RPC and getting a dice roll back.
+This sample demonstrates how you can easily expose an ADK agent so that it can be then consumed by another agent using the A2A Protocol.
+
+In TypeScript, you expose an agent with the `toA2a()` function, which auto-generates the agent card and returns an Express application that you serve yourself.
 
 ```text
 ┌─────────────────────┐                             ┌───────────────────────────────┐
 │  Any A2A client     │       A2A Protocol          │  A2A-Exposed Dice Agent       │
 │  (curl, another     │────────────────────────────▶│  toA2a(diceAgent)             │
-│   ADK agent)        │                             │  (localhost:8001)             │
+│   ADK agent)        │                             │      (localhost: 8001)        │
 └─────────────────────┘                             └───────────────────────────────┘
 ```
 
-Here is the whole server. The rest of this page walks through it, but this file is complete —
-paste it into `server.ts`, add credentials, and it runs:
+The sample consists of:
 
-```typescript title="my-a2a-agent/server.ts"
+- **Remote Dice Agent** (`remote_a2a/dice_agent/server.ts`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that rolls dice. It becomes exposed using the `toA2a()` function and served with `app.listen()`.
+- **Authenticated variant** (`remote_a2a/dice_agent/server-with-auth.ts`): The same agent behind a bearer-token check, covered in [Advanced Configuration](#advanced-configuration-authenticating-the-a2a-endpoint).
+
+Reach for `toA2a()` when you want *another agent* to call yours over the network and you want to own the HTTP server — you pick the port, the middleware, and the TLS termination. If the two agents run in the **same process**, you do not need A2A at all: compose them directly with [sub-agents and workflow agents](../workflows/index.md). You need **Node.js 22 or later** — `@google/adk` declares no `engines` field, so nothing warns you on an older runtime, and the sample uses ESM and top-level `await`. The `curl` commands below pipe through [`jq`](https://jqlang.github.io/jq/); if you would rather not install it, drop the `| jq …` and the responses are still valid JSON.
+
+## Exposing the Remote Agent with the `toA2a()` function
+
+You can take an existing agent built using ADK and make it A2A-compatible by wrapping it with `toA2a()`. Nothing about the agent itself has to change — any `BaseAgent` can be exposed this way. `toA2a()` builds the agent card in memory by extracting the name, description, instruction and tools from your ADK agent, so the well-known agent card endpoint is served as soon as you start listening.
+
+!!! note "There is no separate A2A package to install"
+
+    Express and `@a2a-js/sdk` — the HTTP server and the A2A protocol implementation — are direct
+    dependencies of `@google/adk`, not peer dependencies, so installing `@google/adk` installs
+    everything A2A needs. There is also no `@google/adk/a2a` subpath: every A2A symbol is
+    exported from the package root.
+
+### Under the hood: the routes `toA2a()` mounts
+
+`toA2a()` installs three routes on the Express app it returns:
+
+| Route | Purpose | Authenticated? |
+|---|---|---|
+| `/.well-known/agent-card.json` | Agent discovery | **No — always public** |
+| `/jsonrpc` | JSON-RPC transport (the card's `preferredTransport`) | Yes, once you configure it |
+| `/rest` | HTTP+JSON transport | Yes, once you configure it |
+
+??? note "Moving the routes with `basePath`"
+
+    By default all three sit at the root. `basePath: '/a2a'` moves them: the card is then at
+    `/a2a/.well-known/agent-card.json`, the root card 404s, and the card's `url` becomes
+    `http://localhost:8001/a2a/jsonrpc`. Clients must give that base URL a **trailing slash**
+    (`http://localhost:8001/a2a/`) — without one, `new URL()` drops the last segment.
+
+### 1. Getting the Sample Code { #getting-the-sample-code }
+
+You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-docs/tree/main/examples/typescript/a2a_basic) here:
+
+```bash
+git clone https://github.com/google/adk-docs.git
+cd adk-docs/examples/typescript/a2a_basic
+npm install
+```
+
+As you'll see, the folder structure is as follows:
+
+```text
+a2a_basic/
+├── remote_a2a/
+│   └── dice_agent/
+│       ├── server.ts            # Remote Dice Agent
+│       └── server-with-auth.ts  # The same agent, behind a bearer token
+├── package.json
+├── tsconfig.json
+├── README.md
+├── remote_prime_agent.ts        # ─┐
+├── direct_client.ts             #  ├─ A2A Quickstart (Consuming) uses these
+└── consuming_agent.ts           # ─┘
+```
+
+`a2a_basic/` is shared with [A2A Quickstart (Consuming)](./quickstart-consuming-typescript.md). Every server in it listens on port 8001, so run one at a time.
+
+#### Remote Dice Agent (`a2a_basic/remote_a2a/dice_agent/server.ts`)
+
+- **`rollDice`**: A `FunctionTool` whose zod `parameters` type the `{ sides }` argument destructured inside `execute`, and are what A2A clients see as a declared skill.
+- **`diceAgent`**: An ordinary `LlmAgent`. Nothing about it is A2A-specific.
+- **`toA2a(diceAgent, {...})`**: Returns a `Promise<express.Application>` with the A2A routes mounted. It never listens for you, so **`app.listen(PORT)`** is yours to call — which is also what lets you mount the A2A routes onto an Express app you already have, by passing it as the `app` option.
+
+```typescript title="a2a_basic/remote_a2a/dice_agent/server.ts"
 --8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server.ts:full"
 ```
 
-## Prerequisites
+If you are building this from scratch instead of cloning, run `npm init --yes && npm pkg set type="module"`, then `npm install @google/adk zod` and `npm install -D tsx typescript @types/node @types/express`, and copy the sample's `tsconfig.json`. Two settings are load-bearing: `"type": "module"` in `package.json` and `"module": "nodenext"` in `tsconfig.json`, because the server uses top-level `await`. Keep `zod` on **v4** — `@google/adk` depends on `zod@^4.2.1`, and a zod 3 install makes `tsc` reject every tool schema you write.
 
-*   **Node.js 22 or later.** `@google/adk` declares no `engines` field, so nothing will warn you
-    if your Node is too old. This page uses `--env-file` to load your credentials, which is
-    stable as of Node 22.
-*   **Model credentials** — either a Google AI Studio API key or a Google Cloud project with
-    Vertex AI enabled. Both are shown below, and nothing else on this page changes between them.
-*   **`jq`**, used here to pretty-print and filter the JSON responses (`sudo apt install jq`,
-    `brew install jq`). If you'd rather not install it, drop the `| jq …` from every command —
-    the responses are still valid JSON, and `python3 -m json.tool` pretty-prints them.
+!!! warning "`toA2a()` fails closed without authentication"
 
-Create a **`.env` file** in your project root containing exactly this:
+    `allowUnauthenticated: true` is a local-development shortcut. Without it, and without an
+    `authentication` callback, `toA2a()` refuses to mount and the returned promise rejects with
+    `toA2a: refusing to mount the A2A server without authentication`. See
+    [Advanced Configuration](#advanced-configuration-authenticating-the-a2a-endpoint) before you
+    put the agent on a network anyone else can reach.
+
+Finally, create a **`.env` file** next to `package.json` with your model credentials:
 
 === "Google AI Studio"
 
-    ```bash title="my-a2a-agent/.env"
-    GEMINI_API_KEY="YOUR_API_KEY"
+    ```bash title="a2a_basic/.env"
+    GOOGLE_GENAI_API_KEY="YOUR_API_KEY"
     ```
 
     Create the key on the [API Keys](https://aistudio.google.com/app/apikey) page. ADK reads
@@ -53,7 +117,7 @@ Create a **`.env` file** in your project root containing exactly this:
 
 === "Google Cloud / Vertex AI"
 
-    ```bash title="my-a2a-agent/.env"
+    ```bash title="a2a_basic/.env"
     GOOGLE_GENAI_USE_VERTEXAI=true
     GOOGLE_CLOUD_PROJECT="your-project-id"
     GOOGLE_CLOUD_LOCATION="global"
@@ -64,379 +128,136 @@ Create a **`.env` file** in your project root containing exactly this:
     API is enabled on the project. `GOOGLE_GENAI_USE_VERTEXAI=true` is the switch — with it set,
     ADK routes `gemini-2.5-flash` to Vertex AI and ignores `GEMINI_API_KEY` entirely.
 
-!!! note "There is no separate A2A package to install"
+### 2. Start the Remote A2A Agent server { #start-the-remote-a2a-agent-server }
 
-    Express and `@a2a-js/sdk` — the HTTP server and the A2A protocol implementation — are
-    direct dependencies of `@google/adk`, not peer dependencies. Installing `@google/adk`
-    installs everything the A2A server needs. There is also no `@google/adk/a2a` subpath:
-    `toA2a` and every other A2A symbol are exported from the package root.
-
-## Expose your agent
-
-### 1. Create the project
+You can now start the remote agent server, which will host the A2A app wrapping the dice agent:
 
 ```bash
-mkdir my-a2a-agent && cd my-a2a-agent
-npm init --yes
-npm pkg set type="module"
+npx tsx --env-file=.env remote_a2a/dice_agent/server.ts    # or: npm run serve:dice
 ```
 
-`type: "module"` is required. The server uses top-level `await`, which only works in an ES
-module.
-
-### 2. Install the dependencies
-
-=== "npm"
-
-    ```bash
-    npm install @google/adk zod
-    npm install -D tsx typescript @types/node @types/express
-    ```
-
-=== "pnpm"
-
-    ```bash
-    pnpm add @google/adk zod
-    pnpm add -D tsx typescript @types/node @types/express
-    ```
-
-=== "yarn"
-
-    ```bash
-    yarn add @google/adk zod
-    yarn add -D tsx typescript @types/node @types/express
-    ```
-
-`zod` defines the tool's parameter schema. Install **zod 4** — `@google/adk` depends on
-`zod@^4.2.1`, and a zod 3 install will not typecheck. `tsx` runs TypeScript directly so you
-don't need a build step. `@types/express` is only needed if you annotate the request object
-when you [add authentication](#turn-on-authentication-before-you-ship); Express itself is
-already installed as a dependency of `@google/adk`.
-
-### 3. Add a `tsconfig.json`
-
-```json title="my-a2a-agent/tsconfig.json"
-{
-  "compilerOptions": {
-    "target": "es2022",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "types": ["node"]
-  }
-}
-```
-
-`module: "nodenext"` is the setting that matters: with `commonjs` the top-level `await` in
-`server.ts` fails to compile.
-
-### 4. Write the agent and expose it
-
-Create `server.ts` with the code from the top of this page.
-
-```typescript title="my-a2a-agent/server.ts"
---8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server.ts:full"
-```
-
-Here's what is happening in this code:
-
-1.  **`rollDice`** is an ordinary ADK `FunctionTool`. The `parameters` schema —
-    `z.object({ sides: z.number() })` — is what types the `{ sides }` argument destructured
-    inside `execute`, and it is also what A2A clients see as a declared skill.
-2.  **`diceAgent`** is an ordinary `LlmAgent`. Nothing about it is A2A-specific; any
-    `BaseAgent` can be exposed this way.
-3.  **`toA2a(diceAgent, options)`** returns a `Promise<express.Application>`. It builds the agent
-    card, mounts the A2A routes, and hands the app back to you.
-4.  **`port: PORT`** writes `http://localhost:8001/jsonrpc` into the agent card. It does *not*
-    open a socket. It must agree with the port you pass to `app.listen()` below, or clients
-    will read the card successfully and then fail to reach the address it advertises.
-5.  **`allowUnauthenticated: true`** is a local-development shortcut: without it, or without an
-    `authentication` callback, `toA2a` refuses to start at all. See
-    [Turn on authentication before you ship](#turn-on-authentication-before-you-ship) before you expose this on any
-    network someone else can reach.
-6.  **`app.listen(PORT)`** is yours to call. `toA2a` never listens for you — the application it
-    returns is inert until you start it. This is deliberate: it means you can mount the A2A
-    routes onto an Express app you already have by passing it as the `app` option.
-
-### 5. Start the server
-
-```bash
-npx tsx --env-file=.env server.ts
-```
-
-`--env-file=.env` is what loads your credentials. ADK does not read `.env` for you when you run
-a script directly, so without this flag the agent starts fine and then fails on the first model
-call.
-
-You should see all five of these lines, in this order:
+Once executed, you should see something like:
 
 ```console
-WARN: [ADK] 2026-08-05T18:36:22.793Z SECURITY WARNING: Mounting the A2A server WITHOUT authentication because `allowUnauthenticated: true` was set. The agent and all of its tools are exposed to any network-reachable caller, which can invoke them with arbitrary input and read the output. Do NOT use this outside of local, trusted development.
-(node:4060397) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+WARN: [ADK] 2026-08-06T21:16:38.297Z SECURITY WARNING: Mounting the A2A server WITHOUT authentication because `allowUnauthenticated: true` was set. The agent and all of its tools are exposed to any network-reachable caller, which can invoke them with arbitrary input and read the output. Do NOT use this outside of local, trusted development.
+(node:2807369) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 (Use `node --trace-deprecation ...` to show where the warning was created)
 [dice_agent] A2A server listening on http://localhost:8001
 [dice_agent] agent card: http://localhost:8001/.well-known/agent-card.json
 ```
 
-Your timestamp and the `node:NNNNNNN` process id will differ; everything else is byte-for-byte
-what you get. All three warning lines are expected and none of them means you did something
-wrong: the `SECURITY WARNING` is `allowUnauthenticated: true` telling you what it did, and the
-`punycode` deprecation is Node 22 complaining about one of ADK's transitive dependencies.
+All three warning lines are expected: the `SECURITY WARNING` is `allowUnauthenticated: true` telling you what it did, and the `punycode` deprecation is Node 22 complaining about one of ADK's transitive dependencies.
 
-### 6. Fetch the agent card
+!!! warning "`--env-file=.env` is what loads your credentials"
 
-The agent card is how other agents discover yours: its name, its skills, and the URL to call.
-ADK generates it from your agent code; you don't write it by hand. Leave the server running and,
-in a second terminal:
+    ADK does not read `.env` for you when you run a script directly, which is why the command
+    above passes Node's `--env-file`. Start the server without it and it comes up perfectly, then
+    fails on the first model call — the request reaches your agent and comes back as a
+    `"state": "failed"` task carrying `API key not valid. Please pass a valid API key.` (or, on
+    the Vertex AI path, a credentials error from `aiplatform.googleapis.com`).
+
+??? note "Why use port 8001?"
+    In this quickstart, when testing locally, your agents will be using localhost, so the `port` for the A2A server for the exposed agent must be different from the consuming agent's port. The default port for `adk web` is `8000`, which is why the A2A server is created using a separate port, `8001`.
+
+### 3. Check that your remote agent is running { #check-that-your-remote-agent-is-running }
+
+You can check that your agent is up and running by visiting the agent card that `toA2a()` auto-generated. The card is how other agents discover yours — its name, its skills, and the URL to call — and you never write it by hand:
+
+[http://localhost:8001/.well-known/agent-card.json](http://localhost:8001/.well-known/agent-card.json)
+
+You should see the contents of the agent card. Leave the server running and, in a second terminal, pull out the identity and the skills:
 
 ```bash
-curl -s http://localhost:8001/.well-known/agent-card.json | jq
+curl -s http://localhost:8001/.well-known/agent-card.json \
+  | jq '{name, description, url, skills: [.skills[] | {id, name, description}]}'
 ```
-
-You should see exactly this (the endpoint is served at the `AGENT_CARD_PATH` constant,
-`.well-known/agent-card.json`):
 
 ```json
 {
   "name": "dice_agent",
   "description": "An agent that rolls dice on request.",
-  "protocolVersion": "0.3.0",
-  "version": "1.0.0",
+  "url": "http://localhost:8001/jsonrpc",
   "skills": [
     {
       "id": "dice_agent",
       "name": "model",
-      "description": "An agent that rolls dice on request. I roll dice for the user. Always use the roll_dice tool. Report the resulting number in one short sentence.",
-      "tags": [
-        "llm"
-      ]
+      "description": "An agent that rolls dice on request. I roll dice for the user. Always use the roll_dice tool. Report the resulting number in one short sentence."
     },
     {
       "id": "dice_agent-roll_dice",
       "name": "roll_dice",
-      "description": "Rolls an N-sided die and returns the result.",
-      "tags": [
-        "llm",
-        "tools"
-      ]
-    }
-  ],
-  "url": "http://localhost:8001/jsonrpc",
-  "preferredTransport": "JSONRPC",
-  "capabilities": {
-    "extensions": [],
-    "stateTransitionHistory": false,
-    "pushNotifications": false,
-    "streaming": true
-  },
-  "defaultInputModes": [
-    "text"
-  ],
-  "defaultOutputModes": [
-    "text"
-  ],
-  "additionalInterfaces": [
-    {
-      "url": "http://localhost:8001/jsonrpc",
-      "transport": "JSONRPC"
-    },
-    {
-      "url": "http://localhost:8001/rest",
-      "transport": "HTTP+JSON"
+      "description": "Rolls an N-sided die and returns the result."
     }
   ]
 }
 ```
 
-Three things in that card are worth noticing:
+Two things in that card are worth noticing. **One skill per capability:** `dice_agent` (the model itself) and `dice_agent-roll_dice` (the tool) are advertised separately, so a calling agent can tell what yours can do. And **your instruction came back in the first person** — you wrote *"You roll dice for the user"*, the card says *"I roll dice for the user"*. ADK rewrites the pronouns when it publishes your instruction as a description; the card speaks as the agent.
 
-*   **One skill per capability.** `dice_agent` (the model itself) and `dice_agent-roll_dice`
-    (the tool) are advertised separately, so a calling agent can tell what yours can do.
-*   **Your instruction came back in the first person.** You wrote *"You roll dice for the
-    user"*; the card says *"I roll dice for the user"*. ADK rewrites the pronouns when it
-    publishes your instruction as a description. This is intentional — the card speaks as the
-    agent.
-*   **`url` is `http://localhost:8001/jsonrpc`,** built from the `port` you passed to `toA2a`.
-    If that URL doesn't match where you're actually listening, this is where you'll spot it.
+The rest of the card, which ADK fills in for you, is the protocol plumbing:
 
-### 7. Send it a real request
+```json
+{"protocolVersion":"0.3.0","version":"1.0.0","preferredTransport":"JSONRPC","capabilities":{"extensions":[],"stateTransitionHistory":false,"pushNotifications":false,"streaming":true},"defaultInputModes":["text"],"defaultOutputModes":["text"],"additionalInterfaces":[{"url":"http://localhost:8001/jsonrpc","transport":"JSONRPC"},{"url":"http://localhost:8001/rest","transport":"HTTP+JSON"}]}
+```
 
-Now call the agent over the wire, the same way another agent would. The response is an A2A
-**task**; the `jq` filter below pulls out the three things that prove it worked — the task's
-state, the shape of its `artifacts` array, and the agent's final answer:
+!!! warning "Check the card's `url` before you blame the client"
+
+    `url` is built from the `port` you passed to `toA2a()`, not from the socket `app.listen()`
+    opened. If they disagree, a client reads the card, POSTs to the dead address it advertises,
+    and reports nothing more useful than `TypeError: fetch failed`. Use one `PORT` for both.
+
+### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
+
+Now call the agent over the wire, the same way another agent would. Any A2A client works; `curl` keeps it to one command. The response is an A2A **task**, and the `jq` filter below pulls out the three things that prove it worked — the task's state, the shape of its `artifacts` array, and the agent's final answer:
 
 ```bash
-curl -s -X POST http://localhost:8001/jsonrpc \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": "1",
-    "method": "message/send",
-    "params": {
-      "message": {
-        "kind": "message",
-        "messageId": "msg-1",
-        "role": "user",
-        "parts": [{"kind": "text", "text": "Roll a 20-sided die."}]
-      }
-    }
-  }' | jq -c '.result.status.state,
-              [.result.artifacts[].parts[0] | .metadata.adk_type // "text"],
-              .result.artifacts[-1].parts[0].text'
+curl -s -X POST http://localhost:8001/jsonrpc -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":"1","method":"message/send","params":{"message":{
+        "kind":"message","messageId":"msg-1","role":"user",
+        "parts":[{"kind":"text","text":"Roll a 20-sided die."}]}}}' \
+  | jq -c '.result.status.state,
+           [.result.artifacts[].parts[0] | .metadata.adk_type // "text"],
+           .result.artifacts[-1].parts[0].text'
 ```
+
+To do the same thing from an ADK agent instead of `curl` — a `RemoteA2AAgent` that a parent agent can delegate to — follow [A2A Quickstart (Consuming)](./quickstart-consuming-typescript.md).
+
+## Example Interactions
+
+Once the server is running, you can send it requests to see how an A2A client drives your agent.
+
+**Simple Dice Rolling:**
 
 ```console
 "completed"
 ["function_call","function_response","text"]
-"You rolled a 5."
+"You rolled a 3."
 ```
 
-`"completed"` and `"You rolled a 5."` mean the whole path worked: the request arrived, the agent
-ran, the tool fired, and the model's answer came back over A2A. The middle line is the artifacts
-array — one artifact for the tool call, one for the tool's result, one for the final text, in
-that order. Your server terminal shows the matching tool call:
+`"completed"` and `"You rolled a 3."` mean the whole path worked: the request arrived, the agent ran, the tool fired, and the model's answer came back over A2A. The middle line is the artifacts array — one artifact for the tool call, one for the tool's result, one for the final text, in that order. Your server terminal shows the matching tool call:
 
 ```console
-[dice_agent] roll_dice(sides=20) -> 5
+[dice_agent] roll_dice(sides=20) -> 3
 ```
 
-??? example "The full task JSON, if you want to see everything the filter dropped"
+Roll again and you'll get a different number, and possibly a different sentence around it: the last artifact is the model's own wording, so compare the shape of the response rather than its exact words.
 
-    Drop the filter (`| jq` on its own) to get the whole response. Every `id` is a fresh UUID,
-    so yours will differ:
+## Advanced Configuration: Authenticating the A2A endpoint
 
-    ```json
-    {
-      "jsonrpc": "2.0",
-      "id": "1",
-      "result": {
-        "kind": "task",
-        "id": "f8da1506-6992-4c46-9861-863aba63ca37",
-        "contextId": "129d06d3-42f4-4756-8648-dc0cdb0e5157",
-        "history": [
-          {
-            "kind": "message",
-            "messageId": "msg-1",
-            "role": "user",
-            "parts": [
-              {
-                "kind": "text",
-                "text": "Roll a 20-sided die."
-              }
-            ],
-            "contextId": "129d06d3-42f4-4756-8648-dc0cdb0e5157",
-            "taskId": "f8da1506-6992-4c46-9861-863aba63ca37"
-          }
-        ],
-        "status": {
-          "state": "completed",
-          "timestamp": "2026-08-05T18:37:03.703Z"
-        },
-        "artifacts": [
-          {
-            "artifactId": "f50add34-787f-4fd4-bc82-455e05028ab8",
-            "parts": [
-              {
-                "kind": "data",
-                "data": {
-                  "name": "roll_dice",
-                  "args": {
-                    "sides": 20
-                  },
-                  "id": "adk-7f1f2371-1b31-48ec-b417-425a452079f6"
-                },
-                "metadata": {
-                  "adk_type": "function_call"
-                }
-              }
-            ]
-          },
-          {
-            "artifactId": "9ff19b01-2b52-431a-af5f-730b44630bfa",
-            "parts": [
-              {
-                "kind": "data",
-                "data": {
-                  "id": "adk-7f1f2371-1b31-48ec-b417-425a452079f6",
-                  "name": "roll_dice",
-                  "response": {
-                    "result": 5
-                  }
-                },
-                "metadata": {
-                  "adk_type": "function_response"
-                }
-              }
-            ]
-          },
-          {
-            "artifactId": "64dcfddb-c571-4480-a68b-4c2b75159eb1",
-            "parts": [
-              {
-                "kind": "text",
-                "text": "You rolled a 5."
-              }
-            ]
-          }
-        ]
-      }
-    }
-    ```
+`allowUnauthenticated: true` is a quickstart shortcut and nothing more: it exposes your agent and every one of its tools to any caller who can reach the port. For anything beyond a local loop, replace it with an `authentication` callback — a `UserBuilder` that receives the Express request, validates its credentials, and returns the authenticated user. Throw to reject.
 
-Your agent is now callable by any A2A client. Roll again and you'll get a different number, and
-possibly a different sentence around it — the last artifact is the model's own wording.
+`server-with-auth.ts` is a **complete file**, not a fragment — the same dice agent as before, with `allowUnauthenticated: true` replaced by a bearer-token `authentication` callback:
 
-## What `toA2a` mounted
-
-`toA2a` installs three routes on the Express app it returns:
-
-| Route | Purpose | Authenticated? |
-|---|---|---|
-| `/.well-known/agent-card.json` | Agent discovery | **No — always public** |
-| `/jsonrpc` | JSON-RPC transport (the card's `preferredTransport`) | Yes, once you configure it |
-| `/rest` | HTTP+JSON transport | Yes, once you configure it |
-
-!!! note "Moving the routes with `basePath`"
-
-    By default there is no prefix: all three routes sit at the root, which is what the card you
-    just fetched shows. Passing `basePath: '/a2a'` moves them — the card is then at
-    `/a2a/.well-known/agent-card.json` and its `url` becomes
-    `http://localhost:8001/a2a/jsonrpc`. Clients must give that base URL a **trailing slash**
-    (`http://localhost:8001/a2a/`); without it `new URL()` drops the last segment and the card
-    fetch 404s.
-
-## Turn on authentication before you ship
-
-`allowUnauthenticated: true` is a quickstart shortcut and nothing more: it exposes your agent
-and every one of its tools to any caller who can reach the port. For anything beyond a local
-loop, replace it with an `authentication` callback — a `UserBuilder` that receives the Express
-request, validates its credentials, and returns the authenticated user. Throw to reject.
-
-Save the following alongside `server.ts` as `server-with-auth.ts`. This is a **complete file**,
-not a fragment — it is the same dice agent as before, with `allowUnauthenticated: true` replaced
-by a bearer-token `authentication` callback:
-
-```typescript title="my-a2a-agent/server-with-auth.ts"
+```typescript title="a2a_basic/remote_a2a/dice_agent/server-with-auth.ts"
 --8<-- "examples/typescript/a2a_basic/remote_a2a/dice_agent/server-with-auth.ts:full"
 ```
 
-Three details in there are worth copying rather than simplifying:
+Three details in there are worth copying rather than simplifying. **The `req: Request` annotation** is why `@types/express` is a dev dependency — Express ships with `@google/adk` but its type definitions do not. **The token comes from the environment**: add `A2A_SHARED_TOKEN="s3cret-token"` to the same `.env` you already have, rather than prefixing the command with it, because command-line arguments are visible to anyone who can run `ps` and stay in your shell history. And **the comparison is constant-time** — `token === EXPECTED_TOKEN` returns as soon as the two strings diverge, which leaks how much of the secret a caller has guessed; hashing both sides to a fixed-length digest and comparing them with `crypto.timingSafeEqual` does not.
 
-*   **The `req: Request` annotation** is why `@types/express` is in the dev dependencies —
-    Express ships with `@google/adk` but its type definitions do not.
-*   **The token comes from the environment.** Add `A2A_SHARED_TOKEN="s3cret-token"` to the same
-    `.env` you already have, rather than prefixing the command with it: command-line arguments
-    are visible to anyone who can run `ps`, and they stay in your shell history.
-*   **The comparison is constant-time.** `token === EXPECTED_TOKEN` returns as soon as the two
-    strings diverge, which leaks how much of the secret a caller has guessed. Hashing both sides
-    to a fixed-length digest and comparing them with `crypto.timingSafeEqual` does not.
-
-Start it, then reuse the request body from step 7 to see all four outcomes:
+Start it, then reuse the request body from step 4 to see the difference the header makes (Node's `punycode` lines are omitted below):
 
 ```console
-$ npx tsx --env-file=.env server-with-auth.ts
+$ npx tsx --env-file=.env remote_a2a/dice_agent/server-with-auth.ts
 [dice_agent] authenticated A2A server on http://localhost:8001
 
 $ BODY='{"jsonrpc":"2.0","id":"1","method":"message/send","params":{"message":{"kind":"message","messageId":"msg-1","role":"user","parts":[{"kind":"text","text":"Roll a 20-sided die."}]}}}'
@@ -449,151 +270,30 @@ $ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8001/jsonrpc \
 {"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
 HTTP 500
 
-$ curl -s -w "\nHTTP %{http_code}\n" -X POST http://localhost:8001/jsonrpc \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer wrong-token" -d "$BODY"
-{"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
-HTTP 500
-
 $ curl -s -X POST http://localhost:8001/jsonrpc \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer s3cret-token" -d "$BODY" \
   | jq -c '.result.status.state, .result.artifacts[-1].parts[0].text'
 "completed"
-"You rolled a 14."
+"You rolled a 17."
 ```
 
-Two things to plan for:
+A wrong token (`Authorization: Bearer wrong-token`) is byte-for-byte the same rejection as sending no header at all. Two things to plan for:
 
-*   **The agent card stays public.** `authentication` gates `/jsonrpc` and `/rest` only.
-    Discovery is meant to be open, so do not put anything secret in your agent's name,
-    description, or instruction.
-*   **A rejected request is an HTTP 500, not a 401.** The body is JSON-RPC error code
-    `-32603`, `"General processing error."`, with no hint that credentials were the problem.
-    The real reason is only on the server's own stderr, which prints
+*   **The agent card stays public.** `authentication` gates `/jsonrpc` and `/rest` only, which
+    is why the first `curl` above returns `200`. Discovery is meant to be open, so do not put
+    anything secret in your agent's name, description, or instruction.
+*   **A rejected request is an HTTP 500, not a 401.** The body is JSON-RPC error code `-32603`,
+    `"General processing error."`, with no hint that credentials were the problem — and a
+    callback that *crashes* (a typo, a missing import) looks identical to the caller, so check
+    that correctly-authenticated callers still get through. The real reason is only on the
+    server's own stderr, which prints
     `Unhandled error in JSON-RPC POST handler: Error: A2A request rejected: bad bearer token.`
     and a stack trace.
 
-## Should you use `toA2a`?
+## Next Steps
 
-Use `toA2a` when you want *another agent* to call yours over the network, and you want to own
-the HTTP server — you get an Express app, so you choose the port, the middleware, the TLS
-termination, and the process manager.
+Now that you have created an agent that's exposing a remote agent via an A2A server, the next step is to learn how to consume it from another agent.
 
-*   If you want a **local dev loop with a chat UI** rather than a network endpoint, run
-    `adk web` from `@google/adk-devtools` instead; see the
-    [TypeScript quickstart](../get-started/typescript.md).
-*   If you want your agent to **call** a remote A2A agent rather than be called, you want
-    [A2A Quickstart (Consuming)](./quickstart-consuming-typescript.md) — `RemoteA2AAgent`, not
-    `toA2a`.
-*   If the two agents are in the **same process**, you don't need A2A at all. Compose them
-    directly with [sub-agents and workflow agents](../workflows/index.md).
-
-## Troubleshooting
-
-??? failure "`fetch failed`, with no other detail"
-
-    The port in the agent card doesn't match the port you're actually listening on. `toA2a`'s
-    `port` option only writes the URL into the card; `app.listen()` is what opens the socket.
-    When they disagree the client fetches the card successfully, POSTs to the dead address it
-    advertises, and reports:
-
-    ```console
-    ERROR: [ADK] A2ARemoteAgent remote_echo failed: TypeError: fetch failed
-    ```
-
-    Confirm with `curl -s http://localhost:8001/.well-known/agent-card.json | grep '"url"'` —
-    if the URL names a port nothing is bound to, that's the bug. Use one `PORT` constant for
-    both.
-
-??? failure "`toA2a: refusing to mount the A2A server without authentication`"
-
-    You called `toA2a(agent)` without `allowUnauthenticated` and without `authentication`.
-    `toA2a` fails closed, and the rejected promise reads:
-
-    ```console
-    toA2a: refusing to mount the A2A server without authentication. The A2A surface lets any
-    network-reachable caller invoke this agent and its tools with arbitrary input and read the
-    output, so it must be authenticated. Provide `authentication` (a UserBuilder that validates
-    the request, e.g. a bearer token or OIDC credential) or, only for local/trusted development,
-    explicitly set `allowUnauthenticated: true`.
-    ```
-
-    Pass `allowUnauthenticated: true` locally, or an `authentication` callback anywhere else.
-
-??? failure "HTTP 500 and `-32603` on every request once auth is on"
-
-    ```console
-    {"jsonrpc":"2.0","id":"1","error":{"code":-32603,"message":"General processing error."}}
-    ```
-
-    `-32603` means *your `authentication` callback threw* — it does not say why, and it is not
-    a 401 or 403, so don't go looking for one in your logs. The two causes look identical from
-    the client:
-
-    *   the callback rejected the caller's credentials, which is the intended behaviour; or
-    *   the callback itself crashed — a typo, an undefined variable, a missing import — in which
-        case correctly-authenticated callers get this too.
-
-    The server's own stderr distinguishes them. It logs the thrown error and a stack trace:
-
-    ```console
-    Unhandled error in JSON-RPC POST handler: Error: A2A request rejected: bad bearer token.
-        at Object.authentication (/path/to/server-with-auth.ts:53:13)
-    ```
-
-    If that first line is your own `throw`, the credentials were wrong: check that the caller is
-    sending the header your callback reads. If it is a `ReferenceError` or `TypeError`, the
-    callback is broken and *every* caller is being rejected regardless of their token.
-
-??? failure "`Failed to fetch Agent Card from http://localhost:8001/.well-known/.well-known/agent-card.json: 404`"
-
-    A client was given the card URL where it expects the **base URL**. The A2A resolver appends
-    `.well-known/agent-card.json` itself, so passing the full card URL doubles the path:
-
-    ```console
-    UNCAUGHT: Failed to fetch Agent Card from
-    http://localhost:8001/.well-known/.well-known/agent-card.json: 404
-    ```
-
-    Note that this one is an uncaught exception that stops the client process, not a tidy error
-    event. Pass `http://localhost:8001`, not
-    `http://localhost:8001/.well-known/agent-card.json`.
-
-??? failure "`Type 'ZodObject<...>' is not assignable to type 'ToolInputParameters'`"
-
-    You have zod 3 installed and `@google/adk` needs zod 4:
-
-    ```console
-    error TS2322: Type 'ZodObject<{ sides: ZodNumber; }, "strip", ZodTypeAny, { sides: number; },
-    { sides: number; }>' is not assignable to type 'ToolInputParameters'.
-    ```
-
-    Run `npm install zod@^4.2.1`. The server may still run — the mismatch is only visible to
-    `tsc` — but the types are lying to you until you fix it.
-
-??? failure "`API key not valid. Please pass a valid API key.` in the task response"
-
-    The A2A layer is fine; the model call is not. This error arrives as a `"state": "failed"`
-    task, which means the request reached your agent and the failure travelled back correctly.
-    Either the key in `.env` is wrong, or you started the server without `--env-file=.env` and
-    ADK never saw it. On the Vertex AI path the equivalent failure is a credentials or
-    permission error from `aiplatform.googleapis.com`; re-run
-    `gcloud auth application-default login` and check the API is enabled on
-    `GOOGLE_CLOUD_PROJECT`.
-
-## Next steps
-
-*   **[Call this agent from another ADK agent](./quickstart-consuming-typescript.md)** — wire it
-    up as a `RemoteA2AAgent` so a parent agent can delegate to it.
-*   **[Give the exposed agent more tools](../tools-custom/function-tools.md)** — every tool you
-    add shows up as a new skill in the agent card automatically.
-*   **[Understand how A2A fits into multi-agent systems](./intro.md)** — when to reach for a
-    remote agent instead of a sub-agent.
-*   **[Browse the complete runnable example](https://github.com/google/adk-docs/tree/main/examples/typescript/a2a_basic)**
-    — both servers from this page are there under `remote_a2a/dice_agent/`, ready to
-    `npm install && npm run serve:dice` (or `npm run serve:dice:auth` for the authenticated
-    variant). That directory is shared with
-    [A2A Quickstart (Consuming)](./quickstart-consuming-typescript.md), so it also holds that
-    page's client-side files. Everything in it listens on port 8001, so run one server at a
-    time.
+- [**A2A Quickstart (Consuming)**](./quickstart-consuming-typescript.md): Learn how your agent can use other agents using the A2A Protocol.
+- [**Function tools**](../tools-custom/function-tools.md): every tool you add shows up as a new skill in the agent card.
