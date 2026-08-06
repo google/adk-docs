@@ -203,8 +203,11 @@ tells the agent:
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
     ```
 
-**Note:** For instructions that apply to *all* agents in a system, consider
-using `global_instruction` on the root agent.
+!!! note "GlobalInstructionPlugin"
+
+    To apply shared rules or a consistent personality to *all* 
+    agents in your system, use `GlobalInstructionPlugin` instead of 
+    the deprecated `global_instruction` parameter.
 
 ## Equip the agent with tools
 
@@ -903,7 +906,7 @@ the following:
   graph-based pipelines using [Graph-based agent workflows](/graphs/). In Go
   v2.0.0, use `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
 - **Multi-agent systems:** Advanced strategies for agent interaction, including
-  agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`)
-  and shared instructions (`global_instruction`). See [Multi-agent
+  agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`),
+  and consistent identity and rules for every agent in your app (`GlobalInstructionPlugin`). See [Multi-agent
   workflows](/workflows/) and [collaborative agent
   teams](/workflows/collaboration/).
