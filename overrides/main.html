@@ -35,6 +35,35 @@
   <meta name="twitter:title" content="Agent Development Kit (ADK)">
   <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
   <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
+
+  <!--
+    Pagefind search. These assets are generated into the site directory after
+    the build by hooks/pagefind_index.py, so they do not exist under docs/.
+    The module script is deferred by default, and Pagefind derives the bundle
+    path from this script's own URL, which keeps subpath deploys working.
+  -->
+  <link rel="stylesheet" href="{{ 'pagefind/pagefind-component-ui.css' | url }}">
+  <script type="module" src="{{ 'pagefind/pagefind-component-ui.js' | url }}"></script>
+{% endblock %}
+
+<!--
+  Mirrors the `container` block from the theme's base.html, adding
+  `data-pagefind-body` to the article. Pagefind indexes only pages carrying
+  that attribute, which scopes the index to real documentation pages, and
+  within them to the main content - excluding the header, navigation, sidebar
+  and footer, and excluding the generated API reference output entirely.
+-->
+{% block container %}
+  <div class="md-content" data-md-component="content">
+    {% if "navigation.path" in features %}
+      {% include "partials/path.html" %}
+    {% endif %}
+    <article class="md-content__inner md-typeset" data-pagefind-body>
+      {% block content %}
+        {% include "partials/content.html" %}
+      {% endblock %}
+    </article>
+  </div>
 {% endblock %}
 
 <!-- top of page announcement banner here: -->
