@@ -13,7 +13,7 @@ set up and running a simple agent in less than 20 minutes.
 
     [:octicons-arrow-right-24: Start with Python](python.md) <br>
 
--   :fontawesome-brands-js:{ .lg .middle } **TypeScript Quickstart**
+-   :simple-typescript:{ .lg .middle } **TypeScript Quickstart**
 
     ---
     Create your first TypeScript ADK agent in minutes.
