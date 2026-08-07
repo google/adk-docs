@@ -133,21 +133,6 @@ agent using the ADK CLI.
 
 ### Programmatic setup
 
-#### Use ADK app abstractions
-
-=== "Python"
-
-    If you are using the `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
-
-    ```python
-    from google.adk.apps import AdkApp
-
-    adk_app = AdkApp(
-        agent=root_agent,
-        enable_tracing=True,
-    )
-    ```
-
 #### Use telemetry modules
 
 For fully customized agent runtimes, you can enable cloud tracing by using the built-in telemetry modules.
