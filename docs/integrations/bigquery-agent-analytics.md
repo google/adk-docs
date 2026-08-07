@@ -560,7 +560,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
     | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*` — exact keys or `"prefix*"` patterns |
     | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time |
-    | `final_response_tool_names` | `frozenset[str]` | `frozenset()` | Your agent delivers its final answer through a dedicated tool (e.g. `submit_final_response`) rather than a plain-text final event — a completed tool named here also logs its call args as an `AGENT_RESPONSE` event |
+    | `final_response_tool_names` | `frozenset[str]` | `frozenset()` | Name the tools that deliver a final answer in place of a plain-text final event, such as `submit_final_response`. A completed tool named here also logs its call arguments as an `AGENT_RESPONSE` event |
 
 
     The following code sample shows how to define a configuration for the BigQuery
