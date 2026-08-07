@@ -102,6 +102,60 @@ when using compatible AI coding tools in this repo.
     This command starts a local docs server, typically at
     `http://127.0.0.1:8000/`.
 
+### Search Index
+
+Site search is [Pagefind](https://pagefind.app/). `hooks/pagefind.py` builds the
+index during every `mkdocs build` and every `mkdocs serve` rebuild, which adds
+about two seconds.
+
+To skip it while editing prose:
+
+```shell
+MKDOCS_PAGEFIND_SKIP=1 mkdocs serve
+```
+
+Search will not work in that preview. The variable is deliberately useless under
+`mkdocs build --strict`, which CI runs: skipping logs a warning, and strict mode
+turns warnings into failures, so the site can never ship without an index.
+`mkdocs serve` is not strict, so the escape hatch still works where it is meant
+to be used.
+
+To tune ranking, build with the Pagefind playground and open
+`/pagefind/playground/`:
+
+```shell
+MKDOCS_PAGEFIND_PLAYGROUND=1 mkdocs build
+```
+
+A normal build does not write the playground.
+
+To keep a page out of search, add to its front matter:
+
+```yaml
+---
+search:
+  exclude: true
+---
+```
+
+Pages whose source path starts with a prefix in `EXCLUDED_PREFIXES` in
+`hooks/pagefind.py` are excluded too.
+
+Three checks fail the build when indexing goes wrong. The site indexes 226
+pages, and the guards allow 200 to 500:
+
+- `Pagefind could not mark N page(s) for indexing` - the Material theme changed
+  its content markup. Update the `ARTICLE` constant in `hooks/pagefind.py` to
+  match the new `<article>` tag.
+- `Pagefind indexed only N page(s), below the floor of 200` - too few pages
+  reached the index. Check that `data-pagefind-body` is present in the built
+  HTML.
+- `Pagefind indexed N page(s), above the ceiling of 500` - no page carried
+  `data-pagefind-body`, so Pagefind ignored the attribute and indexed all ~3,470
+  HTML files in the site, including the generated API reference. Check
+  `_is_excluded` and `EXCLUDED_PREFIXES` in `hooks/pagefind.py`, and any
+  `search.exclude` front matter.
+
 ## Create Your Contribution
 
 | Type | Description |
