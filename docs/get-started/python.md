@@ -97,19 +97,19 @@ In a terminal window, write your API key into an `.env` file as an environment v
 === "MacOS / Linux"
 
     ```bash title="Update: my_agent/.env"
-    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > my_agent/.env
     ```
 
 === "Windows PowerShell"
 
     ```console title="Update: my_agent/.env"
-    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > my_agent/.env
     ```
 
 === "Windows Command Prompt"
 
     ```console title="Update: my_agent/.env"
-    echo GOOGLE_API_KEY="YOUR_API_KEY" > .env
+    echo GOOGLE_API_KEY="YOUR_API_KEY" > my_agent/.env
     ```
 
 ??? tip "Using other AI models with ADK"
