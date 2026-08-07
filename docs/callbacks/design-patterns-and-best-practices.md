@@ -76,7 +76,7 @@ Alter data just before it's sent to the LLM/tool or just after it's received.
 - **`before_model_callback`:** Modify `llm_request` (e.g., add system instructions based on `state`)
 - **`after_model_callback`:** Modify the returned `LlmResponse` (e.g., format text, filter content)
 - **`before_tool_callback`:** Modify the tool `args` dictionary (or Map in Java)
-- **`after_tool_callback`:** Modify the `tool_response` (the tool's raw return value in Python, or a Map in Java)
+- **`after_tool_callback`:** Modify the `tool_response`, the tool's raw return value (or Map in Java)
 
 **Example Use Case:**
 `before_model_callback` appends "User language preference: Spanish" to `llm_request.config.system_instruction` if `context.state['lang'] == 'es'`.
@@ -134,7 +134,7 @@ An `after_tool_callback` for a "generate_report" tool saves the output file usin
 Design each callback for a single, well-defined purpose (e.g., just logging, just validation). Avoid monolithic callbacks.
 
 **Mind Performance:**
-Callbacks execute inline within the agent's processing loop, and the loop waits for each one to finish. In Python, declare a callback `async def` when it must `await` something itself, such as `save_artifact`; ADK awaits it. Either way, avoid long-running or blocking operations (network calls, heavy computation). Offload if necessary, but be aware this adds complexity.
+Callbacks execute inline within the agent's processing loop, and the loop waits for each one to finish. In Python, declare a callback `async def` when it must `await` something itself, such as `save_artifact`; ADK awaits it. Either way, avoid long-running or blocking operations, such as network calls or heavy computation. Offload if necessary, but be aware this adds complexity.
 
 ### Error Handling
 
@@ -168,6 +168,6 @@ If a callback performs actions with external side effects (e.g., incrementing an
 - Add clear docstrings explaining their purpose, when they run, and any side effects (especially state modifications)
 
 **Use Correct Context Type:**
-Use the context type your SDK documents for the hook you are implementing. In Python, `CallbackContext` and `ToolContext` are aliases of the same `Context` class and expose identical methods, so prefer `Context` for new code; the older names are kept for backward compatibility and you will still meet them in existing code. See [Context objects](../context/index.md) for the full set of context types.
+Use the context type your SDK documents for the hook you are implementing. In Python, a unified `Context` type supersedes `CallbackContext` and `ToolContext`, so prefer `Context` for new code; the older names remain for backward compatibility and you may still encounter them in existing code. See [Context objects](../context/index.md) for the full set of context types.
 
 By applying these patterns and best practices, you can effectively use callbacks to create more robust, observable, and customized agent behaviors in ADK.

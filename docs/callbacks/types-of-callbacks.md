@@ -62,6 +62,8 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     `dict` from an `on_tool_error_callback` ends the chain, suppresses the
     exception, and becomes the tool result.
 
+    Assign the list to the callback field on the agent:
+
     ```python
     root_agent = LlmAgent(
         name="my_agent",
@@ -164,7 +166,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 *   **Expected Outcome:** You'll see two scenarios:
     1. In the session *without* the `add_concluding_note: True` state, the callback allows the agent's original output ("Processing complete!") to be used.
     2. In the session *with* that state flag, the callback intercepts the agent's original output and appends it with its own message ("Concluding note added...").
-* **Understanding Callbacks:** This highlights how `after_` callbacks allow **post-processing**. You can inspect the result of a step and decide whether to let it pass through or add to it. As the note above says, an `after_agent_callback` cannot replace the agent's output: the content it returns is emitted as an *additional* event after the agent's own events. `after_model_callback` and `after_tool_callback` do replace the value they are given.
+* **Understanding Callbacks:** This example highlights how `after_` callbacks allow **post-processing**. You can inspect the result of a step and decide whether to let it pass through or add to it. An `after_agent_callback` cannot replace the agent's output: the content it returns is emitted as an *additional* event after the agent's own events.
 
 ## LLM Interaction Callbacks
 
@@ -247,7 +249,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ## Tool Execution Callbacks
 
-These callbacks are also specific to `LlmAgent` and trigger around the execution of tools (including `FunctionTool`, `AgentTool`, etc.) that the LLM might request. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that dict is used as the tool result.
+These callbacks are also specific to `LlmAgent` and trigger around the execution of tools that the LLM might request, including `FunctionTool` and `AgentTool`. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that dict is used as the tool result.
 
 ### Before Tool Callback
 
@@ -307,17 +309,15 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.
 2. If a new dictionary is returned, it **replaces** the original `tool_response`. This allows modifying or filtering the result seen by the LLM.
 
-!!! note "Python: `tool_response` is the tool's raw return value"
+!!! note "Python: `tool_response` types and return values"
 
     ADK wraps a non-`dict` result into `{"result": <value>}` only *after* the
     callback has run, so a tool annotated `-> str` hands your
     `after_tool_callback` a `str`, not a `dict`. Check the type before calling
     dictionary methods on it.
 
-!!! note "Python: an empty `dict` still replaces the response"
-
-    ADK compares the returned value against `None`, so returning `{}` replaces
-    the tool response with `{}`. Return `None` to keep the original.
+    ADK also compares the returned value against `None`, so returning `{}`
+    replaces the tool response with `{}`. Return `None` to keep the original.
 
 ??? "Code"
     === "Python"

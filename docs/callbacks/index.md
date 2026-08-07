@@ -79,8 +79,8 @@ When the ADK framework encounters a point where a callback can run (e.g., just b
 
     * The specific return type can vary depending on the language. In Java, the equivalent return type is `Optional.empty()`. In Kotlin, it is `CallbackChoice.Continue(value)` (for `before_*` callbacks) or returning the original object (for `after_*` callbacks). Refer to the API documentation for language specific guidance.
     * This is the standard way to signal that your callback has finished its work (e.g., logging, inspection, minor modifications to input arguments) and that the ADK agent should **proceed with its normal operation**.
-    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `None` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.
-    * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning `None` leaves the result just produced (the agent's output, the LLM's response, the tool's result) untouched. In Python, returning that result back instead of `None` is not equivalent for `after_agent_callback`: it emits a second event carrying the same content.
+    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `None` means the next step in the sequence occurs, whether that step is running the agent logic, calling the LLM, or executing the tool.
+    * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning `None` leaves the result just produced untouched, whether that result is the agent's output, the LLM's response, or the tool's result. In Python, returning that result back instead of `None` is not equivalent for `after_agent_callback`: ADK emits a second event carrying the same content.
 
 2. **`return <Specific Object>` (Override Default Behavior):**
 
