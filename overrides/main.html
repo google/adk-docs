@@ -35,6 +35,50 @@
   <meta name="twitter:title" content="Agent Development Kit (ADK)">
   <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
   <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
+
+  <!-- Pagefind search (index built by hooks/pagefind.py). -->
+  <link rel="stylesheet" href="{{ 'pagefind/pagefind-component-ui.css' | url }}">
+  <script type="module" src="{{ 'pagefind/pagefind-component-ui.js' | url }}"></script>
+
+  <!-- Search ranking. termSimilarity 2.0 (default 1.0) favours pages holding
+       words close in length to the query; it is a measured fix for identifier
+       searches such as "LlmAgent", which otherwise lose to pages that merely
+       say "agent" often. Set on pagefindOptions rather than through
+       configureInstance(), because that call is silently ignored once a
+       component has connected, whereas pagefindOptions is read lazily when the
+       search bundle first loads. Module scripts run in document order, so this
+       executes after the bundle above has defined the components. -->
+  <script type="module">
+    window.PagefindComponents
+      .getInstanceManager()
+      .getInstance("default")
+      .pagefindOptions.ranking = { termSimilarity: 2.0 };
+  </script>
+
+  <!-- Pagefind components apply `all: initial`, so Material's palette does not
+       cascade in, and Pagefind deliberately ignores prefers-color-scheme.
+       Mirror Material's scheme attribute onto the one Pagefind reads. Material's
+       instant navigation preserves document.body, so this observer survives
+       page transitions. -->
+  <script>
+    (function () {
+      var sync = function () {
+        var root = document.documentElement;
+        if (document.body.getAttribute("data-md-color-scheme") === "slate") {
+          root.setAttribute("data-pf-theme", "dark");
+        } else {
+          root.removeAttribute("data-pf-theme");
+        }
+      };
+      document.addEventListener("DOMContentLoaded", function () {
+        sync();
+        new MutationObserver(sync).observe(document.body, {
+          attributes: true,
+          attributeFilter: ["data-md-color-scheme"],
+        });
+      });
+    })();
+  </script>
 {% endblock %}
 
 <!-- top of page announcement banner here: -->
