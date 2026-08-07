@@ -114,14 +114,15 @@ To skip it while editing prose:
 MKDOCS_PAGEFIND_SKIP=1 mkdocs serve
 ```
 
-Search will not work in that preview. The variable is deliberately useless under
-`mkdocs build --strict`, which CI runs: skipping logs a warning, and strict mode
-turns warnings into failures, so the site can never ship without an index.
-`mkdocs serve` is not strict, so the escape hatch still works where it is meant
-to be used.
+Search will not work in that preview. Two separate guards keep the variable out
+of anything a reader sees. Pull requests build with `mkdocs build --strict`,
+where the skip warning becomes a failure. Publishing refuses outright: `mkdocs
+gh-deploy` fails with an error, strict or not, because the publish workflow does
+not pass `--strict`. `mkdocs serve` is neither strict nor a deploy, so the
+escape hatch still works where it is meant to be used.
 
-To tune ranking, build with the Pagefind playground and open
-`/pagefind/playground/`:
+To tune ranking, build with the Pagefind playground, serve the built `site/`
+over HTTP (a `file://` URL will not work) and open `/pagefind/playground/`:
 
 ```shell
 MKDOCS_PAGEFIND_PLAYGROUND=1 mkdocs build
@@ -141,20 +142,33 @@ search:
 Pages whose source path starts with a prefix in `EXCLUDED_PREFIXES` in
 `hooks/pagefind.py` are excluded too.
 
-Three checks fail the build when indexing goes wrong. The site indexes 226
+Five checks fail the build when indexing goes wrong. The site indexes 226
 pages, and the guards allow 200 to 500:
 
-- `Pagefind could not mark N page(s) for indexing` - the Material theme changed
-  its content markup. Update the `ARTICLE` constant in `hooks/pagefind.py` to
-  match the new `<article>` tag.
+- `Pagefind could not mark N page(s) for indexing` - either the Material theme
+  changed its content markup, so the `ARTICLE` constant in `hooks/pagefind.py`
+  needs updating to the new `<article>` tag, or the named pages render from a
+  custom template with no `md-content__inner` article, in which case opt them
+  out with the `search.exclude` front matter above.
 - `Pagefind indexed only N page(s), below the floor of 200` - too few pages
   reached the index. Check that `data-pagefind-body` is present in the built
   HTML.
 - `Pagefind indexed N page(s), above the ceiling of 500` - no page carried
-  `data-pagefind-body`, so Pagefind ignored the attribute and indexed all ~3,470
-  HTML files in the site, including the generated API reference. Check
-  `_is_excluded` and `EXCLUDED_PREFIXES` in `hooks/pagefind.py`, and any
-  `search.exclude` front matter.
+  `data-pagefind-body`, so Pagefind ignored the attribute and indexed every
+  HTML file in the site, roughly 3,500 of them (3,470 at the time of writing),
+  including the generated API reference. Check `_is_excluded` and
+  `EXCLUDED_PREFIXES` in `hooks/pagefind.py`, and any `search.exclude` front
+  matter. If the documentation has genuinely grown past 500 pages instead,
+  raise `MAX_INDEXED_PAGES` and `MIN_INDEXED_PAGES` together.
+- `No indexed page carried the class '...'` - a class named in
+  `EXCLUDE_SELECTORS` was renamed, so the selector no longer suppresses the
+  fused tokens it was added for. Update `EXCLUDE_SELECTORS` in
+  `hooks/pagefind.py`. This check is skipped under `mkdocs build --dirty`,
+  which re-renders too few pages to judge.
+- `Pagefind did not emit pagefind/...` - the search UI assets that
+  `overrides/main.html` loads on every page are missing from the built site,
+  so every page would show no search box. Check whether the Pagefind bundle
+  renamed them.
 
 ## Create Your Contribution
 
