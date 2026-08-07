@@ -261,4 +261,4 @@ The CLI does not collect sensitive, private, or personal data, specifically:
 - User credentials, usernames, API keys, OAuth tokens, or secrets.
 - Google Cloud Project IDs or Cloud Account details.
 - Source code files, file contents, or directory paths.
-- Any Personally Identifiable Information (PII).
+- Personally Identifiable Information (PII).
