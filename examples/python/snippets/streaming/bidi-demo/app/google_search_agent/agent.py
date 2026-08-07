@@ -19,9 +19,16 @@ import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
 
-# Default models for Live API with native audio support:
+# Live API models with native audio support:
 # - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
+#   The default here. Supports proactivity and affective dialog, which this
+#   demo exposes as options.
+# - Gemini Live API: gemini-3.1-flash-live-preview
+#   Newer and lower latency, but supports neither proactivity nor affective
+#   dialog.
 # - Gemini Live API (Agent Platform): gemini-live-2.5-flash-native-audio
+#   GA, and the only Live API model on Agent Platform. Not available in the
+#   `global` location.
 agent = Agent(
     name="google_search_agent",
     model=os.getenv(

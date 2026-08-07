@@ -61,7 +61,7 @@ Then edit `app/.env`:
 GOOGLE_GENAI_USE_VERTEXAI=FALSE
 GOOGLE_API_KEY=your_api_key_here
 
-# ...or Live API on Agent Platform
+# ...or Live API on Agent Platform (use a region, not `global`)
 # GOOGLE_GENAI_USE_VERTEXAI=TRUE
 # GOOGLE_CLOUD_PROJECT=your_project_id
 # GOOGLE_CLOUD_LOCATION=us-east1
@@ -140,8 +140,11 @@ bidi-demo/
 This demo targets **native audio** models, which only support the `AUDIO`
 response modality:
 
-- `gemini-2.5-flash-native-audio-preview-12-2025` (Gemini Live API)
-- `gemini-live-2.5-flash-native-audio` (Live API on Agent Platform)
+| Model | Platform | Stage | Notes |
+|-------|----------|-------|-------|
+| `gemini-2.5-flash-native-audio-preview-12-2025` | Gemini Live API | Preview | **The demo default.** Supports the proactivity and affective dialog toggles this demo exposes |
+| `gemini-3.1-flash-live-preview` | Gemini Live API | Preview | Newer and lower latency, but supports **neither** proactivity nor affective dialog — leave both toggles off |
+| `gemini-live-2.5-flash-native-audio` | Agent Platform | GA | The only Live API model on Agent Platform. Needs a **regional** `GOOGLE_CLOUD_LOCATION`; `global` is not supported |
 
 Select one with `DEMO_AGENT_MODEL` in `app/.env`. See
 [Supported models](https://google.github.io/adk-docs/live/models/) for current

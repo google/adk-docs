@@ -34,7 +34,7 @@ This creates significant implementation overhead, especially in streaming contex
 
 With ADK, tool execution becomes declarative. Simply define tools on your Agent:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L17-L32" target="_blank">agent.py:17-32</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L17-L39" target="_blank">agent.py:17-39</a>'
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search

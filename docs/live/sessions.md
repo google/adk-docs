@@ -123,15 +123,16 @@ These components are created once when your application starts and shared across
 
 The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L15-L32" target="_blank">agent.py:15-32</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L15-L39" target="_blank">agent.py:15-39</a>'
 """Google Search Agent definition for ADK Gemini Live API Toolkit demo."""
 
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
 
-# Default models for Live API with native audio support:
+# Live API models with native audio support:
 # - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
+# - Gemini Live API: gemini-3.1-flash-live-preview
 # - Gemini Live API (Agent Platform): gemini-live-2.5-flash-native-audio
 agent = Agent(
     name="google_search_agent",

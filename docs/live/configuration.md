@@ -527,8 +527,8 @@ run_config = RunConfig(
 ADK validates CFC compatibility at session initialization and will raise an error if the model is unsupported:
 
 - ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-12-2025`)
-- ❌ **Not supported**: `gemini-1.5-x` models
-- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1354-1360`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/runners.py#L1354-L1360))
+- ❌ **Not supported**: any model whose name does not start with `gemini-2` — this includes both `gemini-1.5-x` and, today, `gemini-3.1-flash-live-preview`
+- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:2098-2104`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/runners.py#L2098-L2104)). The check is a literal prefix match, so a Gemini 3.x model raises `ValueError: CFC is not supported for model: ...` even though the underlying Live API session would work
 - **Code executor**: ADK automatically injects `BuiltInCodeExecutor` when CFC is enabled for safe parallel tool execution
 
 **CFC capabilities:**
