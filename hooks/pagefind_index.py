@@ -18,9 +18,8 @@ Pagefind is a static search engine: it crawls the *rendered* HTML in
 ``site_dir`` and emits a sharded index plus a WASM query engine into
 ``site/pagefind/``. The browser fetches only the shards a query touches,
 instead of the single multi-megabyte JSON index the built-in lunr-based
-``search`` plugin produces. That plugin is still enabled at this commit, so
-the site currently ships both indexes; ``search`` is removed later in this
-series, once the Pagefind-backed UI is in place.
+``search`` plugin produced. That plugin is disabled in ``mkdocs.yml``; Pagefind
+is the only search index the site ships.
 
 Which pages get indexed is controlled by the ``data-pagefind-body`` attribute
 on the ``<article>`` element, set in ``overrides/main.html``. Once that

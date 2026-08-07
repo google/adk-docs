@@ -365,11 +365,27 @@
    * Windows sends AltGr as Ctrl+Alt: on layouts where AltGr+K is a printable
    * character, matching on Ctrl alone would swallow it.
    */
+  /*
+   * `/`, `s` and `f` were bound by Material's own search, which this replaces.
+   * Rebinding them keeps existing muscle memory working instead of silently
+   * dropping three shortcuts. They are bare keys, so they must not fire while
+   * the reader is typing into a field or editing content.
+   */
+  const TYPING_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"]);
+  const isTyping = (target) =>
+    TYPING_TAGS.has(target.tagName) || target.isContentEditable;
+
   document.addEventListener("keydown", (event) => {
     if ((event.ctrlKey || event.metaKey) && !event.altKey && event.code === "KeyK") {
       event.preventDefault();
       if (dialog.open) dialog.close();
       else openDialog();
+      return;
+    }
+    if (dialog.open || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (["/", "s", "f"].includes(event.key) && !isTyping(event.target)) {
+      event.preventDefault();
+      openDialog();
     }
   });
 
