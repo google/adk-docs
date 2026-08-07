@@ -27,6 +27,8 @@
 
 
 # ADK Imports
+import asyncio
+
 from google.adk.agents import LlmAgent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.runners import InMemoryRunner  # Use InMemoryRunner
@@ -43,8 +45,9 @@ def modify_output_after_agent(
 ) -> Optional[types.Content]:
     """
     Logs exit from an agent and checks 'add_concluding_note' in session state.
-    If True, returns new Content to *replace* the agent's original output.
-    If False or not present, returns None, allowing the agent's original output to be used.
+    If True, returns new Content, which ADK emits as an *additional* event after
+    the agent's own output. The agent's original output is still produced.
+    If False or not present, returns None, so no extra event is emitted.
     """
     agent_name = callback_context.agent_name
     invocation_id = callback_context.invocation_id
@@ -56,22 +59,23 @@ def modify_output_after_agent(
     # Example: Check state to decide whether to modify the final output
     if current_state.get("add_concluding_note", False):
         print(
-            f"[Callback] State condition 'add_concluding_note=True' met: Replacing agent {agent_name}'s output."
+            f"[Callback] State condition 'add_concluding_note=True' met: Appending a note after agent {agent_name}'s output."
         )
-        # Return Content to *replace* the agent's own output
+        # Returned Content is emitted as an extra event after the agent's own
+        # output; it does not overwrite what the agent already produced.
         return types.Content(
             parts=[
                 types.Part(
-                    text=f"Concluding note added by after_agent_callback, replacing original output."
+                    text=f"Concluding note added by after_agent_callback, after the original output."
                 )
             ],
-            role="model",  # Assign model role to the overriding response
+            role="model",  # Assign model role to the appended response
         )
     else:
         print(
-            f"[Callback] State condition not met: Using agent {agent_name}'s original output."
+            f"[Callback] State condition not met: Only agent {agent_name}'s original output is emitted."
         )
-        # Return None - the agent's output produced just before this callback will be used.
+        # Return None - no extra event is emitted after the agent's output.
         return None
 
 
@@ -80,7 +84,7 @@ llm_agent_with_after_cb = LlmAgent(
     name="MySimpleAgentWithAfter",
     model=GEMINI_2_FLASH,
     instruction="You are a simple agent. Just say 'Processing complete!'",
-    description="An LLM agent demonstrating after_agent_callback for output modification",
+    description="An LLM agent demonstrating after_agent_callback appending an extra event",
     after_agent_callback=modify_output_after_agent,  # Assign the callback here
 )
 
@@ -106,7 +110,7 @@ async def main():
     )
     # print(f"Session '{session_id_normal}' created with default state.")
 
-    # Create session 2: Agent output will be replaced by the callback
+    # Create session 2: The callback appends an extra event after the agent output
     await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
@@ -115,11 +119,11 @@ async def main():
     )
     # print(f"Session '{session_id_modify}' created with state={{'add_concluding_note': True}}.")
 
-    # --- Scenario 1: Run where callback allows agent's original output ---
+    # --- Scenario 1: Run where the callback adds nothing ---
     print(
         "\n"
         + "=" * 20
-        + f" SCENARIO 1: Running Agent on Session '{session_id_normal}' (Should Use Original Output) "
+        + f" SCENARIO 1: Running Agent on Session '{session_id_normal}' (Only Original Output) "
         + "=" * 20
     )
     async for event in runner.run_async(
@@ -129,19 +133,19 @@ async def main():
             role="user", parts=[types.Part(text="Process this please.")]
         ),
     ):
-        # Print final output (either from LLM or callback override)
-        if event.is_final_response() and event.content:
+        # Print final output, from the LLM or from the callback's extra event
+        if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"
             )
-        elif event.is_error():
-            print(f"Error Event: {event.error_details}")
+        elif event.error_code:
+            print(f"Error Event: {event.error_code} - {event.error_message}")
 
-    # --- Scenario 2: Run where callback replaces the agent's output ---
+    # --- Scenario 2: Run where the callback appends an extra event ---
     print(
         "\n"
         + "=" * 20
-        + f" SCENARIO 2: Running Agent on Session '{session_id_modify}' (Should Replace Output) "
+        + f" SCENARIO 2: Running Agent on Session '{session_id_modify}' (Original Output + Appended Note) "
         + "=" * 20
     )
     async for event in runner.run_async(
@@ -151,22 +155,19 @@ async def main():
             role="user", parts=[types.Part(text="Process this and add note.")]
         ),
     ):
-        # Print final output (either from LLM or callback override)
-        if event.is_final_response() and event.content:
+        # Print final output, from the LLM or from the callback's extra event
+        if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"
             )
-        elif event.is_error():
-            print(f"Error Event: {event.error_details}")
+        elif event.error_code:
+            print(f"Error Event: {event.error_code} - {event.error_message}")
 
 
 # --- 4. Execute ---
-# In a Python script:
-# import asyncio
-# if __name__ == "__main__":
-#     # Make sure GOOGLE_API_KEY environment variable is set if not using Agent Platform auth
-#     # Or ensure Application Default Credentials (ADC) are configured for Agent Platform
-#     asyncio.run(main())
-
-# In a Jupyter Notebook or similar environment:
-await main()
+# In a Jupyter Notebook or similar environment you can `await main()` directly.
+# As a script:
+if __name__ == "__main__":
+    # Make sure GOOGLE_API_KEY environment variable is set if not using Agent Platform auth
+    # Or ensure Application Default Credentials (ADC) are configured for Agent Platform
+    asyncio.run(main())
