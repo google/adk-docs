@@ -4,3 +4,5 @@ mkdocs-linkcheck==1.0.6
 mkdocs-llmstxt==0.5.0
 mkdocs-macros-plugin==1.4.1
 click==8.2.1
+# Static search index, built by hooks/pagefind_index.py after each site build.
+pagefind[bin]==1.5.2

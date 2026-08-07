@@ -1,0 +1,95 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Themes the Pagefind search components to match Material for MkDocs.
+ *
+ * Pagefind applies `all: initial` to its host elements, so no site styles
+ * cascade in. Custom properties are the documented theming hook, and they are
+ * exempt from `all`, so mapping Material's palette onto the `--pf-*` variables
+ * is enough to theme the whole search UI - including dark mode - without any
+ * JavaScript.
+ *
+ * These are declared on `body` rather than `:root` on purpose. Material only
+ * declares its default palette at `:root`; the dark palette is declared on
+ * `[data-md-color-scheme="slate"]`, which the theme sets on `<body>`. Mapping
+ * at `:root` would resolve against the light palette and stay light after the
+ * palette toggle.
+ */
+body {
+  --pf-font: var(--md-text-font-family, system-ui, sans-serif);
+
+  --pf-text: var(--md-default-fg-color);
+  --pf-text-secondary: var(--md-default-fg-color--light);
+  --pf-text-muted: var(--md-default-fg-color--light);
+  --pf-background: var(--md-default-bg-color);
+
+  --pf-border: var(--md-default-fg-color--lightest);
+  --pf-border-focus: var(--md-default-fg-color--lighter);
+  --pf-hover: var(--md-code-bg-color);
+
+  --pf-skeleton: var(--md-code-bg-color);
+  --pf-skeleton-shine: var(--md-default-fg-color--lightest);
+
+  /* Matched terms render as transparent-background, weight-500 text. */
+  --pf-mark: var(--md-default-fg-color);
+
+  --pf-outline-focus: var(--md-typeset-a-color);
+  --pf-shadow-lg: var(--md-shadow-z3);
+
+  /* Roomier than the 560px default; ADK page titles and paths run long. */
+  --pf-modal-max-width: 42rem;
+}
+
+/*
+ * Material renders headings and code inside search excerpts using its own
+ * type scale, which is larger than Pagefind's. Nudge the result text up
+ * slightly so excerpts stay legible against the site's body copy.
+ */
+body {
+  --pf-result-title-font-size: 15px;
+  --pf-result-excerpt-font-size: 14px;
+}
+
+/* Header integration -------------------------------------------------- */
+
+/*
+ * Sits between the SDK repository links and the palette toggle. `flex-shrink`
+ * keeps the trigger from collapsing when the page title is long.
+ */
+.adk-search__trigger {
+  flex-shrink: 0;
+  margin-right: 0.4rem;
+}
+
+/*
+ * The header is crowded once the SDK links, palette toggle and navigation
+ * tabs are all present. Below Material's `medium` breakpoint, collapse the
+ * trigger to just its magnifying-glass icon - the same thing the component's
+ * own `compact` attribute does, but responsive rather than fixed at render
+ * time.
+ */
+@media screen and (max-width: 76.1875em) {
+  .adk-search__trigger .pf-trigger-text,
+  .adk-search__trigger .pf-trigger-shortcut {
+    display: none;
+  }
+
+  .adk-search__trigger .pf-trigger-btn {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+}

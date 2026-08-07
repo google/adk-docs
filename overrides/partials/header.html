@@ -96,21 +96,17 @@
       {% include "partials/alternate.html" %}
     {% endif %}
 
-    <!-- Button to open search modal -->
-    {% if "material/search" in config.plugins %}
-      {% set search = config.plugins["material/search"] | attr("config") %}
+    <!--
+      Pagefind search, replacing the theme's lunr-backed modal. The built-in
+      `search` plugin is disabled in mkdocs.yml, so partials/search.html is
+      deliberately not included here.
 
-      <!-- Check if search is actually enabled - see https://t.ly/DT_0V -->
-      {% if search.enabled %}
-        <label class="md-header__button md-icon" for="__search">
-          {% set icon = config.theme.icon.search or "material/magnify" %}
-          {% include ".icons/" ~ icon ~ ".svg" %}
-        </label>
-
-        <!-- Search interface -->
-        {% include "partials/search.html" %}
-      {% endif %}
-    {% endif %}
+      These elements live in the header, outside every region that instant
+      navigation swaps (announce, container, header-topic, outdated, logo,
+      skip), so the components stay mounted across client-side navigation.
+    -->
+    <pagefind-modal-trigger class="adk-search__trigger"></pagefind-modal-trigger>
+    <pagefind-modal reset-on-close></pagefind-modal>
   </nav>
 
   <!-- Navigation tabs (sticky) -->
