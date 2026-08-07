@@ -230,7 +230,8 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
     go run agent.go -streaming_mode sse
     ```
 
-## Usage telemetry in the ADK CLI
+## Usage telemetry
+
 The ADK CLI collects anonymous usage telemetry to understand feature adoption, guide development priorities, and improve tool performance. Data collection is OFF by default until you explicitly choose to enable it.
 
 Your telemetry preference is stored locally on your machine in `~/.adk/config.json`. You can manage telemetry data collection at any time through the terminal:
@@ -253,6 +254,7 @@ You can also manually deactivate telemetry data collection at any time by openin
 - **Command Execution Events**: Generic command and subcommand names, flags passed, execution duration, exit codes, and exception types if an error occurs. We also log a sequence number and an ephemeral session ID that is discarded after command execution.
 
 **What data is not collected**
+
 The CLI does not collect sensitive, private, or personal data, specifically:
 
 - Arguments or parameter values passed to commands or flags, such as agent names, prompt strings, file paths.
