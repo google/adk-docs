@@ -78,6 +78,8 @@ whether the context window is compressed:
   history on every invocation.
 - `context_window_compression`: Enables context window compression for LLM
   input, useful when sessions approach model context limits.
+- `include_thoughts_from_other_agents`: Controls whether thought parts from
+  other agents are included in the LLM context. Disabled by default.
 
 === "Python"
 
@@ -271,6 +273,8 @@ additional parameters:
   and artifact service.
 - `tool_thread_pool_config`: Runs tool executions in a background thread pool
   to keep the event loop responsive to user interruptions.
+- `explicit_vad_signal`: Enables explicit voice activity detection (VAD)
+  signals from the model.
 
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.

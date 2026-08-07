@@ -1,7 +1,7 @@
 # Simple agents with LlmAgent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The `LlmAgent` class, often aliased simply as `Agent`, is a core component in
@@ -53,7 +53,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example: Defining the basic identity
@@ -148,7 +148,7 @@ tells the agent:
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example: Adding instructions
@@ -203,8 +203,11 @@ tells the agent:
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
     ```
 
-**Note:** For instructions that apply to *all* agents in a system, consider
-using `global_instruction` on the root agent.
+!!! note "GlobalInstructionPlugin"
+
+    To apply shared rules or a consistent personality to *all* 
+    agents in your system, use `GlobalInstructionPlugin` instead of 
+    the deprecated `global_instruction` parameter.
 
 ## Equip the agent with tools
 
@@ -248,7 +251,7 @@ on the conversation and its instructions.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {z} from 'zod';
@@ -373,7 +376,7 @@ You can adjust how the underlying AI model generates responses using
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import { GenerateContentConfig } from '@google/genai';
@@ -506,7 +509,7 @@ schema definitions.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {z} from 'zod';
@@ -591,7 +594,7 @@ Control whether the agent receives the prior conversation history.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     const statelessAgent = new LlmAgent({
@@ -867,9 +870,9 @@ More complex agents might incorporate schemas, context control, and planning.
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
-        ```javascript
+        ```typescript
         --8<-- "examples/typescript/snippets/agents/llm-agent/capital_agent.ts"
         ```
 
@@ -903,7 +906,7 @@ the following:
   graph-based pipelines using [Graph-based agent workflows](/graphs/). In Go
   v2.0.0, use `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
 - **Multi-agent systems:** Advanced strategies for agent interaction, including
-  agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`)
-  and shared instructions (`global_instruction`). See [Multi-agent
+  agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`),
+  and consistent identity and rules for every agent in your app (`GlobalInstructionPlugin`). See [Multi-agent
   workflows](/workflows/) and [collaborative agent
   teams](/workflows/collaboration/).
