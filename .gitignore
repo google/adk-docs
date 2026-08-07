@@ -177,6 +177,10 @@ cython_debug/
 # mkdocs documentation
 docs/site
 
+# Local design/plan scratch space. Never committed; see the LOCAL_ONLY_PREFIX
+# exemption in scripts/verify_search_index.py.
+docs/superpowers/
+
 # Utilities for local development
 .gemini/
 .scripts/
