@@ -37,6 +37,41 @@
   <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
 {% endblock %}
 
+<!--
+  Mirrors the `container` block from mkdocs-material 9.7.0's base.html,
+  adding `data-pagefind-body` to the article. Nothing else here departs from
+  upstream on purpose: when bumping mkdocs-material, diff this block against
+  site-packages/material/templates/base.html and expect exactly one
+  substantive difference; ignore indentation (`diff -b`), because this copy
+  sits at a different nesting depth than upstream's. Nothing in the build
+  detects drift.
+
+  Pagefind indexes only pages carrying that attribute, and within them only
+  the subtree it is attached to, so the header, navigation, table of contents
+  and footer stay out of the index.
+  The pre-generated API reference under docs/api-reference/ (python/,
+  typescript/, java/, ...) is copied verbatim by MkDocs rather than rendered
+  through this template, so it never receives the attribute and is not
+  indexed. The hand-written api-reference/index.md is a normal page and is
+  indexed, as it was under the previous lunr-based search.
+
+  The attribute is conditional on `page`. MkDocs renders theme templates such
+  as 404.html without a page in the context, and an unconditional attribute
+  would index the 404 page as a search result.
+-->
+{% block container %}
+  <div class="md-content" data-md-component="content">
+    {% if "navigation.path" in features %}
+      {% include "partials/path.html" %}
+    {% endif %}
+    <article class="md-content__inner md-typeset"{% if page %} data-pagefind-body{% endif %}>
+      {% block content %}
+        {% include "partials/content.html" %}
+      {% endblock %}
+    </article>
+  </div>
+{% endblock %}
+
 <!-- top of page announcement banner here: -->
 <!--
 <span class="announce-item">
