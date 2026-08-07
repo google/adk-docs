@@ -1,16 +1,18 @@
-# Model Context Protocol (MCP) in ADK
+# Model Context Protocol Tools
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The **Model Context Protocol (MCP)** is an open standard for connecting Large Language Models (LLMs) to external data sources, tools, and systems. The Agent Development Kit (ADK) provides native support for integrating MCP servers as tools or exposing ADK capabilities via an MCP server.
+## What is Model Context Protocol (MCP)?
+
+The **Model Context Protocol (MCP)** is an open standard for connecting Large Language Models (LLMs) to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
 
 ---
 
 ## Core architecture and concepts
 
-MCP uses a **client-server model** to exchange prompts, data resources, and function tools over stateful connections.
+MCP follows a client-server architecture, defining how data (resources), interactive templates (prompts), and actionable functions (tools) are exposed by an MCP server and consumed by an MCP client (which could be an LLM host application or an AI agent).
 
 ```mermaid
 sequenceDiagram
@@ -30,82 +32,78 @@ sequenceDiagram
     Toolset-->>Agent: Result returned to LLM
 ```
 
-### Key Differences: ADK vs. MCP
+## Prerequisites and setup rules
 
-| Concept | ADK | MCP |
-| :--- | :--- | :--- |
-| **Nature** | Python/TS/Java application framework | Protocol specification (JSON-RPC 2.0 based) |
-| **Tool Definition** | In-process objects: `BaseTool`, `FunctionTool` | Schema exposed over standard protocol |
-| **Bridge Component** | `McpToolset` translates MCP schemas into ADK `BaseTool` instances transparently |
-| **Execution Context** | In-memory synchronous or async calls | Async IPC (Stdio) or Network RPC (Streamable HTTP / SSE) |
-| **Session Model** | Application state managed by `Runner` | Stateful client-server connection requiring lifecycle management |
+Before you begin, ensure you have the following set up:
 
+### Checklist
+
+- **ADK Installed**: Complete standard ADK setup in your project environment.
+- **Runtime Requirements**: Python 3.9+ or Java 17+.
+- **Node.js & `npx`** *(Python/TS only)*: Required to run npm-packaged community MCP servers.
+- **Verify installations**: Confirm `adk` and `npx` are in your PATH in the activated virtual environment:
+
+=== "MacOS / Linux"
+
+    ```bash
+    # Both commands should print the path to the executables.
+    which adk
+    which npx
+    ```
+    
+=== "Windows PowerShell"
+
+    ```powershell
+    # Both commands should print the path to the executables.
+    Get-Command adk
+    Get-Command npx
+    ```
+    
 !!! warning "Deployment rule"
 
     Agents deployed to production **must define `McpToolset` synchronously** in `agent.py`. Dynamic asynchronous agent initialization is only supported for local debugging or custom standalone runners.
 
 ---
 
-## Prerequisites & setup rules
+## Key considerations
 
-Before building, verify your local development environment:
+ When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents:
 
-### Checklist
+| Concept | MCP (Model Context Protocol) | ADK (Agent Development Kit) |
+| :--- | :--- | :--- |
+| **Core Identity** | A protocol specification that defines communication rules. | A Python library and framework used to build and run agents. |
+| **Tools** | Capabilities exposed by a server according to the protocol's schema. | Native Python objects (like `BaseTool`) built for direct use in the `LlmAgent`. |
+| **Asynchronous Design** | Server handlers rely heavily on Python's `asyncio` library. | Tool implementations rely heavily on Python's `asyncio` library. |
+| **State & Connections** | Establishes stateful, persistent connections between a client and server. | Manages the connection lifecycle using `McpToolset` and the `exit_stack` pattern. |
+| **Session Persistence** | Active connections are not automatically re-established upon restoration. | Preserves agent context across managed environments via object serialization (`getstate` and `setstate`). |
 
-- [ ] **ADK Installed**: Complete standard ADK setup in your project environment.
-- [ ] **Runtime Requirements**: Python 3.9+ or Java 17+.
-- [ ] **Node.js & `npx`** *(Python/TS only)*: Required to run npm-packaged community MCP servers.
+!!! note "State restoration"
 
-### CLI Verification
+        While your agent preserves its session state during lifecycle events, it **does not** automatically re-establish active MCP connections upon restoration. It will re-initialize the connection as needed.
 
-=== "MacOS / Linux"
-
-    ```bash
-    which adk && which npx
-    ```
-
-=== "Windows PowerShell"
-
-    ```powershell
-    Get-Command adk, npx
-    ```
-
-### Universal Setup Rules
+## Universal Setup Rules
 
   1. **Absolute Paths**: File system MCP servers require absolute path arguments: `os.path.abspath(...)`. Relative paths cause runtime resolution errors in subprocesses.
   2. **Package Discovery**: When running `adk web`, ensure an `__init__.py` file exists inside your agent folder so ADK can import the package.
   3. **Windows Async Bug**: If you encounter `_make_subprocess_transport NotImplementedError` on Windows, start `adk web` with the `--no-reload` flag.
 
----
+## Understand uses and integrations
 
-## Connection management and transports
+There's two main integration patterns:
 
-On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
+  1. **Use existing MCP Servers within ADK**: When an ADK agent acts as an MCP client.
+  1. **Expose ADK Tools via an MCP Server**: When you build an MCP servers that wraps ADK Tools to make them accessible to any MCP Client.
 
-### Supported Connection Transports
+### Use existing MCP Servers within ADK
 
-| Transport Mode | Connection Class | Connection Nature | Ideal Use Case |
-| :--- | :--- | :--- | :--- |
-| **Local Stdio** | `StdioConnectionParams` | Local Subprocess IPC | Local commands (`npx`, `python3`), desktop tools. |
-| **Server-Sent Events** | `SseConnectionParams` | Remote Stateful Stream | Persistent streaming connections to remote services. |
-| **Streamable HTTP** | `StreamableHTTPConnectionParams` | Remote Stateless HTTP | Cloud Run, serverless microservices, auto-scaling endpoints. |
-
-### Production timeout configuration
-
-To prevent hanging connections, socket leaks, or process starvation, configure explicit timeouts in production:
-
-| Parameter | Applies To | Description |
-| :--- | :--- | :--- |
-| `timeout` | All Transports | Maximum seconds to wait for connection setup or RPC request calls. |
-| `sse_read_timeout` | `SseConnectionParams`, `StreamableHTTPConnectionParams` | Maximum seconds to wait for streaming event data from the server. |
-
----
-
-## Pattern 1: ADK as an MCP Client (consuming MCP servers)
-
+The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
 
 ### Example: Local Stdio Transport (FileSystem MCP)
+
+This example sets up an ADK agent that connects to a local MCP file system server. It instantiates the McpToolset directly within the agent's tools list to enable file management capabilities.
+
+**Step 1**. Define your agent with `McpToolset`:
 
 === "Python"
 
@@ -136,6 +134,20 @@ Use `McpToolset` to import tools from an external MCP server into your ADK `LlmA
         ],
     )
     ```
+    
+    **Step 2**: Package and Run your Agent to make your agent discoverable to ADK and start interacting with it, follow this workflow:
+    
+      - Initiate your package: Create an `__init__.py` file in the same directory as your agent.py. This step is required for ADK to recognize your agent.
+      - Launch the Web Interface:
+
+     ```bash
+      cd ./adk_agent_samples 
+      adk web
+    ```
+    
+    - Interact with the Agent: select `filesystem_assistant_agent` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
+
+    ![Python Architecture](./assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 === "TypeScript"
 
@@ -252,6 +264,23 @@ export const rootAgent = new LlmAgent({
     ],
 });
 ```
+
+
+
+
+
+### Production timeout configuration
+
+To prevent hanging connections, socket leaks, or process starvation, configure explicit timeouts in production:
+
+| Parameter | Applies To | Description |
+| :--- | :--- | :--- |
+| `timeout` | All Transports | Maximum seconds to wait for connection setup or RPC request calls. |
+| `sse_read_timeout` | `SseConnectionParams`, `StreamableHTTPConnectionParams` | Maximum seconds to wait for streaming event data from the server. |
+
+---
+
+
 
 ---
 
