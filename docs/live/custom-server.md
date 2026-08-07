@@ -19,7 +19,7 @@ Here's a complete FastAPI WebSocket application showing all four phases integrat
 
 !!! note "Complete Demo Implementation"
 
-    For the production-ready implementation with multimodal support (text, audio, image), see the complete [`main.py`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py) file.
+    For the production-ready implementation with multimodal support (text, audio, image), see the complete [`main.py`](https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py) file.
 
 **Complete Implementation:**
 
@@ -27,7 +27,7 @@ Here's a complete FastAPI WebSocket application showing all four phases integrat
 import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from google.adk.runners import Runner
-from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.agents.run_config import RunConfig
 from google.adk.agents.live_request_queue import LiveRequestQueue
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -66,7 +66,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
     # Create RunConfig
     response_modalities = ["AUDIO"]
     run_config = RunConfig(
-        streaming_mode=StreamingMode.BIDI,
         response_modalities=response_modalities,
         input_audio_transcription=types.AudioTranscriptionConfig(),
         output_audio_transcription=types.AudioTranscriptionConfig(),
@@ -153,7 +152,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
 
 The upstream task continuously receives messages from the WebSocket client and forwards them to the `LiveRequestQueue`. This enables the user to send messages to the agent at any time, even while the agent is generating a response.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L169-L205" target="_blank">main.py:169-205</a>'
 async def upstream_task() -> None:
     """Receives messages from WebSocket and sends to LiveRequestQueue."""
     try:
@@ -169,7 +168,7 @@ async def upstream_task() -> None:
 
 The downstream task continuously receives `Event` objects from `run_live()` and sends them to the WebSocket client. This streams the agent's responses, tool executions, transcriptions, and other events to the user in real-time.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L207-L222" target="_blank">main.py:207-222</a>'
 async def downstream_task() -> None:
     """Receives Events from run_live() and sends to WebSocket."""
     async for event in runner.run_live(
@@ -187,7 +186,7 @@ async def downstream_task() -> None:
 
 Both tasks run concurrently using `asyncio.gather()`, enabling true Bidi-streaming. The `try/finally` block ensures `LiveRequestQueue.close()` is called even if exceptions occur, minimizing the session resource usage.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L238-L253" target="_blank">main.py:238-253</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L226-L241" target="_blank">main.py:226-241</a>'
 try:
     await asyncio.gather(
         upstream_task(),

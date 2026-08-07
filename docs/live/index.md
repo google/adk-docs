@@ -104,7 +104,7 @@ source of confusion. Use this table to find the one you want:
 | :---- | :---- | :---- | :---- | :---- |
 | **Server-side streaming** | One-way flow from server to client. Like watching a live video feed — continuous data, no interaction. | No | You are pushing dashboard or feed updates, not holding a conversation. | Outside ADK |
 | **Token-level streaming** | The model's text response arrives word by word, but you must wait for it to finish before sending more input. Like watching someone type. | No | You want a responsive-feeling text chat. | `StreamingMode.SSE` — see [Configuration](configuration.md#streamingmode-bidi-or-sse) |
-| **Bidirectional streaming** | Both sides can speak, listen, and respond at once, over one open connection. | **Yes** | You are building voice or video conversation. | `StreamingMode.BIDI` — these pages |
+| **Bidirectional streaming** | Both sides can speak, listen, and respond at once, over one open connection. | **Yes** | You are building voice or video conversation. | `runner.run_live()` — these pages |
 
 The rest of this section is about the third row.
 
@@ -370,7 +370,7 @@ This architecture demonstrates ADK's clear separation of concerns: your applicat
     A reference implementation with multimodal support (text, audio, image). This FastAPI-based demo shows real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management. It is the demo referenced throughout these pages.
 
     - [Bidi Demo](https://bidi-demo-761793285222.us-central1.run.app/)
-    - [Source Code](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
+    - [Source Code](https://github.com/google/adk-docs/tree/main/examples/python/snippets/streaming/bidi-demo)
 
 </div>
 

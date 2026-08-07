@@ -34,7 +34,7 @@ This creates significant implementation overhead, especially in streaming contex
 
 With ADK, tool execution becomes declarative. Simply define tools on your Agent:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16" target="_blank">agent.py:11-16</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L17-L32" target="_blank">agent.py:17-32</a>'
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
@@ -77,7 +77,7 @@ You don't need to handle the execution yourself—ADK does it automatically. You
 
 !!! note "Learn More"
 
-    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:219-234`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234)
+    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:207-222`](https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L207-L222)
 
 ### Long-Running and Streaming Tools
 
@@ -89,15 +89,26 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
 !!! note "How Streaming Tools Work"
 
-    When you call `runner.run_live()`, ADK inspects your agent's tools at initialization (lines 828-865 in `runners.py`) to identify streaming tools by checking parameter type annotations for `LiveRequestQueue`.
+    Streaming tools are registered **lazily** — ADK does not scan your agent's tools up
+    front. Registration happens the first time the model actually calls the tool.
 
     **Queue creation and lifecycle**:
 
-    1. **Creation**: ADK creates an `ActiveStreamingTool` with a dedicated `LiveRequestQueue` for each streaming tool at the start of `run_live()` (before processing any events)
-    2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
-    3. **Injection**: When the model calls the tool, ADK automatically injects the tool's queue as the `input_stream` parameter (lines 238-253 in `function_tool.py`)
-    4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
-    5. **Lifecycle**: The queues persist for the entire `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits
+    1. **Registration**: When the model calls an async-generator tool, ADK starts a task for
+       it and records an `ActiveStreamingTool` in
+       `invocation_context.active_streaming_tools[tool_name]`
+    2. **Queue creation**: If — and only if — the tool's signature has an `input_stream`
+       parameter annotated as `LiveRequestQueue`, ADK creates a dedicated `LiveRequestQueue`
+       and assigns it to `active_streaming_tools[tool_name].stream`. This is also what makes
+       ADK start duplicating the user's realtime input into that queue
+    3. **Injection**: `FunctionTool` passes that queue in as the `input_stream` argument when
+       it invokes the tool
+    4. **Usage**: The tool can `yield` from inside its loop to send real-time updates back to
+       the model during execution
+    5. **Teardown**: A `stop_streaming` call cancels the task and resets both `.task` and
+       `.stream` to `None`, so a later re-invocation gets a fresh queue. Otherwise the queues
+       live for the whole `run_live()` invocation (one `InvocationContext` = one `run_live()`
+       call)
 
     **Queue distinction**:
 
@@ -108,7 +119,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
     This enables tools to provide incremental updates, progress notifications, or partial results during long-running operations.
 
-    **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
+    **Code reference**: [`functions.py:1109-1138`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/flows/llm_flows/functions.py#L1109-L1138) (lazy registration and queue creation), [`functions.py:1019-1073`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/flows/llm_flows/functions.py#L1019-L1073) (`stop_streaming`), and [`function_tool.py:378-387`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/tools/function_tool.py#L378-L387) (parameter injection).
 
     See the [Tools Guide](/integrations/) for implementation examples.
 

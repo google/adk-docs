@@ -20,9 +20,10 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 | Parameter | Type | Purpose | Platform Support | Reference |
 |-----------|------|---------|------------------|-----------|
 | **response_modalities** | list[str] | Control output format (TEXT or AUDIO) | Both | [Details](#response-modalities) |
-| **streaming_mode** | StreamingMode | Choose BIDI or SSE mode | Both | [Details](#streamingmode-bidi-or-sse) |
+| **streaming_mode** | StreamingMode | Chunked or single-shot delivery on the `run_async()` path; not read by `run_live()` | Both | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](sessions.md#live-api-session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](sessions.md#live-api-context-window-compression) |
+| **history_config** | HistoryConfig | Control how prior conversation history is replayed to the Live server | Both | [Details](#history_config) |
 | **max_llm_calls** | int | Limit total LLM calls per session | Both | [Details](#max_llm_calls) |
 | **save_live_blob** | bool | Persist audio/video streams | Both | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | Both | [Details](#custom_metadata) |
@@ -74,26 +75,21 @@ Response modalities control how the model generates output—as text or audio. B
 
 # Default behavior: ADK automatically sets response_modalities to ["AUDIO"]
 # when not specified (required by native audio models)
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
-)
+run_config = RunConfig()
 
 # The above is equivalent to:
 run_config = RunConfig(
     response_modalities=["AUDIO"],  # Automatically set by ADK in run_live()
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
 )
 
 # ✅ CORRECT: Text-only responses
 run_config = RunConfig(
     response_modalities=["TEXT"],  # Model responds with text only
-    streaming_mode=StreamingMode.BIDI  # Still uses bidirectional streaming
 )
 
 # ✅ CORRECT: Audio-only responses (explicit)
 run_config = RunConfig(
     response_modalities=["AUDIO"],  # Model responds with audio only
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
 )
 ```
 
@@ -103,7 +99,6 @@ Both Gemini Live API and Gemini Live API (Agent Platform) restrict sessions to a
 # ❌ INCORRECT: Both modalities not supported
 run_config = RunConfig(
     response_modalities=["TEXT", "AUDIO"],  # ERROR: Cannot use both
-    streaming_mode=StreamingMode.BIDI
 )
 # Error from Live API: "Only one response modality is supported per session"
 ```
@@ -118,44 +113,64 @@ When `response_modalities` is not specified, ADK's `run_live()` method automatic
 - You must choose `AUDIO` for [native audio models](models.md#native-audio-models). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio transcription](voice.md#audio-transcription) for details
 - Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
 
-## StreamingMode: BIDI or SSE
+## Bidi-streaming or SSE { #streamingmode-bidi-or-sse }
 
-ADK supports two distinct streaming modes that use different API endpoints and protocols:
+ADK can reach Gemini over two different endpoints, and **the `Runner` method you call is
+what picks one**:
 
-- `StreamingMode.BIDI`: ADK uses WebSocket to connect to the **Live API** (the bidirectional streaming endpoint via `live.connect()`)
-- `StreamingMode.SSE`: ADK uses HTTP streaming to connect to the **standard Gemini API** (the unary/streaming endpoint via `generate_content_async()`)
+- **`runner.run_live()`**: ADK opens a WebSocket to the **Live API** (the bidirectional
+  streaming endpoint via `live.connect()`)
+- **`runner.run_async()`**: ADK uses HTTP to the **standard Gemini API** (the
+  unary/streaming endpoint via `generate_content_async()`). Set
+  `RunConfig.streaming_mode = StreamingMode.SSE` to stream that response back chunk by
+  chunk
 
 "Live API" refers specifically to the bidirectional WebSocket endpoint (`live.connect()`), while "Gemini API" or "standard Gemini API" refers to the traditional HTTP-based endpoint (`generate_content()` / `generate_content_async()`). Both are part of the broader Gemini API platform but use different protocols and capabilities.
 
-**Note:** These modes refer to the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either mode.
+!!! warning "`StreamingMode.BIDI` does not switch ADK to the Live API"
 
-This guide focuses on `StreamingMode.BIDI`, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences between BIDI and SSE modes to choose the right approach for your use case.
+    `RunConfig.streaming_mode` is read only on the `run_async()` code path, where it
+    chooses between a single complete response (`StreamingMode.NONE`, the default) and
+    chunked delivery (`StreamingMode.SSE`). The `run_live()` path never reads it, so
+    setting `streaming_mode=StreamingMode.BIDI` has no effect — calling `run_live()` is
+    what gets you bidirectional streaming. ADK's own `StreamingMode` docstring says as
+    much: BIDI "is not used in the standard execution path", and the real bidirectional
+    behavior "uses a completely different code path that doesn't rely on
+    `streaming_mode`".
+
+**Note:** This distinction is about the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either one.
+
+This guide focuses on Bidi-streaming over the Live API, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences from SSE to choose the right approach for your use case.
 
 **Configuration:**
 
 ```python
 from google.adk.agents.run_config import RunConfig, StreamingMode
 
-# BIDI streaming for real-time audio/video
+# Bidi-streaming for real-time audio/video: no streaming_mode needed,
+# calling run_live() is what selects the Live API
 run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
     response_modalities=["AUDIO"]  # Supports audio/video modalities
 )
+async for event in runner.run_live(..., run_config=run_config):
+    ...
 
 # SSE streaming for text-based interactions
 run_config = RunConfig(
     streaming_mode=StreamingMode.SSE,
     response_modalities=["TEXT"]  # Text-only modality
 )
+async for event in runner.run_async(..., run_config=run_config):
+    ...
 ```
 
 ### Protocol and Implementation Differences
 
-The two streaming modes differ fundamentally in their communication patterns and capabilities. BIDI mode enables true bidirectional communication where you can send new input while receiving model responses, while SSE mode follows a traditional request-then-response pattern where you send a complete request and stream back the response.
+The two paths differ fundamentally in their communication patterns and capabilities. Bidi-streaming enables true bidirectional communication where you can send new input while receiving model responses, while SSE follows a traditional request-then-response pattern where you send a complete request and stream back the response.
 
-**StreamingMode.BIDI - Bidirectional WebSocket Communication:**
+**Bidi-streaming — bidirectional WebSocket communication:**
 
-BIDI mode establishes a persistent WebSocket connection that allows simultaneous sending and receiving. This enables real-time features like interruptions, live audio streaming, and immediate turn-taking:
+`run_live()` establishes a persistent WebSocket connection that allows simultaneous sending and receiving. This enables real-time features like interruptions, live audio streaming, and immediate turn-taking:
 
 ```mermaid
 sequenceDiagram
@@ -249,13 +264,13 @@ export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
 - Your responses include thought text (extended thinking) mixed with regular text
 - You want to ensure function calls execute only once after complete response aggregation
 
-**Note:** This feature only affects `StreamingMode.SSE`. It does not apply to `StreamingMode.BIDI` (the focus of this guide), which uses the Live API's native bidirectional protocol.
+**Note:** This feature only affects `StreamingMode.SSE` on the `run_async()` path. It does not apply to `run_live()` (the focus of this guide), which uses the Live API's native bidirectional protocol.
 
 ### When to Use Each Mode
 
-Your choice between BIDI and SSE depends on your application requirements and the interaction patterns you need to support. Here's a practical guide to help you choose:
+Your choice between Bidi-streaming and SSE depends on your application requirements and the interaction patterns you need to support. Here's a practical guide to help you choose:
 
-**Use BIDI when:**
+**Use Bidi-streaming (`run_live()`) when:**
 
 - Building voice/video applications with real-time interaction
 - Need bidirectional communication (send while receiving)
@@ -264,7 +279,7 @@ Your choice between BIDI and SSE depends on your application requirements and th
 - Implementing live streaming tools or real-time data feeds
 - Can plan for concurrent session quotas (50-1,000 sessions depending on platform/tier)
 
-**Use SSE when:**
+**Use SSE (`run_async()`) when:**
 
 - Building text-based chat applications
 - Standard request/response interaction pattern
@@ -274,7 +289,7 @@ Your choice between BIDI and SSE depends on your application requirements and th
 - Prefer standard API rate limits (RPM/TPM) over concurrent session quotas
 
 !!! note "Streaming Mode and Model Compatibility"
-    SSE mode uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while BIDI mode uses the Live API (`live.connect()`) via WebSocket. Gemini 1.5 models (Pro, Flash) don't support the Live API protocol and therefore must be used with SSE mode. Gemini 2.0/2.5 Live models support both protocols but are typically used with BIDI mode to access real-time audio/video features.
+    SSE uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while Bidi-streaming uses the Live API (`live.connect()`) via WebSocket. Gemini 1.5 models (Pro, Flash) don't support the Live API protocol and therefore must be used with `run_async()` and SSE. Gemini 2.0/2.5 Live models support both protocols but are typically used with `run_live()` to access real-time audio/video features.
 
 ### Standard Gemini Models (1.5 Series) Accessed via SSE
 
@@ -325,9 +340,9 @@ run_config = RunConfig(
 
 This parameter caps the total number of LLM invocations allowed per invocation context, providing protection against runaway costs and infinite agent loops.
 
-**Limitation for BIDI Streaming:**
+**Limitation for Bidi-streaming:**
 
-**The `max_llm_calls` limit does NOT apply to `run_live()` with `StreamingMode.BIDI`.** This parameter only protects SSE streaming mode and `run_async()` flows. If you're building bidirectional streaming applications (the focus of this guide), you will NOT get automatic cost protection from this parameter.
+**The `max_llm_calls` limit does NOT apply to `run_live()`.** This parameter only protects `run_async()` flows. If you're building bidirectional streaming applications (the focus of this guide), you will NOT get automatic cost protection from this parameter.
 
 **For Live streaming sessions**, implement your own safeguards:
 
@@ -372,6 +387,37 @@ Enabling `save_live_blob=True` has significant storage implications:
 - Implement retention policies to auto-delete old audio artifacts
 - Consider sampling (e.g., save 10% of sessions for quality monitoring)
 - Use compression if supported by your artifact service
+
+### history_config
+
+When ADK opens a **new** Live API connection for a session that already has conversation
+history, it replays that history to the server. Because the history includes the model's own
+past turns, the server needs to be told not to answer them again. ADK handles this for you:
+before connecting, it sets
+`live_connect_config.history_config.initial_history_in_client_content = True` whenever there
+is history to send and no session resumption handle is in play.
+
+```python
+from google.genai import types
+
+# ADK sets this automatically; override only if you need the opposite behavior.
+run_config = RunConfig(
+    history_config=types.HistoryConfig(
+        initial_history_in_client_content=True,
+    ),
+)
+```
+
+**What this means in practice:**
+
+- **You normally do nothing.** ADK only fills in the value when you have not set one, so an
+  explicit `history_config` on `RunConfig` always wins.
+- **Reconnections skip history entirely.** When ADK reconnects with a session resumption
+  handle, the server already holds the state for that session, so ADK sends no history and
+  does not touch `history_config`.
+- **Symptom if it goes wrong**: setting `initial_history_in_client_content=False` while
+  seeding history makes the model respond to the *replayed* turns, producing a burst of
+  duplicate answers at the start of the connection.
 
 ### custom_metadata
 
@@ -424,7 +470,8 @@ The metadata is a flexible dictionary accepting any JSON-serializable values (st
 
 ```python
 async for event in runner.run_live(
-    session=session,
+    user_id=user_id,
+    session_id=session_id,
     live_request_queue=queue,
     run_config=RunConfig(
         custom_metadata={"user_id": "user_123", "experiment": "new_ui"}
@@ -499,7 +546,7 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 - Complex research tasks requiring conditional exploration
 - Any scenario needing sophisticated tool coordination beyond sequential execution
 
-**For bidirectional streaming applications:** While CFC works with BIDI mode, it's primarily optimized for text-based tool orchestration. For real-time audio/video interactions (the focus of this guide), standard function calling typically provides better performance and simpler implementation.
+**For bidirectional streaming applications:** While CFC works with `run_live()`, it's primarily optimized for text-based tool orchestration. For real-time audio/video interactions (the focus of this guide), standard function calling typically provides better performance and simpler implementation.
 
 **Learn more:**
 

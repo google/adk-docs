@@ -142,7 +142,7 @@ In web applications, transcription events need to be forwarded from the server t
 2. **Client side**: Process `inputTranscription` and `outputTranscription` events from the WebSocket
 3. **UI rendering**: Display partial transcriptions with typing indicators, finalize when `finished: true`
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L532-L655" target="_blank">app.js:530-653</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/app.js#L536-L660" target="_blank">app.js:536-660</a>'
 // Handle input transcription (user's spoken words)
 if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
     const transcriptionText = adkEvent.inputTranscription.text;
@@ -623,13 +623,12 @@ When building voice-enabled applications, you may want to implement client-side 
 
 ```python
 from fastapi import FastAPI, WebSocket
-from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.agents.run_config import RunConfig
 from google.adk.agents.live_request_queue import LiveRequestQueue
 from google.genai import types
 
 # Configure RunConfig to disable automatic VAD
 run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
     response_modalities=["AUDIO"],
     realtime_input_config=types.RealtimeInputConfig(
         automatic_activity_detection=types.AutomaticActivityDetection(
@@ -837,12 +836,11 @@ The model analyzes emotional cues in voice tone and content to:
 
 ```python
 from google.genai import types
-from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.agents.run_config import RunConfig
 
 # Configure for empathetic customer service
 run_config = RunConfig(
     response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI,
 
     # Model can proactively offer help
     proactivity=types.ProactivityConfig(proactive_audio=True),

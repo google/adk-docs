@@ -29,7 +29,7 @@ Before calling `send_realtime()`, ensure your audio data is already in the corre
 
 ADK does not perform audio format conversion. Sending audio in incorrect formats will result in poor quality or errors.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L181-L184" target="_blank">main.py:181-184</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L173-L176" target="_blank">main.py:173-176</a>'
 audio_blob = types.Blob(
     mime_type="audio/pcm;rate=16000",
     data=audio_data
@@ -64,7 +64,7 @@ In browser-based applications, capturing microphone audio and sending it to the 
 3. **Format conversion**: Convert Float32Array samples to 16-bit PCM
 4. **WebSocket streaming**: Send PCM chunks to server via WebSocket
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-recorder.js#L7-L58" target="_blank">audio-recorder.js:7-58</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/audio-recorder.js#L7-L58" target="_blank">audio-recorder.js:7-58</a>'
 // Start audio recorder worklet
 export async function startAudioRecorderWorklet(audioRecorderHandler) {
     // Create an AudioContext with 16kHz sample rate
@@ -117,7 +117,7 @@ function convertFloat32ToPCM(inputData) {
 }
 ```
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L18" target="_blank">pcm-recorder-processor.js:1-18</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L18" target="_blank">pcm-recorder-processor.js:1-18</a>'
 // pcm-recorder-processor.js - AudioWorklet processor for capturing audio
 class PCMProcessor extends AudioWorkletProcessor {
     constructor() {
@@ -139,7 +139,7 @@ class PCMProcessor extends AudioWorkletProcessor {
 registerProcessor("pcm-recorder-processor", PCMProcessor);
 ```
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L979-L988" target="_blank">app.js:977-986</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/app.js#L994-L1003" target="_blank">app.js:994-1003</a>'
 // Audio recorder handler - called for each audio chunk
 function audioRecorderHandler(pcmData) {
     if (websocket && websocket.readyState === WebSocket.OPEN && is_audio) {
@@ -184,12 +184,11 @@ The audio data arrives as raw PCM bytes, ready for playback or further processin
 **Receiving Audio Output:**
 
 ```python
-from google.adk.agents.run_config import RunConfig, StreamingMode
+from google.adk.agents.run_config import RunConfig
 
 # Configure for audio output
 run_config = RunConfig(
     response_modalities=["AUDIO"],  # Required for audio responses
-    streaming_mode=StreamingMode.BIDI
 )
 
 # Process audio output from the model
@@ -223,7 +222,7 @@ async for event in runner.run_live(
 
 The bidi-demo uses a different architectural approach: instead of processing audio on the server, it forwards all events (including audio data) to the WebSocket client and handles audio playback in the browser. This pattern separates concerns—the server focuses on ADK event streaming while the client handles media playback using Web Audio API.
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L225-L233" target="_blank">main.py:225-233</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L213-L222" target="_blank">main.py:213-222</a>'
 # The bidi-demo forwards all events (including audio) to the WebSocket client
 async for event in runner.run_live(
     user_id=user_id,
@@ -239,7 +238,7 @@ async for event in runner.run_live(
 
 The client-side implementation involves three components: WebSocket message handling, audio player setup with AudioWorklet, and the AudioWorklet processor itself.
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L640-L690" target="_blank">app.js:638-688</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/app.js#L645-L704" target="_blank">app.js:645-704</a>'
 // 1. WebSocket Message Handler
 // Handle content events (text or audio)
 if (adkEvent.content && adkEvent.content.parts) {
@@ -285,7 +284,7 @@ function base64ToArray(base64) {
 }
 ```
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-player.js#L5-L24" target="_blank">audio-player.js:5-24</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/audio-player.js#L5-L24" target="_blank">audio-player.js:5-24</a>'
 // 2. Audio Player Setup
 // Start audio player worklet
 export async function startAudioPlayerWorklet() {
@@ -313,7 +312,7 @@ export async function startAudioPlayerWorklet() {
 }
 ```
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-player-processor.js#L5-L76" target="_blank">pcm-player-processor.js:5-76</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/pcm-player-processor.js#L5-L75" target="_blank">pcm-player-processor.js:5-75</a>'
 // 3. AudioWorklet Processor (Ring Buffer)
 // AudioWorklet processor that buffers and plays PCM audio
 class PCMPlayerProcessor extends AudioWorkletProcessor {
@@ -417,7 +416,7 @@ Both images and video in ADK Gemini Live API Toolkit are processed as JPEG frame
 - **Frame rate**: 1 frame per second (1 FPS) recommended maximum
 - **Resolution**: 768x768 pixels (recommended)
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L202-L217" target="_blank">main.py:202-217</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L191-L205" target="_blank">main.py:191-205</a>'
 # Decode base64 image data
 image_data = base64.b64decode(json_message["data"])
 mime_type = json_message.get("mimeType", "image/jpeg")
@@ -459,7 +458,7 @@ In browser-based applications, capturing images from the user's webcam and sendi
 4. **Base64 encoding**: Convert canvas to base64 data URL for transmission
 5. **WebSocket transmission**: Send as JSON message to server
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L803-L845" target="_blank">app.js:801-843</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/app.js#L818-L845" target="_blank">app.js:818-845</a>'
 // 1. Opening Camera Preview
 // Open camera modal and start preview
 async function openCameraPreview() {
@@ -501,7 +500,7 @@ function closeCameraPreview() {
 }
 ```
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L848-L916" target="_blank">app.js:846-914</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/static/js/app.js#L863-L918" target="_blank">app.js:863-918</a>'
 // 2. Capturing and Sending Image
 // Capture image from the live preview
 function captureImageFromPreview() {
