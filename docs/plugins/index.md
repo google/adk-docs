@@ -269,7 +269,7 @@ of the agent.
 ### Register Plugin class
 
 Integrate your Plugin class by registering it during your agent initialization
-as part of your `Runner` class (in Python, your `App` object), using the
+as part of your `Runner` class, or in Python your `App` object, using the
 `plugins` parameter. You can specify multiple Plugins with this parameter. The
 following code example shows how to register the `CountInvocationPlugin` plugin
 defined in the previous section with a simple ADK agent.
@@ -1159,7 +1159,7 @@ The following code example shows the basic syntax of this callback:
     }
     ```
 
-In Python, ADK notifies your Plugin of two more end-of-life events:
+In Python, ADK notifies your Plugin of two more lifecycle events:
 
 -   **`on_run_error_callback(*, invocation_context, error)`**: Runs instead of
     `after_run_callback` when the run fails with an unhandled exception. This
