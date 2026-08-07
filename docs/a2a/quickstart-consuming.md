@@ -175,7 +175,7 @@ prime_agent = RemoteA2aAgent(
 ```
 
 !!! note "Using the new A2A integration"
-    `use_legacy` defaults to `True`, so the sample above uses the legacy path. Pass `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
+    The `use_legacy` parameter defaults to `True`, so the sample above uses the legacy path. Set `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
 
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
