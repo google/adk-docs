@@ -30,6 +30,7 @@ extra_css:
 # Custom JavaScript
 extra_javascript:
   - javascript/copy-page.js
+  - javascript/search.js
 
 # Additional config
 extra:
