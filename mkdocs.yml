@@ -337,6 +337,7 @@ nav:
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
       - Ambient Agents: runtime/ambient-agents.md
+      - Run in Code: runtime/run-in-code.md
       - Resume Agents: runtime/resume.md
       - Cancel Agent Runs: runtime/cancel.md
       - Runtime Config: runtime/runconfig.md

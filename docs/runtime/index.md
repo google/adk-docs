@@ -11,6 +11,15 @@ the method that best fits your development workflow.
 
 <div class="grid cards" markdown>
 
+-   :material-language-python:{ .lg .middle } **Run in Code**
+
+    ---
+
+    Use `Runner` to invoke your agents directly from Python, TypeScript,
+    or Java code.
+
+    [:octicons-arrow-right-24: Run agents in code](run-in-code.md)
+
 -   :material-web:{ .lg .middle } **Dev UI**
 
     ---
