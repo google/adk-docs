@@ -80,6 +80,11 @@ def _is_excluded(page) -> bool:
     return isinstance(search, dict) and search.get("exclude") is True
 
 
+def on_pre_build(config) -> None:
+    """Reset per-build state so it cannot leak across ``mkdocs serve`` rebuilds."""
+    _missing_anchor.clear()
+
+
 def on_post_page(output: str, page, config) -> str:
     """Add ``data-pagefind-body`` to the content article of indexable pages."""
     if _skip() or _is_excluded(page):
