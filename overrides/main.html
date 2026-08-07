@@ -36,7 +36,11 @@
   <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
   <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
 
-  <!-- Pagefind search (index built by hooks/pagefind.py). -->
+  <!-- Pagefind search (index built by hooks/pagefind.py). Both filenames are
+       repeated in the asset guard at the end of on_post_build in
+       hooks/pagefind.py, which fails the build if Pagefind stops emitting one.
+       That guard cannot read this template, so a third asset added here is
+       unguarded until its name is added there too. -->
   <link rel="stylesheet" href="{{ 'pagefind/pagefind-component-ui.css' | url }}">
   <script type="module" src="{{ 'pagefind/pagefind-component-ui.js' | url }}"></script>
   <!-- document.currentScript is null inside a module script, so the bundle's

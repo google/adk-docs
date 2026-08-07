@@ -29,14 +29,19 @@ Replaces MkDocs Material's built-in lunr search. Four responsibilities:
    is also how pages opt out of search. It also records which
    ``EXCLUDE_SELECTORS`` classes actually appeared, since the rendered HTML is
    already in hand here and re-reading the built site would be wasted I/O.
-4. ``on_post_build`` runs the Pagefind indexer over the built site and fails
-   the build if the resulting page count falls outside
-   ``MIN_INDEXED_PAGES..MAX_INDEXED_PAGES``, if either browser-facing asset is
-   missing, or if an exclude selector matched nothing. Both count bounds are
-   checked against the finished index rather than against per-page counters, so
-   they hold under ``mkdocs build``, ``mkdocs serve`` and ``mkdocs build
-   --dirty`` alike: a dirty build re-renders only a handful of pages, but
-   Pagefind still indexes the whole ``site_dir``.
+4. ``on_post_build`` runs the Pagefind indexer over the built site. It fails
+   the build in five cases:
+
+   * ``MKDOCS_PAGEFIND_SKIP=1`` is set on a ``gh-deploy``, which publishes;
+   * a page carried no ``ARTICLE`` anchor, so it could not be marked;
+   * a class named in ``EXCLUDE_SELECTORS`` appeared on no indexed page;
+   * the indexed page count fell outside ``MIN_INDEXED_PAGES..MAX_INDEXED_PAGES``;
+   * either browser-facing asset is missing from the built ``pagefind/``.
+
+   Both count bounds are checked against the finished index rather than against
+   per-page counters, so they hold under ``mkdocs build``, ``mkdocs serve`` and
+   ``mkdocs build --dirty`` alike: a dirty build re-renders only a handful of
+   pages, but Pagefind still indexes the whole ``site_dir``.
 
 Environment variables (``MKDOCS_`` prefixed so they cannot be confused with
 Pagefind's own ``PAGEFIND_*`` configuration, which the subprocess inherits):
@@ -91,11 +96,20 @@ EXCLUDE_SELECTORS = ".headerlink, .tabbed-labels, .language-support-tag"
 # attribute holds a space-separated list and these names contain hyphens, which
 # `\b` treats as a word boundary, so the lookarounds are what stop
 # `.headerlink` from matching a future `md-headerlink`.
+#
+# Only a bare `.class` selector can be verified by this text search, so anything
+# else Pagefind accepts -- a compound like `.md-typeset a.headerlink`, an
+# attribute selector, a stray trailing comma -- is skipped and left unchecked.
+# Deriving a pattern from those instead would build one that can never match and
+# fail every full build over a selector that is doing its job.
+_SIMPLE_CLASS = re.compile(r"\.([A-Za-z_][\w-]*)$")
 EXCLUDE_CLASS_PATTERNS = {
-    name: re.compile(rf'class="[^"]*(?<![\w-]){re.escape(name)}(?![\w-])')
-    for name in (
-        selector.strip().lstrip(".") for selector in EXCLUDE_SELECTORS.split(",")
+    match[1]: re.compile(rf'class="[^"]*(?<![\w-]){re.escape(match[1])}(?![\w-])')
+    for match in (
+        _SIMPLE_CLASS.fullmatch(selector.strip())
+        for selector in EXCLUDE_SELECTORS.split(",")
     )
+    if match
 }
 
 # Punctuation that carries meaning here: adk.dev, run_async, a2a, C++, @tool.
@@ -159,9 +173,7 @@ def on_post_page(output: str, page, config) -> str:
         return output
     # Only pages that reach the index are scanned for the excluded classes. A
     # class surviving on an excluded page would prove nothing about the index,
-    # and the excluded docs/superpowers/ notes quote these very class names
-    # inside code blocks, which would hold the guard green through a real
-    # rename.
+    # so counting it would make the guard's error message false.
     for name, pattern in EXCLUDE_CLASS_PATTERNS.items():
         if name not in _seen_exclude_classes and pattern.search(output):
             _seen_exclude_classes.add(name)
@@ -203,8 +215,10 @@ def on_post_build(config) -> None:
 
     # A dirty build re-renders only the pages that changed, so nearly every
     # class legitimately goes unseen and this check would fail on a healthy
-    # site. It is the one guard here that reads per-page state rather than the
-    # finished index, which is why it alone needs the exemption.
+    # site. It argues from absence, which only a complete render can support.
+    # The missing-anchor guard above also reads state accumulated per page in
+    # on_post_page, yet needs no such exemption: it argues from positive
+    # evidence, which a partial render can miss but cannot fabricate.
     if not _dirty:
         for name in EXCLUDE_CLASS_PATTERNS:
             if name not in _seen_exclude_classes:

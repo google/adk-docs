@@ -117,8 +117,9 @@ MKDOCS_PAGEFIND_SKIP=1 mkdocs serve
 Search will not work in that preview. Two separate guards keep the variable out
 of anything a reader sees. Pull requests build with `mkdocs build --strict`,
 where the skip warning becomes a failure. Publishing refuses outright: `mkdocs
-gh-deploy` fails with an error, strict or not, because the publish workflow does
-not pass `--strict`. `mkdocs serve` is neither strict nor a deploy, so the
+gh-deploy` fails with an error, strict or not. That refusal was added because
+the publish workflow does not pass `--strict`, so the warning alone would let a
+site ship with no index. `mkdocs serve` is neither strict nor a deploy, so the
 escape hatch still works where it is meant to be used.
 
 To tune ranking, build with the Pagefind playground, serve the built `site/`
