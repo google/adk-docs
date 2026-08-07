@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package integrations
+package com.google.adk.kt.examples.integrations
 
 // --8<-- [start:full_code]
 import com.google.adk.kt.agents.Instruction
