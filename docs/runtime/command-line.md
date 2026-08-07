@@ -208,7 +208,7 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
     | `--memory_service_uri` | Custom memory service URI |
     | `--use_local_storage/--no_use_local_storage` | Use the local `.adk` folder when no service URI is set |
     | `--state` | Initial state for the run as a JSON string |
-    | `--timeout` | Timeout for a single turn or query (e.g., `30s`, `5m`) |
+    | `--timeout` | Timeout for a single turn or query, such as `30s` or `5m` |
     | `--in_memory` | Do not persist session data |
     | `--jsonl` | Output structured JSONL instead of human-readable text |
     | `--default_llm_model` | Default model when the agent does not set one |
