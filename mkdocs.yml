@@ -118,7 +118,8 @@ markdown_extensions:
 
 # Plugins
 plugins:
-  - search
+  # NOTE: the built-in `search` plugin (lunr.js) is intentionally not enabled.
+  # Search is served by Pagefind - see hooks/pagefind_index.py.
   - macros:
       module_name: scripts/integrations
       # Set custom delimiters for J2 templates to avoid conflicts with Markdown

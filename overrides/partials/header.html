@@ -122,22 +122,6 @@
       <span class="adk-search__trigger-label">{{ lang.t('search') }}</span>
       <kbd class="adk-search__trigger-keys"><kbd>Ctrl</kbd><kbd>K</kbd></kbd>
     </button>
-
-    <!-- Button to open search modal -->
-    {% if "material/search" in config.plugins %}
-      {% set search = config.plugins["material/search"] | attr("config") %}
-
-      <!-- Check if search is actually enabled - see https://t.ly/DT_0V -->
-      {% if search.enabled %}
-        <label class="md-header__button md-icon" for="__search">
-          {% set icon = config.theme.icon.search or "material/magnify" %}
-          {% include ".icons/" ~ icon ~ ".svg" %}
-        </label>
-
-        <!-- Search interface -->
-        {% include "partials/search.html" %}
-      {% endif %}
-    {% endif %}
   </nav>
 
   <!-- Navigation tabs (sticky) -->
