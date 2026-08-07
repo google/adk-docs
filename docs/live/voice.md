@@ -492,18 +492,13 @@ In this example, when the customer service agent speaks, users hear the "Aoede" 
 
 **`language_code`**: ISO 639 language code for speech synthesis (e.g., "en-US", "ja-JP")
 - Determines the language and regional accent for synthesized speech
-- **Model-specific behavior:**
-  - **Half-Cascade models**: Use the specified `language_code` for TTS output
-  - **Native audio models**: May ignore `language_code` and automatically determine language from conversation context. Consult model-specific documentation for support.
+- **Native audio models** may ignore `language_code` and automatically determine the language from conversation context. Consult the model-specific documentation for support.
 
-### Available Voices
+### Supported voices
 
-The available voices vary by model architecture. To verify which voices are available for your specific model:
-- Check the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide) for the complete list
-- Test voice configurations in development before deploying to production
-- If a voice is not supported, the Live API will return an error
+[Native audio models](models.md#native-audio-models) support these eight prebuilt Live API
+voices:
 
-**Half-cascade models** support these voices:
 - Puck
 - Charon
 - Kore
@@ -513,11 +508,15 @@ The available voices vary by model architecture. To verify which voices are avai
 - Orus
 - Zephyr
 
-**Native audio models** support an extended voice list that includes all half-cascade voices plus additional voices from the Text-to-Speech (TTS) service. For the complete list of voices supported by native audio models:
-- See the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide#available-voices)
-- Or check the [Text-to-Speech voice list](https://cloud.google.com/text-to-speech/docs/voices) which native audio models also support
+They also support an extended list of additional voices from the Text-to-Speech (TTS)
+service, which gives you more options for voice characteristics, accents, and languages:
 
-The extended voice list provides more options for voice characteristics, accents, and languages compared to half-cascade models.
+- See the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide#available-voices)
+- Or check the [Text-to-Speech voice list](https://cloud.google.com/text-to-speech/docs/voices), which native audio models also support
+
+To verify which voices are available for your specific model, test voice configurations in
+development before deploying to production. If a voice is not supported, the Live API
+returns an error.
 
 ### Platform Availability
 
@@ -526,8 +525,7 @@ Voice configuration is supported on both platforms, but voice availability may v
 **Gemini Live API:**
 
 - ✅ Fully supported with documented voice options
-- ✅ Half-cascade models: 8 voices (Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr)
-- ✅ Native audio models: Extended voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-guide))
+- ✅ The eight prebuilt voices plus the extended TTS voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-guide))
 
 **Gemini Live API (Agent Platform):**
 
@@ -874,15 +872,13 @@ These features are **model-specific** and have platform implications:
 
 **Gemini Live API:**
 
-- ✅ Supported on `gemini-2.5-flash-native-audio-preview-12-2025` (native audio model)
-- ❌ Not supported on `gemini-live-2.5-flash-preview` (half-cascade model)
+- ✅ Supported on `gemini-2.5-flash-native-audio-preview-12-2025`
 
 **Gemini Live API (Agent Platform):**
 
-- ❌ Not currently supported on `gemini-live-2.5-flash` (half-cascade model)
-- ⚠️ **Platform-specific difference**: Proactivity and affective dialog require native audio models, which are currently only available on Gemini Live API
+- ⚠️ **Platform-specific difference**: Proactivity and affective dialog are not currently available on Agent Platform models
 
-**Key insight**: If your application requires proactive audio or affective dialog features, you must use Gemini Live API with a native audio model. Half-cascade models on either platform do not support these features.
+**Key insight**: If your application requires proactive audio or affective dialog, use Gemini Live API with one of the [native audio models](models.md#native-audio-models) that support these features.
 
 **Testing Proactivity**:
 
