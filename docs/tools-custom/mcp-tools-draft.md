@@ -79,7 +79,7 @@ Before you begin, ensure you have the following set up:
 
 !!! note "State restoration"
 
-        While your agent preserves its session state during lifecycle events, it **does not** automatically re-establish active MCP connections upon restoration. It will re-initialize the connection as needed.
+    While your agent preserves its session state during lifecycle events, it **does not** automatically re-    establish active MCP connections upon restoration. It will re-initialize the connection as needed.
 
 ## Universal Setup Rules
 
@@ -140,14 +140,14 @@ This example sets up an ADK agent that connects to a local MCP file system serve
       - Initiate your package: Create an `__init__.py` file in the same directory as your agent.py. This step is required for ADK to recognize your agent.
       - Launch the Web Interface:
 
-     ```bash
-      cd ./adk_agent_samples 
-      adk web
-    ```
+        ```bash
+        cd ./adk_agent_samples 
+        adk web
+        ```
     
     - Interact with the Agent: select `filesystem_assistant_agent` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
-    ![Python Architecture](./assets/adk-tool-mcp-filesystem-adk-web-demo.png)
+    ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 === "TypeScript"
 
@@ -208,140 +208,174 @@ This example sets up an ADK agent that connects to a local MCP file system serve
 
 ### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
 
+Before starting, please follow the instructions for [Google Maps Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) to enable the service on your Google Cloud project and generate your Maps Platform API Key.
+Unlike the previous local process example, this pattern connects your agent to a remote, cloud-hosted MCP server using Server-Sent Events (SSE). It uses the Google Maps Grounding Lite service to demonstrate how to pass authentication headers, such as an API key, to a scalable endpoint.
+
+**Step 1**: Define your agent with `McpToolset`.
+
 === "Python"
 
-```python
-import os
-from google.adk.agents.llm_agent import Agent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
-
-root_agent = Agent(
-    model="gemini-flash-latest",
-    name="travel_planner",
-    instruction="Plan travel routes and search locations using Google Maps.",
-    tools=[
-        McpToolset(
-            connection_params=StreamableHTTPConnectionParams(
-                url="[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
-                headers={
-                    "X-Goog-Api-Key": API_KEY,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json, text/event-stream",
-                },
-                timeout=5,
-                sse_read_timeout=300
+    ```python
+    import os
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
+    
+    API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+    
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="travel_planner",
+        instruction="Plan travel routes and search locations using Google Maps.",
+        tools=[
+            McpToolset(
+                connection_params=StreamableHTTPConnectionParams(
+                    url="[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
+                    headers={
+                        "X-Goog-Api-Key": API_KEY,
+                        "Content-Type": "application/json",
+                        "Accept": "application/json, text/event-stream",
+                    },
+                    timeout=5,
+                    sse_read_timeout=300
+                )
             )
-        )
-    ],
-)
-```
+        ],
+    )
+    ```
+    **Step 2**: Set environment variable before running `adk web`, set you Google API key in your terminal
+      
+      ```
+      bash
+      export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
+      ```
+      
+     **Step 3**: Run `adk web`: Navigate to the parent directory of `mcp_agent` and launch the web Interface.
+     **Step 4**: Interact with the UI:
+       - Select `travel_planner_agent` from the drop-down.
+       - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
+       
+     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 === "TypeScript"
 
-```typescript
-
-import { LlmAgent, MCPToolset } from "@google/adk";
-
-export const rootAgent = new LlmAgent({
-    model: "gemini-flash-latest",
-    name: "travel_planner",
-    instruction: "Plan travel routes and search locations using Google Maps.",
-    tools: [
-        new MCPToolset({
-            type: "SseConnectionParams",
-            url: "[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
-            headers: {
-                "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream",
-            },
-            timeout: 5,
-            sseReadTimeout: 300
-        }),
-    ],
-});
-```
-
-
-
-
-
-### Production timeout configuration
-
-To prevent hanging connections, socket leaks, or process starvation, configure explicit timeouts in production:
-
-| Parameter | Applies To | Description |
-| :--- | :--- | :--- |
-| `timeout` | All Transports | Maximum seconds to wait for connection setup or RPC request calls. |
-| `sse_read_timeout` | `SseConnectionParams`, `StreamableHTTPConnectionParams` | Maximum seconds to wait for streaming event data from the server. |
-
+    ```typescript
+    import { LlmAgent, MCPToolset } from "@google/adk";
+    
+    export const rootAgent = new LlmAgent({
+        model: "gemini-flash-latest",
+        name: "travel_planner",
+        instruction: "Plan travel routes and search locations using Google Maps.",
+        tools: [
+            new MCPToolset({
+                type: "SseConnectionParams",
+                url: "[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
+                headers: {
+                    "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/event-stream",
+                },
+                timeout: 5,
+                sseReadTimeout: 300
+            }),
+        ],
+    });
+    ```
+    
 ---
 
-
-
----
-
-## Pattern 2: Exposing ADK Tools via a Custom MCP Server
+## Expose ADK Tools via a Custom MCP Server
 
 Wrap existing ADK tools (`FunctionTool`) inside an MCP server to make them accessible to external clients, such as Claude Desktop or custom hosts.
 
-    ```python
-    import asyncio
-    import json
-    from mcp import types as mcp_types
-    from mcp.server.lowlevel import Server, NotificationOptions
-    from mcp.server.models import InitializationOptions
-    import mcp.server.stdio
+### Prerequisites
 
-    from google.adk.tools.function_tool import FunctionTool
-    from google.adk.tools.load_web_page import load_web_page
-    from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
+Install the MCP Server library in the same environment as your ADK installation
 
-    # 1. Instantiate the ADK Tool
-    adk_tool = FunctionTool(load_web_page)
+     ```bash
+     pip install mcp
+     ```
+     
+### Build the MCP server with ADK tools
 
-    # 2. Create the MCP Server
-    app = Server("adk-web-loader-server")
+1. Create a new Python file for your MCP server, for example: `my_adk_mcp_server.py`.
+2. Implement server logic with the following code to your new file. This following script sets up an MCP server that exposes the ADK `load_web_page` tool.
 
-    @app.list_tools()
-    async def list_mcp_tools() -> list[mcp_types.Tool]:
-        """Expose converted ADK tool schema to MCP clients."""
-        return [adk_to_mcp_tool_type(adk_tool)]
+```python
+import asyncio
+import json
+import os
+from dotenv import load_dotenv
 
-    @app.call_tool()
-    async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
-        """Execute the ADK tool when called by an MCP client."""
-        if name == adk_tool.name:
-            try:
-                result = await adk_tool.run_async(args=arguments, tool_context=None)
-                return [mcp_types.TextContent(type="text", text=json.dumps(result, indent=2))]
-            except Exception as err:
-                return [mcp_types.TextContent(type="text", text=json.dumps({"error": str(err)}))]
-        raise ValueError(f"Unknown tool: {name}")
+from mcp import types as mcp_types
+from mcp.server.lowlevel import Server, NotificationOptions
+from mcp.server.models import InitializationOptions
+import mcp.server.stdio 
 
-    # 3. Run Server over Stdio
-    async def main():
-        async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-            await app.run(
-                read_stream,
-                write_stream,
-                InitializationOptions(
-                    server_name=app.name,
-                    server_version="0.1.0",
-                    capabilities=app.get_capabilities(
-                        notification_options=NotificationOptions(),
-                        experimental_capabilities={},
-                    ),
-                ),
+from google.adk.tools.function_tool import FunctionTool
+from google.adk.tools.load_web_page import load_web_page 
+from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
+
+# Load environment variables (e.g., API keys required by ADK tools)
+load_dotenv() 
+
+adk_tool_to_expose = FunctionTool(load_web_page)
+app = Server("adk-tool-exposing-mcp-server")
+
+@app.list_tools()
+async def list_mcp_tools() -> list[mcp_types.Tool]:
+    """List tools exposed by this server."""
+    mcp_tool_schema = adk_to_mcp_tool_type(adk_tool_to_expose)
+    return [mcp_tool_schema]
+
+@app.call_tool()
+async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
+    """Execute a tool call requested by an MCP client."""
+    if name == adk_tool_to_expose.name:
+        try:
+            # Note: tool_context is None because the ADK tool runs outside a full ADK Runner.
+            # Tools requiring ToolContext features (like state or auth) need custom handling here.
+            adk_tool_response = await adk_tool_to_expose.run_async(
+                args=arguments,
+                tool_context=None,
             )
 
-    if __name__ == "__main__":
-        asyncio.run(main())
-    ```
+            # Serialize the ADK tool's response into MCP's expected Content format
+            response_text = json.dumps(adk_tool_response, indent=2)
+            return [mcp_types.TextContent(type="text", text=response_text)]
+
+        except Exception as e:
+            error_text = json.dumps({"error": f"Failed to execute tool '{name}': {str(e)}"})
+            return [mcp_types.TextContent(type="text", text=error_text)]
+    else:
+        error_text = json.dumps({"error": f"Tool '{name}' not implemented by this server."})
+        return [mcp_types.TextContent(type="text", text=error_text)]
+
+async def run_mcp_stdio_server():
+    """Run the MCP server over standard input/output."""
+    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+        await app.run(
+            read_stream,
+            write_stream,
+            InitializationOptions(
+                server_name=app.name,
+                server_version="0.1.0",
+                capabilities=app.get_capabilities(
+                    notification_options=NotificationOptions(),
+                    experimental_capabilities={},
+                ),
+            ),
+        )
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(run_mcp_stdio_server())
+    except KeyboardInterrupt:
+        print("\nMCP Server (stdio) stopped by user.")
+```
+
 ---
+
 
 ## Deployment Comparison Matrix
 
@@ -371,7 +405,7 @@ uv run adk deploy cloud_run \
   --service_name=<service-name> \
   ./path/to/agent_directory
 ```
-
+### Test your
 ---
 
 ## Remote MCP Authentication and resource access
@@ -518,7 +552,7 @@ else:
     )
 ```
 
-## Experimental UI Rendering (`meta.ui.resourceUri`)
+## UI Rendering (`meta.ui.resourceUri`)
 
 Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
 
