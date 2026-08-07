@@ -22,9 +22,11 @@ class LiveRequest(BaseModel):
     activity_start: Optional[ActivityStart] = None  # Signal start of user activity
     activity_end: Optional[ActivityEnd] = None      # Signal end of user activity
     close: bool = False                         # Graceful connection termination signal
+    partial: bool = False                       # Content does not complete the current model turn
+    state_delta: Optional[dict[str, Any]] = None  # Session state changes to apply
 ```
 
-This streamlined design handles every streaming scenario you'll encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics.
+This streamlined design handles every streaming scenario you encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics. The `partial` flag marks content that does not complete the current model turn, and `state_delta` carries session state changes that are applied even when the request has no content.
 
 The `content` and `blob` fields are mutually exclusive—only one can be set per LiveRequest. While ADK does not enforce this client-side and will attempt to send both if set, the Live API backend will reject this with a validation error. ADK's convenience methods `send_content()` and `send_realtime()` automatically ensure this constraint is met by setting only one field, so **using these methods (rather than manually creating `LiveRequest` objects) is the recommended approach**.
 
@@ -77,6 +79,8 @@ The `send_content()` method sends text messages in turn-by-turn mode, where each
 content = types.Content(parts=[types.Part(text=json_message["text"])])
 live_request_queue.send_content(content)
 ```
+
+Pass `partial=True` to send content that does **not** complete the model turn, so the model keeps waiting for more input. Partial content is also not appended to the `Session` as a user event. The default, `False`, is what turn-by-turn messages need.
 
 **Using Content and Part with ADK Gemini Live API Toolkit:**
 
@@ -159,7 +163,7 @@ The `close` signal provides graceful termination semantics for streaming session
 
 **Manual closure in BIDI mode:** When using `StreamingMode.BIDI` (Bidi-streaming), your application should manually call `close()` when the session terminates or when errors occur. This practice minimizes session resource usage.
 
-**Automatic closure in SSE mode:** When using the legacy `StreamingMode.SSE` (not Bidi-streaming), ADK automatically calls `close()` on the queue when it receives a `turn_complete=True` event from the model (see [`base_llm_flow.py:1150`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/flows/llm_flows/base_llm_flow.py#L1150)).
+**Automatic closure in the CFC path:** ADK never closes a queue you created and passed to `run_live()`. The one queue it closes for you is an internal `LiveRequestQueue` it creates when `RunConfig.support_cfc` is enabled (Compositional Function Calling, which applies to `StreamingMode.SSE` only), and it closes that queue when it receives a `turn_complete=True` response from the model (see [`base_llm_flow.py:1150`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/flows/llm_flows/base_llm_flow.py#L1150)).
 
 See [Part 4: Understanding RunConfig](part4.md#streamingmode-bidi-or-sse) for detailed comparison and when to use each mode.
 
@@ -187,7 +191,7 @@ Although ADK cleans up local resources automatically, failing to call `close()` 
 
 !!! note "Learn More"
     
-    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Part 3: Error Events](part3.md#error-events).
+    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue`, handling different error types, and which exceptions `run_live()` raises, see [Part 3: Error Events](part3.md#error-events).
 
 ## Concurrency and Thread Safety
 
@@ -235,13 +239,13 @@ async def main():
     # This is the preferred pattern - ensures queue uses the correct event loop
     # that will run your streaming operations
 
-# ❌ Not recommended - Creates event loop automatically
-queue = LiveRequestQueue()  # Works but ADK auto-creates new loop
-# This works due to ADK's safety mechanism, but may cause issues with
-# loop coordination in complex applications or multi-threaded scenarios
+# ❌ Not recommended - Created outside any event loop
+queue = LiveRequestQueue()  # Constructs fine, but binds to the first loop it blocks in
+# The late binding may cause issues with loop coordination in complex
+# applications or multi-threaded scenarios
 ```
 
-**Why this matters:** `LiveRequestQueue` requires an event loop to exist when instantiated. ADK includes a safety mechanism that auto-creates a loop if none exists, but relying on this can cause unexpected behavior in multi-threaded scenarios or with custom event loop configurations.
+**Why this matters:** Constructing a `LiveRequestQueue` outside an event loop does not raise, and ADK does not create a loop for you. The underlying `asyncio.Queue` binds to the running loop the first time it has to wait for an item, which happens inside `run_live()`. Creating the queue in the same async context that runs `run_live()` keeps that binding predictable in multi-threaded scenarios or with custom event loop configurations.
 
 ## Message Ordering Guarantees
 

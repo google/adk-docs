@@ -47,4 +47,10 @@ For example, if you want to set voice config, you can leverage speech_config.
         runConfig);
     ```
 
+RunConfig accepts many more settings than `speech_config`. For the full list, see [Part 4: Understanding RunConfig](dev-guide/part4.md).
+
+!!! note "Python: audio transcription is on by default"
+
+    The `input_audio_transcription` and `output_audio_transcription` fields of `RunConfig` default to `AudioTranscriptionConfig()`, not `None`, so ADK asks the Live API to transcribe both the user's audio and the model's audio unless you explicitly set them to `None`. See [Part 5: Audio Transcription](dev-guide/part5.md#audio-transcription).
+
 
