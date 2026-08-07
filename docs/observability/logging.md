@@ -306,7 +306,6 @@ standard Go `log` package. These logs are written to `stderr` by default.
 
 By reading the logger name, you can immediately pinpoint the source of the log
 and understand its context within the agent's architecture.
-
 ADK loggers are named `google_adk.` followed by the module's fully-qualified
 name, so every ADK logger is a child of the `google_adk` logger. Configure them
 as a group with `logging.getLogger("google_adk")`.
