@@ -866,17 +866,19 @@ run_config = RunConfig(
 
 ### Platform Compatibility
 
-These features are **model-specific** and have platform implications:
+These features are **model-specific**, and the split runs by model generation rather than by
+platform:
 
-**Gemini Live API:**
+| Model | Affective dialog | Proactive audio |
+|-------|------------------|-----------------|
+| `gemini-2.5-flash-native-audio-preview-12-2025` (Gemini Live API) | ✅ | ✅ |
+| `gemini-live-2.5-flash-native-audio` (Agent Platform) | ✅ | ✅ (Preview) |
+| `gemini-3.1-flash-live-preview` (Gemini Live API) | ❌ Not supported | ❌ Not supported |
 
-- ✅ Supported on `gemini-2.5-flash-native-audio-preview-12-2025`
-
-**Gemini Live API (Agent Platform):**
-
-- ⚠️ **Platform-specific difference**: Proactivity and affective dialog are not currently available on Agent Platform models
-
-**Key insight**: If your application requires proactive audio or affective dialog, use Gemini Live API with one of the [native audio models](models.md#native-audio-models) that support these features.
+**Key insight**: both features work on the 2.5 native audio models on **either** platform. What
+you cannot do is combine them with `gemini-3.1-flash-live-preview` — that model does not support
+them yet, so setting `proactivity` or `enable_affective_dialog` while pointing at 3.1 is a
+common upgrade mistake. See [Supported models](models.md#native-audio-models).
 
 **Testing Proactivity**:
 
