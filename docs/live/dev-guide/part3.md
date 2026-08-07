@@ -137,7 +137,7 @@ These events are persisted to the ADK `Session` and available in session history
 - **Usage Metadata Events**: Always saved to track token consumption across the ADK `Session`
 - **Non-Partial Transcription Events**: Final transcriptions are saved; partial transcriptions are not persisted
 - **Function Call and Response Events**: Always saved to maintain tool execution history
-- **Other Control Events**: Most control events (e.g., `turn_complete`, `interrupted`) are saved
+- **Other Control Events**: Most control events, such as `turn_complete` and `interrupted`, are saved
 
 **Events NOT Saved to the ADK `Session`:**
 
@@ -184,7 +184,7 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 **For debugging and diagnostics:**
 - `usage_metadata`: Token counts and billing information
 - `cache_metadata`: Context cache hit/miss statistics
-- `turn_complete_reason`: Why the Live API ended the turn, when it reports one (e.g., RESPONSE_REJECTED, BLOCKLIST); `None` on a normal turn
+- `turn_complete_reason`: Why the Live API ended the turn, when it reports one, such as RESPONSE_REJECTED or BLOCKLIST. It is `None` on a normal turn
 - `finish_reason` / `error_code` / `error_message`: Inherited from `LlmResponse` and populated on the `run_async()` path only; always `None` under `run_live()`
 
 !!! note "Author Semantics"
@@ -513,7 +513,7 @@ ADK's live flow retries a dropped connection itself, but only when session resum
 
 A model-side termination is not a transport error and does not raise. It arrives on the event itself:
 
-- `event.turn_complete_reason`: a `types.TurnCompleteReason` carried on the `turn_complete=True` event when the Live API reports why generation stopped (for example `RESPONSE_REJECTED`, `PROHIBITED_INPUT_CONTENT`, `BLOCKLIST`, `GENERATED_CONTENT_SAFETY`, `MALFORMED_FUNCTION_CALL`). It is `None` when the turn ended normally.
+- `event.turn_complete_reason`: a `types.TurnCompleteReason` carried on the `turn_complete=True` event when the Live API reports why generation stopped, such as `RESPONSE_REJECTED`, `PROHIBITED_INPUT_CONTENT`, `BLOCKLIST`, `GENERATED_CONTENT_SAFETY` or `MALFORMED_FUNCTION_CALL`. It is `None` when the turn ended normally.
 - `event.interrupted`: `True` when the user barged in and the model stopped mid-response. See [Handling `interrupted` Flag](#handling-interrupted-flag).
 
 **Usage:**
@@ -595,7 +595,7 @@ Event 4: partial=None,  content=None,        turn_complete=True  # Turn done
 
     - You can safely ignore all `partial=True` events and only process `partial=False` events if you don't need streaming display
     - If you do display `partial=True` events, the `partial=False` event provides the complete merged text for validation or storage
-    - This accumulation is handled automatically by ADK's live connection layer (`GeminiLlmConnection.receive()`)—you don't need to manually concatenate partial text chunks
+    - This accumulation is handled automatically by ADK's live connection layer (`GeminiLlmConnection.receive()`)—you do not need to manually concatenate partial text chunks
 
 #### Handling `interrupted` Flag
 
@@ -969,7 +969,7 @@ You don't need to handle the execution yourself—ADK does it automatically. You
 
 ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
-**Long-Running Tools**: Tools that require human approval or take extended time to complete. Wrap the function in `LongRunningFunctionTool`, which sets the tool's `is_long_running` attribute (a plain function in `tools=[...]` cannot carry it). In resumable async flows, ADK can pause after long-running calls. In live flows, streaming continues; `long_running_tool_ids` indicate pending operations and clients can display appropriate UI.
+**Long-Running Tools**: Tools that require human approval or take extended time to complete. Wrap the function in `LongRunningFunctionTool`, which sets the tool's `is_long_running` attribute, because a plain function in `tools=[...]` cannot carry it. In resumable async flows, ADK can pause after long-running calls. In live flows, streaming continues; `long_running_tool_ids` indicate pending operations and clients can display appropriate UI.
 
 **Streaming Tools**: Tools that accept an `input_stream` parameter with type `LiveRequestQueue` can send real-time updates back to the model during execution, enabling progressive responses.
 
@@ -983,7 +983,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
     2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
     3. **Injection**: ADK automatically injects the tool's queue as the `input_stream` parameter when it invokes the tool
     4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
-    5. **Lifecycle**: The queues persist for the rest of the `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits. A queue can be cleared earlier by a `stop_streaming(function_name=...)` call: ADK special-cases that function *name*, but ships no such tool—you define and register it yourself (see [Streaming Tools](/streaming/streaming-tools/))
+    5. **Lifecycle**: The queues persist for the rest of the `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits. A queue can be cleared earlier by a `stop_streaming(function_name=...)` call: ADK special-cases that function *name*, but ships no such tool—you define and register it yourself (see [Streaming Tools](/live/streaming-tools/))
 
     **Queue distinction**:
 
@@ -1054,7 +1054,7 @@ InvocationContext serves different audiences at different levels:
 
 #### What InvocationContext Contains
 
-When you implement custom tools or callbacks, you receive the invocation state through a `ToolContext` or `CallbackContext` parameter. Here's what's available to you:
+When you implement custom tools or callbacks, you receive the invocation state through a `ToolContext` or `CallbackContext` parameter. The following fields are available to you:
 
 **Essential Fields for Tool/Callback Developers:**
 

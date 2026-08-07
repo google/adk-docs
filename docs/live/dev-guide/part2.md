@@ -26,7 +26,7 @@ class LiveRequest(BaseModel):
     state_delta: Optional[dict[str, Any]] = None  # Session state changes to apply
 ```
 
-This streamlined design handles every streaming scenario you'll encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics. The `partial` flag marks content that does not complete the current model turn, and `state_delta` carries session state changes that are applied even when the request has no content.
+This streamlined design handles every streaming scenario you encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics. The `partial` flag marks content that does not complete the current model turn, and `state_delta` carries session state changes that are applied even when the request has no content.
 
 The `content` and `blob` fields are mutually exclusive—only one can be set per LiveRequest. While ADK does not enforce this client-side and will attempt to send both if set, the Live API backend will reject this with a validation error. ADK's convenience methods `send_content()` and `send_realtime()` automatically ensure this constraint is met by setting only one field, so **using these methods (rather than manually creating `LiveRequest` objects) is the recommended approach**.
 
@@ -245,7 +245,7 @@ queue = LiveRequestQueue()  # Constructs fine, but binds to the first loop it bl
 # applications or multi-threaded scenarios
 ```
 
-**Why this matters:** Constructing a `LiveRequestQueue` outside an event loop does not raise, and ADK does not create a loop for you. The underlying `asyncio.Queue` binds to the running loop the first time it has to wait for an item, which happens inside `run_live()`. Creating the queue in the same async context that will run `run_live()` keeps that binding predictable in multi-threaded scenarios or with custom event loop configurations.
+**Why this matters:** Constructing a `LiveRequestQueue` outside an event loop does not raise, and ADK does not create a loop for you. The underlying `asyncio.Queue` binds to the running loop the first time it has to wait for an item, which happens inside `run_live()`. Creating the queue in the same async context that runs `run_live()` keeps that binding predictable in multi-threaded scenarios or with custom event loop configurations.
 
 ## Message Ordering Guarantees
 

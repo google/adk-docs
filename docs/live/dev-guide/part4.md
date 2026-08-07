@@ -273,7 +273,7 @@ Your choice between BIDI and SSE depends on your application requirements and th
 
 ### Standard Gemini Models Accessed via SSE
 
-While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also supports non-Live Gemini models through SSE streaming. These models offer different trade-offs—proven stability, but without real-time audio/video features. Here's what they support when accessed via SSE:
+While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also supports non-Live Gemini models through SSE streaming. These models offer different trade-offs—proven stability, but without real-time audio/video features. Non-Live models support the following when accessed via SSE:
 
 **Models:**
 

@@ -552,7 +552,7 @@ This pattern works correctly in all scenarios:
 - **Resuming conversations**: If the session already exists (e.g., reconnection after network interruption), the existing session is reused with full conversation history
 - **Idempotent**: Safe to call multiple times without errors
 
-**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session doesn't exist, `run_live()` raises `SessionNotFoundError: Session not found: <session_id>` (a subclass of `ValueError`). Alternatively, construct the runner with `Runner(..., auto_create_session=True)` and ADK creates the missing session for you instead of raising.
+**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session does not exist, `run_live()` raises `SessionNotFoundError: Session not found: <session_id>`, a subclass of `ValueError`. Alternatively, construct the runner with `Runner(..., auto_create_session=True)` and ADK creates the missing session for you instead of raising.
 
 #### Create RunConfig
 
