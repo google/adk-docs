@@ -70,7 +70,9 @@ immediately:
     Saves files included in user messages as Artifacts.
 *   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
     Log important information at each agent workflow callback point.
-
+*   [**Environment Simulation**](/evaluate/environment_simulation/):
+    Simulates tool responses and injects faults to test agent behavior.
+    
 ## Define and register Plugins
 
 This section explains how to define Plugin classes and register them as part of
