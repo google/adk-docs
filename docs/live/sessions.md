@@ -130,8 +130,9 @@ import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
 
-# Default models for Live API with native audio support:
+# Live API models with native audio support:
 # - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
+# - Gemini Live API: gemini-3.1-flash-live-preview
 # - Gemini Live API (Agent Platform): gemini-live-2.5-flash-native-audio
 agent = Agent(
     name="google_search_agent",

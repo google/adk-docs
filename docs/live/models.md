@@ -16,10 +16,43 @@ audio output directly, end to end, without an intermediate text conversion step.
 what produces human-like speech with natural prosody, and it is the architecture ADK
 supports for live agents.
 
-| Platform | Model | Notes |
-|----------|-------|-------|
-| Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-live) | Publicly available |
-| Gemini Live API (Agent Platform) | [gemini-live-2.5-flash-native-audio](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash-live-api) | Public preview |
+| Platform | Model | Stage | Notes |
+|----------|-------|-------|-------|
+| Gemini Live API | [gemini-3.1-flash-live-preview](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview) | Preview | Newest. Lower latency, but no proactivity or affective dialog — see the caveats below |
+| Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-native-audio-preview-12-2025) | Preview | Full feature set, including proactivity and affective dialog |
+| Gemini Live API (Agent Platform) | [gemini-live-2.5-flash-native-audio](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/2-5-flash-live-api) | **GA** | The only Live API model on Agent Platform. Also ADK's `LlmAgent.DEFAULT_LIVE_MODEL` |
+
+!!! warning "Gemini 3.x Live models are Gemini Live API only"
+
+    `gemini-3.1-flash-live-preview` runs on the Gemini Live API
+    (`generativelanguage.googleapis.com`) only. There is **no Gemini 3.x Live model on
+    Agent Platform** — if you are on Agent Platform, `gemini-live-2.5-flash-native-audio`
+    is your model.
+
+!!! warning "What `gemini-3.1-flash-live-preview` does not support"
+
+    Before switching from `gemini-2.5-flash-native-audio-preview-12-2025`, check that you
+    do not depend on any of these:
+
+    - **[Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog)** are
+      not supported. Remove `RunConfig.proactivity` and
+      `RunConfig.enable_affective_dialog` — leaving them set is the most common upgrade
+      failure
+    - **Asynchronous function calling** is not supported; function calling is synchronous
+      only, so the model will not speak again until you return the tool response
+    - **Thinking** is configured with `thinking_level` (`minimal`, `low`, `medium`, `high`),
+      not `thinking_budget`
+    - **Server events carry multiple content parts at once.** If your client assumes
+      `event.content.parts[0]` is the whole payload, iterate over `parts` instead
+    - **Turn coverage** now defaults to including all detected audio activity and video
+      frames, which can change your token costs
+
+!!! note "Agent Platform: the `global` location is not supported"
+
+    Live API models are not available at `GOOGLE_CLOUD_LOCATION=global` on Agent Platform.
+    Use a regional endpoint (for example `us-central1`, `us-east1`, or `asia-northeast1`).
+    See [Agent Platform locations](https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations)
+    for the current list.
 
 **Key characteristics:**
 
@@ -28,9 +61,9 @@ supports for live agents.
 - **Extended voice library**: Supports the eight prebuilt Live API voices plus additional voices from the Text-to-Speech (TTS) service — see [Voice configuration](voice.md#supported-voices)
 - **Automatic language detection**: Determines language from conversation context without explicit configuration
 - **Advanced conversational features**:
-  - **[Affective dialog](voice.md#proactivity-and-affective-dialog)**: Adapts response style to input expression and tone, detecting emotional cues
-  - **[Proactive audio](voice.md#proactivity-and-affective-dialog)**: Can proactively decide when to respond, offer suggestions, or ignore irrelevant input
-  - **Dynamic thinking**: Supports thought summaries and dynamic thinking budgets
+  - **[Affective dialog](voice.md#proactivity-and-affective-dialog)**: Adapts response style to input expression and tone, detecting emotional cues. Supported on `gemini-2.5-flash-native-audio-preview-12-2025` and `gemini-live-2.5-flash-native-audio`, **not** on `gemini-3.1-flash-live-preview`
+  - **[Proactive audio](voice.md#proactivity-and-affective-dialog)**: Can proactively decide when to respond, offer suggestions, or ignore irrelevant input. Same model support as affective dialog
+  - **Dynamic thinking**: Supports thought summaries and thinking controls (`thinking_budget` on 2.5, `thinking_level` on 3.1)
 - **AUDIO-only response modality**: Does not support the TEXT response modality with `RunConfig`. To get text alongside audio, use [audio transcription](voice.md#audio-transcription)
 
 ## How to handle model names
@@ -54,7 +87,7 @@ agent = Agent(
 
 **Why use environment variables:**
 
-- **Model availability changes**: Models are released, updated, and deprecated regularly (e.g., `gemini-2.0-flash-live-001` was deprecated on December 09, 2025)
+- **Model availability changes**: Models are released, updated, and deprecated regularly. `gemini-2.0-flash-live-001` was deprecated on December 09, 2025, and `gemini-3.1-flash-live-preview` arrived in March 2026 — a live agent written a year ago will not be pinned to a model that still exists
 - **Platform-specific names**: Gemini Live API and Gemini Live API on Agent Platform use different model naming conventions for the same functionality
 - **Easy switching**: Change models without modifying code by updating the `.env` file
 - **Environment-specific configuration**: Use different models for development, staging, and production
@@ -62,8 +95,12 @@ agent = Agent(
 **Configuration in `.env` file:**
 
 ```bash
-# For Gemini Live API (publicly available)
+# For Gemini Live API
 DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
+
+# ...or the newer Gemini 3.1 model, if you do not need proactivity or
+# affective dialog
+# DEMO_AGENT_MODEL=gemini-3.1-flash-live-preview
 
 # For Gemini Live API (if using Agent Platform)
 # DEMO_AGENT_MODEL=gemini-live-2.5-flash-native-audio
@@ -100,7 +137,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 **Selecting the right model:**
 
-1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise)
+1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise). This narrows the model list for you — Agent Platform has exactly one Live API model
 2. **Check current availability**: Refer to the model table above and the official documentation
 3. **Configure environment variable**: Set the model name in your `.env` file and read it from there when constructing the agent
 
@@ -108,8 +145,8 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 For the latest information on Live API model compatibility and availability:
 
-- **Gemini Live API models**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models/gemini)
-- **Gemini Live API models (Agent Platform)**: See the [Agent Platform model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+- **Gemini Live API models**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models) and the [Live API capabilities guide](https://ai.google.dev/gemini-api/docs/live-api/capabilities)
+- **Gemini Live API models (Agent Platform)**: See the [Live API overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api) and the [Agent Platform model documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)
 
 Always verify model availability and feature support in the official documentation before deploying to production.
 
