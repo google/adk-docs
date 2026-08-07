@@ -27,9 +27,9 @@ When building multi-agent systems with ADK, understanding how agents transition 
 
 `SequentialAgent` enables workflow pipelines where agents execute one after another. Each agent completes its task before the next one begins. The challenge with live streaming is determining when an agent has finished processing continuous audio or video input.
 
-!!! note "Source Reference"
+!!! note "Reference"
 
-    See SequentialAgent implementation in [`sequential_agent.py:120-159`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/agents/sequential_agent.py#L120-L159)
+    [`SequentialAgent`](../api-reference/python/google-adk.html#google.adk.agents.SequentialAgent) in the Python API reference
 
 **How it works:**
 
