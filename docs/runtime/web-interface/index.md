@@ -238,7 +238,8 @@ browser to use the web interface:
     go run agent.go web -port 9090 api -path_prefix /myapi webui -api_server_address http://localhost:9090/myapi
     ```
 
-## Usage telemetry in the ADK Web UI
+## Usage telemetry
+
 The ADK Web UI collects anonymous usage telemetry to understand feature adoption, discover usability issues, and improve your overall developer experience. Data collection is OFF by default until you explicitly choose to enable it. 
 
 You can enable or disable usage telemetry at any time by navigating to User Settings, the user icon on the top right of the screen, in the Web UI. This setting updates a single unified preference stored locally on your machine at `~/.adk/config.json`. If you prefer, you can manually deactivate data collection by editing this file directly and setting the `telemetry` attribute to `false`:
@@ -250,6 +251,7 @@ You can enable or disable usage telemetry at any time by navigating to User Sett
 ```
 
 **What data is collected**
+
 When enabled, Web UI telemetry captures standard page events and feature interaction, including:
 
 - **Standard Navigation**: Page views, session starts, and active session duration.
@@ -257,6 +259,7 @@ When enabled, Web UI telemetry captures standard page events and feature interac
 - **Feature Usage**: Using the builder mode feature, using the agent chat, toggling execution trace or event log viewers, creating evaluation sets, and clicking the agent structure graph view.
 
 **What data is not collected**
+
 The Web UI does not collect sensitive, private, or personal data, specifically:
 
 - Contents of agent prompts, system instructions, or LLM responses.
