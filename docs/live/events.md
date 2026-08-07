@@ -89,10 +89,16 @@ In live streaming mode, the `Event.author` field follows special semantics to ma
 
 **How it works**:
 
-1. Gemini Live API returns user audio transcriptions with `content.role == 'user'`
-2. ADK's `get_author_for_event()` function checks for this role marker
-3. If `content.role == 'user'`, ADK sets `Event.author` to `"user"`
+1. Gemini Live API returns user audio transcriptions as `input_transcription`, and user
+   content with `content.role == 'user'`
+2. ADK's `get_author_for_event()` function checks for **either** marker
+3. If `llm_response.input_transcription` is set **or** `content.role == 'user'`, ADK sets
+   `Event.author` to `"user"`
 4. Otherwise, ADK sets `Event.author` to the agent name (e.g., `"my_agent"`)
+
+Checking `input_transcription` is what makes this reliable: an input-transcription response
+does not always carry a `content` with `role == 'user'`, so relying on the role alone would
+misattribute some transcription events to the agent.
 
 This transformation ensures that transcribed user input is correctly attributed to the user in your application's conversation history, even though it flows through the model's response stream.
 
@@ -106,7 +112,7 @@ This transformation ensures that transcribed user input is correctly attributed 
 
 !!! note "Source Reference"
 
-    See author attribution logic in [`base_llm_flow.py:674-708`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/flows/llm_flows/base_llm_flow.py#L674-L708)
+    See author attribution logic in [`base_llm_flow.py:931-949`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/flows/llm_flows/base_llm_flow.py#L931-L949)
 
 ### Event Types and Handling
 
@@ -147,7 +153,6 @@ When `response_modalities` is not explicitly set (i.e., `None`), ADK automatical
 # Explicit text mode
 run_config = RunConfig(
     response_modalities=["TEXT"],
-    streaming_mode=StreamingMode.BIDI
 )
 ```
 
@@ -173,7 +178,6 @@ When `response_modalities` is configured to `["AUDIO"]` in your `RunConfig`, the
 # Configure RunConfig for audio responses
 run_config = RunConfig(
     response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI
 )
 
 # Audio arrives as inline_data in event.content.parts
@@ -230,11 +234,18 @@ async for event in runner.run_live(
 - **Inline Data** (`part.inline_data`): Raw audio bytes streamed in real-time; ephemeral and not saved to session
 - **File Data** (`part.file_data`): Reference to audio file stored in artifacts; can be persisted to session history
 
-Both input and output audio data are aggregated into audio files and saved in the artifact service. The file reference is included in the event as `file_data`, allowing you to retrieve the audio later.
+This only happens when you opt in. With the default `RunConfig.save_live_blob = False`, audio
+arrives as `inline_data` only and nothing is written to the artifact service — so you will
+never see a `file_data` part. Set `save_live_blob=True` and ADK aggregates both input and
+output audio into files in the artifact service and includes the reference in the event as
+`file_data`, letting you retrieve the audio later.
 
 !!! note "Session Persistence"
 
-    To save audio events with file data to session history, enable `RunConfig.save_live_blob = True`. This allows audio conversations to be reviewed or replayed from persisted sessions.
+    Raw audio blobs are never appended to the session — only the `file_data` references are.
+    So `RunConfig.save_live_blob = True` is what makes audio conversations reviewable or
+    replayable from persisted sessions. See
+    [save_live_blob](configuration.md#save_live_blob).
 
 ### Metadata Events
 
@@ -696,7 +707,7 @@ This provides a simple one-liner to convert ADK events into JSON format that can
 
 The `model_dump_json()` method serializes an `Event` object to a JSON string:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
+```python
 async def downstream_task() -> None:
     """Receives Events from run_live() and sends to WebSocket."""
     async for event in runner.run_live(
@@ -762,7 +773,7 @@ event_json = event.model_dump_json(
 event_json = event.model_dump_json(indent=2, by_alias=True)
 ```
 
-The bidi-demo uses `exclude_none=True` to minimize payload size by omitting fields with None values.
+Use `exclude_none=True` to minimize payload size by omitting fields with None values.
 
 ### Deserializing on the Client
 
@@ -770,7 +781,7 @@ This shows how to parse and handle serialized events on the client side, enablin
 
 On the client side (JavaScript/TypeScript), parse the JSON back to objects:
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L341-L690" target="_blank">app.js:339-688</a>'
+```javascript
 // Handle incoming messages
 websocket.onmessage = function (event) {
     // Parse the incoming ADK Event
@@ -843,10 +854,6 @@ websocket.onmessage = function (event) {
     }
 };
 ```
-
-!!! note "Demo Implementation"
-
-    See the complete WebSocket message handler in [`app.js:339-688`](https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L341-L690)
 
 ### Optimization for Audio Transmission
 
