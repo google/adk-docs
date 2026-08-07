@@ -292,7 +292,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-#### Use Google API toolsets (e.g., `CalendarToolset`)
+#### Use Google API toolsets
 
 These toolsets often have dedicated configuration methods.
 
@@ -629,7 +629,7 @@ The sequence diagram of auth response flow, where the ***Agent Client*** sends b
 
 This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
 
-!!! tip "Let ADK run the handshake for you"
+!!! tip "Automatic credential handling"
 
     The experimental `AuthenticatedFunctionTool` in
     `google.adk.tools.authenticated_function_tool` takes an `AuthConfig` and
@@ -658,7 +658,7 @@ Implement the following steps inside your function:
 
 **Step 1: Check for Cached & Valid Credentials:**
 
-Inside your tool function, first check if valid credentials (e.g., access/refresh tokens) are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.state.get(credential_name, None)`.
+Inside your tool function, first check if valid credentials, such as access or refresh tokens, are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.state.get(credential_name, None)`.
 
 ```py
 from google.oauth2.credentials import Credentials
@@ -695,7 +695,7 @@ else:
 
 **Step 2: Check for Auth Response from Client**
 
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response(auth_config)`.
+* If Step 1 did not yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response(auth_config)`.
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py

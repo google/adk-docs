@@ -729,8 +729,8 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   as long running. The framework calls the function once, like any other
   function tool, and does not consume values yielded from a generator.
 - **Agent instruction**: Directs the LLM to use the tool and to interpret the
-  FunctionResponses the agent client sends afterwards (progress vs. completion)
-  for user updates.
+  progress and completion FunctionResponses that the agent client sends
+  afterwards, for user updates.
 - **Initial return**: Whatever the function returns is sent as the first
   FunctionResponse, and a function that returns nothing emits none. Every later
   progress or completion update is a FunctionResponse sent by the agent client.

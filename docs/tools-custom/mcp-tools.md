@@ -948,6 +948,7 @@ async def get_agent():  # This won't work for deployment
 uv run adk deploy agent_engine \
   --project=<your-gcp-project-id> \
   --region=<your-gcp-region> \
+  --staging_bucket="gs://<your-gcs-bucket>" \
   --display_name="My MCP Agent" \
   ./path/to/your/agent_directory
 ```
