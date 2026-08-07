@@ -273,6 +273,13 @@ plugins:
         Community:
         - community/*.md
 
+# Hooks
+# Registered after every plugin above, and runs last in `on_post_build`.
+hooks:
+  # Builds the Pagefind search index from the rendered HTML after each build.
+  # Set PAGEFIND_SKIP=1 to skip it while authoring; search is then dead.
+  - hooks/pagefind_index.py
+
 # Navigation
 nav:
   - Home: index.md
