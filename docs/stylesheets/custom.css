@@ -604,3 +604,40 @@ html:root {
   --pf-border-radius: 4px;
   --pf-modal-max-width: 46rem;
 }
+
+/* Collapse the search trigger to its icon on phones.
+ *
+ * The trigger renders a fixed 159px pill: a magnifier, the word "search" and
+ * two key chips. It never shrinks. Below about 480px the header has run out of
+ * room, so the pill pushes the document wider than the viewport and the whole
+ * page scrolls sideways. Measured at a 400px viewport before this rule:
+ * documentElement.scrollWidth 466 against clientWidth 400, and 385 with the
+ * trigger displayed none, which isolates it as the only cause. Hiding the
+ * label and the chips leaves a 44x36px icon button, so the reader on a phone
+ * can still open search. Pagefind sets aria-label on the <button> itself
+ * rather than deriving it from the label span, so the icon-only form keeps its
+ * accessible name ("search").
+ *
+ * Pagefind's `compact` attribute is the obvious alternative and it is the
+ * wrong tool twice over. It only drops the word, not the Ctrl/K chips, so the
+ * button is still 109px and still overflows at 400px. And it is a
+ * markup-time choice, so tracking the viewport with it would mean a resize
+ * listener re-rendering the button. The bundle does honour a runtime toggle,
+ * contrary to the docs' claim that attributes are read once on connect, but
+ * the re-render drops the aria-controls the component set on the button,
+ * which trades a layout bug for an accessibility one.
+ *
+ * !important is load-bearing, not laziness. Pagefind's own sheet chains
+ * `:is(*, #\#)` three deep to manufacture (3,1,0) specificity, and its
+ * `all: revert` reset at (2,1,1) already sets `display` on every .pf-*
+ * element. No selector a site stylesheet can reasonably write outranks that.
+ *
+ * The 479px ceiling is the measured breakpoint: 480px and every width above it
+ * already fit, and desktop must keep the full pill.
+ */
+@media screen and (max-width: 479px) {
+  pagefind-modal-trigger .pf-trigger-text,
+  pagefind-modal-trigger .pf-trigger-shortcut {
+    display: none !important;
+  }
+}
