@@ -24,7 +24,7 @@ This guide covers two primary integration patterns:
 
 When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents:
 
-* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
+* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the `mcp` library.
 
 * **ADK Tools vs. MCP Tools:**
 
@@ -36,9 +36,9 @@ When you start building with the Model Context Protocol (MCP) and ADK, these key
 * **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
 
     * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
-    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+    * **ADK McpToolset:** Manages this connection lifecycle. Closing the toolset (`await toolset.close()`), or the `Runner` that owns it (`await runner.close()`), is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
  
-* **Session persistence**: The `MCPToolset` supports object serialization via `getstate` and `setstate` methods. This feature helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
+* **Session persistence**: The `McpToolset` supports object serialization via `__getstate__` and `__setstate__` methods. This feature helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
 
 !!! Note: While the agent preserves its session state during lifecycle events, active MCP connections are not automatically re-established upon restoration. The agent will re-initialize its connection to the MCP server as needed after the process is restored to ensure a reliable and up-to-date link.
 
@@ -47,7 +47,7 @@ When you start building with the Model Context Protocol (MCP) and ADK, these key
 Before you begin, ensure you have the following set up:
 
 * **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/index.md) in the quickstart.
-* **Install/update Python/Java:** MCP requires Python version of 3.9 or higher for Python or Java 17 or higher.
+* **Install/update Python/Java:** MCP requires Python version of 3.10 or higher for Python or Java 17 or higher.
 * **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
@@ -75,11 +75,11 @@ This section demonstrates how to integrate tools from external MCP (Model Contex
 
 The `McpToolset` class is ADK's primary mechanism for integrating tools from an MCP server. When you include an `McpToolset` instance in your agent's `tools` list, it automatically handles the interaction with the specified MCP server. Here's how it works:
 
-1.  **Connection Management:** On initialization, `McpToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioConnectionParams` for communication over standard input/output) or a remote server (using `SseConnectionParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
+1.  **Connection Management:** `McpToolset` manages the connection to the MCP server. Constructing the toolset does not connect: the session is opened lazily the first time the toolset is used, such as when the agent asks it for its tools. This can be a local server process (using `StdioConnectionParams` for communication over standard input/output) or a remote server (using `StreamableHTTPConnectionParams` for Streamable HTTP, or `SseConnectionParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
 2.  **Tool Discovery & Adaptation:** Once connected, `McpToolset` queries the MCP server for its available tools (via the `list_tools` MCP method). It then converts the schemas of these discovered MCP tools into ADK-compatible `BaseTool` instances.
 3.  **Exposure to Agent:** These adapted tools are then made available to your `LlmAgent` as if they were native ADK tools.
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `McpToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
-5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
+5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent. It accepts either a list of tool names to include, or a `predicate(tool, readonly_context)` function that returns `True` for each tool to keep.
 
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
@@ -738,6 +738,30 @@ This example demonstrates how ADK tools can be encapsulated within an MCP server
 
 Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
+### Expose a whole ADK agent as an MCP server
+
+To expose an entire ADK agent, rather than individual tools, as an MCP server,
+use `to_mcp_server`. It returns a `FastMCP` server with a single tool that runs
+the agent, and keeps one ADK session per MCP connection so successive calls form
+a single conversation. Choose the transport when you run the server.
+
+!!! example "Experimental"
+    The `to_mcp_server` function is experimental and its API or behavior may
+    change in future releases.
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.tools.mcp_tool import to_mcp_server
+
+root_agent = LlmAgent(
+    model='gemini-flash-latest',
+    name='assistant',
+)
+
+server = to_mcp_server(root_agent)
+server.run(transport='stdio')  # or transport='streamable-http'
+```
+
 ## Advanced use cases
 
 The following sections describe how to handle more advanced use cases with MCP Tools in agents.
@@ -757,7 +781,7 @@ from the MCP Server running remotely, or in another process.
 The following example is modified from the "Example 1: File System MCP Server" example above. The main differences are:
 
 1. Your tool and agent are created asynchronously
-2. You need to properly manage the exit stack, so that your agents and tools are destructed properly when the connection to MCP Server is closed.
+2. You need to close the toolset with `await toolset.close()`, or close the `Runner` with `await runner.close()` to close every toolset on its agent tree, so that your agents and tools are destructed properly when the connection to MCP Server is closed.
 
 ```python
 # agent.py (modify get_tools_async and other parts as needed)
@@ -1160,7 +1184,7 @@ spec:
 When deploying agents with MCP tools to production:
 
 **✅ Connection Lifecycle**
-- Ensure proper cleanup of MCP connections using exit_stack patterns
+- Close the `Runner` (`await runner.close()`) to clean up every `McpToolset`
 - Configure appropriate timeouts for connection establishment and requests
 - Implement retry logic for transient connection failures
 
@@ -1171,6 +1195,7 @@ When deploying agents with MCP tools to production:
 
 **✅ Security**
 - Use authentication headers for remote MCP connections
+- Prefer `header_provider` or `auth_credential` over a static `headers` dict for per-user or refreshable credentials
 - Restrict network access between ADK agents and MCP servers
 - **Filter MCP tools using `tool_filter` to limit exposed functionality**
 - Validate MCP tool inputs to prevent injection attacks

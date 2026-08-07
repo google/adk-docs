@@ -5,11 +5,14 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 ## One tool per agent limitation {#one-tool-one-agent}
 
-!!! note "ONLY for Search in ADK Python v1.15.0 and lower"
+!!! note "ADK Python: the built-in Search workaround is opt-in"
 
-    This limitation only applies to the use of Google Search and Agent Search
-    tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
-    provides a built-in workaround to remove this limitation.
+    ADK Python v1.16.0 and higher can bypass this limitation for the Google
+    Search and Agent Search tools, but not by default. You must construct the
+    tool yourself with `bypass_multi_tools_limit=True`; the shared
+    `google_search` instance exported from `google.adk.tools` leaves the flag
+    off. The bypass also only takes effect when the agent declares more than
+    one tool. See Workaround #2 below.
 
 In general, you can use more than one tool in an agent, but use of specific
 tools within an agent excludes the use of any other tools in that agent. The
@@ -23,6 +26,12 @@ a single agent object:
 * [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
   TypeScript)
 
+!!! note "Python: code execution and URL context need a versioned model name"
+
+    In ADK Python, the built-in code executor and the `url_context` tool raise a
+    `ValueError` for the `-latest` model aliases. An agent that uses either one
+    needs a versioned Gemini model name, such as `gemini-2.5-flash`.
+
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:
 
@@ -31,7 +40,7 @@ other tools, within a single agent, is ***not supported***:
     ```py
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-flash-latest",
+        model="gemini-2.5-flash",
         description="Code Agent",
         tools=[custom_function],
         code_executor=BuiltInCodeExecutor() # <-- NOT supported when used with tools
@@ -75,7 +84,7 @@ other tools, within a single agent, is ***not supported***:
     )
     ```
 
-### Workaround #1: AgentTool.create() method
+### Workaround #1: wrap the agent in an AgentTool
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
@@ -101,7 +110,7 @@ to use built-in tools with other tools by using multiple agents:
         tools=[google_search],
     )
     coding_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -207,6 +216,13 @@ to use built-in tools with other tools by using multiple agents:
     --8<-- "examples/kotlin/snippets/tools/LimitationsWorkaround.kt:workaround_1"
     ```
 
+In ADK Python, an `AgentTool` does not pass the wrapped agent's grounding
+metadata back to the calling agent. Set `propagate_grounding_metadata=True` on
+the `AgentTool` to store that metadata in session state under the
+`temp:_adk_grounding_metadata` key. ADK attaches it to the parent agent's own
+response only when the parent has a tool named `google_search_agent`, which is
+the tool that Workaround #2 below creates for you.
+
 ### Workaround #2: bypass_multi_tools_limit
 
 <div class="language-support-tag">
@@ -219,11 +235,20 @@ as shown in the
 [built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools).
 sample agent.
 
+Set the flag on a tool instance you construct yourself, for example
+`GoogleSearchTool(bypass_multi_tools_limit=True)` imported from
+`google.adk.tools.google_search_tool`. The shared `google_search` instance
+exported from `google.adk.tools` leaves the flag off. The bypass takes effect
+only when the agent declares more than one entry in its `tools` list.
+
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent, with the exception of
-    `GoogleSearchTool` and `VertexAiSearchTool` in ADK Python because of the
-    workaround mentioned above.
+    Built-in tools cannot be used within a sub-agent. In ADK Python,
+    `GoogleSearchTool` and `VertexAiSearchTool` are an exception only when the
+    workaround above actually applies: the sub-agent must construct the tool
+    with `bypass_multi_tools_limit=True` **and** declare more than one tool in
+    its own `tools` list. A sub-agent whose only tool is the built-in keeps the
+    built-in, so the exception does not cover it.
 
 For example, the following approach that uses built-in tools within sub-agents
 is **not supported**:
@@ -232,7 +257,7 @@ is **not supported**:
 
     ```py
     url_context_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='UrlContextAgent',
         instruction="""
         You're a specialist in URL Context
@@ -240,7 +265,7 @@ is **not supported**:
         tools=[url_context],
     )
     coding_agent = Agent(
-        model='gemini-flash-latest',
+        model='gemini-2.5-flash',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
