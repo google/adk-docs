@@ -39,3 +39,4 @@ jobs:
             mkdocs-material-
       - run: pip install -r requirements.txt
       - run: mkdocs build --strict
+      - run: python scripts/verify_search_index.py site

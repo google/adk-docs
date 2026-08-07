@@ -102,6 +102,10 @@ when using compatible AI coding tools in this repo.
     This command starts a local docs server, typically at
     `http://127.0.0.1:8000/`.
 
+    Set `PAGEFIND_SKIP=1` to skip building the search index on each rebuild
+    while authoring; site search will not work in that build, and because
+    skipping logs a warning, `mkdocs build --strict` fails while it is set.
+
 ## Create Your Contribution
 
 | Type | Description |
