@@ -44,7 +44,7 @@ set up and running a simple agent in less than 20 minutes.
 -   :material-console:{ .lg .middle } **Agents CLI Quickstart**
 
     ---
-    Create your first ADK agent with your coding agent in minutes.
+    Create your first ADK agent with your coding agent.
 
     [:octicons-arrow-right-24: Start with Agents CLI](agents-cli.md) <br>
 </div>

@@ -1,21 +1,25 @@
 # Agents CLI Quickstart for ADK
 
 [Agents CLI in Agent Platform](https://google.github.io/agents-cli/) is a CLI
-and skills package that supports the end-to-end lifecycle of your agents on
-Google Cloud: scaffolding, evaluation, deployment, and observability. Your
+and skills package that supports **the end-to-end lifecycle of your agents on
+Google Cloud**: scaffolding, evaluation, deployment, and observability. Your
 agents are built with the Agent Development Kit (ADK).
 
-Agents CLI is designed to be used through a coding agent: it installs ADK skills
-into Antigravity CLI, Claude Code, Codex, and others, and your coding agent uses
-them to make the right decisions at each step. You can also run every command
-yourself from a terminal. This guide takes the coding agent path, and the last
-section shows the same project built manually.
+![The ten stages of the agent development lifecycle](/assets/agents-cli-lifecycle.png)
 
-Agents CLI is optional, and the agents it creates are ordinary ADK agents. If
-you want to learn ADK itself, start with the [Python quickstart](python.md).
+**Agents CLI is designed to be used through a coding agent.** It installs ADK
+skills into Antigravity, Claude Code, Codex, and others, and your coding agent
+uses them to make the right decisions at each step. This guide takes the coding
+agent path. Every command also works standalone, so you can run them yourself
+from a terminal instead: see the
+[manual workflow tutorial](https://google.github.io/agents-cli/guide/hands-on-tutorial/).
 
-Agents CLI bundles seven skills that give your coding agent knowledge across the
-full ADK lifecycle:
+Agents CLI is optional, and the agents it creates are ordinary ADK agents. To
+learn ADK itself, start with one of the
+[language quickstarts](index.md).
+
+Agents CLI provides more than 25 commands spanning that lifecycle, and bundles
+seven skills that teach your coding agent when to reach for each one:
 
 | Skill | What your coding agent learns |
 | --- | --- |
@@ -35,7 +39,7 @@ Required:
 *   [`uv`](https://docs.astral.sh/uv/getting-started/installation/), which
     Agents CLI uses to manage environments and dependencies
 *   [Node.js](https://nodejs.org/en/download), for installing the skills
-*   A coding agent, such as [Antigravity CLI](https://antigravity.google/),
+*   A coding agent, such as [Antigravity](https://antigravity.google/),
     [Claude Code](https://docs.anthropic.com/en/docs/claude-code), or
     [Codex](https://github.com/openai/codex)
 
@@ -109,7 +113,7 @@ gcloud auth application-default login
 
 Open your coding agent and confirm it can see the skills:
 
-=== "Antigravity CLI"
+=== "Antigravity"
 
     Launch Antigravity from your IDE or terminal, then check that the Agents CLI
     skills are available in your environment.
@@ -143,8 +147,9 @@ Then tell it what you want to build:
 > bullet-point summaries"*
 
 Your coding agent activates the `google-agents-cli-workflow` and
-`google-agents-cli-scaffold` skills. It asks clarifying questions, such as which
-deployment target you want, then scaffolds the project:
+`google-agents-cli-scaffold` skills. It asks clarifying questions about the
+tools your agent calls, the inputs and outputs you expect, and the success
+criteria to evaluate against, then scaffolds the project:
 
 ```shell
 agents-cli create my-agent --prototype --yes
@@ -188,12 +193,6 @@ changes as you edit. You can access the playground at (http://localhost:8080).
 Select the agent at the upper left corner and paste in a few paragraphs of
 text. The agent replies with a short bullet-point summary.
 
-!!! warning "Caution: the playground is for development only"
-
-    The playground is ***not meant for use in production deployments***. You
-    should use it for development and debugging purposes only. To run your
-    agent in production, see [deploying your agent](/deploy/).
-
 ## Next: Evaluate and deploy your agent
 
 Now that you have Agents CLI installed and your first agent running, evaluate
@@ -201,6 +200,9 @@ and deploy it:
 
 *   *"Write evals for this agent and run them"* to
     [evaluate your agent](https://google.github.io/agents-cli/guide/evaluation/)
+    against the success criteria you set when you scoped it. Your coding agent
+    grades the results, groups the failures by cause, and tunes the agent's
+    instructions until it passes
 *   *"Deploy this to Cloud Run"* to
     [deploy your agent](/deploy/agent-runtime/agents-cli/) to Agent Runtime,
     Cloud Run, or GKE
@@ -210,21 +212,3 @@ and deploy it:
 For the full walkthrough, including evaluation, deployment, and observability,
 see
 [Tutorial: Build your first agent](https://google.github.io/agents-cli/guide/quickstart-tutorial/).
-
-??? tip "Prefer to type the commands yourself?"
-
-    Every command works standalone. To build the same project without a coding
-    agent, scaffold it, edit `app/agent.py` yourself, then start the
-    playground:
-
-    ```shell
-    agents-cli create my-agent --prototype --yes
-    cd my-agent
-    agents-cli install
-    agents-cli playground
-    ```
-
-    The generated `app/agent.py` already includes `get_weather` and
-    `get_current_time` example tools, so the playground works before you change
-    anything. See the
-    [manual workflow tutorial](https://google.github.io/agents-cli/guide/hands-on-tutorial/).
