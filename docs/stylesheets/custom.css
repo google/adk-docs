@@ -581,11 +581,25 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
  *
  * The components apply `all: initial` to their host elements, so Material's
  * styles do not cascade in. CSS custom properties are exempt from `all`, so
- * these variables are the supported way to theme them. Dark mode comes from
- * Pagefind's own palette, activated by the data-pf-theme attribute that
- * overrides/main.html mirrors from Material's data-md-color-scheme.
+ * the variables below are the supported way to theme them: --pf-font,
+ * --pf-border-radius and --pf-modal-max-width still reach the components even
+ * though nothing else does. Dark mode comes from Pagefind's own palette,
+ * activated by the data-pf-theme attribute that overrides/main.html mirrors
+ * from Material's data-md-color-scheme.
+ *
+ * The selector is `html:root` on purpose. Do not "simplify" it to `:root`.
+ * Pagefind's own bundle, pagefind/pagefind-component-ui.css, declares these
+ * same three variables on a bare `:root`, defaulting to a system font stack,
+ * 6px and 560px. That sheet always loads after this one: Material emits
+ * extra_css in its `styles` block, and the Pagefind <link> comes from the
+ * `extrahead` block in overrides/main.html, which Material emits afterwards.
+ * Same origin, same layer, no !important, so source order breaks the tie. A
+ * bare `:root` here is (0,1,0), exactly ties Pagefind's (0,1,0), loses on
+ * order, and all three values silently revert to Pagefind's defaults with no
+ * error anywhere. `html:root` is (0,1,1), which outranks (0,1,0) no matter
+ * which sheet loads last, and still matches only the single <html> element.
  */
-:root {
+html:root {
   --pf-font: Roboto, Helvetica, Arial, sans-serif;
   --pf-border-radius: 4px;
   --pf-modal-max-width: 46rem;
