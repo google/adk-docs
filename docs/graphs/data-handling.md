@@ -365,8 +365,8 @@ accepted and produced by any agent node.
     The curly-brace `{key}` placeholders that an `instruction` supports are
     substituted from *session state*, not from the node input, so a
     placeholder such as `{CityTime.time_info}` is left in the prompt verbatim.
-    To template a value into an instruction, write it to state first — with
-    `output_key` or `Event(state=...)` — and reference it as `{time_info}`.
+    To template a value into an instruction, write it to state first, with
+    `output_key` or `Event(state=...)`, and reference it as `{time_info}`.
 
 === "Go"
 

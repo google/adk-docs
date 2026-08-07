@@ -13,9 +13,9 @@ your project requirements before committing to a full implementation.
 
     In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
     deprecated: constructing one emits a `DeprecationWarning`, and the classes
-    will be removed in a future release. The Python examples below still run.
-    For new code, express these patterns with a
-    [graph-based workflow](/graphs/), which cannot yet be used as an `LlmAgent`
+    are scheduled for removal in a future release. The Python examples below
+    still run. For new code, express these patterns with a
+    [graph-based workflow](/graphs/), which cannot be used as an `LlmAgent`
     sub-agent.
 
 ## Coordinator and dispatcher
@@ -42,7 +42,7 @@ your project requirements before committing to a full implementation.
         model="gemini-flash-latest",
         instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
         description="Main help desk router.",
-        # Setting sub_agents selects AutoFlow, which adds transfer_to_agent
+        # allow_transfer=True is often implicit with sub_agents in AutoFlow
         sub_agents=[billing_agent, support_agent]
     )
     # User asks "My payment failed" -> Coordinator's LLM should call transfer_to_agent(agent_name='Billing')
@@ -802,7 +802,7 @@ your project requirements before committing to a full implementation.
     * **Interaction:** Can be implemented using a custom **Tool** that pauses execution and sends a request to an external system (e.g., a UI, ticketing system) waiting for human input. The tool then returns the human's response to the agent.
     * **Workflow:** Could use **LLM-Driven Delegation** (`transfer_to_agent`) targeting a conceptual "Human Agent" that triggers the external workflow, or use the custom tool within an `LlmAgent`.
     * **State/Callbacks:** State can hold task details for the human; callbacks can manage the interaction flow.
-    * **Note:** ADK has no "Human Agent" agent type, but in Python you do not have to build the pause yourself: yield a `RequestInput` event from a [graph workflow node](/graphs/human-input/), or set `require_confirmation=True` on a `FunctionTool` (or call `tool_context.request_confirmation()` inside the tool) for a yes/no approval.
+    * **Note:** ADK has no "Human Agent" agent type, but in Python you do not have to build the pause yourself: yield a `RequestInput` event from a [graph workflow node](/graphs/human-input/), or set `require_confirmation=True` on a `FunctionTool` for a yes/no approval. To supply a custom hint, call `tool_context.request_confirmation()` inside the tool.
 
 === "Python"
 
