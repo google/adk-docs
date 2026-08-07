@@ -343,7 +343,7 @@ Here are the primary context flavors you will encounter:
 
 ### `ToolContext`
 - **Where Used:** Passed as `tool_context` to the functions backing `FunctionTool`s and to tool execution callbacks (`before_tool_callback`, `after_tool_callback`).
-- **Purpose:** Exposes the methods essential for tool execution, like handling authentication, searching memory, and listing artifacts. In Python these members are available on any `Context` object (`CallbackContext` and `ToolContext` are aliases of it), and the ones marked tool-only below raise `ValueError` unless a tool call is in progress. `ReadonlyContext` and `InvocationContext` do not have them.
+- **Purpose:** Exposes the methods essential for tool execution, like handling authentication, searching memory, and listing artifacts. In Python these members are available on any `Context` object, because `CallbackContext` and `ToolContext` are aliases of it. The members marked tool-only below raise `ValueError` unless a tool call is in progress. `ReadonlyContext` and `InvocationContext` do not have them.
 - **Key Capabilities:**
     - **Authentication Methods:** `request_credential(auth_config)` to trigger an auth flow (tool-only: requires `function_call_id`), and `get_auth_response(auth_config)` to retrieve credentials provided by the user/system.
     - **Artifact Listing:** `list_artifacts()` to discover available artifacts in the session (`async` in Python).
@@ -1550,9 +1550,9 @@ Setting `ctx.end_invocation = True` gracefully stops the agent that sets it, and
 
 ## Key Takeaways & Best Practices
 
-*   **Use the Right Context:** Use the context object you are handed. In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by `Context` (in Python both names are aliases of `Context` itself), so prefer `Context` in new code; `ReadonlyContext` is the restricted view you get where mutation is disallowed. Use the full `InvocationContext` (`ctx`) directly in `_run_async_impl` / `_run_live_impl` only when necessary.
+*   **Use the Right Context:** Use the context object you are handed. In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by `Context`, so prefer `Context` in new code; `ReadonlyContext` is the restricted view you get where mutation is disallowed. Use the full `InvocationContext` (`ctx`) directly in `_run_async_impl` / `_run_live_impl` only when necessary.
 *   **State for Data Flow:** `context.state` is the primary way to share data, remember preferences, and manage conversational memory *within* an invocation. Use prefixes (`app:`, `user:`, `temp:`) thoughtfully when using persistent storage.
-*   **Artifacts for Files:** Use `context.save_artifact` and `context.load_artifact` (both `async` in Python, so `await` them) for managing file references (like paths or URIs) or larger data blobs. Store references, load content on demand.
+*   **Artifacts for Files:** Use `context.save_artifact` and `context.load_artifact`, which are `async` in Python and must be awaited, for managing file references (like paths or URIs) or larger data blobs. Store references, load content on demand.
 *   **Tracked Changes:** Modifications to state or artifacts made via context methods are automatically linked to the current step's `EventActions` and handled by the `SessionService`.
 *   **Start Simple:** Focus on `state` and basic artifact usage first. Explore authentication, memory, and advanced `InvocationContext` fields (like those for live streaming) as your needs become more complex.
 
