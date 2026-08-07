@@ -93,6 +93,65 @@
       });
     })();
   </script>
+
+  <!-- Workaround for an upstream bug in the Pagefind Component UI: the
+       reset-on-close attribute on <pagefind-modal> does not clear the input.
+       The modal implements the reset as instance.triggerSearch("") on the
+       dialog's close event, which empties the result list and the summary but
+       never writes back to the <input> element's own value. So the second time
+       a reader opens search they find their old query sitting above no
+       results, and the next keystroke appends to it: "artifacts" then "x"
+       gives "artifactsx". Delete this block once Pagefind clears the input
+       itself; nothing else here depends on it.
+
+       reset-on-close stays on the element. It is the supported API and it does
+       the half of the reset this listener should not: it drops the search
+       state synchronously on close, so no stale results can flash if the modal
+       is reopened quickly. This listener supplies only the half it misses, the
+       input's value. Clearing the value also feeds an empty query back through
+       the component's own debounced input handler, which is redundant with
+       triggerSearch("") but is what keeps the Clear button in step.
+
+       The value goes through the native HTMLInputElement value setter and is
+       announced with a bubbling, composed `input` event, so the component
+       observes the change instead of drifting out of sync with the DOM.
+
+       The listener is registered in the capture phase on <pagefind-modal>
+       rather than on the <dialog> inside it. `close` does not bubble, but the
+       capture phase still walks the ancestor chain, so this keeps working if a
+       future version re-renders the modal and replaces its dialog element. -->
+  <script>
+    (function () {
+      document.addEventListener("DOMContentLoaded", function () {
+        var modal = document.querySelector("pagefind-modal");
+        // Bind exactly once. The header nav survives Material's instant
+        // navigation, so the modal outlives page transitions and a second
+        // binding would be a duplicate. Material keys head elements by
+        // outerHTML and this script is byte-identical on every page, so it is
+        // never re-evaluated today; the flag keeps that from becoming a
+        // silent assumption.
+        if (!modal || modal.dataset.adkPfClearOnClose) return;
+        modal.dataset.adkPfClearOnClose = "1";
+        modal.addEventListener(
+          "close",
+          function () {
+            var input =
+              modal.querySelector("input") ||
+              (modal.shadowRoot && modal.shadowRoot.querySelector("input"));
+            if (!input || !input.value) return;
+            Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value",
+            ).set.call(input, "");
+            input.dispatchEvent(
+              new Event("input", { bubbles: true, composed: true }),
+            );
+          },
+          true,
+        );
+      });
+    })();
+  </script>
 {% endblock %}
 
 <!-- top of page announcement banner here: -->
