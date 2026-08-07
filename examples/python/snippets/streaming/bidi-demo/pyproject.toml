@@ -1,0 +1,92 @@
+[project]
+name = "bidi-demo"
+version = "0.1.0"
+description = "ADK Gemini Live API Toolkit demo application"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Google LLC" },
+    { name = "Kaz Sato" },
+]
+
+dependencies = [
+    "google-adk>=2.5.0",
+    "fastapi>=0.115.0",
+    "python-dotenv>=1.0.0",
+    "uvicorn[standard]>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+    "websockets>=13.0",
+]
+agent-engine = [
+    "google-cloud-aiplatform[agent_engines,adk]>=1.112",
+    "numpy",
+    "websockets",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Formatting mirrors google/adk-python so the copy published to google/adk-docs
+# under examples/python/snippets/streaming/bidi-demo/ is byte-for-byte identical
+# to this source tree.
+[tool.pyink]
+line-length = 80
+unstable = true
+pyink-indentation = 2
+pyink-use-majority-quotes = true
+pyink-annotation-pragmas = [
+    "noqa",
+    "pylint:",
+    "type: ignore",
+    "pytype:",
+    "mypy:",
+    "pyright:",
+    "pyre-",
+]
+
+[tool.isort]
+profile = "google"
+line_length = 200
+single_line_exclusions = []
+known_third_party = ["google.adk"]
+
+[tool.ruff]
+line-length = 80
+target-version = "py310"
+
+[tool.ruff.lint]
+# Import ordering is owned by isort (profile = "google"), not ruff.
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "C",   # flake8-comprehension
+    "PL",  # Pylint rules
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "RUF", # ruff specific rules
+]
+ignore = [
+    "E501",    # line length (long prompts, URLs)
+    "PLR0913", # too many arguments
+    "C901",    # too complex
+    "PLR0915", # too many statements
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"agent_engine/*.py" = ["PLC0415"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"app/static" = "share/bidi-demo/static"
+"app/.env" = "share/bidi-demo/.env.template"

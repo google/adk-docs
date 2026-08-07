@@ -1,8 +1,145 @@
-# Streaming Tools
+# Tools
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-preview">Experimental</span>
 </div>
+
+Tools work in a live agent much as they do anywhere else in ADK — you pass functions to
+an agent and the model calls them. Two things are different. ADK executes tool calls for
+you inside the `run_live()` loop, so you never write the function-call plumbing the raw
+Live API would require. And live agents can use *streaming tools*: functions that stay
+running and push intermediate results back to the agent, so the agent can react to a
+stock price moving or a person appearing in a video frame without the user asking again.
+
+## Automatic Tool Execution in run_live()
+
+!!! note "Source Reference"
+
+    See automatic tool execution implementation in [`functions.py`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/flows/llm_flows/functions.py)
+
+One of the most powerful features of ADK's `run_live()` is **automatic tool execution**. Unlike the raw Gemini Live API, which requires you to manually handle tool calls and responses, ADK abstracts this complexity entirely.
+
+### The Challenge with Raw Live API
+
+When using the Gemini Live API directly (without ADK), tool use requires manual orchestration:
+
+1. **Receive** function calls from the model
+2. **Execute** the tools yourself
+3. **Format** function responses correctly
+4. **Send** responses back to the model
+
+This creates significant implementation overhead, especially in streaming contexts where you need to handle multiple concurrent tool calls, manage errors, and coordinate with ongoing audio/text streams.
+
+### How ADK Simplifies Tool Use
+
+With ADK, tool execution becomes declarative. Simply define tools on your Agent:
+
+```python title='Demo implementation: <a href="https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/google_search_agent/agent.py#L17-L39" target="_blank">agent.py:17-39</a>'
+import os
+from google.adk.agents import Agent
+from google.adk.tools import google_search
+
+agent = Agent(
+    name="google_search_agent",
+    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
+    tools=[google_search],
+    instruction="You are a helpful assistant that can search the web."
+)
+```
+
+When you call `runner.run_live()`, ADK automatically:
+
+- **Detects** when the model returns function calls in streaming responses
+- **Executes** tools in parallel for maximum performance
+- **Handles** before/after tool callbacks for custom logic
+- **Formats** function responses according to Live API requirements
+- **Sends** responses back to the model seamlessly
+- **Yields** both function call and response events to your application
+
+### Tool Execution Events
+
+When tools execute, you'll receive events through the `run_live()` async generator:
+
+**Usage:**
+
+```python
+async for event in runner.run_live(...):
+    # Function call event - model requesting tool execution
+    if event.get_function_calls():
+        print(f"Model calling: {event.get_function_calls()[0].name}")
+
+    # Function response event - tool execution result
+    if event.get_function_responses():
+        print(f"Tool result: {event.get_function_responses()[0].response}")
+```
+
+You don't need to handle the execution yourself—ADK does it automatically. You just observe the events as they flow through the conversation.
+
+!!! note "Learn More"
+
+    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:207-222`](https://github.com/google/adk-docs/blob/main/examples/python/snippets/streaming/bidi-demo/app/main.py#L207-L222)
+
+### Long-Running and Streaming Tools
+
+ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
+
+**Long-Running Tools**: Tools that require human approval or take extended time to complete. Mark them with `is_long_running=True`. In resumable async flows, ADK can pause after long-running calls. In live flows, streaming continues; `long_running_tool_ids` indicate pending operations and clients can display appropriate UI.
+
+**Streaming Tools**: Tools that accept an `input_stream` parameter with type `LiveRequestQueue` can send real-time updates back to the model during execution, enabling progressive responses.
+
+!!! note "How Streaming Tools Work"
+
+    Streaming tools are registered **lazily** — ADK does not scan your agent's tools up
+    front. Registration happens the first time the model actually calls the tool.
+
+    **Queue creation and lifecycle**:
+
+    1. **Registration**: When the model calls an async-generator tool, ADK starts a task for
+       it and records an `ActiveStreamingTool` in
+       `invocation_context.active_streaming_tools[tool_name]`
+    2. **Queue creation**: If — and only if — the tool's signature has an `input_stream`
+       parameter annotated as `LiveRequestQueue`, ADK creates a dedicated `LiveRequestQueue`
+       and assigns it to `active_streaming_tools[tool_name].stream`. This is also what makes
+       ADK start duplicating the user's realtime input into that queue
+    3. **Injection**: `FunctionTool` passes that queue in as the `input_stream` argument when
+       it invokes the tool
+    4. **Usage**: The tool can `yield` from inside its loop to send real-time updates back to
+       the model during execution
+    5. **Teardown**: A `stop_streaming` call cancels the task and resets both `.task` and
+       `.stream` to `None`, so a later re-invocation gets a fresh queue. Otherwise the queues
+       live for the whole `run_live()` invocation (one `InvocationContext` = one `run_live()`
+       call)
+
+    **Queue distinction**:
+
+    - **Main queue** (`live_request_queue` parameter): Created by your application, used for client-to-model communication
+    - **Tool queues** (`active_streaming_tools[tool_name].stream`): Created automatically by ADK, used for tool-to-model communication during execution
+
+    Both types of queues are `LiveRequestQueue` instances, but they serve different purposes in the streaming architecture.
+
+    This enables tools to provide incremental updates, progress notifications, or partial results during long-running operations.
+
+    **Code reference**: [`functions.py:1109-1138`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/flows/llm_flows/functions.py#L1109-L1138) (lazy registration and queue creation), [`functions.py:1019-1073`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/flows/llm_flows/functions.py#L1019-L1073) (`stop_streaming`), and [`function_tool.py:378-387`](https://github.com/google/adk-python/blob/c5672030b7b9c76967a18665120c8ac36e5c7fef/src/google/adk/tools/function_tool.py#L378-L387) (parameter injection).
+
+    See the [Tools Guide](/integrations/) for implementation examples.
+
+### Key Takeaway
+
+The difference between raw Live API tool use and ADK is stark:
+
+| Aspect | Raw Live API | ADK `run_live()` |
+|--------|--------------|------------------|
+| **Tool Declaration** | Manual schema definition | Automatic from Python functions |
+| **Tool Execution** | Manual handling in app code | Automatic parallel execution |
+| **Response Formatting** | Manual JSON construction | Automatic |
+| **Error Handling** | Manual try/catch and formatting | Automatic capture and reporting |
+| **Streaming Integration** | Manual coordination | Automatic event yielding |
+| **Developer Experience** | Complex, error-prone | Declarative, simple |
+
+This automatic handling is one of the core value propositions of ADK—it transforms the complexity of Live API tool use into a simple, declarative developer experience.
+
+
+## Streaming tools
 
 Streaming tools allows tools(functions) to stream intermediate results back to agents and agents can respond to those intermediate results. 
 For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
@@ -10,6 +147,8 @@ For example, we can use streaming tools to monitor the changes of the stock pric
 !!! info
 
     This is only supported in ADK Gemini Live APIs.
+
+### Define a streaming tool
 
 To define a streaming tool, you must adhere to the following:
 
@@ -22,6 +161,8 @@ We support two types of streaming tools:
 - Video streaming tools. This only works in video streaming and the video stream(the streams that you feed to adk web or adk runner) will be passed into this function.
 
 Now let's define an agent that can monitor stock price changes and monitor the video stream changes. 
+
+### Example: monitoring a stock price and a video stream
 
 === "Python"
 
@@ -250,6 +391,58 @@ Now let's define an agent that can monitor stock price changes and monitor the v
     }
     ```
 
+### Try it
+
 Here are some sample queries to test:
 - Help me monitor the stock price for $XYZ stock.
 - Help me monitor how many people are there in the video stream.
+
+## Tool execution context
+
+When you implement a custom tool or callback, ADK passes you an `InvocationContext` —
+the state carrier for the current invocation. One `InvocationContext` corresponds to one
+`run_live()` loop: it is created when you call `run_live()` and lives for the whole
+streaming session, across every agent and every turn in it.
+
+`InvocationContext` is not specific to live agents. For what an invocation is, how it
+relates to agent calls and steps, and the full field reference, see
+[Agent context](../context/index.md). The fields that matter most when writing a tool for
+a live agent are:
+
+| Field | What it gives you |
+| :---- | :---- |
+| `context.invocation_id` | Identifier for the current invocation, unique per `run_live()` call |
+| `context.session.events` | Every event in the session history, across all invocations |
+| `context.session.state` | Persistent key-value store that outlives the streaming session |
+| `context.session.user_id` | User identity |
+| `context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, cost limits |
+| `context.end_invocation` | Set to `True` to terminate the conversation immediately |
+
+```python
+def my_tool(context: InvocationContext, query: str):
+    # Identify the user and check whether this is their first message
+    user_id = context.session.user_id
+    if len(context.session.events) == 0:
+        return "Welcome! This is your first message."
+
+    # Read recent history and persistent state
+    recent_events = context.session.events[-5:]
+    user_preferences = context.session.state.get('user_preferences', {})
+
+    # Writes to session state are persisted beyond this streaming session
+    context.session.state['last_query_time'] = datetime.now().isoformat()
+
+    result = process_query(query, context=recent_events, preferences=user_preferences)
+
+    # Stop the conversation on an unrecoverable error
+    if result.get('error'):
+        context.end_invocation = True
+
+    return result
+```
+
+!!! note "Storing large artifacts"
+
+    To persist audio, images, or other binary output produced by a tool, use
+    `context.artifact_service.save_artifact()` rather than session state. See
+    [Artifacts](../artifacts/index.md).
