@@ -51,7 +51,7 @@ fun main() =
                         1. Identify the country name from the user's query.
                         2. Use the `getCapitalCity` tool to find the capital.
                         3. Respond clearly to the user, stating the capital city.
-                        Example Query: "What's the capital of {country}?"
+                        Example Query: "What's the capital of {{country}}?"
                         Example Response: "The capital of France is Paris."
                         """.trimIndent(),
                     ),
