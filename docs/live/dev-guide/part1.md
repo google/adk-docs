@@ -844,7 +844,7 @@ This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is
 
 This example shows the core pattern. For production applications, consider:
 
-- **Error handling (ADK)**: Wrap the `run_live()` loop in `try`/`except`—ADK raises live failures rather than yielding them as events. For details, see [Part 3: Error Events](part3.md#error-events).
+- **Error handling (ADK)**: Check each event for an `error_code`, and also wrap the `run_live()` loop in `try`/`except` so that connection failures raised by the transport are caught. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
     - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
     - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
 - **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:

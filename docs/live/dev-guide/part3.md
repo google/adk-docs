@@ -94,7 +94,7 @@ The `run_live()` method yields a stream of `Event` objects in real-time as the a
 | **[Metadata Events](#metadata-events)** | Token usage information (`prompt_token_count`, `candidates_token_count`, `total_token_count`) for cost monitoring and quota tracking |
 | **[Transcription Events](#transcription-events)** | Speech-to-text for user input (`input_transcription`) and model output (`output_transcription`) when transcription is enabled in `RunConfig` |
 | **[Tool Call Events](#tool-call-events)** | Function call requests from the model; ADK handles execution automatically |
-| **[Error Events](#error-events)** | Not an event type: model and connection failures are raised out of the `async for` loop rather than yielded |
+| **[Error Events](#error-events)** | Model errors and connection issues with `error_code` and `error_message` fields |
 
 !!! note "Source Reference"
 
@@ -185,7 +185,8 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 - `usage_metadata`: Token counts and billing information
 - `cache_metadata`: Context cache hit/miss statistics
 - `turn_complete_reason`: Why the Live API ended the turn, when it reports one, such as RESPONSE_REJECTED or BLOCKLIST. It is `None` on a normal turn
-- `finish_reason` / `error_code` / `error_message`: Inherited from `LlmResponse` and populated on the `run_async()` path only; always `None` under `run_live()`
+- `finish_reason`: Why the model stopped generating, such as STOP, MAX_TOKENS or SAFETY
+- `error_code` / `error_message`: Failure diagnostics. `Event` inherits both from `LlmResponse`, and ADK populates them on the `run_live()` path as well as on `run_async()`
 
 !!! note "Author Semantics"
 
@@ -458,11 +459,11 @@ ADK processes tool calls automatically—you typically don't need to handle thes
 
 ### Error Events
 
-Failures in a live session are raised, not yielded. `run_live()` does not emit an error event—when the live connection fails, the exception propagates out of the `async for` loop. Error handling therefore belongs in a `try`/`except` around the loop, not in an `if` inside it.
+Production applications need robust error handling to gracefully handle model errors and connection issues. ADK surfaces errors through the `error_code` and `error_message` fields:
 
-!!! warning "`event.error_code` is not set by `run_live()`"
+!!! note "A live session reports failures in two different ways"
 
-    `Event` inherits `error_code` and `error_message` from `LlmResponse`, so both attributes exist on every live event—but nothing on the `run_live()` path assigns them. `GeminiLlmConnection.receive()` never sets them, and `_postprocess_live()` only reads them. They are populated on the `run_async()` path only, where a blocking `finish_reason` or `prompt_feedback.block_reason` is mapped onto them. An `if event.error_code:` check inside a `run_live()` loop never fires.
+    `Event` subclasses `LlmResponse`, so `error_code` and `error_message` are real fields on every event that `run_live()` yields. When a model response carries an error code, ADK's live post-processing deliberately does not skip that response: the event is finalized and yielded, so an `if event.error_code:` check inside the loop is where you handle a model-side failure. Transport failures behave differently. If the live connection drops and ADK cannot resume it, the exception propagates out of the `async for` loop instead. Production code handles both.
 
 **Usage:**
 
@@ -476,6 +477,28 @@ logger = logging.getLogger(__name__)
 
 try:
     async for event in runner.run_live(...):
+        # Handle errors from the model or connection
+        if event.error_code:
+            logger.error(f"Model error: {event.error_code} - {event.error_message}")
+
+            # Send error notification to client
+            await websocket.send_json({
+                "type": "error",
+                "code": event.error_code,
+                "message": event.error_message
+            })
+
+            # Decide whether to continue or break based on error severity
+            if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
+                # Content policy violations - usually cannot retry
+                break  # Terminal error - exit loop
+            elif event.error_code == "MAX_TOKENS":
+                # Token limit reached - may need to adjust configuration
+                break
+            # For other errors, you might continue or implement retry logic
+            continue  # Transient error - keep processing
+
+        # Normal event processing only if no error
         if event.content and event.content.parts:
             # ... handle content
             pass
@@ -492,6 +515,140 @@ finally:
 ```
 
 Whether the loop finishes naturally, breaks, or raises, `finally` ensures the connection closes properly.
+
+!!! note
+
+    The above example shows the basic structure for checking `error_code` and `error_message`. For production-ready error handling with user notifications, retry logic, and context logging, see the real-world scenarios below.
+
+**When to use `break` vs `continue`:**
+
+The key decision is: *Can the model's response continue meaningfully?*
+
+**Scenario 1: Content Policy Violation (Use `break`)**
+
+You're building a customer support chatbot. A user asks an inappropriate question that triggers a SAFETY filter:
+
+**Example:**
+
+```python
+if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
+    # Model has stopped generating - continuation is impossible
+    await websocket.send_json({
+        "type": "error",
+        "message": "I can't help with that request. Please ask something else."
+    })
+    break  # Exit loop - model won't send more events for this turn
+```
+
+**Why `break`?** The model has terminated its response. No more events will come for this turn. Continuing would just waste resources waiting for events that won't arrive.
+
+---
+
+**Scenario 2: Network Hiccup During Streaming (Use `continue`)**
+
+You're building a voice transcription service. Midway through transcribing, there's a brief network glitch:
+
+**Example:**
+
+```python
+if event.error_code == "UNAVAILABLE":
+    # Temporary network issue
+    logger.warning(f"Network hiccup: {event.error_message}")
+    # Don't notify user for brief transient issues that may self-resolve
+    continue  # Keep listening - model may recover and continue
+```
+
+**Why `continue`?** This is a transient error. The connection might recover, and the model may continue streaming the transcription. Breaking would prematurely end a potentially recoverable stream.
+
+!!! note "User Notifications"
+
+    For brief transient errors (lasting <1 second), don't notify the user—they won't notice the hiccup. But if the error persists or impacts the user experience (e.g., streaming pauses for >3 seconds), notify them gracefully: "Experiencing connection issues, retrying..."
+
+---
+
+**Scenario 3: Token Limit Reached (Use `break`)**
+
+You're generating a long-form article and hit the maximum token limit:
+
+**Example:**
+
+```python
+if event.error_code == "MAX_TOKENS":
+    # Model has reached output limit
+    await websocket.send_json({
+        "type": "complete",
+        "message": "Response reached maximum length",
+        "truncated": True
+    })
+    break  # Model has finished - no more tokens will be generated
+```
+
+**Why `break`?** The model has reached its output limit and stopped. Continuing won't yield more tokens.
+
+---
+
+**Scenario 4: Rate Limit with Retry Logic (Use `continue` with backoff)**
+
+You're running a high-traffic application that occasionally hits rate limits:
+
+**Example:**
+
+```python
+retry_count = 0
+max_retries = 3
+
+async for event in runner.run_live(...):
+    if event.error_code == "RESOURCE_EXHAUSTED":
+        retry_count += 1
+        if retry_count > max_retries:
+            logger.error("Max retries exceeded")
+            break  # Give up after multiple failures
+
+        # Wait and retry
+        await asyncio.sleep(2 ** retry_count)  # Exponential backoff
+        continue  # Keep listening - rate limit may clear
+
+    # Reset counter on successful event
+    retry_count = 0
+```
+
+**Why `continue` (initially)?** Rate limits are often temporary. With exponential backoff, the stream may recover. But after multiple failures, `break` to avoid infinite waiting.
+
+---
+
+**Decision Framework:**
+
+| Error Type | Action | Reason |
+|------------|--------|--------|
+| `SAFETY`, `PROHIBITED_CONTENT` | `break` | Model terminated response |
+| `MAX_TOKENS` | `break` | Model finished generating |
+| `UNAVAILABLE`, `DEADLINE_EXCEEDED` | `continue` | Transient network/timeout issue |
+| `RESOURCE_EXHAUSTED` (rate limit) | `continue` with retry logic | May recover after brief wait |
+| Unknown errors | `continue` (with logging) | Err on side of caution |
+
+**Error Code Reference:**
+
+ADK error codes come from the underlying Gemini API. Here are the most common error codes you'll encounter:
+
+| Error Code | Category | Description | Recommended Action |
+|------------|----------|-------------|-------------------|
+| `SAFETY` | Content Policy | Content violates safety policies | `break` - Inform user, log incident |
+| `PROHIBITED_CONTENT` | Content Policy | Content contains prohibited material | `break` - Show policy violation message |
+| `BLOCKLIST` | Content Policy | Content matches blocklist | `break` - Alert user, don't retry |
+| `MAX_TOKENS` | Limits | Output reached maximum token limit | `break` - Truncate gracefully, summarize |
+| `RESOURCE_EXHAUSTED` | Rate Limiting | Quota or rate limit exceeded | `continue` with backoff - Retry after delay |
+| `UNAVAILABLE` | Transient | Service temporarily unavailable | `continue` - Retry, may self-resolve |
+| `DEADLINE_EXCEEDED` | Transient | Request timeout exceeded | `continue` - Consider retry with backoff |
+| `CANCELLED` | Client | Client cancelled the request | `break` - Clean up resources |
+| `UNKNOWN` | System | Unspecified error occurred | `continue` with logging - Log for analysis |
+
+For complete error code listings and descriptions, refer to the official documentation:
+
+!!! note "Official Documentation"
+
+    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
+    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
+    - **ADK Implementation**: [`llm_response.py:145-200`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/models/llm_response.py#L145-L200)
 
 **What ADK retries before the exception reaches you:**
 
@@ -530,12 +687,16 @@ async for event in runner.run_live(...):
 
 **Best practices for error handling:**
 
-- **Wrap the loop, not the events**: put the `try`/`except` around `async for`, and always close the queue in `finally`
+- **Always check for errors first**: Process `error_code` before handling content to avoid processing invalid events
+- **Wrap the loop as well**: put a `try`/`except` around `async for` so that transport failures, which raise instead of yielding, are caught too, and always close the queue in `finally`
 - **Log errors with context**: Include session_id and user_id in error logs for debugging
+- **Categorize errors**: Distinguish between retryable errors (transient failures) and terminal errors (content policy violations)
 - **Distinguish transport failures from turn terminations**: an exception ends the whole `run_live()` call, while `turn_complete_reason` only ends the current turn
-- **Notify users gracefully**: Show user-friendly error messages instead of raw exception text
+- **Notify users gracefully**: Show user-friendly error messages instead of raw error codes
+- **Implement retry logic**: For transient errors, consider automatic retry with exponential backoff
 - **Enable session resumption**: it is what lets ADK reconnect instead of raising on a dropped connection
-- **Monitor error rates**: Track exception types and frequencies to identify systemic issues
+- **Monitor error rates**: Track error types and frequencies to identify systemic issues
+- **Handle content policy errors**: For `SAFETY`, `PROHIBITED_CONTENT`, and `BLOCKLIST` errors, inform users that their content violates policies
 
 ## Handling Text Events
 

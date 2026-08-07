@@ -191,7 +191,7 @@ Although ADK cleans up local resources automatically, failing to call `close()` 
 
 !!! note "Learn More"
     
-    For comprehensive error handling patterns during streaming, including which exceptions `run_live()` raises and what ADK retries first, see [Part 3: Error Events](part3.md#error-events).
+    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue`, handling different error types, and which exceptions `run_live()` raises, see [Part 3: Error Events](part3.md#error-events).
 
 ## Concurrency and Thread Safety
 
