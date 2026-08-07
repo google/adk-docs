@@ -15,15 +15,15 @@ workflow. This page covers the patterns that hold up and the ones that break.
 
 ## Best Practices for Multi-Agent Workflows
 
-ADK's bidirectional streaming supports three agent architectures: **single agent** (one agent handles the entire conversation), **multi-agent with sub-agents** (a coordinator agent dynamically routes to specialist agents using `transfer_to_agent`), and **sequential workflow agents** (agents execute in a fixed pipeline using `task_completed`). This section focuses on best practices for sequential workflows, where understanding agent transitions and state sharing is crucial for smooth BIDI communication.
+ADK's bidirectional streaming supports three agent architectures: **single agent** (one agent handles the entire conversation), **multi-agent with sub-agents** (a coordinator agent dynamically routes to specialist agents using `transfer_to_agent`), and **sequential workflow agents** (agents execute in a fixed pipeline using `task_completed`). This section focuses on best practices for sequential workflows, where understanding agent transitions and state sharing is crucial for smooth bidirectional communication.
 
 !!! note "Learn More"
 
     For comprehensive coverage of multi-agent patterns, see [Workflow Agents as Orchestrators](/agents/multi-agents/#workflow-agents-as-orchestrators) in the ADK documentation.
 
-When building multi-agent systems with ADK, understanding how agents transition and share state during live streaming is crucial for smooth BIDI communication.
+When building multi-agent systems with ADK, understanding how agents transition and share state during live streaming is crucial for smooth bidirectional communication.
 
-### SequentialAgent with BIDI Streaming
+### SequentialAgent with Bidi-streaming
 
 `SequentialAgent` enables workflow pipelines where agents execute one after another. Each agent completes its task before the next one begins. The challenge with live streaming is determining when an agent has finished processing continuous audio or video input.
 
@@ -55,7 +55,7 @@ The key insight is that **agent transitions happen transparently** within the sa
 
 ```python
 async def handle_sequential_workflow():
-    """Recommended pattern for SequentialAgent with BIDI streaming."""
+    """Recommended pattern for SequentialAgent with bidi-streaming."""
 
     # 1. Single queue shared across all agents in the sequence
     queue = LiveRequestQueue()

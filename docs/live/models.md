@@ -102,7 +102,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise)
 2. **Check current availability**: Refer to the model table above and the official documentation
-3. **Configure environment variable**: Set `DEMO_AGENT_MODEL` in your `.env` file (see [`agent.py:11-16`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16) and [`main.py:99-152`](https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L99-L152))
+3. **Configure environment variable**: Set the model name in your `.env` file and read it from there when constructing the agent
 
 ## Model compatibility and availability
 
