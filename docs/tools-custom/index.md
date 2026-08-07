@@ -123,7 +123,7 @@ The **ToolContext** provides access to several key pieces of information and con
 
 * `invocation_id: str`: The unique identifier of the current invocation.
 
-* `agent_name: str`: The name of the agent that is currently running.
+* `agent_name: str`: The name of the agent that is running.
 
 * `get_auth_response(auth_config)`: Returns the authentication credentials if an authentication flow was completed before this tool call.
 
@@ -202,7 +202,7 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
 
 * **`transfer_to_agent: str`**: Set this to the name of another agent. The framework will halt the current agent's execution and **transfer control of the conversation to the specified agent**. This allows tools to dynamically hand off tasks to more specialized agents.
 
-* **`escalate: bool`**: (Default: None) Setting this to True signals that the current agent cannot handle the request and should pass control up to its parent agent (if in a hierarchy). In a LoopAgent, setting **escalate=True** in a sub-agent's tool will terminate the loop.
+* **`escalate: bool`**: (Default: None) Setting this to True signals that the current agent cannot handle the request and should pass control up to its parent agent (if in a hierarchy). In a LoopAgent, setting **escalate=True** in a sub-agent's tool terminates the loop.
 
 #### Example
 
@@ -245,7 +245,7 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
-* **`request_credential(auth_config: AuthConfig)`** (in Python) or **`requestCredential(authConfig: AuthConfig)`** (in TypeScript): Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
+* **`request_credential(auth_config: AuthConfig)`** (in Python) or **`requestCredential(authConfig: AuthConfig)`** (in TypeScript): Call this method if your tool determines authentication is needed but credentials are not available. This signals the framework to start an authentication flow based on the provided auth_config.
 
 * **`get_auth_response(auth_config: AuthConfig)`** (in Python) or **`getAuthResponse(authConfig: AuthConfig)`** (in TypeScript): Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided. It returns an `AuthCredential`, or `None` if no credential is available yet.
 
