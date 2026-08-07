@@ -22,6 +22,8 @@ import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.callbacks.AfterAgentCallback
 import com.google.adk.kt.callbacks.CallbackChoice
 import com.google.adk.kt.memory.InMemoryMemoryService
+import com.google.adk.kt.memory.VertexAiMemoryBankService
+import com.google.adk.kt.memory.VertexAiRagMemoryService
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
@@ -34,11 +36,12 @@ import com.google.adk.kt.types.Role
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 
+// --8<-- [start:full_example]
+
 /**
  * This example demonstrates the basic flow using the `InMemoryMemoryService` in Kotlin.
  * It shows how to capture information in one session, add it to memory, and recall it in another.
  */
-// --8<-- [start:full_example]
 fun main() =
     runBlocking {
         // --- Constants ---
@@ -66,7 +69,8 @@ fun main() =
                         "Answer the user's question. Use the 'load_memory' tool " +
                             "if the answer might be in past conversations.",
                     ),
-                tools = listOf(LoadMemoryTool()), // Give the agent the tool
+                // Give the agent the tool
+                tools = listOf(LoadMemoryTool()),
             )
 
         // --- Services ---
@@ -116,8 +120,10 @@ fun main() =
             InMemoryRunner(
                 agent = memoryRecallAgent,
                 appName = appName,
-                sessionService = sessionService, // Reuse the same service
-                memoryService = memoryService, // Reuse the same service
+                // Reuse the same service
+                sessionService = sessionService,
+                // Reuse the same service
+                memoryService = memoryService,
             )
         val sessionId2 = "session_recall"
         val userInput2 = Content.fromText(Role.USER, "What is my favorite project?")
@@ -253,3 +259,38 @@ fun agentWithCallback(model: Gemini) {
         )
 }
 // --8<-- [end:auto_save_callback]
+
+// --8<-- [start:memory_bank]
+
+/**
+ * Memory Bank keeps LLM-extracted memories in a Vertex AI Agent Engine.
+ *
+ * The primary constructor is internal; this project/location/agentEngineId one
+ * is the public entry point.
+ */
+fun memoryBankService(): VertexAiMemoryBankService =
+    VertexAiMemoryBankService(
+        project = "PROJECT_ID",
+        location = "LOCATION",
+        agentEngineId = "AGENT_ENGINE_ID",
+    )
+// --8<-- [end:memory_bank]
+
+// --8<-- [start:rag_memory]
+
+/**
+ * RAG memory stores whole transcripts in a Knowledge Engine corpus and
+ * retrieves them by vector similarity.
+ *
+ * `ragCorpus` accepts either a bare corpus id or a full resource name; it is
+ * normalised against [project] and [location] either way.
+ */
+fun ragMemoryService(): VertexAiRagMemoryService =
+    VertexAiRagMemoryService(
+        project = "PROJECT_ID",
+        location = "LOCATION",
+        ragCorpus = "CORPUS_ID",
+        similarityTopK = 5,
+        vectorDistanceThreshold = 0.6,
+    )
+// --8<-- [end:rag_memory]
