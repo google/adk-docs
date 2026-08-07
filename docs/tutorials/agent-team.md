@@ -1897,7 +1897,7 @@ Your Weather Bot team is a great starting point. Here are some ideas to further 
     *   Use `after_tool_callback` to process or log the results returned by a tool.
     *   Implement `before_agent_callback` or `after_agent_callback` for agent-level entry/exit logic.
 5.  **Error Handling:** Improve how the agent handles tool errors or unexpected API responses. Maybe add retry logic within a tool.
-6.  **Persistent Session Storage:** Swap `InMemorySessionService` for one of ADK's persistent implementations – `DatabaseSessionService`, which is SQLAlchemy-backed and installed with `pip install google-adk[db]`, or `VertexAiSessionService`. See [Session](/sessions/session/) for details.
+6.  **Persistent Session Storage:** Consider changing `InMemorySessionService` to one of ADK's persistent implementations, such as `DatabaseSessionService` which is SQLAlchemy-backed and installed with `pip install google-adk[db]`, or `VertexAiSessionService`. For more information, see the [Session](/sessions/session/) page.
 7.  **Streaming UI:** Integrate your agent team with a web framework (like FastAPI, as shown in the ADK Streaming Quickstart) to create a real-time chat interface.
 
 The Agent Development Kit provides a robust foundation for building sophisticated LLM-powered applications. By mastering the concepts covered in this tutorial – tools, state, delegation, and callbacks – you are well-equipped to tackle increasingly complex agentic systems.
