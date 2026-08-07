@@ -61,7 +61,7 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 Events have two important ID fields:
 
 - **`event.id`**: Unique identifier for this specific event (format: UUID). Each event gets a new ID, even partial text chunks.
-- **`event.invocation_id`**: Shared identifier for all events in the current invocation (format: `"e-" + UUID`). In `run_live()`, all events from a single streaming session share the same invocation_id. (See [InvocationContext](#invocationcontext-the-execution-state-container) for more about invocations)
+- **`event.invocation_id`**: Shared identifier for all events in the current invocation (format: `"e-" + UUID`). In `run_live()`, all events from a single streaming session share the same invocation_id. (See [Tool execution context](tools.md#tool-execution-context) for more about invocations)
 
 **Usage:**
 
@@ -194,8 +194,8 @@ async for event in runner.run_live(..., run_config=run_config):
 
 !!! note "Learn More"
 
-    - **`response_modalities` controls how the model generates output**—you must choose either `["TEXT"]` for text responses or `["AUDIO"]` for audio responses per session. You cannot use both modalities simultaneously. See [Part 4: Response Modalities](part4.md#response-modalities) for configuration details.
-    - For comprehensive coverage of audio formats, sending/receiving audio, and audio processing flow, see [Part 5: How to Use Audio, Image and Video](part5.md).
+    - **`response_modalities` controls how the model generates output**—you must choose either `["TEXT"]` for text responses or `["AUDIO"]` for audio responses per session. You cannot use both modalities simultaneously. See [Response modalities](configuration.md#response-modalities) for configuration details.
+    - For comprehensive coverage of audio formats, sending/receiving audio, and audio processing flow, see [Audio and video](audio-video.md).
 
 ### Audio Events with File Data
 
@@ -296,7 +296,7 @@ These enable accessibility features and conversation logging without separate tr
 
 !!! note "Learn More"
 
-    For details on enabling transcription in `RunConfig` and understanding transcription delivery, see [Part 5: Audio Transcription](part5.md#audio-transcription).
+    For details on enabling transcription in `RunConfig` and understanding transcription delivery, see [Audio transcription](voice.md#audio-transcription).
 
 ### Tool Call Events
 
@@ -319,7 +319,7 @@ ADK processes tool calls automatically—you typically don't need to handle thes
 
 !!! note "Learn More"
 
-    For details on how ADK automatically executes tools, handles function responses, and supports long-running and streaming tools, see [Automatic Tool Execution in run_live()](#automatic-tool-execution-in-run_live).
+    For details on how ADK automatically executes tools, handles function responses, and supports long-running and streaming tools, see [Automatic tool execution in run_live()](tools.md#automatic-tool-execution-in-run_live).
 
 ### Error Events
 

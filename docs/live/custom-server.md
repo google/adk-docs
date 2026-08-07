@@ -204,14 +204,14 @@ This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is
 
 This example shows the core pattern. For production applications, consider:
 
-- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
+- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Error events](events.md#error-events).
     - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
     - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
 - **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:
     - Catch `WebSocketDisconnect` (client disconnected), `ConnectionClosedError` (connection lost), and `RuntimeError` (sending to closed connection)
     - Validate WebSocket connection state before sending with `websocket.client_state` to prevent errors when the connection is closed
 - **Authentication and authorization**: Implement authentication and authorization for your endpoints
-- **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Part 4: Concurrent Live API Sessions and Quota Management](part4.md#concurrent-live-api-sessions-and-quota-management).
+- **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Concurrent Live API sessions and quota management](sessions.md#concurrent-live-api-sessions-and-quota-management).
 - **Structured logging**: Use structured logging for debugging.
 - **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](/sessions/) for more details.
 

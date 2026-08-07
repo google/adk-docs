@@ -29,9 +29,9 @@ ADK Gemini Live API Toolkit integrates Live API session into the ADK framework's
   - ADK `Session` initialization:
     - Get or Create an ADK `Session` using the `SessionService`
   - ADK Gemini Live API Toolkit initialization:
-    - Create a [RunConfig](part4.md) for configuring ADK Gemini Live API Toolkit
-    - Create a [LiveRequestQueue](part2.md) for sending user messages to the `Agent`
-    - Start a [run_live()](part3.md) event loop
+    - Create a [RunConfig](configuration.md) for configuring ADK Gemini Live API Toolkit
+    - Create a [LiveRequestQueue](#liverequestqueue-and-liverequest) for sending user messages to the `Agent`
+    - Start a [run_live()](#how-run_live-works) event loop
 
 - **Phase 3: Bidi-streaming with `run_live()` event loop** (One or More Times per User Session)
   - Upstream: User sends message to the agent with `LiveRequestQueue`
@@ -145,7 +145,7 @@ The agent instance is **stateless and reusable**—you create it once and use it
 
 !!! note "Model Availability"
 
-    For the latest supported models and their capabilities, see [Part 5: Understanding Audio Model Architectures](part5.md#understanding-audio-model-architectures).
+    For the latest supported models and their capabilities, see [Supported models](models.md).
 
 !!! note "Agent vs LlmAgent"
 
@@ -215,7 +215,7 @@ ADK `Session` (managed by SessionService) provides **persistent conversation sto
 
 !!! note "Learn More"
 
-    For a detailed comparison with sequence diagrams, see [Part 4: ADK `Session` vs Live API session](part4.md#adk-session-vs-live-api-session).
+    For a detailed comparison with sequence diagrams, see [ADK `Session` vs Live API session](#adk-session-vs-live-api-session).
 
 ##### Session Identifiers Are Application-Defined
 
@@ -269,7 +269,7 @@ This pattern works correctly in all scenarios:
 
 #### Create RunConfig
 
-[RunConfig](part4.md) defines the streaming behavior for this specific session—which modalities to use (text or audio), whether to enable transcription, voice activity detection, proactivity, and other advanced features.
+[RunConfig](configuration.md) defines the streaming behavior for this specific session—which modalities to use (text or audio), whether to enable transcription, voice activity detection, proactivity, and other advanced features.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L110-L124" target="_blank">main.py:110-124</a>'
 from google.adk.agents.run_config import RunConfig, StreamingMode
@@ -286,7 +286,7 @@ run_config = RunConfig(
 )
 ```
 
-`RunConfig` is **session-specific**—each streaming session can have different configuration. For example, one user might prefer text-only responses while another uses voice mode. See [Part 4: Understanding RunConfig](part4.md) for complete configuration options.
+`RunConfig` is **session-specific**—each streaming session can have different configuration. For example, one user might prefer text-only responses while another uses voice mode. See [Configuration](configuration.md) for complete configuration options.
 
 #### Create LiveRequestQueue
 
@@ -331,7 +331,7 @@ live_request_queue.send_realtime(audio_blob)
 
 These methods are **non-blocking**—they immediately add messages to the queue without waiting for processing. This enables smooth, responsive user experiences even during heavy AI processing.
 
-See [Part 2: Sending messages with LiveRequestQueue](part2.md) for detailed API documentation.
+See [Sending different message types](#sending-different-message-types) for detailed API documentation.
 
 #### Receive and Process Events
 
@@ -350,7 +350,7 @@ async for event in runner.run_live(
 
 Events are designed for **streaming delivery**—you receive partial responses as they're generated, not just complete messages. This enables real-time UI updates and responsive user experiences.
 
-See [Part 3: Event handling with run_live()](part3.md) for comprehensive event handling patterns.
+See [Events](events.md) for comprehensive event handling patterns.
 
 ### Phase 4: Terminate Live API session
 
@@ -453,7 +453,7 @@ For Live API, multimodal inputs (audio/video) use different mechanisms (see `sen
     While the Gemini API `Part` type supports many fields (`inline_data`, `file_data`, `function_call`, `function_response`, etc.), most are either handled automatically by ADK or use different mechanisms in Live API:
     
     - **Function calls**: ADK automatically handles the function calling loop - receiving function calls from the model, executing your registered functions, and sending responses back. You don't manually construct these.
-    - **Images/Video**: Do NOT use `send_content()` with `inline_data`. Instead, use `send_realtime(Blob(mime_type="image/jpeg", data=...))` for continuous streaming. See [Part 5: How to Use Image and Video](part5.md#how-to-use-image-and-video).
+    - **Images/Video**: Do NOT use `send_content()` with `inline_data`. Instead, use `send_realtime(Blob(mime_type="image/jpeg", data=...))` for continuous streaming. See [How to use image and video](audio-video.md#how-to-use-image-and-video).
 
 ### send_realtime(): Sends Audio, Image and Video in Real-Time
 
@@ -469,7 +469,7 @@ live_request_queue.send_realtime(audio_blob)
 
 !!! note "Learn More"
     
-    For complete details on audio, image and video specifications, formats, and best practices, see [Part 5: How to Use Audio, Image and Video](part5.md).
+    For complete details on audio, image and video specifications, formats, and best practices, see [Audio and video](audio-video.md).
 
 ### Activity Signals
 
@@ -507,7 +507,7 @@ live_request_queue.send_activity_end()  # Signal: user stopped speaking
 
 !!! note "Learn More"
     
-    For detailed comparison of automatic VAD vs manual activity signals, including when to disable VAD and best practices, see [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad).
+    For detailed comparison of automatic VAD vs manual activity signals, including when to disable VAD and best practices, see [Voice activity detection](voice.md#voice-activity-detection-vad).
 
 ### Control Signals
 
@@ -517,7 +517,7 @@ The `close` signal provides graceful termination semantics for streaming session
 
 **Automatic closure in SSE mode:** When using the legacy `StreamingMode.SSE` (not Bidi-streaming), ADK automatically calls `close()` on the queue when it receives a `turn_complete=True` event from the model (see [`base_llm_flow.py:1150`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/flows/llm_flows/base_llm_flow.py#L1150)).
 
-See [Part 4: Understanding RunConfig](part4.md#streamingmode-bidi-or-sse) for detailed comparison and when to use each mode.
+See [StreamingMode: BIDI or SSE](configuration.md#streamingmode-bidi-or-sse) for detailed comparison and when to use each mode.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L238-L253" target="_blank">main.py:238-253</a>'
 try:
@@ -543,7 +543,7 @@ Although ADK cleans up local resources automatically, failing to call `close()` 
 
 !!! note "Learn More"
     
-    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Part 3: Error Events](part3.md#error-events).
+    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Error events](events.md#error-events).
 
 ## Concurrency and Thread Safety
 
@@ -674,7 +674,7 @@ async for event in runner.run_live(
 
 !!! note "Session Identifiers"
 
-    Both `user_id` and `session_id` must match the identifiers you used when creating the session via `SessionService.create_session()`. These can be any string values based on your application's needs (e.g., UUIDs, email addresses, custom tokens). See [Part 1: Get or Create Session](part1.md#get-or-create-session) for detailed guidance on session identifiers.
+    Both `user_id` and `session_id` must match the identifiers you used when creating the session via `SessionService.create_session()`. These can be any string values based on your application's needs (e.g., UUIDs, email addresses, custom tokens). See [Get or Create Session](#get-or-create-session) for detailed guidance on session identifiers.
 
 ### Connection Lifecycle in run_live()
 
@@ -684,21 +684,21 @@ The `run_live()` method manages the underlying Live API connection lifecycle aut
 1. **Initialization**: Connection established when `run_live()` is called
 2. **Active Streaming**: Bidirectional communication via `LiveRequestQueue` (upstream to the model) and `run_live()` (downstream from the model)
 3. **Graceful Closure**: Connection closes when `LiveRequestQueue.close()` is called
-4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures. See [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption) for details.
+4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures. See [Live API session resumption](#live-api-session-resumption) for details.
 
 #### What run_live() Yields
 
-The `run_live()` method yields a stream of `Event` objects in real-time as the agent processes user input and generates responses. Understanding the different event types helps you build responsive UIs that handle text, audio, transcriptions, tool calls, metadata, and errors appropriately. Each event type is explained in detail in the sections below.
+The `run_live()` method yields a stream of `Event` objects in real-time as the agent processes user input and generates responses. Understanding the different event types helps you build responsive UIs that handle text, audio, transcriptions, tool calls, metadata, and errors appropriately. Each event type is explained in detail in [Events](events.md).
 
 | Event Type | Description |
 |------------|-------------|
-| **[Text Events](#text-events)** | Model's text responses when using `response_modalities=["TEXT"]`; includes `partial`, `turn_complete`, and `interrupted` flags for streaming UI management |
-| **[Audio Events with Inline Data](#audio-events)** | Raw audio bytes (`inline_data`) streamed in real-time when using `response_modalities=["AUDIO"]`; ephemeral (not persisted to session) |
-| **[Audio Events with File Data](#audio-events-with-file-data)** | Audio aggregated into files and stored in artifacts; contains `file_data` references instead of raw bytes; can be persisted to session history |
-| **[Metadata Events](#metadata-events)** | Token usage information (`prompt_token_count`, `candidates_token_count`, `total_token_count`) for cost monitoring and quota tracking |
-| **[Transcription Events](#transcription-events)** | Speech-to-text for user input (`input_transcription`) and model output (`output_transcription`) when transcription is enabled in `RunConfig` |
-| **[Tool Call Events](#tool-call-events)** | Function call requests from the model; ADK handles execution automatically |
-| **[Error Events](#error-events)** | Model errors and connection issues with `error_code` and `error_message` fields |
+| **[Text events](events.md#text-events)** | Model's text responses when using `response_modalities=["TEXT"]`; includes `partial`, `turn_complete`, and `interrupted` flags for streaming UI management |
+| **[Audio events with inline data](events.md#audio-events)** | Raw audio bytes (`inline_data`) streamed in real-time when using `response_modalities=["AUDIO"]`; ephemeral (not persisted to session) |
+| **[Audio events with file data](events.md#audio-events-with-file-data)** | Audio aggregated into files and stored in artifacts; contains `file_data` references instead of raw bytes; can be persisted to session history |
+| **[Metadata events](events.md#metadata-events)** | Token usage information (`prompt_token_count`, `candidates_token_count`, `total_token_count`) for cost monitoring and quota tracking |
+| **[Transcription events](events.md#transcription-events)** | Speech-to-text for user input (`input_transcription`) and model output (`output_transcription`) when transcription is enabled in `RunConfig` |
+| **[Tool call events](events.md#tool-call-events)** | Function call requests from the model; ADK handles execution automatically |
+| **[Error events](events.md#error-events)** | Model errors and connection issues with `error_code` and `error_message` fields |
 
 !!! note "Source Reference"
 
@@ -723,7 +723,7 @@ The `run_live()` event loop can exit under various conditions. Understanding the
 
 !!! note "Learn More"
 
-    For session resumption and connection recovery details, see [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption). For multi-agent workflows, see [Best Practices for Multi-Agent Workflows](#best-practices-for-multi-agent-workflows).
+    For session resumption and connection recovery details, see [Live API session resumption](#live-api-session-resumption). For multi-agent workflows, see [Best practices for multi-agent workflows](workflows.md#best-practices-for-multi-agent-workflows).
 
 #### Events Saved to ADK `Session`
 
@@ -752,7 +752,7 @@ These events are ephemeral and only yielded to callers during active streaming:
 
 !!! note "Audio Persistence"
 
-    To save audio conversations to the ADK `Session` for review or resumption, enable `RunConfig.save_live_blob = True`. This persists audio streams to artifacts. See [Part 4: save_live_blob](part4.md#save_live_blob) for configuration details.
+    To save audio conversations to the ADK `Session` for review or resumption, enable `RunConfig.save_live_blob = True`. This persists audio streams to artifacts. See [save_live_blob](configuration.md#save_live_blob) for configuration details.
 
 
 ## Understanding Live API Connections and Sessions
@@ -992,7 +992,7 @@ sequenceDiagram
 
 !!! note "Events and Session Persistence"
 
-    For details on which events are saved to the ADK `Session` versus which are only yielded during streaming, see [Part 3: Events Saved to ADK Session](part3.md#events-saved-to-adk-session).
+    For details on which events are saved to the ADK `Session` versus which are only yielded during streaming, see [Events saved to ADK `Session`](#events-saved-to-adk-session).
 
 ## Live API Context Window Compression
 
