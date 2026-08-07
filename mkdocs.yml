@@ -26,6 +26,7 @@ validation:
 extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
+  - stylesheets/search.css
 
 # Custom JavaScript
 extra_javascript:
