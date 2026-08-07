@@ -40,6 +40,17 @@ set up and running a simple agent in less than 20 minutes.
     Create your first Kotlin ADK agent in minutes.
 
     [:octicons-arrow-right-24: Start with Kotlin](kotlin.md) <br>
+
+-   :material-console:{ .lg .middle } **Agents CLI Quickstart**
+
+    ---
+    Create your first ADK agent with your coding agent.
+
+    [:octicons-arrow-right-24: Start with Agents CLI](agents-cli.md) <br>
 </div>
+
+The language quickstarts start from a single-file agent and teach ADK itself.
+Use the Agents CLI quickstart when you want a complete project you can
+evaluate, deploy, and share with a team.
 
 To get started with a technical overview check this [link](about.md).

@@ -285,6 +285,7 @@ nav:
       - Go: get-started/go.md
       - Java: get-started/java.md
       - Kotlin: get-started/kotlin.md
+      - Agents CLI: get-started/agents-cli.md
       - Installation: get-started/installation.md
       - Google Cloud: get-started/google-cloud.md
     - Build your Agent:
