@@ -160,7 +160,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List Artifact keys`: Lists the unique filenames of artifacts within a given scope.
     * `Delete Artifact`: Removes an artifact (and potentially all its versions, depending on implementation).
     * `List versions`: Lists all available version numbers for a specific artifact filename.
-    * `List artifact versions` and `Get artifact version` (Python): Return `ArtifactVersion` metadata (version number, canonical URI, MIME type, creation time, custom metadata) instead of the artifact payload.
+    * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
 * **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
@@ -352,7 +352,7 @@ Understanding artifacts involves grasping a few key components: the service that
 
 * **User Scope (`"user:"` prefix):** If you prefix the filename with `"user:"`, like `"user:profile.png"`, the artifact is associated only with the `app_name` and `user_id`. It can be accessed or updated from *any* session belonging to that user within the app.
 
-* **Listing behavior:** In Python, listing artifacts from within a session returns the session-scoped filenames *and* that user's user-scoped filenames, with the `"user:"` prefix retained (e.g. `["summary.txt", "user:settings.json"]`).
+* **Listing behavior:** In Python, listing artifacts from within a session returns the session-scoped filenames *and* that user's user-scoped filenames, with the `"user:"` prefix retained, for example `["summary.txt", "user:settings.json"]`.
 
 
 === "Python"
@@ -432,7 +432,7 @@ These core concepts work together to provide a flexible system for managing bina
 
 The primary way you interact with artifacts within your agent's logic (specifically within callbacks or tools) is through methods provided by the `CallbackContext` and `ToolContext` objects. These methods abstract away the underlying storage details managed by the `ArtifactService`.
 
-*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type. In Python both names remain as aliases of `Context` and can be used interchangeably.)*
+*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type, and in Python both names remain usable as aliases of it.)*
 
 ### Prerequisite: Configuring the `ArtifactService`
 
@@ -556,7 +556,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
 
 ### Accessing Methods
 
-The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks) in Go and Java, and available on the unified `Context` in Python and TypeScript (in Python, `CallbackContext` and `ToolContext` are aliases of `Context`).
+The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks) in Go and Java, and available on the unified `Context` in Python and TypeScript.
 
 #### Saving Artifacts
 
@@ -1168,29 +1168,6 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         ```kotlin
         --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:in_memory_service"
         ```
-### FileArtifactService
-
-*   **Storage Mechanism:** Stores artifacts on the local filesystem, beneath a root directory you choose. Each version of an artifact is a directory holding the payload file plus a `metadata.json` sidecar, so the tree can be inspected with ordinary file tools.
-*   **Key Features:**
-    *   **Persistence:** Artifacts survive application restarts, as long as the root directory does.
-    *   **No external dependencies:** Needs no cloud project, credentials, or network access, only a writable directory. The root directory is created on instantiation if it does not exist.
-*   **Use Cases:**
-    *   Local development and single-machine deployments that need artifacts to outlive the process.
-    *   In Python, this is also the service behind `--artifact_service_uri file://<path>` for `adk web` / `adk run`.
-*   **Instantiation:**
-
-    === "Python"
-
-        ```python
-        from google.adk.artifacts import FileArtifactService
-
-        # Point it at the directory that should hold the artifact tree
-        file_service_py = FileArtifactService(root_dir="/path/to/adk-artifacts")
-
-        # Then pass it to the Runner
-        # runner = Runner(..., artifact_service=file_service_py)
-        ```
-
 ### GcsArtifactService
 
 
@@ -1199,7 +1176,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 *   **Key Features:**
     *   **Persistence:** Artifacts stored in GCS persist across application restarts and deployments.
     *   **Scalability:** Leverages the scalability and durability of Google Cloud Storage.
-    *   **Versioning:** Explicitly stores each version as a distinct GCS object. In Python, `save_artifact` assigns the next version number (the first version is `0`) rather than overwriting an existing object.
+    *   **Versioning:** Explicitly stores each version as a distinct GCS object. In Python, `save_artifact` assigns the next version number, starting at `0`, rather than overwriting an existing object.
     *   **Permissions Required:** The application environment needs appropriate credentials (e.g., Application Default Credentials) and IAM permissions to read from and write to the specified GCS bucket.
 *   **Use Cases:**
     *   Production environments requiring persistent artifact storage.

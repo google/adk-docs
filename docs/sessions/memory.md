@@ -54,7 +54,7 @@ to decide which is the best fit for your agent.
 
 You can always import `VertexAiRagMemoryService` from `google.adk.memory`, but
 constructing it raises `ImportError` unless the Agent Platform SDK is installed
-(`pip install google-adk[gcp]`). Memory Bank and RAG-backed memory are
+with `pip install google-adk[gcp]`. Memory Bank and RAG-backed memory are
 documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
 
 

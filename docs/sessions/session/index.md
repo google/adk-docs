@@ -286,7 +286,7 @@ the storage backend that best suits your needs:
   Runtime](/deploy/agent-runtime/).
 * **Requires:**
     * A Google Cloud project.
-    * The `gcp` extra (`pip install google-adk[gcp]`).
+    * The `gcp` extra, installed with `pip install google-adk[gcp]`.
     * A Google Cloud storage bucket that can be configured by this
       [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     * An Agent Runtime resource name/ID that can setup following this
@@ -370,8 +370,8 @@ For more information on connecting to Google Cloud from ADK agents, see
 * **How it works:** Connects to a relational database (e.g., PostgreSQL, MySQL,
   SQLite) to store session data persistently in tables.
 * **Persistence:** Yes. Data survives application restarts.
-* **Requires:** A configured database and the `db` extra
-  (`pip install google-adk[db]`).
+* **Requires:** A configured database and the `db` extra, installed with
+  `pip install google-adk[db]`.
 * **Best for:** Applications needing reliable, persistent storage that you
   manage yourself.
 

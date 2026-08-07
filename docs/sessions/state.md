@@ -553,9 +553,9 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
-*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type. In Python both names remain as aliases of `Context` and can be used interchangeably.)*
+*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type, and in Python both names remain usable as aliases of it.)*
 
-Modifying state within agent callbacks (e.g., `before_agent_callback`, `after_agent_callback`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
+Modifying state within agent callbacks such as `before_agent_callback` and `after_agent_callback`, or within tool functions, is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
 *   `callback_context.state['my_key'] = my_value`
 *   `tool_context.state['my_key'] = my_value`
