@@ -45,7 +45,7 @@ support_agent = Agent(
 
 # Pass `sub_agents` to the constructor: that is what links `support_agent` back
 # to `main_agent` as its parent. Assigning `main_agent.sub_agents` afterwards
-# would leave `support_agent.parent_agent` unset and transfers would fail.
+# leaves `support_agent.parent_agent` unset, so transfers fail.
 main_agent = Agent(
     model='gemini-2.0-flash',
     name='main_agent',

@@ -133,7 +133,7 @@ async def main():
             role="user", parts=[types.Part(text="Process this please.")]
         ),
     ):
-        # Print final output (from the LLM, or from the callback's extra event)
+        # Print final output, from the LLM or from the callback's extra event
         if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"
@@ -155,7 +155,7 @@ async def main():
             role="user", parts=[types.Part(text="Process this and add note.")]
         ),
     ):
-        # Print final output (from the LLM, or from the callback's extra event)
+        # Print final output, from the LLM or from the callback's extra event
         if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"

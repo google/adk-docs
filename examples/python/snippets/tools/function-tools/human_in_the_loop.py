@@ -142,7 +142,7 @@ async def call_agent_async(query):
 # --8<-- [end:call_reimbursement_tool]          
 
 async def main():
-    # reimbursement that doesn't require approval
+    # reimbursement that does not require approval
     await call_agent_async("Please reimburse 50$ for meals")
     # reimbursement that requires approval
     await call_agent_async("Please reimburse 200$ for meals")
