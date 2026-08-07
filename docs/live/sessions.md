@@ -371,7 +371,7 @@ This signals `run_live()` to stop yielding events and exit the async generator l
 
 The `LiveRequestQueue` is your primary interface for sending messages to the Agent in streaming conversations. Rather than managing separate channels for text, audio, and control signals, ADK provides a unified `LiveRequest` container that handles all message types through a single, elegant API:
 
-```python title='Source reference: <a href="https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/agents/live_request_queue.py" target="_blank">live_request_queue.py</a>'
+```python title='Reference: <a href="../api-reference/python/google-adk.html#google.adk.agents.LiveRequestQueue">LiveRequestQueue</a>'
 class LiveRequest(BaseModel):
     content: Optional[Content] = None           # Text-based content and structured data
     blob: Optional[Blob] = None                 # Audio/video data and binary streams
@@ -620,7 +620,7 @@ queue = LiveRequestQueue()  # Works but ADK auto-creates new loop
 
 **Usage:**
 
-```python title='Source reference: <a href="https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/runners.py" target="_blank">runners.py</a>'
+```python title='Reference: <a href="../api-reference/python/google-adk.html#google.adk.runners.Runner.run_live">Runner.run_live()</a>'
 # The method signature reveals the thoughtful design
 async def run_live(
     self,

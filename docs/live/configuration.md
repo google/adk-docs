@@ -15,7 +15,7 @@ detection have their own page: see [Voice](voice.md).
 
 ## RunConfig Parameter Quick Reference
 
-This table provides a quick reference for all RunConfig parameters covered in this part:
+This table provides a quick reference for the `RunConfig` parameters that matter most to live agents:
 
 | Parameter | Type | Purpose | Platform Support | Reference |
 |-----------|------|---------|------------------|-----------|
@@ -34,9 +34,9 @@ This table provides a quick reference for all RunConfig parameters covered in th
 | **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
 | **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
 
-!!! note "Source Reference"
+!!! note "Reference"
 
-    [`run_config.py`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/agents/run_config.py)
+    [`RunConfig`](../api-reference/python/google-adk.html#google.adk.agents.RunConfig) in the Python API reference
 
 **Platform Support Legend:**
 

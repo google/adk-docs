@@ -23,9 +23,9 @@ Events are the core communication mechanism in ADK Gemini Live API Toolkit's str
 
 ADK's `Event` class is a Pydantic model that represents all communication in a streaming conversation. It extends `LlmResponse` and serves as the unified container for model responses, user input, transcriptions, and control signals.
 
-!!! note "Source Reference"
+!!! note "Reference"
 
-    See Event class implementation in [`event.py:30-128`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/events/event.py#L30-L128) and [`llm_response.py:28-200`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/models/llm_response.py#L28-L200)
+    [`Event`](../api-reference/python/google-adk.html#google.adk.events.Event) in the Python API reference
 
 #### Key Fields
 
