@@ -166,8 +166,8 @@ Optimized root agent instructions:
 adk optimize [OPTIONS] AGENT_MODULE_FILE_PATH
 ```
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a
-module by the name `agent`.
+* `AGENT_MODULE_FILE_PATH`: The path to the agent directory, not a file, whose
+`__init__.py` exposes a module by the name `agent`.
 The `agent` module must contain a `root_agent`.
 For an example of a valid setup, examine the
 [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
@@ -237,12 +237,16 @@ additional metrics collected during optimization.
 Note: The `GEPARootAgentPromptOptimizer` does not improve any sub-agents, agent
 tools, skills, or any other aspect of the root agent.
 
+Note: The `GEPARootAgentPromptOptimizer` is experimental.
+It emits a warning when constructed, and its API may change or be removed
+without notice.
+
 You can configure the `GEPARootAgentPromptOptimizer` with a
 `GEPARootAgentPromptOptimizerConfig` that contains the following fields:
 
 * `optimizer_model` (optional): The model used to analyze evaluation results and
 optimize the agent.
-Defaults to `"gemini-flash-latest"`.
+Defaults to `"gemini-2.5-flash"`.
 * `model_configuration` (optional): The configuration for the optimizer model.
 Defaults to a config with a 10K token thinking budget.
 * `max_metric_calls` (optional): The maximum number of evaluations to run during
@@ -273,6 +277,10 @@ additional metrics collected during optimization.
 
 Note: The `GEPARootAgentOptimizer` does not improve any sub-agents or agent
 tools.
+
+Note: The `GEPARootAgentOptimizer` is experimental.
+It emits a warning when constructed, and its API may change or be removed
+without notice.
 
 You can configure the `GEPARootAgentOptimizer` with a
 `GEPARootAgentOptimizerConfig` that contains the following fields:
@@ -315,15 +323,18 @@ Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` in
 
 | Parameter | Type | Default | Description |
 | :---- | :---- | :---- | :---- |
-| `num_iterations` | int | *Required* | The total number of optimization rounds to execute. |
-| `batch_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+| `num_iterations` | int | `10` | The total number of optimization rounds to execute. |
+| `batch_size` | int | `5` | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+| `optimizer_model` | str | `"gemini-2.5-flash"` | The model used to critique the current prompt and generate the next one. |
+| `model_configuration` | GenerateContentConfig | thinking budget of 10K tokens | The configuration for the optimizer model. |
 
 #### Implementation Example
 
 Once your configuration is defined, run the optimization with:
 
 ```python
-from google.adk.optimization import SimplePromptOptimizer, SimplePromptOptimizerConfig
+from google.adk.optimization.simple_prompt_optimizer import SimplePromptOptimizer
+from google.adk.optimization.simple_prompt_optimizer import SimplePromptOptimizerConfig
 
 # Define your Agent and Sampler first...
 
