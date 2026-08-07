@@ -208,7 +208,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     before the conversation is forcefully terminated. This should be set to be
     greater than the longest reasonable user-agent interaction in your
     `EvalSet`. The initial fixed prompt counts as an invocation. Set it to `-1`
-    for no limit (not recommended).
+    for no limit, which is not recommended.
 *   `include_function_calls`: Optional. Whether to include function calls and
     responses in the conversation history prompt given to the user simulator.
     Defaults to `false`.
