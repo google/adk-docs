@@ -185,8 +185,7 @@ In Kotlin, ADK uses standard JVM logging facilities (defaulting to Flogger) and 
 You can enable full prompt logging by configuring the global `TelemetryConfig`:
 
 ```kotlin
---8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:
-capture_content"
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:capture_content"
 ```
 
 #### Activity logging with Plugins
