@@ -187,4 +187,8 @@ Congratulations\! You've successfully created and interacted with your first Str
 
 ## Next steps: build custom streaming app
 
-The [Gemini Live API Toolkit development guide series](../dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+[Build a custom server](../custom-server.md) walks through the server and client code for
+a custom asynchronous web app built with ADK, enabling real-time, bidirectional audio and
+text communication. From there, [Sessions and the streaming loop](../sessions.md) covers
+the application lifecycle in depth, and [Events](../events.md) covers everything
+`run_live()` hands back to you.

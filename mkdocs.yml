@@ -221,13 +221,22 @@ plugins:
         'workflows/data-handling.md': graphs/data-handling.md
         'workflows/dynamic.md': graphs/dynamic.md
         'streaming/index.md': 'live/index.md'
-        'streaming/streaming-tools.md': 'live/streaming-tools.md'
+        'streaming/streaming-tools.md': 'live/tools.md'
         'streaming/configuration.md': 'live/configuration.md'
-        'streaming/dev-guide/part1.md': 'live/dev-guide/part1.md'
-        'streaming/dev-guide/part2.md': 'live/dev-guide/part2.md'
-        'streaming/dev-guide/part3.md': 'live/dev-guide/part3.md'
-        'streaming/dev-guide/part4.md': 'live/dev-guide/part4.md'
-        'streaming/dev-guide/part5.md': 'live/dev-guide/part5.md'
+        # The five-part development guide was decomposed into capability pages.
+        # mkdocs-redirects does not chain, so the streaming/* keys point at the
+        # final destination rather than at live/dev-guide/*.
+        'streaming/dev-guide/part1.md': 'live/index.md'
+        'streaming/dev-guide/part2.md': 'live/sessions.md'
+        'streaming/dev-guide/part3.md': 'live/events.md'
+        'streaming/dev-guide/part4.md': 'live/configuration.md'
+        'streaming/dev-guide/part5.md': 'live/audio-video.md'
+        'live/streaming-tools.md': 'live/tools.md'
+        'live/dev-guide/part1.md': 'live/index.md'
+        'live/dev-guide/part2.md': 'live/sessions.md'
+        'live/dev-guide/part3.md': 'live/events.md'
+        'live/dev-guide/part4.md': 'live/configuration.md'
+        'live/dev-guide/part5.md': 'live/audio-video.md'
         'get-started/streaming/index.md': 'live/get-started/index.md'
         'get-started/streaming/quickstart-streaming.md': 'live/get-started/streaming-python.md'
         'get-started/streaming/quickstart-streaming-java.md': 'live/get-started/streaming-java.md'
@@ -420,14 +429,18 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
-      - Gemini Live API Toolkit development guide:
-        - Part 1. Intro to streaming: live/dev-guide/part1.md
-        - Part 2. Sending messages: live/dev-guide/part2.md
-        - Part 3. Event handling: live/dev-guide/part3.md
-        - Part 4. Run configuration: live/dev-guide/part4.md
-        - Part 5. Audio, Images, and Video: live/dev-guide/part5.md
-      - Streaming Tools: live/streaming-tools.md
-      - Configuring streaming behavior: live/configuration.md
+      - Build:
+        - Sessions: live/sessions.md
+        - Events: live/events.md
+        - Tools: live/tools.md
+        - Workflows: live/workflows.md
+        - Audio and video: live/audio-video.md
+        - Voice: live/voice.md
+        - Configuration: live/configuration.md
+      - Ship:
+        - Build a custom server: live/custom-server.md
+      - Reference:
+        - Supported models: live/models.md
     - Grounding:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md

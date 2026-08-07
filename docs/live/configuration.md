@@ -21,18 +21,18 @@ This table provides a quick reference for all RunConfig parameters covered in th
 |-----------|------|---------|------------------|-----------|
 | **response_modalities** | list[str] | Control output format (TEXT or AUDIO) | Both | [Details](#response-modalities) |
 | **streaming_mode** | StreamingMode | Choose BIDI or SSE mode | Both | [Details](#streamingmode-bidi-or-sse) |
-| **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](#live-api-session-resumption) |
-| **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](#live-api-context-window-compression) |
+| **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](sessions.md#live-api-session-resumption) |
+| **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](sessions.md#live-api-context-window-compression) |
 | **max_llm_calls** | int | Limit total LLM calls per session | Both | [Details](#max_llm_calls) |
 | **save_live_blob** | bool | Persist audio/video streams | Both | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | Both | [Details](#custom_metadata) |
 | **support_cfc** | bool | Enable compositional function calling | Gemini (2.x models only) | [Details](#support_cfc-experimental) |
-| **speech_config** | SpeechConfig | Voice and language configuration | Both | [Part 5: Voice Configuration](part5.md#voice-configuration-speech-config) |
-| **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | Both | [Part 5: Audio Transcription](part5.md#audio-transcription) |
-| **output_audio_transcription** | AudioTranscriptionConfig | Transcribe model speech | Both | [Part 5: Audio Transcription](part5.md#audio-transcription) |
-| **realtime_input_config** | RealtimeInputConfig | VAD configuration | Both | [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad) |
-| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
-| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
+| **speech_config** | SpeechConfig | Voice and language configuration | Both | [Voice configuration](voice.md#voice-configuration-speech-config) |
+| **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | Both | [Audio transcription](voice.md#audio-transcription) |
+| **output_audio_transcription** | AudioTranscriptionConfig | Transcribe model speech | Both | [Audio transcription](voice.md#audio-transcription) |
+| **realtime_input_config** | RealtimeInputConfig | VAD configuration | Both | [Voice activity detection](voice.md#voice-activity-detection-vad) |
+| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
+| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
 
 !!! note "Source Reference"
 
@@ -115,7 +115,7 @@ When `response_modalities` is not specified, ADK's `run_live()` method automatic
 **Key constraints:**
 
 - You must choose either `TEXT` or `AUDIO` at session start. **Cannot switch between modalities mid-session**
-- You must choose `AUDIO` for [Native Audio models](part5.md#understanding-audio-model-architectures). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio Transcription](part5.md#audio-transcription) for details
+- You must choose `AUDIO` for [native audio models](models.md#native-audio-models). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio transcription](voice.md#audio-transcription) for details
 - Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
 
 ## StreamingMode: BIDI or SSE
@@ -260,7 +260,7 @@ Your choice between BIDI and SSE depends on your application requirements and th
 - Building voice/video applications with real-time interaction
 - Need bidirectional communication (send while receiving)
 - Require Live API features (audio transcription, VAD, proactivity, affective dialog)
-- Supporting interruptions and natural turn-taking (see [Part 3: Handling Interrupted Flag](part3.md#handling-interrupted-flag))
+- Supporting interruptions and natural turn-taking (see [Handling the interrupted flag](events.md#handling-interrupted-flag))
 - Implementing live streaming tools or real-time data feeds
 - Can plan for concurrent session quotas (50-1,000 sessions depending on platform/tier)
 
@@ -333,7 +333,7 @@ This parameter caps the total number of LLM invocations allowed per invocation c
 
 - Session duration limits
 - Turn count tracking
-- Custom cost monitoring by tracking token usage in model turn events (see [Part 3: Event Types and Handling](part3.md#event-types-and-handling))
+- Custom cost monitoring by tracking token usage in model turn events (see [Event types and handling](events.md#event-types-and-handling))
 - Application-level circuit breakers
 
 ### save_live_blob

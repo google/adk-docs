@@ -77,7 +77,7 @@ class Event:
 
 !!! note "Learn More"
 
-    For complete Event structure, see [Part 3: The Event Class](part3.md#the-event-class).
+    For complete Event structure, see [The Event class](events.md#the-event-class).
 
 Each `Transcription` object has two attributes:
 - **`.text`**: The transcribed text (string)
@@ -546,7 +546,7 @@ Voice configuration is supported on both platforms, but voice availability may v
 
 !!! note "Learn More"
 
-    For complete RunConfig reference, see [Part 4: Understanding RunConfig](part4.md).
+    For complete RunConfig reference, see [Configuration](configuration.md).
 
 ## Voice Activity Detection (VAD)
 
@@ -575,7 +575,7 @@ You should disable automatic VAD in these scenarios:
 - **Client-side voice detection**: Your application uses client-side VAD that sends activity signals to your server to reduce CPU and network overhead from continuous audio streaming
 - **Specific UX patterns**: Your design requires users to manually indicate when they're done speaking
 
-When you disable VAD (which is enabled by default), you must use manual activity signals (`ActivityStart`/`ActivityEnd`) to control conversation turns. See [Part 2: Activity Signals](part2.md#activity-signals) for details on manual turn control.
+When you disable VAD (which is enabled by default), you must use manual activity signals (`ActivityStart`/`ActivityEnd`) to control conversation turns. See [Activity signals](sessions.md#activity-signals) for details on manual turn control.
 
 ### VAD Configurations
 
