@@ -90,7 +90,9 @@ these settings, as shown in the following code sample:
             rootAgent = rootAgent,
             contextCacheConfig =
                 ContextCacheConfig(
-                    minTokens = 2048, // Minimum tokens to trigger caching
+                    // Gemini enforces a hard 4096-token floor of its own, so only a
+                    // value above that has any further effect.
+                    minTokens = 8192,
                     ttl = 10.minutes, // Store for up to 10 minutes
                     cacheIntervals = 5, // Refresh after 5 uses
                 ),
