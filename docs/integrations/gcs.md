@@ -188,7 +188,7 @@ Tool | Description
 ---- | -----------
 `list_buckets` | List GCS bucket names in a Google Cloud project.
 `create_bucket` | Create a new GCS bucket in a specific location. Requires `Capabilities.READ_WRITE`.
-`update_bucket` | Update properties of a GCS bucket (e.g. versioning or uniform bucket-level access). Requires `Capabilities.READ_WRITE`.
+`update_bucket` | Update properties of a GCS bucket, such as versioning or uniform bucket-level access. Requires `Capabilities.READ_WRITE`.
 `delete_bucket` | Delete a GCS bucket (bucket must be empty first). Requires `Capabilities.READ_WRITE`.
 
 ## Sample agents

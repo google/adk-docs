@@ -53,7 +53,7 @@ integration is part of the core ADK library.
 pip install google-adk
 ```
 
-### Required Dependencies
+### Required dependencies
 
 `google.adk.integrations.agent_registry` imports both the A2A SDK and the Agent
 Identity auth provider at module scope, so importing `AgentRegistry` raises
@@ -200,11 +200,11 @@ The AgentRegistry constructor accepts the following arguments:
 - `header_provider` (Callable, optional): A callable that takes a
   ReadonlyContext and returns a dictionary of custom headers to be included in
   requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class)
-  that `get_mcp_toolset` returns, to the target MCP server. This does not affect
-  headers used to call the Agent Registry API itself, and it does not affect
-  requests made by
-  [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a)
-  — for those, pass an authenticated `httpx.AsyncClient` to
+  that `get_mcp_toolset` returns, to the target MCP server. These headers do not
+  affect calls to the Agent Registry API itself, and they do not affect requests
+  made by
+  [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a).
+  For those requests, pass an authenticated `httpx.AsyncClient` to
   `get_remote_a2a_agent`, as shown in
   [Remote A2A Agents](#remote-a2a-agents).
 

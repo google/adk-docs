@@ -82,9 +82,9 @@ The Reflect and Retry Plugin has the following configuration options:
 *   **`throw_exception_if_retry_exceeded`**: (optional) If set to `False`, the
     system does not raise an error if the final retry attempt fails. Default
     value is `True`.
-*   **`tracking_scope`**: (optional) A `TrackingScope` value, imported from
-    `google.adk.plugins.reflect_retry_tool_plugin` (it is not re-exported from
-    `google.adk.plugins`):
+*   **`tracking_scope`**: (optional) A `TrackingScope` value. Import it from
+    `google.adk.plugins.reflect_retry_tool_plugin`, because
+    `google.adk.plugins` does not re-export it:
     *   **`TrackingScope.INVOCATION`**: Track tool failures across a single
         invocation and user. This value is the default.
     *   **`TrackingScope.GLOBAL`**: Track tool failures across all invocations
