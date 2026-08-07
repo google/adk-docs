@@ -39,15 +39,27 @@
   <!-- Pagefind search (index built by hooks/pagefind.py). -->
   <link rel="stylesheet" href="{{ 'pagefind/pagefind-component-ui.css' | url }}">
   <script type="module" src="{{ 'pagefind/pagefind-component-ui.js' | url }}"></script>
+  <!-- document.currentScript is null inside a module script, so the bundle's
+       currentScript.src auto-detection of its own index location always fails
+       here and falls back to the hard-coded "/pagefind/". The `| url` filter
+       therefore governs only the two asset URLs above; the index itself is
+       always fetched from the origin root. Production is unaffected, because
+       the site deploys to the root of a custom domain (site_url:
+       https://adk.dev, docs/CNAME). Any non-root base path breaks, though: on a
+       contributor fork previewing at <user>.github.io/adk-docs/ the modal opens
+       but shows an error state, and would need a
+       <pagefind-config bundle-path="..."> element to find its index. -->
 
   <!-- Search ranking. termSimilarity 2.0 (default 1.0) favours pages holding
        words close in length to the query; it is a measured fix for identifier
        searches such as "LlmAgent", which otherwise lose to pages that merely
        say "agent" often. Set on pagefindOptions rather than through
-       configureInstance(), because that call is silently ignored once a
-       component has connected, whereas pagefindOptions is read lazily when the
-       search bundle first loads. Module scripts run in document order, so this
-       executes after the bundle above has defined the components. -->
+       configureInstance(), because that call is ignored with a console warning
+       ('Instance "default" already exists, configuration ignored') once the
+       instance exists, and the components create the instance on connect during
+       the bundle's own execution. pagefindOptions, by contrast, is read lazily
+       when the search bundle first loads. Module scripts run in document order,
+       so this executes after the bundle above has defined the components. -->
   <script type="module">
     window.PagefindComponents
       .getInstanceManager()
@@ -55,11 +67,13 @@
       .pagefindOptions.ranking = { termSimilarity: 2.0 };
   </script>
 
-  <!-- Pagefind components apply `all: initial`, so Material's palette does not
-       cascade in, and Pagefind deliberately ignores prefers-color-scheme.
-       Mirror Material's scheme attribute onto the one Pagefind reads. Material's
-       instant navigation preserves document.body, so this observer survives
-       page transitions. -->
+  <!-- Pagefind declares its light palette on :root in
+       pagefind-component-ui.css and gates the dark palette behind the attribute
+       selector [data-pf-theme="dark"]. Nothing sets that attribute
+       automatically, and the bundle contains no prefers-color-scheme queries,
+       so Material's data-md-color-scheme on <body> must be mirrored to
+       data-pf-theme on <html>. Material's instant navigation preserves
+       document.body, so this observer survives page transitions. -->
   <script>
     (function () {
       var sync = function () {
