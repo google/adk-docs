@@ -120,8 +120,48 @@
     >
       {% include ".icons/material/magnify.svg" %}
       <span class="adk-search__trigger-label">{{ lang.t('search') }}</span>
-      <kbd class="adk-search__trigger-keys"><kbd>Ctrl</kbd><kbd>K</kbd></kbd>
+      {#-
+        Nested <kbd> is the spec's markup for a key combination: the outer
+        element is the chord, the inner ones are the individual keys. The
+        script below relies on that nesting to find the modifier, so keep
+        `Ctrl` as the first inner <kbd>.
+
+        Rendered hidden on purpose - see the script.
+      -#}
+      <kbd class="adk-search__trigger-keys" style="display: none"><kbd>Ctrl</kbd><kbd>K</kbd></kbd>
     </button>
+    {#-
+      Relabel the shortcut on Apple platforms, where the handler in
+      search.js already accepts Meta as well as Control.
+
+      Inline and immediately after the button on purpose. The hint is
+      server-rendered as `Ctrl` so the HTML stays identical for every
+      visitor and fully cacheable, then corrected here during parse. Doing
+      it from search.js instead would be too late: that file is a plain
+      <script src> at the end of <body>, and it was measured finishing 6ms
+      *after* first paint on a throttled connection, so Mac readers would
+      see `Ctrl` repaint to `Cmd`. Clearing the inline `display` rather
+      than toggling a class hands responsive control back to the
+      stylesheet, which keeps the hint hidden below 60em.
+
+      With JavaScript off the hint stays hidden, which is correct: the
+      shortcut it advertises would not work either.
+    -#}
+    <script>
+      (() => {
+        const button = document.querySelector("[data-adk-search-trigger]");
+        const chord = button?.querySelector("kbd");
+        if (!chord) return;
+        const modifier = chord.querySelector("kbd");
+        // navigator.platform is deprecated and frozen, but it is the only
+        // option that works in Safari and Firefox - i.e. on most actual Macs.
+        if (modifier && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+          modifier.textContent = "\u2318";
+          button.setAttribute("aria-keyshortcuts", "Meta+K");
+        }
+        chord.style.display = "";
+      })();
+    </script>
   </nav>
 
   <!-- Navigation tabs (sticky) -->
