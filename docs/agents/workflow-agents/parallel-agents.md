@@ -38,8 +38,8 @@ ultimately managed by the ***ParallelAgent*** object you define.
 When the `ParallelAgent`'s `run_async()` method is called:
 
 1. **Concurrent Execution:** It initiates the `run_async()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
-2. **Independent Branches:**  Each sub-agent operates in its own execution branch, and there is ***no* automatic sharing of conversation history between these branches** during execution. A sub-agent sees only the events on its own branch. Session state is shared: all branches run against the same session, so a value one sub-agent writes (e.g., through `output_key`) is visible to the other branches and to later agents.
-3. **Result Collection:** The `ParallelAgent` merges the sub-agents' event streams and yields each event as it is produced; it does not gather the results into a list you can read afterwards. Because the branches interleave, the event order is not deterministic. To use a sub-agent's result, read it from the shared session state — for example, the key it was given through `output_key`.
+2. **Independent Branches:**  Each sub-agent operates in its own execution branch, and there is ***no* automatic sharing of conversation history between these branches** during execution. A sub-agent sees only the events on its own branch. Session state is shared: all branches run against the same session, so a value one sub-agent writes, for example through `output_key`, is visible to the other branches and to later agents.
+3. **Result Collection:** The `ParallelAgent` merges the sub-agents' event streams and yields each event as it is produced; it does not gather the results into a list you can read afterwards. Because the branches interleave, the event order is not deterministic. To use a sub-agent's result, read it from the shared session state, for example the key it was given through `output_key`.
 
 ### Independent Execution and State Management
 
