@@ -1,0 +1,105 @@
+{#-
+ Copyright 2026 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-#}
+{#-
+  The search dialog, backed by Pagefind.
+
+  The trigger button that opens this dialog is NOT here. It is inlined in
+  partials/header.html, which includes this partial separately, after the
+  closing </header>. Two constraints pull in opposite directions and only
+  that split satisfies both.
+
+  1. The dialog must not be a descendant of .md-header.
+
+     docs/stylesheets/custom.css declares, for the slate scheme:
+
+         [data-md-color-scheme="slate"] .md-header,
+         [data-md-color-scheme="slate"] .md-header * { color: ...; }
+
+     That blanket descendant selector is specificity 0-2-0 and repaints
+     every element inside the header in dark mode. With the dialog inside
+     the header it beat our own 0-1-1 rules and flattened the excerpt text,
+     the section links and the <mark> accent on matched terms. The rule is
+     load-bearing for the real header, so the dialog moves out from under it
+     rather than being fought with higher-specificity overrides.
+
+  2. The dialog must stay outside the seven elements Material's instant
+     navigation replaces: announce, container, header-topic, outdated, logo,
+     skip and tabs. Anything inside those is destroyed on client-side
+     navigation, taking its event listeners with it.
+
+  base.html renders the header block immediately before
+  <div class="md-container" data-md-component="container">, so including
+  this partial after the closing </header> makes the dialog a sibling of
+  both: outside .md-header, and outside every replaced element.
+
+  Do not move this back inside the header. It satisfies constraint 2 there
+  but reintroduces the dark-mode bug from constraint 1.
+
+  data-pagefind-bundle is resolved to an absolute URL by search.js at initial
+  page load, before any instant navigation can change the document location.
+-#}
+<dialog
+  class="adk-search"
+  data-adk-search-dialog
+  data-pagefind-bundle="{{ 'pagefind/' | url }}"
+  aria-label="{{ lang.t('search') }}"
+>
+  <div class="adk-search__panel">
+    <div class="adk-search__field">
+      {% include ".icons/material/magnify.svg" %}
+      {#-
+        The combobox half of an ARIA combobox/listbox pair. Focus stays in
+        this input for the whole interaction; arrow keys move a virtual
+        cursor expressed as aria-activedescendant rather than moving real
+        focus, so typing keeps working without the input having to forward
+        printable keys back to itself.
+
+        search.js keeps aria-expanded and aria-activedescendant in sync, and
+        owns the role="option" / aria-selected / id attributes on the result
+        links inside the listbox below.
+      -#}
+      <input
+        type="search"
+        class="adk-search__input"
+        data-adk-search-input
+        placeholder="{{ lang.t('search.placeholder') }}"
+        aria-label="{{ lang.t('search.placeholder') }}"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="adk-search-listbox"
+        aria-autocomplete="list"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      >
+      <button
+        type="button"
+        class="adk-search__close"
+        data-adk-search-close
+        aria-label="Close search"
+      >Esc</button>
+    </div>
+    <div class="adk-search__status" data-adk-search-status role="status" aria-live="polite"></div>
+    <ul
+      class="adk-search__results"
+      data-adk-search-results
+      id="adk-search-listbox"
+      role="listbox"
+      aria-label="{{ lang.t('search') }}"
+    ></ul>
+  </div>
+</dialog>

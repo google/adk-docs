@@ -96,21 +96,72 @@
       {% include "partials/alternate.html" %}
     {% endif %}
 
-    <!-- Button to open search modal -->
-    {% if "material/search" in config.plugins %}
-      {% set search = config.plugins["material/search"] | attr("config") %}
+    {#-
+      Pagefind search trigger.
 
-      <!-- Check if search is actually enabled - see https://t.ly/DT_0V -->
-      {% if search.enabled %}
-        <label class="md-header__button md-icon" for="__search">
-          {% set icon = config.theme.icon.search or "material/magnify" %}
-          {% include ".icons/" ~ icon ~ ".svg" %}
-        </label>
+      The dialog this opens is deliberately not here. It is included after
+      the closing </header> below, because custom.css repaints every
+      descendant of .md-header in dark mode via a blanket
+      `[data-md-color-scheme="slate"] .md-header *` rule, which flattened the
+      dialog's colours. See partials/search-modal.html for the full
+      reasoning before moving either piece.
 
-        <!-- Search interface -->
-        {% include "partials/search.html" %}
-      {% endif %}
-    {% endif %}
+      This button is a header control and is meant to follow header colours,
+      so it stays inside the header and is inlined here, mirroring how
+      Material pairs its own .md-header__button with a separate
+      partials/search.html include.
+    -#}
+    <button
+      type="button"
+      class="md-header__button md-icon adk-search__trigger"
+      data-adk-search-trigger
+      aria-label="{{ lang.t('search') }}"
+      aria-keyshortcuts="Control+K"
+    >
+      {% include ".icons/material/magnify.svg" %}
+      <span class="adk-search__trigger-label">{{ lang.t('search') }}</span>
+      {#-
+        Nested <kbd> is the spec's markup for a key combination: the outer
+        element is the chord, the inner ones are the individual keys. The
+        script below relies on that nesting to find the modifier, so keep
+        `Ctrl` as the first inner <kbd>.
+
+        Rendered hidden on purpose - see the script.
+      -#}
+      <kbd class="adk-search__trigger-keys" style="display: none"><kbd>Ctrl</kbd><kbd>K</kbd></kbd>
+    </button>
+    {#-
+      Relabel the shortcut on Apple platforms, where the handler in
+      search.js already accepts Meta as well as Control.
+
+      Inline and immediately after the button on purpose. The hint is
+      server-rendered as `Ctrl` so the HTML stays identical for every
+      visitor and fully cacheable, then corrected here during parse. Doing
+      it from search.js instead would be too late: that file is a plain
+      <script src> at the end of <body>, and it was measured finishing 6ms
+      *after* first paint on a throttled connection, so Mac readers would
+      see `Ctrl` repaint to `Cmd`. Clearing the inline `display` rather
+      than toggling a class hands responsive control back to the
+      stylesheet, which keeps the hint hidden below 60em.
+
+      With JavaScript off the hint stays hidden, which is correct: the
+      shortcut it advertises would not work either.
+    -#}
+    <script>
+      (() => {
+        const button = document.querySelector("[data-adk-search-trigger]");
+        const chord = button?.querySelector("kbd");
+        if (!chord) return;
+        const modifier = chord.querySelector("kbd");
+        // navigator.platform is deprecated and frozen, but it is the only
+        // option that works in Safari and Firefox - i.e. on most actual Macs.
+        if (modifier && /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+          modifier.textContent = "\u2318";
+          button.setAttribute("aria-keyshortcuts", "Meta+K");
+        }
+        chord.style.display = "";
+      })();
+    </script>
   </nav>
 
   <!-- Navigation tabs (sticky) -->
@@ -120,3 +171,17 @@
     {% endif %}
   {% endif %}
 </header>
+
+{#-
+  Pagefind search dialog, outside <header> on purpose.
+
+  base.html renders this block immediately before
+  <div class="md-container" data-md-component="container">, so the dialog
+  lands as a sibling of both .md-header and .md-container. That puts it out
+  of reach of custom.css's `[data-md-color-scheme="slate"] .md-header *`
+  colour override while keeping it outside every element instant navigation
+  replaces, so it stays mounted with its listeners intact.
+
+  See partials/search-modal.html before relocating this.
+-#}
+{% include "partials/search-modal.html" %}

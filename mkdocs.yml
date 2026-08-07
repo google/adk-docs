@@ -26,10 +26,12 @@ validation:
 extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
+  - stylesheets/search.css
 
 # Custom JavaScript
 extra_javascript:
   - javascript/copy-page.js
+  - javascript/search.js
 
 # Additional config
 extra:
@@ -116,7 +118,8 @@ markdown_extensions:
 
 # Plugins
 plugins:
-  - search
+  # NOTE: the built-in `search` plugin (lunr.js) is intentionally not enabled.
+  # Search is served by Pagefind - see hooks/pagefind_index.py.
   - macros:
       module_name: scripts/integrations
       # Set custom delimiters for J2 templates to avoid conflicts with Markdown
@@ -272,6 +275,13 @@ plugins:
         - api-reference/index.md
         Community:
         - community/*.md
+
+# Hooks
+# Registered after every plugin above, and runs last in `on_post_build`.
+hooks:
+  # Builds the Pagefind search index from the rendered HTML after each build.
+  # Set PAGEFIND_SKIP=1 to skip it while authoring; search is then dead.
+  - hooks/pagefind_index.py
 
 # Navigation
 nav:

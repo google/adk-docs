@@ -1,0 +1,285 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Search modal.
+ *
+ * Everything here reads Material's own custom properties, so the palette
+ * toggle is handled by ordinary cascade. Material declares its light palette
+ * at :root and its dark palette on [data-md-color-scheme] on <body>, and
+ * these elements live in the normal document, so both resolve correctly with
+ * no JavaScript and no variable bridging.
+ */
+
+/* Trigger ---------------------------------------------------------------- */
+
+/*
+ * Qualified with .md-header__button for specificity, not for scoping.
+ *
+ * Material declares `.md-header__button:not([hidden]) { display: inline-block }`.
+ * :not() takes the specificity of its argument, so that is 0-2-0 and a bare
+ * `.adk-search__trigger` at 0-1-0 loses to it no matter what the source
+ * order is. The button then blockifies and align-items, gap and the
+ * `margin-left: auto` on the key hint all go inert, stacking the icon, label
+ * and shortcut into three rows that overflow the header. This selector is
+ * also 0-2-0 and wins on source order, since search.css is loaded after
+ * Material's stylesheet.
+ *
+ * padding is here for the same reason -- Material sets `padding: .4rem` on
+ * .md-header__button -- and the rest ride along so the whole trigger is
+ * declared at one specificity rather than several.
+ */
+.md-header__button.adk-search__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: auto;
+  padding: 0 0.5rem;
+  border-radius: 0.2rem;
+  cursor: pointer;
+}
+
+.adk-search__trigger svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentcolor;
+  flex-shrink: 0;
+}
+
+.adk-search__trigger-label,
+.adk-search__trigger-keys {
+  display: none;
+}
+
+/*
+ * 60em is where Material's own search control changes shape, not 76.25em,
+ * which is where the sidebar appears. This trigger replaces Material's
+ * search outright, so tracking the search breakpoint is the coherent choice.
+ */
+@media screen and (min-width: 60em) {
+  .md-header__button.adk-search__trigger {
+    background-color: var(--md-default-bg-color);
+    border: 1px solid var(--md-default-fg-color--lightest);
+    min-width: 11rem;
+    height: 1.8rem;
+  }
+
+  .adk-search__trigger-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--md-default-fg-color--light);
+  }
+
+  .adk-search__trigger-keys {
+    display: flex;
+    gap: 0.15rem;
+    margin-left: auto;
+  }
+
+  .adk-search__trigger-keys kbd {
+    background-color: var(--md-default-fg-color--lightest);
+    border-radius: 0.15rem;
+    color: var(--md-default-fg-color--light);
+    font-size: 0.6rem;
+    padding: 0.05rem 0.25rem;
+  }
+}
+
+/* Dialog ----------------------------------------------------------------- */
+
+.adk-search {
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: min(46rem, 92vw);
+  margin-top: 4rem;
+  color: var(--md-typeset-color);
+}
+
+.adk-search::backdrop {
+  background-color: rgb(0 0 0 / 55%);
+}
+
+/*
+ * The panel owns the height cap; the dialog shrink-wraps it. Capping both
+ * was redundant, and capping only the dialog would let the panel overflow
+ * it, since the dialog does not establish a scroll container.
+ */
+.adk-search__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  background-color: var(--md-default-bg-color);
+  border-radius: 0.3rem;
+  box-shadow: 0 0.2rem 1rem rgb(0 0 0 / 25%);
+  overflow: hidden;
+}
+
+/* Input ------------------------------------------------------------------ */
+
+.adk-search__field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/*
+ * The input suppresses its own outline so the borderless field does not get
+ * a ring floating inside it, so the focus indicator has to live on the
+ * wrapper instead. Without this the modal's primary control has no visible
+ * focus state at all.
+ */
+.adk-search__field:focus-within {
+  border-bottom-color: var(--md-accent-fg-color);
+  box-shadow: inset 0 -1px 0 var(--md-accent-fg-color);
+}
+
+.adk-search__field svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: var(--md-default-fg-color--light);
+  flex-shrink: 0;
+}
+
+.adk-search__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--md-typeset-color);
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.adk-search__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.adk-search__close {
+  background-color: var(--md-default-fg-color--lightest);
+  border: none;
+  border-radius: 0.15rem;
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.35rem;
+}
+
+/* Results ---------------------------------------------------------------- */
+
+.adk-search__status {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.75rem;
+  padding: 0 0.8rem;
+}
+
+.adk-search__status:not(:empty) {
+  padding: 0.8rem;
+}
+
+.adk-search__results {
+  list-style: none;
+  margin: 0;
+  overflow-y: auto;
+  padding: 0.4rem;
+}
+
+.adk-search__page + .adk-search__page {
+  margin-top: 0.3rem;
+}
+
+.adk-search__page-link {
+  display: block;
+  border-radius: 0.2rem;
+  color: var(--md-typeset-color);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.4rem 0.5rem;
+  text-decoration: none;
+}
+
+.adk-search__sections {
+  list-style: none;
+  margin: 0 0 0 0.5rem;
+  padding: 0 0 0 0.5rem;
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.adk-search__section-link {
+  display: block;
+  border-radius: 0.2rem;
+  color: var(--md-typeset-color);
+  padding: 0.35rem 0.5rem;
+  text-decoration: none;
+}
+
+.adk-search__section-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.adk-search__excerpt {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  margin: 0.1rem 0 0;
+}
+
+.adk-search__excerpt mark {
+  background: transparent;
+  color: var(--md-accent-fg-color);
+  font-weight: 700;
+}
+
+.adk-search__page-link:hover,
+.adk-search__section-link:hover,
+.adk-search__link--active {
+  background-color: var(--md-default-fg-color--lightest);
+}
+
+.adk-search__link--active {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: -2px;
+}
+
+/* Arrival highlighting --------------------------------------------------- */
+
+/*
+ * Terms marked in the page after arriving from a search result.
+ *
+ * This rule is deliberately a no-op today, kept as documentation rather than
+ * as the thing doing the work. Be honest about why:
+ *
+ * mark.js wraps matches in a bare <mark>, and markContext points at
+ * article.md-content__inner, which is .md-typeset. Material's own
+ * `.md-typeset mark` therefore already applies and already resolves to this
+ * exact token, so deleting this rule would change nothing on screen. The
+ * yellow is not prevented by us either -- Pagefind's injected
+ * `:where(.pagefind-highlight)` is specificity 0-0-0 and was losing anyway.
+ *
+ * It stays for two reasons. It states the intended colour at the point
+ * someone will look for it, so a future change to markOptions.element or to
+ * markContext does not silently drop palette awareness. And at 0-2-0 it
+ * outranks `.md-typeset mark`, so if the wrapper element ever stops being
+ * <mark> this keeps working rather than needing to be discovered.
+ */
+.md-typeset .pagefind-highlight {
+  background-color: var(--md-typeset-mark-color);
+}
