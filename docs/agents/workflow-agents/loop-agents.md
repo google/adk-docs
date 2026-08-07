@@ -61,7 +61,7 @@ Imagine a scenario where you want to iteratively improve a document:
     LoopAgent(name="RefinementLoop", sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
     ```
 
-In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **given an escalation tool such as `exit_loop`, which it calls once the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max_iterations` parameter could be used to limit the process to a fixed number of cycles. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
+In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **given an escalation tool such as `exit_loop`, which it calls once the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max_iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
 
 ???+ "Full Code"
 

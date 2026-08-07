@@ -38,12 +38,12 @@ First, you need to establish what the agent *is* and what it's *for*.
 - **`model` (Optional in Python):** Specify the underlying LLM that will power
   this agent's reasoning. This is either a string identifier like
   `"gemini-flash-latest"` or a `BaseLlm` instance. If you omit `model`, the
-  agent inherits the model of its nearest `LlmAgent` ancestor — a
-  `SequentialAgent`, `ParallelAgent`, or custom `BaseAgent` parent is skipped
-  over, not consulted — or falls back to ADK's built-in default model
-  (see [Configure a default model](#configure-a-default-model)). The choice of
-  model impacts the agent's capabilities, cost, and performance. See the
-  [Models](/agents/models/) page for available options and considerations.
+  agent inherits the model of its nearest `LlmAgent` ancestor, skipping over any
+  `SequentialAgent`, `ParallelAgent`, or custom `BaseAgent` parent. If no
+  ancestor sets a model, the agent falls back to the built-in default model
+  described in [Configure a default model](#configure-a-default-model). The
+  choice of model impacts the agent's capabilities, cost, and performance. See
+  the [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
@@ -487,9 +487,9 @@ schema definitions.
 
     In Python, ADK supports `output_schema` and `tools` on the same agent: the
     tools stay available during the agent's thought loop, and the schema is
-    enforced only on the final response. When the model accepts both in a single
-    request — a `LiteLlm` model, or Gemini 2.0 and later on Vertex AI — ADK
-    passes them through directly. Otherwise ADK adds an internal
+    enforced only on the final response. Some models accept both in a single
+    request, such as a `LiteLlm` model, or Gemini 2.0 and higher on Vertex AI,
+    and ADK passes them through directly. Otherwise ADK adds an internal
     `set_model_response` tool and instructs the model to return its final answer
     through that tool. See
     [`_output_schema_processor.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py).
@@ -500,9 +500,9 @@ schema definitions.
   workflow.
     - In Python, this might look like: `session.state[output_key] =
       agent_response_text`. If `output_schema` is also set, ADK parses the
-      response against the schema first and stores the parsed value — a `dict`
-      for a `BaseModel` schema, a `list[dict]` for `list[BaseModel]` — rather
-      than the response text.
+      response against the schema first and stores the parsed value rather than
+      the response text. A `BaseModel` schema is stored as a `dict`, and a
+      `list[BaseModel]` schema is stored as a `list[dict]`.
     - In Java: `session.state().put(outputKey, agentResponseText)`
     - In Golang, within a callback handler: `ctx.State().Set(output_key,
       agentResponseText)`
@@ -571,6 +571,7 @@ schema definitions.
         instruction: `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
         outputSchema: CapitalOutputSchema, // Enforce JSON output
         outputKey: 'found_capital', // Store result in state['found_capital']
+        // Cannot use tools effectively here
     });
     ```
 
@@ -607,6 +608,7 @@ schema definitions.
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
             .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
+            // Cannot use tools(getCapitalCity) effectively here
             .build();
     ```
 
