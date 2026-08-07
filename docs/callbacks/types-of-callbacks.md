@@ -54,7 +54,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/before_agent_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_agent_callback.ts"
         ```
@@ -104,7 +104,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/after_agent_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_agent_callback.ts"
         ```
@@ -156,7 +156,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
         ```
@@ -195,7 +195,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/after_model_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_model_callback.ts"
         ```
@@ -238,7 +238,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_tool_callback.ts"
         ```
@@ -276,7 +276,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_tool_callback.ts"
         ```
