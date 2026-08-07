@@ -19,13 +19,18 @@ Replaces MkDocs Material's built-in lunr search. Three responsibilities:
 1. ``on_pre_build`` clears the module-level state the other two hooks
    accumulate. The hook module stays loaded for the life of the process, so
    without this a long-running ``mkdocs serve`` would carry one rebuild's
-   counts and findings into the next.
+   findings into the next.
 2. ``on_post_page`` marks the indexable region of each rendered page by adding
    ``data-pagefind-body`` to Material's content ``<article>``. Once any page on
    a site carries that attribute, Pagefind skips every page without it, so this
    is also how pages opt out of search.
 3. ``on_post_build`` runs the Pagefind indexer over the built site and fails
-   the build if the result looks empty.
+   the build if the resulting page count falls outside
+   ``MIN_INDEXED_PAGES..MAX_INDEXED_PAGES``. Both bounds are checked against
+   the finished index rather than against per-page counters, so they hold under
+   ``mkdocs build``, ``mkdocs serve`` and ``mkdocs build --dirty`` alike: a
+   dirty build re-renders only a handful of pages, but Pagefind still indexes
+   the whole ``site_dir``.
 
 Environment variables (``MKDOCS_`` prefixed so they cannot be confused with
 Pagefind's own ``PAGEFIND_*`` configuration, which the subprocess inherits):
@@ -78,8 +83,15 @@ INCLUDE_CHARACTERS = ".-@#+"
 # The site currently indexes 226 pages.
 MIN_INDEXED_PAGES = 200
 
+# The built site holds ~3,476 HTML files, but only ~226 are Material-rendered
+# documentation pages; the rest are generated API reference (javadoc, typedoc,
+# sphinx). Pagefind only honours data-pagefind-body if at least one page
+# carries it, and with none it falls back to indexing every file whole-body. A
+# count near the larger number therefore means nothing got marked and the index
+# is full of API reference and navigation chrome, which no other guard sees.
+MAX_INDEXED_PAGES = 500
+
 _missing_anchor: list[str] = []
-_marked = 0
 
 
 def _skip() -> bool:
@@ -95,20 +107,16 @@ def _is_excluded(page) -> bool:
 
 def on_pre_build(config) -> None:
     """Reset per-build state so it cannot leak across ``mkdocs serve`` rebuilds."""
-    global _marked
     _missing_anchor.clear()
-    _marked = 0
 
 
 def on_post_page(output: str, page, config) -> str:
     """Add ``data-pagefind-body`` to the content article of indexable pages."""
-    global _marked
     if _skip() or _is_excluded(page):
         return output
     if ARTICLE not in output:
         _missing_anchor.append(page.file.src_uri)
         return output
-    _marked += 1
     return output.replace(ARTICLE, ARTICLE_INDEXED, 1)
 
 
@@ -124,22 +132,6 @@ def on_post_build(config) -> None:
             f"indexing: the anchor {ARTICLE!r} was not found. This usually "
             f"means the Material theme changed its content markup. Update "
             f"ARTICLE in hooks/pagefind.py. First offenders: {sample}"
-        )
-
-    # Pagefind only honours data-pagefind-body if at least one page carries it;
-    # with zero marked pages it silently falls back to indexing every HTML file
-    # whole-body. That failure mode raises the fragment count, so the floor
-    # check below cannot catch it, and neither can the missing-anchor guard
-    # above (excluded pages never reach it). This is the only place it shows.
-    if _marked < MIN_INDEXED_PAGES:
-        raise PluginError(
-            f"Pagefind marked only {_marked} page(s) with data-pagefind-body, "
-            f"below the floor of {MIN_INDEXED_PAGES}. With too few marked "
-            f"pages Pagefind stops honouring the attribute and indexes every "
-            f"page whole-body, so the build would go green while shipping an "
-            f"index full of navigation chrome and pages meant to be excluded. "
-            f"Check EXCLUDED_PREFIXES and _is_excluded in hooks/pagefind.py, "
-            f"and any 'search.exclude' front matter."
         )
 
     site_dir = Path(config["site_dir"])
@@ -197,5 +189,15 @@ def on_post_build(config) -> None:
             f"Pagefind indexed only {indexed} page(s), below the floor of "
             f"{MIN_INDEXED_PAGES}. Search would ship broken. Check that "
             f"data-pagefind-body is present in the built HTML."
+        )
+    if indexed > MAX_INDEXED_PAGES:
+        raise PluginError(
+            f"Pagefind indexed {indexed} page(s), above the ceiling of "
+            f"{MAX_INDEXED_PAGES}. No page carried data-pagefind-body, so "
+            f"Pagefind ignored the attribute and indexed the entire site "
+            f"whole-body: generated API reference and navigation chrome are "
+            f"now in the index, and pages meant to be excluded are searchable. "
+            f"Check _is_excluded and EXCLUDED_PREFIXES in hooks/pagefind.py, "
+            f"and any 'search.exclude' front matter."
         )
     log.info("Pagefind indexed %d pages.", indexed)
