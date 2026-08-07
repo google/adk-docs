@@ -262,35 +262,44 @@ fun agentWithCallback(model: Gemini) {
 
 // --8<-- [start:memory_bank]
 
-/**
- * Memory Bank keeps LLM-extracted memories in a Vertex AI Agent Engine.
- *
- * The primary constructor is internal; this project/location/agentEngineId one
- * is the public entry point.
- */
-fun memoryBankService(): VertexAiMemoryBankService =
-    VertexAiMemoryBankService(
-        project = "PROJECT_ID",
-        location = "LOCATION",
-        agentEngineId = "AGENT_ENGINE_ID",
+/** Memory Bank keeps LLM-extracted memories in a Vertex AI Agent Engine. */
+fun memoryBankRunner(agent: LlmAgent): InMemoryRunner {
+    val memoryService =
+        VertexAiMemoryBankService(
+            project = "PROJECT_ID",
+            location = "LOCATION",
+            agentEngineId = "AGENT_ENGINE_ID",
+        )
+    return InMemoryRunner(
+        agent = agent,
+        appName = "memory_bank_app",
+        memoryService = memoryService,
     )
+}
 // --8<-- [end:memory_bank]
 
 // --8<-- [start:rag_memory]
 
 /**
- * RAG memory stores whole transcripts in a Knowledge Engine corpus and
- * retrieves them by vector similarity.
- *
- * `ragCorpus` accepts either a bare corpus id or a full resource name; it is
- * normalised against [project] and [location] either way.
+ * RAG memory stores whole transcripts in a Knowledge Engine corpus and retrieves them by vector
+ * similarity.
  */
-fun ragMemoryService(): VertexAiRagMemoryService =
-    VertexAiRagMemoryService(
-        project = "PROJECT_ID",
-        location = "LOCATION",
-        ragCorpus = "CORPUS_ID",
-        similarityTopK = 5,
-        vectorDistanceThreshold = 0.6,
+fun ragMemoryRunner(agent: LlmAgent): InMemoryRunner {
+    val memoryService =
+        VertexAiRagMemoryService(
+            project = "PROJECT_ID",
+            location = "LOCATION",
+            // A bare corpus id, NOT a full resource name. Kotlin expands it to
+            // projects/{project}/locations/{location}/ragCorpora/{id} and rejects an
+            // already-expanded name -- unlike the Python tab above, which takes the full name.
+            ragCorpus = "CORPUS_ID",
+            similarityTopK = 5,
+            vectorDistanceThreshold = 0.6,
+        )
+    return InMemoryRunner(
+        agent = agent,
+        appName = "rag_memory_app",
+        memoryService = memoryService,
     )
+}
 // --8<-- [end:rag_memory]
