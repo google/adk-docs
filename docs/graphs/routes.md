@@ -438,8 +438,8 @@ accomplish this goal.
     emits it as the output of the nested workflow.
 
     A workflow must have at most *one* terminal node that produces output. If
-    two or more terminal nodes produce output — for example the ends of two
-    parallel branches — the workflow fails with a `ValueError`. Merge those
+    two or more terminal nodes produce output, for example the ends of two
+    parallel branches, the workflow fails with a `ValueError`. Merge those
     branches with a ***JoinNode*** so the graph ends in a single terminal
     output.
 
@@ -522,8 +522,8 @@ lifecycle on each iteration.
     )
     ```
 
-    A cycle must contain at least one routed (conditional) edge; a cycle made
-    only of unconditional edges is rejected when the `Workflow` is built.
+    A cycle must contain at least one routed, or conditional, edge. A cycle
+    made only of unconditional edges is rejected when the `Workflow` is built.
 
 === "TypeScript"
 
