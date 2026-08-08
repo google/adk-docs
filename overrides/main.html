@@ -35,6 +35,127 @@
   <meta name="twitter:title" content="Agent Development Kit (ADK)">
   <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
   <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
+
+  <!-- Pagefind search (index built by hooks/pagefind.py). Both filenames are
+       repeated in the asset guard at the end of on_post_build in
+       hooks/pagefind.py, which fails the build if Pagefind stops emitting one.
+       That guard cannot read this template, so a third asset added here is
+       unguarded until its name is added there too. -->
+  <link rel="stylesheet" href="{{ 'pagefind/pagefind-component-ui.css' | url }}">
+  <script type="module" src="{{ 'pagefind/pagefind-component-ui.js' | url }}"></script>
+  <!-- document.currentScript is null inside a module script, so the bundle's
+       currentScript.src auto-detection of its own index location always fails
+       here and falls back to the hard-coded "/pagefind/". The `| url` filter
+       therefore governs only the two asset URLs above; the index itself is
+       always fetched from the origin root. Production is unaffected, because
+       the site deploys to the root of a custom domain (site_url:
+       https://adk.dev, docs/CNAME). Any non-root base path breaks, though: on a
+       contributor fork previewing at <user>.github.io/adk-docs/ the modal opens
+       but shows an error state, and would need a
+       <pagefind-config bundle-path="..."> element to find its index. -->
+
+  <!-- Search ranking. termSimilarity 2.0 (default 1.0) favours pages holding
+       words close in length to the query; it is a measured fix for identifier
+       searches such as "LlmAgent", which otherwise lose to pages that merely
+       say "agent" often. Set on pagefindOptions rather than through
+       configureInstance(), because that call is ignored with a console warning
+       ('Instance "default" already exists, configuration ignored') once the
+       instance exists, and the components create the instance on connect during
+       the bundle's own execution. pagefindOptions, by contrast, is read lazily
+       when the search bundle first loads. Module scripts run in document order,
+       so this executes after the bundle above has defined the components. -->
+  <script type="module">
+    window.PagefindComponents
+      .getInstanceManager()
+      .getInstance("default")
+      .pagefindOptions.ranking = { termSimilarity: 2.0 };
+  </script>
+
+  <!-- Pagefind declares its light palette on :root in
+       pagefind-component-ui.css and gates the dark palette behind the attribute
+       selector [data-pf-theme="dark"]. Nothing sets that attribute
+       automatically, and the bundle contains no prefers-color-scheme queries,
+       so Material's data-md-color-scheme on <body> must be mirrored to
+       data-pf-theme on <html>. Material's instant navigation preserves
+       document.body, so this observer survives page transitions. -->
+  <script>
+    (function () {
+      var sync = function () {
+        var root = document.documentElement;
+        if (document.body.getAttribute("data-md-color-scheme") === "slate") {
+          root.setAttribute("data-pf-theme", "dark");
+        } else {
+          root.removeAttribute("data-pf-theme");
+        }
+      };
+      document.addEventListener("DOMContentLoaded", function () {
+        sync();
+        new MutationObserver(sync).observe(document.body, {
+          attributes: true,
+          attributeFilter: ["data-md-color-scheme"],
+        });
+      });
+    })();
+  </script>
+
+  <!-- Workaround for an upstream bug in the Pagefind Component UI: the
+       reset-on-close attribute on <pagefind-modal> does not clear the input.
+       The modal implements the reset as instance.triggerSearch("") on the
+       dialog's close event, which empties the result list and the summary but
+       never writes back to the <input> element's own value. So the second time
+       a reader opens search they find their old query sitting above no
+       results, and the next keystroke appends to it: "artifacts" then "x"
+       gives "artifactsx". Delete this block once Pagefind clears the input
+       itself; nothing else here depends on it.
+
+       reset-on-close stays on the element. It is the supported API and it does
+       the half of the reset this listener should not: it drops the search
+       state synchronously on close, so no stale results can flash if the modal
+       is reopened quickly. This listener supplies only the half it misses, the
+       input's value. Clearing the value also feeds an empty query back through
+       the component's own debounced input handler, which is redundant with
+       triggerSearch("") but is what keeps the Clear button in step.
+
+       The value goes through the native HTMLInputElement value setter and is
+       announced with a bubbling, composed `input` event, so the component
+       observes the change instead of drifting out of sync with the DOM.
+
+       The listener is registered in the capture phase on <pagefind-modal>
+       rather than on the <dialog> inside it. `close` does not bubble, but the
+       capture phase still walks the ancestor chain, so this keeps working if a
+       future version re-renders the modal and replaces its dialog element. -->
+  <script>
+    (function () {
+      document.addEventListener("DOMContentLoaded", function () {
+        var modal = document.querySelector("pagefind-modal");
+        // Bind exactly once. The header nav survives Material's instant
+        // navigation, so the modal outlives page transitions and a second
+        // binding would be a duplicate. Material keys head elements by
+        // outerHTML and this script is byte-identical on every page, so it is
+        // never re-evaluated today; the flag keeps that from becoming a
+        // silent assumption.
+        if (!modal || modal.dataset.adkPfClearOnClose) return;
+        modal.dataset.adkPfClearOnClose = "1";
+        modal.addEventListener(
+          "close",
+          function () {
+            var input =
+              modal.querySelector("input") ||
+              (modal.shadowRoot && modal.shadowRoot.querySelector("input"));
+            if (!input || !input.value) return;
+            Object.getOwnPropertyDescriptor(
+              HTMLInputElement.prototype,
+              "value",
+            ).set.call(input, "");
+            input.dispatchEvent(
+              new Event("input", { bubbles: true, composed: true }),
+            );
+          },
+          true,
+        );
+      });
+    })();
+  </script>
 {% endblock %}
 
 <!-- top of page announcement banner here: -->
