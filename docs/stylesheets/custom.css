@@ -169,13 +169,10 @@ button.md-content__button:hover svg {
   overflow: hidden !important;
 }
 
-/* Constrain header right edge and search bar width on desktop */
+/* Constrain header right edge on desktop */
 @media screen and (min-width: 60em) {
   .md-header__inner {
     padding-right: 5rem;
-  }
-  .md-search__form {
-    max-width: 12rem;
   }
 }
 
@@ -459,21 +456,6 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   fill: var(--md-default-fg-color);
 }
 
-[data-md-color-scheme="slate"] .md-search__input {
-  color: var(--md-default-fg-color);
-  background-color: var(--md-default-bg-color);
-  border-color: var(--md-default-fg-color--light);
-}
-
-[data-md-color-scheme="slate"] .md-search__input::placeholder {
-  color: var(--md-default-fg-color--light);
-}
-
-[data-md-color-scheme="slate"] .md-search__icon svg,
-[data-md-color-scheme="slate"] .md-search__icon path {
-  fill: var(--md-default-fg-color);
-}
-
 [data-md-color-scheme="slate"] .resource-card,
 [data-md-color-scheme="slate"] .tool-card {
   background: var(--md-default-bg-color);
@@ -592,5 +574,24 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   }
   .md-banner .announce-item {
     display: inline;
+  }
+}
+
+/* Pagefind theming. Keep the selector on `body`, not :root: custom properties
+ * resolve from the nearest declaring ancestor, and Pagefind declares these on
+ * :root, where an equal-specificity rule would lose on source order. */
+body {
+  --pf-font: Roboto, Helvetica, Arial, sans-serif;
+  --pf-border-radius: 4px;
+  --pf-modal-max-width: 46rem;
+}
+
+/* Collapse the trigger to an icon below 480px, where its fixed 159px pill
+ * overflows the header and scrolls the page sideways. !important is required:
+ * Pagefind's own reset already sets `display` at (3,1,0) specificity. */
+@media screen and (max-width: 479px) {
+  pagefind-modal-trigger .pf-trigger-text,
+  pagefind-modal-trigger .pf-trigger-shortcut {
+    display: none !important;
   }
 }
