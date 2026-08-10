@@ -392,19 +392,6 @@ if __name__ == "__main__":
         print("\nMCP Server (stdio) stopped by user.")
 ```
 
----
-
-
-## Deployment Comparison Matrix
-
-| Strategy | Architecture | Ideal Use Case | Pros / Cons |
-| :--- | :--- | :--- | :--- |
-| **Self-Contained Stdio** | Single container runs ADK agent + Node.js/Python MCP subprocess | Lightweight apps, single-tenant tasks | **Pros:** Zero network latency, simple deployment.<br>**Cons:** Higher container memory consumption. |
-| **Streamable HTTP Service** | ADK agent connects to separate Cloud Run HTTP service | High-scale, multi-tenant production systems | **Pros:** Independent auto-scaling, stateless.<br>**Cons:** Requires network authentication setup. |
-| **GKE Sidecar** | MCP server runs as a sidecar container in the same Kubernetes Pod | Microservice clusters, local cluster IPC | **Pros:** Fast `localhost` IPC, isolated dependencies.<br>**Cons:** Pod-level resource allocation. |
-
----
-
 ### Deployment CLI Commands
 
 ```bash
@@ -422,8 +409,6 @@ uv run adk deploy cloud_run \
   --service_name=<service-name> \
   ./path/to/agent_directory
 ```
-### Test your
----
 
 ## Remote MCP Authentication and resource access
 
@@ -437,12 +422,6 @@ This section shows you how to connect to remote MCP servers using authentication
 | `auth_credential` | `AuthCredential` | The secret credential payload, for example, API token, OAuth access token, username/password. |
 
 ADK automatically constructs the required `Authorization` HTTP headers and manages OAuth 2.0 token refreshes during client requests.
-
-### Configure authentication
-
-When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
-
-*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md)*
 
 ### Configurate authentication
 
