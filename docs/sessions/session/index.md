@@ -363,45 +363,28 @@ the storage backend that best suits your needs:
     Android; use it from a server-side agent.
 
     ```kotlin
-    import com.google.adk.kt.agents.LlmAgent
-    import com.google.adk.kt.models.Gemini
-    import com.google.adk.kt.runners.InMemoryRunner
     import com.google.adk.kt.sessions.SessionKey
     import com.google.adk.kt.sessions.VertexAiSessionService
     import kotlinx.coroutines.runBlocking
 
-    fun main() = runBlocking {
-        // The reasoning engine is pinned here, at construction. In the other
-        // tabs on this page the engine is chosen per call, through `app_name`;
-        // in Kotlin `appName` is never parsed for it and is only a label.
-        val sessionService =
-            VertexAiSessionService(
-                project = "your-gcp-project-id",
-                location = "us-central1",
-                // The bare numeric engine id. A full
-                // "projects/.../reasoningEngines/..." resource name is
-                // rejected; project and location are separate arguments.
-                reasoningEngineId = "1234567890",
-            )
+    // The reasoning engine is pinned here, at construction. In the other tabs
+    // the engine is chosen per call, through `app_name`; in Kotlin `appName`
+    // is never parsed for it and is only a label on the session.
+    val sessionService =
+        VertexAiSessionService(
+            project = "your-gcp-project-id",
+            location = "us-central1",
+            // The bare numeric engine id. A full
+            // "projects/.../reasoningEngines/..." resource name is rejected;
+            // project and location are separate arguments.
+            reasoningEngineId = "1234567890",
+        )
 
-        val appName = "example-app"
-        val userId = "u_123"
-
-        // Hand the service to the runner so turns are persisted to Vertex AI.
-        val runner =
-            InMemoryRunner(
-                agent =
-                    LlmAgent(
-                        name = "example_agent",
-                        model = Gemini(name = "gemini-flash-latest"),
-                    ),
-                appName = appName,
-                sessionService = sessionService,
-            )
-
+    // Session methods are suspend functions; `runBlocking` here is the
+    // counterpart of the Java tab's `.blockingGet()`.
+    val mySession = runBlocking {
         // A null id lets the service assign one.
-        val session = sessionService.createSession(SessionKey(appName, userId, id = null))
-        println("Session ${session.key.id} is ready for ${runner.appName}.")
+        sessionService.createSession(SessionKey("example-app", "u_123", id = null))
     }
     ```
 
