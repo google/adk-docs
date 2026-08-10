@@ -269,7 +269,8 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
     ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
 
     ```bash
-    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true```
+    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
+    ```
 
 ## Agent Executor V2
 
