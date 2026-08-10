@@ -145,6 +145,7 @@ in the following sample code:
     import com.google.adk.kt.summarizer.EventsCompactionConfig
 
     // tokenThreshold and eventRetentionSize must be set together; either alone throws.
+    // Kotlin also accepts the compactionInterval/overlapSize pair used in the other tabs.
     val app =
         App(
             appName = "my-agent",
