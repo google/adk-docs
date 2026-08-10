@@ -359,30 +359,50 @@ the storage backend that best suits your needs:
 
 === "Kotlin"
 
+    `VertexAiSessionService` is JVM-only in ADK Kotlin. It is not available on
+    Android; use it from a server-side agent.
+
     ```kotlin
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.runners.InMemoryRunner
     import com.google.adk.kt.sessions.SessionKey
     import com.google.adk.kt.sessions.VertexAiSessionService
+    import kotlinx.coroutines.runBlocking
 
-    // The reasoning engine is fixed here, at construction. Unlike the Python
-    // and Java tabs above, `appName` is never parsed to derive the engine --
-    // in Kotlin it is only a label recorded on the session.
-    val sessionService =
-        VertexAiSessionService(
-            project = "your-gcp-project-id",
-            location = "us-central1",
-            // The bare numeric engine id. A full
-            // "projects/.../reasoningEngines/..." resource name is rejected;
-            // project and location are separate arguments above.
-            reasoningEngineId = "1234567890",
-        )
+    fun main() = runBlocking {
+        // The reasoning engine is pinned here, at construction. In the other
+        // tabs on this page the engine is chosen per call, through `app_name`;
+        // in Kotlin `appName` is never parsed for it and is only a label.
+        val sessionService =
+            VertexAiSessionService(
+                project = "your-gcp-project-id",
+                location = "us-central1",
+                // The bare numeric engine id. A full
+                // "projects/.../reasoningEngines/..." resource name is
+                // rejected; project and location are separate arguments.
+                reasoningEngineId = "1234567890",
+            )
 
-    // Session methods are suspend functions, so call them from a coroutine.
-    suspend fun startSession() =
-        sessionService.createSession(
-            // A null id lets the service assign one.
-            key = SessionKey(appName = "example-app", userId = "u_123", id = null),
-            state = mapOf("visitCount" to 0),
-        )
+        val appName = "example-app"
+        val userId = "u_123"
+
+        // Hand the service to the runner so turns are persisted to Vertex AI.
+        val runner =
+            InMemoryRunner(
+                agent =
+                    LlmAgent(
+                        name = "example_agent",
+                        model = Gemini(name = "gemini-flash-latest"),
+                    ),
+                appName = appName,
+                sessionService = sessionService,
+            )
+
+        // A null id lets the service assign one.
+        val session = sessionService.createSession(SessionKey(appName, userId, id = null))
+        println("Session ${session.key.id} is ready for ${runner.appName}.")
+    }
     ```
 
 For more information on connecting to Google Cloud from ADK agents, see
