@@ -12,7 +12,7 @@ The **Model Context Protocol (MCP)** is an open standard for connecting Large La
 
 ## Core architecture and concepts
 
-MCP follows a client-server architecture, defining how data (resources), interactive templates (prompts), and actionable functions (tools) are exposed by an MCP server and consumed by an MCP client (which could be an LLM host application or an AI agent).
+MCP follows a client-server architecture, defining how data or resources, interactive templates or prompts, and actionable functions or tools are exposed by an MCP server and consumed by an MCP client, which could be an LLM host application or an AI agent.
 
 ```mermaid
 sequenceDiagram
@@ -67,19 +67,38 @@ Before you begin, ensure you have the following set up:
 
 ## Key considerations
 
- When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents:
+ When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents.
 
-| Concept | MCP (Model Context Protocol) | ADK (Agent Development Kit) |
-| :--- | :--- | :--- |
-| **Core Identity** | A protocol specification that defines communication rules. | A Python library and framework used to build and run agents. |
-| **Tools** | Capabilities exposed by a server according to the protocol's schema. | Native Python objects (like `BaseTool`) built for direct use in the `LlmAgent`. |
-| **Asynchronous Design** | Server handlers rely heavily on Python's `asyncio` library. | Tool implementations rely heavily on Python's `asyncio` library. |
-| **State & Connections** | Establishes stateful, persistent connections between a client and server. | Manages the connection lifecycle using `McpToolset` and the `exit_stack` pattern. |
-| **Session Persistence** | Active connections are not automatically re-established upon restoration. | Preserves agent context across managed environments via object serialization (`getstate` and `setstate`). |
+### Compare tools
+
+| Dimension | **Direct MCP Tool Integration** (`McpToolset`) | **Specialized Sub-Agent Delegation** (`AgentTool`) | **Agent-Exposed MCP Server** (`to_mcp_server`) |
+| :--- | :--- | :--- | :--- |
+| **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). |
+| **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. | **Isolated**: The external caller only receives the final aggregated response text/blocks. |
+| **Cognitive Load & Model Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. | Independent model reasoning dedicated solely to the wrapped task. |
+| **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | **Higher Cost & Variable Latency**: Multiplies LLM calls, sub-agent reasoning turns before returning to parent. | Client-driven; latency depends on internal agent execution depth. |
+| **Ideal Use Cases** | <ul><li>Deterministic API integrations: Postgres, BigQuery, GitHub, Google Maps.</li><li>File system operations & static resource reading.</li><li>Reusing standard pre-built community MCP servers.</li></ul> | <ul><li>Multi-step autonomous workflows requiring trial-and-error. For example: code debugging or research synthesis.</li><li>Tasks needing isolated personas or specialized instructions.</li><li>Scenarios with >20 tools where schema overload harms accuracy.</li></ul> | <ul><li>Exposing complex ADK multi-agent capabilities to external MCP-compliant ecosystems.</li><li>Integrating ADK agents into IDEs, editors, or A2A pipelines.</li></ul> |
+| **Pros** | <ul><li>Zero extra LLM reasoning overhead.</li><li>Clean boundary separation via standardized Stdio/HTTP IPC.</li><li>Dynamic tool discovery and runtime credential injection.</li></ul> | <ul><li>Keeps primary agent context lean and focused on orchestration.</li><li>Prevents prompt injection / token pollution from raw payloads.</li><li>Allows domain-specific tool sets per sub-agent.</li></ul> | <ul><li>Standardized cross-platform distribution.</li><li>Session persistence across connection lifecycle.</li><li>Native progress streaming over MCP protocol.</li></ul> |
+| **Cons** | <ul><li>Context window exhaustion if tools return large payloads.</li><li>Tool naming collisions and model confusion if many tools are loaded.</li><li>Stdio subprocess startup overhead.</li></ul> | <ul><li>Increased LLM token consumption & inference billing.</li><li>Higher end-to-end latency due to nested reasoning turns.</li><li>Risk of delegation loops or cascading hallucination.</li></ul> | <ul><li>Requires host environment to support MCP client protocol.</li><li>Higher infrastructure deployment footprint.</li></ul> |
+
+---
+
+### Make your decision
+
+```mermaid
+graph TD
+    A[Need to add capability to Agent] --> B{Does the task require multi-step autonomous reasoning or trial-and-error?}
+    B -- Yes --> C{Is the capability consumed within your ADK app or by external hosts?}
+    C -- Internal ADK --> D[Use Separate Sub-Agent via AgentTool]
+    C -- External Host / IDE --> E[Use Agent-to-MCP Server via to_mcp_server]
+    B -- No: Single-step deterministic call / API / DB --> F{Do you have a pre-built MCP server or need process isolation?}
+    F -- Yes --> G[Use MCP Tool Integration via McpToolset]
+    F -- No: Simple Python function --> H[Use Native FunctionTool]
+```
 
 !!! note "State restoration"
 
-    While your agent preserves its session state during lifecycle events, it **does not** automatically re-    establish active MCP connections upon restoration. It will re-initialize the connection as needed.
+    While your agent preserves its session state during lifecycle events, it **does not** automatically re-establish active MCP connections upon restoration. It will re-initialize the connection as needed.
 
 ## Universal Setup Rules
 
