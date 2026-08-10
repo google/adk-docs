@@ -277,7 +277,7 @@ the storage backend that best suits your needs:
 ### `VertexAiSessionService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 * **How it works:** Uses Google Cloud Agent Platform infrastructure via API
@@ -355,6 +355,34 @@ the storage backend that best suits your needs:
         sessionService
             .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
             .blockingGet();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.sessions.SessionKey
+    import com.google.adk.kt.sessions.VertexAiSessionService
+
+    // The reasoning engine is fixed here, at construction. Unlike the Python
+    // and Java tabs above, `appName` is never parsed to derive the engine --
+    // in Kotlin it is only a label recorded on the session.
+    val sessionService =
+        VertexAiSessionService(
+            project = "your-gcp-project-id",
+            location = "us-central1",
+            // The bare numeric engine id. A full
+            // "projects/.../reasoningEngines/..." resource name is rejected;
+            // project and location are separate arguments above.
+            reasoningEngineId = "1234567890",
+        )
+
+    // Session methods are suspend functions, so call them from a coroutine.
+    suspend fun startSession() =
+        sessionService.createSession(
+            // A null id lets the service assign one.
+            key = SessionKey(appName = "example-app", userId = "u_123", id = null),
+            state = mapOf("visitCount" to 0),
+        )
     ```
 
 For more information on connecting to Google Cloud from ADK agents, see
