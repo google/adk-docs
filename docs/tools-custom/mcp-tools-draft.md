@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.3.10</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 ## What is Model Context Protocol (MCP)?
@@ -39,7 +39,7 @@ Before you begin, ensure you have the following set up:
 ### Checklist
 
 - **ADK Installed**: Complete standard ADK setup in your project environment.
-- **Runtime Requirements**: Python 3.9+ or Java 17+.
+- **Runtime Requirements**: Python 3.10+ or Java 17+.
 - **Node.js & `npx`** *(Python/TS only)*: Required to run npm-packaged community MCP servers.
 - **Verify installations**: Confirm `adk` and `npx` are in your PATH in the activated virtual environment:
 
@@ -108,10 +108,10 @@ graph TD
 
 ## Understand uses and integrations
 
-There's two main integration patterns:
+There are two main integration patterns:
 
   1. **Use existing MCP Servers within ADK**: When an ADK agent acts as an MCP client.
-  1. **Expose ADK Tools via an MCP Server**: When you build an MCP servers that wraps ADK Tools to make them accessible to any MCP Client.
+  1. **Expose ADK Tools via an MCP Server**: When you build an MCP server that wraps ADK Tools to make them accessible to any MCP Client.
 
 ### Use existing MCP Servers within ADK
 
@@ -164,7 +164,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         adk web
         ```
     
-    - Interact with the Agent: select `filesystem_assistant_agent` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
+    - Interact with the Agent: select `filesystem_assistant` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
@@ -249,7 +249,7 @@ Unlike the previous local process example, this pattern connects your agent to a
         tools=[
             McpToolset(
                 connection_params=StreamableHTTPConnectionParams(
-                    url="[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
+                    url="https://mapstools.googleapis.com/mcp",
                     headers={
                         "X-Goog-Api-Key": API_KEY,
                         "Content-Type": "application/json",
@@ -264,17 +264,16 @@ Unlike the previous local process example, this pattern connects your agent to a
     ```
     **Step 2**: Set environment variable before running `adk web`, set you Google API key in your terminal
       
-      ```
-      bash
+      ```bash
       export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
       ```
       
      **Step 3**: Run `adk web`: Navigate to the parent directory of `mcp_agent` and launch the web Interface.
      **Step 4**: Interact with the UI:
-       - Select `travel_planner_agent` from the drop-down.
+       - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
        
-     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
+     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 === "TypeScript"
 
@@ -288,7 +287,7 @@ Unlike the previous local process example, this pattern connects your agent to a
         tools: [
             new MCPToolset({
                 type: "SseConnectionParams",
-                url: "[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
+                url: "https://mapstools.googleapis.com/mcp"
                 headers: {
                     "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
                     "Content-Type": "application/json",
@@ -413,7 +412,6 @@ if __name__ == "__main__":
 uv run adk deploy agent_engine \
   --project=<gcp-project-id> \
   --region=<gcp-region> \
-  --staging_bucket="gs://<gcs-bucket>" \
   --display_name="MCP Agent" \
   ./path/to/agent_directory
 
@@ -439,6 +437,12 @@ This section shows you how to connect to remote MCP servers using authentication
 | `auth_credential` | `AuthCredential` | The secret credential payload, for example, API token, OAuth access token, username/password. |
 
 ADK automatically constructs the required `Authorization` HTTP headers and manages OAuth 2.0 token refreshes during client requests.
+
+### Configure authentication
+
+When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
+
+*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md)*
 
 ### Configurate authentication
 
@@ -467,16 +471,15 @@ toolset = McpToolset(
 === "TypeScript"
 
 ```typescript
-    import { MCPToolset } from "@google/adk";
+import { MCPToolset, AuthScheme, AuthCredential } from "@google/adk";
 
-    // Configure Bearer Token Authentication
-    const toolset = new MCPToolset({
-        type: "SseConnectionParams",
-        url: "https://mcp-server.example.com/sse",
-        headers: {
-            "Authorization": "Bearer YOUR_ACCESS_TOKEN",
-        },
-    });
+// Configure Bearer Token Authentication
+const toolset = new MCPToolset({
+    type: "SseConnectionParams",
+    url: "https://mcp-server.example.com/sse]",
+    authScheme: AuthScheme.BEARER,
+    authCredential: new AuthCredential({ token: "YOUR_ACCESS_TOKEN" })
+});
 ```
 
 ---
@@ -506,7 +509,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 
         # 2. Read content from a specific resource
         if resources:
-            resource_name = resources[0].name
+            resource_name = resources[0]
             content_blocks = await toolset.read_resource(name=resource_name)
             print(f"Content of {resource_name}:", content_blocks)
   ```
@@ -521,7 +524,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 
         // 2. Read a specific resource
         if (resources.length > 0) {
-            const content = await toolset.readResource(resources[0].name);
+            const content = await toolset.readResource(resources[0]);
             console.log(`Content of ${resources[0].name}:`, content);
         }
     }
@@ -534,7 +537,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 * **Security & Scoping**: Always supply `tool_filter=[...]` in `McpToolset` to expose only necessary actions to your LLM.
 * **Timeouts**: Configure explicit timeouts on `StdioConnectionParams(timeout=5)` to prevent hanging subprocesses.
 * **Lifecycle Cleanup**: In non-`adk web` runners, invoke `await toolset.close()` or use async context managers to gracefully shutdown subprocesses.
-* **Environment Detection**: Dynamically pick connection types based on environment variables (for example, `K_SERVICE` for Cloud Run vs Stdio for local dev.
+* **Environment Detection**: Dynamically pick connection types based on environment variables, for example: `K_SERVICE` for Cloud Run vs Stdio for local dev.
 
 ### Configure the environment-aware connection
 
@@ -571,7 +574,7 @@ else:
     )
 ```
 
-## UI Rendering (`meta.ui.resourceUri`)
+## UI Rendering 
 
 Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
 
@@ -590,20 +593,24 @@ sequenceDiagram
 ```
 
 ### How It Works
-1. **Metadata Link**: An MCP tool attaches a UI resource link in its output metadata: `meta.ui.resourceUri = "ui://widgets/card"`.
-2. **ADK Detection**: ADK detects `meta.ui.resourceUri` when processing tool execution results.
-3. **Client Display**: ADK signals the web UI, `adk web` or custom frontend, to fetch the UI resource and render an interactive widget instead of plain text.
+
+1. **Tool Registration**: The MCP tool declares a UI resource link in its schema definition metadata during `tools/list`: `_meta.ui.resourceUri = "ui://widgets/weather-card"`.
+2. **ADK Detection**: ADK reads the schema definition to detect `_meta.ui.resourceUri` and knows this tool supports an interactive UI.
+3. **Client Display**: Upon tool execution, ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
 
 ```python
-    # MCP Server tool returning a UI metadata link
-    @app.call_tool()
-    async def get_weather(city: str):
-        return {
-            "content": [{"type": "text", "text": f"Weather in {city}: 72°F Sunny"}],
-            "_meta": {
-                "ui": {
-                    "resourceUri": "ui://widgets/weather-card"
-                }
-            }
-        }
+# MCP Server tool declaring a UI metadata link in its schema
+TOOL_METADATA = {
+    "ui": {
+        "resourceUri": "ui://widgets/weather-card"
+    }
+}
+
+# The metadata is passed during tool registration, NOT emitted dynamically
+@app.call_tool(metadata=TOOL_METADATA)
+async def get_weather(city: str):
+    # The tool returns standard content; the UI is handled by the host via the schema
+    return {
+        "content": [{"type": "text", "text": f"Weather in {city}: 72°F Sunny"}]
+    }
     ```
