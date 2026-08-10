@@ -1,7 +1,7 @@
 # Compress agent context for performance
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-typescript">TypeScript v0.6.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-typescript">TypeScript v0.6.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 As an ADK agent runs it collects *context* information, including user
@@ -80,10 +80,10 @@ compaction_config = EventsCompactionConfig(
 ## Configure context compaction
 
 Add context compaction to your agent workflow by adding an Events Compaction
-Configuration setting to the App object (Python/Java) or by configuring `contextCompactors`
+Configuration setting to the App object (Python/Java/Kotlin) or by configuring `contextCompactors`
 on the `LlmAgent` (TypeScript). As part of the
 configuration, you must specify a compaction interval and overlap size (Python/Java)
-or a token threshold and event retention size (TypeScript), as shown
+or a token threshold and event retention size (TypeScript/Kotlin), as shown
 in the following sample code:
 
 === "Python"
@@ -136,6 +136,25 @@ in the following sample code:
         }),
       ],
     });
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.summarizer.EventsCompactionConfig
+
+    // tokenThreshold and eventRetentionSize must be set together; either alone throws.
+    val app =
+        App(
+            appName = "my-agent",
+            rootAgent = rootAgent,
+            eventsCompactionConfig =
+                EventsCompactionConfig(
+                    tokenThreshold = 1000, // Compact when the last prompt exceeds 1000 tokens.
+                    eventRetentionSize = 1, // Keep at least 1 raw event.
+                ),
+        )
     ```
 
 Once configured, the ADK `Runner` handles the compaction process in the
