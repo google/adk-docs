@@ -58,7 +58,7 @@ To configure an agent to dynamically discover and load skills on demand, instant
 ```python
 import os
 from google.adk import Agent
-from google.adk.integrations.gcp_skill_registry import GCPSkillRegistry
+from google.adk.integrations.skill_registry import GCPSkillRegistry
 from google.adk.tools.skill_toolset import SkillToolset
 
 # 1. Initialize the GCP Skill Registry
