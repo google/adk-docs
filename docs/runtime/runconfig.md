@@ -39,7 +39,7 @@ to `runner.run_async()` or `runner.run_live()` to override default behavior.
 === "Go"
 
     ```go
-    import "google.golang.org/adk/agent"
+    import "google.golang.org/adk/v2/agent"
 
     config := agent.RunConfig{
         StreamingMode: agent.StreamingModeSSE,
@@ -78,6 +78,8 @@ whether the context window is compressed:
   history on every invocation.
 - `context_window_compression`: Enables context window compression for LLM
   input, useful when sessions approach model context limits.
+- `include_thoughts_from_other_agents`: Controls whether thought parts from
+  other agents are included in the LLM context. Disabled by default.
 
 === "Python"
 
@@ -138,7 +140,7 @@ execute function calls. CFC uses the Live API under the hood.
 === "Go"
 
     ```go
-    import "google.golang.org/adk/agent"
+    import "google.golang.org/adk/v2/agent"
 
     config := agent.RunConfig{
         StreamingMode: agent.StreamingModeSSE,
@@ -271,6 +273,8 @@ additional parameters:
   and artifact service.
 - `tool_thread_pool_config`: Runs tool executions in a background thread pool
   to keep the event loop responsive to user interruptions.
+- `explicit_vad_signal`: Enables explicit voice activity detection (VAD)
+  signals from the model.
 
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.
@@ -324,5 +328,6 @@ your language:
 
 - [Python API reference](../api-reference/python/google-adk.html#google.adk.agents.RunConfig)
 - [TypeScript API reference](../api-reference/typescript/interfaces/RunConfig.html)
-- [Go API reference](https://pkg.go.dev/google.golang.org/adk/agent#RunConfig)
+- [Go API reference](https://pkg.go.dev/google.golang.org/adk/v2/agent#RunConfig)
 - [Java API reference](../api-reference/java/com/google/adk/agents/RunConfig.html)
+- [Kotlin API reference](../api-reference/kotlin/google-adk-kotlin-core/com.google.adk.kt.agents/-run-config/index.html)

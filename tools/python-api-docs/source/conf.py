@@ -27,6 +27,7 @@ project = 'Agent Development Kit'
 copyright = f'{datetime.now().year}, Google'
 author = 'Google'
 version = release = __version__
+html_title = f'{project} (Python) {release} documentation'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

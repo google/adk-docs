@@ -1,7 +1,7 @@
 # Runtime Event Loop
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
@@ -103,7 +103,7 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
         return func(yield func(*Event, error) bool) {
             // 1. Append new_query to session event history (via SessionService)
             // ...
-            userEvent := session.NewEvent(ctx.InvocationID()) // Simplified for conceptual view
+            userEvent := session.NewEvent(ctx, ctx.InvocationID()) // Simplified for conceptual view
             userEvent.Author = "user"
             userEvent.LLMResponse = model.LLMResponse{Content: newQuery}
 
@@ -528,7 +528,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 
           // 1. Determine a change or output is needed, construct the event
           updateData := map[string]interface{}{"field_1": "value_2"}
-          eventWithStateChange := session.NewEvent(ctx.InvocationID())
+          eventWithStateChange := session.NewEvent(ctx, ctx.InvocationID())
           eventWithStateChange.Author = a.Name()
           eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
           // ... other event fields ...
@@ -554,7 +554,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
           // of the *next* `Run` invocation in a subsequent turn.
 
           // ... subsequent code continues, potentially yielding more events ...
-          finalEvent := session.NewEvent(ctx.InvocationID())
+          finalEvent := session.NewEvent(ctx, ctx.InvocationID())
           finalEvent.Author = a.Name()
           // ...
           yield(finalEvent, nil)

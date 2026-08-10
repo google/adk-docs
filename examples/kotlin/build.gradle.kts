@@ -14,10 +14,16 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.2.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:0.2.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.2.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.7.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:0.7.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    // The Vertex AI session and memory services expose Ktor's HttpClient as a
+    // defaulted constructor parameter, so any snippet naming them needs Ktor on
+    // the COMPILE classpath, not just at runtime. Version matches what
+    // adk-kotlin 0.7.0 already resolves to.
+    implementation("io.ktor:ktor-client-core:2.3.13")
+    implementation("io.ktor:ktor-client-java:2.3.13")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
     implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.56.0")

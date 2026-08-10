@@ -62,6 +62,26 @@ for updates on the next call. Recent recordings are below, or browse the full
 playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=-L8ys-nKCWc" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/-L8ys-nKCWc/maxresdefault.jpg" alt="ADK Community Call July 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 July 2026 Recording</h3>
+      <p>Discussions include the ADK Go 2.0 release, the Agents CLI reaching GA with automated evaluations, using ADK to automate PR and issue triage, the new Managed Agents and Antigravity integration, and a community spotlight on CopilotKit with the AG-UI and A2UI protocols.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=XAvXSACGdEQ" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/XAvXSACGdEQ/maxresdefault.jpg" alt="ADK Community Call June 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 June 2026 Recording</h3>
+      <p>Discussions include multi-language SDK support, native GCS integration, the new ADK Environments feature, the Agents CLI and Agent Eval CLI, and a community spotlight on a prompt optimization taxonomy plugin.</p>
+    </div>
+  </a>
   <a href="https://www.youtube.com/watch?v=vbqKmK0rArI" class="resource-card">
     <div class="card-image-wrapper">
       <img src="https://img.youtube.com/vi/vbqKmK0rArI/maxresdefault.jpg" alt="ADK Community Call May 2026">
@@ -72,27 +92,6 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
       <p>Discussions include the ADK Python 2.0 GA release, initial release of ADK for Kotlin and Android, demos of Agents CLI and Skills for dynamic capability loading, and a community spotlight on Beever Atlas.</p>
     </div>
   </a>
-  <a href="https://www.youtube.com/watch?v=bPngDY7EuOQ" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/bPngDY7EuOQ/maxresdefault.jpg" alt="ADK Community Call Mar 2026">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Mar 2026 Recording</h3>
-      <p>Discussions include the ADK 2.0 alpha release, Workflows for graph-based agent composition, Agent Modes for structured multi-agent coordination, and a community spotlight on Restate durable agents.</p>
-    </div>
-  </a>
-  <a href="https://www.youtube.com/watch?v=cXDr4RYJxK0" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/cXDr4RYJxK0/maxresdefault.jpg" alt="ADK Community Call Feb 2026">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Feb 2026 Recording</h3>
-      <p>Discussions include ADK evaluations with built-in metrics, token-based context compaction, the BigQuery observability plugin, and a community spotlight on Redis integration.</p>
-    </div>
-  </a>
-
 </div>
 
 ## Courses & Deep Dives

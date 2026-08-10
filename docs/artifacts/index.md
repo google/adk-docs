@@ -41,7 +41,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
     print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {createPartFromBase64, type Part} from '@google/genai';
@@ -185,7 +185,7 @@ Understanding artifacts involves grasping a few key components: the service that
     # Now, contexts within runs managed by this runner can use artifact methods
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {
@@ -219,11 +219,11 @@ Understanding artifacts involves grasping a few key components: the service that
       "context"
       "log"
 
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/artifactservice"
-      "google.golang.org/adk/llm/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/sessionservice"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/artifact"
+      "google.golang.org/adk/v2/model/gemini"
+      "google.golang.org/adk/v2/runner"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
 	)
 
@@ -285,7 +285,7 @@ Understanding artifacts involves grasping a few key components: the service that
     print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {createPartFromBase64, type Part} from '@google/genai';
@@ -371,7 +371,7 @@ Understanding artifacts involves grasping a few key components: the service that
     # and scope it to app_name and user_id, making it accessible across sessions for that user.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example illustrating namespace difference (conceptual)
@@ -461,7 +461,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     ```
     If no `artifact_service` is configured in the `InvocationContext` (which happens if it's not passed to the `Runner`), calling `save_artifact`, `load_artifact`, or `list_artifacts` on the context objects will raise a `ValueError`.
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {
@@ -498,11 +498,11 @@ Before you can use any artifact methods via the context objects, you **must** pr
       "context"
       "log"
 
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/artifactservice"
-      "google.golang.org/adk/llm/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/sessionservice"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/artifact"
+      "google.golang.org/adk/v2/model/gemini"
+      "google.golang.org/adk/v2/runner"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
     )
 
@@ -591,7 +591,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         #   await save_generated_report_py(callback_context, report_data)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -622,8 +622,8 @@ The artifact interaction methods are available directly on instances of `Callbac
         import (
           "log"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
           "google.golang.org/genai"
         )
 
@@ -716,7 +716,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         #   await process_latest_report_py(callback_context)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -752,8 +752,8 @@ The artifact interaction methods are available directly on instances of `Callbac
         import (
           "log"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
         )
 
         --8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"
@@ -896,9 +896,9 @@ artifact in a later turn.
 
     ```go
     import (
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/tool"
-      "google.golang.org/adk/tool/loadartifactstool"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/tool"
+      "google.golang.org/adk/v2/tool/loadartifactstool"
     )
 
     agent, err := llmagent.New(llmagent.Config{
@@ -955,7 +955,7 @@ artifact in a later turn.
         # list_files_tool = FunctionTool(func=list_user_files_py)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -988,8 +988,8 @@ artifact in a later turn.
           "log"
           "strings"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
           "google.golang.org/genai"
         )
 
@@ -1081,7 +1081,7 @@ artifact in a later turn.
     --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:listing_artifacts"
     ```
 
-These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
+These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether you reach them through the context object passed to your callbacks and tools or by interacting with the `BaseArtifactService` directly, regardless of the chosen backend storage implementation.
 
 ## Available Implementations
 
@@ -1113,7 +1113,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         # runner = Runner(..., artifact_service=in_memory_service_py)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {InMemoryArtifactService} from '@google/adk';
@@ -1132,7 +1132,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
         ```go
         import (
-          "google.golang.org/adk/artifactservice"
+          "google.golang.org/adk/v2/artifact"
         )
 
         --8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"
@@ -1204,7 +1204,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
             # Handle the error appropriately - maybe fall back to InMemory or raise
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {GcsArtifactService} from '@google/adk';

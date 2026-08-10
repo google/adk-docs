@@ -22,14 +22,14 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/memory"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/memory"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -52,8 +52,8 @@ type Result struct {
 // --8<-- [start:tool_search]
 
 // memorySearchToolFunc is the implementation of the memory search tool.
-// This function demonstrates accessing memory via tool.Context.
-func memorySearchToolFunc(tctx tool.Context, args Args) (Result, error) {
+// This function demonstrates accessing memory via agent.Context.
+func memorySearchToolFunc(tctx agent.Context, args Args) (Result, error) {
 	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 	// The SearchMemory function is available on the context.
 	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
@@ -85,7 +85,7 @@ var memorySearchTool = must(functiontool.New(
 // This example demonstrates how to use the MemoryService in the Go ADK.
 // It covers two main scenarios:
 // 1. Adding a completed session to memory and recalling it in a new session.
-// 2. Searching memory from within a custom tool using the tool.Context.
+// 2. Searching memory from within a custom tool using the agent.Context.
 func main() {
 	ctx := context.Background()
 

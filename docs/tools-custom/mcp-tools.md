@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
@@ -19,6 +19,28 @@ This guide covers two primary integration patterns:
 
 1. **Using Existing MCP Servers within ADK:** An ADK agent acts as an MCP client, leveraging tools provided by external MCP servers.
 2. **Exposing ADK Tools via an MCP Server:** Building an MCP server that wraps ADK tools, making them accessible to any MCP client.
+
+## Key considerations
+
+When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents:
+
+* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
+
+* **ADK Tools vs. MCP Tools:**
+
+    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
+    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. McpToolset makes these look like ADK tools to an LlmAgent.
+
+* **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
+
+* **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
+
+    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
+    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+ 
+* **Session persistence**: The `MCPToolset` supports object serialization via `getstate` and `setstate` methods. This feature helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
+
+!!! Note: While the agent preserves its session state during lifecycle events, active MCP connections are not automatically re-established upon restoration. The agent will re-initialize its connection to the MCP server as needed after the process is restored to ensure a reliable and up-to-date link.
 
 ## Prerequisites
 
@@ -237,7 +259,7 @@ Event received: {"id":"8728380b-bfad-4d14-8421-fa98d09364f1","invocationId":"e-c
 Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"text":"There are three files in the directory: first, second, and third."}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544689}
 ```
 
-For Typescript, you can define an agent that initializes the `MCPToolset` as follows:
+For TypeScript, you can define an agent that initializes the `MCPToolset` as follows:
 
 ```typescript
 import 'dotenv/config';
@@ -493,7 +515,7 @@ export const rootAgent = new LlmAgent({
 });
 ```
 
-## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
+## 2. Build an MCP server with ADK tools (MCP server exposing ADK)
 
 This pattern allows you to wrap existing ADK tools and make them available to any standard MCP client application. The example in this section exposes the ADK `load_web_page` tool through a custom-built MCP server.
 
@@ -716,7 +738,11 @@ This example demonstrates how ADK tools can be encapsulated within an MCP server
 
 Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## Using MCP Tools in your own Agent out of `adk web`
+## Advanced use cases
+
+The following sections describe how to handle more advanced use cases with MCP Tools in agents.
+
+### Use MCP Tools without `adk web`
 
 This section is relevant to you if:
 
@@ -828,26 +854,21 @@ if __name__ == '__main__':
     print(f"An error occurred: {e}")
 ```
 
+### Handling progress updates
 
-## Key considerations
+For long-running tools, `McpToolset` supports a `progress_callback`. This approach allows you to receive real-time updates from the MCP server. You can provide a simple callback function or a factory that creates callbacks with access to the runtime context, such as updating session state.
 
-When working with MCP and ADK, keep these points in mind:
+```python
+async def my_progress_callback(progress: float, total: float, message: str):
+    print(f"Progress: {progress}/{total} - {message}")
 
-* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
+toolset = McpToolset(
+    connection_params=...,
+    progress_callback=my_progress_callback
+)
+```
 
-* **ADK Tools vs. MCP Tools:**
-
-    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
-    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. McpToolset makes these look like ADK tools to an LlmAgent.
-
-* **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
-
-* **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
-
-    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
-    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
-
-## Deploying Agents with MCP Tools
+## Deploy Agents with MCP Tools
 
 When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Agent Runtime, you need to consider how MCP connections will work in containerized and distributed environments.
 

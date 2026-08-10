@@ -18,7 +18,7 @@ package main
 import (
 	"fmt"
 
-	"google.golang.org/adk/tool"
+	"google.golang.org/adk/v2/agent"
 )
 
 type lookupOrderStatusArgs struct {
@@ -35,7 +35,7 @@ type lookupOrderStatusResult struct {
 	Order  order  `json:"order,omitempty"`
 }
 
-func lookupOrderStatus(ctx tool.Context, args lookupOrderStatusArgs) (*lookupOrderStatusResult, error) {
+func lookupOrderStatus(ctx agent.Context, args lookupOrderStatusArgs) (*lookupOrderStatusResult, error) {
 	// ... function implementation to fetch status ...
 	statusDetails, ok := fetchStatusFromBackend(args.OrderID)
 	if !ok {

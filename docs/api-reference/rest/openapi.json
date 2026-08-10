@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.0.0"
+    "version": "2.6.0"
   },
   "paths": {
     "/health": {
@@ -42,6 +42,48 @@
                   },
                   "type": "object",
                   "title": "Response Version Version Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent-identity/finalize": {
+      "post": {
+        "summary": "Finalize Agent Identity Credentials",
+        "operationId": "finalize_agent_identity_credentials_agent_identity_finalize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinalizeAgentIdentityCredentialsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Finalize Agent Identity Credentials Agent Identity Finalize Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -506,10 +548,10 @@
         }
       }
     },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}": {
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}/metadata": {
       "get": {
-        "summary": "Load Artifact",
-        "operationId": "load_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__get",
+        "summary": "Get Artifact Version Metadata",
+        "operationId": "get_artifact_version_metadata_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__metadata_get",
         "parameters": [
           {
             "name": "app_name",
@@ -548,19 +590,12 @@
             }
           },
           {
-            "name": "version",
-            "in": "query",
-            "required": false,
+            "name": "version_id",
+            "in": "path",
+            "required": true,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Version"
+              "type": "string",
+              "title": "Version Id"
             }
           }
         ],
@@ -570,78 +605,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Part"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Load Artifact Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Get"
+                  "$ref": "#/components/schemas/ArtifactVersion"
                 }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete Artifact",
-        "operationId": "delete_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__delete",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
-          },
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          },
-          {
-            "name": "artifact_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Artifact Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
               }
             }
           },
@@ -711,89 +676,6 @@
                     "$ref": "#/components/schemas/ArtifactVersion"
                   },
                   "title": "Response List Artifact Versions Metadata Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions Metadata Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}": {
-      "get": {
-        "summary": "Load Artifact Version",
-        "operationId": "load_artifact_version_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
-          },
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          },
-          {
-            "name": "artifact_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Artifact Name"
-            }
-          },
-          {
-            "name": "version_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Version Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Part"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Load Artifact Version Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions  Version Id  Get"
                 }
               }
             }
@@ -938,10 +820,10 @@
         }
       }
     },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}/metadata": {
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}": {
       "get": {
-        "summary": "Get Artifact Version Metadata",
-        "operationId": "get_artifact_version_metadata_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__metadata_get",
+        "summary": "Load Artifact Version",
+        "operationId": "load_artifact_version_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__get",
         "parameters": [
           {
             "name": "app_name",
@@ -984,7 +866,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
+              "type": "string",
               "title": "Version Id"
             }
           }
@@ -995,7 +877,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArtifactVersion"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Part"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Load Artifact Version Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions  Version Id  Get"
                 }
               }
             }
@@ -1067,6 +957,158 @@
                   },
                   "title": "Response List Artifact Versions Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions Get"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}": {
+      "get": {
+        "summary": "Load Artifact",
+        "operationId": "load_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__get",
+        "parameters": [
+          {
+            "name": "app_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Name"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "artifact_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Name"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Part"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Load Artifact Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Artifact",
+        "operationId": "delete_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__delete",
+        "parameters": [
+          {
+            "name": "app_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Name"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "artifact_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           },
@@ -1221,48 +1263,6 @@
   },
   "components": {
     "schemas": {
-      "APIKey": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "apiKey"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "in": {
-            "$ref": "#/components/schemas/APIKeyIn"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "in",
-          "name"
-        ],
-        "title": "APIKey"
-      },
-      "APIKeyIn": {
-        "type": "string",
-        "enum": [
-          "query",
-          "header",
-          "cookie"
-        ],
-        "title": "APIKeyIn"
-      },
       "AgentInfo": {
         "properties": {
           "name": {
@@ -1513,55 +1513,9 @@
         "title": "ArtifactVersion",
         "description": "Metadata describing a specific version of an artifact."
       },
-      "AuthConfig-Input": {
+      "AuthConfig": {
         "properties": {
-          "authScheme": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/APIKey"
-              },
-              {
-                "$ref": "#/components/schemas/HTTPBase"
-              },
-              {
-                "$ref": "#/components/schemas/OAuth2"
-              },
-              {
-                "$ref": "#/components/schemas/OpenIdConnect"
-              },
-              {
-                "$ref": "#/components/schemas/HTTPBearer"
-              },
-              {
-                "$ref": "#/components/schemas/OpenIdConnectWithConfig"
-              },
-              {
-                "$ref": "#/components/schemas/CustomAuthScheme"
-              }
-            ],
-            "title": "Authscheme"
-          },
-          "rawAuthCredential": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthCredential"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "exchangedAuthCredential": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthCredential"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "credentialKey": {
+          "apiKey": {
             "anyOf": [
               {
                 "type": "string"
@@ -1570,16 +1524,80 @@
                 "type": "null"
               }
             ],
-            "title": "Credentialkey"
+            "title": "Apikey",
+            "description": "The authentication config to access the API. Only API key is supported. This field is not supported in Gemini API."
+          },
+          "apiKeyConfig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApiKeyConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Config for API key auth."
+          },
+          "authType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Type of auth scheme."
+          },
+          "googleServiceAccountConfig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthConfigGoogleServiceAccountConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Config for Google Service Account auth."
+          },
+          "httpBasicAuthConfig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthConfigHttpBasicAuthConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Config for HTTP Basic auth."
+          },
+          "oauthConfig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthConfigOauthConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Config for user oauth."
+          },
+          "oidcConfig": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuthConfigOidcConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Config for user OIDC auth."
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
-        "required": [
-          "authScheme"
-        ],
         "title": "AuthConfig",
-        "description": "The auth config sent by tool asking client to collect auth credentials and\n\nadk and client will help to fill in the response"
+        "description": "The authentication config to access the API."
       },
       "AuthConfigGoogleServiceAccountConfig": {
         "properties": {
@@ -1685,84 +1703,6 @@
         "title": "AuthConfigOidcConfig",
         "description": "Config for user OIDC auth.\n\nThis data type is not supported in Gemini API."
       },
-      "AuthCredential": {
-        "properties": {
-          "authType": {
-            "$ref": "#/components/schemas/AuthCredentialTypes"
-          },
-          "resourceRef": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Resourceref"
-          },
-          "apiKey": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Apikey"
-          },
-          "http": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/HttpAuth"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "serviceAccount": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ServiceAccount"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "oauth2": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuth2Auth"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authType"
-        ],
-        "title": "AuthCredential",
-        "description": "Data class representing an authentication credential.\n\nTo exchange for the actual credential, please use\nCredentialExchanger.exchange_credential().\n\nExamples: API Key Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.API_KEY,\n    api_key=\"1234\",\n)\n\nExample: HTTP Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.HTTP,\n    http=HttpAuth(\n        scheme=\"basic\",\n        credentials=HttpCredentials(username=\"user\", password=\"password\"),\n    ),\n)\n\nExample: OAuth2 Bearer Token in HTTP Header\nAuthCredential(\n    auth_type=AuthCredentialTypes.HTTP,\n    http=HttpAuth(\n        scheme=\"bearer\",\n        credentials=HttpCredentials(token=\"eyAkaknabna....\"),\n    ),\n)\n\nExample: OAuth2 Auth with Authorization Code Flow\nAuthCredential(\n    auth_type=AuthCredentialTypes.OAUTH2,\n    oauth2=OAuth2Auth(\n        client_id=\"1234\",\n        client_secret=\"secret\",\n    ),\n)\n\nExample: OpenID Connect Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,\n    oauth2=OAuth2Auth(\n        client_id=\"1234\",\n        client_secret=\"secret\",\n        redirect_uri=\"https://example.com\",\n        scopes=[\"scope1\", \"scope2\"],\n    ),\n)\n\nExample: Auth with resource reference\nAuthCredential(\n    auth_type=AuthCredentialTypes.API_KEY,\n    resource_ref=\"projects/1234/locations/us-central1/resources/resource1\",\n)"
-      },
-      "AuthCredentialTypes": {
-        "type": "string",
-        "enum": [
-          "apiKey",
-          "http",
-          "oauth2",
-          "openIdConnect",
-          "serviceAccount"
-        ],
-        "title": "AuthCredentialTypes",
-        "description": "Represents the type of authentication credential."
-      },
       "AuthType": {
         "type": "string",
         "enum": [
@@ -1785,7 +1725,7 @@
           "NON_BLOCKING"
         ],
         "title": "Behavior",
-        "description": "Specifies the function Behavior.\n\nCurrently only supported by the BidiGenerateContent method. This enum is not\nsupported in Vertex AI."
+        "description": "Specifies the function Behavior.\n\nIf not specified, the system keeps the current function call behavior. This\nfield is currently only supported by the BidiGenerateContent method."
       },
       "Blob": {
         "properties": {
@@ -1881,7 +1821,7 @@
             "type": "integer",
             "minimum": 0.0,
             "title": "Contents Count",
-            "description": "Number of contents (cached contents when active cache exists, total contents in request when no active cache)"
+            "description": "Number of contents (cached contents when active cache exists, cacheable content prefix when no active cache)"
           },
           "created_at": {
             "anyOf": [
@@ -1903,7 +1843,7 @@
           "contents_count"
         ],
         "title": "CacheMetadata",
-        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the total count of contents in the request.\n    created_at: Unix timestamp when the cache was created. None when\n        no active cache exists."
+        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the count of the cacheable content prefix used for fingerprinting.\n    created_at: Unix timestamp when the cache was created. None when\n        no active cache exists."
       },
       "Citation": {
         "properties": {
@@ -2042,13 +1982,13 @@
               }
             ],
             "title": "Id",
-            "description": "The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id."
+            "description": "Optional. The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "CodeExecutionResult",
-        "description": "Result of executing the `ExecutableCode`.\n\nGenerated only when the `CodeExecution` tool is used."
+        "description": "Result of executing the ExecutableCode.\n\nGenerated only when the `CodeExecution` tool is used."
       },
       "ComputerUse": {
         "properties": {
@@ -2076,7 +2016,34 @@
               }
             ],
             "title": "Excludedpredefinedfunctions",
-            "description": "By default, predefined functions are included in the final model call.\n    Some of them can be explicitly excluded from being automatically included.\n    This can serve two purposes:\n      1. Using a more restricted / different action space.\n      2. Improving the definitions / instructions of predefined functions."
+            "description": "Optional. By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions) are included in the final model call. Some of them can be explicitly excluded from being automatically included. This can serve two purposes: 1. Using a more restricted / different action space. 2. Improving the definitions / instructions of predefined functions."
+          },
+          "enablePromptInjectionDetection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enablepromptinjectiondetection",
+            "description": "Optional. Enables the prompt injection detection check on computer-use request."
+          },
+          "disabledSafetyPolicies": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SafetyPolicy"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabledsafetypolicies",
+            "description": "Optional. Disabled safety policies for computer use. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -2165,21 +2132,6 @@
         "type": "object",
         "title": "CreateSessionRequest"
       },
-      "CustomAuthScheme": {
-        "properties": {
-          "type": {
-            "type": "string",
-            "title": "Type"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "title": "CustomAuthScheme",
-        "description": "A flexible model for custom authentication schemes.\n\nThe subclasses must define a `default` for the `type_` field, if using OAuth2\nuser consent flow, to ensure correct rehydration."
-      },
       "DynamicRetrievalConfig": {
         "properties": {
           "dynamicThreshold": {
@@ -2258,7 +2210,9 @@
         "type": "string",
         "enum": [
           "ENVIRONMENT_UNSPECIFIED",
-          "ENVIRONMENT_BROWSER"
+          "ENVIRONMENT_BROWSER",
+          "ENVIRONMENT_MOBILE",
+          "ENVIRONMENT_DESKTOP"
         ],
         "title": "Environment",
         "description": "The environment being operated."
@@ -2317,6 +2271,16 @@
               }
             ],
             "title": "Turncomplete"
+          },
+          "turnCompleteReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TurnCompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "finishReason": {
             "anyOf": [
@@ -2414,6 +2378,16 @@
               }
             ]
           },
+          "voiceActivity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VoiceActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "inputTranscription": {
             "anyOf": [
               {
@@ -2485,6 +2459,17 @@
               }
             ],
             "title": "Interactionid"
+          },
+          "environmentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Environmentid"
           },
           "invocationId": {
             "type": "string",
@@ -2617,6 +2602,16 @@
             ],
             "title": "Turncomplete"
           },
+          "turnCompleteReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TurnCompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "finishReason": {
             "anyOf": [
               {
@@ -2713,6 +2708,16 @@
               }
             ]
           },
+          "voiceActivity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VoiceActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "inputTranscription": {
             "anyOf": [
               {
@@ -2784,6 +2789,17 @@
               }
             ],
             "title": "Interactionid"
+          },
+          "environmentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Environmentid"
           },
           "invocationId": {
             "type": "string",
@@ -2909,9 +2925,7 @@
             "title": "Escalate"
           },
           "requestedAuthConfigs": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/AuthConfig-Input"
-            },
+            "additionalProperties": true,
             "type": "object",
             "title": "Requestedauthconfigs"
           },
@@ -3076,9 +3090,7 @@
             "title": "Escalate"
           },
           "requestedAuthConfigs": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/google__adk__auth__auth_tool__AuthConfig"
-            },
+            "additionalProperties": true,
             "type": "object",
             "title": "Requestedauthconfigs"
           },
@@ -3254,13 +3266,13 @@
               }
             ],
             "title": "Id",
-            "description": "Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`."
+            "description": "Optional. Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "ExecutableCode",
-        "description": "Model-generated code executed server-side, results returned to the model.\n\nOnly generated when using the `CodeExecution` tool, in which the code will\nbe automatically executed, and a corresponding `CodeExecutionResult` will\nalso be generated."
+        "description": "Code generated by the model that is meant to be executed, and the result returned to the model.\n\nGenerated when using the `CodeExecution` tool, in which the code will be\nautomatically executed, and a corresponding CodeExecutionResult will also be\ngenerated."
       },
       "ExternalApi": {
         "properties": {
@@ -3289,7 +3301,7 @@
           "authConfig": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/google__genai__types__AuthConfig"
+                "$ref": "#/components/schemas/AuthConfig"
               },
               {
                 "type": "null"
@@ -3479,6 +3491,35 @@
         "title": "FileSearch",
         "description": "The FileSearch tool that retrieves knowledge from Semantic Retrieval corpora.\n\nFiles are imported to Semantic Retrieval corpora using the ImportFile API.\nThis data type is not supported in Vertex AI."
       },
+      "FinalizeAgentIdentityCredentialsRequest": {
+        "properties": {
+          "connectorName": {
+            "type": "string",
+            "title": "Connectorname"
+          },
+          "userId": {
+            "type": "string",
+            "title": "Userid"
+          },
+          "userIdValidationState": {
+            "type": "string",
+            "title": "Useridvalidationstate"
+          },
+          "consentNonce": {
+            "type": "string",
+            "title": "Consentnonce"
+          }
+        },
+        "type": "object",
+        "required": [
+          "connectorName",
+          "userId",
+          "userIdValidationState",
+          "consentNonce"
+        ],
+        "title": "FinalizeAgentIdentityCredentialsRequest",
+        "description": "Request to finalize a 3LO consent for an Agent Identity connector."
+      },
       "FinishReason": {
         "type": "string",
         "enum": [
@@ -3515,7 +3556,7 @@
               }
             ],
             "title": "Id",
-            "description": "The unique id of the function call. If populated, the client to execute the\n   `function_call` and return the response with the matching `id`."
+            "description": "Optional. The unique id of the function call. If populated, the client to execute the `function_call` and return the response with the matching `id`."
           },
           "args": {
             "anyOf": [
@@ -3528,7 +3569,7 @@
               }
             ],
             "title": "Args",
-            "description": "Optional. The function parameters and values in JSON object format. See [FunctionDeclaration.parameters] for parameter details."
+            "description": "Optional. The function parameters and values in JSON object format. See FunctionDeclaration.parameters for parameter details."
           },
           "name": {
             "anyOf": [
@@ -3540,7 +3581,7 @@
               }
             ],
             "title": "Name",
-            "description": "Optional. The name of the function to call. Matches [FunctionDeclaration.name]."
+            "description": "Optional. The name of the function to call. Matches FunctionDeclaration.name."
           },
           "partialArgs": {
             "anyOf": [
@@ -3573,7 +3614,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionCall",
-        "description": "A function call."
+        "description": "A predicted FunctionCall returned from the model that contains a string representing the FunctionDeclaration.name and a structured JSON object containing the parameters and their values."
       },
       "FunctionDeclaration": {
         "properties": {
@@ -3599,7 +3640,7 @@
               }
             ],
             "title": "Name",
-            "description": "Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots, colons and dashes, with a maximum length of 64."
+            "description": "Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots, colons and dashes, with a maximum length of 128."
           },
           "parameters": {
             "anyOf": [
@@ -3652,7 +3693,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Specifies the function Behavior. Currently only supported by the BidiGenerateContent method. This field is not supported in Vertex AI."
+            "description": "Optional. Specifies the function Behavior. If not specified, the system keeps the current function call behavior. This field is currently only supported by the BidiGenerateContent method."
           }
         },
         "additionalProperties": false,
@@ -3672,7 +3713,7 @@
               }
             ],
             "title": "Willcontinue",
-            "description": "Signals that function call continues, and more responses will be returned, turning the function call into a generator. Is only applicable to NON_BLOCKING function calls (see FunctionDeclaration.behavior for details), ignored otherwise. If false, the default, future responses will not be considered. Is only applicable to NON_BLOCKING function calls, is ignored otherwise. If set to false, future responses will not be considered. It is allowed to return empty `response` with `will_continue=False` to signal that the function call is finished."
+            "description": "Optional. Signals that function call continues, and more responses will be returned, turning the function call into a generator. Is only applicable to NON_BLOCKING function calls, is ignored otherwise. If set to false, future responses will not be considered. It is allowed to return empty `response` with `will_continue=False` to signal that the function call is finished. This may still trigger the model generation. To avoid triggering the generation and finish the function call, additionally set `scheduling` to `SILENT`. This field is not supported in Vertex AI."
           },
           "scheduling": {
             "anyOf": [
@@ -3683,7 +3724,7 @@
                 "type": "null"
               }
             ],
-            "description": "Specifies how the response should be scheduled in the conversation. Only applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE."
+            "description": "Optional. Specifies how the response should be scheduled in the conversation. Only applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE."
           },
           "parts": {
             "anyOf": [
@@ -3698,7 +3739,7 @@
               }
             ],
             "title": "Parts",
-            "description": "List of parts that constitute a function response. Each part may\n      have a different IANA MIME type."
+            "description": "Optional. Ordered `Parts` that constitute a function response. Parts may have different IANA MIME types."
           },
           "id": {
             "anyOf": [
@@ -3722,7 +3763,7 @@
               }
             ],
             "title": "Name",
-            "description": "Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name]."
+            "description": "Required. The name of the function to call. Matches FunctionDeclaration.name and FunctionCall.name."
           },
           "response": {
             "anyOf": [
@@ -3741,7 +3782,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponse",
-        "description": "A function response."
+        "description": "The result output from a FunctionCall that contains a string representing the FunctionDeclaration.name and a structured JSON object containing any output from the function is used as context to the model.\n\nThis should contain the result of a `FunctionCall` made based on model\nprediction."
       },
       "FunctionResponseBlob": {
         "properties": {
@@ -3769,7 +3810,7 @@
               }
             ],
             "title": "Data",
-            "description": "Required. Inline media bytes."
+            "description": "Required. Raw bytes."
           },
           "displayName": {
             "anyOf": [
@@ -3781,13 +3822,13 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. Display name of the blob.\n      Used to provide a label or filename to distinguish blobs."
+            "description": "Optional. Display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponseBlob",
-        "description": "Raw media bytes for function response.\n\nText should not be sent as raw bytes, use the FunctionResponse.response\nfield."
+        "description": "Raw media bytes for function response.\n\nText should not be sent as raw bytes, use the 'text' field."
       },
       "FunctionResponseFileData": {
         "properties": {
@@ -3825,13 +3866,13 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. Display name of the file.\n      Used to provide a label or filename to distinguish files."
+            "description": "Optional. Display name of the file data. Used to provide a label or filename to distinguish file datas. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponseFileData",
-        "description": "URI based data for function response."
+        "description": "URI based data for function response.\n\nThis data type is not supported in Gemini API."
       },
       "FunctionResponsePart": {
         "properties": {
@@ -3844,7 +3885,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Inline media bytes."
+            "description": "Inline media bytes."
           },
           "fileData": {
             "anyOf": [
@@ -3855,13 +3896,13 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. URI based data."
+            "description": "URI based data. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponsePart",
-        "description": "A datatype containing media that is part of a `FunctionResponse` message.\n\nA `FunctionResponsePart` consists of data which has an associated datatype. A\n`FunctionResponsePart` can only contain one of the accepted types in\n`FunctionResponsePart.data`.\n\nA `FunctionResponsePart` must have a fixed IANA MIME type identifying the\ntype and subtype of the media if the `inline_data` field is filled with raw\nbytes."
+        "description": "A datatype containing media that is part of a `FunctionResponse` message.\n\nA `FunctionResponsePart` consists of data which has an associated datatype. A\n`FunctionResponsePart` can only contain one of the accepted types in\n`FunctionResponsePart.data`. A `FunctionResponsePart` must have a fixed IANA\nMIME type identifying the type and subtype of the media if the `inline_data`\nfield is filled with raw bytes."
       },
       "FunctionResponseScheduling": {
         "type": "string",
@@ -3872,7 +3913,7 @@
           "INTERRUPT"
         ],
         "title": "FunctionResponseScheduling",
-        "description": "Specifies how the response should be scheduled in the conversation."
+        "description": "Specifies how the response should be scheduled in the conversation.\n\nOnly applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults\nto WHEN_IDLE."
       },
       "GenerateContentResponseUsageMetadata": {
         "properties": {
@@ -4030,7 +4071,7 @@
           "authConfig": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/google__genai__types__AuthConfig"
+                "$ref": "#/components/schemas/AuthConfig"
               },
               {
                 "type": "null"
@@ -4048,13 +4089,68 @@
               }
             ],
             "title": "Enablewidget",
-            "description": "Optional. Whether to return a widget context token in the GroundingMetadata of the response. Developers can use the widget context token to render a Google Maps widget with geospatial context related to the places that the model references in the response."
+            "description": "Deprecated. The Google Maps contextual widget behavior in Grounding with Google Maps is being deprecated; this field is planned for removal and no longer has any effect once removed. Optional. Whether to return a widget context token in the GroundingMetadata of the response."
+          },
+          "groundingTypes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsGroundingTypes"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional. Specifies the types of Google Maps grounding to enable. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "GoogleMaps",
         "description": "Tool to retrieve knowledge from Google Maps."
+      },
+      "GoogleMapsGroundingTypes": {
+        "properties": {
+          "places": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsPlaces"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional. Enables grounding with Google Maps Places. This is the default grounding type when no `GroundingTypes` are specified."
+          },
+          "routing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsRouting"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional. Enables grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute)."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GoogleMapsGroundingTypes",
+        "description": "Defines the types of Google Maps grounding that can be enabled and their configurations.\n\nThis data type is not supported in Gemini API."
+      },
+      "GoogleMapsPlaces": {
+        "properties": {},
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GoogleMapsPlaces",
+        "description": "Grounding with Google Maps Places data (e.g.\n\nQueryPlaces). This is the default Google Maps grounding type when no other\ntype is specified. This data type is not supported in Gemini API."
+      },
+      "GoogleMapsRouting": {
+        "properties": {},
+        "additionalProperties": false,
+        "type": "object",
+        "title": "GoogleMapsRouting",
+        "description": "Grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute).\n\nThis data type is not supported in Gemini API."
       },
       "GoogleSearch": {
         "properties": {
@@ -4743,7 +4839,7 @@
               }
             ],
             "title": "Pagenumber",
-            "description": "Optional. Page number of the retrieved context. This field is not supported in Vertex AI."
+            "description": "Optional. Page number of the retrieved context, if applicable. This field is not supported in Vertex AI."
           },
           "mediaId": {
             "anyOf": [
@@ -4755,7 +4851,7 @@
               }
             ],
             "title": "Mediaid",
-            "description": "Optional. Media ID. This field is not supported in Vertex AI."
+            "description": "Optional. The media blob resource name for multimodal file search results. Format: fileSearchStores/{file_search_store_id}/media/{blob_id}. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -4924,7 +5020,7 @@
               }
             ],
             "title": "Googlemapswidgetcontexttoken",
-            "description": "Optional. Output only. A token that can be used to render a Google Maps widget with the contextual data. This field is populated only when the grounding source is Google Maps."
+            "description": "Optional. Output only. Deprecated: The Google Maps contextual widget behavior in Grounding with Google Maps is being deprecated; this field is planned for removal and will no longer be populated once removed. A token that can be used to render a Google Maps widget with the contextual data. This field is populated only when the grounding source is Google Maps."
           },
           "retrievalQueries": {
             "anyOf": [
@@ -5058,74 +5154,6 @@
         "title": "GroundingSupport",
         "description": "Grounding support."
       },
-      "HTTPBase": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "http"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "scheme": {
-            "type": "string",
-            "title": "Scheme"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "scheme"
-        ],
-        "title": "HTTPBase"
-      },
-      "HTTPBearer": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "http"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "scheme": {
-            "type": "string",
-            "const": "bearer",
-            "title": "Scheme",
-            "default": "bearer"
-          },
-          "bearerFormat": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Bearerformat"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "title": "HTTPBearer"
-      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -5138,80 +5166,6 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
-      },
-      "HttpAuth": {
-        "properties": {
-          "scheme": {
-            "type": "string",
-            "title": "Scheme"
-          },
-          "credentials": {
-            "$ref": "#/components/schemas/HttpCredentials"
-          },
-          "additionalHeaders": {
-            "anyOf": [
-              {
-                "additionalProperties": {
-                  "type": "string"
-                },
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Additionalheaders"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "scheme",
-          "credentials"
-        ],
-        "title": "HttpAuth",
-        "description": "The credentials and metadata for HTTP authentication."
-      },
-      "HttpCredentials": {
-        "properties": {
-          "username": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Username"
-          },
-          "password": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Password"
-          },
-          "token": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Token"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "title": "HttpCredentials",
-        "description": "Represents the secret token value for HTTP authentication, like user name, password, oauth token, etc."
       },
       "HttpElementLocation": {
         "type": "string",
@@ -5348,7 +5302,7 @@
               }
             ],
             "title": "Lastconsumedclientmessageindex",
-            "description": "Index of last message sent by client that is included in state represented by this SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent` is set.\n\nPresence of this index allows users to transparently reconnect and avoid issue of losing some part of realtime audio input/video. If client wishes to temporarily disconnect (for example as result of receiving GoAway) they can do it without losing state by buffering messages sent since last `SessionResmumptionTokenUpdate`. This field will enable them to limit buffering (avoid keeping all requests in RAM).\n\nNote: This should not be used for when resuming a session at some time later -- in those cases partial audio and video frames arelikely not needed."
+            "description": "Index of last message sent by client that is included in state represented by this SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent` is set.\n\nPresence of this index allows users to transparently reconnect and avoid issue of losing some part of realtime audio input/video. If client wishes to temporarily disconnect (for example as result of receiving GoAway) they can do it without losing state by buffering messages sent since last `SessionResumptionTokenUpdate`. This field will enable them to limit buffering (avoid keeping all requests in RAM).\n\nNote: This should not be used for when resuming a session at some time later -- in those cases partial audio and video frames are likely not needed."
           }
         },
         "additionalProperties": false,
@@ -5502,7 +5456,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "McpServer",
-        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 5. This data type is\nnot supported in Vertex AI."
+        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 6. This data type is\nnot supported in Vertex AI."
       },
       "MediaModality": {
         "type": "string",
@@ -5515,7 +5469,7 @@
           "DOCUMENT"
         ],
         "title": "MediaModality",
-        "description": "Server content modalities."
+        "description": "The modality that this token count applies to."
       },
       "ModalityTokenCount": {
         "properties": {
@@ -5528,7 +5482,7 @@
                 "type": "null"
               }
             ],
-            "description": "The modality associated with this token count."
+            "description": "The modality that this token count applies to."
           },
           "tokenCount": {
             "anyOf": [
@@ -5546,7 +5500,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "ModalityTokenCount",
-        "description": "Represents token counting info for a single modality."
+        "description": "Represents a breakdown of token usage by modality.\n\nThis message is used in CountTokensResponse and\nGenerateContentResponse.UsageMetadata to provide a detailed view of how many\ntokens are used by each modality (e.g., text, image, video) in a request. This\nis particularly useful for multimodal models, allowing you to track and manage\ntoken consumption for billing and quota purposes."
       },
       "NodeInfo": {
         "properties": {
@@ -5584,547 +5538,6 @@
         "type": "object",
         "title": "NodeInfo",
         "description": "Workflow node metadata attached to an Event."
-      },
-      "OAuth2": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "oauth2"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "flows": {
-            "$ref": "#/components/schemas/OAuthFlows"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "flows"
-        ],
-        "title": "OAuth2"
-      },
-      "OAuth2Auth": {
-        "properties": {
-          "clientId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Clientid"
-          },
-          "clientSecret": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Clientsecret"
-          },
-          "authUri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Authuri"
-          },
-          "nonce": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Nonce"
-          },
-          "state": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "State"
-          },
-          "redirectUri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Redirecturi"
-          },
-          "authResponseUri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Authresponseuri"
-          },
-          "authCode": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Authcode"
-          },
-          "accessToken": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Accesstoken"
-          },
-          "refreshToken": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Refreshtoken"
-          },
-          "idToken": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Idtoken"
-          },
-          "expiresAt": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expiresat"
-          },
-          "expiresIn": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Expiresin"
-          },
-          "audience": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Audience"
-          },
-          "codeVerifier": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Codeverifier"
-          },
-          "codeChallengeMethod": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Codechallengemethod"
-          },
-          "tokenEndpointAuthMethod": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "client_secret_basic",
-                  "client_secret_post",
-                  "client_secret_jwt",
-                  "private_key_jwt"
-                ]
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tokenendpointauthmethod",
-            "default": "client_secret_basic"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "title": "OAuth2Auth",
-        "description": "Represents credential value and its metadata for a OAuth2 credential."
-      },
-      "OAuthFlowAuthorizationCode": {
-        "properties": {
-          "refreshUrl": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Refreshurl"
-          },
-          "scopes": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "title": "Scopes",
-            "default": {}
-          },
-          "authorizationUrl": {
-            "type": "string",
-            "title": "Authorizationurl"
-          },
-          "tokenUrl": {
-            "type": "string",
-            "title": "Tokenurl"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authorizationUrl",
-          "tokenUrl"
-        ],
-        "title": "OAuthFlowAuthorizationCode"
-      },
-      "OAuthFlowClientCredentials": {
-        "properties": {
-          "refreshUrl": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Refreshurl"
-          },
-          "scopes": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "title": "Scopes",
-            "default": {}
-          },
-          "tokenUrl": {
-            "type": "string",
-            "title": "Tokenurl"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "tokenUrl"
-        ],
-        "title": "OAuthFlowClientCredentials"
-      },
-      "OAuthFlowImplicit": {
-        "properties": {
-          "refreshUrl": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Refreshurl"
-          },
-          "scopes": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "title": "Scopes",
-            "default": {}
-          },
-          "authorizationUrl": {
-            "type": "string",
-            "title": "Authorizationurl"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authorizationUrl"
-        ],
-        "title": "OAuthFlowImplicit"
-      },
-      "OAuthFlowPassword": {
-        "properties": {
-          "refreshUrl": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Refreshurl"
-          },
-          "scopes": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "title": "Scopes",
-            "default": {}
-          },
-          "tokenUrl": {
-            "type": "string",
-            "title": "Tokenurl"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "tokenUrl"
-        ],
-        "title": "OAuthFlowPassword"
-      },
-      "OAuthFlows": {
-        "properties": {
-          "implicit": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuthFlowImplicit"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "password": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuthFlowPassword"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "clientCredentials": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuthFlowClientCredentials"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "authorizationCode": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuthFlowAuthorizationCode"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "title": "OAuthFlows"
-      },
-      "OpenIdConnect": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "openIdConnect"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "openIdConnectUrl": {
-            "type": "string",
-            "title": "Openidconnecturl"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "openIdConnectUrl"
-        ],
-        "title": "OpenIdConnect"
-      },
-      "OpenIdConnectWithConfig": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "openIdConnect"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "authorization_endpoint": {
-            "type": "string",
-            "title": "Authorization Endpoint"
-          },
-          "token_endpoint": {
-            "type": "string",
-            "title": "Token Endpoint"
-          },
-          "userinfo_endpoint": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Userinfo Endpoint"
-          },
-          "revocation_endpoint": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Revocation Endpoint"
-          },
-          "token_endpoint_auth_methods_supported": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Token Endpoint Auth Methods Supported"
-          },
-          "grant_types_supported": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Grant Types Supported"
-          },
-          "scopes": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Scopes"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authorization_endpoint",
-          "token_endpoint"
-        ],
-        "title": "OpenIdConnectWithConfig"
       },
       "Outcome": {
         "type": "string",
@@ -6299,6 +5712,17 @@
             ],
             "title": "Partmetadata",
             "description": "Custom metadata associated with the Part. Agents using genai.Part as content representation may need to keep track of the additional information. For example it can be name of a file/source from which the Part originates or a way to multiplex multiple Part streams. This field is not supported in Vertex AI."
+          },
+          "audioTranscription": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Transcription"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Output only. The transcription of the audio part."
           }
         },
         "additionalProperties": false,
@@ -6468,6 +5892,30 @@
             ],
             "title": "Text",
             "description": "The content of the chunk."
+          },
+          "chunkId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunkid",
+            "description": "The ID of the chunk."
+          },
+          "fileId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fileid",
+            "description": "The ID of the file that the chunk belongs to."
           }
         },
         "additionalProperties": false,
@@ -6836,6 +6284,18 @@
               }
             ],
             "title": "Invocationid"
+          },
+          "customMetadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custommetadata"
           }
         },
         "type": "object",
@@ -6844,6 +6304,21 @@
           "sessionId"
         ],
         "title": "RunAgentRequest"
+      },
+      "SafetyPolicy": {
+        "type": "string",
+        "enum": [
+          "SAFETY_POLICY_UNSPECIFIED",
+          "FINANCIAL_TRANSACTIONS",
+          "SENSITIVE_DATA_MODIFICATION",
+          "COMMUNICATION_TOOL",
+          "ACCOUNT_CREATION",
+          "DATA_MODIFICATION",
+          "USER_CONSENT_MANAGEMENT",
+          "LEGAL_TERMS_AND_AGREEMENTS"
+        ],
+        "title": "SafetyPolicy",
+        "description": "SafetyPolicy"
       },
       "SaveArtifactRequest": {
         "properties": {
@@ -7260,16 +6735,6 @@
         "title": "SearchTypes",
         "description": "Different types of search that can be enabled on the GoogleSearch tool."
       },
-      "SecuritySchemeType": {
-        "type": "string",
-        "enum": [
-          "apiKey",
-          "http",
-          "oauth2",
-          "openIdConnect"
-        ],
-        "title": "SecuritySchemeType"
-      },
       "Segment": {
         "properties": {
           "startIndex": {
@@ -7326,168 +6791,59 @@
         "title": "Segment",
         "description": "Segment of the content this support belongs to."
       },
-      "ServiceAccount": {
-        "properties": {
-          "serviceAccountCredential": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ServiceAccountCredential"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "scopes": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Scopes"
-          },
-          "useDefaultCredential": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Usedefaultcredential",
-            "default": false
-          },
-          "useIdToken": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Useidtoken",
-            "default": false
-          },
-          "audience": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Audience"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "title": "ServiceAccount",
-        "description": "Represents Google Service Account configuration.\n\nAttributes:\n  service_account_credential: The service account credential (JSON key).\n  scopes: The OAuth2 scopes to request. Optional; when omitted with\n      ``use_default_credential=True``, defaults to the cloud-platform scope.\n  use_default_credential: Whether to use Application Default Credentials.\n  use_id_token: Whether to exchange for an ID token instead of an access\n      token. Required for service-to-service authentication with Cloud Run,\n      Cloud Functions, and other Google Cloud services that require identity\n      verification. When True, ``audience`` must also be set.\n  audience: The target audience for the ID token, typically the URL of the\n      receiving service (e.g. ``https://my-service-xyz.run.app``). Required\n      when ``use_id_token`` is True."
-      },
-      "ServiceAccountCredential": {
-        "properties": {
-          "type": {
-            "type": "string",
-            "title": "Type",
-            "default": ""
-          },
-          "projectId": {
-            "type": "string",
-            "title": "Projectid"
-          },
-          "privateKeyId": {
-            "type": "string",
-            "title": "Privatekeyid"
-          },
-          "privateKey": {
-            "type": "string",
-            "title": "Privatekey"
-          },
-          "clientEmail": {
-            "type": "string",
-            "title": "Clientemail"
-          },
-          "clientId": {
-            "type": "string",
-            "title": "Clientid"
-          },
-          "authUri": {
-            "type": "string",
-            "title": "Authuri"
-          },
-          "tokenUri": {
-            "type": "string",
-            "title": "Tokenuri"
-          },
-          "authProviderX509CertUrl": {
-            "type": "string",
-            "title": "Authproviderx509Certurl"
-          },
-          "clientX509CertUrl": {
-            "type": "string",
-            "title": "Clientx509Certurl"
-          },
-          "universeDomain": {
-            "type": "string",
-            "title": "Universedomain"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "projectId",
-          "privateKeyId",
-          "privateKey",
-          "clientEmail",
-          "clientId",
-          "authUri",
-          "tokenUri",
-          "authProviderX509CertUrl",
-          "clientX509CertUrl",
-          "universeDomain"
-        ],
-        "title": "ServiceAccountCredential",
-        "description": "Represents Google Service Account configuration.\n\nAttributes:\n  type: The type should be \"service_account\".\n  project_id: The project ID.\n  private_key_id: The ID of the private key.\n  private_key: The private key.\n  client_email: The client email.\n  client_id: The client ID.\n  auth_uri: The authorization URI.\n  token_uri: The token URI.\n  auth_provider_x509_cert_url: URL for auth provider's X.509 cert.\n  client_x509_cert_url: URL for the client's X.509 cert.\n  universe_domain: The universe domain.\n\nExample:\n\n    config = ServiceAccountCredential(\n        type_=\"service_account\",\n        project_id=\"your_project_id\",\n        private_key_id=\"your_private_key_id\",\n        private_key=\"-----BEGIN PRIVATE KEY-----...\",\n        client_email=\"...@....iam.gserviceaccount.com\",\n        client_id=\"your_client_id\",\n        auth_uri=\"https://accounts.google.com/o/oauth2/auth\",\n        token_uri=\"https://oauth2.googleapis.com/token\",\n        auth_provider_x509_cert_url=\"https://www.googleapis.com/oauth2/v1/certs\",\n        client_x509_cert_url=\"https://www.googleapis.com/robot/v1/metadata/x509/...\",\n        universe_domain=\"googleapis.com\"\n    )\n\n\n    config = ServiceAccountConfig.model_construct(**{\n        ...service account config dict\n    })"
-      },
       "Session": {
         "properties": {
           "id": {
             "type": "string",
-            "title": "Id"
+            "title": "Id",
+            "description": "Unique identifier of the session.",
+            "examples": [
+              "session-abc123"
+            ]
           },
           "appName": {
             "type": "string",
-            "title": "Appname"
+            "title": "Appname",
+            "description": "Application name that owns the session.",
+            "examples": [
+              "hello_world"
+            ]
           },
           "userId": {
             "type": "string",
-            "title": "Userid"
+            "title": "Userid",
+            "description": "User ID that owns the session.",
+            "examples": [
+              "user-123"
+            ]
           },
           "state": {
             "additionalProperties": true,
             "type": "object",
-            "title": "State"
+            "title": "State",
+            "description": "Current persisted session state.",
+            "examples": [
+              {
+                "locale": "en-US"
+              }
+            ]
           },
           "events": {
             "items": {
               "$ref": "#/components/schemas/Event-Output"
             },
             "type": "array",
-            "title": "Events"
+            "title": "Events",
+            "description": "Ordered event history for the session, including user, model, and tool events (e.g. user input, model response, function call/response)."
           },
           "lastUpdateTime": {
             "type": "number",
             "title": "Lastupdatetime",
-            "default": 0.0
+            "description": "Unix timestamp in seconds for the most recent session update.",
+            "default": 0.0,
+            "examples": [
+              1742000000.0
+            ]
           }
         },
         "additionalProperties": false,
@@ -7593,7 +6949,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Tool to support the model interacting directly with the\n      computer. If enabled, it automatically populates computer-use specific\n      Function Declarations."
+            "description": "Optional. Tool to support the model interacting directly with the computer. If enabled, it automatically populates computer-use specific Function Declarations."
           },
           "fileSearch": {
             "anyOf": [
@@ -7712,6 +7068,17 @@
             ],
             "title": "Mcpservers",
             "description": "Optional. MCP Servers to connect to. This field is not supported in Vertex AI."
+          },
+          "exaAiSearch": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToolExaAiSearch"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional. Uses Exa.ai to search for information to answer user queries. The search results will be grounded on Exa.ai and presented to the model for response generation. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
@@ -7768,7 +7135,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "ToolCodeExecution",
-        "description": "Tool that executes code generated by the model, and automatically returns the result to the model.\n\nSee also [ExecutableCode]and [CodeExecutionResult] which are input and output\nto this tool. This data type is not supported in Gemini API."
+        "description": "Tool that executes code generated by the model, and automatically returns the result to the model.\n\nSee also ExecutableCode and CodeExecutionResult, which are input and output to\nthis tool. This data type is not supported in Gemini API."
       },
       "ToolConfirmation": {
         "properties": {
@@ -7796,6 +7163,39 @@
         "type": "object",
         "title": "ToolConfirmation",
         "description": "Represents a tool confirmation configuration."
+      },
+      "ToolExaAiSearch": {
+        "properties": {
+          "apiKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apikey",
+            "description": "Required. The API key for ExaAiSearch."
+          },
+          "customConfigs": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customconfigs",
+            "description": "Optional. This field can be used to pass any parameter from the Exa.ai Search API."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ToolExaAiSearch",
+        "description": "ExaAiSearch tool type.\n\nA tool that uses the Exa.ai search engine for grounding. This data type is not\nsupported in Gemini API."
       },
       "ToolParallelAiSearch": {
         "properties": {
@@ -7924,12 +7324,86 @@
             ],
             "title": "Finished",
             "description": "Optional. The bool indicates the end of the transcription."
+          },
+          "languageCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languagecode",
+            "description": "The BCP-47 language code of the transcription."
+          },
+          "speakerLabel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speakerlabel",
+            "description": "A label identifying the speaker of this audio segment (e.g. \"spk_1\", \"spk_2\").\n      "
+          },
+          "words": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/WordInfo"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Words",
+            "description": "Detailed word-level transcriptions and timing details.\n      "
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "Transcription",
-        "description": "Audio transcription in Server Conent."
+        "description": "Audio transcription in Server Content."
+      },
+      "TurnCompleteReason": {
+        "type": "string",
+        "enum": [
+          "TURN_COMPLETE_REASON_UNSPECIFIED",
+          "MALFORMED_FUNCTION_CALL",
+          "RESPONSE_REJECTED",
+          "NEED_MORE_INPUT",
+          "PROHIBITED_INPUT_CONTENT",
+          "IMAGE_PROHIBITED_INPUT_CONTENT",
+          "INPUT_TEXT_CONTAIN_PROMINENT_PERSON_PROHIBITED",
+          "INPUT_IMAGE_CELEBRITY",
+          "INPUT_IMAGE_PHOTO_REALISTIC_CHILD_PROHIBITED",
+          "INPUT_TEXT_NCII_PROHIBITED",
+          "INPUT_OTHER",
+          "INPUT_IP_PROHIBITED",
+          "BLOCKLIST",
+          "UNSAFE_PROMPT_FOR_IMAGE_GENERATION",
+          "GENERATED_IMAGE_SAFETY",
+          "GENERATED_CONTENT_SAFETY",
+          "GENERATED_AUDIO_SAFETY",
+          "GENERATED_VIDEO_SAFETY",
+          "GENERATED_CONTENT_PROHIBITED",
+          "GENERATED_CONTENT_BLOCKLIST",
+          "GENERATED_IMAGE_PROHIBITED",
+          "GENERATED_IMAGE_CELEBRITY",
+          "GENERATED_IMAGE_PROMINENT_PEOPLE_DETECTED_BY_REWRITER",
+          "GENERATED_IMAGE_IDENTIFIABLE_PEOPLE",
+          "GENERATED_IMAGE_MINORS",
+          "OUTPUT_IMAGE_IP_PROHIBITED",
+          "GENERATED_OTHER",
+          "MAX_REGENERATION_REACHED"
+        ],
+        "title": "TurnCompleteReason",
+        "description": "The reason why the turn is complete."
       },
       "Type": {
         "type": "string",
@@ -8314,6 +7788,47 @@
         "title": "VideoMetadata",
         "description": "Provides metadata for a video, including the start and end offsets for clipping and the frame rate."
       },
+      "VoiceActivity": {
+        "properties": {
+          "voiceActivityType": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VoiceActivityType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The type of the voice activity signal."
+          },
+          "audioOffset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audiooffset",
+            "description": "The time voice activity detected in audio time, relative to the start of the audio stream."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "VoiceActivity",
+        "description": "Voice activity signal."
+      },
+      "VoiceActivityType": {
+        "type": "string",
+        "enum": [
+          "TYPE_UNSPECIFIED",
+          "ACTIVITY_START",
+          "ACTIVITY_END"
+        ],
+        "title": "VoiceActivityType",
+        "description": "The type of the voice activity signal."
+      },
       "WebSearch": {
         "properties": {},
         "additionalProperties": false,
@@ -8321,55 +7836,9 @@
         "title": "WebSearch",
         "description": "Standard web search for grounding and related configurations.\n\nOnly text results are returned."
       },
-      "google__adk__auth__auth_tool__AuthConfig": {
+      "WordInfo": {
         "properties": {
-          "authScheme": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/APIKey"
-              },
-              {
-                "$ref": "#/components/schemas/HTTPBase"
-              },
-              {
-                "$ref": "#/components/schemas/OAuth2"
-              },
-              {
-                "$ref": "#/components/schemas/OpenIdConnect"
-              },
-              {
-                "$ref": "#/components/schemas/HTTPBearer"
-              },
-              {
-                "$ref": "#/components/schemas/OpenIdConnectWithConfig"
-              },
-              {
-                "$ref": "#/components/schemas/CustomAuthScheme"
-              }
-            ],
-            "title": "Authscheme"
-          },
-          "rawAuthCredential": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthCredential"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "exchangedAuthCredential": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthCredential"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "credentialKey": {
+          "word": {
             "anyOf": [
               {
                 "type": "string"
@@ -8378,20 +7847,10 @@
                 "type": "null"
               }
             ],
-            "title": "Credentialkey"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authScheme"
-        ],
-        "title": "AuthConfig",
-        "description": "The auth config sent by tool asking client to collect auth credentials and\n\nadk and client will help to fill in the response"
-      },
-      "google__genai__types__AuthConfig": {
-        "properties": {
-          "apiKey": {
+            "title": "Word",
+            "description": "Transcript of the word.\n      "
+          },
+          "startOffset": {
             "anyOf": [
               {
                 "type": "string"
@@ -8400,80 +7859,26 @@
                 "type": "null"
               }
             ],
-            "title": "Apikey",
-            "description": "The authentication config to access the API. Only API key is supported. This field is not supported in Gemini API."
+            "title": "Startoffset",
+            "description": "Start offset in time of the word relative to the start of the audio.\n      "
           },
-          "apiKeyConfig": {
+          "endOffset": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/ApiKeyConfig"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Config for API key auth."
-          },
-          "authType": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthType"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Type of auth scheme."
-          },
-          "googleServiceAccountConfig": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthConfigGoogleServiceAccountConfig"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Config for Google Service Account auth."
-          },
-          "httpBasicAuthConfig": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthConfigHttpBasicAuthConfig"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Config for HTTP Basic auth."
-          },
-          "oauthConfig": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthConfigOauthConfig"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Config for user oauth."
-          },
-          "oidcConfig": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AuthConfigOidcConfig"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Config for user OIDC auth."
+            "title": "Endoffset",
+            "description": "End offset in time of the word relative to the start of the audio.\n      "
           }
         },
         "additionalProperties": false,
         "type": "object",
-        "title": "AuthConfig",
-        "description": "The authentication config to access the API."
+        "title": "WordInfo",
+        "description": "Information about a single recognized word."
       }
     }
   }

@@ -103,7 +103,7 @@ An ADK agent project requires this dependency in your
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>1.4.0</version>
+        <version>1.6.0</version>
     </dependency>
 </dependencies>
 ```
@@ -138,13 +138,13 @@ additional settings with the following configuration code:
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>1.4.0</version>
+                <version>1.6.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>1.4.0</version>
+                <version>1.6.0</version>
             </dependency>
         </dependencies>
 
@@ -269,7 +269,7 @@ mvn compile exec:java \
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
+access the web interface at `http://localhost:8000`. Select your agent at the
 upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)

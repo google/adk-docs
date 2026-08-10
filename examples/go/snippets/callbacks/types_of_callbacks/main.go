@@ -22,14 +22,14 @@ import (
 	"regexp"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -43,7 +43,7 @@ const (
 
 // --8<-- [start:before_agent_example]
 // 1. Define the Callback Function
-func onBeforeAgent(ctx agent.CallbackContext) (*genai.Content, error) {
+func onBeforeAgent(ctx agent.Context) (*genai.Content, error) {
 	agentName := ctx.AgentName()
 	log.Printf("[Callback] Entering agent: %s", agentName)
 	if skip, _ := ctx.State().Get("skip_llm_agent"); skip == true {
@@ -95,7 +95,7 @@ func runBeforeAgentExample() {
 // --8<-- [end:before_agent_example]
 
 // --8<-- [start:after_agent_example]
-func onAfterAgent(ctx agent.CallbackContext) (*genai.Content, error) {
+func onAfterAgent(ctx agent.Context) (*genai.Content, error) {
 	agentName := ctx.AgentName()
 	invocationID := ctx.InvocationID()
 	state := ctx.State()
@@ -149,7 +149,7 @@ func runAfterAgentExample() {
 // --8<-- [end:after_agent_example]
 
 // --8<-- [start:before_model_example]
-func onBeforeModel(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func onBeforeModel(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Printf("[Callback] BeforeModel triggered for agent %q.", ctx.AgentName())
 
 	// Modification Example: Add a prefix to the system instruction.
@@ -216,7 +216,7 @@ func runBeforeModelExample() {
 // --8<-- [end:before_model_example]
 
 // --8<-- [start:after_model_example]
-func onAfterModel(ctx agent.CallbackContext, resp *model.LLMResponse, respErr error) (*model.LLMResponse, error) {
+func onAfterModel(ctx agent.Context, resp *model.LLMResponse, respErr error) (*model.LLMResponse, error) {
 	log.Printf("[Callback] AfterModel triggered for agent %q.", ctx.AgentName())
 	if respErr != nil {
 		log.Printf("[Callback] Model returned an error: %v. Passing it through.", respErr)
@@ -293,7 +293,7 @@ type GetCapitalCityArgs struct {
 }
 
 // getCapitalCity is a tool that returns the capital of a given country.
-func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) (string, error) {
+func getCapitalCity(ctx agent.Context, args *GetCapitalCityArgs) (string, error) {
 	capitals := map[string]string{
 		"canada":        "Ottawa",
 		"france":        "Paris",
@@ -310,7 +310,7 @@ func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) (string, error) 
 // --8<-- [end:tool_defs]
 
 // --8<-- [start:before_tool_example]
-func onBeforeTool(ctx tool.Context, t tool.Tool, args map[string]any) (map[string]any, error) {
+func onBeforeTool(ctx agent.Context, t tool.Tool, args map[string]any) (map[string]any, error) {
 	log.Printf("[Callback] BeforeTool triggered for tool %q in agent %q.", t.Name(), ctx.AgentName())
 	log.Printf("[Callback] Original args: %v", args)
 
@@ -372,7 +372,7 @@ func runBeforeToolExample() {
 // --8<-- [end:before_tool_example]
 
 // --8<-- [start:after_tool_example]
-func onAfterTool(ctx tool.Context, t tool.Tool, args map[string]any, result map[string]any, err error) (map[string]any, error) {
+func onAfterTool(ctx agent.Context, t tool.Tool, args map[string]any, result map[string]any, err error) (map[string]any, error) {
 	log.Printf("[Callback] AfterTool triggered for tool %q in agent %q.", t.Name(), ctx.AgentName())
 	log.Printf("[Callback] Original result: %v", result)
 

@@ -1,7 +1,7 @@
 # Build collaborative agent teams
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Some complex tasks may require multiple agents with specific responsibilities
@@ -39,27 +39,42 @@ agent behavior.
 The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
-```python
-from google.adk import Agent
+=== "Python"
 
-weather_agent = Agent(
-    name="weather_checker",
-    mode="single_turn",         # no user interaction
-    tools=[get_weather, user_info, geocode_address],
-)
-flight_agent = Agent(
-    name="flight_booker",
-    mode="task",                # can ask user questions
-    input_schema=FlightInput,
-    output_schema=FlightResult,
-    tools=[search_flights, book_flight],
-)
-root = Agent(
-    name="travel_planner",      # coordinator agent
-    sub_agents=[weather_agent, flight_agent],
-    # Auto-injects: request_task_weather_checker, request_task_flight_booker
-)
-```
+    ```python
+    from google.adk import Agent
+
+    weather_agent = Agent(
+        name="weather_checker",
+        mode="single_turn",         # no user interaction
+        tools=[get_weather, user_info, geocode_address],
+    )
+    flight_agent = Agent(
+        name="flight_booker",
+        mode="task",                # can ask user questions
+        input_schema=FlightInput,
+        output_schema=FlightResult,
+        tools=[search_flights, book_flight],
+    )
+    root = Agent(
+        name="travel_planner",      # coordinator agent
+        sub_agents=[weather_agent, flight_agent],
+        # Auto-injects delegation tools named after each subagent:
+        # weather_checker, flight_booker
+    )
+    ```
+
+=== "Go"
+
+    In ADK Go v2.0.0, the `Mode` field on `llmagent.Config` accepts the same
+    mode strings as Python: `"chat"`, `"task"`, and `"single_turn"`. Declaring
+    `SubAgents` on the coordinator agent causes ADK to automatically generate
+    a delegation tool for each subagent, named after the subagent itself,
+    exactly as in Python.
+
+    ```go
+    --8<-- "examples/go/snippets/workflows/collaboration/main.go:get-started"
+    ```
 
 When you run this workflow, the `travel_planner` coordinator agent automatically
 identifies and assigns tasks to the subagents. When a subagent completes
@@ -117,7 +132,7 @@ each mode:
     <tr>
       <td><strong>Return to parent</strong></td>
       <td>Manual (via transfer)</td>
-      <td>Automatic (via <code>complete_task</code>)</td>
+      <td>Automatic (via <code>finish_task</code>)</td>
       <td>Automatic (with result)</td>
     </tr>
   </tbody>
@@ -139,17 +154,19 @@ Workflow Agent graph nodes, and with ***LlmAgent*** instances. However the
 execution transfer behavior is different depending on the calling, or parent,
 agent:
 
-**As a workflow graph node:** When a task agent is placed within a workflow
-graph, such as ***SequentialAgent***, ***ParallelAgent***, the agent executes
-its task. Upon completion, control automatically advances to the next node based
-on the logic of the workflow agent's graph.
+**As a workflow graph node:** When a task or single-turn agent is placed within
+a workflow graph — such as a ***SequentialAgent*** or ***ParallelAgent*** (Python
+and Go prebuilt agents), or wrapped with `workflow.NewAgentNode` in the ADK Go
+v2.0.0 graph engine — the agent executes its task. Upon completion, control
+automatically advances to the next node based on the logic of the workflow
+agent's graph.
 
 **As a transferee from an LlmAgent:** When a parent ***LlmAgent*** transfers
-control to a task agent via `request_task`, the task agent executes until it
-calls `complete_task`. At that point, control automatically returns to the
-originating agent that initiated the transfer. This behavior differs from
-default, chat ***mode*** agents, which require explicit `transfer_to_agent`
-calls to hand back control.
+control to a task agent via the delegation tool named after that subagent, the
+task agent executes until it calls `finish_task`. At that point, control
+automatically returns to the originating agent that initiated the transfer.
+This behavior differs from default, chat ***mode*** agents, which require
+explicit `transfer_to_agent` calls to hand back control.
 
 <table>
   <thead>

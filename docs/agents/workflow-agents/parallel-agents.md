@@ -1,7 +1,7 @@
 # Parallel template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 The ***ParallelAgent*** class is a [template workflow](/agents/workflow-agents/)
@@ -23,11 +23,11 @@ ultimately managed by the ***ParallelAgent*** object you define.
 
 !!! note "Alternative: graph-based workflows"
 
-    Starting in ADK 2.0, templated workflows have been superseded
+    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
 
     by more flexible workflow structures, including
-    [graph-based workflows](/workflows/graphs/) and
-    [dynamic workflows](/workflows/dynamic/).
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
 
 ### How it works
 
@@ -68,7 +68,7 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
          --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
          --8<-- "examples/typescript/snippets/agents/workflow-agents/parallel_agent_web_research.ts:init"
         ```

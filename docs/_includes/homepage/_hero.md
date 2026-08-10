@@ -40,7 +40,7 @@ agent = <span class="fn">Agent</span>(
 
 </pre></div>
 
-<div class="code-content" id="code-go" style="display:none"><pre><span class="kw">import</span> <span class="str">"google.golang.org/adk/agent/llmagent"</span>
+<div class="code-content" id="code-go" style="display:none"><pre><span class="kw">import</span> <span class="str">"google.golang.org/adk/v2/agent/llmagent"</span>
 
 model, _ := gemini.<span class="fn">NewModel</span>(context.<span class="fn">Background</span>(), <span class="str">"gemini-flash-latest"</span>, <span class="kw">nil</span>)
 a, _ := llmagent.<span class="fn">New</span>(llmagent.<span class="fn">Config</span>{
@@ -86,8 +86,8 @@ a, _ := llmagent.<span class="fn">New</span>(llmagent.<span class="fn">Config</s
       </div>
       <div class="install-info" id="install-go" style="display:none">
         <div class="install-cmd">
-          <code>go get google.golang.org/adk</code>
-          <button class="copy-btn" data-copy="go get google.golang.org/adk" title="Copy to clipboard">📋</button>
+          <code>go get google.golang.org/adk/v2</code>
+          <button class="copy-btn" data-copy="go get google.golang.org/adk/v2" title="Copy to clipboard">📋</button>
         </div>
       </div>
       <div class="install-info" id="install-java" style="display:none">

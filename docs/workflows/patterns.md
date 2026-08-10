@@ -1,7 +1,7 @@
 # Multi-agent workflow patterns
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 This guide provides a number of agent patterns which you can implement with
@@ -40,7 +40,7 @@ your project requirements before committing to a full implementation.
     # User asks "I can't log in" -> Coordinator's LLM should call transfer_to_agent(agent_name='Support')
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Coordinator using LLM Transfer
@@ -65,8 +65,8 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:coordinator-pattern"
@@ -139,7 +139,7 @@ your project requirements before committing to a full implementation.
     # reporter runs -> reads state['result']
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Sequential Data Pipeline
@@ -162,9 +162,9 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:sequential-pipeline-pattern"
@@ -253,7 +253,7 @@ your project requirements before committing to a full implementation.
     # synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Parallel Information Gathering
@@ -284,10 +284,10 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/parallelagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/parallelagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-gather-pattern"
@@ -382,7 +382,7 @@ your project requirements before committing to a full implementation.
     # Results flow back up.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Hierarchical Research Task
@@ -418,9 +418,9 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/agenttool"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/agenttool"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchical-pattern"
@@ -518,7 +518,7 @@ your project requirements before committing to a full implementation.
     # reviewer runs -> reads state['draft_text'], saves status to state['review_status']
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Generator-Critic
@@ -550,9 +550,9 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:generator-critic-pattern"
@@ -652,7 +652,7 @@ your project requirements before committing to a full implementation.
     # Loop stops if QualityChecker outputs 'pass' (leading to StopChecker escalating) or after 5 iterations.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Iterative Code Refinement
@@ -662,7 +662,7 @@ your project requirements before committing to a full implementation.
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
         name: 'CodeRefiner',
-        instruction: 'Read state["current_code"] (if exists) and state["requirements"]. Generate/refine Typescript code to meet requirements. Save to state["current_code"].',
+        instruction: 'Read state["current_code"] (if exists) and state["requirements"]. Generate/refine TypeScript code to meet requirements. Save to state["current_code"].',
         outputKey: 'current_code' // Overwrites previous code in state
     });
 
@@ -707,10 +707,10 @@ your project requirements before committing to a full implementation.
     ```go
     import (
         "iter"
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/loopagent"
-        "google.golang.org/adk/session"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/loopagent"
+        "google.golang.org/adk/v2/session"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:iterative-refinement-pattern"
@@ -843,7 +843,7 @@ your project requirements before committing to a full implementation.
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Conceptual Code: Using a Tool for Human Approval
@@ -903,10 +903,10 @@ your project requirements before committing to a full implementation.
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
-        "google.golang.org/adk/tool"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/tool"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:human-in-loop-pattern"

@@ -255,6 +255,43 @@ Defaults to 3.
 optimization results if desired.
 Facilitates warm starts.
 
+### `GEPARootAgentOptimizer` {#geparootagentoptimizer}
+
+The
+[`GEPARootAgentOptimizer`](https://github.com/google/adk-python/blob/main/src/google/adk/optimization/gepa_root_agent_optimizer.py)
+improves both the instructions of the root agent and the instructions of skills
+provided to it via a
+[`SkillToolset`](https://github.com/google/adk-python/blob/main/src/google/adk/tools/skill_toolset.py)
+using the [GEPA](https://gepa-ai.github.io/gepa/) optimizer.
+In many ways it can be considered to be an extension of the
+[`GEPARootAgentPromptOptimizer`](#geparootagentpromptoptimizer).
+It expects the sampler to provide eval results as an
+[`UnstructuredSamplingResult`](#sampler-results).
+Its output is a subclass of [`OptimizerResult`](#agent-optimizer-results) which
+specifies a list of [optimized agents with scores](#agent-optimizer-results) and
+additional metrics collected during optimization.
+
+Note: The `GEPARootAgentOptimizer` does not improve any sub-agents or agent
+tools.
+
+You can configure the `GEPARootAgentOptimizer` with a
+`GEPARootAgentOptimizerConfig` that contains the following fields:
+
+* `optimizer_model` (optional): The model used to analyze evaluation results and
+optimize the agent.
+Defaults to `"gemini-3.5-flash"`.
+* `model_configuration` (optional): The configuration for the optimizer model.
+Defaults to a config with a `ThinkingLevel` of `HIGH`.
+* `max_metric_calls` (optional): The maximum number of evaluations to run during
+optimization.
+Defaults to 100.
+* `reflection_minibatch_size` (optional): The number of examples to use at a
+time to update the instructions.
+Defaults to 3.
+* `run_dir` (optional): The directory to save intermediate and final
+optimization results if desired.
+Facilitates warm starts.
+
 ### `SimplePromptOptimizer` {#simplepromptoptimizer}
 
 The `SimplePromptOptimizer` is an automated, iterative prompt-tuning component designed
@@ -272,7 +309,7 @@ The optimizer automatically executes an asynchronous, four-stage feedback loop:
 
 **Note:** The optimization loop does not mutate your initial agent instance in place. Upon completion, it returns an `OptimizerResult` containing the highest-scoring agent variation extracted during the process.
 
-### Configuration
+#### Configuration
 
 Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` instance to the optimizer.
 
@@ -281,7 +318,7 @@ Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` in
 | `num_iterations` | int | *Required* | The total number of optimization rounds to execute. |
 | `batch_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
 
-### Implementation Example
+#### Implementation Example
 
 Once your configuration is defined, run the optimization with:
 

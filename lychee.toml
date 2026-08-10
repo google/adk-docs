@@ -2,7 +2,7 @@
 # https://github.com/lycheeverse/lychee
 
 # Accepted HTTP status codes
-accept = ["200", "206", "302", "403", "429"]
+accept = ["200", "202", "206", "302", "403", "429"]
 
 # Website timeout in seconds
 timeout = 30
@@ -24,5 +24,4 @@ host_request_interval = "1s"
 # Add paths here for directories containing partial/template files
 exclude_path = [
     "_includes",
-    "adk-samples",  # TODO: Remove at release time
 ]
