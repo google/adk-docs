@@ -137,7 +137,7 @@ agent using the ADK CLI.
 
 === "Python"
 
-    If you are using the Vertex AI SDK `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
+    If you are using the Agent Platform SDK `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
 
     ```python
     from vertexai.agent_engines import AdkApp
