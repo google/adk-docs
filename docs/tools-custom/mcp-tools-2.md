@@ -78,23 +78,6 @@ Before you begin, ensure you have the following set up:
 | **Cognitive Load & Model Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. | Independent model reasoning dedicated solely to the wrapped task. |
 | **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | **Higher Cost & Variable Latency**: Multiplies LLM calls, sub-agent reasoning turns before returning to parent. | Client-driven; latency depends on internal agent execution depth. |
 | **Ideal Use Cases** | <ul><li>Deterministic API integrations: Postgres, BigQuery, GitHub, Google Maps.</li><li>File system operations & static resource reading.</li><li>Reusing standard pre-built community MCP servers.</li></ul> | <ul><li>Multi-step autonomous workflows requiring trial-and-error. For example: code debugging or research synthesis.</li><li>Tasks needing isolated personas or specialized instructions.</li><li>Scenarios with >20 tools where schema overload harms accuracy.</li></ul> | <ul><li>Exposing complex ADK multi-agent capabilities to external MCP-compliant ecosystems.</li><li>Integrating ADK agents into IDEs, editors, or A2A pipelines.</li></ul> |
-| **Pros** | <ul><li>Zero extra LLM reasoning overhead.</li><li>Clean boundary separation via standardized Stdio/HTTP IPC.</li><li>Dynamic tool discovery and runtime credential injection.</li></ul> | <ul><li>Keeps primary agent context lean and focused on orchestration.</li><li>Prevents prompt injection / token pollution from raw payloads.</li><li>Allows domain-specific tool sets per sub-agent.</li></ul> | <ul><li>Standardized cross-platform distribution.</li><li>Session persistence across connection lifecycle.</li><li>Native progress streaming over MCP protocol.</li></ul> |
-| **Cons** | <ul><li>Context window exhaustion if tools return large payloads.</li><li>Tool naming collisions and model confusion if many tools are loaded.</li><li>Stdio subprocess startup overhead.</li></ul> | <ul><li>Increased LLM token consumption & inference billing.</li><li>Higher end-to-end latency due to nested reasoning turns.</li><li>Risk of delegation loops or cascading hallucination.</li></ul> | <ul><li>Requires host environment to support MCP client protocol.</li><li>Higher infrastructure deployment footprint.</li></ul> |
-
----
-
-### Make your decision
-
-```mermaid
-graph TD
-    A[Need to add capability to Agent] --> B{Does the task require multi-step autonomous reasoning or trial-and-error?}
-    B -- Yes --> C{Is the capability consumed within your ADK app or by external hosts?}
-    C -- Internal ADK --> D[Use Separate Sub-Agent via AgentTool]
-    C -- External Host / IDE --> E[Use Agent-to-MCP Server via to_mcp_server]
-    B -- No: Single-step deterministic call / API / DB --> F{Do you have a pre-built MCP server or need process isolation?}
-    F -- Yes --> G[Use MCP Tool Integration via McpToolset]
-    F -- No: Simple Python function --> H[Use Native FunctionTool]
-```
 
 !!! note "State restoration"
 
@@ -120,7 +103,7 @@ Use `McpToolset` to import tools from an external MCP server into your ADK `LlmA
 
 ### Example: Local Stdio Transport (FileSystem MCP)
 
-This example sets up an ADK agent that connects to a local MCP file system server. It instantiates the McpToolset directly within the agent's tools list to enable file management capabilities.
+This example sets up an ADK agent that connects to a local MCP file system server; it instantiates the McpToolset directly within the agent's tools list to enable file management capabilities.
 
 **Step 1**. Define your agent with `McpToolset`:
 
@@ -227,7 +210,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
 
 ### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
 
-Before starting, please follow the instructions for [Google Maps Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) to enable the service on your Google Cloud project and generate your Maps Platform API Key.
+Before starting, follow the instructions for [Google Maps Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) to enable the service on your Google Cloud project and generate your Maps Platform API Key.
 Unlike the previous local process example, this pattern connects your agent to a remote, cloud-hosted MCP server using Server-Sent Events (SSE). It uses the Google Maps Grounding Lite service to demonstrate how to pass authentication headers, such as an API key, to a scalable endpoint.
 
 **Step 1**: Define your agent with `McpToolset`.
@@ -391,6 +374,50 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nMCP Server (stdio) stopped by user.")
 ```
+
+#### Test your custom MCP server with an ADK Agent
+
+To test your custom server, you need to build an ADK agent that acts as a client. This agent uses the `McpToolset` to establish a connection to the server script you just created.
+
+1. Set up your agent in a new directory such as `./adk_agent_samples/mcp_client_agent/`. Create an `agent.py` file and include an `__init__.py` alongside it to make it discoverable.
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from mcp import StdioServerParameters
+
+# IMPORTANT: Provide the absolute path to the server script you built previously
+MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py"
+
+root_agent = LlmAgent(
+    model='gemini-flash-latest',
+    name='web_reader_mcp_client_agent',
+    instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
+    tools=[
+        McpToolset(
+            connection_params=StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command='python3', 
+                    args=[MCP_SERVER_SCRIPT], 
+                )
+            )
+        )
+    ],
+)
+```
+
+2. Navigate to your agent's parent directory in the terminal:
+
+```bash
+cd ./adk_agent_samples
+adk web
+```
+
+3. Open the ADK Web UI and select the web_reader_mcp_client_agent.
+4. Test the connection with a prompt such as: *Load the content from "https://example.com"*.
+
+---
 
 ### Deployment CLI Commands
 
@@ -592,4 +619,8 @@ async def get_weather(city: str):
     return {
         "content": [{"type": "text", "text": f"Weather in {city}: 72°F Sunny"}]
     }
-    ```
+```
+
+## Further resources
+
+Once you understand the basics, explore [Advanced use cases](/advanced-mcp-tools) for complex implementations and custom integrations.
