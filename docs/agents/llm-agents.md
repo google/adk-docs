@@ -421,6 +421,20 @@ You can adjust how the underlying AI model generates responses using
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:gen_config"
     ```
 
+### Route requests across models
+
+<div class="language-support-tag" title="">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+`routingConfig` asks Vertex AI to choose the model for each request, rather than
+pinning one. Use `autoMode` with a `ModelRoutingPreference` to let Vertex balance
+quality against cost, or `manualMode` to name a model explicitly.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:routing_config"
+```
+
 ### Configure a default model
 
 <div class="language-support-tag" title="">

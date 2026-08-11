@@ -5,10 +5,14 @@ import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 import com.google.adk.kt.models.Gemini
+import com.google.adk.kt.models.VertexCredentials
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.GenerateContentConfig
+import com.google.adk.kt.types.GenerationConfigRoutingConfig
+import com.google.adk.kt.types.GenerationConfigRoutingConfigAutoRoutingMode
+import com.google.adk.kt.types.ModelRoutingPreference
 import com.google.adk.kt.types.Part
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
@@ -80,6 +84,35 @@ fun main() =
                     ),
             )
         // --8<-- [end:gen_config]
+
+        // --8<-- [start:routing_config]
+        val routedAgent =
+            LlmAgent(
+                name = "capital_agent",
+                // Routing is a Vertex AI feature; it is not supported by the Gemini API.
+                model =
+                    Gemini(
+                        name = "gemini-flash-latest",
+                        vertexCredentials =
+                            VertexCredentials(project = "PROJECT_ID", location = "LOCATION"),
+                    ),
+                generateContentConfig =
+                    GenerateContentConfig(
+                        // Let Vertex pick the model, favouring cost over quality.
+                        routingConfig =
+                            GenerationConfigRoutingConfig(
+                                autoMode =
+                                    GenerationConfigRoutingConfigAutoRoutingMode(
+                                        modelRoutingPreference =
+                                            ModelRoutingPreference.PRIORITIZE_COST,
+                                    ),
+                            ),
+                        // Labels are also Vertex-only: they are stripped from requests
+                        // made with an AI Studio API key.
+                        labels = mapOf("team" to "search"),
+                    ),
+            )
+        // --8<-- [end:routing_config]
 
         // --8<-- [start:full_example]
         val finalAgent =
