@@ -597,6 +597,25 @@ For example, you can automate this step with a callback:
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
     ```
 
+### Write specific events or facts from a callback
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+</div>
+
+`addSessionToMemory` saves the whole session. When you want finer control,
+`CallbackContext` also offers `addEventsToMemory`, for a chosen subset of events,
+and `addMemory`, for facts you construct yourself. Both accept optional
+`customMetadata`, and both fill in the app, user and session from the current
+invocation.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:callback_memory_writes"
+```
+
+All three throw `IllegalStateException` if the runner has no memory service
+configured, so they fail at run time rather than at compile time.
+
 ## Extend memory capabilities
 
 Memory services extended from `BaseMemoryService` support adding sessions and
