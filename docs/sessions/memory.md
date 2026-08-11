@@ -414,6 +414,12 @@ instantiating the `VertexAiMemoryBankService` and passing it to the `Runner`.
     )
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:memory_bank"
+    ```
+
 ## RAG memory
 
 The `VertexAiRagMemoryService` stores conversations in [Knowledge
@@ -432,6 +438,12 @@ memories produced by Memory Bank. Requires the Agent Platform SDK.
         similarity_top_k=5,
         vector_distance_threshold=0.6,
     )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:rag_memory"
     ```
 
 ## Use memory in your agent
