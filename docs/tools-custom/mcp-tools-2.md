@@ -219,13 +219,13 @@ Unlike the previous local process example, this pattern connects your agent to a
 
     ```python
     import os
-    from google.adk.agents.llm_agent import LlmAgent
+    from google.adk.agents import LlmAgent
     from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
     
     API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
     
-    root_agent = Agent(
+    root_agent = LlmAgent(
         model="gemini-flash-latest",
         name="travel_planner",
         instruction="Plan travel routes and search locations using Google Maps.",
@@ -256,7 +256,7 @@ Unlike the previous local process example, this pattern connects your agent to a
        - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
        
-     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+     ![MCP with ADK Web - Google Maps Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 === "TypeScript"
 
@@ -287,11 +287,43 @@ Unlike the previous local process example, this pattern connects your agent to a
 
 ## Expose ADK Tools via a Custom MCP Server
 
-Wrap existing ADK tools (`FunctionTool`) inside an MCP server to make them accessible to external clients, such as Claude Desktop or custom hosts.
+You can make ADK capabilities accessible to external MCP clients, such as Claude Desktop, IDEs, or custom hosts, in two ways:
 
-### Prerequisites
+1. **Expose an entire Agent (`to_mcp_server`)**: One-line conversion that exposes full multi-turn agent reasoning and internal tool execution to external MCP clients.
+2. **Expose individual Tools (`FunctionTool`)**: Manually build a lightweight MCP server that wraps specific standalone ADK tools.
 
-Install the MCP Server library in the same environment as your ADK installation
+---
+
+### Expose an entire ADK Agent (`to_mcp_server`)
+Use ADK's native `to_mcp_server()` utility to wrap an existing `LlmAgent` into a standard FastMCP server:
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.tools.load_web_page import load_web_page
+from google.adk.tools.mcp_tool import to_mcp_server
+# Define your ADK agent
+agent = LlmAgent(
+    model="gemini-flash-latest",
+    name="web_reader_agent",
+    instruction="Fetch and summarize web content for the user.",
+    tools=[load_web_page],
+)
+# Convert the agent into an MCP server
+app = to_mcp_server(agent)
+if __name__ == "__main__":
+    # Runs the agent as a standard stdio MCP server
+    app.run()
+```
+
+---
+
+### Expose individual Tools
+
+If you only want to expose individual ADK tools without the full agent reasoning loop, wrap FunctionTool inside an MCP Server:
+
+#### Prerequisites
+
+Install the MCP Server library in the same environment as your ADK installation:
 
      ```bash
      pip install mcp
@@ -419,24 +451,6 @@ adk web
 
 ---
 
-### Deployment CLI Commands
-
-```bash
-# Deploy to Agent Runtime
-uv run adk deploy agent_engine \
-  --project=<gcp-project-id> \
-  --region=<gcp-region> \
-  --display_name="MCP Agent" \
-  ./path/to/agent_directory
-
-# Deploy to Cloud Run
-uv run adk deploy cloud_run \
-  --project=<gcp-project-id> \
-  --region=<gcp-region> \
-  --service_name=<service-name> \
-  ./path/to/agent_directory
-```
-
 ## Remote MCP Authentication and resource access
 
 This section shows you how to connect to remote MCP servers using authentication and how to read data **Resources** exposed by an MCP server. When an MCP server requires authentication, such as over Server-Sent Events `SseConnectionParams` or Streamable HTTP, `McpToolset` handles credential injection and token management automatically.
@@ -459,32 +473,33 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
 === "Python"
 
 ```python
+import os
 from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-from google.adk.auth import AuthScheme, AuthCredential
 
-# Configure Bearer Token / OAuth Authentication
+# Configure Bearer Token Authentication via headers
 toolset = McpToolset(
     connection_params=SseConnectionParams(
         url="https://mcp-server.example.com/sse",
-        timeout=5
-    ),
-    auth_scheme=AuthScheme.BEARER,
-    auth_credential=AuthCredential(token="YOUR_ACCESS_TOKEN"),
+        headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
+        timeout=5,
+    )
 )
 ```
 
 === "TypeScript"
 
 ```typescript
-import { MCPToolset, AuthScheme, AuthCredential } from "@google/adk";
+import { MCPToolset } from "@google/adk";
 
-// Configure Bearer Token Authentication
+// Configure Bearer Token Authentication via headers
 const toolset = new MCPToolset({
     type: "SseConnectionParams",
     url: "https://mcp-server.example.com/sse",
-    authScheme: AuthScheme.BEARER,
-    authCredential: new AuthCredential({ token: "YOUR_ACCESS_TOKEN" })
+    headers: {
+        "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
+    },
+    timeout: 5,
 });
 ```
 
@@ -492,7 +507,7 @@ const toolset = new MCPToolset({
 
 ## Accessing MCP Resources
 
-In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\94read-only data files, database records, or API context blobs.
+In addition to executable **Tools**, MCP servers can expose **Resources** data files, database records, or API context blobs.
 
 `McpToolset` provides two core methods to discover and read these data resources:
 
@@ -550,34 +565,36 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
 ```python
 import os
 from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams, StdioConnectionParams
-from google.adk.auth import AuthScheme, AuthCredential
+from google.adk.tools.mcp_tool.mcp_session_manager import (
+    StdioConnectionParams,
+    StreamableHTTPConnectionParams,
+)
 from mcp import StdioServerParameters
 
 if os.getenv("K_SERVICE"):
-    # Running in Production (Cloud Run)
-    # Uses Streamable HTTP for stateless scalability and native ADK Auth
-    mcp_toolset = McpToolset(
-        connection_params=StreamableHTTPConnectionParams(
-            url=os.getenv("REMOTE_MCP_URL"),
-            timeout=5,
-            sse_read_timeout=300
-        ),
-        auth_scheme=AuthScheme.BEARER,
-        auth_credential=AuthCredential(token=os.getenv("MCP_AUTH_TOKEN"))
-    )
+  # Running in Production (Cloud Run)
+  # Uses Streamable HTTP for stateless scalability and bearer auth headers
+  mcp_toolset = McpToolset(
+      connection_params=StreamableHTTPConnectionParams(
+          url=os.getenv("REMOTE_MCP_URL"),
+          headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
+          timeout=5,
+          sse_read_timeout=300,
+      )
+  )
 else:
-    # Running in Local Development
-    # Uses Stdio Subprocess IPC for zero-network latency testing
-    mcp_toolset = McpToolset(
-        connection_params=StdioConnectionParams(
-            server_params=StdioServerParameters(
-                command="npx",
-                args=["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
-            ),
-            timeout=5
-        )
-    )
+  # Running in Local Development
+  # Uses Stdio Subprocess IPC for zero-network latency testing
+  mcp_toolset = McpToolset(
+      connection_params=StdioConnectionParams(
+          server_params=StdioServerParameters(
+              command="npx",
+              args=["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+          ),
+          timeout=5,
+      )
+  )
+
 ```
 
 ## UI Rendering 
