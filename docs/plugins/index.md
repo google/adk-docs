@@ -75,7 +75,7 @@ immediately:
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugins/plugin_basic)
 in the repository.
 
 ### Create Plugin class
@@ -116,7 +116,7 @@ methods, as shown in the following code example:
         print(f"[Plugin] LLM request count: {self.llm_request_count}")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript title="count_plugin.ts"
     import { BaseAgent, BasePlugin, Context } from "@google/adk";
@@ -320,7 +320,7 @@ a simple ADK agent.
         asyncio.run(main())
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import { InMemoryRunner, LlmAgent, FunctionTool } from "@google/adk";
@@ -581,7 +581,7 @@ command line:
     python3 -m path.to.main.py
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```sh
     npx ts-node path.to.main.ts
@@ -758,7 +758,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onUserMessageCallback(
@@ -813,7 +813,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
@@ -906,7 +906,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[LlmResponse]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onModelErrorCallback(
@@ -987,7 +987,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[dict]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onToolErrorCallback(
@@ -1044,7 +1044,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[Event]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onEventCallback(
@@ -1098,7 +1098,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[None]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {
