@@ -563,4 +563,19 @@ In this example:
 *   The `add_numbers` tool demonstrates writing to `tool_context.state`, and the agent's instruction mentions reading this state.
 *   The `close()` method is called to ensure any resources held by the toolset are released.
 
+### Filtering which tools a toolset exposes
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+</div>
+
+Rather than deciding inside `getTools()`, a toolset can accept a `ToolFilter` and
+apply it with `isToolSelected`. `ToolFilter.allowList` selects tools by name, while
+`ToolFilter.Predicate` receives the `ReadonlyContext`, so the tool list can depend
+on session state or the current user. A null filter selects everything.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/tools/overview/ToolsetExample.kt:init"
+```
+
 Toolsets offer a powerful way to organize, manage, and dynamically provide collections of tools to your ADK agents, leading to more modular, maintainable, and adaptable agentic applications.
