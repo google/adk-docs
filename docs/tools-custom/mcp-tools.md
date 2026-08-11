@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
@@ -1111,6 +1111,27 @@ if __name__ == "__main__":
             .build();
 
     McpToolset toolset = new McpToolset(streamableParams);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+
+    // Your ADK agent connects to the remote MCP service via Streamable HTTP
+    val toolset =
+        McpToolset.McpToolsetConfig(
+                streamableHttpConnectionParams =
+                    McpConnectionParameters.StreamableHttp(
+                        url = "https://your-mcp-server-url.run.app/mcp",
+                    ),
+            )
+            // headerProvider is a suspend function, so a token can be minted per
+            // request. Supplying one also disables session reuse, so headers can
+            // differ per user; pass static headers on StreamableHttp instead if
+            // you want a single cached session.
+            .toToolset(headerProvider = { mapOf("Authorization" to "Bearer ${fetchToken()}") })
     ```
 
 #### Pattern 3: Sidecar MCP Servers (GKE)
