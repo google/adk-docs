@@ -191,6 +191,11 @@ Tool | Description
 `gcs_update_bucket` | Update properties of a GCS bucket, such as versioning or uniform bucket-level access. Requires `Capabilities.READ_WRITE`.
 `gcs_delete_bucket` | Delete a GCS bucket (bucket must be empty first). Requires `Capabilities.READ_WRITE`.
 
+!!! note
+
+    The tool names listed here are the ones exposed to the model (prefixed with `gcs_`).
+    When using `tool_filter`, reference the unprefixed names such as `get_bucket`.
+
 ## Sample agents
 
 For complete, ready-to-run examples of GCS-powered agents with detailed
