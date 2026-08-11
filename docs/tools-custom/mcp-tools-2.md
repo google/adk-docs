@@ -219,7 +219,7 @@ Unlike the previous local process example, this pattern connects your agent to a
 
     ```python
     import os
-    from google.adk.agents.llm_agent import Agent
+    from google.adk.agents.llm_agent import LlmAgent
     from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
     
@@ -270,7 +270,7 @@ Unlike the previous local process example, this pattern connects your agent to a
         tools: [
             new MCPToolset({
                 type: "SseConnectionParams",
-                url: "https://mapstools.googleapis.com/mcp"
+                url: "https://mapstools.googleapis.com/mcp",
                 headers: {
                     "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
                     "Content-Type": "application/json",
@@ -450,7 +450,7 @@ This section shows you how to connect to remote MCP servers using authentication
 
 ADK automatically constructs the required `Authorization` HTTP headers and manages OAuth 2.0 token refreshes during client requests.
 
-### Configurate authentication
+### Configure authentication
 
 When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
 
@@ -466,7 +466,7 @@ from google.adk.auth import AuthScheme, AuthCredential
 # Configure Bearer Token / OAuth Authentication
 toolset = McpToolset(
     connection_params=SseConnectionParams(
-        url="[https://mcp-server.example.com/sse](https://mcp-server.example.com/sse)",
+        url="https://mcp-server.example.com/sse",
         timeout=5
     ),
     auth_scheme=AuthScheme.BEARER,
@@ -482,7 +482,7 @@ import { MCPToolset, AuthScheme, AuthCredential } from "@google/adk";
 // Configure Bearer Token Authentication
 const toolset = new MCPToolset({
     type: "SseConnectionParams",
-    url: "https://mcp-server.example.com/sse]",
+    url: "https://mcp-server.example.com/sse",
     authScheme: AuthScheme.BEARER,
     authCredential: new AuthCredential({ token: "YOUR_ACCESS_TOKEN" })
 });
@@ -531,7 +531,7 @@ In addition to executable **Tools**, MCP servers can expose **Resources**\E2\80\
         // 2. Read a specific resource
         if (resources.length > 0) {
             const content = await toolset.readResource(resources[0]);
-            console.log(`Content of ${resources[0].name}:`, content);
+            console.log(`Content of ${resources[0]}:`, content);
         }
     }
   ```
@@ -605,20 +605,43 @@ sequenceDiagram
 3. **Client Display**: Upon tool execution, ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
 
 ```python
-# MCP Server tool declaring a UI metadata link in its schema
-TOOL_METADATA = {
-    "ui": {
-        "resourceUri": "ui://widgets/weather-card"
-    }
-}
+from mcp import types as mcp_types
+from mcp.server.lowlevel import Server
 
-# The metadata is passed during tool registration, NOT emitted dynamically
-@app.call_tool(metadata=TOOL_METADATA)
-async def get_weather(city: str):
-    # The tool returns standard content; the UI is handled by the host via the schema
-    return {
-        "content": [{"type": "text", "text": f"Weather in {city}: 72°F Sunny"}]
-    }
+app = Server("weather-mcp-server")
+
+
+@app.list_tools()
+async def list_mcp_tools() -> list[mcp_types.Tool]:
+  """Declares the tool and attaches UI rendering metadata."""
+  return [
+      mcp_types.Tool(
+          name="get_weather",
+          description="Get weather forecast for a city.",
+          inputSchema={
+              "type": "object",
+              "properties": {"city": {"type": "string"}},
+              "required": ["city"],
+          },
+          meta={"ui": {"resourceUri": "ui://widgets/weather-card"}},
+      )
+  ]
+
+
+@app.call_tool()
+async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
+  """Executes the tool and returns standard text/data content."""
+  if name == "get_weather":
+    city = arguments.get("city", "Unknown")
+    return [
+        mcp_types.TextContent(
+            type="text", text=f"Weather in {city}: 72°F Sunny"
+        )
+    ]
+  return [
+      mcp_types.TextContent(type="text", text=f"Unknown tool: '{name}'")
+  ]
+
 ```
 
 ## Further resources
