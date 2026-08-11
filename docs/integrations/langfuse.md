@@ -1,6 +1,6 @@
 ---
 catalog_title: Langfuse
-catalog_description: Trace, evaluate, and debug ADK agents with open-source observability
+catalog_description: Open-source AI engineering platform to debug, analyze, and iterate on LLM applications
 catalog_icon: /integrations/assets/langfuse.png
 catalog_tags: ["observability", "evaluation"]
 ---
@@ -11,27 +11,28 @@ catalog_tags: ["observability", "evaluation"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Langfuse](https://langfuse.com) is an open-source LLM engineering platform for
-observability, evaluation, and prompt management. It captures detailed traces
-from ADK agents using [OpenInference
-instrumentation](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk)
-over OpenTelemetry, so you can debug, evaluate, and iterate on agent apps in
-development and production.
+[Langfuse](https://langfuse.com) is an open-source LLM engineering platform for observability, evaluation, and prompt management. It captures detailed traces from ADK agents using the OpenTelemetry (OTel) protocol, so you can debug, evaluate, and iterate on agent apps in development and production.
 
 ## Overview
 
-Langfuse captures traces from ADK using OpenTelemetry, giving you:
+Langfuse captures traces from ADK using OpenTelemetry and supports the
+[AI Engineering Loop](https://langfuse.com/academy/ai-engineering-loop):
 
-- **Automatic tracing**: Capture every agent run, tool call, and model request
-  with full context
-- **User and session tracking**: Map `user_id` and `session_id` from
-  `runner.run()` / `runner.run_async()` to Langfuse users and sessions without
-  extra code
-- **Evaluations and scores**: Attach user feedback, guardrail results, or
-  LLM-as-a-judge outcomes to traces
-- **Prompt management**: Version and manage prompts alongside your traces
-- **Cloud or self-hosted**: Use [Langfuse Cloud](https://cloud.langfuse.com) or
-  [self-host](https://langfuse.com/self-hosting) the platform
+- **[Trace](https://langfuse.com/academy/tracing)**: Capture the full path of a
+request, including prompts, retrieved context, tool calls, outputs, latency,
+and cost
+- **[Monitor](https://langfuse.com/academy/monitoring)**: Track how the system
+behaves over time and surface the traces that deserve attention, using
+evaluation methods, user feedback, and cost or latency anomalies
+- **[Build datasets](https://langfuse.com/academy/datasets)**: Turn real
+scenarios from monitoring and expected scenarios from development into
+repeatable test cases
+- **[Experiment](https://langfuse.com/academy/experiments)**: Change variables
+systematically (a prompt, a model, a retrieval strategy) and compare each
+change against a stable baseline
+- **[Evaluate](https://langfuse.com/academy/evaluate)**: Decide whether results
+are good enough to ship using manual review, code evaluator checks, or
+LLM-as-a-judge
 
 ## Installation
 
@@ -87,71 +88,44 @@ appear in Langfuse:
 
 ```python
 from google.adk.agents import Agent
-from google.adk.runners import InMemoryRunner
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
 from google.genai import types
-from langfuse import get_client
-from openinference.instrumentation.google_adk import GoogleADKInstrumentor
 
-get_client()
-GoogleADKInstrumentor().instrument()
+def say_hello():
+    return {"greeting": "Hello Langfuse 👋"}
 
-# Define a tool
-def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
-
-    Args:
-        city (str): The name of the city.
-
-    Returns:
-        dict: status and result or error msg.
-    """
-    if city.lower() == "new york":
-        return {
-            "status": "success",
-            "report": (
-                "The weather in New York is sunny with a temperature of 25 degrees"
-                " Celsius (77 degrees Fahrenheit)."
-            ),
-        }
-    else:
-        return {
-            "status": "error",
-            "error_message": f"Weather information for '{city}' is not available.",
-        }
-
-# Create an agent with tools
 agent = Agent(
-    name="weather_agent",
-    model="gemini-flash-latest",
-    description="Agent to answer questions about the weather.",
-    instruction="You must use the available tools to find an answer.",
-    tools=[get_weather],
+    name="hello_agent",
+    model="gemini-3.5-flash",
+    instruction="Always greet using the say_hello tool.",
+    tools=[say_hello],
 )
 
-app_name = "weather_app"
-user_id = "test_user"
-session_id = "test_session"
-runner = InMemoryRunner(agent=agent, app_name=app_name)
-session_service = runner.session_service
+APP_NAME = "hello_app"
+USER_ID = "demo-user"
+SESSION_ID = "demo-session"
 
-await session_service.create_session(
-    app_name=app_name,
-    user_id=user_id,
-    session_id=session_id,
-)
+session_service = InMemorySessionService()
+# create_session is async → await it in notebooks
+await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
 
-# Run the agent. All interactions will be traced.
-async for event in runner.run_async(
-    user_id=user_id,
-    session_id=session_id,
-    new_message=types.Content(
-        role="user",
-        parts=[types.Part(text="What is the weather in New York?")],
-    ),
-):
+runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
+
+user_msg = types.Content(role="user", parts=[types.Part(text="hi")])
+for event in runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=user_msg):
     if event.is_final_response():
-        print(event.content.parts[0].text.strip())
+        if event.content and event.content.parts:
+            print(event.content.parts[0].text)
+        elif event.error_message:
+            print(f"Agent error: {event.error_message}")
 ```
+
+Langfuse automatically maps the `user_id` and `session_id` you pass to
+`runner.run()` to the trace's **user** and **session** — you get
+[user](https://langfuse.com/docs/observability/features/users) and
+[session](https://langfuse.com/docs/observability/features/sessions) tracking
+without any extra code.
 
 ## Named and filterable traces
 
@@ -168,21 +142,20 @@ reach the ADK spans:
 ```python
 from langfuse import propagate_attributes
 
+SESSION_ID_2 = "demo-session-2"
+await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_2)
+
 with propagate_attributes(
-    trace_name="weather-agent-request",
-    tags=["google-adk", "demo"],
+    trace_name="hello-agent-request",
+    tags=["google-adk", "cookbook"],
     metadata={"example": "named-trace"},
 ):
-    async for event in runner.run_async(
-        user_id=user_id,
-        session_id=session_id,
-        new_message=types.Content(
-            role="user",
-            parts=[types.Part(text="What is the weather in New York?")],
-        ),
-    ):
+    async for event in runner.run_async(user_id=USER_ID, session_id=SESSION_ID_2, new_message=user_msg):
         if event.is_final_response():
-            print(event.content.parts[0].text.strip())
+            if event.content and event.content.parts:
+                print(event.content.parts[0].text)
+            elif event.error_message:
+                print(f"Agent error: {event.error_message}")
 ```
 
 ## View traces in Langfuse
@@ -191,7 +164,7 @@ Open your **Langfuse dashboard → Traces** to inspect agent loops, tool calls,
 and model generations. Traces are filterable by the users, sessions, and tags
 set above.
 
-![ADK example trace in Langfuse](https://langfuse.com/images/cookbook/integration-google-adk/google-adk-trace.png)
+![Google ADK example trace in Langfuse](https://langfuse.com/images/cookbook/integration-google-adk/google-adk-trace.png)
 
 For multi-agent pipelines, scoring traces with user feedback, and more examples,
 see the [Langfuse ADK integration
@@ -202,4 +175,4 @@ guide](https://langfuse.com/integrations/frameworks/google-adk).
 - [Langfuse Documentation](https://langfuse.com/docs)
 - [ADK Integration Guide](https://langfuse.com/integrations/frameworks/google-adk)
 - [Langfuse Repository on GitHub](https://github.com/langfuse/langfuse)
-- [Community Discord](https://discord.gg/7NXgeHuTZu)
+
