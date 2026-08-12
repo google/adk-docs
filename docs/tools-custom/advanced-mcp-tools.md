@@ -8,7 +8,7 @@ This guide covers advanced integration patterns for the Model Context Protocol (
 
 ---
 
-## Developer Decision Matrix
+## Choose your mechanism
 
 Use the matrix below to select the right configuration mechanism for your production workload:
 
@@ -25,7 +25,7 @@ Use the matrix below to select the right configuration mechanism for your produc
 
 ---
 
-## 1. Dynamic Authentication & Per-User Headers (`header_provider`)
+## Dynamic authentication and per-user headers (`header_provider`)
 
 In multi-tenant or user-facing systems, hardcoding credentials into connection parameters is insecure. `McpToolset` supports `header_provider`, an asynchronous or synchronous callable that receives the active `ReadonlyContext` to dynamically construct authentication headers on every tool invocation.
 
@@ -64,9 +64,9 @@ root_agent = LlmAgent(
 
 ---
 
-## 2. Human-in-the-Loop & Tool Confirmations (`require_confirmation`)
+## Human-in-the-loop and tool confirmations (`require_confirmation`)
 
-MCP servers can expose high-impact capabilities (e.g. database schema modifications or record deletions). You can enforce confirmation globally across all tools in the toolset or conditionally via a predicate function that inspects tool arguments.
+MCP servers can expose high-impact capabilities, for example: database schema modifications or record deletions. You can enforce confirmation globally across all tools in the toolset or conditionally via a predicate function that inspects tool arguments.
 
 === "Python"
 
@@ -104,11 +104,11 @@ root_agent = LlmAgent(
 
 ---
 
-## 3. Real-Time Progress Tracking (`progress_callback`)
+## Real-time progress tracking (`progress_callback`)
 
-Long-running MCP operations (such as scraping large websites or training jobs) send intermediate progress notifications over the `notifications/progress` channel.
+Long-running MCP operations, such as scraping large websites or training jobs, send intermediate progress notifications over the `notifications/progress` channel.
 
-### Option A: Global Callback Function
+### Option A: Global callback function
 Assign a shared callback for simple logging or progress reporting:
 
 ```python
@@ -122,7 +122,7 @@ toolset = McpToolset(
 )
 ```
 
-### Option B: Per-Tool Callback Factory (Session-Aware)
+### Option B: Per-tool callback factory (Session-Aware)
 Use `ProgressCallbackFactory` to inject tool-specific callbacks with write access to `ToolContext.state`:
 
 ```python
@@ -143,7 +143,7 @@ toolset = McpToolset(
 
 ---
 
-## 4. Standalone Runner Execution (Outside `adk web`)
+## Standalone runner execution (Outside `adk web`)
 
 When embedding ADK agents into custom FastAPI applications, background workers, or standalone CLI scripts, instantiate `Runner` and manage lifecycle teardown explicitly via `await toolset.close()`.
 
@@ -218,9 +218,9 @@ if __name__ == "__main__":
 
 ---
 
-## 5. Enterprise Cloud Deployment Architectures
+## Enterprise Cloud deployment architectures
 
-### Architecture 1: Cloud Run Remote Service (Streamable HTTP)
+### Architecture 1: Cloud run remote service (Streamable HTTP)
 
 Deploy MCP servers as independently scalable Cloud Run services and connect your ADK agent using `StreamableHTTPConnectionParams`.
 
@@ -261,7 +261,7 @@ uv run adk deploy cloud_run \
 
 ---
 
-### Architecture 2: GKE Sidecar Pattern
+### Architecture 2: GKE sidecar pattern
 
 In Kubernetes/GKE environments, run the MCP server as a companion sidecar container in the same Pod for high-throughput, low-latency `localhost` communication.
 
@@ -292,7 +292,7 @@ spec:
 
 ---
 
-### Architecture 3: Agent Platform Runtime
+### Architecture 3: Agent Platform runtime
 
 Deploying to Agent Platform Runtime:
 
@@ -306,9 +306,9 @@ uv run adk deploy agent_engine \
 
 ---
 
-## 6. Name Collisions & Tool Namespacing (`tool_name_prefix`)
+## Name collisions and tool namespacing (`tool_name_prefix`)
 
-When connecting to multiple MCP servers, tool names such as `query` or `search` can conflict. Use `tool_name_prefix` to automatically namespace discovered tools:
+When you connect to multiple MCP servers, tool names such as `query` or `search` can conflict. Use `tool_name_prefix` to automatically namespace discovered tools:
 
 ```python
 from google.adk.tools.mcp_tool import McpToolset
@@ -338,7 +338,7 @@ github_toolset = McpToolset(
 
 ---
 
-## 7. Bi-directional Protocol Hooks: Sampling & Elicitation
+## Bi-directional protocol hooks: sampling and elicitation
 
 The Model Context Protocol supports bi-directional interaction where servers can request actions from clients:
 - **Sampling (`sampling_callback`)**: Allows the MCP server to ask the ADK host to generate an LLM completion.
@@ -370,7 +370,7 @@ toolset = McpToolset(
 
 ---
 
-## 8. Diagnostic Logging & Error Streams (`errlog`)
+## Diagnostic logging and error streams (`errlog`)
 
 By default, MCP subprocess errors are logged to standard error. You can redirect STDERR streams to an external file or diagnostic buffer for root-cause debugging:
 
