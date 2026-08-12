@@ -40,7 +40,7 @@ const checkPrime = new FunctionTool({
 
 const primeAgent = new LlmAgent({
   name: 'prime_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'Checks whether numbers are prime.',
   instruction:
     'You check whether numbers are prime. Always call the check_prime tool, ' +

@@ -126,7 +126,7 @@ Finally, create a **`.env` file** next to `package.json` with your model credent
     There is no key on this path: the model call is authenticated with Application Default
     Credentials, so run `gcloud auth application-default login` once and make sure the Vertex AI
     API is enabled on the project. `GOOGLE_GENAI_USE_VERTEXAI=true` is the switch — with it set,
-    ADK routes `gemini-2.5-flash` to Vertex AI and ignores `GEMINI_API_KEY` entirely.
+    ADK routes `gemini-flash-latest` to Vertex AI and ignores `GEMINI_API_KEY` entirely.
 
 ### 2. Start the Remote A2A Agent server { #start-the-remote-a2a-agent-server }
 

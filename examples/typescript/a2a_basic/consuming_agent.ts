@@ -39,7 +39,7 @@ const rollDie = new FunctionTool({
 
 const rollAgent = new LlmAgent({
   name: 'roll_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'Rolls dice of any size.',
   instruction:
     'You roll dice. Always call the roll_die tool first, then report the ' +
@@ -60,7 +60,7 @@ const primeAgent = new RemoteA2AAgent({
 // --8<-- [start:root-agent]
 const rootAgent = new LlmAgent({
   name: 'root_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'Rolls dice and checks primes by delegating to specialist agents.',
   instruction: `You coordinate two specialists.
 Delegate any dice rolling to roll_agent.

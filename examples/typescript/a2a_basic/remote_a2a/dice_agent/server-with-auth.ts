@@ -47,7 +47,7 @@ const rollDice = new FunctionTool({
 
 const diceAgent = new LlmAgent({
   name: 'dice_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'An agent that rolls dice on request.',
   instruction:
     'You roll dice for the user. Always use the roll_dice tool. ' +
