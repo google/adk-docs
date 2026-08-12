@@ -271,13 +271,15 @@ workflow as a tool for your agent or create a new one.
               integration="test-integration", #TODO: replace with integration name
               triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
               service_account_json='{...}', #optional. Stringified json for service account key
-              tool_name_prefix="tool_prefix1",
-              tool_instructions="..."
           )
       ```
 
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct
          [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+
+      **Note:** `tool_name_prefix` and `tool_instructions` apply only when you
+         pass `connection=`. On the `integration=` path they are accepted but
+         silently ignored.
 
 === "Java"
 
