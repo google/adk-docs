@@ -537,12 +537,11 @@ Voice configuration is supported on both platforms, but voice availability may v
 
 ### Important Notes
 
-- **Model compatibility**: Voice configuration is only available for Live API models with audio output capabilities
-- **Configuration levels**: You can set `speech_config` at the agent level (via `Gemini(speech_config=...)`) or session level (`RunConfig(speech_config=...)`). Agent-level configuration takes precedence.
-- **Agent-level usage**: To configure voice per agent, create a `Gemini` instance with `speech_config` and pass it to `Agent(model=gemini_instance)`
-- **Default behavior**: If `speech_config` is not specified at either level, the Live API uses a default voice
-- **Native audio models**: Automatically determine language based on conversation context; explicit `language_code` may not be supported
-- **Voice availability**: Specific voice names may vary by model; refer to the current Live API documentation for supported voices on your chosen model
+- **Configuration levels**: `speech_config` can be set on the agent (`Gemini(speech_config=...)`)
+  or on the session (`RunConfig(speech_config=...)`); the agent-level value wins. With neither
+  set, the Live API picks a default voice.
+- **Native audio models** determine language from the conversation itself, so `language_code`
+  may have no effect.
 
 !!! note "Learn More"
 
@@ -889,32 +888,5 @@ you cannot do is combine them with `gemini-3.1-flash-live-preview` — that mode
 them yet, so setting `proactivity` or `enable_affective_dialog` while pointing at 3.1 is a
 common upgrade mistake. See [Supported models](models.md#native-audio-models).
 
-**Testing Proactivity**:
-
-To verify proactive behavior is working:
-
-1. **Create open-ended context**: Provide information without asking questions
-    ```text
-    User: "I'm planning a trip to Japan next month."
-    Expected: Model offers suggestions, asks follow-up questions
-    ```
-
-2. **Test emotional response**:
-    ```text
-    User: [frustrated tone] "This isn't working at all!"
-    Expected: Model acknowledges emotion, adjusts response style
-    ```
-
-3. **Monitor for unprompted responses**:
-    - Model should occasionally offer relevant information
-    - Should ignore truly irrelevant input
-    - Should anticipate user needs based on context
-
-**When to Disable**:
-
-Consider disabling proactivity/affective dialog for:
-- **Formal/professional contexts** where emotional adaptation is inappropriate
-- **High-precision tasks** where predictability is critical
-- **Accessibility applications** where consistent behavior is expected
-- **Testing/debugging** where deterministic behavior is needed
-
+Both features are off by default, and leaving them off is the right call for formal or
+high-precision contexts, and while debugging — they make responses less predictable by design.

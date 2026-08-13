@@ -806,83 +806,36 @@ Use `exclude_none=True` to minimize payload size by omitting fields with None va
 
 ### Deserializing on the Client
 
-This shows how to parse and handle serialized events on the client side, enabling responsive UI updates based on event properties like turn completion and interruptions.
-
-On the client side (JavaScript/TypeScript), parse the JSON back to objects:
+On the client side, parse the JSON back into an object and branch on the same three signals
+you would in Python — `turnComplete`, `interrupted`, and the parts of `content`. Note the
+camelCase field names, which is what `by_alias=True` produces:
 
 ```javascript
-// Handle incoming messages
-websocket.onmessage = function (event) {
-    // Parse the incoming ADK Event
-    const adkEvent = JSON.parse(event.data);
+websocket.onmessage = (message) => {
+    const adkEvent = JSON.parse(message.data);
 
-    // Handle turn complete event
-    if (adkEvent.turnComplete === true) {
-        // Remove typing indicator from current message
-        if (currentBubbleElement) {
-            const textElement = currentBubbleElement.querySelector(".bubble-text");
-            const typingIndicator = textElement.querySelector(".typing-indicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-        currentMessageId = null;
-        currentBubbleElement = null;
+    if (adkEvent.turnComplete) {
+        finishCurrentBubble();          // the agent is done speaking
         return;
     }
 
-    // Handle interrupted event
-    if (adkEvent.interrupted === true) {
-        // Stop audio playback if it's playing
-        if (audioPlayerNode) {
-            audioPlayerNode.port.postMessage({ command: "endOfAudio" });
-        }
-
-        // Keep the partial message but mark it as interrupted
-        if (currentBubbleElement) {
-            const textElement = currentBubbleElement.querySelector(".bubble-text");
-
-            // Remove typing indicator
-            const typingIndicator = textElement.querySelector(".typing-indicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-
-            // Add interrupted marker
-            currentBubbleElement.classList.add("interrupted");
-        }
-
-        currentMessageId = null;
-        currentBubbleElement = null;
+    if (adkEvent.interrupted) {
+        stopAudioPlayback();            // the user barged in - drop queued audio
+        finishCurrentBubble();
         return;
     }
 
-    // Handle content events (text or audio)
-    if (adkEvent.content && adkEvent.content.parts) {
-        const parts = adkEvent.content.parts;
-
-        for (const part of parts) {
-            // Handle text
-            if (part.text) {
-                // Add a new message bubble for a new turn
-                if (currentMessageId == null) {
-                    currentMessageId = Math.random().toString(36).substring(7);
-                    currentBubbleElement = createMessageBubble(part.text, false, true);
-                    currentBubbleElement.id = currentMessageId;
-                    messagesDiv.appendChild(currentBubbleElement);
-                } else {
-                    // Update the existing message bubble with accumulated text
-                    const existingText = currentBubbleElement.querySelector(".bubble-text").textContent;
-                    const cleanText = existingText.replace(/\.\.\.$/, '');
-                    updateMessageBubble(currentBubbleElement, cleanText + part.text, true);
-                }
-
-                scrollToBottom();
-            }
-        }
+    // One event can carry several parts
+    for (const part of adkEvent.content?.parts ?? []) {
+        if (part.text) appendText(part.text);
+        if (part.inlineData) enqueueAudio(part.inlineData.data);
     }
 };
 ```
+
+Handling `interrupted` is the part most easily missed: without it, already-buffered audio
+keeps playing over the user.
+
 
 ### Optimization for Audio Transmission
 

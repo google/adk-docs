@@ -448,136 +448,43 @@ In the [Shopper's Concierge demo](https://youtu.be/LwHPYyw7u6U?si=lG9gl9aSIuu-F4
 
 ### Handling Image Input at the Client
 
-In browser-based applications, capturing images from the user's webcam and sending them to the server requires using the MediaDevices API to access the camera, capturing frames to a canvas, and converting to JPEG format. The example below shows how to open a camera preview modal, capture a single frame, and send it as base64-encoded JPEG to the WebSocket server.
-
-**Architecture:**
-
-1. **Camera access**: Use `navigator.mediaDevices.getUserMedia()` to access webcam
-2. **Video preview**: Display live camera feed in a `<video>` element
-3. **Frame capture**: Draw video frame to `<canvas>` and convert to JPEG
-4. **Base64 encoding**: Convert canvas to base64 data URL for transmission
-5. **WebSocket transmission**: Send as JSON message to server
+In the browser, capturing a frame is three standard Web APIs: `getUserMedia()` for the camera,
+a `<canvas>` to grab a single frame, and `FileReader` to base64-encode it for the WebSocket.
 
 ```javascript
-// 1. Opening Camera Preview
-// Open camera modal and start preview
-async function openCameraPreview() {
-    try {
-        // Request access to the user's webcam with 768x768 resolution
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: { ideal: 768 },
-                height: { ideal: 768 },
-                facingMode: 'user'
-            }
-        });
+// Request the front camera at the recommended 768x768
+const stream = await navigator.mediaDevices.getUserMedia({
+    video: { width: { ideal: 768 }, height: { ideal: 768 }, facingMode: 'user' }
+});
+videoPreview.srcObject = stream;
 
-        // Set the stream to the video element
-        cameraPreview.srcObject = cameraStream;
+function captureAndSend() {
+    const canvas = document.createElement('canvas');
+    canvas.width = videoPreview.videoWidth;
+    canvas.height = videoPreview.videoHeight;
+    canvas.getContext('2d').drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
 
-        // Show the modal
-        cameraModal.classList.add('show');
+    canvas.toBlob((blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            // Strip the "data:image/jpeg;base64," prefix
+            const base64data = reader.result.split(',')[1];
+            websocket.send(JSON.stringify({
+                type: "image", data: base64data, mimeType: "image/jpeg",
+            }));
+        };
+        reader.readAsDataURL(blob);
+    }, 'image/jpeg', 0.85);
 
-    } catch (error) {
-        console.error('Error accessing camera:', error);
-        addSystemMessage(`Failed to access camera: ${error.message}`);
-    }
-}
-
-// Close camera modal and stop preview
-function closeCameraPreview() {
-    // Stop the camera stream
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-    }
-
-    // Clear the video source
-    cameraPreview.srcObject = null;
-
-    // Hide the modal
-    cameraModal.classList.remove('show');
+    // Release the camera - this also turns off the hardware indicator light
+    stream.getTracks().forEach((track) => track.stop());
 }
 ```
 
-```javascript
-// 2. Capturing and Sending Image
-// Capture image from the live preview
-function captureImageFromPreview() {
-    if (!cameraStream) {
-        addSystemMessage('No camera stream available');
-        return;
-    }
+Two things are easy to get wrong: the JPEG quality argument (`0.85` keeps frames small enough
+to stream without visible artifacts), and stopping the tracks - a stream left running holds the
+camera open and leaves the indicator light on.
 
-    try {
-        // Create canvas to capture the frame
-        const canvas = document.createElement('canvas');
-        canvas.width = cameraPreview.videoWidth;
-        canvas.height = cameraPreview.videoHeight;
-        const context = canvas.getContext('2d');
-
-        // Draw current video frame to canvas
-        context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
-
-        // Convert canvas to data URL for display
-        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-        // Display the captured image in the chat
-        const imageBubble = createImageBubble(imageDataUrl, true);
-        messagesDiv.appendChild(imageBubble);
-
-        // Convert canvas to blob for sending to server
-        canvas.toBlob((blob) => {
-            // Convert blob to base64 for sending to server
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                // Remove data:image/jpeg;base64, prefix
-                const base64data = reader.result.split(',')[1];
-                sendImage(base64data);
-            };
-            reader.readAsDataURL(blob);
-        }, 'image/jpeg', 0.85);
-
-        // Close the camera modal
-        closeCameraPreview();
-
-    } catch (error) {
-        console.error('Error capturing image:', error);
-        addSystemMessage(`Failed to capture image: ${error.message}`);
-    }
-}
-
-// Send image to server
-function sendImage(base64Image) {
-    if (websocket && websocket.readyState === WebSocket.OPEN) {
-        const jsonMessage = JSON.stringify({
-            type: "image",
-            data: base64Image,
-            mimeType: "image/jpeg"
-        });
-        websocket.send(jsonMessage);
-        console.log("[CLIENT TO AGENT] Sent image");
-    }
-}
-```
-
-**Key Implementation Details:**
-
-1. **768x768 Resolution**: Request ideal resolution of 768x768 to match the recommended specification. The browser will provide the closest available resolution.
-
-2. **User-Facing Camera**: The `facingMode: 'user'` constraint selects the front-facing camera on mobile devices, appropriate for self-portrait captures.
-
-3. **Canvas Frame Capture**: Use `canvas.getContext('2d').drawImage()` to capture a single frame from the live video stream. This creates a static snapshot of the current video frame.
-
-4. **JPEG Compression**: The second parameter to `toDataURL()` and `toBlob()` is the quality (0.0 to 1.0). Using 0.85 provides good quality while keeping file size manageable.
-
-5. **Dual Output**: The code creates both a data URL for immediate UI display and a blob for efficient base64 encoding, demonstrating a pattern for responsive user feedback.
-
-6. **Resource Cleanup**: Always call `getTracks().forEach(track => track.stop())` when closing the camera to release the hardware resource and turn off the camera indicator light.
-
-7. **Base64 Encoding**: The FileReader converts the blob to a data URL (`data:image/jpeg;base64,<data>`). Split on comma and take the second part to get just the base64 data without the prefix.
-
-This implementation provides a user-friendly camera interface with preview, single-frame capture, and efficient transmission to the server for processing by the Live API.
 
 ### Custom Video Streaming Tools Support
 
@@ -594,5 +501,5 @@ ADK provides special tool support for processing video frames during streaming s
 
 **Important**: You must provide a `stop_streaming(function_name: str)` function as a tool to allow the model to explicitly stop streaming operations.
 
-For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](/live/streaming-tools/).
+For implementing custom video streaming tools that process and yield video frames to the model, see [Streaming tools](tools.md#streaming-tools).
 

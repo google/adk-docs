@@ -566,72 +566,26 @@ Although ADK cleans up local resources automatically, failing to call `close()` 
     
     For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Error events](events.md#error-events).
 
-## Concurrency and Thread Safety
+## Concurrency and Message Ordering
 
-Understanding how `LiveRequestQueue` handles concurrency is essential for building reliable streaming applications. The queue is built on `asyncio.Queue`, which means it's safe for concurrent access **within the same event loop thread** (the common case), but requires special handling when called from **different threads** (the advanced case). This section explains the design choices behind `LiveRequestQueue`'s API, when you can safely use it without extra precautions, and when you need thread-safety mechanisms like `loop.call_soon_threadsafe()`.
+`LiveRequestQueue` wraps an `asyncio.Queue`, which determines three things worth knowing:
 
-### Async Queue Management
+- **The send methods are synchronous.** `send_content()`, `send_realtime()` and the activity
+  signals all call `put_nowait()` underneath, so they never block and never need `await`.
+  Call them from anywhere in your async code — see the upstream task in
+  [Custom server](custom-server.md#key-concepts) for the usual shape.
+- **Delivery is FIFO and uncoalesced.** Requests reach the model in send order, one request
+  per call. ADK never batches them.
+- **The queue is unbounded.** Sending faster than the model consumes grows memory instead of
+  applying backpressure, so cap your own send rate for high-rate audio or video.
 
-`LiveRequestQueue` uses synchronous methods (`send_content()`, `send_realtime()`) instead of async methods, even though the underlying queue is consumed asynchronously. This design choice uses `asyncio.Queue.put_nowait()` - a non-blocking operation that doesn't require `await`.
+Create the queue inside an async context (an `async def`, not at module scope) so it binds to
+the event loop that will run `run_live()`. ADK auto-creates a loop if none exists, but relying
+on that causes loop-coordination problems in multi-threaded applications.
 
-**Why synchronous send methods?** Convenience and simplicity. You can call them from anywhere in your async code without `await`:
-
-```python
-async def upstream_task() -> None:
-    """Receives messages from WebSocket and sends to LiveRequestQueue."""
-    while True:
-        message = await websocket.receive()
-
-        if "bytes" in message:
-            audio_data = message["bytes"]
-            audio_blob = types.Blob(
-                mime_type="audio/pcm;rate=16000",
-                data=audio_data
-            )
-            live_request_queue.send_realtime(audio_blob)
-
-        elif "text" in message:
-            text_data = message["text"]
-            json_message = json.loads(text_data)
-
-            if json_message.get("type") == "text":
-                content = types.Content(parts=[types.Part(text=json_message["text"])])
-                live_request_queue.send_content(content)
-```
-
-This pattern mixes async I/O operations with sync CPU operations naturally. The send methods return immediately without blocking, allowing your application to stay responsive.
-
-#### Best Practice: Create Queue in Async Context
-
-Always create `LiveRequestQueue` within an async context (async function or coroutine) to ensure it uses the correct event loop:
-
-```python
-# ✅ Recommended - Create in async context
-async def main():
-    queue = LiveRequestQueue()  # Uses existing event loop from async context
-    # This is the preferred pattern - ensures queue uses the correct event loop
-    # that will run your streaming operations
-
-# ❌ Not recommended - Creates event loop automatically
-queue = LiveRequestQueue()  # Works but ADK auto-creates new loop
-# This works due to ADK's safety mechanism, but may cause issues with
-# loop coordination in complex applications or multi-threaded scenarios
-```
-
-**Why this matters:** `LiveRequestQueue` requires an event loop to exist when instantiated. ADK includes a safety mechanism that auto-creates a loop if none exists, but relying on this can cause unexpected behavior in multi-threaded scenarios or with custom event loop configurations.
-
-## Message Ordering Guarantees
-
-`LiveRequestQueue` provides predictable message delivery behavior:
-
-| Guarantee | Description | Impact |
-|-----------|-------------|--------|
-| **FIFO ordering** | Messages processed in send order (guaranteed by underlying `asyncio.Queue`) | Maintains conversation context and interaction consistency |
-| **No coalescing** | Each message delivered independently | No automatic batching—each send operation creates one request |
-| **Unbounded by default** | Queue accepts unlimited messages without blocking | **Benefit**: Simplifies client code (no blocking on send)<br>**Risk**: Memory growth if sending faster than processing<br>**Mitigation**: Monitor queue depth in production |
-
-> **Production Tip**: For high-throughput audio/video streaming, monitor `live_request_queue._queue.qsize()` to detect backpressure. If the queue depth grows continuously, slow down your send rate or implement batching. Note: `_queue` is an internal attribute and may change in future releases; use with caution.
-
+`asyncio.Queue` is safe for concurrent access **within a single event loop thread**, which is
+the common case. To feed the queue from a different thread, hop back onto the loop with
+`loop.call_soon_threadsafe()`.
 
 ## How run_live() Works
 
@@ -1133,56 +1087,6 @@ While compression enables unlimited session duration, consider these trade-offs:
 
 **Best practice**: Enable compression only when you need sessions longer than platform duration limits OR when conversations may exceed context window token limits.
 
-## Best Practices for Live API Connection and Session Management
-
-### Essential: Enable Session Resumption
-
-- ✅ **Always enable session resumption** in RunConfig for production applications
-- ✅ This enables ADK to automatically handle Gemini's ~10 minute connection timeouts transparently
-- ✅ Sessions continue seamlessly across multiple WebSocket connections without user interruption
-- ✅ Session resumption handle caching and management
-
-```python
-from google.genai import types
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    session_resumption=types.SessionResumptionConfig()
-)
-```
-
-### Recommended: Enable Context Window Compression for Unlimited Sessions
-
-- ✅ **Enable context window compression** if you need sessions longer than 15 minutes (audio-only) or 2 minutes (audio+video)
-- ✅ Once enabled, session duration becomes unlimited—no need to monitor time-based limits
-- ✅ Configure `trigger_tokens` and `target_tokens` based on your model's context window
-- ✅ Test compression settings with realistic conversation patterns
-- ⚠️ **Use judiciously**: Compression adds latency during summarization and may lose conversational nuance—only enable when extended sessions are truly necessary for your use case
-
-```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    session_resumption=types.SessionResumptionConfig(),
-    context_window_compression=types.ContextWindowCompressionConfig(
-        trigger_tokens=100000,
-        sliding_window=types.SlidingWindow(target_tokens=80000)
-    )
-)
-```
-
-### Optional: Monitor Session Duration
-
-**Only applies if NOT using context window compression:**
-
-- ✅ Focus on **session duration limits**, not connection timeouts (ADK handles those automatically)
-- ✅ **Gemini Live API**: Monitor for 15-minute limit (audio-only) or 2-minute limit (audio+video)
-- ✅ **Gemini Live API (Agent Platform)**: Monitor for 10-minute session limit
-- ✅ Warn users 1-2 minutes before session duration limits
-- ✅ Implement graceful session transitions for conversations exceeding session limits
-
 ## Concurrent Live API Sessions and Quota Management
 
 **Problem:** Production voice applications typically serve multiple users simultaneously, each requiring their own Live API session. However, both Gemini Live API and Gemini Live API (Agent Platform) impose strict concurrent session limits that vary by platform and pricing tier. Without proper quota planning and session management, applications can hit these limits quickly, causing connection failures for new users or degraded service quality during peak usage.
@@ -1232,63 +1136,18 @@ To request an increase for Live API concurrent sessions, navigate to the [Quotas
 
 2. **Gemini Live API (Agent Platform)**: Rate-limited by connection establishment rate (10/min) but supports up to 1,000 total concurrent sessions. Best for enterprise applications with gradual scaling patterns and existing Google Cloud infrastructure. Additionally, you can request quota increases to prepare for production deployments with higher concurrency requirements.
 
-### Architectural Patterns for Managing Quotas
+### Designing Around the Quota
 
-Once you understand your concurrent session quotas, the next challenge is architecting your application to operate effectively within those limits. The right approach depends on your expected user concurrency, scaling requirements, and tolerance for queueing. This section presents two architectural patterns—from simple direct mapping for low-concurrency applications to session pooling with queueing for applications that may exceed quota limits during peak usage. Choose the pattern that matches your current scale and design it to evolve as your user base grows.
+Your concurrent-session ceiling is a hard cap on simultaneous users, so decide early how
+sessions map to them:
 
-**Choosing the Right Architecture:**
+- **One session per user** is the default and the right choice while your peak concurrency
+  fits inside the quota. ADK's lifecycle handling is all you need.
+- **A session pool** — a fixed set of sessions handed out on demand, with a queue in front —
+  keeps you inside the quota when peak concurrency exceeds it, at the cost of wait time for
+  users who arrive when the pool is full. Reset per-session state on release so conversations
+  do not leak between users.
 
-```text
-                Start: Designing Quota Management
-                              |
-                              v
-                   Expected Concurrent Users?
-                     /                    \
-            < Quota Limit           > Quota Limit or Unpredictable
-                   |                              |
-                   v                              v
-          Pattern 1: Direct Mapping    Pattern 2: Session Pooling
-          - Simple 1:1 mapping         - Queue waiting users
-          - No quota logic             - Graceful degradation
-          - Fast development           - Peak handling
-                   |                              |
-                   v                              v
-              Good for:                      Good for:
-              - Prototypes                   - Production at scale
-              - Small teams                  - Unpredictable load
-              - Controlled users             - Public applications
-```
-
-**Quick Decision Guide:**
-
-| Factor | Direct Mapping | Session Pooling |
-|--------|----------------|-----------------|
-| **Expected users** | Always < quota | May exceed quota |
-| **User experience** | Always instant | May wait during peaks |
-| **Implementation complexity** | Low | Medium |
-| **Operational overhead** | None | Monitor queue depth |
-| **Best for** | Prototypes, internal tools | Production, public apps |
-
-#### Pattern 1: Direct Mapping (Simple Applications)
-
-For small-scale applications where concurrent users will never exceed quota limits, create a dedicated Live API session for each connected user with a simple 1:1 mapping:
-
-1. **When a user connects:** Immediately start a `run_live()` session for them
-2. **When they disconnect:** The session ends
-3. **No quota management logic:** Assumes your total concurrent users will always stay below your quota limits
-
-This is the simplest possible architecture and works well for prototypes, development environments, and small-scale applications with predictable user loads.
-
-#### Pattern 2: Session Pooling with Queueing
-
-For applications that may exceed concurrent session limits during peak usage, track the number of active Live API sessions and enforce your quota limit at the application level:
-
-1. **When a new user connects:** Check if you have available session slots
-2. **If slots are available:** Start a session immediately
-3. **If you've reached your quota limit:**
-   - Place the user in a waiting queue
-   - Notify them they're waiting for an available slot
-4. **As sessions end:** Automatically process the queue to start sessions for waiting users
-
-This provides graceful degradation—users wait briefly during peak times rather than experiencing hard connection failures.
-
+Either way, count active sessions yourself and reject or queue new connections before the
+platform does — a quota rejection surfaces as a connection failure, which is a much worse
+user experience than a queue position.
