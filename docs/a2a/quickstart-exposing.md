@@ -120,10 +120,13 @@ When you call `to_a2a()`, ADK automatically handles several setup steps to expos
 * **Starlette App & Agent Card:** Creates a Starlette application. During the startup phase, it either loads your provided Agent Card or automatically builds one from your agent's configuration using an `AgentCardBuilder`. It then mounts all the necessary A2A API routes.
 
 #### Parameters
-* **`root_agent` (required):** The primary ADK agent instance you want to expose via the A2A protocol.
-* **`port` (optional):**  The port number the application will run on.
+* **`agent` (required):** The primary ADK agent instance you want to expose via the A2A protocol.
+* **`host` (optional):** The host used to build the A2A RPC URL advertised in the generated agent card. Defaults to `"localhost"`.
+* **`protocol` (optional):** The protocol used in that same URL. Defaults to `"http"`.
+* **`port` (optional):** The port used in that same URL. Defaults to `8000`. `to_a2a()` does not bind a port itself, so this must match the port you actually serve on (see the `uvicorn --port` flag below), or the advertised card will point somewhere unreachable.
 * **`push_config_store` (optional):** A custom store implementation for managing A2A push notifications. If not provided, the system defaults to an in-memory store (`InMemoryPushNotificationConfigStore`).
 * **`agent_card` (optional):** An `AgentCard` object or a path to a JSON file. If omitted, ADK automatically generates an agent card from your agent's code.
+* **`runner` (optional):** A pre-built `Runner`. If omitted, a default runner backed by in-memory services is created.
 
 ### Getting the Sample Code { #getting-the-sample-code }
 
@@ -170,7 +173,7 @@ You can now start the remote agent server, which will host the `a2a_app` within 
 ```bash
 # Ensure current working directory is adk-python/
 # Start the remote agent using uvicorn
-uvicorn contributing.samples.a2a_root.remote_a2a.hello_world.agent:a2a_app --host localhost --port 8001
+uvicorn contributing.samples.a2a.a2a_root.remote_a2a.hello_world.agent:a2a_app --host localhost --port 8001
 ```
 
 ??? note "Why use port 8001?"
@@ -203,7 +206,7 @@ Now that your remote agent is running, you can launch the dev UI and select "a2a
 
 ```bash
 # In a separate terminal, run the adk web server
-adk web contributing/samples/
+adk web contributing/samples/a2a/
 ```
 
 To open the adk web server, go to: [http://localhost:8000](http://localhost:8000).
@@ -261,6 +264,14 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 *   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
 *   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
 
+!!! tip "Suppress experimental warnings"
+
+    ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
+
+    ```bash
+    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
+    ```
+
 ## Agent Executor V2
 
 The new version of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) is typically enabled when a client sends the required [A2A extension](a2a-extension.md).
@@ -268,7 +279,7 @@ The new version of the [agent executor](https://github.com/google/adk-python/blo
 However, you can also bypass the extension and force the server to use the new executor version by setting the `force_new_version=True` flag when instantiating the `A2aAgentExecutor`. This allows you to use the new executor logic without needing to modify existing clients to send the extension.
 
 ```python
-from google.adk.a2a.executor import A2aAgentExecutor
+from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 
 executor = A2aAgentExecutor(
             ...,
