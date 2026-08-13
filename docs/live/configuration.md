@@ -4,8 +4,8 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-`RunConfig` is where you shape a live session: whether the agent replies in text or
-audio, which streaming mode it uses, and what limits it runs under. You pass it to
+`RunConfig` is where you shape a live session: how the agent sounds, how much history it
+keeps, and what limits it runs under. You pass it to
 [`Runner.run_live()`](https://google.github.io/adk-docs/api-reference/python/), and it
 applies to that session only — two users of the same agent can run with completely
 different configurations.
@@ -69,72 +69,30 @@ The `RunConfig` class itself and `StreamingMode` enum are imported from `google.
 
 ## Response Modalities
 
-Response modalities control how the model generates output. Both Gemini Live API and Gemini
-Live API (Agent Platform) restrict a session to a single response modality, and every Live
-API model ADK supports today is a [native audio model](models.md#native-audio-models) —
-which means the only accepted value for live agents is `AUDIO`.
+`response_modalities` controls the output format, and a session gets exactly one. **For live
+agents the value is always `["AUDIO"]`**: every Live API model ADK supports is a
+[native audio model](models.md#native-audio-models), and those accept no other modality.
 
-!!! warning "`TEXT` is not a valid response modality for live agents"
+ADK fills this in for you when you leave it unset
+([`runners.py:1672-1673`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/runners.py#L1672-L1673)),
+so most live applications never touch the field.
 
-    Native audio models support the `AUDIO` response modality only. Setting
-    `response_modalities=["TEXT"]` and calling `run_live()` fails against
+!!! warning "Migrating from `response_modalities=["TEXT"]`"
+
+    Older ADK samples and half-cascade models allowed a text-only live session. That no
+    longer works — `run_live()` with `["TEXT"]` fails against
     `gemini-3.1-flash-live-preview`, `gemini-2.5-flash-native-audio-preview-12-2025`, and
     `gemini-live-2.5-flash-native-audio` alike.
 
-    **To get text out of a live agent, use [audio transcription](voice.md#audio-transcription)**,
-    which is enabled by default in ADK and delivers the model's words on
-    `event.output_transcription`. `TEXT` still applies to the `run_async()` / SSE path
-    described in [Bidi-streaming or SSE](#streamingmode-bidi-or-sse), which runs on standard
-    Gemini models.
+    **To get text out of a live agent, read
+    [`event.output_transcription`](voice.md#audio-transcription)** — transcription is enabled
+    by default in ADK, so deleting the `response_modalities` line is usually the whole fix.
 
-**Configuration:**
+    `["TEXT"]` is still correct on the `run_async()` path, which runs on standard Gemini
+    models. See [Bidi-streaming or SSE](#streamingmode-bidi-or-sse).
 
-```python
-from google.genai import types
-
-# Default behavior: ADK automatically sets response_modalities to ["AUDIO"]
-# when not specified (required by native audio models)
-run_config = RunConfig()
-
-# The above is equivalent to:
-run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Automatically set by ADK in run_live()
-)
-
-# ✅ CORRECT: audio out, with a text transcript of what the model said.
-# Transcription is on by default; shown explicitly here for clarity.
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    output_audio_transcription=types.AudioTranscriptionConfig(),
-)
-
-# ❌ INCORRECT: native audio models reject the TEXT modality
-run_config = RunConfig(
-    response_modalities=["TEXT"],
-)
-
-# ❌ INCORRECT: Both modalities not supported
-run_config = RunConfig(
-    response_modalities=["TEXT", "AUDIO"],  # ERROR: Cannot use both
-)
-# Error from Live API: "Only one response modality is supported per session"
-```
-
-**Default Behavior:**
-
-When `response_modalities` is not specified, ADK's `run_live()` method automatically sets it
-to `["AUDIO"]`, because native audio models require the response modality to be set
-explicitly ([`runners.py:1672-1673`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/runners.py#L1672-L1673)).
-For live agents this default is also the only correct value, so most applications never set
-this field at all.
-
-**Key constraints:**
-
-- **Live agents must use `AUDIO`.** To receive text alongside the audio, use the audio
-  transcription feature rather than a second modality. See
-  [Audio transcription](voice.md#audio-transcription)
-- You cannot request both modalities, and you **cannot switch modality mid-session**
-- Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
+Response modality only affects model output — **you can always send text, voice, or video
+input** (if the model supports that input modality) regardless of it.
 
 ## Bidi-streaming or SSE { #streamingmode-bidi-or-sse }
 
@@ -142,217 +100,40 @@ ADK can reach Gemini over two different endpoints, and **the `Runner` method you
 what picks one**:
 
 - **`runner.run_live()`**: ADK opens a WebSocket to the **Live API** (the bidirectional
-  streaming endpoint via `live.connect()`)
+  streaming endpoint via `live.connect()`). This is what the rest of this guide covers, and
+  it is required for real-time audio and video
 - **`runner.run_async()`**: ADK uses HTTP to the **standard Gemini API** (the
   unary/streaming endpoint via `generate_content_async()`). Set
-  `RunConfig.streaming_mode = StreamingMode.SSE` to stream that response back chunk by
-  chunk
+  `RunConfig.streaming_mode = StreamingMode.SSE` to stream that response back chunk by chunk
 
-"Live API" refers specifically to the bidirectional WebSocket endpoint (`live.connect()`), while "Gemini API" or "standard Gemini API" refers to the traditional HTTP-based endpoint (`generate_content()` / `generate_content_async()`). Both are part of the broader Gemini API platform but use different protocols and capabilities.
+The two model sets barely overlap. Standard Gemini models such as `gemini-flash-latest` do
+not speak the Live API protocol, and the Live API models in
+[Supported models](models.md#native-audio-models) are meant to be driven with `run_live()`,
+so choosing a model is part of choosing a `Runner` method.
 
 !!! warning "`StreamingMode.BIDI` does not switch ADK to the Live API"
 
     `RunConfig.streaming_mode` is read only on the `run_async()` code path, where it
     chooses between a single complete response (`StreamingMode.NONE`, the default) and
     chunked delivery (`StreamingMode.SSE`). The `run_live()` path never reads it, so
-    setting `streaming_mode=StreamingMode.BIDI` has no effect — calling `run_live()` is
-    what gets you bidirectional streaming. ADK's own `StreamingMode` docstring says as
-    much: BIDI "is not used in the standard execution path", and the real bidirectional
-    behavior "uses a completely different code path that doesn't rely on
-    `streaming_mode`".
+    setting `streaming_mode=StreamingMode.BIDI` has no effect — and it fails silently, with
+    no error or warning. **Calling `run_live()` is what gets you bidirectional streaming.**
+    ADK's own `StreamingMode` docstring says as much: BIDI "is not used in the standard
+    execution path", and the real bidirectional behavior "uses a completely different code
+    path that doesn't rely on `streaming_mode`".
+
+```python
+# Live API: no streaming_mode needed, calling run_live() is what selects it
+run_config = RunConfig(response_modalities=["AUDIO"])
+async for event in runner.run_live(..., run_config=run_config):
+    ...
+```
 
 **Note:** This distinction is about the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either one.
 
-This guide focuses on Bidi-streaming over the Live API, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences from SSE to choose the right approach for your use case.
-
-**Configuration:**
-
-```python
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# Bidi-streaming for real-time audio/video: no streaming_mode needed,
-# calling run_live() is what selects the Live API
-run_config = RunConfig(
-    response_modalities=["AUDIO"]  # Supports audio/video modalities
-)
-async for event in runner.run_live(..., run_config=run_config):
-    ...
-
-# SSE streaming for text-based interactions
-run_config = RunConfig(
-    streaming_mode=StreamingMode.SSE,
-    response_modalities=["TEXT"]  # Text-only modality
-)
-async for event in runner.run_async(..., run_config=run_config):
-    ...
-```
-
-### Protocol and Implementation Differences
-
-The two paths differ fundamentally in their communication patterns and capabilities. Bidi-streaming enables true bidirectional communication where you can send new input while receiving model responses, while SSE follows a traditional request-then-response pattern where you send a complete request and stream back the response.
-
-**Bidi-streaming — bidirectional WebSocket communication:**
-
-`run_live()` establishes a persistent WebSocket connection that allows simultaneous sending and receiving. This enables real-time features like interruptions, live audio streaming, and immediate turn-taking:
-
-```mermaid
-sequenceDiagram
-    participant App as Your Application
-    participant ADK as ADK
-    participant Queue as LiveRequestQueue
-    participant Gemini as Gemini Live API
-
-    Note over ADK,Gemini: Protocol: WebSocket
-
-    App->>ADK: runner.run_live(run_config)
-    ADK->>Gemini: live.connect() - WebSocket
-    activate Gemini
-
-    Note over ADK,Queue: Can send while receiving
-
-    App->>Queue: send_content(text)
-    Queue->>Gemini: → Content (via WebSocket)
-    App->>Queue: send_realtime(audio)
-    Queue->>Gemini: → Audio blob (via WebSocket)
-
-    Gemini-->>ADK: ← Partial response (partial=True)
-    ADK-->>App: ← Event: partial text/audio
-    Gemini-->>ADK: ← Partial response (partial=True)
-    ADK-->>App: ← Event: partial text/audio
-
-    App->>Queue: send_content(interrupt)
-    Queue->>Gemini: → New content
-
-    Gemini-->>ADK: ← turn_complete=True
-    ADK-->>App: ← Event: turn complete
-
-    deactivate Gemini
-
-    Note over ADK,Gemini: Turn Detection: turn_complete flag
-```
-
-**StreamingMode.SSE - Unidirectional HTTP Streaming:**
-
-SSE (Server-Sent Events) mode uses HTTP streaming where you send a complete request upfront, then receive the response as a stream of chunks. This is a simpler, more traditional pattern suitable for text-based chat applications:
-
-```mermaid
-sequenceDiagram
-    participant App as Your Application
-    participant ADK as ADK
-    participant Gemini as Gemini API
-
-    Note over ADK,Gemini: Protocol: HTTP
-
-    App->>ADK: runner.run(run_config)
-    ADK->>Gemini: generate_content_stream() - HTTP
-    activate Gemini
-
-    Note over ADK,Gemini: Request sent completely, then stream response
-
-    Gemini-->>ADK: ← Partial chunk (partial=True)
-    ADK-->>App: ← Event: partial text
-    Gemini-->>ADK: ← Partial chunk (partial=True)
-    ADK-->>App: ← Event: partial text
-    Gemini-->>ADK: ← Partial chunk (partial=True)
-    ADK-->>App: ← Event: partial text
-
-    Gemini-->>ADK: ← Final chunk (finish_reason=STOP)
-    ADK-->>App: ← Event: complete response
-
-    deactivate Gemini
-
-    Note over ADK,Gemini: Turn Detection: finish_reason
-```
-
-### Progressive SSE Streaming
-
-**Progressive SSE streaming** is an experimental feature that enhances how SSE mode delivers streaming responses. When enabled, this feature improves response aggregation by:
-
-- **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
-- **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
-- **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
-- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
-
-**Enabling the feature:**
-
-This is an experimental (WIP stage) feature disabled by default. Enable it via environment variable:
-
-```bash
-export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
-```
-
-**When to use:**
-
-- You're using `StreamingMode.SSE` and need better handling of mixed content types (text + function calls)
-- Your responses include thought text (extended thinking) mixed with regular text
-- You want to ensure function calls execute only once after complete response aggregation
-
-**Note:** This feature only affects `StreamingMode.SSE` on the `run_async()` path. It does not apply to `run_live()` (the focus of this guide), which uses the Live API's native bidirectional protocol.
-
-### When to Use Each Mode
-
-Your choice between Bidi-streaming and SSE depends on your application requirements and the interaction patterns you need to support. Here's a practical guide to help you choose:
-
-**Use Bidi-streaming (`run_live()`) when:**
-
-- Building voice/video applications with real-time interaction
-- Need bidirectional communication (send while receiving)
-- Require Live API features (audio transcription, VAD, proactivity, affective dialog)
-- Supporting interruptions and natural turn-taking (see [Handling the interrupted flag](events.md#handling-interrupted-flag))
-- Implementing live streaming tools or real-time data feeds
-- Can plan for concurrent session quotas (50-1,000 sessions depending on platform/tier)
-
-**Use SSE (`run_async()`) when:**
-
-- Building text-based chat applications
-- Standard request/response interaction pattern
-- Using models without Live API support (e.g. `gemini-flash-latest`, `gemini-pro-latest`)
-- Simpler deployment without WebSocket requirements
-- Need a larger context window (standard Gemini models offer 1M tokens; a Live API session
-  is capped at 128K — see [Context window limits](sessions.md#live-api-context-window-compression))
-- Prefer standard API rate limits (RPM/TPM) over concurrent session quotas
-
-!!! note "Streaming Mode and Model Compatibility"
-    SSE uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while
-    Bidi-streaming uses the Live API (`live.connect()`) via WebSocket. **The two model sets
-    barely overlap**: standard Gemini models such as `gemini-flash-latest` do not speak the
-    Live API protocol and must be used with `run_async()`, and the Live API models listed in
-    [Supported models](models.md#native-audio-models) are meant to be driven with
-    `run_live()`. Picking a model is therefore part of picking a `Runner` method — you cannot
-    swap one in for the other.
-
-### Standard Gemini Models Accessed via SSE
-
-While this guide focuses on Bidi-streaming with Live API models, ADK also supports the
-standard Gemini models through SSE streaming. These models offer different trade-offs — much
-larger context windows and a broader feature set, but no real-time audio or video. Here is
-what they support when accessed via `run_async()`:
-
-**Models:**
-
-- `gemini-pro-latest`
-- `gemini-flash-latest`
-
-**Supported:**
-
-- ✅ Text input/output (`response_modalities=["TEXT"]`)
-- ✅ SSE streaming (`StreamingMode.SSE`)
-- ✅ Function calling with automatic execution
-- ✅ Large context windows (1M input tokens)
-
-**Not Supported:**
-
-- ❌ Live audio features (audio I/O, transcription, VAD)
-- ❌ Bidi-streaming via `run_live()`
-- ❌ Proactivity and affective dialog
-- ❌ Real-time video input
-
-!!! warning "`-latest` aliases move"
-
-    `gemini-flash-latest` and `gemini-pro-latest` are floating aliases that Google repoints
-    at each new generation, and **neither alias has ever pointed at a Live API model**. Pin an
-    explicit model name if you need reproducible behavior.
-
+For the `run_async()` / SSE path — `streaming_mode` values, progressive SSE streaming, and
+the language-specific configuration — see
+[Runtime configuration](../runtime/runconfig.md#enable-streaming).
 
 ## Miscellaneous Controls
 
