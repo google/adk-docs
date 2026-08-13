@@ -448,6 +448,21 @@ In practice, most messages use a single text Part for ADK Gemini Live API Toolki
 
 For Live API, multimodal inputs (audio/video) use different mechanisms (see `send_realtime()` below), not multi-part Content.
 
+!!! note "Gemini 3.x: prefer a single text Part"
+
+    On the Gemini Live API, `gemini-3.1-flash-live-preview` treats the underlying
+    `send_client_content` message as **conversation seeding only** — it is meant for priming
+    a session with prior history, not for driving a turn mid-conversation. Live turn-by-turn
+    text has to go through `send_realtime_input` instead.
+
+    **ADK handles this for you**, but only for the common case. When the model is a Gemini 3.x
+    Live model and the content is a single, non-partial text Part, ADK reroutes it to
+    `send_realtime_input`; anything else still goes out as `LiveClientContent`
+    ([`gemini_llm_connection.py`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/models/gemini_llm_connection.py)).
+    So a multi-part `Content` that works on `gemini-live-2.5-flash-native-audio` may be
+    treated as seeding on 3.1. Send one text Part per call and the behavior is identical
+    across both platforms.
+
 !!! note "Content and Part Usage in ADK Gemini Live API Toolkit"
     
     While the Gemini API `Part` type supports many fields (`inline_data`, `file_data`, `function_call`, `function_response`, etc.), most are either handled automatically by ADK or use different mechanisms in Live API:
@@ -698,7 +713,7 @@ The `run_live()` method yields a stream of `Event` objects in real-time as the a
 
 | Event Type | Description |
 |------------|-------------|
-| **[Text events](events.md#text-events)** | Model's text responses when using `response_modalities=["TEXT"]`; includes `partial`, `turn_complete`, and `interrupted` flags for streaming UI management |
+| **[Text events](events.md#text-events)** | Text parts on `event.content.parts` — in a live session this is thought summaries and other non-audio content, not the model's spoken reply (native audio models return that as a transcription). Includes `partial`, `turn_complete`, and `interrupted` flags for streaming UI management |
 | **[Audio events with inline data](events.md#audio-events)** | Raw audio bytes (`inline_data`) streamed in real-time when using `response_modalities=["AUDIO"]`; ephemeral (not persisted to session) |
 | **[Audio events with file data](events.md#audio-events-with-file-data)** | Audio aggregated into files and stored in artifacts; contains `file_data` references instead of raw bytes; can be persisted to session history |
 | **[Metadata events](events.md#metadata-events)** | Token usage information (`prompt_token_count`, `candidates_token_count`, `total_token_count`) for cost monitoring and quota tracking |
@@ -875,13 +890,13 @@ Understanding the constraints of each platform is critical for production planni
 
 !!! note "Source References"
 
-    - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
+    - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-api/capabilities)
     - [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
-    - [Gemini Live API (Agent Platform)](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+    - [Gemini Live API (Agent Platform)](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
 ## Live API Session Resumption
 
-By default, the Live API limits connection duration to approximately 10 minutes—each WebSocket connection automatically closes after this duration. To overcome this limit and enable longer conversations, the **Live API provides [Session Resumption](https://ai.google.dev/gemini-api/docs/live#session-resumption)**, a feature that transparently migrates a session across multiple connections. When enabled, the Live API generates resumption handles that allow reconnecting to the same session context, preserving the full conversation history and state.
+By default, the Live API limits connection duration to approximately 10 minutes—each WebSocket connection automatically closes after this duration. To overcome this limit and enable longer conversations, the **Live API provides [Session Resumption](https://ai.google.dev/gemini-api/docs/live-api/session-management#session-resumption)**, a feature that transparently migrates a session across multiple connections. When enabled, the Live API generates resumption handles that allow reconnecting to the same session context, preserving the full conversation history and state.
 
 **ADK automates this entirely**: When you enable session resumption in RunConfig, ADK automatically handles all reconnection logic—detecting connection closures, caching resumption handles, and reconnecting seamlessly in the background. You don't need to write any reconnection code. Sessions continue seamlessly beyond the 10-minute connection limit, handling connection timeouts, network disruptions, and planned reconnections automatically.
 
@@ -1020,7 +1035,7 @@ sequenceDiagram
 
 **Problem:** Live API sessions face two critical constraints that limit conversation duration. First, **session duration limits** impose hard time caps: without compression, Gemini Live API limits audio-only sessions to 15 minutes and audio+video sessions to just 2 minutes, while Agent Platform limits all sessions to 10 minutes. Second, **context window limits** restrict conversation length: models have finite token capacities (128k tokens for `gemini-2.5-flash-native-audio-preview-12-2025`, 32k-128k for Agent Platform models). Long conversations—especially extended customer support sessions, tutoring interactions, or multi-hour voice dialogues—will hit either the time limit or the token limit, causing the session to terminate or lose critical conversation history.
 
-**Solution:** [Context window compression](https://ai.google.dev/gemini-api/docs/live-session#context-window-compression) solves both constraints simultaneously. It uses a sliding-window approach to automatically compress or summarize earlier conversation history when the token count reaches a configured threshold. The Live API preserves recent context in full detail while compressing older portions. **Critically, enabling context window compression extends session duration to unlimited time**, removing the session duration limits (15 minutes for audio-only / 2 minutes for audio+video on Gemini Live API; 10 minutes for all sessions on Agent Platform) while also preventing token limit exhaustion. However, there is a trade-off: as the feature summarizes earlier conversation history rather than retaining it all, the detail of past context will be gradually lost over time. The model will have access to compressed summaries of older exchanges, not the full verbatim history.
+**Solution:** [Context window compression](https://ai.google.dev/gemini-api/docs/live-api/session-management#context-window-compression) solves both constraints simultaneously. It uses a sliding-window approach to automatically compress or summarize earlier conversation history when the token count reaches a configured threshold. The Live API preserves recent context in full detail while compressing older portions. **Critically, enabling context window compression extends session duration to unlimited time**, removing the session duration limits (15 minutes for audio-only / 2 minutes for audio+video on Gemini Live API; 10 minutes for all sessions on Agent Platform) while also preventing token limit exhaustion. However, there is a trade-off: as the feature summarizes earlier conversation history rather than retaining it all, the detail of past context will be gradually lost over time. The model will have access to compressed summaries of older exchanges, not the full verbatim history.
 
 ### Platform Behavior and Official Limits
 
@@ -1028,8 +1043,8 @@ Session duration management and context window compression are **Live API platfo
 
 **Important**: The duration limits and "unlimited" session behavior mentioned in this guide are based on current Live API behavior. These limits are subject to change by Google. Always verify current session duration limits and compression behavior in the official documentation:
 
-- [Gemini Live API Documentation](https://ai.google.dev/gemini-api/docs/live)
-- [Gemini Live API (Agent Platform) Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Gemini Live API Documentation](https://ai.google.dev/gemini-api/docs/live-api)
+- [Gemini Live API (Agent Platform) Documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
 ADK provides an easy way to configure context window compression through RunConfig. However, developers are responsible for appropriately configuring the compression parameters (`trigger_tokens` and `target_tokens`) based on their specific requirements—model context window size, expected conversation patterns, and quality needs:
 
@@ -1203,7 +1218,7 @@ Both platforms limit how many Live API sessions can run simultaneously, but the 
 
 !!! note "Source"
 
-    [Gemini Live API (Agent Platform)](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) | [Agent Platform Quotas](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
+    [Gemini Live API (Agent Platform)](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api) | [Agent Platform Quotas](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/quotas)
 
 **Requesting a quota increase:**
 

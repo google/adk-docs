@@ -179,8 +179,10 @@ response modalities.
 
 - `speech_config`: Sets the voice and language for speech output (e.g., the
   "Kore" voice with `en-US`).
-- `response_modalities`: Controls output formats. Set to `["AUDIO", "TEXT"]` for
-  agents that both speak and return text.
+- `response_modalities`: Controls the output format. A session accepts exactly one
+  modality — use `["AUDIO"]` for voice agents and `["TEXT"]` for text-only ones.
+  To get both speech and text, set `["AUDIO"]` and read the text from the output
+  audio transcription.
 - `output_audio_transcription` / `input_audio_transcription`: Enable
   transcription of audio output from the model and audio input from the user.
   Both default to `AudioTranscriptionConfig()` in Python.
@@ -200,7 +202,7 @@ response modalities.
                 )
             ),
         ),
-        response_modalities=["AUDIO", "TEXT"],
+        response_modalities=["AUDIO"],
         streaming_mode=StreamingMode.SSE,
         max_llm_calls=1000,
     )
@@ -221,7 +223,7 @@ response modalities.
                 }
             },
         },
-        responseModalities: [Modality.AUDIO, Modality.TEXT],
+        responseModalities: [Modality.AUDIO],
         streamingMode: StreamingMode.SSE,
         maxLlmCalls: 1000,
     };
@@ -242,7 +244,7 @@ response modalities.
         RunConfig.builder()
             .streamingMode(StreamingMode.SSE)
             .maxLlmCalls(1000)
-            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO), new Modality(Modality.Known.TEXT)))
+            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO)))
             .speechConfig(
                 SpeechConfig.builder()
                     .voiceConfig(

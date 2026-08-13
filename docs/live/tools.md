@@ -168,6 +168,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
     ```python
     import asyncio
+    import os
     from typing import AsyncGenerator
 
     from google.adk.agents import LiveRequestQueue
@@ -276,7 +277,10 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
 
     root_agent = Agent(
-        model="gemini-flash-latest",
+        # Streaming tools run under runner.run_live(), so the root agent needs a
+        # Live API model. gemini-flash-latest is used above only for the one-shot
+        # generate_content call inside the tool.
+        model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
         name="video_streaming_agent",
         instruction="""
           You are a monitoring agent. You can do video monitoring and stock price monitoring
@@ -370,7 +374,10 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
       public static void main(String[] args) {
         LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-flash-latest")
+            // Streaming tools run under runLive(), so the root agent needs a Live API
+            // model. gemini-flash-latest is used above only for the one-shot
+            // generateContent call inside the tool.
+            .model("gemini-2.5-flash-native-audio-preview-12-2025")
             .name("video_streaming_agent")
             .instruction(
                 "You are a monitoring agent. You can do video monitoring and stock price monitoring\n" +

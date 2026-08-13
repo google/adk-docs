@@ -120,20 +120,41 @@ ADK streams distinct event types through `runner.run_live()` to support differen
 
 ### Text Events
 
-The most common event type, containing the model's text responses when you specifying `response_modalities` in `RunConfig` to `["TEXT"]` mode:
+Text events carry text on `event.content.parts[].text`. Where that text comes from depends on
+which `Runner` method you called:
+
+- **`run_live()` (Live API)**: every Live API model ADK supports is a
+  [native audio model](models.md#native-audio-models), and those models speak rather than
+  write. **The model's words arrive as [transcription events](#transcription-events) on
+  `event.output_transcription`, not as text parts** — see
+  [Audio transcription](voice.md#audio-transcription). Text *parts* still show up in a live
+  session for other content, most commonly thought summaries when thinking is enabled.
+- **`run_async()` (standard Gemini API)**: with `response_modalities=["TEXT"]`, the model's
+  response arrives as text parts, streamed chunk by chunk under `StreamingMode.SSE`.
 
 **Usage:**
 
 ```python
 async for event in runner.run_live(...):
     if event.content and event.content.parts:
-        if event.content.parts[0].text:
-            text = event.content.parts[0].text
+        # Iterate: a single event can carry several parts
+        for part in event.content.parts:
+            if not part.text:
+                continue
 
             if not event.partial:
                 # Your logic to update streaming display
-                update_streaming_display(text)
+                update_streaming_display(part.text)
 ```
+
+!!! warning "Iterate over `parts` — never assume `parts[0]`"
+
+    A server event can carry multiple content parts at once, and
+    `gemini-3.1-flash-live-preview` does this routinely. Code written as
+    `event.content.parts[0].text` silently drops everything after the first part, and breaks
+    outright when the first part holds something other than text (a thought summary, a
+    function call, an audio blob). Loop over `event.content.parts` and branch on which field
+    is populated. See [Supported models](models.md#native-audio-models).
 
 #### Default Response Modality Behavior
 
@@ -143,16 +164,19 @@ When `response_modalities` is not explicitly set (i.e., `None`), ADK automatical
 - **If you provide RunConfig without response_modalities**: Defaults to `["AUDIO"]`
 - **If you explicitly set response_modalities**: Uses your setting (no default applied)
 
-**Why this default exists**: Some native audio models require the response modality to be explicitly set. To ensure compatibility with all models, ADK defaults to `["AUDIO"]`.
+**Why this default exists**: Native audio models require the response modality to be set explicitly. ADK fills in `["AUDIO"]` so a bare `RunConfig()` connects successfully.
 
-**For text-only applications**: Always explicitly set `response_modalities=["TEXT"]` in your RunConfig to avoid receiving unexpected audio events.
+**If your live application is text-driven**: keep `["AUDIO"]` — it is the only modality native audio models accept — and read the model's words from `event.output_transcription`. Setting `response_modalities=["TEXT"]` on a `run_live()` session fails. See [Response modalities](configuration.md#response-modalities).
 
 **Example:**
 
 ```python
-# Explicit text mode
+from google.genai import types
+
+# Audio out, text transcript alongside it (transcription is on by default)
 run_config = RunConfig(
-    response_modalities=["TEXT"],
+    response_modalities=["AUDIO"],
+    output_audio_transcription=types.AudioTranscriptionConfig(),
 )
 ```
 
@@ -183,22 +207,23 @@ run_config = RunConfig(
 # Audio arrives as inline_data in event.content.parts
 async for event in runner.run_live(..., run_config=run_config):
     if event.content and event.content.parts:
-        part = event.content.parts[0]
-        if part.inline_data:
-            # Audio event structure:
-            # part.inline_data.data: bytes (raw PCM audio)
-            # part.inline_data.mime_type: str (e.g., "audio/pcm")
-            audio_data = part.inline_data.data
-            mime_type = part.inline_data.mime_type
+        # One event can carry several parts — audio, text, function calls
+        for part in event.content.parts:
+            if part.inline_data:
+                # Audio event structure:
+                # part.inline_data.data: bytes (raw PCM audio)
+                # part.inline_data.mime_type: str (e.g., "audio/pcm")
+                audio_data = part.inline_data.data
+                mime_type = part.inline_data.mime_type
 
-            print(f"Received {len(audio_data)} bytes of {mime_type}")
-            # Your logic to play audio
-            await play_audio(audio_data)
+                print(f"Received {len(audio_data)} bytes of {mime_type}")
+                # Your logic to play audio
+                await play_audio(audio_data)
 ```
 
 !!! note "Learn More"
 
-    - **`response_modalities` controls how the model generates output**—you must choose either `["TEXT"]` for text responses or `["AUDIO"]` for audio responses per session. You cannot use both modalities simultaneously. See [Response modalities](configuration.md#response-modalities) for configuration details.
+    - **`response_modalities` controls how the model generates output**, and a session gets exactly one modality — never both. For live agents that modality is always `["AUDIO"]`, because every Live API model ADK supports is a native audio model. See [Response modalities](configuration.md#response-modalities) for configuration details.
     - For comprehensive coverage of audio formats, sending/receiving audio, and audio processing flow, see [Audio and video](audio-video.md).
 
 ### Audio Events with File Data
@@ -518,8 +543,8 @@ For complete error code listings and descriptions, refer to the official documen
 
 !!! note "Official Documentation"
 
-    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
+    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/models/inference)
+    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/configure-safety-filters)
     - **ADK Implementation**: [`llm_response.py:145-200`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/models/llm_response.py#L145-L200)
 
 **Best practices for error handling:**
@@ -545,15 +570,16 @@ This flag helps you distinguish between incremental text chunks and complete mer
 ```python
 async for event in runner.run_live(...):
     if event.content and event.content.parts:
-        if event.content.parts[0].text:
-            text = event.content.parts[0].text
+        for part in event.content.parts:
+            if not part.text:
+                continue
 
             if event.partial:
                 # Your streaming UI update logic here
-                update_streaming_display(text)
+                update_streaming_display(part.text)
             else:
                 # Your complete message display logic here
-                display_complete_message(text)
+                display_complete_message(part.text)
 ```
 
 **`partial` Flag Semantics:**
@@ -664,13 +690,16 @@ Understanding how `turn_complete` and `interrupted` combine helps you handle all
 ```python
 async for event in runner.run_live(...):
     # Handle streaming text
-    if event.content and event.content.parts and event.content.parts[0].text:
-        if event.partial:
-            # Your logic to show typing indicator and update partial text
-            update_streaming_text(event.content.parts[0].text)
-        else:
-            # Your logic to display complete text chunk
-            display_text(event.content.parts[0].text)
+    if event.content and event.content.parts:
+        for part in event.content.parts:
+            if not part.text:
+                continue
+            if event.partial:
+                # Your logic to show typing indicator and update partial text
+                update_streaming_text(part.text)
+            else:
+                # Your logic to display complete text chunk
+                display_text(part.text)
 
     # Handle interruption
     if event.interrupted:
