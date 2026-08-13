@@ -20,7 +20,7 @@ supports for live agents.
 |----------|-------|-------|-------|
 | Gemini Live API | [gemini-3.1-flash-live-preview](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview) | Preview | Newest. Lower latency, but no proactivity or affective dialog — see the caveats below |
 | Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-native-audio-preview-12-2025) | Preview | Full feature set, including proactivity and affective dialog |
-| Gemini Live API (Agent Platform) | [gemini-live-2.5-flash-native-audio](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/2-5-flash-live-api) | **GA** | The only Live API model on Agent Platform. Also ADK's `LlmAgent.DEFAULT_LIVE_MODEL` |
+| Gemini Live API (Agent Platform) | [gemini-live-2.5-flash-native-audio](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/2-5-flash-live-api) | **GA** | The only GA Live API model on Agent Platform, and ADK's `LlmAgent.DEFAULT_LIVE_MODEL`. Full feature set |
 
 !!! warning "Gemini 3.x Live models are Gemini Live API only"
 
@@ -137,7 +137,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 **Selecting the right model:**
 
-1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise). This narrows the model list for you — Agent Platform has exactly one Live API model
+1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise). This narrows the model list for you — Agent Platform has exactly one GA Live API model
 2. **Check current availability**: Refer to the model table above and the official documentation
 3. **Configure environment variable**: Set the model name in your `.env` file and read it from there when constructing the agent
 

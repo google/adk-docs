@@ -19,7 +19,7 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 
 | Parameter | Type | Purpose | Platform Support | Reference |
 |-----------|------|---------|------------------|-----------|
-| **response_modalities** | list[str] | Control output format (TEXT or AUDIO) | Both | [Details](#response-modalities) |
+| **response_modalities** | list[str] | Output format. Live agents must use `AUDIO` — the native audio models do not accept `TEXT` | Both | [Details](#response-modalities) |
 | **streaming_mode** | StreamingMode | Chunked or single-shot delivery on the `run_async()` path; not read by `run_live()` | Both | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | Both | [Details](sessions.md#live-api-session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | Both | [Details](sessions.md#live-api-context-window-compression) |
@@ -32,8 +32,11 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 | **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | Both | [Audio transcription](voice.md#audio-transcription) |
 | **output_audio_transcription** | AudioTranscriptionConfig | Transcribe model speech | Both | [Audio transcription](voice.md#audio-transcription) |
 | **realtime_input_config** | RealtimeInputConfig | VAD configuration | Both | [Voice activity detection](voice.md#voice-activity-detection-vad) |
-| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
-| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
+| **explicit_vad_signal** | bool | Emit voice activity events from the model | Both | [Details](#other-live-related-fields) |
+| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (2.5 native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
+| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (2.5 native audio only) | [Proactivity and affective dialog](voice.md#proactivity-and-affective-dialog) |
+| **translation_config** | TranslationConfig | Real-time speech-to-speech translation | Gemini (translation models only) | [Details](#other-live-related-fields) |
+| **avatar_config** | AvatarConfig | Render the agent as an animated avatar | Both | [Details](#other-live-related-fields) |
 
 !!! note "Reference"
 
@@ -66,12 +69,28 @@ The `RunConfig` class itself and `StreamingMode` enum are imported from `google.
 
 ## Response Modalities
 
-Response modalities control how the model generates output—as text or audio. Both Gemini Live API and Gemini Live API (Agent Platform) have the same restriction: only one response modality per session.
+Response modalities control how the model generates output. Both Gemini Live API and Gemini
+Live API (Agent Platform) restrict a session to a single response modality, and every Live
+API model ADK supports today is a [native audio model](models.md#native-audio-models) —
+which means the only accepted value for live agents is `AUDIO`.
+
+!!! warning "`TEXT` is not a valid response modality for live agents"
+
+    Native audio models support the `AUDIO` response modality only. Setting
+    `response_modalities=["TEXT"]` and calling `run_live()` fails against
+    `gemini-3.1-flash-live-preview`, `gemini-2.5-flash-native-audio-preview-12-2025`, and
+    `gemini-live-2.5-flash-native-audio` alike.
+
+    **To get text out of a live agent, use [audio transcription](voice.md#audio-transcription)**,
+    which is enabled by default in ADK and delivers the model's words on
+    `event.output_transcription`. `TEXT` still applies to the `run_async()` / SSE path
+    described in [Bidi-streaming or SSE](#streamingmode-bidi-or-sse), which runs on standard
+    Gemini models.
 
 **Configuration:**
 
 ```python
-# Phase 2: Session initialization - RunConfig determines streaming behavior
+from google.genai import types
 
 # Default behavior: ADK automatically sets response_modalities to ["AUDIO"]
 # when not specified (required by native audio models)
@@ -82,20 +101,18 @@ run_config = RunConfig(
     response_modalities=["AUDIO"],  # Automatically set by ADK in run_live()
 )
 
-# ✅ CORRECT: Text-only responses
+# ✅ CORRECT: audio out, with a text transcript of what the model said.
+# Transcription is on by default; shown explicitly here for clarity.
 run_config = RunConfig(
-    response_modalities=["TEXT"],  # Model responds with text only
+    response_modalities=["AUDIO"],
+    output_audio_transcription=types.AudioTranscriptionConfig(),
 )
 
-# ✅ CORRECT: Audio-only responses (explicit)
+# ❌ INCORRECT: native audio models reject the TEXT modality
 run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Model responds with audio only
+    response_modalities=["TEXT"],
 )
-```
 
-Both Gemini Live API and Gemini Live API (Agent Platform) restrict sessions to a single response modality. Attempting to use both will result in an API error:
-
-```python
 # ❌ INCORRECT: Both modalities not supported
 run_config = RunConfig(
     response_modalities=["TEXT", "AUDIO"],  # ERROR: Cannot use both
@@ -105,12 +122,18 @@ run_config = RunConfig(
 
 **Default Behavior:**
 
-When `response_modalities` is not specified, ADK's `run_live()` method automatically sets it to `["AUDIO"]` because native audio models require an explicit response modality. You can override this by explicitly setting `response_modalities=["TEXT"]` if needed.
+When `response_modalities` is not specified, ADK's `run_live()` method automatically sets it
+to `["AUDIO"]`, because native audio models require the response modality to be set
+explicitly ([`runners.py:1672-1673`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/runners.py#L1672-L1673)).
+For live agents this default is also the only correct value, so most applications never set
+this field at all.
 
 **Key constraints:**
 
-- You must choose either `TEXT` or `AUDIO` at session start. **Cannot switch between modalities mid-session**
-- You must choose `AUDIO` for [native audio models](models.md#native-audio-models). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio transcription](voice.md#audio-transcription) for details
+- **Live agents must use `AUDIO`.** To receive text alongside the audio, use the audio
+  transcription feature rather than a second modality. See
+  [Audio transcription](voice.md#audio-transcription)
+- You cannot request both modalities, and you **cannot switch modality mid-session**
 - Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
 
 ## Bidi-streaming or SSE { #streamingmode-bidi-or-sse }
@@ -283,17 +306,27 @@ Your choice between Bidi-streaming and SSE depends on your application requireme
 
 - Building text-based chat applications
 - Standard request/response interaction pattern
-- Using models without Live API support (e.g., Gemini 1.5 Pro, Gemini 1.5 Flash)
+- Using models without Live API support (e.g. `gemini-flash-latest`, `gemini-pro-latest`)
 - Simpler deployment without WebSocket requirements
-- Need larger context windows (Gemini 1.5 supports up to 2M tokens)
+- Need a larger context window (standard Gemini models offer 1M tokens; a Live API session
+  is capped at 128K — see [Context window limits](sessions.md#live-api-context-window-compression))
 - Prefer standard API rate limits (RPM/TPM) over concurrent session quotas
 
 !!! note "Streaming Mode and Model Compatibility"
-    SSE uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while Bidi-streaming uses the Live API (`live.connect()`) via WebSocket. Gemini 1.5 models (Pro, Flash) don't support the Live API protocol and therefore must be used with `run_async()` and SSE. Gemini 2.0/2.5 Live models support both protocols but are typically used with `run_live()` to access real-time audio/video features.
+    SSE uses the standard Gemini API (`generate_content_async`) via HTTP streaming, while
+    Bidi-streaming uses the Live API (`live.connect()`) via WebSocket. **The two model sets
+    barely overlap**: standard Gemini models such as `gemini-flash-latest` do not speak the
+    Live API protocol and must be used with `run_async()`, and the Live API models listed in
+    [Supported models](models.md#native-audio-models) are meant to be driven with
+    `run_live()`. Picking a model is therefore part of picking a `Runner` method — you cannot
+    swap one in for the other.
 
-### Standard Gemini Models (1.5 Series) Accessed via SSE
+### Standard Gemini Models Accessed via SSE
 
-While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also supports the Gemini 1.5 model family through SSE streaming. These models offer different trade-offs—larger context windows and proven stability, but without real-time audio/video features. Here's what the 1.5 series supports when accessed via SSE:
+While this guide focuses on Bidi-streaming with Live API models, ADK also supports the
+standard Gemini models through SSE streaming. These models offer different trade-offs — much
+larger context windows and a broader feature set, but no real-time audio or video. Here is
+what they support when accessed via `run_async()`:
 
 **Models:**
 
@@ -305,14 +338,20 @@ While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also
 - ✅ Text input/output (`response_modalities=["TEXT"]`)
 - ✅ SSE streaming (`StreamingMode.SSE`)
 - ✅ Function calling with automatic execution
-- ✅ Large context windows (up to 2M tokens for 1.5-pro)
+- ✅ Large context windows (1M input tokens)
 
 **Not Supported:**
 
 - ❌ Live audio features (audio I/O, transcription, VAD)
 - ❌ Bidi-streaming via `run_live()`
 - ❌ Proactivity and affective dialog
-- ❌ Video input
+- ❌ Real-time video input
+
+!!! warning "`-latest` aliases move"
+
+    `gemini-flash-latest` and `gemini-pro-latest` are floating aliases that Google repoints
+    at each new generation, and **neither alias has ever pointed at a Live API model**. Pin an
+    explicit model name if you need reproducible behavior.
 
 
 ## Miscellaneous Controls
@@ -505,6 +544,35 @@ This enables seamless metadata propagation across agent boundaries in multi-agen
 - Keep metadata size reasonable to minimize storage overhead
 - Document your metadata schema for team consistency
 - Consider using metadata for session filtering and search in production debugging
+
+### Other live-related fields
+
+`RunConfig` carries a few more fields that only take effect on the `run_live()` path. They
+are passed straight through to `live_connect_config`
+([`basic.py:123-152`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/flows/llm_flows/basic.py#L123-L152)),
+so their exact behavior is defined by the Live API rather than by ADK:
+
+| Field | Type | What it does |
+|-------|------|--------------|
+| `explicit_vad_signal` | `bool` | Asks the model to emit explicit voice activity signals. ADK surfaces them on `event.voice_activity` instead of inferring turn boundaries from content |
+| `translation_config` | `types.TranslationConfig` | Enables real-time speech-to-speech translation. Takes `target_language_code` (BCP-47) and `echo_target_language`. **Only supported by translation models** such as `gemini-3.5-live-translate-preview` — not by the native audio models in [Supported models](models.md#native-audio-models) |
+| `avatar_config` | `types.AvatarConfig` | Renders the agent as an animated avatar. Takes `avatar_name` (a prebuilt avatar) or `customized_avatar`, plus `audio_bitrate_bps` / `video_bitrate_bps` |
+
+```python
+from google.genai import types
+
+run_config = RunConfig(
+    response_modalities=["AUDIO"],
+    explicit_vad_signal=True,
+)
+```
+
+One more field is not live-specific but is often useful in a live session:
+
+- **`model_input_context`** (`list[types.Content]`): transient context injected into the LLM
+  request for the current invocation only. The `Runner` does not persist it to the session,
+  which makes it a clean way to supply per-turn grounding (a document the user just opened, a
+  page they are viewing) without polluting conversation history.
 
 ### support_cfc (Experimental)
 

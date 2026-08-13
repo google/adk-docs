@@ -9,7 +9,7 @@ With this quickstart, you'll learn to create a simple agent and use ADK Streamin
 In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
 ## 1. Setup Environment & Install ADK { #setup-environment-install-adk }
 
@@ -101,9 +101,9 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
        [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
        project.
         * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+          [Google Cloud project](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
         * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+          [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
         * Authenticate to Google Cloud, from the terminal by running
           `gcloud auth login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).

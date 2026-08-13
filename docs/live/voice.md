@@ -20,7 +20,7 @@ The Live API provides built-in audio transcription capabilities that automatical
 
 !!! note "Source"
 
-    [Gemini Live API - Audio transcriptions](https://ai.google.dev/gemini-api/docs/live-guide#audio-transcriptions)
+    [Gemini Live API - Audio transcriptions](https://ai.google.dev/gemini-api/docs/live-api/capabilities#audio-transcription)
 
 **Configuration:**
 
@@ -289,7 +289,7 @@ The Live API provides voice configuration capabilities that allow you to customi
 
 !!! note "Source"
 
-    [Gemini Live API - Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
+    [Gemini Live API - Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-api/capabilities)
 
 ### Agent-Level Configuration
 
@@ -511,7 +511,7 @@ voices:
 They also support an extended list of additional voices from the Text-to-Speech (TTS)
 service, which gives you more options for voice characteristics, accents, and languages:
 
-- See the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide#available-voices)
+- See the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-api/capabilities#change-voice-and-language)
 - Or check the [Text-to-Speech voice list](https://cloud.google.com/text-to-speech/docs/voices), which native audio models also support
 
 To verify which voices are available for your specific model, test voice configurations in
@@ -525,13 +525,13 @@ Voice configuration is supported on both platforms, but voice availability may v
 **Gemini Live API:**
 
 - ✅ Fully supported with documented voice options
-- ✅ The eight prebuilt voices plus the extended TTS voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-guide))
+- ✅ The eight prebuilt voices plus the extended TTS voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-api/capabilities))
 
 **Gemini Live API (Agent Platform):**
 
 - ✅ Voice configuration supported
 - ⚠️ **Platform-specific difference**: Voice availability may differ from Gemini Live API
-- ⚠️ **Verification required**: Check [Agent Platform documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) for the current list of supported voices
+- ⚠️ **Verification required**: Check [Agent Platform documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api) for the current list of supported voices
 
 **Best practice**: Always test your chosen voice configuration on your target platform during development. If a voice is not supported on your platform/model combination, the Live API will return an error at connection time.
 
@@ -554,7 +554,7 @@ Voice Activity Detection (VAD) is a Live API feature that automatically detects 
 
 !!! note "Source"
 
-    [Gemini Live API - Voice Activity Detection](https://ai.google.dev/gemini-api/docs/live-guide#voice-activity-detection-vad)
+    [Gemini Live API - Voice Activity Detection](https://ai.google.dev/gemini-api/docs/live-api/capabilities#configure-automatic-vad)
 
 ### How VAD Works
 
@@ -797,7 +797,7 @@ The Live API offers advanced conversational features that enable more natural an
 
 !!! note "Source"
 
-    [Gemini Live API - Proactive audio](https://ai.google.dev/gemini-api/docs/live-guide#proactive-audio) | [Affective dialog](https://ai.google.dev/gemini-api/docs/live-guide#affective-dialog)
+    [Gemini Live API - Proactive audio](https://ai.google.dev/gemini-api/docs/live-api/capabilities#proactive-audio) | [Affective dialog](https://ai.google.dev/gemini-api/docs/live-api/capabilities#affective-dialog)
 
 **Configuration:**
 
@@ -813,6 +813,15 @@ run_config = RunConfig(
     enable_affective_dialog=True
 )
 ```
+
+!!! note "You do not need to set the API version"
+
+    Both features require a preview API version on the wire, and the raw `google-genai`
+    examples in Google's documentation set it explicitly via `http_options`. **ADK selects the
+    version for you** when it opens the live connection — `v1alpha` for the Gemini Live API
+    and `v1beta1` for Agent Platform
+    ([`google_llm.py`](https://github.com/google/adk-python/blob/096ecfcf56ad47a9a63da1d76a062f56d7586692/src/google/adk/models/google_llm.py)).
+    Setting `RunConfig.http_options` yourself is only needed for custom endpoints or headers.
 
 **Proactivity:**
 
