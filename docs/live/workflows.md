@@ -19,7 +19,7 @@ ADK's bidirectional streaming supports three agent architectures: **single agent
 
 !!! note "Learn More"
 
-    For comprehensive coverage of multi-agent patterns, see [Workflow Agents as Orchestrators](/agents/multi-agents/#workflow-agents-as-orchestrators) in the ADK documentation.
+    For comprehensive coverage of multi-agent patterns, see [Workflows](../workflows/index.md) in the ADK documentation.
 
 When building multi-agent systems with ADK, understanding how agents transition and share state during live streaming is crucial for smooth bidirectional communication.
 
