@@ -97,7 +97,9 @@ whether the context window is compressed:
 
 ## Enable streaming
 
-To control how the agent delivers responses, set the `streaming_mode` parameter:
+To control how the agent delivers responses, set the streaming mode parameter
+(`streaming_mode` in Python, Go, Java and Kotlin; `streamingMode` in
+TypeScript):
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
   per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
