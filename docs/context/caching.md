@@ -120,6 +120,10 @@ all agents within your app.
     content can be used before it expires. This setting allows you to
     control how frequently the cache is updated, even if the TTL has not
     expired. Defaults to `10`.
+-   **`create_http_options`** (HttpOptions): The HTTP options for the cache
+    creation call, which lets you set a timeout on it. If the call times out,
+    it fails and the request proceeds without caching. Available in Python and
+    Kotlin; defaults to none.
 
 ## Next steps
 
