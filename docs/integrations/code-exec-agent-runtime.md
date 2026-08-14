@@ -72,7 +72,7 @@ example](#advanced-example) or the full
 
 ## How it works
 
-The `AgentEngineCodeExecutor` Tool maintains a single sandbox throughout an
+The `AgentEngineSandboxCodeExecutor` Tool maintains a single sandbox throughout an
 agent's task, meaning the sandbox's state persists across all operations within
 an ADK workflow session.
 
@@ -179,7 +179,7 @@ def base_system_instruction():
       print(df.shape)
       ```
       The output will be presented to you as:
-      ```tool_outputs
+      ```tool_output
       (49, 7)
 
       ```
@@ -189,11 +189,11 @@ def base_system_instruction():
       print(f'{{x=}}')
       ```
       The output will be presented to you as:
-      ```tool_outputs
+      ```tool_output
       x=999751168
 
       ```
-    - You **never** generate ```tool_outputs yourself.
+    - You **never** generate ```tool_output yourself.
     - You can then use this output to decide on next steps.
     - Print just variables (e.g., `print(f'{{variable=}}')`.
 
