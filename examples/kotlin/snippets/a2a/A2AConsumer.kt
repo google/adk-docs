@@ -26,9 +26,10 @@ fun main() =
     runBlocking {
         // --8<-- [start:remote_agent]
         // A2AAgent is a suspending factory: it fetches the remote agent's card from
-        // <url>/.well-known/agent-card.json and reads the name, description and
-        // transport from it. The constructor of the returned agent is internal, so
-        // this factory is the only way to build one.
+        // <url>/.well-known/agent-card.json and takes the description and streaming
+        // capability from it. The name is yours -- it identifies this agent in your
+        // tree, independent of the name the card advertises. The constructor of the
+        // returned agent is internal, so this factory is the only way to build one.
         val primeAgent =
             A2AAgent(
                 name = "prime_agent",
@@ -45,7 +46,8 @@ fun main() =
                 model = Gemini(name = "gemini-flash-latest"),
                 instruction =
                     Instruction(
-                        "Roll dice yourself, and delegate prime checks to prime_agent.",
+                        "You are a helpful assistant that can check prime numbers " +
+                            "by delegating to prime_agent.",
                     ),
                 subAgents = listOf(primeAgent),
             )

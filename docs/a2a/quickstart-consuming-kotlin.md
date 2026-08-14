@@ -33,18 +33,55 @@ implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.0.0.Final")
 
 ## Start a remote agent server
 
-To consume a remote agent you first need one running. Any A2A-compliant server
-will do, in any language. The A2A protocol requires each agent to publish an
-**agent card** describing what it does, served at the well-known path:
+To consume a remote agent you first need one running. adk-kotlin cannot expose an
+agent over A2A yet, so the server has to come from elsewhere — A2A is a wire
+protocol, so any language will do.
+
+The A2A protocol requires each agent to publish an **agent card** describing what
+it does, served at the well-known path:
 
 ```text
 http://localhost:9090/.well-known/agent-card.json
 ```
 
+The Kotlin client reads **A2A 1.0** cards, so the card must carry a
+`supportedInterfaces` array whose entries each have a `protocolBinding`.
+Cards written for A2A 0.3 omit it, and `A2AAgent` rejects them with
+`AgentCardResolutionError: Failed to parse agent card`. That includes the
+`a2a_server` sample in adk-java and the `remote_a2a` sample in adk-python as
+they stand today, so neither works as the server for this page yet.
+
+A minimal card the client accepts looks like this:
+
+```json title=".well-known/agent-card.json"
+{
+  "name": "check_prime_agent",
+  "description": "Checks whether numbers are prime.",
+  "version": "1.0.0",
+  "url": "http://localhost:9090",
+  "preferredTransport": "JSONRPC",
+  "capabilities": { "streaming": true },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [],
+  "supportedInterfaces": [
+    { "protocolBinding": "JSONRPC", "url": "http://localhost:9090" }
+  ]
+}
+```
+
+Check the card is reachable before you continue:
+
+```bash
+curl http://localhost:9090/.well-known/agent-card.json
+```
+
 ## Connect to the remote agent
 
-`A2AAgent` fetches that card and reads the remote agent's name, description and
-transport from it. It is a suspending function, so call it from a coroutine:
+`A2AAgent` fetches that card and reads the remote agent's description from it,
+along with whether the remote supports streaming. The `name` you pass is this
+agent's identifier in your own agent tree, independent of the name the card
+advertises. It is a suspending function, so call it from a coroutine:
 
 ```kotlin title="A2AConsumer.kt"
 --8<-- "examples/kotlin/snippets/a2a/A2AConsumer.kt:remote_agent"
