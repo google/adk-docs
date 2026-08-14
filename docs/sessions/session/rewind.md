@@ -55,7 +55,7 @@ are restored to the state they were in *before* the request you specified with
 the ***invocation id***. However, global resources, such as app-level or
 user-level state and artifacts, are not restored. For a complete example of an
 agent session rewind, see the
-[rewind_session](https://github.com/google/adk-python/tree/main/contributing/samples/rewind_session)
+[rewind_session](https://github.com/google/adk-python/tree/main/contributing/samples/context_management/rewind_session)
 sample code. For more information on the limitations of the Rewind feature,
 see [Limitations](#limitations).
 

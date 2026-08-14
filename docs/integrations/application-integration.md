@@ -1,7 +1,7 @@
 ---
 catalog_title: Application Integration
 catalog_description: Link your agents to enterprise apps using Integration Connectors
-catalog_icon: /adk-docs/integrations/assets/apigee-integration.png
+catalog_icon: /integrations/assets/apigee-integration.png
 catalog_tags: ["google", "connectors"]
 ---
 
@@ -32,7 +32,7 @@ multiple enterprise applications and data sources simultaneously.
 ### 1. Install ADK
 
 Install Agent Development Kit following the steps in the
-[installation guide](/adk-docs/get-started/installation/).
+[installation guide](/get-started/installation/).
 
 ### 2. Install CLI
 
@@ -107,7 +107,7 @@ Workflows):
     - roles/connectors.invoker
     - roles/secretmanager.secretAccessor
 
-**Note:** When using Agent Engine (AE) for deployment, don't use
+**Note:** When using Agent Runtime for deployment, don't use
 `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use
 `roles/integrations.integrationEditor` instead.
 
@@ -123,7 +123,7 @@ Connect your agent to enterprise applications using
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
 
-   ![Google Cloud Tools](/adk-docs/assets/application-integration-overview.png)
+   ![Google Cloud Tools](/assets/application-integration-overview.png)
 
 
 
@@ -131,7 +131,7 @@ Connect your agent to enterprise applications using
    template in the template library and click **USE TEMPLATE**.
 
 
-    ![Google Cloud Tools](/adk-docs/assets/use-connection-tool-template.png)
+    ![Google Cloud Tools](/assets/use-connection-tool-template.png)
 
 3. Enter the Integration Name as *ExecuteConnection* (it is mandatory to use this exact integration name only).
    Then, select the region to match your connection region and click **CREATE**.
@@ -139,7 +139,7 @@ Connect your agent to enterprise applications using
 4. Click **PUBLISH** to publish the integration in the <i>Application Integration</i> editor.
 
 
-    ![Google Cloud Tools](/adk-docs/assets/publish-integration.png)
+    ![Google Cloud Tools](/assets/publish-integration.png)
 
 
 ### Create an Application Integration Toolset
@@ -227,7 +227,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     from .tools import connector_tool
 
     root_agent = LlmAgent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='connector_agent',
         instruction="Help user, leverage the tools you have access to",
         tools=[connector_tool],
@@ -271,13 +271,15 @@ workflow as a tool for your agent or create a new one.
               integration="test-integration", #TODO: replace with integration name
               triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
               service_account_json='{...}', #optional. Stringified json for service account key
-              tool_name_prefix="tool_prefix1",
-              tool_instructions="..."
           )
       ```
 
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct
          [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+
+      **Note:** `tool_name_prefix` and `tool_instructions` apply only when you
+         pass `connection=`. On the `integration=` path they are accepted but
+         silently ignored.
 
 === "Java"
 
@@ -333,7 +335,7 @@ workflow as a tool for your agent or create a new one.
           from .tools import integration_tool, connector_tool
 
           root_agent = LlmAgent(
-              model='gemini-2.0-flash',
+              model='gemini-flash-latest',
               name='integration_agent',
               instruction="Help user, leverage the tools you have access to",
               tools=[integration_tool],
@@ -361,7 +363,7 @@ workflow as a tool for your agent or create a new one.
                     LlmAgent rootAgent = LlmAgent.builder()
                             .name("science-teacher")
                             .description("Science teacher agent")
-                            .model("gemini-2.0-flash")
+                            .model("gemini-flash-latest")
                             .instruction(
                                     "Help user, leverage the tools you have access to."
                             )

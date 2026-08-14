@@ -1,7 +1,7 @@
 ---
 catalog_title: Supermetrics
 catalog_description: Consume and analyze your real-time marketing, advertising, and CRM data
-catalog_icon: /adk-docs/integrations/assets/supermetrics.png
+catalog_icon: /integrations/assets/supermetrics.png
 catalog_tags: ["mcp", "data"]
 ---
 
@@ -55,7 +55,7 @@ accounts using natural language.
         SUPERMETRICS_API_KEY = "YOUR_SUPERMETRICS_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="supermetrics_agent",
             instruction="Help users query and analyze their marketing data from Supermetrics",
             tools=[
@@ -81,7 +81,7 @@ accounts using natural language.
         const SUPERMETRICS_API_KEY = "YOUR_SUPERMETRICS_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "supermetrics_agent",
             instruction: "Help users query and analyze their marketing data from Supermetrics",
             tools: [

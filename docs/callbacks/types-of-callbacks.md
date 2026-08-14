@@ -13,6 +13,33 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 !!! Note
     The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.
 
+??? warning "Python: Use the documented callback parameter names"
+
+    In Python, callback function parameter names must match the documented
+    names exactly because ADK passes callback arguments by keyword. For example,
+    use `callback_context` for agent and model callbacks, and `tool_context` for
+    tool callbacks. Renaming these parameters to aliases such as `ctx` will cause
+    runtime `TypeError` failures.
+
+    ```python
+    # Correct
+    def before_agent_callback(callback_context):
+        ...
+
+    # Incorrect
+    def before_agent_callback(ctx):
+        ...
+    ```
+
+    | Callback | Required parameter names |
+    |---|---|
+    | `before_agent_callback` | `callback_context` |
+    | `after_agent_callback` | `callback_context` |
+    | `before_model_callback` | `callback_context`, `llm_request` |
+    | `after_model_callback` | `callback_context`, `llm_response` |
+    | `before_tool_callback` | `tool`, `args`, `tool_context` |
+    | `after_tool_callback` | `tool`, `args`, `tool_context`, `tool_response` |
+
 ### Before Agent Callback
 
 **When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
@@ -27,7 +54,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/before_agent_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_agent_callback.ts"
         ```
@@ -64,7 +91,11 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 **When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content or if `end_invocation` was set during the agent's run.
 
-**Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, modifying final state, or augmenting the agent's final output.
+**Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, or modifying final state.
+
+!!! note "After Agent Callback output modification limitations"
+
+    The `after_agent_callback` can not fully alter the response output because the agent may have called AI models multiple times and omitted multiple events. So modifying the output is not allowed, although you can *append* additional content. If you want to change an AI model response, consider `after_model_callback`.
 
 ??? "Code"
     === "Python"
@@ -73,7 +104,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/after_agent_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_agent_callback.ts"
         ```
@@ -125,7 +156,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
         ```
@@ -164,7 +195,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/after_model_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_model_callback.ts"
         ```
@@ -207,7 +238,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/before_tool_callback.ts"
         ```
@@ -245,7 +276,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/after_tool_callback.ts"
         ```

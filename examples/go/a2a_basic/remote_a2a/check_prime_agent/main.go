@@ -21,15 +21,15 @@ import (
 	"strconv"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher"
-	"google.golang.org/adk/cmd/launcher/web"
-	"google.golang.org/adk/cmd/launcher/web/a2a"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/cmd/launcher"
+	"google.golang.org/adk/v2/cmd/launcher/web"
+	"google.golang.org/adk/v2/cmd/launcher/web/a2a"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -50,7 +50,7 @@ type checkPrimeToolArgs struct {
 	Nums []int `json:"nums" jsonschema:"A list of numbers to check for primality."`
 }
 
-func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) (string, error) {
+func checkPrimeTool(tc agent.Context, args checkPrimeToolArgs) (string, error) {
 	var primes []int
 	for _, num := range args.Nums {
 		if isPrime(num) {

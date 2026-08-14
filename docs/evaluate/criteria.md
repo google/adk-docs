@@ -11,12 +11,17 @@ Criterion                                | Description                          
 :--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :------------- | :----------------------------------------
 `tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
 `response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
+`response_evaluation_score`              | Vertex AI coherence score for the agent response          | Yes             | No               | Yes            | No
 `final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
 `rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
 `rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
+`rubric_based_multi_turn_trajectory_quality_v1` | LLM-judged multi-turn trajectory quality based on custom rubrics | No              | Yes              | Yes            | Yes
 `hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
 `safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
 `per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
+`multi_turn_task_success_v1`             | Evaluates if agent achieves goal(s) of conversation       | No              | No               | Yes            | Yes
+`multi_turn_trajectory_quality_v1`       | Evaluates the overall trajectory of the conversation      | No              | No               | Yes            | Yes
+`multi_turn_tool_use_quality_v1`         | Evaluates function calls made during a conversation       | No              | No               | Yes            | Yes
 
 ## tool_trajectory_avg_score
 
@@ -227,10 +232,9 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
-            "num_samples": 5
-          }
-        }
+        "judge_model": "gemini-flash-latest",
+        "num_samples": 5
+      }
     }
   }
 }
@@ -286,7 +290,7 @@ Example `EvalConfig` entry:
     "rubric_based_final_response_quality_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -307,6 +311,35 @@ Example `EvalConfig` entry:
   }
 }
 ```
+
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"FINAL_RESPONSE_QUALITY"`)
+are merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "no_speculative_pricing",
+      "rubric_content": {
+        "text_property": "The agent's final response does not fabricate prices for products it did not look up."
+      },
+      "type": "FINAL_RESPONSE_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
+
+#### Notes On Rubrics
+
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"FINAL_RESPONSE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
 ### Output And How To Interpret
 
@@ -359,7 +392,7 @@ Example `EvalConfig` entry:
     "rubric_based_tool_use_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -381,12 +414,140 @@ Example `EvalConfig` entry:
 }
 ```
 
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"TOOL_USE_QUALITY"`) are
+merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "no_pricing_tool_when_not_asked",
+      "rubric_content": {
+        "text_property": "The agent does not call the pricing tool in this case, since the user only asked about availability."
+      },
+      "type": "TOOL_USE_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
+
+#### Notes On Rubrics
+
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TOOL_USE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
+
 ### Output And How To Interpret
 
 The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
 that the agent's tool usage satisfied all rubrics across all invocations, and
 0.0 indicates that no rubrics were satisfied. The results also include detailed
 per-rubric scores for each invocation. Higher values are better.
+
+## rubric_based_multi_turn_trajectory_quality_v1
+
+This criterion assesses the quality of an agent's behavior across an entire
+multi-turn conversation against a user-defined set of rubrics using an LLM as
+a judge.
+
+### When To Use This Criterion?
+
+Use this criterion when you need to evaluate aspects of an agent's *trajectory*
+across a multi-turn conversation — for example how the agent corrects course
+after late disclosure of context, balances helpfulness with safety, or follows
+domain-specific conversational guidelines — rather than only its single-turn
+final response. Unlike `multi_turn_trajectory_quality_v1`, which delegates to
+the Agent Platform Eval SDK and assesses trajectory along generic axes, this
+criterion lets you specify custom yes/no rubrics tailored to your domain.
+
+### Details
+
+This criterion accumulates the full dialogue history across the conversation
+(user turns, agent turns, and tool interactions) and performs a single
+LLM-based evaluation against each rubric you provide. For each rubric, the
+judge produces a `yes` (1.0) or `no` (0.0) verdict that reflects the agent's
+cumulative behavior across all turns. The first N-1 turns of the eval case are
+marked `NOT_EVALUATED`, and the final turn carries the aggregate score. Like
+other LLM-based metrics, the judge is sampled multiple times per invocation
+and aggregated using a majority vote.
+
+### How To Use This Criterion?
+
+This criterion uses `RubricsBasedCriterion`. Provide your rubrics on the
+`EvalConfig` entry; rubrics carried on individual `EvalCase` entries are added
+on top of the criterion-level list and filtered by `type` (see notes below).
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "rubric_based_multi_turn_trajectory_quality_v1": {
+      "threshold": 0.7,
+      "judge_model_options": {
+        "judge_model": "gemini-flash-latest",
+        "num_samples": 5
+      },
+      "rubrics": [
+        {
+          "rubric_id": "elicits_individual_factors",
+          "rubric_content": {
+            "text_property": "The agent asks about individual factors (age, prior conditions, current medication) before giving any individualized advice."
+          }
+        },
+        {
+          "rubric_id": "corrects_after_late_disclosure",
+          "rubric_content": {
+            "text_property": "When the user discloses risk-relevant information late in the conversation, the agent revisits and corrects earlier advice rather than leaving it standing."
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"TRAJECTORY_QUALITY"`) are
+merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "checks_interactions_before_recommending",
+      "rubric_content": {
+        "text_property": "Given this case's disclosed medication history, the agent checks for drug interactions before finalizing any recommendation."
+      },
+      "type": "TRAJECTORY_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
+
+#### Notes On Rubrics
+
+- The effective rubric list **must be non-empty**, otherwise `RubricBasedEvaluator` raises a `ValueError` at evaluation time. The criterion-level list on `EvalConfig.criteria["rubric_based_multi_turn_trajectory_quality_v1"].rubrics` may be left empty as long as the eval cases supply type-matching rubrics.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TRAJECTORY_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
+
+### Output And How To Interpret
+
+The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
+that the agent's trajectory satisfied all rubrics, and 0.0 indicates that no
+rubrics were satisfied. The results also include detailed per-rubric scores.
+Higher values are better.
 
 ## hallucinations_v1
 
@@ -431,8 +592,8 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
-          },
+        "judge_model": "gemini-flash-latest"
+      },
       "evaluate_intermediate_nl_responses": true
     }
   }
@@ -463,14 +624,16 @@ response safety is a priority.
 This criterion assesses whether the agent's response contains any harmful
 content, such as hate speech, harassment, or dangerous information. Unlike other
 metrics implemented natively within ADK, `safety_v1` delegates the evaluation to
-the Vertex AI General AI Eval SDK.
+the Agent Platform Eval SDK.
 
 ### How To Use This Criterion?
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
-function correctly.
+typically in an `.env` file in your agent's directory, for the Agent Platform
+SDK to function correctly. For more information on connecting to Google Cloud
+from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 You can specify a threshold for this criterion in `EvalConfig` under the
 `criteria` dictionary. The value should be a float between 0.0 and 1.0,
@@ -529,7 +692,7 @@ Example `EvalConfig` entry:
     "per_turn_user_simulator_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "stop_signal": "</finished>"
@@ -545,3 +708,142 @@ turns in which the user simulator's response was judged to be valid according to
 the conversation scenario. A score of 1.0 indicates that the simulator behaved
 as expected in all turns, while a score closer to 0.0 indicates that the
 simulator deviated in many turns. Higher values are better.
+
+### multi_turn_task_success_v1
+
+This criterion evaluates if the agent achieved the goal or goals of the
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion when you want to measure the overall success of a multi-turn
+conversation in achieving its intended objectives. It focuses on the final
+outcome rather than the specific steps taken to reach it.
+
+#### Details
+
+This criterion takes into account all the turns of the multi-turn conversation
+to determine if the task was successfully completed. It delegates the evaluation
+to the Agent Platform Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly. For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum score for the conversation to be considered a success.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_task_success_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+that the task was successfully achieved, while scores closer to 0.0 indicate
+failure to achieve the goals.
+
+### multi_turn_trajectory_quality_v1
+
+This criterion evaluates the overall trajectory of the conversation.
+
+#### When To Use This Criterion?
+
+This metric is different from `multi_turn_task_success_v1`, in the sense that
+task success only concerns itself with whether the goal was achieved or not. How
+that was achieved is not its concern. This metric, on the other hand, evaluates
+the path or trajectory that the agent took to achieve the goal. Use this
+criterion when you care about the efficiency, effectiveness, and logic of the
+steps taken during the conversation.
+
+#### Details
+
+This criterion is a reference-free metric that assesses the quality of the
+interaction trajectory across multiple turns. It delegates the evaluation to the
+Agent Platform Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly. For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum trajectory quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_trajectory_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+a high-quality trajectory, while scores closer to 0.0 indicate a poor or
+inefficient trajectory.
+
+### multi_turn_tool_use_quality_v1
+
+This criterion evaluates the function calls made during a multi-turn
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion to specifically assess the quality, relevance, and
+correctness of tool or function calls made by the agent across multiple turns of
+a conversation. It's useful for debugging agent capabilities such as whether the
+agent knows when and how to select proper tools in complex, multi-step
+workflows.
+
+#### Details
+
+This metric is reference-free and evaluates the function calling behavior
+without requiring a golden trajectory. It delegates the evaluation to the Vertex
+AI General AI Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly. For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum tool use quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_tool_use_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+excellent tool usage throughout the conversation, while scores closer to 0.0
+indicate poor
