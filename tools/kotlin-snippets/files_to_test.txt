@@ -32,3 +32,8 @@ snippets/runtime/RunConfigExample.kt
 snippets/runtime/RunnerLoop.kt
 snippets/integrations/RagEngine.kt
 snippets/tools/overview/ToolsetExample.kt
+snippets/tools/overview/WeatherSentiment.kt
+snippets/tools/overview/UserPreferenceTools.kt
+snippets/tools/overview/CustomerSupport.kt
+snippets/tools/overview/DocAnalysisTools.kt
+snippets/tools/overview/OrderTools.kt
