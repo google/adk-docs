@@ -246,7 +246,7 @@ You can configure the `GEPARootAgentPromptOptimizer` with a
 
 * `optimizer_model` (optional): The model used to analyze evaluation results and
 optimize the agent.
-Defaults to `"gemini-2.5-flash"`.
+Defaults to `"gemini-flash-latest"`.
 * `model_configuration` (optional): The configuration for the optimizer model.
 Defaults to a config with a 10K token thinking budget.
 * `max_metric_calls` (optional): The maximum number of evaluations to run during
@@ -312,7 +312,7 @@ The optimizer automatically executes an asynchronous, four-stage feedback loop:
 
 1. **Execute:** The target agent processes a specific batch of evaluation tasks managed by an implementation of the `Sampler` class.  
 2. **Evaluate**: The Sampler scores the agent's outputs against your evaluation datasets and returns a structured `SamplingResult`.  
-3. **Critique**: An underlying optimization large language model (LLM) (defaulting to Gemini-2.5-flash) analyzes the historical evaluation scores alongside the current prompt to isolate specific behavioral weaknesses or gaps.  
+3. **Critique**: An underlying optimization large language model (LLM) analyzes the historical evaluation scores alongside the current prompt to isolate specific behavioral weaknesses or gaps.  
 4. **Rewrite**: The optimization model generates an updated variation of the system prompt tailored to address the discovered weaknesses. This new prompt is then fed directly into the next iteration.
 
 **Note:** The optimization loop does not mutate your initial agent instance in place. Upon completion, it returns an `OptimizerResult` containing the highest-scoring agent variation extracted during the process.
