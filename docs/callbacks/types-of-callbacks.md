@@ -249,7 +249,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ## Tool Execution Callbacks
 
-These callbacks are also specific to `LlmAgent` and trigger around the execution of tools that the LLM might request, including `FunctionTool` and `AgentTool`. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that dict is used as the tool result.
+These callbacks are also specific to `LlmAgent` and trigger around the execution of tools that the LLM might request, including `FunctionTool` and `AgentTool`. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that `dict` value is used as the tool result.
 
 ### Before Tool Callback
 
