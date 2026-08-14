@@ -31,4 +31,5 @@ snippets/get-started/multi_tool_agent/MultiToolAgent.kt
 snippets/runtime/RunConfigExample.kt
 snippets/runtime/RunnerLoop.kt
 snippets/integrations/RagEngine.kt
+snippets/plugins/CountInvocationPlugin.kt
 snippets/a2a/A2AConsumer.kt
