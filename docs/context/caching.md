@@ -15,6 +15,10 @@ The ADK Context Caching feature allows you to cache request data with generative
 AI models that support it, including Gemini 2.0 and higher models. This document
 explains how to configure and use this feature.
 
+!!! example "Experimental"
+    The `ContextCacheConfig` class is experimental and its API or behavior may
+    change in future releases. Constructing one emits a warning.
+
 ## Configure context caching
 
 You configure the context caching feature at the ADK `App` object level,
@@ -105,17 +109,29 @@ The `ContextCacheConfig` class has the following settings that control how
 caching works for your agent. When you configure these settings, they apply to
 all agents within your app.
 
--   **`min_tokens`** (int): The minimum number of tokens required in a request
-    to enable caching. This setting allows you to avoid the overhead of caching
-    for very small requests where the performance benefit would be negligible.
-    Defaults to `0`.
+-   **`min_tokens`** (int): The minimum number of tokens required to enable
+    caching. This setting allows you to avoid the overhead of caching for very
+    small requests where the performance benefit would be negligible. ADK
+    compares the setting against the previous request's prompt token count, so
+    the first request in a session is never cached. Defaults to `0`.
 -   **`ttl_seconds`** (int): The time-to-live (TTL) for the cache in seconds.
     This setting determines how long the cached content is stored before it is
-    refreshed. Defaults to `1800` (30 minutes).
+    refreshed. Must be greater than `0`. Defaults to `1800` (30 minutes).
 -   **`cache_intervals`** (int): The maximum number of times the same cached
     content can be used before it expires. This setting allows you to
     control how frequently the cache is updated, even if the TTL has not
-    expired. Defaults to `10`.
+    expired. Must be between `1` and `100`. Defaults to `10`.
+-   **`create_http_options`** (types.HttpOptions): HTTP options for the GenAI
+    client call that creates the cache, for example
+    `types.HttpOptions(timeout=10000)` to bound that call at 10 seconds. If
+    cache creation exceeds the timeout, it fails and the request proceeds
+    without caching. Defaults to `None`, which uses the client's default HTTP
+    options.
+
+!!! note
+    Gemini enforces its own minimum cacheable size on top of `min_tokens`:
+    2048 tokens for Gemini 2.5 models and 4096 tokens for Gemini 3 models.
+    Short sessions therefore never use the cache.
 
 ## Next steps
 
