@@ -62,6 +62,8 @@ agent = defend(agent, mode="enforce")
 Or get a plugin for the entire app:
 
 ```python
+from google.adk.apps import App
+
 from aidefense_google_adk import defend
 
 plugin = defend(mode="enforce")
@@ -156,6 +158,8 @@ For automatic retry with exponential backoff, fail-open/fail-closed semantics,
 and structured `Decision` objects, use the `AgentsecPlugin` variant:
 
 ```python
+from google.adk.apps import App
+
 from aidefense_google_adk import AgentsecPlugin
 
 app = App(
