@@ -82,7 +82,7 @@ This pattern works with any event source that can make an HTTP request.
         payload = request.get_json(silent=True) or {}
 
         requests.post(
-            f"{AGENT_URL}/apps/my_agent/run",
+            f"{AGENT_URL}/run",
             json={
                 "app_name": "my_agent",
                 "user_id": payload.get("account", "webhook-caller"),
@@ -100,7 +100,7 @@ This pattern works with any event source that can make an HTTP request.
 ??? "Example: Send an event with curl"
 
     ```bash
-    curl -X POST http://localhost:8000/apps/my_agent/run \
+    curl -X POST http://localhost:8000/run \
       -H "Content-Type: application/json" \
       -d '{
         "app_name": "my_agent",
