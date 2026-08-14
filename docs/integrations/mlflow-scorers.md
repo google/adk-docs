@@ -174,7 +174,7 @@ response_eval = ResponseEvaluation(
 hallucination = Hallucination(model="gemini-flash-latest", threshold=0.5)
 ```
 
-The model must be a name that ADK's `LlmRegistry` can resolve, such as
+The model must be a name that ADK's `LLMRegistry` can resolve, such as
 `gemini-flash-latest` or `gemini-pro-latest`. MLflow model URIs like `databricks` or
 `openai:/gpt-4o` aren't supported here because ADK's evaluators wire directly
 into Google's model registry.
