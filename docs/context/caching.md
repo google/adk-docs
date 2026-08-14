@@ -123,10 +123,12 @@ all agents within your app.
    <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
 </div>
 
-Every event backed by an LLM response carries a `CacheMetadata`, which reports
-what the cache did for that call. It has two states: an **active cache**, where
-`cacheName`, `expireTime` and `invocationsUsed` are all set, and a
-**fingerprint-only** state, where all three are null.
+When caching is enabled, an event backed by an LLM response can carry a
+`CacheMetadata` reporting what the cache did for that call. It is null when
+caching is disabled, and also when the call produced no cache information, so
+check for it before reading it. When present it has two states: an **active
+cache**, where `cacheName`, `expireTime` and `invocationsUsed` are all set, and
+a **fingerprint-only** state, where all three are null.
 
 ```kotlin
 --8<-- "examples/kotlin/snippets/context/CacheMetadataExample.kt:cache_metadata"

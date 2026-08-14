@@ -22,7 +22,8 @@ import com.google.adk.kt.events.Event
 
 /** Reports whether the context cache was used for the LLM call behind [event]. */
 fun logCacheUse(event: Event) {
-    // Only events backed by an LLM response carry cache metadata.
+    // Null when caching is disabled, and on any event whose LLM call produced
+    // no cache information.
     val cache = event.cacheMetadata ?: return
 
     if (!cache.isActive) {
