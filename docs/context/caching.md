@@ -1,7 +1,7 @@
 # Context caching with Gemini
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.15.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.15.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 When working with agents to complete tasks, you may want to reuse extended
@@ -62,6 +62,41 @@ these settings, as shown in the following code sample:
                          Duration.ofMinutes(10), /* ttl */
                          2048 /* min_tokens */))
                  .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    @file:OptIn(ExperimentalContextCachingFeature::class)
+
+    import com.google.adk.kt.agents.ContextCacheConfig
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.annotations.ExperimentalContextCachingFeature
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.models.Gemini
+    import kotlin.time.Duration.Companion.minutes
+
+    val rootAgent =
+        LlmAgent(
+            name = "my_caching_agent",
+            // configure an agent using Gemini 2.0 or higher
+            model = Gemini(name = "gemini-flash-latest"),
+        )
+
+    // Create the app with context caching configuration
+    val app =
+        App(
+            appName = "my-caching-agent-app",
+            rootAgent = rootAgent,
+            contextCacheConfig =
+                ContextCacheConfig(
+                    // Gemini enforces a hard 4096-token floor of its own, so only a
+                    // value above that has any further effect.
+                    minTokens = 8192,
+                    ttl = 10.minutes, // Store for up to 10 minutes
+                    cacheIntervals = 5, // Refresh after 5 uses
+                ),
+        )
     ```
 
 ## Configuration settings
