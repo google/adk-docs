@@ -246,7 +246,6 @@ You can configure the `GEPARootAgentPromptOptimizer` with a
 
 * `optimizer_model` (optional): The model used to analyze evaluation results and
 optimize the agent.
-Defaults to `"gemini-flash-latest"`.
 * `model_configuration` (optional): The configuration for the optimizer model.
 Defaults to a config with a 10K token thinking budget.
 * `max_metric_calls` (optional): The maximum number of evaluations to run during
@@ -287,7 +286,6 @@ You can configure the `GEPARootAgentOptimizer` with a
 
 * `optimizer_model` (optional): The model used to analyze evaluation results and
 optimize the agent.
-Defaults to `"gemini-3.5-flash"`.
 * `model_configuration` (optional): The configuration for the optimizer model.
 Defaults to a config with a `ThinkingLevel` of `HIGH`.
 * `max_metric_calls` (optional): The maximum number of evaluations to run during
