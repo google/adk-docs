@@ -134,6 +134,11 @@ a **fingerprint-only** state, where all three are null.
 --8<-- "examples/kotlin/snippets/context/CacheMetadataExample.kt:cache_metadata"
 ```
 
+`expireSoon` means the cache expires within about two minutes, or has already
+expired. It is a signal for your own code, not something ADK acts on: ADK keeps
+reusing a cache until it is actually past `expireTime`, has run past
+`cacheIntervals`, or its cached prefix changes.
+
 Token counts are not on `CacheMetadata`; read them from `LlmResponse.usageMetadata`.
 
 ## Next steps

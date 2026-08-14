@@ -27,15 +27,20 @@ fun logCacheUse(event: Event) {
     val cache = event.cacheMetadata ?: return
 
     if (!cache.isActive) {
-        // Fingerprint-only: ADK measured the cacheable prefix, but no cache
-        // exists yet -- the request was below minTokens, or this is the first turn.
+        // Fingerprint-only: ADK measured the cacheable prefix but no cache is in
+        // use. That is the first turn, a prefix that changed since the last turn,
+        // or a cache ADK did not create -- most often because the cacheable
+        // prefix was below minTokens.
         println("Not cached yet; fingerprinted ${cache.contentsCount} contents.")
         return
     }
 
     println("Cache ${cache.cacheName} reused ${cache.invocationsUsed} time(s).")
     if (cache.expireSoon) {
-        println("Cache expires shortly; the next turn will create a new one.")
+        // Advisory only. ADK goes on reusing the cache until it actually expires,
+        // so this is a heads-up for your own code, not a prediction about the
+        // next turn.
+        println("Cache is at or near expiry.")
     }
 }
 // --8<-- [end:cache_metadata]
