@@ -1,11 +1,11 @@
 ---
-catalog_title: tracegauge Cost Regression Gate
+catalog_title: adk-tracegauge Cost Regression Gate
 catalog_description: CI cost-regression gate plus a real per-invocation dollar-cost metric for ADK evals
 catalog_icon: /integrations/assets/adk-tracegauge.png
 catalog_tags: ["evaluation"]
 ---
 
-# tracegauge Cost Regression Gate for ADK agents
+# adk-tracegauge Cost Regression Gate for ADK agents
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
@@ -22,16 +22,16 @@ CI gate.
 ADK's built-in evaluation metrics report quality — trajectory match, response similarity,
 safety, hallucination — but none of them report cost. This fills that gap.
 
-> **The CI gate (`tracegauge check`) is the primary, recommended path — not the `adk eval`
+> **The CI gate (`adk-tracegauge check`) is the primary, recommended path — not the `adk eval`
 > metric below.** `adk eval`'s own process exit code does not reflect PASSED/FAILED (see
 > [Known ADK-side limitations](#known-adk-side-limitations)), so it cannot gate a CI job on
-> its own; `tracegauge check` has its own real, distinguishable exit codes and is proven to
+> its own; `adk-tracegauge check` has its own real, distinguishable exit codes and is proven to
 > work standalone. See [Use with agent](#use-with-agent) below — the metric path still
 > requires the plugin to be wired in either way.
 
 ## Use cases
 
-- **Cost regression gates (primary)**: `tracegauge check` fails CI when a prompt or model
+- **Cost regression gates (primary)**: `adk-tracegauge check` fails CI when a prompt or model
   change measurably increases mean cost per invocation, using a percentile bootstrap — not
   a naive point-estimate delta — so a build doesn't fail on noise.
 - **Inline cost visibility during eval iteration**: the `adk_tracegauge_cost_usd` metric
@@ -87,25 +87,25 @@ root_agent = LlmAgent(
 ```
 
 This works with the standard `adk eval` CLI directly — no `App`/plugin-list wiring needed
-for the primary paths (`tracegauge check` or the `adk eval` metric). A separate,
+for the primary paths (`adk-tracegauge check` or the `adk eval` metric). A separate,
 hand-rolled `App(plugins=[...])` harness is only needed for the optional sub-agent
 cost-rollup pattern described in the project's own README — out of scope for this page.
 
-## The CI cost-regression gate: `tracegauge check`
+## The CI cost-regression gate: `adk-tracegauge check`
 
-`tracegauge` (the console script this package installs) has two subcommands: `snapshot`
+`adk-tracegauge` (the console script this package installs) has two subcommands: `snapshot`
 (persist a `UsageStore`'s priced invocations to a JSON file) and `check` (a percentile
 bootstrap comparing two snapshots). Write a zero-argument entrypoint that runs your eval —
 `AgentEvaluator.evaluate()`, a real `adk eval` CLI invocation, or your own harness — with
 the plugin wired in per the previous section, then:
 
 ```bash
-tracegauge snapshot --entrypoint my_eval_suite:run_and_return_store --output baseline.json
-tracegauge snapshot --entrypoint my_eval_suite:run_and_return_store --output current.json
-tracegauge check --baseline baseline.json --current current.json
+adk-tracegauge snapshot --entrypoint my_eval_suite:run_and_return_store --output baseline.json
+adk-tracegauge snapshot --entrypoint my_eval_suite:run_and_return_store --output current.json
+adk-tracegauge check --baseline baseline.json --current current.json
 ```
 
-`tracegauge check` exits `0` (no significant regression), `1` (regression: the cost
+`adk-tracegauge check` exits `0` (no significant regression), `1` (regression: the cost
 increase is both statistically significant — the bootstrap confidence interval excludes
 zero — and clears a configurable practical-significance floor), or `3` (insufficient
 data — fewer than `--min-n`, default 30, priced invocations in either snapshot; a bootstrap
@@ -119,19 +119,19 @@ honestly-reported detection-power numbers this estimate is validated against.
 ### Paired mode for higher power at the same sample size
 
 At a realistic ADK eval-set size (tens of cases, not hundreds), the default independent-
-samples comparison can be substantially underpowered. `tracegauge check --mode paired` uses
+samples comparison can be substantially underpowered. `adk-tracegauge check --mode paired` uses
 a paired bootstrap instead — the same before/after eval case compared against itself,
 cancelling case-to-case cost variance rather than averaging over it — which is
 dramatically more sensitive at the same `n` whenever real per-case cost variance exists.
 
 Pairing needs a stable key that identifies "the same eval case" across both runs. For the
 standard `adk eval` CLI workflow, that key is each case's own authored `eval_id` from the
-`.evalset.json` file, recovered by pointing `tracegauge snapshot --eval-history` at the
+`.evalset.json` file, recovered by pointing `adk-tracegauge snapshot --eval-history` at the
 `.evalset_result.json` file `adk eval` writes after every run.
 
 **One real detail that matters here:** `after_model_callback` only ever populates an
 in-memory store — it does not survive a plain shell `adk eval` process exiting. So the
-entrypoint your `tracegauge snapshot` command runs must invoke the same underlying
+entrypoint your `adk-tracegauge snapshot` command runs must invoke the same underlying
 evaluation call *in-process* (via `click.testing.CliRunner` against `cli_eval`, the exact
 function `adk eval` itself runs), not shell out to `adk eval` as a separate step — otherwise
 the snapshot step sees an empty store. A minimal entrypoint that does this correctly:
@@ -175,11 +175,11 @@ def run_current():
 ```
 
 ```bash
-tracegauge snapshot --entrypoint my_eval_suite:run_baseline --output baseline.json \
+adk-tracegauge snapshot --entrypoint my_eval_suite:run_baseline --output baseline.json \
   --eval-history baseline.evalset_result.json
-tracegauge snapshot --entrypoint my_eval_suite:run_current --output current.json \
+adk-tracegauge snapshot --entrypoint my_eval_suite:run_current --output current.json \
   --eval-history current.evalset_result.json
-tracegauge check --baseline baseline.json --current current.json --mode paired
+adk-tracegauge check --baseline baseline.json --current current.json --mode paired
 ```
 
 Real output, from a genuine injected regression (32-case eval set, a fixed per-call
@@ -188,8 +188,8 @@ prompt-token bump added to the "current" agent variant — above the real defaul
 floor):
 
 ```
-tracegauge check: mode=paired (key=eval_case_id, 32 overlapping eval_case_ids matched between baseline and current)
-tracegauge check [method=paired]: n_baseline=32 n_current=32 (min_n=30)
+adk-tracegauge check: mode=paired (key=eval_case_id, 32 overlapping eval_case_ids matched between baseline and current)
+adk-tracegauge check [method=paired]: n_baseline=32 n_current=32 (min_n=30)
   mean_baseline=$0.005306  mean_current=$0.007106
   achieved power: minimum reliably-detectable effect at 80% power, given this run's observed variance/n, is ~$0.000000 (+0.00% of mean baseline) [normal approximation to the bootstrap CI -- see _regression.py module docstring for validated accuracy]
   observed effect: +0.001800 USD (+33.93%), 95% CI [+0.001800, +0.001800] (n_boot=10000, seed=42)
@@ -230,7 +230,7 @@ Metric: adk_tracegauge_cost_usd, Status: PASSED, Score: 0.0007999999999999999, T
 **One real thing worth knowing before you rely on this path for anything CI-shaped:** `adk
 eval`'s own *process exit code* does not reflect PASSED/FAILED — the real result lives in
 `adk eval`'s stdout table and the persisted `.adk/eval_history/*.evalset_result.json` file,
-not in `$?`. Use this path for inline visibility while iterating; use `tracegauge check`
+not in `$?`. Use this path for inline visibility while iterating; use `adk-tracegauge check`
 (above) for CI gating.
 
 ## Available metrics
@@ -263,24 +263,24 @@ own correctness — worth knowing regardless of which path above you use:
   itself from the deprecated legacy `threshold` scalar via `mean(scores) >= threshold` —
   hardcoded higher-is-better — instead of reading the metric's own, already-correct
   `eval_status`. `adk eval`/`LocalEvalService` are **unaffected** — they read `eval_status`
-  directly and are always correct. Trust `adk eval`, `tracegauge check`, or this metric's own
+  directly and are always correct. Trust `adk eval`, `adk-tracegauge check`, or this metric's own
   `eval_status`; never `AgentEvaluator.evaluate()`'s assert/no-assert outcome for this
   specific metric. `adk-tracegauge` emits a real runtime warning when it detects this
   situation. A fix has been prepared and is pending submission upstream to `google/adk-python`.
 - **`adk eval`'s own process exit code does not reflect PASSED/FAILED**, on any metric —
   the CLI prints a real pass/fail summary but the process always exits `0`. This is exactly
-  why `tracegauge check`, not `adk eval`, is the recommended CI-gating path above. A fix has
+  why `adk-tracegauge check`, not `adk eval`, is the recommended CI-gating path above. A fix has
   been prepared and is pending submission upstream to `google/adk-python`.
 
 Neither limitation is specific to `adk-tracegauge` — both apply to any custom metric
-registered the same way. `tracegauge check`'s own exit codes are unaffected by either, since
+registered the same way. `adk-tracegauge check`'s own exit codes are unaffected by either, since
 it never depends on `adk eval`'s own exit behavior.
 
 ## Resources
 
 - [GitHub repository](https://github.com/gaurav-gandhi-2411/adk-tracegauge): source code,
   issues, and the full design rationale (including the measured statistical detection-power
-  numbers behind `tracegauge check`) in `README.md`.
+  numbers behind `adk-tracegauge check`) in `README.md`.
 - [PyPI package](https://pypi.org/project/adk-tracegauge/): releases and install
   instructions.
 - [ADK Evaluation Guide](/evaluate/): background on ADK's evaluation framework and the
