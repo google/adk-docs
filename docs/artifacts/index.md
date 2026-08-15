@@ -895,6 +895,22 @@ artifact in a later turn.
     and customize its request instructions before loading the selected artifact
     contents.
 
+    **Parsing spreadsheet artifacts (Python only):**
+
+    By default, spreadsheet files (`.xlsx`, `.xls`) cannot be read inline by the
+    model. In Python, you can set `enable_spreadsheet_parsing=True` to parse
+    them into Markdown tables:
+
+    ```python
+    tools=[
+        LoadArtifactsTool(enable_spreadsheet_parsing=True),
+    ]
+    ```
+
+    - Each sheet is rendered as a separate Markdown table under a sheet heading.
+    - Table output is capped at the first 100 rows per sheet to avoid exceeding
+      context window limits.
+
 === "Go"
 
     ```go
