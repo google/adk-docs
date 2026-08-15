@@ -116,18 +116,25 @@ explicit warning whenever your configured significance floor is smaller than tha
 achievable figure. See the project's own README ("Known limitations") for the full,
 honestly-reported detection-power numbers this estimate is validated against.
 
-### Paired mode for higher power at the same sample size
+### Paired mode: the default, whenever a pairing key resolves
 
-At a realistic ADK eval-set size (tens of cases, not hundreds), the default independent-
-samples comparison can be substantially underpowered. `adk-tracegauge check --mode paired` uses
-a paired bootstrap instead — the same before/after eval case compared against itself,
-cancelling case-to-case cost variance rather than averaging over it — which is
-dramatically more sensitive at the same `n` whenever real per-case cost variance exists.
+At a realistic ADK eval-set size (tens of cases, not hundreds), an unpaired two-sample
+comparison can be substantially underpowered. `adk-tracegauge check` defaults to
+`--mode auto`, and that default **prefers a paired bootstrap** — the same before/after eval
+case compared against itself, cancelling case-to-case cost variance rather than averaging
+over it — whenever a stable pairing key resolves with at least `--min-n` (default 30)
+overlapping cases between the two snapshots. Paired mode is dramatically more sensitive at
+the same `n` whenever real per-case cost variance exists; **only when no such key
+resolves, or too few cases overlap, does `check` automatically fall back to the two-sample
+comparison** — never silently: the resolved mode and key are printed on every run.
 
 Pairing needs a stable key that identifies "the same eval case" across both runs. For the
 standard `adk eval` CLI workflow, that key is each case's own authored `eval_id` from the
 `.evalset.json` file, recovered by pointing `adk-tracegauge snapshot --eval-history` at the
-`.evalset_result.json` file `adk eval` writes after every run.
+`.evalset_result.json` file `adk eval` writes after every run. No flag is needed to opt in —
+`--mode auto` finds and uses this key automatically; `--mode paired`/`--mode two-sample`
+remain available to force one method by name (`--mode paired` fails loudly, naming the
+actual overlap count, rather than silently falling back, if too few cases match).
 
 **One real detail that matters here:** `after_model_callback` only ever populates an
 in-memory store — it does not survive a plain shell `adk eval` process exiting. So the
@@ -179,13 +186,16 @@ adk-tracegauge snapshot --entrypoint my_eval_suite:run_baseline --output baselin
   --eval-history baseline.evalset_result.json
 adk-tracegauge snapshot --entrypoint my_eval_suite:run_current --output current.json \
   --eval-history current.evalset_result.json
-adk-tracegauge check --baseline baseline.json --current current.json --mode paired
+adk-tracegauge check --baseline baseline.json --current current.json
 ```
 
-Real output, from a genuine injected regression (32-case eval set, a fixed per-call
-prompt-token bump added to the "current" agent variant — above the real default
-`--min-n=30`, a genuine gate-passing verdict, not a demo that bypasses the real refusal
-floor):
+Note there is **no `--mode` flag above** — `check` defaults to `--mode auto`, which resolves
+`eval_case_id` from the two `--eval-history` files and selects paired mode on its own. Real
+output, from a genuine injected regression (32-case eval set, a fixed per-call prompt-token
+bump added to the "current" agent variant — above the real default `--min-n=30`, a genuine
+gate-passing verdict, not a demo that bypasses the real refusal floor), re-verified fresh
+this session against a clean-built `adk-tracegauge` wheel installed into a fresh venv outside
+any repo checkout, with `google-adk==2.7.0`:
 
 ```
 adk-tracegauge check: mode=paired (key=eval_case_id, 32 overlapping eval_case_ids matched between baseline and current)
@@ -201,10 +211,20 @@ $ echo $?
 1
 ```
 
-`--mode auto` (the default) uses paired mode automatically whenever enough eval cases
-overlap between the two snapshots, and always prints which mode and which pairing key it
-actually used — never silently. `--mode paired` requested explicitly fails with an
-actionable error, naming the actual overlap count, if too few cases match.
+**Measured detection rates for the shipped default (`--confidence 0.98`, `--min-n 30`),
+stated honestly, not just "it works":** paired mode's false-positive rate is measured
+*higher* than two-sample's at the same `n` (**1.40% [0.97%, 2.02%], 28/2,000 trials** vs.
+**0.85% [0.53%, 1.36%], 17/2,000 trials**) — pairing buys detection power at a given `n`,
+not a more reliable "clean" verdict. That power difference is large: paired mode detects a
+true 10% cost regression **99.45% [99.02%, 99.69%] of the time (1,989/2,000 trials)** at
+`n=30`, versus the two-sample fallback's **57.80% [55.62%, 59.95%] (1,156/2,000 trials)** on
+the identical scenario — which is exactly why `--mode auto` prefers paired whenever it can.
+The two-sample fallback remains real and live (no pairing key, insufficient overlap, or
+`--mode two-sample` requested explicitly) and should not be assumed to inherit paired mode's
+power. Both figures — Wilson 95% confidence intervals, 2,000 trials/cell — come from the
+package's own `scripts/measure_regression_confidence_grid.py`; see its README ("Known
+limitations" and "What this gate can and cannot detect") for the full 18+18-cell grid across
+`confidence` ∈ {0.95, 0.98, 0.99} and `n` ∈ {30, 50}.
 
 ## Also: the `adk_tracegauge_cost_usd` metric inside `adk eval`
 
