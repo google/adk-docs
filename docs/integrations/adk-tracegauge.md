@@ -192,7 +192,7 @@ adk-tracegauge check: mode=paired (key=eval_case_id, 32 overlapping eval_case_id
 adk-tracegauge check [method=paired]: n_baseline=32 n_current=32 (min_n=30)
   mean_baseline=$0.005306  mean_current=$0.007106
   achieved power: minimum reliably-detectable effect at 80% power, given this run's observed variance/n, is ~$0.000000 (+0.00% of mean baseline) [normal approximation to the bootstrap CI -- see _regression.py module docstring for validated accuracy]
-  observed effect: +0.001800 USD (+33.93%), 95% CI [+0.001800, +0.001800] (n_boot=10000, seed=42)
+  observed effect: +0.001800 USD (+33.93%), 98% CI [+0.001800, +0.001800] (n_boot=10000, seed=42)
   statistically_significant=True practically_significant=True (floors: min_effect_usd=0.000100 OR min_effect_pct=5.00%)
   REGRESSION: cost increased significantly (CI excludes zero) AND the increase clears the configured practical-significance floor.
 ```
