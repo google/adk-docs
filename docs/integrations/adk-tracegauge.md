@@ -233,7 +233,7 @@ a real dollar score and PASSED/FAILED verdict per invocation:
 
 ```json
 // test_config.json — the threshold this run must stay under, per invocation
-{"criteria": {"adk_tracegauge_cost_usd": 0.05}}
+{"criteria": {"adk_tracegauge_cost_usd": 5.00}}
 ```
 
 ```bash
@@ -242,10 +242,16 @@ adk eval assistant my_eval_set.json --config_file_path test_config.json --print_
 
 ```
 Overall Eval Status: PASSED
-Metric: adk_tracegauge_cost_usd, Status: PASSED, Score: 0.0007999999999999999, Threshold: 0.05
+Metric: adk_tracegauge_cost_usd, Status: PASSED, Score: 2.8, Threshold: 5.0
 ```
 
-(real output, verbatim — the float tail is genuine floating-point representation, not a typo)
+Real output, reproduced against the published `adk-tracegauge==0.3.0` install. See
+[`examples/01_minimal_cost_gate.py`](https://github.com/gaurav-gandhi-2411/adk-tracegauge/blob/main/examples/01_minimal_cost_gate.py)
+in the `adk-tracegauge` repo for a runnable, fully deterministic version of this example — it
+wires a fake model returning a fixed token count (1M input + 1M output tokens on
+`gemini-2.5-flash`, pricing to a real, reproducible `$2.80`) so it needs no API key or live
+model call to reproduce. The same script also runs a second case with `threshold=1.00` to show
+the FAILED path (`Score: 2.8, Threshold: 1.0`).
 
 **One real thing worth knowing before you rely on this path for anything CI-shaped:** `adk
 eval`'s own *process exit code* does not reflect PASSED/FAILED — the real result lives in
