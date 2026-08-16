@@ -57,6 +57,15 @@ safety, hallucination — but none of them report cost. This fills that gap.
 pip install adk-tracegauge
 ```
 
+**If `adk-tracegauge` isn't found right after installing** (`CommandNotFoundException` in
+PowerShell, "not recognized" in cmd on Windows), this is a PATH issue, not a broken install —
+`pip install` outside a venv defaults to a per-user install, and the console script lands in a
+per-user directory that isn't on PATH by default. Two fixes: use `python -m adk_tracegauge` in
+place of `adk-tracegauge` everywhere on this page (works regardless of PATH, from
+`adk-tracegauge>=0.3.1`), or add the script directory `pip install` printed a `WARNING` about
+(typically `%APPDATA%\Python\PythonXYZ\Scripts` on Windows) to PATH. Installing into an
+activated virtual environment avoids this entirely.
+
 `google-adk[eval]` is pulled in as a dependency; `adk-tracegauge` has no other required
 runtime dependency (its dollar-cost arithmetic is implemented in-house — it does not depend
 on any external cost-computation library). The `[eval]` extra is required: `google-adk`'s
