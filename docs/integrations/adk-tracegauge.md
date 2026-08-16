@@ -212,19 +212,28 @@ $ echo $?
 ```
 
 **Measured detection rates for the shipped default (`--confidence 0.98`, `--min-n 30`),
-stated honestly, not just "it works":** paired mode's false-positive rate is measured
-*higher* than two-sample's at the same `n` (**1.40% [0.97%, 2.02%], 28/2,000 trials** vs.
-**0.85% [0.53%, 1.36%], 17/2,000 trials**) — pairing buys detection power at a given `n`,
-not a more reliable "clean" verdict. That power difference is large: paired mode detects a
-true 10% cost regression **99.45% [99.02%, 99.69%] of the time (1,989/2,000 trials)** at
-`n=30`, versus the two-sample fallback's **57.80% [55.62%, 59.95%] (1,156/2,000 trials)** on
-the identical scenario — which is exactly why `--mode auto` prefers paired whenever it can.
-The two-sample fallback remains real and live (no pairing key, insufficient overlap, or
-`--mode two-sample` requested explicitly) and should not be assumed to inherit paired mode's
-power. Both figures — Wilson 95% confidence intervals, 2,000 trials/cell — come from the
-package's own `scripts/measure_regression_confidence_grid.py`; see its README ("Known
-limitations" and "What this gate can and cannot detect") for the full 18+18-cell grid across
-`confidence` ∈ {0.95, 0.98, 0.99} and `n` ∈ {30, 50}.
+stated honestly, not just "it works":** paired mode detects a true 10% cost regression
+**99.22% [98.94%, 99.43%] of the time (4,961/5,000 trials)** at `n=30`, versus the
+two-sample fallback's **57.46% [56.08%, 58.82%] (2,873/5,000 trials)** on the identical
+scenario — which is exactly why `--mode auto` prefers paired whenever it can. The
+two-sample fallback remains real and live (no pairing key, insufficient overlap, or
+`--mode two-sample` requested explicitly) and should not be assumed to inherit paired
+mode's power. **On false-positive rate specifically**: an earlier (2,000-trial)
+measurement reported paired mode's FPR as higher than two-sample's at the shipped
+`n=30` (1.40% vs. 0.85%) — a follow-up audit (`docs/audit/FPR_ANOMALY.md`) found that
+comparison was never actually significance-tested and does not hold up when tested. The
+corrected, extended 5,000-trial measurement (same seed base, trials 0–1,999
+byte-identical to the original run) puts paired at **1.46% [1.16%, 1.83%] (73/5,000)**
+and two-sample at **1.30% [1.02%, 1.65%] (65/5,000)** at this cell — not significantly
+different (z=0.69, p=0.49), and at `confidence=0.95/n=30` the original ranking flips
+entirely (paired 2.98% < two-sample 3.18%). Both modes DO show a
+real, already-documented, generic small-`n` percentile-bootstrap anti-conservatism
+(elevated FPR relative to nominal at `n≤50`, roughly equally in both modes) — see the
+package's own `docs/audit/FPR_ANOMALY.md` for the full investigation. Figures — Wilson
+95% confidence intervals — come from the package's own
+`scripts/measure_regression_confidence_grid.py`; see its README ("Known limitations" and
+"What this gate can and cannot detect") for the full 18+18-cell grid across `confidence`
+∈ {0.95, 0.98, 0.99} and `n` ∈ {30, 50}.
 
 ## Also: the `adk_tracegauge_cost_usd` metric inside `adk eval`
 
