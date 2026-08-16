@@ -1,35 +1,12 @@
 # Agents CLI Quickstart for ADK
 
-[Agents CLI in Agent Platform](https://google.github.io/agents-cli/) is a CLI
-and skills package that supports **the end-to-end lifecycle of your agents on
-Google Cloud**: scaffolding, evaluation, deployment, and observability. Your
-agents are built with the Agent Development Kit (ADK).
+[Agents CLI](https://google.github.io/agents-cli/) sets up and installs ADK,
+scaffolds a project you can evaluate and deploy, and teaches your coding agent
+how to use ADK through a bundled set of skills. It works with Antigravity,
+Claude Code, Codex, and any other skill-aware coding agent. Use it when you
+want to go from empty directory to a deployable ADK agent quickly.
 
 ![The ten stages of the agent development lifecycle](/assets/agents-cli-lifecycle.png)
-
-**Agents CLI is designed to be used through a coding agent.** It installs ADK
-skills into Antigravity, Claude Code, Codex, and others, and your coding agent
-uses them to make the right decisions at each step. This guide takes the coding
-agent path. Every command also works standalone, so you can run them yourself
-from a terminal instead: see the
-[manual workflow tutorial](https://google.github.io/agents-cli/guide/hands-on-tutorial/).
-
-Agents CLI is optional, and the agents it creates are ordinary ADK agents. To
-learn ADK itself, start with one of the
-[language quickstarts](index.md).
-
-Agents CLI provides more than 25 commands spanning that lifecycle, and bundles
-seven skills that teach your coding agent when to reach for each one:
-
-| Skill | What your coding agent learns |
-| --- | --- |
-| `google-agents-cli-workflow` | Development lifecycle, code preservation, model selection |
-| `google-agents-cli-adk-code` | ADK Python API: agents, tools, orchestration, callbacks |
-| `google-agents-cli-scaffold` | Project scaffolding: `create`, `enhance`, `upgrade` |
-| `google-agents-cli-eval` | Evaluation lifecycle: datasets, metrics, generate and grade, compare, analyze, optimize |
-| `google-agents-cli-deploy` | Deployment: Agent Runtime, Cloud Run, GKE, CI/CD |
-| `google-agents-cli-publish` | Gemini Enterprise registration |
-| `google-agents-cli-observability` | Cloud Trace, logging, third-party integrations |
 
 ## Prerequisites
 
@@ -52,15 +29,15 @@ Agents CLI currently supports Python agents.
 
 ## Installation
 
-Install Agents CLI by running the following command. This is the only command
-you run yourself; the rest of this guide goes through your coding agent.
+Install Agents CLI by running the following command. This installs the
+`agents-cli` command, the ADK Python packages your project will need, and the
+ADK skills into any coding agents already on your machine. This is the only
+command you run yourself; the rest of this guide goes through your coding
+agent.
 
 ```shell
 uvx google-agents-cli setup
 ```
-
-This command installs the `agents-cli` command, and the ADK skills into any
-coding agents it finds on your machine.
 
 ??? tip "Alternative installation methods"
 
@@ -84,30 +61,31 @@ coding agents it finds on your machine.
 
 ## Authenticate
 
-If you are already authenticated with the Google Cloud CLI, Agents CLI picks up
-your Application Default Credentials and needs no further setup:
+Agents CLI needs credentials for a generative AI API to run your agents. The
+simplest option is a Gemini API key from Google AI Studio. Create a key on the
+[API Keys](https://aistudio.google.com/app/apikey) page, then after you
+scaffold a project in the next step, open its `.env` file and set:
 
-```shell
-gcloud auth application-default login
+```env title="Update: .env"
+GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-??? tip "Using a Gemini API key instead"
+Comment out the three `GOOGLE_CLOUD_*` lines in the same file so the SDK uses
+your key instead of Vertex AI.
 
-    Create a key in Google AI Studio on the
-    [API Keys](https://aistudio.google.com/app/apikey) page. After you scaffold
-    a project in the next step, open its `.env` file, comment out the three
-    Google Cloud lines, and add your key:
+??? note "Using Google Cloud (Vertex AI) instead"
 
-    ```env title="Update: .env"
-    # GOOGLE_GENAI_USE_VERTEXAI=true
-    # GOOGLE_CLOUD_PROJECT=your-project-id
-    # GOOGLE_CLOUD_LOCATION=global
+    If you already have a Google Cloud project, Agents CLI picks up your
+    Application Default Credentials:
 
-    GEMINI_API_KEY=YOUR_API_KEY
+    ```shell
+    gcloud auth application-default login
     ```
 
-    Setting `GEMINI_API_KEY` as a shell variable is not enough on its own,
-    because the generated `.env` file selects Google Cloud by default.
+    Leave the `GOOGLE_CLOUD_*` lines in the generated `.env` file uncommented
+    and set them to your project. For the full setup — including quotas,
+    regions, and enterprise auth — see the
+    [Google Cloud setup guide](google-cloud.md).
 
 ## Build your agent
 
@@ -115,50 +93,51 @@ Open your coding agent and confirm it can see the skills:
 
 === "Antigravity"
 
-    Launch Antigravity from your IDE or terminal, then check that the Agents CLI
-    skills are available in your environment.
+    ```shell
+    antigravity            # launch from your IDE or terminal
+    # then verify the Agents CLI skills are listed in your environment
+    ```
 
 === "Claude Code"
 
     ```shell
     claude
+    /skills                # expect google-agents-cli-* entries in the list
     ```
-
-    Run `/skills`. You should see `google-agents-cli-workflow` and the other
-    Agents CLI skills listed.
 
 === "Codex"
 
     ```shell
     codex
+    /skills                # expect google-agents-cli-* entries in the list
     ```
 
-    Check that the Agents CLI skills are available in your environment.
-
-=== "Any other agent"
+??? note "Using other coding agents"
 
     Agents CLI works with any coding agent that supports
     [skills](https://agentskills.io/what-are-skills). Most agents list them
     through a `/skills` command or a settings panel.
 
-Then tell it what you want to build:
+Then tell the coding agent what you want to build:
 
 > *"Use agents-cli to build an agent that turns long text into short
 > bullet-point summaries"*
 
 Your coding agent activates the `google-agents-cli-workflow` and
-`google-agents-cli-scaffold` skills. It asks clarifying questions about the
+`google-agents-cli-scaffold` skills, asks clarifying questions about the
 tools your agent calls, the inputs and outputs you expect, and the success
-criteria to evaluate against, then scaffolds the project:
+criteria to evaluate against, and then scaffolds the project. It runs the
+commands below on your behalf — you can also run them directly in a terminal
+if you prefer:
 
 ```shell
 agents-cli create my-agent --prototype --yes
 cd my-agent && agents-cli install
 ```
 
-It then uses the `google-agents-cli-adk-code` skill to write your agent into
-`app/agent.py`. You now have a working project with agent code, tests, and an
-eval dataset:
+Next, your coding agent uses the `google-agents-cli-adk-code` skill to write
+your agent into `app/agent.py`. You end up with a working project — agent
+code, tests, and an eval dataset — laid out like this:
 
 ```none
 my-agent/
