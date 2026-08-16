@@ -275,8 +275,8 @@ own README ("Pricing") for the full model list and the custom-price extension me
 
 ## Known ADK-side limitations
 
-Two real, source-confirmed limitations in `google-adk` itself, independent of this package's
-own correctness — worth knowing regardless of which path above you use:
+Three real, source-confirmed limitations in `google-adk` itself, independent of this
+package's own correctness — worth knowing regardless of which path above you use:
 
 - **`AgentEvaluator.evaluate()`'s pytest-style pass/fail is directionally unreliable for a
   lower-is-better metric like cost, at any threshold.** ADK's harness recomputes PASSED/FAILED
@@ -291,10 +291,17 @@ own correctness — worth knowing regardless of which path above you use:
   the CLI prints a real pass/fail summary but the process always exits `0`. This is exactly
   why `adk-tracegauge check`, not `adk eval`, is the recommended CI-gating path above. A fix has
   been prepared and is pending submission upstream to `google/adk-python`.
+- **`LocalEvalService` discards a metric's per-invocation result whenever its
+  `overall_eval_status` is `NOT_EVALUATED`** — the status `adk_tracegauge_cost_usd` reports
+  for an individual invocation whose model didn't resolve, a streaming anomaly was detected,
+  or an unpriced token category was present (see [Available metrics](#available-metrics));
+  ADK substitutes an empty result rather than surfacing the real rationale in that case. Open
+  design question, not yet resolved: [google/adk-python#6725](https://github.com/google/adk-python/issues/6725).
 
-Neither limitation is specific to `adk-tracegauge` — both apply to any custom metric
-registered the same way. `adk-tracegauge check`'s own exit codes are unaffected by either, since
-it never depends on `adk eval`'s own exit behavior.
+Neither of the first two limitations is specific to `adk-tracegauge` — both apply to any
+custom metric registered the same way. `adk-tracegauge check`'s own exit codes are unaffected
+by any of the three, since it never depends on `adk eval`'s own exit behavior or on
+`LocalEvalService`'s per-invocation result surfacing.
 
 ## Resources
 
@@ -305,3 +312,5 @@ it never depends on `adk eval`'s own exit behavior.
   instructions.
 - [ADK Evaluation Guide](/evaluate/): background on ADK's evaluation framework and the
   `MetricEvaluatorRegistry` this package registers against.
+- [google/adk-python#6725](https://github.com/google/adk-python/issues/6725): the open
+  upstream issue behind this page's third "Known ADK-side limitations" entry above.
