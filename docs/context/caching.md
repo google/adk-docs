@@ -67,8 +67,6 @@ these settings, as shown in the following code sample:
 === "Kotlin"
 
     ```kotlin
-    @file:OptIn(ExperimentalContextCachingFeature::class)
-
     import com.google.adk.kt.agents.ContextCacheConfig
     import com.google.adk.kt.agents.LlmAgent
     import com.google.adk.kt.annotations.ExperimentalContextCachingFeature
@@ -86,14 +84,14 @@ these settings, as shown in the following code sample:
         )
 
     // Create the app with context caching configuration
+    @OptIn(ExperimentalContextCachingFeature::class)
     val app =
         App(
             appName = "my-caching-agent-app",
             rootAgent = rootAgent,
             contextCacheConfig =
                 ContextCacheConfig(
-                    // Gemini enforces a hard 4096-token floor of its own, so only a
-                    // value above that has any further effect.
+                    // Gemini applies its own minimum cacheable size, which varies by model
                     minTokens = 8192,
                     ttl = 10.minutes, // Store for up to 10 minutes
                     cacheIntervals = 5, // Refresh after 5 uses
