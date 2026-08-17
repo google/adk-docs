@@ -32,3 +32,4 @@ snippets/runtime/RunConfigExample.kt
 snippets/runtime/RunnerLoop.kt
 snippets/integrations/RagEngine.kt
 snippets/plugins/CountInvocationPlugin.kt
+snippets/context/CacheMetadataExample.kt

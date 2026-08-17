@@ -123,6 +123,30 @@ all agents within your app.
     it fails and the request proceeds without caching. Available in Python and
     Kotlin; defaults to none.
 
+## Check whether the cache is being used
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+When caching is enabled, an event backed by an LLM response can carry a
+`CacheMetadata` reporting what the cache did for that call. It is null when
+caching is disabled, and also when the call produced no cache information, so
+check for it before reading it. When present it has two states: an **active
+cache**, where `cacheName`, `expireTime` and `invocationsUsed` are all set, and
+a **fingerprint-only** state, where all three are null.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/context/CacheMetadataExample.kt:cache_metadata"
+```
+
+`expireSoon` means the cache expires within about two minutes, or has already
+expired. It is a signal for your own code, not something ADK acts on: ADK keeps
+reusing a cache until it is actually past `expireTime`, has run past
+`cacheIntervals`, or its cached prefix changes.
+
+Token counts are not on `CacheMetadata`; read them from `LlmResponse.usageMetadata`.
+
 ## Next steps
 
 For a full implementation of how to use and test the context caching feature,
