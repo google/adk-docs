@@ -220,29 +220,38 @@ $ echo $?
 1
 ```
 
-**Measured detection rates for the shipped default (`--confidence 0.98`, `--min-n 30`),
-stated honestly, not just "it works":** paired mode detects a true 10% cost regression
-**99.22% [98.94%, 99.43%] of the time (4,961/5,000 trials)** at `n=30`, versus the
-two-sample fallback's **57.46% [56.08%, 58.82%] (2,873/5,000 trials)** on the identical
-scenario — which is exactly why `--mode auto` prefers paired whenever it can. The
-two-sample fallback remains real and live (no pairing key, insufficient overlap, or
-`--mode two-sample` requested explicitly) and should not be assumed to inherit paired
-mode's power. **On false-positive rate specifically**: an earlier (2,000-trial)
-measurement reported paired mode's FPR as higher than two-sample's at the shipped
-`n=30` (1.40% vs. 0.85%) — a follow-up audit (`docs/audit/FPR_ANOMALY.md`) found that
-comparison was never actually significance-tested and does not hold up when tested. The
-corrected, extended 5,000-trial measurement (same seed base, trials 0–1,999
-byte-identical to the original run) puts paired at **1.46% [1.16%, 1.83%] (73/5,000)**
-and two-sample at **1.30% [1.02%, 1.65%] (65/5,000)** at this cell — not significantly
-different (z=0.69, p=0.49), and at `confidence=0.95/n=30` the original ranking flips
-entirely (paired 2.98% < two-sample 3.18%). Both modes DO show a
-real, already-documented, generic small-`n` percentile-bootstrap anti-conservatism
-(elevated FPR relative to nominal at `n≤50`, roughly equally in both modes) — see the
-package's own `docs/audit/FPR_ANOMALY.md` for the full investigation. Figures — Wilson
-95% confidence intervals — come from the package's own
-`scripts/measure_regression_confidence_grid.py`; see its README ("Known limitations" and
-"What this gate can and cannot detect") for the full 18+18-cell grid across `confidence`
-∈ {0.95, 0.98, 0.99} and `n` ∈ {30, 50}.
+**Measured false-positive rate for the shipped default (`--confidence 0.98`,
+`--min-n 30`), stated honestly, not just "it works":** at `n=30`, paired mode's false-positive
+rate is **1.46% [1.16%, 1.83%] (73/5,000 trials)**, two-sample's is **1.30% [1.02%, 1.65%]
+(65/5,000 trials)**. An earlier (2,000-trial) measurement reported paired mode's FPR as
+higher than two-sample's at the shipped `n=30` (1.40% vs. 0.85%) — a follow-up audit
+(`docs/audit/FPR_ANOMALY.md`) found that comparison was never actually significance-tested
+and does not hold up when tested (z=0.69, p=0.49 on the corrected, extended 5,000-trial
+measurement; at `confidence=0.95/n=30` the original ranking even flips, paired 2.98% <
+two-sample 3.18%). Both modes DO show a real, already-documented, generic small-`n`
+percentile-bootstrap anti-conservatism (elevated FPR relative to nominal at `n≤50`,
+roughly equally in both modes) — see `docs/audit/FPR_ANOMALY.md` for the full
+investigation.
+
+**On power — no single figure, by design.** Paired mode structurally cancels case-to-case
+cost heterogeneity (that's the whole reason `--mode auto` prefers it whenever a pairing key
+resolves — see "Shipped default" in the package README), so its detection power depends on
+the **within-case** cost CV (coefficient of variation — standard deviation divided by mean,
+i.e. how much cost varies) rather than the raw per-invocation CV two-sample mode sees. An
+earlier version of this page (and the package README) stated one power figure ("99.22% at
+`n=30`") as if it applied universally; a follow-up audit
+(`docs/audit/AC1_SKEW_SENSITIVITY.md`, `docs/audit/AD2_REAL_CV_MEASUREMENT.md`) found power
+at that same `n` swings from ~99% to single digits depending on an assumed CV that was never
+measured. The package README now publishes a CV x `n` power table (both modes, `confidence
+=0.98`, ≥2,000 trials/cell, Wilson 95% CIs) instead of one number — see its "Power depends on
+your own cost variance" section for the full grid and how to read it against your own data.
+`adk-tracegauge check` also prints an "achieved power" line from YOUR run's own observed
+variance on every invocation, unconditionally — that per-run number, not any table, is what
+applies to your actual workload. Figures — Wilson 95% confidence intervals — come from the
+package's own `scripts/measure_regression_confidence_grid.py` and
+`scripts/measure_power_by_cv_grid.py`; see the package README ("Known limitations" and "What
+this gate can and cannot detect") for the full FPR grid across `confidence` ∈ {0.95, 0.98,
+0.99} and `n` ∈ {30, 50}.
 
 ## Also: the `adk_tracegauge_cost_usd` metric inside `adk eval`
 
