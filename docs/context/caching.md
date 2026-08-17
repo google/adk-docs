@@ -72,7 +72,9 @@ these settings, as shown in the following code sample:
     import com.google.adk.kt.annotations.ExperimentalContextCachingFeature
     import com.google.adk.kt.apps.App
     import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.types.HttpOptions
     import kotlin.time.Duration.Companion.minutes
+    import kotlin.time.Duration.Companion.seconds
 
     val rootAgent =
         LlmAgent(
@@ -93,6 +95,8 @@ these settings, as shown in the following code sample:
                     minTokens = 8192,
                     ttl = 10.minutes, // Store for up to 10 minutes
                     cacheIntervals = 5, // Refresh after 5 uses
+                    // On timeout the create fails and the request proceeds uncached.
+                    createHttpOptions = HttpOptions(timeout = 10.seconds),
                 ),
         )
     ```
@@ -114,6 +118,10 @@ all agents within your app.
     content can be used before it expires. This setting allows you to
     control how frequently the cache is updated, even if the TTL has not
     expired. Defaults to `10`.
+-   **`create_http_options`** (HttpOptions): The HTTP options for the cache
+    creation call, which lets you set a timeout on it. If the call times out,
+    it fails and the request proceeds without caching. Available in Python and
+    Kotlin; defaults to none.
 
 ## Next steps
 
