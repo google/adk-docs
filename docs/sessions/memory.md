@@ -603,11 +603,12 @@ For example, you can automate this step with a callback:
    <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
-`addSessionToMemory` saves the whole session. When you want finer control,
-`CallbackContext` also offers `addEventsToMemory`, for a chosen subset of events,
-and `addMemory`, for facts you construct yourself. Both accept optional
-`customMetadata`, and both fill in the app, user and session from the current
-invocation.
+The `CallbackContext.addSessionToMemory` method is the default behavior for
+memory and saves the whole session of your agent. When you want finer control,
+`CallbackContext` also offers two more methods: `addEventsToMemory`, for a
+chosen subset of events, and `addMemory`, for facts you construct yourself.
+Both accept optional `customMetadata`, and both fill in the app, user and
+session from the current invocation.
 
 ```kotlin
 --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:callback_memory_writes"
