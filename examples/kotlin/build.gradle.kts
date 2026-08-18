@@ -24,6 +24,12 @@ dependencies {
     // adk-kotlin 0.8.0 already resolves to.
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-java:2.3.13")
+    // A2A. The a2a artifact publishes the A2A SDK as runtime-only, but A2AAgent's
+    // httpClient parameter defaults to JdkA2AHttpClient(), so the client artifact
+    // is needed on the COMPILE classpath too. Version matches adk-kotlin 0.8.0's
+    // own catalog; the spec and jsonrpc transport arrive transitively.
+    implementation("com.google.adk:google-adk-kotlin-a2a:0.8.0")
+    implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.0.0.Final")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
     implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.56.0")
