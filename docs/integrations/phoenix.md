@@ -11,7 +11,9 @@ catalog_tags: ["observability", "evaluation"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Phoenix](https://arize.com/docs/phoenix) is an open-source, self-hosted observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://arize.com/phoenix/).
+[Arize Phoenix](https://arize.com/phoenix/) is the open-source observability and evaluation platform from [Arize AI](https://arize.com/?utm_source=google-adk-docs&utm_medium=partner&utm_campaign=partner-docs&utm_content=integrations-phoenix) for local development, OSS workflows, and self-hosted tracing. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://arize.com/phoenix/).
+
+For the full-featured production platform built for AI-native teams and enterprises, use [Arize AX](https://arize.com/products/ax/), available as managed cloud or enterprise self-hosted deployment. Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) show how traces support evaluation workflows for agents and LLM applications.
 
 
 ## Overview
