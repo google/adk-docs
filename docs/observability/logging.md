@@ -219,7 +219,11 @@ To get detailed logs of agent activity (user messages, model requests/responses,
 
 #### Full debug capture to a file
 
-To record the same activity in full, as YAML appended to `adk_debug.yaml` rather than truncated console output, use the `DebugLoggingPlugin` (adk-kotlin 0.6.0 and later):
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+To record the same activity in full, as YAML appended to `adk_debug.yaml` rather than truncated console output, use the `DebugLoggingPlugin`:
 
 ```kotlin
 --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
