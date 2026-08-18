@@ -233,25 +233,37 @@ percentile-bootstrap anti-conservatism (elevated FPR relative to nominal at `n�
 roughly equally in both modes) — see `docs/audit/FPR_ANOMALY.md` for the full
 investigation.
 
-**On power — no single figure, by design.** Paired mode structurally cancels case-to-case
-cost heterogeneity (that's the whole reason `--mode auto` prefers it whenever a pairing key
-resolves — see "Shipped default" in the package README), so its detection power depends on
-the **within-case** cost CV (coefficient of variation — standard deviation divided by mean,
-i.e. how much cost varies) rather than the raw per-invocation CV two-sample mode sees. An
-earlier version of this page (and the package README) stated one power figure ("99.22% at
-`n=30`") as if it applied universally; a follow-up audit
-(`docs/audit/AC1_SKEW_SENSITIVITY.md`, `docs/audit/AD2_REAL_CV_MEASUREMENT.md`) found power
-at that same `n` swings from ~99% to single digits depending on an assumed CV that was never
-measured. The package README now publishes a CV x `n` power table (both modes, `confidence
-=0.98`, ≥2,000 trials/cell, Wilson 95% CIs) instead of one number — see its "Power depends on
-your own cost variance" section for the full grid and how to read it against your own data.
-`adk-tracegauge check` also prints an "achieved power" line from YOUR run's own observed
-variance on every invocation, unconditionally — that per-run number, not any table, is what
-applies to your actual workload. Figures — Wilson 95% confidence intervals — come from the
-package's own `scripts/measure_regression_confidence_grid.py` and
-`scripts/measure_power_by_cv_grid.py`; see the package README ("Known limitations" and "What
-this gate can and cannot detect") for the full FPR grid across `confidence` ∈ {0.95, 0.98,
-0.99} and `n` ∈ {30, 50}.
+**On power — no single figure, by design, and two different noise regimes, not one.** Paired
+mode structurally cancels case-to-case cost heterogeneity (that's the whole reason `--mode
+auto` prefers it whenever a pairing key resolves — see "Shipped default" in the package
+README), so its detection power depends on the **within-case** cost CV rather than the raw
+per-invocation CV two-sample mode sees. An earlier version of this page (and the package
+README) stated one power figure ("99.22% at `n=30`") as if it applied universally; a
+follow-up audit found power at that same `n` swings from ~99% to single digits depending on
+the within-case noise assumption — and a further reconciliation
+(`docs/audit/Q1A_RECONCILIATION.md`) found the gap is not a bug in either measurement, but two
+genuinely different, both-legitimate assumptions about how within-case noise behaves:
+
+- **Fixed absolute dollar noise** (the originally-published grid's own generator) —
+  approximates an evalset of near-identical cases, where response-length noise is roughly
+  constant in dollars regardless of that case's own cost.
+- **Proportional (CV-scaled) noise** (the package's CV-sweep table) — approximates an evalset
+  of genuinely varying task complexity, where noise scales with each case's own cost level.
+
+**How to tell which applies to you**: cases that are variations on one task land closer to the
+fixed-noise regime; cases spanning genuinely different complexity (short factual questions
+mixed with long-form generation) land closer to the proportional regime — real measurement on
+a mixed-complexity evalset landed solidly in the proportional regime. The package README's
+"Power depends on your own cost variance" section publishes BOTH regimes' full `n`-swept power
+tables side by side, not one replacing the other. **The one number that is correct regardless
+of which regime you're in**: `adk-tracegauge check` prints an "achieved power" line computed
+directly from YOUR run's own observed variance and `n` on every invocation, unconditionally —
+never from an assumed constant or a regime choice. That per-run number, not either table, is
+what applies to your actual workload. Figures — Wilson 95% confidence intervals — come from
+the package's own `scripts/measure_regression_confidence_grid.py`,
+`scripts/measure_power_by_cv_grid.py`, and `scripts/measure_absolute_sd_grid.py`; see the
+package README ("Known limitations" and "What this gate can and cannot detect") for the full
+FPR grid across `confidence` ∈ {0.95, 0.98, 0.99} and `n` ∈ {30, 50}.
 
 ## Also: the `adk_tracegauge_cost_usd` metric inside `adk eval`
 
