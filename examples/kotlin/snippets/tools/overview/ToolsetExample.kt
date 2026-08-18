@@ -16,6 +16,8 @@
 
 package com.google.adk.kt.examples.tools.overview
 
+// --8<-- [start:init]
+
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.agents.ReadonlyContext
@@ -27,8 +29,6 @@ import com.google.adk.kt.tools.ToolContext
 import com.google.adk.kt.tools.ToolFilter
 import com.google.adk.kt.tools.Toolset
 import com.google.adk.kt.tools.isToolSelected
-
-// --8<-- [start:init]
 
 /** The individual tools, exposed by the @Tool annotation. */
 class MathTools {

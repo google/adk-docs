@@ -16,11 +16,12 @@
 
 package com.google.adk.kt.examples.tools.overview
 
+// --8<-- [start:example]
+
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 import com.google.adk.kt.tools.ToolContext
 
-// --8<-- [start:example]
 class UserPreferenceTools {
     /**
      * Updates a user-specific preference.

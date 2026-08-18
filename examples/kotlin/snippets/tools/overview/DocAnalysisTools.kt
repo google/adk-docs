@@ -16,12 +16,13 @@
 
 package com.google.adk.kt.examples.tools.overview
 
+// --8<-- [start:full_code]
+
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 import com.google.adk.kt.tools.ToolContext
 import com.google.adk.kt.types.Part
 
-// --8<-- [start:full_code]
 class DocAnalysisTools {
     /**
      * Analyzes a document held in the session's artifacts.

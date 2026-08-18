@@ -16,10 +16,11 @@
 
 package com.google.adk.kt.examples.tools.overview
 
+// --8<-- [start:snippet]
+
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 
-// --8<-- [start:snippet]
 class OrderTools {
     /**
      * Fetches the current status of a customer's order using its ID.
@@ -35,7 +36,6 @@ class OrderTools {
     fun lookupOrderStatus(
         @Param("The unique identifier of the order to look up.") orderId: String,
     ): Map<String, Any> {
-        // ... function implementation to fetch status ...
         val statusDetails = fetchStatusFromBackend(orderId)
         return if (statusDetails != null) {
             mapOf(

@@ -16,6 +16,8 @@
 
 package com.google.adk.kt.examples.tools.overview
 
+// --8<-- [start:full_code]
+
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.annotations.Param
@@ -31,7 +33,6 @@ import com.google.adk.kt.types.Role
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 
-// --8<-- [start:full_code]
 private const val APP_NAME = "customer_support_agent"
 private const val USER_ID = "user1234"
 private const val SESSION_ID = "1234"
