@@ -13,7 +13,7 @@ This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Dev
 ```text
 ┌─────────────────┐         ┌────────────────────────┐
 │   Root Agent    │────────▶│   Remote Prime Agent   │
-│   (Local)       │◀────────│   (localhost:9090)     │
+│   (Local)       │◀────────│   (localhost:8001)     │
 └─────────────────┘         └────────────────────────┘
 ```
 
@@ -37,44 +37,66 @@ To consume a remote agent you first need one running. adk-kotlin cannot expose a
 agent over A2A yet, so the server has to come from elsewhere — A2A is a wire
 protocol, so any language will do.
 
-The A2A protocol requires each agent to publish an **agent card** describing what
-it does, served at the well-known path:
+The `a2a_basic` sample in adk-python serves the prime agent this page delegates
+to. From an adk-python checkout:
 
-```text
-http://localhost:9090/.well-known/agent-card.json
+```bash
+adk api_server --a2a --port 8001 contributing/samples/a2a/a2a_basic/remote_a2a
 ```
 
-The Kotlin client reads **A2A 1.0** cards, so the card must carry a
-`supportedInterfaces` array whose entries each have a `protocolBinding`.
-Cards written for A2A 0.3 omit it, and `A2AAgent` rejects them with
-`AgentCardResolutionError: Failed to parse agent card`. That includes the
-`a2a_server` sample in adk-java and the `remote_a2a` sample in adk-python as
-they stand today, so neither works as the server for this page yet.
+The A2A protocol requires each agent to publish an **agent card** describing what
+it does, served at the well-known path under that agent's own prefix:
 
-A minimal card the client accepts looks like this:
-
-```json title=".well-known/agent-card.json"
-{
-  "name": "check_prime_agent",
-  "description": "Checks whether numbers are prime.",
-  "version": "1.0.0",
-  "url": "http://localhost:9090",
-  "preferredTransport": "JSONRPC",
-  "capabilities": { "streaming": true },
-  "defaultInputModes": ["text/plain"],
-  "defaultOutputModes": ["application/json"],
-  "skills": [],
-  "supportedInterfaces": [
-    { "protocolBinding": "JSONRPC", "url": "http://localhost:9090" }
-  ]
-}
+```text
+http://localhost:8001/a2a/check_prime_agent/.well-known/agent-card.json
 ```
 
 Check the card is reachable before you continue:
 
 ```bash
-curl http://localhost:9090/.well-known/agent-card.json
+curl http://localhost:8001/a2a/check_prime_agent/.well-known/agent-card.json
 ```
+
+!!! note "Which servers this client can talk to"
+
+    The Kotlin client reads **A2A 1.0** cards, so the card must carry a
+    `supportedInterfaces` array whose entries each have a `protocolBinding`.
+    Cards written for A2A 0.3 declare a top-level `url` and `preferredTransport`
+    instead, and `A2AAgent` rejects them with
+    `AgentCardResolutionError: Failed to parse agent card`.
+
+    The sample's checked-in `agent.json` is a 0.3-style card, but adk-python does
+    not serve that file verbatim: it parses the card on startup, and under
+    a2a-sdk 1.x that parse promotes `url` and `preferredTransport` into
+    `supportedInterfaces`. adk-python requires `a2a-sdk>=0.3.4,<2`, so a fresh
+    install resolves to 1.x and the card on the wire is A2A 1.0.
+
+    The `a2a_server` sample in adk-java is pinned to the 0.3.x A2A SDK and serves
+    a 0.3 card, so it does not work as the server for this page.
+
+??? note "Serving your own card instead"
+
+    Any server publishing an A2A 1.0 card will do. A minimal card the client
+    accepts, served from `<your-base-url>/.well-known/agent-card.json`:
+
+    ```json title=".well-known/agent-card.json"
+    {
+      "name": "check_prime_agent",
+      "description": "Checks whether numbers are prime.",
+      "version": "1.0.0",
+      "url": "http://localhost:9090",
+      "preferredTransport": "JSONRPC",
+      "capabilities": { "streaming": true },
+      "defaultInputModes": ["text/plain"],
+      "defaultOutputModes": ["application/json"],
+      "skills": [],
+      "supportedInterfaces": [
+        { "protocolBinding": "JSONRPC", "url": "http://localhost:9090" }
+      ]
+    }
+    ```
+
+    Pass that base URL — `http://localhost:9090` — as `agentCardUrl` below.
 
 ## Connect to the remote agent
 

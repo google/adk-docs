@@ -33,7 +33,7 @@ fun main() =
         val primeAgent =
             A2AAgent(
                 name = "prime_agent",
-                agentCardUrl = "http://localhost:9090",
+                agentCardUrl = "http://localhost:8001/a2a/check_prime_agent",
             )
         // --8<-- [end:remote_agent]
 
