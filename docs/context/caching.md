@@ -67,14 +67,14 @@ these settings, as shown in the following code sample:
 === "Kotlin"
 
     ```kotlin
-    @file:OptIn(ExperimentalContextCachingFeature::class)
-
     import com.google.adk.kt.agents.ContextCacheConfig
     import com.google.adk.kt.agents.LlmAgent
     import com.google.adk.kt.annotations.ExperimentalContextCachingFeature
     import com.google.adk.kt.apps.App
     import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.types.HttpOptions
     import kotlin.time.Duration.Companion.minutes
+    import kotlin.time.Duration.Companion.seconds
 
     val rootAgent =
         LlmAgent(
@@ -84,17 +84,19 @@ these settings, as shown in the following code sample:
         )
 
     // Create the app with context caching configuration
+    @OptIn(ExperimentalContextCachingFeature::class)
     val app =
         App(
             appName = "my-caching-agent-app",
             rootAgent = rootAgent,
             contextCacheConfig =
                 ContextCacheConfig(
-                    // Gemini enforces a hard 4096-token floor of its own, so only a
-                    // value above that has any further effect.
+                    // Gemini applies its own minimum cacheable size, which varies by model
                     minTokens = 8192,
                     ttl = 10.minutes, // Store for up to 10 minutes
                     cacheIntervals = 5, // Refresh after 5 uses
+                    // On timeout the create fails and the request proceeds uncached.
+                    createHttpOptions = HttpOptions(timeout = 10.seconds),
                 ),
         )
     ```
@@ -116,6 +118,34 @@ all agents within your app.
     content can be used before it expires. This setting allows you to
     control how frequently the cache is updated, even if the TTL has not
     expired. Defaults to `10`.
+-   **`create_http_options`** (HttpOptions): The HTTP options for the cache
+    creation call, which lets you set a timeout on it. If the call times out,
+    it fails and the request proceeds without caching. Available in Python and
+    Kotlin; defaults to none.
+
+## Check whether the cache is being used
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+When caching is enabled, an event backed by an LLM response can carry a
+`CacheMetadata` reporting what the cache did for that call. It is null when
+caching is disabled, and also when the call produced no cache information, so
+check for it before reading it. When present it has two states: an **active
+cache**, where `cacheName`, `expireTime` and `invocationsUsed` are all set, and
+a **fingerprint-only** state, where all three are null.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/context/CacheMetadataExample.kt:cache_metadata"
+```
+
+`expireSoon` means the cache expires within about two minutes, or has already
+expired. It is a signal for your own code, not something ADK acts on: ADK keeps
+reusing a cache until it is actually past `expireTime`, has run past
+`cacheIntervals`, or its cached prefix changes.
+
+Token counts are not on `CacheMetadata`; read them from `LlmResponse.usageMetadata`.
 
 ## Next steps
 
