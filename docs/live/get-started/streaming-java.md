@@ -573,6 +573,5 @@ With this message, the tool is ready to take voice input. Talk to the agent with
 !!! Caution
     When you observe the agent keep speaking by itself and doesn't stop, try using earphones to suppress the echoing.
 
-## **Summary** {#summary}
-
-Streaming for ADK enables developers to create agents capable of low-latency, bidirectional voice and video communication, enhancing interactive experiences. The article demonstrates that text streaming is a built-in feature of ADK Agents, requiring no additional specific code, while also showcasing how to implement live audio conversations for real-time voice interaction with an agent. This allows for more natural and dynamic communication, as users can speak to and hear from the agent seamlessly.
+Next, see [Configuration](../configuration.md) to set the voice and turn detection, and
+[Tools](../tools.md) to give your live agent tools.

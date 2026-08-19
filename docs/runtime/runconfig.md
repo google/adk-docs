@@ -177,6 +177,13 @@ execute function calls. CFC uses the Live API under the hood.
 For voice-enabled agents, configure speech synthesis, audio transcription, and
 response modalities.
 
+!!! tip "Live agents"
+
+    This section covers the audio fields shared across languages. For the full live
+    (`run_live()`) configuration reference — transcription streaming, voice selection,
+    voice activity detection, and proactive/affective dialog — see
+    [Live agent configuration](../live/configuration.md).
+
 - `speech_config`: Sets the voice and language for speech output (e.g., the
   "Kore" voice with `en-US`).
 - `response_modalities`: Controls the output format. A session accepts exactly one
@@ -259,31 +266,21 @@ response modalities.
 
 ## Configure live agents
 
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
-</div>
+Live (`run_live()`) sessions add a set of real-time parameters —
+`realtime_input_config`, `session_resumption`, `save_live_blob`,
+`tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more. These
+are documented in one place, with per-model support and examples, in the live docs:
 
-When using `runner.run_live()`, configure real-time behavior with these
-additional parameters:
+- **[Live agent configuration](../live/configuration.md)** — the full `RunConfig`
+  reference for live agents.
+- **[Sessions](../live/sessions.md#session-resumption)** — session resumption
+  and reconnection.
+- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)** —
+  native-audio conversational features and the models that support them.
 
-- `realtime_input_config`: Configures how audio input is received from users.
-- `proactivity`: Allows the model to respond proactively and ignore irrelevant
-  input.
-- `enable_affective_dialog`: When `True`, the model detects user emotions and
-  adapts its tone accordingly.
-- `avatar_config`: Configures an avatar for live agents.
-- `session_resumption`: Enables transparent session resumption across
-  disconnects.
-- `save_live_blob`: When `True`, saves live audio and video data to the session
-  and artifact service.
-- `tool_thread_pool_config`: Runs tool executions in a background thread pool
-  to keep the event loop responsive to user interruptions.
-- `explicit_vad_signal`: Enables explicit voice activity detection (VAD)
-  signals from the model.
-- `history_config`: Configures the exchange of history between the client and
-  the server.
-- `translation_config`: Configures real-time speech-to-speech translation. Only
-  translation models support it.
+`tool_thread_pool_config` is the exception: it is a runtime concern rather than a
+Live API one, so it stays here. It runs tool executions in a background thread
+pool so the event loop keeps responding to user interruptions.
 
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.

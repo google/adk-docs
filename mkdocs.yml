@@ -232,6 +232,7 @@ plugins:
         'streaming/dev-guide/part4.md': 'live/configuration.md'
         'streaming/dev-guide/part5.md': 'live/audio-video.md'
         'live/streaming-tools.md': 'live/tools.md'
+        'live/voice.md': 'live/configuration.md'
         'live/dev-guide/part1.md': 'live/index.md'
         'live/dev-guide/part2.md': 'live/sessions.md'
         'live/dev-guide/part3.md': 'live/events.md'
@@ -430,15 +431,18 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
-      - Build:
+      # Revamp IA also plans Building/Prompting and Production/{Guardrails,
+      # Observability}, plus an Architectures section once cascade lands. Left
+      # unfilled here rather than shipping stub pages.
+      - Building:
+        - Workflows: live/workflows.md
+        - Tools: live/tools.md
         - Sessions: live/sessions.md
         - Events: live/events.md
-        - Tools: live/tools.md
-        - Workflows: live/workflows.md
         - Audio and video: live/audio-video.md
-        - Voice: live/voice.md
         - Configuration: live/configuration.md
-      - Ship:
+        - Evaluation: live/evaluation.md
+      - Production:
         - Build a custom server: live/custom-server.md
       - Reference:
         - Supported models: live/models.md

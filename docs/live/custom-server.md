@@ -1,17 +1,18 @@
 # Build a custom server
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-`adk web` is enough to develop and test a live agent, but shipping one means running your
-own server: a WebSocket endpoint that bridges browser clients to `run_live()`, with the
-runner and session service initialized once at startup and one `LiveRequestQueue` per
-connected user.
+`adk web` runs a live agent during development — it ships a browser client that captures the
+microphone and camera, plays model audio, and renders transcripts, so you can talk to your
+agent with no code of your own. Shipping to production means replacing that: running your own
+server that bridges clients to `run_live()`, with the runner and session service initialized
+once at startup and one `LiveRequestQueue` per connected user.
 
-This page walks through a complete FastAPI implementation of that bridge. It assumes you
-have read [Sessions](sessions.md), which covers the lifecycle this example puts into
-practice.
+This page walks through a complete FastAPI implementation of that bridge, then covers how a
+client connects to it. It assumes you have read [Sessions](sessions.md), which covers the
+lifecycle this example puts into practice.
 
 ## FastAPI application example
 
@@ -29,11 +30,8 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from google_search_agent.agent import agent
 
-# ========================================
-# Phase 1: Application Initialization (once at startup)
-# ========================================
-
-APP_NAME = "bidi-demo"
+# Application setup (once at startup)
+APP_NAME = "live-agent"
 
 app = FastAPI()
 
@@ -47,19 +45,11 @@ runner = Runner(
     session_service=session_service
 )
 
-# ========================================
-# WebSocket Endpoint
-# ========================================
-
 @app.websocket("/ws/{user_id}/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str) -> None:
     await websocket.accept()
 
-    # ========================================
-    # Phase 2: Session Initialization (once per streaming session)
-    # ========================================
-
-    # Create RunConfig
+    # Per-session setup: RunConfig, session, queue.
     response_modalities = ["AUDIO"]
     run_config = RunConfig(
         response_modalities=response_modalities,
@@ -68,7 +58,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
         session_resumption=types.SessionResumptionConfig()
     )
 
-    # Get or create session
     session = await session_service.get_session(
         app_name=APP_NAME,
         user_id=user_id,
@@ -81,12 +70,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
             session_id=session_id
         )
 
-    # Create LiveRequestQueue
     live_request_queue = LiveRequestQueue()
-
-    # ========================================
-    # Phase 3: Active Session (concurrent bidirectional communication)
-    # ========================================
 
     async def upstream_task() -> None:
         """Receives messages from WebSocket and sends to LiveRequestQueue."""
@@ -123,12 +107,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
             return_exceptions=True
         )
     finally:
-        # ========================================
-        # Phase 4: Session Termination
-        # ========================================
-
-        # Always close the queue, even if exceptions occurred
-        live_request_queue.close()
+        live_request_queue.close()  # Always close, even on error.
 ```
 
 !!! note "Async Context Required"
@@ -140,7 +119,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
     - **WebSocket operations**: FastAPI's `websocket.accept()`, `receive_text()`, and `send_text()` are all async
     - **Concurrent tasks**: The upstream/downstream pattern requires `asyncio.gather()` for concurrent execution
 
-    All code examples in this guide assume you're running in an async context (e.g., within an async function or coroutine). For consistency with ADK's official documentation patterns, examples show the core logic without boilerplate wrapper functions.
+    All code examples assume an async context (within an `async def` or coroutine). They show the core logic without boilerplate wrapper functions.
 
 ## Key concepts
 
@@ -199,14 +178,111 @@ This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is
 
 This example shows the core pattern. For production applications, consider:
 
-- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Error events](events.md#error-events).
+- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Error events](events.md#handling-errors).
     - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
     - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
 - **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:
     - Catch `WebSocketDisconnect` (client disconnected), `ConnectionClosedError` (connection lost), and `RuntimeError` (sending to closed connection)
     - Validate WebSocket connection state before sending with `websocket.client_state` to prevent errors when the connection is closed
 - **Authentication and authorization**: Implement authentication and authorization for your endpoints
-- **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Concurrent Live API sessions and quota management](sessions.md#concurrent-live-api-sessions-and-quota-management).
+- **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Concurrent sessions](sessions.md#concurrent-sessions).
 - **Structured logging**: Use structured logging for debugging.
-- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](/sessions/) for more details.
+- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](../sessions/index.md) for more details.
+
+## Connect a client
+
+Your server exposes a WebSocket; something has to talk to it. During development that is
+`adk web`. In production it is a client you write — a browser app, a mobile app, or a
+telephony or WebRTC bridge. Whatever you build inherits the same contract, so it is worth
+knowing exactly what `adk web` does and where it stops.
+
+**What `adk web` handles for you:**
+
+| Capability | What the built-in client does |
+|---|---|
+| Microphone | Captures and resamples to 16 kHz mono PCM, streamed as `audio/pcm;rate=16000` |
+| Playback | Plays model audio as 24 kHz mono PCM, gapless |
+| Camera | Sends JPEG frames at ~1 fps as `image/jpeg` |
+| Transcription | Renders both user and model transcripts, merging partial fragments |
+| Barge-in | Stops playback when an event arrives with `interrupted` set |
+
+**What it does not do**, and a production client may need:
+
+- No screen sharing, and no video without an active audio call.
+- No modality choice — responses are always `AUDIO`.
+- No UI for proactivity, affective dialog, session resumption, `save_live_blob`, or explicit
+  VAD signals. Those are set on the server through [`RunConfig`](configuration.md).
+- No manual [VAD](configuration.md#voice-activity-detection-vad) — it relies on the
+  server-side automatic detection that is on by default.
+
+`adk web` and `adk api_server` both serve the same `/run_live` WebSocket; `adk api_server`
+just does not ship the browser client unless you pass `--with_ui`. So you can develop
+against `adk web` and point a custom client at either.
+
+### The wire protocol
+
+The `/run_live` endpoint speaks **JSON text frames only**. Your client sends serialized
+[`LiveRequest`](sessions.md#liverequestqueue) objects and receives serialized
+[`Event`](events.md) objects. Binary data — audio and image bytes — is base64-encoded
+*inside* the JSON, not sent as binary WebSocket frames.
+
+On the client, branch on the same event fields you would in Python, in camelCase:
+
+```javascript
+websocket.onmessage = (message) => {
+    const adkEvent = JSON.parse(message.data);
+    if (adkEvent.interrupted) {
+        stopAudioPlayback();   // user barged in; drop queued audio
+        finishCurrentBubble();
+        return;
+    }
+    if (adkEvent.turnComplete) {
+        finishCurrentBubble();
+        return;
+    }
+    for (const part of adkEvent.content?.parts ?? []) {
+        if (part.text) appendText(part.text);
+        if (part.inlineData) enqueueAudio(part.inlineData.data);
+    }
+};
+```
+
+The media formats your client must produce and consume — sample rates, encodings, chunk
+sizes — are in [Audio and video](audio-video.md). The streaming flags it branches on
+(`partial`, `turnComplete`, `interrupted`) and how transcriptions fragment are in
+[Events](events.md).
+
+## Serializing events
+
+The `/run_live` endpoint between ADK and the Live API is JSON-text-only, but the transport
+between *your* server and *your* client is yours to design — and there you can send audio as
+binary frames to avoid base64 overhead.
+
+`Event` is a Pydantic model, so `model_dump_json()` converts it to a JSON string for a
+WebSocket or SSE transport. Use `by_alias=True` for camelCase field names on the client and
+`exclude_none=True` to drop empty fields:
+
+```python
+async for event in runner.run_live(...):
+    await websocket.send_text(event.model_dump_json(exclude_none=True, by_alias=True))
+```
+
+Binary audio in `inline_data` is base64-encoded in JSON, which inflates the payload by about
+33%. For audio-heavy streams, send audio as binary frames and metadata as JSON:
+
+```python
+async for event in runner.run_live(...):
+    parts = event.content.parts if event.content else []
+    audio_parts = [p for p in parts if p.inline_data]
+    if audio_parts:
+        for part in audio_parts:
+            await websocket.send_bytes(part.inline_data.data)
+        # Metadata without the audio bytes.
+        await websocket.send_text(event.model_dump_json(
+            exclude={"content": {"parts": {"__all__": {"inline_data"}}}},
+            by_alias=True,
+        ))
+    else:
+        await websocket.send_text(event.model_dump_json(exclude_none=True, by_alias=True))
+```
 
