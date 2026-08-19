@@ -1,0 +1,83 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Kotlin Snippets Build on PR
+
+on:
+  # Run on pull requests targeting the main branch.
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  # This job builds the Kotlin snippets.
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      with:
+        # Fetch the entire history to compare branches in the PR.
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
+
+    # --- PR-Specific Checks ---
+    # These steps only run for pull request events.
+
+    - name: Find new, un-tested Kotlin files (PR only)
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "Checking for any new Kotlin files that are not in the build script..."
+        ./tools/kotlin-snippets/check_kotlin_snippets.sh
+
+    - name: Get changed Kotlin snippet files (PR only)
+      if: github.event_name == 'pull_request'
+      id: changed-files
+      env:
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: |
+        # This command gets the list of changed .kt files in the snippets directory
+        # between the PR's head and the base branch.
+        CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" -- 'examples/kotlin/snippets/**/*.kt' | xargs)
+        echo "changed_files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+        echo "Detected changes in: ${CHANGED_FILES}"
+
+    - name: Build changed Kotlin snippets (PR only)
+      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
+      run: |
+        echo "Building only the changed Kotlin files..."
+        ./tools/kotlin-snippets/runner.sh build ${STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES}
+      env:
+        STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}
+
+    - name: Lint changed Kotlin snippets (PR only)
+      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
+      run: |
+        echo "Linting only the changed Kotlin files..."
+        ./tools/kotlin-snippets/runner.sh lint ${STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES}
+      env:
+        STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}

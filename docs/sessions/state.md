@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -54,6 +54,7 @@ Prefixes on state keys define their scope and persistence behavior, especially w
     * **Scope:** Tied to the `user_id`, shared across *all* sessions for that user (within the same `app_name`).
     * **Persistence:** Persistent with `Database` or `VertexAI`. (Stored by `InMemory` but lost on restart).
     * **Use Cases:** User preferences (e.g., `'user:theme'`), profile details (e.g., `'user:name'`).
+    * **Reading without a session:** In Python, `await session_service.get_user_state(app_name=..., user_id=...)` returns the user-scoped keys with the `user:` prefix stripped, so you can read them before a session exists. `VertexAiSessionService` is the exception: it always raises `NotImplementedError`, because the Agent Runtime API does not expose user state independently of a session. There, enumerate sessions with `list_sessions` and call `get_session` on each result instead.
     * **Example:** `session.state['user:preferred_language'] = 'fr'`
 
 * **`app:` Prefix (App State):**
@@ -93,7 +94,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     story_generator = LlmAgent(
         name="StoryGenerator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
     )
 
@@ -109,7 +110,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     const storyGenerator = new LlmAgent({
         name: "StoryGenerator",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Write a short story about a cat, focusing on the theme: {topic}."
     });
 
@@ -124,17 +125,42 @@ To inject a value from the session state, enclose the key of the desired state v
     --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+
+    LlmAgent storyGenerator = LlmAgent.builder()
+        .name("StoryGenerator")
+        .model(geminiModel)
+        .instruction("Write a short story about a cat, focusing on the theme: " + topic)
+        .build();
+
+    // Assuming session.state().put("topic", "friendship"), the LLM
+    // will receive the following instruction:
+    // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_templating"
+    ```
+
 #### Important Considerations
 
 * Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
 * Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
-* Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
+* Literal Curly Braces: The `{key}` syntax matches any valid Python identifier inside single curly braces. If you need literal curly braces in your instruction, such as for JSON formatting or templating syntax, use an `InstructionProvider` function instead of a string (see below).
 
-#### Bypassing State Injection with `InstructionProvider`
+!!! note "f-strings and double braces"
+    Some ADK examples use Python f-strings in instructions, such as `f"Topic: {{initial_topic}}"`. The `{{` and `}}` in those examples are **Python f-string escaping**, not ADK syntax. At runtime, Python converts `{{initial_topic}}` to `{initial_topic}`, which ADK then treats as a normal state variable placeholder. If you are not using f-strings, use single braces `{key}` directly.
 
-In some cases, you might want to use `{{` and `}}` literally in your instructions without triggering the state injection mechanism. For example, you might be writing instructions for an agent that helps with a templating language that uses the same syntax.
+#### Using `InstructionProvider` for Full Control
 
-To achieve this, you can provide a function to the `instruction` parameter instead of a string. This function is called an `InstructionProvider`. When you use an `InstructionProvider`, the ADK will not attempt to inject state, and your instruction string will be passed to the model as-is.
+In some cases, you may need full control over the instruction string — for example, when your instructions contain literal curly braces (e.g., JSON examples, templating syntax) that would otherwise be interpreted as state variable placeholders.
+
+To achieve this, provide a function to the `instruction` parameter instead of a string. This function is called an `InstructionProvider`. When you use an `InstructionProvider`, the ADK will **not** attempt to inject state variables, and the returned string will be passed to the model as-is.
 
 The `InstructionProvider` function receives a `ReadonlyContext` object, which you can use to access session state or other contextual information if you need to build the instruction dynamically.
 
@@ -146,12 +172,11 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 
     # This is an InstructionProvider
     def my_instruction_provider(context: ReadonlyContext) -> str:
-        # You can optionally use the context to build the instruction
-        # For this example, we'll return a static string with literal braces.
-        return "This is an instruction with {{literal_braces}} that will not be replaced."
+        # No state injection occurs — curly braces are treated as literal text.
+        return 'Format your output as JSON: {"city": "<name>", "population": <number>}'
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="template_helper_agent",
         instruction=my_instruction_provider
     )
@@ -164,13 +189,12 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 
     // This is an InstructionProvider
     function myInstructionProvider(context: ReadonlyContext): string {
-        // You can optionally use the context to build the instruction
-        // For this example, we'll return a static string with literal braces.
-        return "This is an instruction with {{literal_braces}} that will not be replaced.";
+        // No state injection occurs — curly braces are treated as literal text.
+        return 'Format your output as JSON: {"city": "<name>", "population": <number>}';
     }
 
     const agent = new LlmAgent({
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         name: "template_helper_agent",
         instruction: myInstructionProvider
     });
@@ -182,7 +206,36 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
     ```
 
-If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function.
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import io.reactivex.rxjava3.core.Single;
+
+    // This is an Instruction.Provider
+    Instruction.Provider myInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            // No state injection occurs — curly braces are treated as literal text.
+            return Single.just("Format your output as JSON: {\"city\": \"<name>\", \"population\": <number>}");
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("template_helper_agent")
+        .instruction(myInstructionProvider)
+        .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_provider"
+    ```
+
+If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function. Only `{key}` placeholders matching valid state variable names will be replaced; other text (including curly braces that don't match valid identifiers) will be left as-is.
 
 === "Python"
 
@@ -192,12 +245,13 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
     from google.adk.utils import instructions_utils
 
     async def my_dynamic_instruction_provider(context: ReadonlyContext) -> str:
-        template = "This is a {adjective} instruction with {{literal_braces}}."
-        # This will inject the 'adjective' state variable but leave the literal braces.
+        template = "This is a {adjective} instruction. Use JSON like: {\"key\": \"value\"}."
+        # This will inject the 'adjective' state variable.
+        # The JSON braces are left alone because their content is not a valid identifier.
         return await instructions_utils.inject_session_state(template, context)
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="dynamic_template_helper_agent",
         instruction=my_dynamic_instruction_provider
     )
@@ -207,6 +261,31 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 
     ```go
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:manual_state_injection"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import com.google.adk.utils.InstructionUtils;
+    import io.reactivex.rxjava3.core.Single;
+
+    Instruction.Provider myDynamicInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            String template = "This is a " + adjective + " instruction. Use JSON like: {\"key\": \"value\"}.";
+            // This will inject the 'adjective' state variable.
+            // The JSON braces are left alone because their content is not a valid identifier.
+            return InstructionUtils.injectSessionState(context.invocationContext(), template);
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("dynamic_template_helper_agent")
+        .instruction(myDynamicInstructionProvider)
+        .build();
     ```
 
 **Benefits of Direct Injection**
@@ -243,7 +322,7 @@ This is the simplest method for saving an agent's final text response directly i
     # Define agent with output_key
     greeting_agent = LlmAgent(
         name="Greeter",
-        model="gemini-2.0-flash", # Use a valid model
+        model="gemini-flash-latest", # Use a valid model
         instruction="Generate a short, friendly greeting.",
         output_key="last_greeting" # Save response to state['last_greeting']
     )
@@ -262,8 +341,9 @@ This is the simplest method for saving an agent's final text response directly i
     print(f"Initial state: {session.state}")
 
     # --- Run the Agent ---
-    # Runner handles calling append_event, which uses the output_key
-    # to automatically create the state_delta.
+    # The agent uses the output_key to put its response into the event's
+    # state_delta; the Runner hands that event to append_event, which
+    # applies the delta to the session state.
     user_message = Content(parts=[Part(text="Hello")])
     for event in runner.run(user_id=user_id,
                             session_id=session_id,
@@ -272,7 +352,7 @@ This is the simplest method for saving an agent's final text response directly i
           print(f"Agent responded.") # Response text is also in event.content
 
     # --- Check Updated State ---
-    updated_session = await session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session_id)
+    updated_session = await session_service.get_session(app_name=app_name, user_id=user_id, session_id=session_id)
     print(f"State after agent run: {updated_session.state}")
     # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
@@ -286,7 +366,7 @@ This is the simplest method for saving an agent's final text response directly i
     // Define agent with outputKey
     const greetingAgent = new LlmAgent({
         name: "Greeter",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Generate a short, friendly greeting.",
         outputKey: "last_greeting" // Save response to state['last_greeting']
     });
@@ -340,7 +420,7 @@ This is the simplest method for saving an agent's final text response directly i
     --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
-Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
+Behind the scenes, the agent itself uses the `output_key` to write the response into the `state_delta` of the `EventActions` on the event it yields; the `Runner` then passes that event to the `SessionService`'s `append_event`, which applies the delta.
 
 **2\. The Standard Way: `EventActions.state_delta` (for Complex Updates)**
 
@@ -465,9 +545,17 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:full_example"
+    ```
+
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
-Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
+*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type, and in Python both names remain usable as aliases of it.)*
+
+Modifying state within agent callbacks such as `before_agent_callback` and `after_agent_callback`, or within tool functions, is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
 *   `callback_context.state['my_key'] = my_value`
 *   `tool_context.state['my_key'] = my_value`
@@ -482,7 +570,8 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```python
     # In an agent callback or tool function
-    from google.adk.agents import CallbackContext # or ToolContext
+    from google.adk.agents.callback_context import CallbackContext
+    # or, equivalently: from google.adk.tools.tool_context import ToolContext
 
     def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
                                      # ... other parameters ...
@@ -502,10 +591,10 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```typescript
     // In an agent callback or tool function
-    import { CallbackContext } from "@google/adk"; // or ToolContext
+    import { Context } from "@google/adk";
 
     function myCallbackOrToolFunction(
-        context: CallbackContext, // Or ToolContext
+        context: Context,
         // ... other parameters ...
     ) {
         // Update existing state
@@ -548,13 +637,19 @@ For more comprehensive details on context objects, refer to the [Context documen
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:state_updates_context"
+    ```
+
 **What `append_event` Does:**
 
 * Adds the `Event` to `session.events`.
 * Reads the `state_delta` from the event's `actions`.
 * Applies these changes to the state managed by the `SessionService`, correctly handling prefixes and persistence based on the service type.
 * Updates the session's `last_update_time`.
-* Ensures thread-safety for concurrent updates.
+* Serializes concurrent updates to the same session where the service supports it: `DatabaseSessionService` takes a per-session lock, while `InMemorySessionService` is not safe for multi-threaded use.
 
 ### ⚠️ A Warning About Direct State Modification
 

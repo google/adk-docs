@@ -23,21 +23,21 @@ import (
 	"os"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/artifact"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/artifact"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 // --- Conceptual Snippets for adk-docs/docs/context/index.md ---
 const (
-	modelName = "gemini-2.5-flash"
+	modelName = "gemini-flash-latest"
 	appName   = "context_doc_app"
 	userID    = "test_user_123"
 )
@@ -123,7 +123,9 @@ func conceptualRunnerExample(ctx context.Context, myAgent agent.Agent) {
 				log.Printf("ERROR during agent execution: %v", err)
 				break
 			}
-			fmt.Print(event.Content.Parts[0].Text)
+			if event != nil && event.Content != nil && len(event.Content.Parts) > 0 {
+				fmt.Print(event.Content.Parts[0].Text)
+			}
 		}
 	}
 	// --8<-- [end:conceptual_runner_example]
@@ -205,7 +207,7 @@ func myInstructionProvider(ctx agent.ReadonlyContext) (string, error) {
 
 // --8<-- [start:callback_context_callback]
 // Pseudocode: Callback receiving CallbackContext
-func myBeforeModelCb(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func myBeforeModelCb(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	// Read/Write state example
 	callCount, err := ctx.State().Get("model_calls")
 	if err != nil {
@@ -252,7 +254,7 @@ type searchExternalAPIArgs struct {
 	Query string `json:"query" jsonschema:"The query to search for."`
 }
 
-func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) (string, error) {
+func searchExternalAPI(tc agent.Context, input searchExternalAPIArgs) (string, error) {
 	apiKey, err := tc.State().Get("api_key")
 	if err != nil || apiKey == "" {
 		// In a real scenario, you would define and request credentials here.
@@ -297,7 +299,7 @@ type toolResults struct {
 }
 
 // Example tool function demonstrating state access
-func myTool(tc tool.Context, input toolArgs) (toolResults, error) {
+func myTool(tc agent.Context, input toolArgs) (toolResults, error) {
 	userPref, err := tc.State().Get("user_display_preference")
 	if err != nil {
 		userPref = "default_mode"
@@ -331,7 +333,7 @@ func runMyToolExample() {
 
 // --8<-- [start:accessing_state_callback]
 // Pseudocode: In a Callback function
-func myCallback(ctx agent.CallbackContext) (*genai.Content, error) {
+func myCallback(ctx agent.Context) (*genai.Content, error) {
 	lastToolResult, err := ctx.State().Get("temp:last_api_result") // Read temporary state
 	if err == nil {
 		fmt.Printf("Found temporary result from last tool: %v\n", lastToolResult)
@@ -381,7 +383,7 @@ type logToolUsageResult struct {
 	Status string `json:"status"`
 }
 
-func logToolUsage(tc tool.Context, args logToolUsageArgs) (logToolUsageResult, error) {
+func logToolUsage(tc agent.Context, args logToolUsageArgs) (logToolUsageResult, error) {
 	agentName := tc.AgentName()
 	invID := tc.InvocationID()
 	funcCallID := tc.FunctionCallID()
@@ -430,7 +432,7 @@ func runAccessIdsExample() {
 
 // --8<-- [start:accessing_user_content_agent]
 // Pseudocode: In a Callback
-func checkInitialIntent(ctx agent.CallbackContext) (*genai.Content, error) {
+func checkInitialIntent(ctx agent.Context) (*genai.Content, error) {
 	initialText := "N/A"
 	userContent := ctx.UserContent()
 	if userContent != nil && len(userContent.Parts) > 0 {
@@ -471,7 +473,7 @@ func runInitialIntentCheck() {
 
 // --8<-- [start:accessing_initial_user_input]
 // Pseudocode: In a Callback
-func logInitialUserInput(ctx agent.CallbackContext) (*genai.Content, error) {
+func logInitialUserInput(ctx agent.Context) (*genai.Content, error) {
 	userContent := ctx.UserContent()
 	if userContent != nil && len(userContent.Parts) > 0 {
 		if text := userContent.Parts[0].Text; text != "" {
@@ -510,7 +512,7 @@ func runAccessingInitialUserInputExample() {
 type GetUserProfileArgs struct {
 }
 
-func getUserProfile(tc tool.Context, input GetUserProfileArgs) (string, error) {
+func getUserProfile(tc agent.Context, input GetUserProfileArgs) (string, error) {
 	// A random user ID for demonstration purposes
 	userID := "random_user_456"
 
@@ -532,7 +534,7 @@ type getUserOrdersResult struct {
 	Orders []string `json:"orders"`
 }
 
-func getUserOrders(tc tool.Context, input GetUserOrdersArgs) (*getUserOrdersResult, error) {
+func getUserOrders(tc agent.Context, input GetUserOrdersArgs) (*getUserOrdersResult, error) {
 	userID, err := tc.State().Get("temp:current_user_id")
 	if err != nil {
 		return &getUserOrdersResult{}, fmt.Errorf("user ID not found in state")
@@ -607,7 +609,7 @@ type setUserPreferenceResult struct {
 	Status string `json:"status"`
 }
 
-func setUserPreference(tc tool.Context, args setUserPreferenceArgs) (setUserPreferenceResult, error) {
+func setUserPreference(tc agent.Context, args setUserPreferenceArgs) (setUserPreferenceResult, error) {
 	// Use 'user:' prefix for user-level state (if using a persistent SessionService)
 	stateKey := fmt.Sprintf("user:%s", args.Preference)
 	if err := tc.State().Set(stateKey, args.Value); err != nil {
@@ -663,7 +665,7 @@ type summarizeDocumentResult struct {
 	Summary string `json:"summary"`
 }
 
-func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) (summarizeDocumentResult, error) {
+func summarizeDocumentTool(tc agent.Context, input summarizeDocumentArgs) (summarizeDocumentResult, error) {
 	artifactName, err := tc.State().Get("temp:doc_artifact_name")
 	if err != nil {
 		return summarizeDocumentResult{}, fmt.Errorf("No document artifact name found in state")
@@ -702,7 +704,7 @@ type checkAvailableDocsResult struct {
 	AvailableDocs []string `json:"available_docs"`
 }
 
-func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) (checkAvailableDocsResult, error) {
+func checkAvailableDocs(tc agent.Context, args checkAvailableDocsArgs) (checkAvailableDocsResult, error) {
 	artifactKeys, err := tc.Artifacts().List(tc)
 	if err != nil {
 		return checkAvailableDocsResult{}, err
@@ -723,7 +725,7 @@ type saveDocRefResult struct {
 	Status string `json:"status"`
 }
 
-func saveDocRef(tc tool.Context, args saveDocRefArgs) (saveDocRefResult, error) {
+func saveDocRef(tc agent.Context, args saveDocRefArgs) (saveDocRefResult, error) {
 	artifactPart := genai.NewPartFromText(args.FilePath)
 	_, err := tc.Artifacts().Save(tc, "document_to_summarize.txt", artifactPart)
 	if err != nil {
@@ -834,4 +836,5 @@ func main() {
 	runArtifactsExample()
 	runUpdatingPreferencesExample()
 	runCheckAvailableDocsExample()
+	runConceptualExample()
 }

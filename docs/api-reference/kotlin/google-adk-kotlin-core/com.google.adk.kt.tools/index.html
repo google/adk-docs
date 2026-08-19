@@ -1,0 +1,381 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.google.adk.kt.tools</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            google-adk-kotlin
+                    </a>            </div>
+            <div class="library-version">0.5.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button>
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools////PointingToDeclaration//1585794604">
+  <div class="breadcrumbs"><a href="../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><span class="current">com.google.adk.kt.tools</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-284581025%2FClasslikes%2F-1644122207" anchor-label="AgentTool" id="-284581025%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-agent-tool/index.html"><span>Agent</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-284581025%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-agent-tool/index.html">AgentTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>agent<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-base-agent/index.html">BaseAgent</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>skipSummarization<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>includePlugins<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>propagateGroundingMetadata<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that wraps a <a href="../com.google.adk.kt.agents/-base-agent/index.html">BaseAgent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-608725987%2FClasslikes%2F-1644122207" anchor-label="BaseTool" id="-608725987%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-base-tool/index.html"><span>Base</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-608725987%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-base-tool/index.html">BaseTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isLongRunning<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>customMetadata<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Abstract base class for defining and executing tools.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2122540756%2FClasslikes%2F-1644122207" anchor-label="ExitLoopTool" id="-2122540756%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-exit-loop-tool/index.html"><span>Exit</span><wbr><span>Loop</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2122540756%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-exit-loop-tool/index.html">ExitLoopTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that allows an agent to exit a loop.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1564408330%2FClasslikes%2F-1644122207" anchor-label="FunctionTool" id="-1564408330%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-function-tool/index.html"><span>Function</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1564408330%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-function-tool/index.html">FunctionTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isLongRunning<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>customMetadata<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()<span class="token punctuation">, </span></span><span class="parameter ">requiresConfirmation<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span>{ false }</span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">Represents a compile-time generated tool that wraps a function annotated with <a href="../com.google.adk.kt.annotations/-tool/index.html">com.google.adk.kt.annotations.Tool</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="796452674%2FClasslikes%2F-1644122207" anchor-label="GetUserChoiceTool" id="796452674%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-get-user-choice-tool/index.html"><span>Get</span><wbr><span>User</span><wbr><span>Choice</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="796452674%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-get-user-choice-tool/index.html">GetUserChoiceTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">Built-in long-running tool that presents a list of options and pauses the invocation until the user picks one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-970011874%2FClasslikes%2F-1644122207" anchor-label="GoogleMapsTool" id="-970011874%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-google-maps-tool/index.html"><span>Google</span><wbr><span>Maps</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-970011874%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-google-maps-tool/index.html">GoogleMapsTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>model<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A built-in tool that is automatically invoked by Gemini 2 models to retrieve search results from Google Maps.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1972704595%2FClasslikes%2F-1644122207" anchor-label="GoogleSearchTool" id="-1972704595%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-google-search-tool/index.html"><span>Google</span><wbr><span>Search</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1972704595%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-google-search-tool/index.html">GoogleSearchTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>bypassMultiToolsLimit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>model<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A built-in tool that is automatically invoked by Gemini 2 and 3 models to retrieve search results from Google Search.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="743549065%2FClasslikes%2F-1644122207" anchor-label="LoadArtifactsTool" id="743549065%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-load-artifacts-tool/index.html"><span>Load</span><wbr><span>Artifacts</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="743549065%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-load-artifacts-tool/index.html">LoadArtifactsTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that loads artifacts and adds them to the session.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="713146727%2FClasslikes%2F-1644122207" anchor-label="LoadMemoryTool" id="713146727%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-load-memory-tool/index.html"><span>Load</span><wbr><span>Memory</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="713146727%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-load-memory-tool/index.html">LoadMemoryTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that loads the memory for the current user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="617321754%2FClasslikes%2F-1644122207" anchor-label="PreloadMemoryTool" id="617321754%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-preload-memory-tool/index.html"><span>Preload</span><wbr><span>Memory</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="617321754%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-preload-memory-tool/index.html">PreloadMemoryTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that preloads the memory for the current user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1087821675%2FClasslikes%2F752004321" anchor-label="PromptFormat" id="1087821675%2FClasslikes%2F752004321" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-prompt-format/index.html"><span>Prompt</span><wbr><span><span>Format</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1087821675%2FClasslikes%2F752004321"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-prompt-format/index.html">PromptFormat</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-prompt-format/index.html">PromptFormat</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">The format to use when rendering prompt descriptions of tools.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2052484487%2FClasslikes%2F-1644122207" anchor-label="ReadonlyToolContext" id="2052484487%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-readonly-tool-context/index.html"><span>Readonly</span><wbr><span>Tool</span><wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2052484487%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-readonly-tool-context/index.html">ReadonlyToolContext</a></div><div class="brief "><p class="paragraph">A readonly view of the tool context.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1258788787%2FClasslikes%2F-1644122207" anchor-label="RequestInputTool" id="1258788787%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-request-input-tool/index.html"><span>Request</span><wbr><span>Input</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1258788787%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-request-input-tool/index.html">RequestInputTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">Built-in long-running tool that asks the user a question and pauses the invocation until they respond.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1330929349%2FClasslikes%2F-1644122207" anchor-label="Schema" id="1330929349%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-schema/index.html"><span><span>Schema</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1330929349%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-f-u-n-c-t-i-o-n/index.html">AnnotationTarget.FUNCTION</a><span class="token punctuation">, </span></span><wbr><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-v-a-l-u-e_-p-a-r-a-m-e-t-e-r/index.html">AnnotationTarget.VALUE_PARAMETER</a></span><wbr><span class="token punctuation">]</span></span><wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-schema/index.html">Schema</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>optional<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The annotation for binding the 'Schema' input.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1777614995%2FClasslikes%2F-1644122207" anchor-label="SkillToolset" id="-1777614995%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-skill-toolset/index.html"><span>Skill</span><wbr><span><span>Toolset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1777614995%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-skill-toolset/index.html">SkillToolset</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">source<span class="token operator">: </span><a href="../com.google.adk.kt.skills/-skill-source/index.html">SkillSource</a></span></span><span class="token punctuation">)</span> : <a href="-toolset/index.html">Toolset</a></div><div class="brief "><p class="paragraph">Toolset that manages and provides access to a collection of Skills.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1936092965%2FClasslikes%2F-1644122207" anchor-label="ToolContext" id="1936092965%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tool-context/index.html"><span>Tool</span><wbr><span><span>Context</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1936092965%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tool-context/index.html">ToolContext</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>invocationContext<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-invocation-context/index.html">InvocationContext</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>actions<span class="token operator">: </span><a href="../com.google.adk.kt.events/-event-actions/index.html">EventActions</a><span class="token operator"> = </span>EventActions()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>functionCallId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>toolConfirmation<span class="token operator">: </span><a href="../com.google.adk.kt.events/-tool-confirmation/index.html">ToolConfirmation</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>eventId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="-readonly-tool-context/index.html">ReadonlyToolContext</a></div><div class="brief "><p class="paragraph">ToolContext provides a structured context for executing tools or functions.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-882438862%2FClasslikes%2F-1644122207" anchor-label="Toolset" id="-882438862%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-toolset/index.html"><span><span>Toolset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-882438862%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-toolset/index.html">Toolset</a></div><div class="brief "><p class="paragraph">Base interface for toolsets.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1550683058%2FClasslikes%2F-1644122207" anchor-label="UrlContextTool" id="-1550683058%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-url-context-tool/index.html"><span>Url</span><wbr><span>Context</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1550683058%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-url-context-tool/index.html">UrlContextTool</a> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A built-in tool that is automatically invoked by Gemini models to retrieve content from the given URLs and use that content to inform and shape its response.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1230261798%2FClasslikes%2F-1644122207" anchor-label="VertexAiSearchTool" id="-1230261798%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-vertex-ai-search-tool/index.html"><span>Vertex</span><wbr><span>Ai</span><wbr><span>Search</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1230261798%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-vertex-ai-search-tool/index.html">VertexAiSearchTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>dataStoreId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>dataStoreSpecs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../com.google.adk.kt.types/-vertex-a-i-search-data-store-spec/index.html">VertexAISearchDataStoreSpec</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>searchEngineId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>filter<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>maxResults<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>bypassMultiToolsLimit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>model<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A built-in tool using Vertex AI Search.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -21,14 +21,14 @@ import (
 	"iter"
 	"log"
 
-	"google.golang.org/adk/agent/workflowagents/loopagent"
-	"google.golang.org/adk/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
+	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
 	"google.golang.org/genai"
 )
 
@@ -161,7 +161,7 @@ func (s *StoryFlowAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Eve
 // --8<-- [end:executionlogic]
 
 const (
-	modelName = "gemini-2.0-flash"
+	modelName = "gemini-flash-latest"
 	appName   = "story_app"
 	userID    = "user_12345"
 )

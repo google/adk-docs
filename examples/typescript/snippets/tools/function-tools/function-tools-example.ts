@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 import {Content, Part, createUserContent} from '@google/genai';
-import {
-  stringifyContent,
-  FunctionTool,
-  InMemoryRunner,
-  LlmAgent,
-} from '@google/adk';
+import { stringifyContent, FunctionTool, InMemoryRunner, LlmAgent } from '@google/adk';
 import {z} from 'zod';
 
 // Define the function to get the stock price

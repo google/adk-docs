@@ -50,7 +50,7 @@ const getCurrentTime = new FunctionTool({
 
 export const rootAgent = new LlmAgent({
   name: 'weather_time_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'Agent to answer questions about the time and weather in a city.',
   instruction: 'You are a helpful agent who can answer user questions about the time and weather in a city.',
   tools: [getWeather, getCurrentTime],

@@ -6,6 +6,19 @@
 
 This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
+!!! note "A2A Python SDK version compatibility"
+
+    ADK's A2A integration works with both major versions of the A2A SDK
+    (`a2a-sdk` 0.3.x and 1.x.x). The installed A2A SDK version is detected
+    automatically, so no changes to your ADK application code are needed.
+
+    Although `a2a-sdk` 0.3.x is supported in compatibility mode, new
+    integrations should target 1.x.x. If your code references `a2a-sdk` types
+    directly (for example, custom executors or hand-constructed `AgentCard`
+    instances), see the [A2A SDK v1.0 migration
+    guide](https://github.com/a2aproject/a2a-python/tree/main/docs/migrations/v1_0)
+    when moving to 1.x.x.
+
 ## Overview
 
 This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
@@ -39,7 +52,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
+You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a/a2a_basic) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
@@ -78,13 +91,13 @@ To show how your ADK agent can consume a remote agent via A2A, you'll first need
 
 ```bash
 # Start the remote a2a server that serves the check_prime_agent on port 8001
-adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a
+adk api_server --a2a --port 8001 contributing/samples/a2a/a2a_basic/remote_a2a
 ```
 
 ??? note "Adding logging for debugging with `--log_level debug`"
     To enable debug-level logging, you can add `--log_level debug` to your `adk api_server`, as in:
     ```bash
-    adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a --log_level debug
+    adk api_server --a2a --port 8001 contributing/samples/a2a/a2a_basic/remote_a2a --log_level debug
     ```
     This will give richer logs for you to inspect when testing your agents.
 
@@ -99,16 +112,16 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
-  
-### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
+
+### 3. Look out for the required agent card (`agent.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
+If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent.json`). The `adk api_server --a2a` command exposes over A2A only the agent folders that contain a file named exactly `agent.json`.
 
 In the sample, the `check_prime_agent` already has an agent card provided:
 
-```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
+```json title="a2a_basic/remote_a2a/check_prime_agent/agent.json"
 
 {
   "capabilities": {},
@@ -131,18 +144,18 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
 ??? note "More info on agent cards in ADK"
 
-    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial. 
+    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial.
 
 ### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
 
   ```bash
   # In a separate terminal, run the adk web server
-  adk web contributing/samples/
+  adk web contributing/samples/a2a/
   ```
 
 #### How it works
 
-The main agent uses the `RemoteA2aAgent()` function to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent()` requires the `name`, `description`, and the URL of the `agent_card`.
+The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and an `agent_card`, which can be an `AgentCard` object, a URL (as in the example below), or a path to a local agent card file; the `description` field is optional and defaults to an empty string.
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
@@ -161,6 +174,9 @@ prime_agent = RemoteA2aAgent(
 <...code truncated>
 ```
 
+!!! note "Using the new A2A integration"
+    The `use_legacy` parameter defaults to `True`, so the sample above uses the legacy path. Set `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
+
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
@@ -168,7 +184,7 @@ from google.adk.agents.llm_agent import Agent
 from google.genai import types
 
 root_agent = Agent(
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     name="root_agent",
     instruction="""
       <You are a helpful assistant that can roll dice and check if numbers are prime.
@@ -194,6 +210,63 @@ root_agent = Agent(
     ),
 )
 ```
+
+### Advanced Configuration: Custom Converters and Interceptors
+
+Internally, the `RemoteA2aAgent` translates between the A2A protocol format and the ADK's native `Event` system. You can customize this behaviour by passing an [`A2aRemoteAgentConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/agent/config.py) object via the `config` parameter to `RemoteA2aAgent`.
+
+This allows you to define custom type mappings, inject request parameters, and intercept requests or responses.
+
+#### Converters
+
+Converters handle the translation of incoming A2A responses into native ADK objects. You can provide your own mapping functions for the following hooks:
+
+*   **`a2a_message_converter`**: Converts standard A2A Messages into ADK `Event` objects.
+*   **`a2a_task_converter`**: Converts an A2A Task into an ADK `Event`.
+*   **`a2a_status_update_converter`**: Converts A2A `TaskStatusUpdateEvent`s into ADK `Event` objects.
+*   **`a2a_artifact_update_converter`**: Converts A2A `TaskArtifactUpdateEvent`s into ADK `Event` objects.
+*   **`a2a_part_converter`**: A foundational low-level hook utilized internally by other converters to convert individual A2A Message Parts into GenAI `Part` objects.
+
+!!! note
+    These custom client converters are used only when the response is coming from the new implementation of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py). For more details, see the [A2A extension](a2a-extension.md).
+
+#### Request Interceptors
+
+You can inject a list of `request_interceptors` to add middleware logic to A2A requests:
+
+*   **`before_request`**: Executed before the agent starts processing. You can modify the `A2AMessage`, or return an ADK `Event` to immediately abort the request and return that event to the caller.
+*   **`after_request`**: Executed after the agent has processed the request. You can modify the resulting ADK `Event`, or return `None` to filter out and drop the event entirely.
+
+#### Request Parameters Configuration
+
+Through interceptors, you can also modify the `ParametersConfig` for the A2A request to inject:
+
+*   **`request_metadata`**: Pass custom metadata dictionaries into the request headers.
+*   **`client_call_context`**: Inject specific client call contexts for the underlying transport.
+
+```python
+<...code truncated...>
+
+from google.adk.a2a.agent import A2aRemoteAgentConfig
+from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
+
+prime_agent = RemoteA2aAgent(
+    name="prime_agent",
+    description="Agent that handles checking if numbers are prime.",
+    agent_card=(
+        f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
+    ),
+    use_legacy=False,
+    config=A2aRemoteAgentConfig(
+        a2a_message_converter=my_a2a_message_converter,
+        request_interceptors=[my_request_interceptor],
+    ),
+)
+
+<...code truncated>
+```
+
 
 ## Example Interactions
 

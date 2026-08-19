@@ -44,3 +44,11 @@ snippets/agents/llm-agents/snippets/main.go
 snippets/agents/llm-agents/main.go
 snippets/sessions/memory_example/memory_example.go
 snippets/tools-custom/customer_support_agent/main.go
+snippets/get-started/multi_tool_agent/main.go
+snippets/runtime/triggers/event_processing_agent.go
+snippets/graphs/human-input/main.go
+snippets/graphs/index/main.go
+snippets/graphs/routes/main.go
+snippets/graphs/data-handling/main.go
+snippets/graphs/dynamic/main.go
+snippets/workflows/collaboration/main.go

@@ -1,14 +1,14 @@
 # Events
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
 
 ## What Events Are and Why They Matter
 
-An `Event` in ADK is an immutable record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
+An `Event` in ADK is a record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
 
 === "Python"
     Technically, it's an instance of the `google.adk.events.Event` class, which builds upon the basic `LlmResponse` structure by adding essential ADK-specific metadata and an `actions` payload.
@@ -34,8 +34,42 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     #     # ...
     ```
 
+=== "TypeScript"
+    In TypeScript, this is an interface of type `Event`.
+
+    ```typescript
+    import {Content} from '@google/genai';
+
+    /**
+     * Conceptual Structure of an Event (TypeScript)
+     */
+    export interface Event extends LlmResponse {
+      /** Unique ID for this specific event. */
+      id: string;
+      /** ID for the whole interaction run. */
+      invocationId: string;
+      /** 'user' or agent name. */
+      author?: string;
+      /** Important for side-effects & control. */
+      actions: EventActions;
+      /** Creation time. */
+      timestamp: number;
+      /** Is it streaming output? */
+      partial?: boolean;
+      /** Is the turn finished? */
+      turnComplete?: boolean;
+      /** Hierarchy path. */
+      branch?: string;
+      /** List of IDs for long-running tools. */
+      longRunningToolIds?: string[];
+      /** The content of the response. */
+      content?: Content;
+      // ... other LlmResponse fields like errorCode, errorMessage
+    }
+    ```
+
 === "Go"
-    In Go, this is a struct of type `google.golang.org/adk/session.Event`.
+    In Go, this is a struct of type `google.golang.org/adk/v2/session.Event`.
 
     ```go
     // Conceptual Structure of an Event (Go - See session/session.go)
@@ -84,6 +118,27 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     // }
     ```
 
+=== "Kotlin"
+    In Kotlin, this is an instance of the `com.google.adk.kt.events.Event` class.
+
+    ```kotlin
+    // Conceptual Structure of an Event (Kotlin)
+    // data class Event(
+    //     val author: String,
+    //     val content: Content? = null,
+    //     val actions: EventActions = EventActions(),
+    //     val invocationId: String? = null,
+    //     val branch: String? = null,
+    //     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+    //     val id: String = Uuid.random(),
+    //     val partial: Boolean = false,
+    //     val turnComplete: Boolean = false,
+    //     val longRunningToolIds: Set<String> = emptySet()
+    // )
+    ```
+
+
+
 Events are central to ADK's operation for several key reasons:
 
 1.  **Communication:** They serve as the standard message format between the user interface, the `Runner`, agents, the LLM, and tools. Everything flows as an `Event`.
@@ -102,7 +157,7 @@ In essence, the entire process, from a user's query to the agent's final answer,
 As a developer, you'll primarily interact with the stream of events yielded by the `Runner`. Here's how to understand and extract information from them:
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `event.content()` in Python, `event.content().get().parts()` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language, for example the `event.content` attribute in Python and `event.content().get().parts()` in Java. Refer to the language-specific API documentation for details.
 
 ### Identifying Event Origin and Type
 
@@ -146,13 +201,54 @@ Quickly determine what an event represents by checking:
     #         print("  Type: Control Signal or Other")
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Pseudocode: Basic event identification (TypeScript)
+    import {
+      Event,
+      getFunctionCalls,
+      getFunctionResponses
+    } from '@google/adk';
+
+    export async function processEvents(runnerEvents: AsyncIterable<Event>) {
+      for await (const event of runnerEvents) {
+        console.log(`Event from: ${event.author}`);
+
+        if (event.content && event.content.parts && event.content.parts.length > 0) {
+          if (getFunctionCalls(event).length > 0) {
+            console.log('  Type: Tool Call Request');
+          } else if (getFunctionResponses(event).length > 0) {
+            console.log('  Type: Tool Result');
+          } else if (event.content.parts[0].text) {
+            if (event.partial) {
+              console.log('  Type: Streaming Text Chunk');
+            } else {
+              console.log('  Type: Complete Text Message');
+            }
+          } else {
+            console.log('  Type: Other Content (e.g., code result)');
+          }
+        } else if (
+          event.actions &&
+          (Object.keys(event.actions.stateDelta).length > 0 ||
+            Object.keys(event.actions.artifactDelta).length > 0)
+        ) {
+          console.log('  Type: State/Artifact Update');
+        } else {
+          console.log('  Type: Control Signal or Other');
+        }
+      }
+    }
+    ```
+
 === "Go"
 
     ```go
       // Pseudocode: Basic event identification (Go)
     import (
       "fmt"
-      "google.golang.org/adk/session"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
     )
 
@@ -247,6 +343,36 @@ Quickly determine what an event represents by checking:
     // });
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    // Pseudocode: Basic event identification (Kotlin)
+    // runner.runAsync(...).collect { event ->
+    //     println("Event from: ${event.author}")
+    //
+    //     val content = event.content
+    //     if (content != null && content.parts.isNotEmpty()) {
+    //         if (event.functionCalls().isNotEmpty()) {
+    //             println("  Type: Tool Call Request")
+    //         } else if (event.functionResponses().isNotEmpty()) {
+    //             println("  Type: Tool Result")
+    //         } else if (content.parts[0].text != null) {
+    //             if (event.partial) {
+    //                 println("  Type: Streaming Text Chunk")
+    //             } else {
+    //                 println("  Type: Complete Text Message")
+    //             }
+    //         } else {
+    //             println("  Type: Other Content (e.g., code result)")
+    //         }
+    //     } else if (event.actions.stateDelta.isNotEmpty() || event.actions.artifactDelta.isNotEmpty()) {
+    //         println("  Type: State/Artifact Update")
+    //     } else {
+    //         println("  Type: Control Signal or Other")
+    //     }
+    // }
+    ```
+
 ### Extracting Key Information
 
 Once you know the event type, access the relevant data:
@@ -268,12 +394,27 @@ Once you know the event type, access the relevant data:
                 # Application might dispatch execution based on this
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        export function handleFunctionCalls(event: Event) {
+            const calls = getFunctionCalls(event);
+            if (calls.length > 0) {
+                for (const call of calls) {
+                    const toolName = call.name;
+                    const argumentsDict = call.args; // This is an object
+                    console.log(`  Tool: ${toolName}, Args: ${JSON.stringify(argumentsDict)}`);
+                }
+            }
+        }
+        ```
+
     === "Go"
 
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -325,12 +466,28 @@ Once you know the event type, access the relevant data:
                 print(f"  Tool Result: {tool_name} -> {result_dict}")
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Handle function responses (TypeScript)
+        export function handleFunctionResponses(event: Event) {
+            const responses = getFunctionResponses(event);
+            if (responses.length > 0) {
+                for (const response of responses) {
+                    const toolName = response.name;
+                    const result = response.response; // The object returned by the tool
+                    console.log(`  Tool Result: ${toolName} -> ${JSON.stringify(result)}`);
+                }
+            }
+        }
+        ```
+
     === "Go"
 
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -383,12 +540,24 @@ The `event.actions` object signals changes that occurred or should occur. Always
             print(f"  State changes: {event.actions.state_delta}")
             # Update local UI or application state if necessary
         ```
+
+    === "TypeScript"
+        `delta = event.actions.stateDelta` (an object of `{key: value}` pairs).
+        ```typescript
+        export function handleStateChanges(event: Event) {
+            if (event.actions && Object.keys(event.actions.stateDelta).length > 0) {
+                console.log(`  State changes: ${JSON.stringify(event.actions.stateDelta)}`);
+                // Update local UI or application state if necessary
+            }
+        }
+        ```
+
     === "Go"
         `delta := event.Actions.StateDelta` (a `map[string]any`)
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleStateChanges(event *session.Event) {
@@ -424,13 +593,24 @@ The `event.actions` object signals changes that occurred or should occur. Always
             # UI might refresh an artifact list
         ```
 
+    === "TypeScript"
+        `artifact_changes = event.actions.artifactDelta` (an object of `{filename: version}`).
+        ```typescript
+        export function handleArtifactChanges(event: Event) {
+            if (event.actions && Object.keys(event.actions.artifactDelta).length > 0) {
+                console.log(`  Artifacts saved: ${JSON.stringify(event.actions.artifactDelta)}`);
+                // UI might refresh an artifact list
+            }
+        }
+        ```
+
     === "Go"
-        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]artifact.Artifact`)
+        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]int64`)
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/artifact"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/artifact"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleArtifactChanges(event *session.Event) {
@@ -438,8 +618,8 @@ The `event.actions` object signals changes that occurred or should occur. Always
                 fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
                 // UI might refresh an artifact list
                 // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
-                for filename, art := range event.Actions.ArtifactDelta {
-                    fmt.Printf("    Filename: %s, Version: %d, MIMEType: %s\n", filename, art.Version, art.MIMEType)
+                for filename, version := range event.Actions.ArtifactDelta {
+                    fmt.Printf("    Filename: %s, Version: %d\n", filename, version)
                 }
             }
         }
@@ -478,6 +658,26 @@ The `event.actions` object signals changes that occurred or should occur. Always
                 print("  Signal: Skip summarization for tool result")
         ```
 
+    === "TypeScript"
+        *   `event.actions.transferToAgent` (string): Control should pass to the named agent.
+        *   `event.actions.escalate` (boolean): A loop should terminate.
+        *   `event.actions.skipSummarization` (boolean): A tool result should not be summarized by the LLM.
+        ```typescript
+        export function handleControlFlow(event: Event) {
+            if (event.actions) {
+                if (event.actions.transferToAgent) {
+                    console.log(`  Signal: Transfer to ${event.actions.transferToAgent}`);
+                }
+                if (event.actions.escalate) {
+                    console.log('  Signal: Escalate (terminate loop)');
+                }
+                if (event.actions.skipSummarization) {
+                    console.log('  Signal: Skip summarization for tool result');
+                }
+            }
+        }
+        ```
+
     === "Go"
         *   `event.Actions.TransferToAgent` (string): Control should pass to the named agent.
         *   `event.Actions.Escalate` (bool): A loop should terminate.
@@ -485,7 +685,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleControlFlow(event *session.Event) {
@@ -533,10 +733,10 @@ The `event.actions` object signals changes that occurred or should occur. Always
 
 Use the built-in helper method `event.is_final_response()` to identify events suitable for display as the agent's complete output for a turn.
 
-*   **Purpose:** Filters out intermediate steps (like tool calls, partial streaming text, internal state updates) from the final user-facing message(s).
+*   **Purpose:** Filters out intermediate steps, such as tool calls and partial streaming text, from the final user-facing message(s).
 *   **When `True`?**
-    1.  The event contains a tool result (`function_response`) and `skip_summarization` is `True`.
-    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty:
+    1.  The `skip_summarization` action is `True`. In Python this flag alone is enough, and the event does not need to carry a `function_response` tool result.
+    2.  The event's `long_running_tool_ids` is non-empty, meaning a tool marked as `is_long_running=True` was called. In Python this list alone is enough, and the event does not need to carry the `function_call` itself. In Java, check if the `longRunningToolIds` list is empty:
         *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
     3.  OR, **all** of the following are met:
         *   No function calls (`get_function_calls()` is empty).
@@ -573,6 +773,53 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         #              print("Display: Final non-textual response or signal.")
         ```
 
+    === "TypeScript"
+        ```typescript
+        // Pseudocode: Handling final responses in application (TypeScript)
+        import {
+            Event,
+            getFunctionResponses,
+            isFinalResponse,
+            stringifyContent
+        } from '@google/adk';
+
+        async function handleFinalResponses(runnerEvents: AsyncIterable<Event>) {
+            let fullResponseText = '';
+
+            for await (const event of runnerEvents) {
+                // Accumulate streaming text if needed...
+                if (event.partial) {
+                    fullResponseText += stringifyContent(event);
+                }
+
+                // Check if it's a final, displayable event
+                if (isFinalResponse(event)) {
+                    console.log('\n--- Final Output Detected ---');
+
+                    const eventText = stringifyContent(event);
+                    if (fullResponseText || eventText) {
+                        // If it's the final part of a stream (or a single message), use accumulated text
+                        const finalText = fullResponseText + (event.partial ? '' : eventText);
+                        console.log(`Display to user: ${finalText.trim()}`);
+                        fullResponseText = ''; // Reset accumulator
+                    } else if (
+                        event.actions?.skipSummarization &&
+                        getFunctionResponses(event).length > 0
+                    ) {
+                        // Handle displaying the raw tool result if needed
+                        const responseData = getFunctionResponses(event)[0].response;
+                        console.log(`Display raw tool result: ${JSON.stringify(responseData)}`);
+                    } else if (event.longRunningToolIds && event.longRunningToolIds.length > 0) {
+                        console.log('Display message: Tool is running in background...');
+                    } else {
+                        // Handle other types of final responses if applicable
+                        console.log('Display: Final non-textual response or signal.');
+                    }
+                }
+            }
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -580,7 +827,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         import (
             "fmt"
             "strings"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -708,7 +955,7 @@ Events are created at different points and processed systematically by the frame
     2.  **Runner Receives:** The main `Runner` executing the agent receives the event.
     3.  **SessionService Processing:** The `Runner` sends the event to the configured `SessionService`. This is a critical step:
         *   **Applies Deltas:** The service merges `event.actions.state_delta` into `session.state` and updates internal records based on `event.actions.artifact_delta`. (Note: The actual artifact *saving* usually happened earlier when `context.save_artifact` was called).
-        *   **Finalizes Metadata:** Assigns a unique `event.id` if not present, may update `event.timestamp`.
+        *   **Event Metadata:** In Python, the `Event` object already carries an `id` and a `timestamp` from the moment it is constructed, so the service does not assign them and records the event as it received it.
         *   **Persists to History:** Appends the processed event to the `session.events` list.
     4.  **External Yield:** The `Runner` yields (Python) or returns/emits (Java) the processed event outwards to the calling application (e.g., the code that invoked `runner.run_async`).
 
@@ -771,7 +1018,7 @@ Here are concise examples of typical events you might see in the stream:
       // actions might have skip_summarization=True
     }
     ```
-*   **State/Artifact Update Only:** (`is_final_response() == False`)
+*   **State/Artifact Update Only:** (`is_final_response() == True`)
     ```json
     {
       "author": "InternalUpdater",
@@ -792,7 +1039,7 @@ Here are concise examples of typical events you might see in the stream:
       "actions": {"transfer_to_agent": "BillingAgent"} // Added by framework
     }
     ```
-*   **Loop Escalation Signal:** (`is_final_response() == False`)
+*   **Loop Escalation Signal:** (`is_final_response() == True`)
     ```json
     {
       "author": "CheckerAgent",
@@ -848,6 +1095,9 @@ To use events effectively in your ADK applications:
 
     === "Python"
         Use `yield Event(author=self.name, ...)` in `BaseAgent` subclasses.
+
+    === "TypeScript"
+        When constructing an `Event` in your custom agent logic, set the author, for example: `createEvent({ author: this.name, ... })`
 
     === "Go"
         In custom agent `Run` methods, the framework typically handles authorship. If creating an event manually, set the author: `yield(&session.Event{Author: a.name, ...}, nil)`
