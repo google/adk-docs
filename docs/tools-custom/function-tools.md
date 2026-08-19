@@ -679,6 +679,12 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:call_reimbursement_tool"
+    ```
+
 ??? "Python complete example: File Processing Simulation"
 
     ```python
@@ -690,6 +696,10 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
 - **`LongRunningFunctionTool`**: Wraps the supplied method/function; the
   framework handles sending yielded updates and the final return value as
   sequential FunctionResponses.
+- **Kotlin has no `LongRunningFunctionTool` class**: annotate the function with
+  `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
+  subclass. A long-running tool that returns `Unit` suppresses even the
+  placeholder response, so the turn ends on the function call alone.
 - **Agent instruction**: Directs the LLM to use the tool and understand the
   incoming FunctionResponse stream (progress vs. completion) for user updates.
 - **Final return**: The function returns the final result dictionary, which is
