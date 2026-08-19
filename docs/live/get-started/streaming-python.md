@@ -117,7 +117,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         ```
 
 For more information on connecting to Google Cloud from ADK agents, see
-[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+[Connect to Google Cloud and Agent Platform](../../get-started/google-cloud.md).
 
 ## 4. Try the agent with `adk web` { #try-the-agent-with-adk-web }
 

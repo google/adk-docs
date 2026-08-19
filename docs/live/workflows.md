@@ -1,262 +1,145 @@
 # Workflows
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
-Multi-agent workflows behave differently under a live connection. With a request/response
-agent, each agent transition is a fresh call you control. Under `run_live()`, a
-`SequentialAgent` pipeline or a coordinator handing off to a specialist all happens
-*inside a single open connection and a single event loop* — the transitions are invisible
-to your code, and the user keeps talking through them.
+Live agents compose into the same graph workflows as any other ADK agent. Defining nodes and
+edges, routing, and state are covered in [Graph workflows](../graphs/index.md), and the
+broader multi-agent picture in [Workflows](../workflows/index.md). This page covers what
+changes when the workflow runs over a live connection.
 
-That changes what correct application code looks like: one loop, one queue, for the whole
-workflow. This page covers the patterns that hold up and the ones that break.
+What changes is the execution model. With a request/response agent, each agent transition is
+a fresh call you control. Under `run_live()`, a whole pipeline of agents runs *inside one
+open connection and one event loop*. The transitions are invisible to your code, and the
+user keeps talking through them.
 
-## Best Practices for Multi-Agent Workflows
+That shapes what correct application code looks like: one loop and one queue for the
+entire workflow, no matter how many agents it spans.
 
-ADK's bidirectional streaming supports three agent architectures: **single agent** (one agent handles the entire conversation), **multi-agent with sub-agents** (a coordinator agent dynamically routes to specialist agents using `transfer_to_agent`), and **sequential workflow agents** (agents execute in a fixed pipeline using `task_completed`). This section focuses on best practices for sequential workflows, where understanding agent transitions and state sharing is crucial for smooth bidirectional communication.
+## Use a graph Workflow
 
-!!! note "Learn More"
+A graph [`Workflow`](../graphs/index.md) is the way to sequence live agents in
+ADK 2.0. You define the agents as nodes and connect them with edges; the runner walks the
+graph over a single live session.
 
-    For comprehensive coverage of multi-agent patterns, see [Workflows](../workflows/index.md) in the ADK documentation.
-
-When building multi-agent systems with ADK, understanding how agents transition and share state during live streaming is crucial for smooth bidirectional communication.
-
-### SequentialAgent with Bidi-streaming
-
-`SequentialAgent` enables workflow pipelines where agents execute one after another. Each agent completes its task before the next one begins. The challenge with live streaming is determining when an agent has finished processing continuous audio or video input.
-
-!!! note "Reference"
-
-    [`SequentialAgent`](../api-reference/python/google-adk.html#google.adk.agents.SequentialAgent) in the Python API reference
-
-**How it works:**
-
-ADK automatically adds a `task_completed()` function to each agent in the sequence. When the model calls this function, it signals completion and triggers the transition to the next agent:
-
-**Usage:**
+Each agent you want to speak must set `mode='task'` (or `mode='chat'`). This is the one
+requirement that trips people up: an `LlmAgent` node with no `mode` defaults to
+`single_turn`, which runs without the live connection and ignores the audio queue. Set
+the mode explicitly on every node that talks.
 
 ```python
-# SequentialAgent automatically adds this tool to each sub-agent
-def task_completed():
-    """
-    Signals that the agent has successfully completed the user's question
-    or task.
-    """
-    return 'Task completion signaled.'
+from google.adk.agents.llm_agent import Agent
+from google.adk.workflow import START, Workflow
+
+LIVE_MODEL = 'gemini-live-2.5-flash-native-audio'
+
+greeter = Agent(
+    model=LIVE_MODEL,
+    name='greeter',
+    mode='task',  # required for the node to use the live connection
+    instruction='Greet the caller and confirm you are speaking with John Doe. '
+    'Ask one question per turn. Complete your task once the name is confirmed.',
+)
+
+verifier = Agent(
+    model=LIVE_MODEL,
+    name='verifier',
+    mode='task',
+    instruction='Verify the caller by date of birth, then complete your task.',
+)
+
+root_agent = Workflow(
+    name='intake',
+    edges=[
+        (START, greeter),
+        (greeter, verifier),
+    ],
+)
 ```
 
-### Recommended Pattern: Transparent Sequential Flow
+Serve this with `adk web` and start a live session, or pass it to `Runner.run_live()`.
+The runner detects a `Workflow` root and drives it over the live connection; you consume
+one event stream across all nodes. See the runnable
+[`live_workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_workflow)
+for a three-stage voice intake flow with typed handoffs and a live eval set.
 
-The key insight is that **agent transitions happen transparently** within the same `run_live()` event stream. Your application doesn't need to manage transitions—just consume events uniformly:
+Each node opens its own Live API session for the duration of that node, and the workflow's
+`LiveRequestQueue` is shared across nodes in sequence. Fan-out (parallel live nodes sharing
+one queue) is not supported; keep live nodes on a single path.
 
-**Usage:**
+## Consume the event stream
+
+The stream is continuous across node transitions. Consume it with one loop and one queue,
+and read `event.author` to tell which agent is speaking.
 
 ```python
-async def handle_sequential_workflow():
-    """Recommended pattern for SequentialAgent with bidi-streaming."""
-
-    # 1. Single queue shared across all agents in the sequence
-    queue = LiveRequestQueue()
-
-    # 2. Background task captures user input continuously
-    async def capture_user_input():
-        while True:
-            # Your logic to read audio from microphone
-            audio_chunk = await microphone.read()
-            queue.send_realtime(
-                blob=types.Blob(data=audio_chunk, mime_type="audio/pcm")
-            )
-
-    input_task = asyncio.create_task(capture_user_input())
-
-    try:
-        # 3. Single event loop handles ALL agents seamlessly
-        async for event in runner.run_live(
-            user_id="user_123",
-            session_id="session_456",
-            live_request_queue=queue,
-        ):
-            # Events flow seamlessly across agent transitions
-            current_agent = event.author
-
-            # Handle audio and text output
-            if event.content and event.content.parts:
-                for part in event.content.parts:
-                    # Check for audio data
-                    if part.inline_data and part.inline_data.mime_type.startswith("audio/"):
-                        # Your logic to play audio
-            await play_audio(part.inline_data.data)
-
-                    # Check for text data
-                    if part.text:
-                        await display_text(f"[{current_agent}] {part.text}")
-
-            # No special transition handling needed!
-
-    finally:
-        input_task.cancel()
-        queue.close()
-```
-
-### Event Flow During Agent Transitions
-
-Here's what your application sees when agents transition:
-
-```text
-# Agent 1 (Researcher) completes its work
-Event: author="researcher", text="I've gathered all the data."
-Event: author="researcher", function_call: task_completed()
-Event: author="researcher", function_response: task_completed
-
-# --- Automatic transition (invisible to your code) ---
-
-# Agent 2 (Writer) begins
-Event: author="writer", text="Let me write the report based on the research..."
-Event: author="writer", text=" The findings show..."
-Event: author="writer", function_call: task_completed()
-Event: author="writer", function_response: task_completed
-
-# --- Automatic transition ---
-
-# Agent 3 (Reviewer) begins - the last agent in sequence
-Event: author="reviewer", text="Let me review the report..."
-Event: author="reviewer", text="The report looks good. All done!"
-Event: author="reviewer", function_call: task_completed()
-Event: author="reviewer", function_response: task_completed
-
-# --- Last agent completed: run_live() exits ---
-# Your async for loop ends here
-```
-
-### Design Principles
-
-#### 1. Single Event Loop
-
-Use one event loop for all agents in the sequence:
-
-**Usage:**
-
-```python
-# ✅ CORRECT: One loop handles all agents
-async for event in runner.run_live(...):
-    # Your event handling logic here
-    await handle_event(event)  # Works for Agent1, Agent2, Agent3...
-
-# ❌ INCORRECT: Don't break the loop or create multiple loops
-for agent in agents:
-    async for event in runner.run_live(...):  # WRONG!
-        ...
-```
-
-#### 2. Persistent Queue
-
-The same `LiveRequestQueue` serves all agents:
-
-```text
-# User input flows to whichever agent is currently active
-User speaks → Queue → Agent1 (researcher)
-                ↓
-User speaks → Queue → Agent2 (writer)
-                ↓
-User speaks → Queue → Agent3 (reviewer)
-```
-
-**Don't create new queues per agent:**
-
-```python
-# ❌ INCORRECT: New queue per agent
-for agent in agents:
-    new_queue = LiveRequestQueue()  # WRONG!
-
-# ✅ CORRECT: Single queue for entire workflow
 queue = LiveRequestQueue()
-async for event in runner.run_live(live_request_queue=queue):
-    ...
-```
 
-#### 3. Agent-Aware UI (Optional)
-
-Track which agent is active for better user experience:
-
-**Usage:**
-
-```python
-current_agent_name = None
-
-async for event in runner.run_live(...):
-    # Detect agent transitions
-    if event.author and event.author != current_agent_name:
-        current_agent_name = event.author
-        # Your logic to update UI indicator
-        await update_ui_indicator(f"Now: {current_agent_name}")
-
-    # Your event handling logic here
-    await handle_event(event)
-```
-
-#### 4. Transition Notifications
-
-Optionally notify users when agents hand off:
-
-**Usage:**
-
-```python
-async for event in runner.run_live(...):
-    # Detect task completion (transition signal)
+async for event in runner.run_live(
+    user_id='user_123',
+    session_id='session_456',
+    live_request_queue=queue,
+):
     if event.content and event.content.parts:
         for part in event.content.parts:
-            if (part.function_response and
-                part.function_response.name == "task_completed"):
-                # Your logic to display transition notification
-                await display_notification(
-                    f"✓ {event.author} completed. Handing off to next agent..."
-                )
-                continue
-
-    # Your event handling logic here
-    await handle_event(event)
+            if part.inline_data and part.inline_data.mime_type.startswith('audio/'):
+                await play_audio(part.inline_data.data)
+            elif part.text:
+                await display_text(f'[{event.author}] {part.text}')
 ```
 
-### Key Differences: transfer_to_agent vs task_completed
+Do not open a new `run_live()` loop or a new `LiveRequestQueue` per agent. One loop and
+one queue serve the whole workflow; user input flows to whichever node is currently active.
 
-Understanding these two functions helps you choose the right multi-agent pattern:
+## Route with transfer_to_agent
 
-| Function | Agent Pattern | When `run_live()` Exits | Use Case |
-|----------|--------------|----------------------|----------|
-| `transfer_to_agent` | Coordinator (dynamic routing) | `LiveRequestQueue.close()` | Route user to specialist based on intent |
-| `task_completed` | Sequential (pipeline) | `LiveRequestQueue.close()` or `task_completed` of the last agent | Fixed workflow: research → write → review |
-
-**transfer_to_agent example:**
+A coordinator agent can hand the conversation to a specialist mid-session with
+`transfer_to_agent`. The handoff happens inside the same `run_live()` loop: ADK closes the
+coordinator's live connection, opens a fresh one for the specialist, and the user keeps
+talking.
 
 ```text
-# Coordinator routes based on user intent
 User: "I need help with billing"
 Event: author="coordinator", function_call: transfer_to_agent(agent_name="billing")
-# Stream continues with billing agent - same run_live() loop
 Event: author="billing", text="I can help with your billing question..."
 ```
 
-**task_completed example:**
+Transfers start a new Live API session for the target agent, so session-resumption handles
+from the coordinator do not carry over. To keep transfers on the coordinator's own team,
+set `disallow_transfer_to_peers` on the sub-agents; a disallowed sibling transfer raises a
+`ValueError`.
+
+## Template workflow agents
+
+`SequentialAgent`, `LoopAgent`, and `ParallelAgent` are **deprecated in favor of
+`Workflow`** and will be removed in a future release. `LoopAgent` and `ParallelAgent`
+raise `NotImplementedError` under `run_live()` and will crash a live session, so keep both
+off any live path. Prefer a graph `Workflow` for new code.
+
+`SequentialAgent` still runs in live mode. When it does, ADK adds a `task_completed`
+tool to each direct `LlmAgent` sub-agent and appends an instruction telling the model to
+call it when the task is done. Calling `task_completed` ends that sub-agent's live
+connection and advances to the next agent in the sequence.
+
+```python
+# ADK injects this into each LlmAgent sub-agent at live-run time.
+def task_completed():
+    """Signals that the agent has completed the user's task."""
+    return 'Task completion signaled.'
+```
+
+The event stream looks like any live workflow: a run of events per agent, then a
+`task_completed` function response, then the next agent begins:
 
 ```text
-# Sequential workflow progresses through pipeline
 Event: author="researcher", function_call: task_completed()
-# Current agent exits, next agent in sequence begins
 Event: author="writer", text="Based on the research..."
 ```
 
-### Best Practices Summary
+`task_completed` and `transfer_to_agent` end an agent's turn for different reasons:
 
-| Practice | Reason |
-|----------|--------|
-| Use single event loop | ADK handles transitions internally |
-| Keep queue alive across agents | Same queue serves all sequential agents |
-| Track `event.author` | Know which agent is currently responding |
-| Don't reset session/context | Conversation state persists across agents |
-| Handle events uniformly | All agents produce the same event types |
-| Let `task_completed` signal transitions | Don't manually manage sequential flow |
-
-The SequentialAgent design ensures smooth transitions—your application simply sees a continuous stream of events from different agents in sequence, with automatic handoffs managed by ADK.
-
+| Function | Pattern | Effect |
+|----------|---------|--------|
+| `task_completed` | Fixed sequence | Ends the current agent; the next agent in the sequence begins |
+| `transfer_to_agent` | Dynamic routing | Closes the current live session; a new session opens for the target agent |

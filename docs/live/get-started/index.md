@@ -4,7 +4,7 @@ The Agent Development Kit (ADK) enables real-time, interactive experiences with 
 
 This page provides quickstart examples to get you up and running with streaming capabilities in both Python and Java ADK.
 
-<div class.="grid cards" markdown>
+<div class="grid cards" markdown>
 
 -   :fontawesome-brands-python:{ .lg .middle } **Python ADK: Streaming agent**
 
