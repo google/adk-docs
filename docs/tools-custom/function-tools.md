@@ -698,8 +698,13 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   sequential FunctionResponses.
 - **Kotlin has no `LongRunningFunctionTool` class**: annotate the function with
   `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
-  subclass. A long-running tool that returns `Unit` suppresses even the
-  placeholder response, so the turn ends on the function call alone.
+  subclass.
+- **Kotlin turn count**: because the tool above returns a value rather than
+  `Unit`, a non-resumable app sends that placeholder to the model and calls it a
+  second time, so turn 1 ends in an interim reply. A resumable app pauses on the
+  function call with no second model call. Returning `Unit` suppresses the
+  placeholder response entirely, ending the turn on the function call in either
+  mode.
 - **Agent instruction**: Directs the LLM to use the tool and understand the
   incoming FunctionResponse stream (progress vs. completion) for user updates.
 - **Final return**: The function returns the final result dictionary, which is

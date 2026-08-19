@@ -4,6 +4,7 @@ import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
+import com.google.adk.kt.events.Event
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.Runner
 import com.google.adk.kt.types.Content
@@ -59,16 +60,20 @@ fun main() {
 /**
  * Drives the approval from the client side.
  *
- * `askForApproval` is long running, so it returns a `pending` placeholder and the
- * turn ends. The real decision arrives out of band and is handed back on a later
- * turn as a `FunctionResponse`.
+ * `askForApproval` is long running, so its return value is only a `pending`
+ * placeholder: the real decision arrives out of band and is handed back on a
+ * later turn as a `FunctionResponse`.
+ *
+ * What turn 1 looks like depends on the app. Because this tool returns a value
+ * rather than `Unit`, a non-resumable app emits the placeholder as a function
+ * response and calls the model a second time, so the user sees an interim reply
+ * before the decision exists. A resumable app pauses on the function call
+ * instead, with no second model call.
  */
 suspend fun approveReimbursement(
     runner: Runner,
     userId: String,
     sessionId: String,
-    // True when the app was built with ResumabilityConfig(isResumable = true).
-    appIsResumable: Boolean = false,
 ) {
     val firstTurn =
         runner
@@ -77,15 +82,22 @@ suspend fun approveReimbursement(
                 sessionId = sessionId,
                 newMessage = Content.fromText(Role.USER, "Please reimburse 200 USD for meals."),
             ).toList()
+    firstTurn.printText()
 
     // A pending call is one whose id the event also lists in longRunningToolIds.
     val pendingCall =
         firstTurn.firstNotNullOfOrNull { event ->
             event.functionCalls().firstOrNull { it.id != null && it.id in event.longRunningToolIds }
-        } ?: return
+        }
+    if (pendingCall == null) {
+        println("The model answered without calling the tool; nothing to approve.")
+        return
+    }
 
-    // Reuse the id of the original call, or the model cannot match this answer to
-    // the request it is still waiting on.
+    // The id is not optional bookkeeping: the framework matches the response to
+    // the original call by id, and a missing or unknown one throws rather than
+    // degrading. It also tells a resumable app which invocation to resume, so no
+    // invocationId argument is needed here.
     val approval =
         Content(
             role = Role.USER,
@@ -106,13 +118,13 @@ suspend fun approveReimbursement(
         .runAsync(
             userId = userId,
             sessionId = sessionId,
-            // A resumable app must resume the invocation that raised the call;
-            // without the id the response starts a new invocation instead. A
-            // non-resumable app passes null and continues in a fresh invocation.
-            invocationId = if (appIsResumable) firstTurn.firstOrNull()?.invocationId else null,
             newMessage = approval,
-        ).collect { event ->
-            event.content?.parts?.forEach { part -> part.text?.let(::println) }
-        }
+        ).toList()
+        .printText()
 }
+
+private fun List<Event>.printText() =
+    forEach { event ->
+        event.content?.parts?.forEach { part -> part.text?.let(::println) }
+    }
 // --8<-- [end:call_reimbursement_tool]
