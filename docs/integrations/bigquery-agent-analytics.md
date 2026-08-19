@@ -7,7 +7,7 @@ catalog_tags: ["observability", "google"]
 
 # BigQuery Agent Analytics plugin for ADK
 
-<div class="language-support-tag">
+<div class="language-support-tag" title="Kotlin support covers invocation lifecycle logging only; see the Kotlin support note below.">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
 </div>
 
@@ -57,6 +57,22 @@ The plugin includes three reliability and observability fixes:
     This feature uses **BigQuery Storage Write API**, which is a paid service.
     For information on costs, see the [BigQuery
     documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
+
+!!! note "Kotlin support"
+
+    The **Kotlin** plugin covers a small subset of this page. It logs
+    `INVOCATION_STARTING` and `INVOCATION_COMPLETED` only; it fills the identity
+    columns and `content`, leaving `trace_id`, `span_id`, `latency_ms`,
+    `attributes` and the rest null; and it creates **no views**, so the `v_*`
+    views in the table below do not exist for Kotlin. Auto Schema Upgrade, tool
+    provenance, HITL tracing, drop stats and the ADK 2.0 workflow events are not
+    implemented.
+
+    It also ingests differently: rows go one at a time through
+    `tabledata.insertAll`, synchronously on the invocation path, not through the
+    gRPC Storage Write API described above. Those are separate billing lines:
+    inserted rows are charged with a 1 KB minimum each and no monthly free tier,
+    so cost scales with invocation count rather than bytes.
 
 ## Use cases
 
@@ -196,21 +212,33 @@ shows the BigQuery view optionally created when
 === "Kotlin"
 
     Add the plugin to your agent's `App` object. For prerequisites, see
-    [Prerequisites](#prerequisites). The plugin ships outside core, in
-    `com.google.adk:google-adk-kotlin-integrations`, and is JVM-only.
+    [Prerequisites](#prerequisites). The plugin is JVM-only and ships outside
+    core, so add the integrations artifact:
+
+    ```kotlin title="build.gradle.kts"
+    implementation("com.google.adk:google-adk-kotlin-integrations:0.8.0")
+    ```
 
     ```kotlin title="BigQueryAnalyticsExample.kt"
     --8<-- "examples/kotlin/snippets/integrations/BigQueryAnalyticsExample.kt:quickstart"
     ```
 
-    The Kotlin plugin logs a deliberately narrow slice of what the Python and
-    Java plugins do. It records `INVOCATION_STARTING` and `INVOCATION_COMPLETED`
-    only — none of the LLM, tool, state or HITL events in the table above — and
-    populates the identity columns plus `content`, leaving `trace_id`,
-    `latency_ms`, `attributes` and the rest null. Rows are written one at a time
-    with the `insertAll` streaming API, synchronously on the invocation path, so
-    each write adds latency to the turn rather than being batched away by the
-    Storage Write API.
+    `BigQueryLoggerConfig` is the whole Kotlin configuration surface —
+    `projectId`, `datasetId`, `enabled` (default `true`), `location` (default
+    `"US"`, passed to the BigQuery client), `tableName` (default
+    `"agent_events"`) and `credentials` (default: application default
+    credentials). The options under [Configuration
+    options](#configuration-options) are Python and Java only.
+
+    **Logging failures are swallowed.** If the table cannot be created or a row
+    cannot be inserted, the plugin logs and the invocation continues, so a
+    misconfigured agent looks healthy while writing nothing. When rows are
+    missing, raise the log level for
+    `com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin` —
+    logs are emitted under that class name, not under the plugin's ADK name.
+    Note also that Kotlin writes `content` as
+    `{"message": "Invocation started"}` rather than the `{}` shown for these two
+    event types below.
 
 
 ### Run and test agent

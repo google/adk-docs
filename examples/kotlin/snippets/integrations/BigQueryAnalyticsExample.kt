@@ -37,10 +37,14 @@ val analyticsAgent =
  * The plugin creates the day-partitioned table on first use, so the credentials
  * in scope need permission to create a table in the dataset, not only to insert
  * rows. Without explicit `credentials`, application default credentials are used.
+ *
+ * Logging failures never fail the turn: a table that cannot be created, or a row
+ * that cannot be inserted, is logged and the invocation carries on.
  */
 fun analyticsApp(
     projectId: String,
     datasetId: String,
+    datasetLocation: String,
 ): App {
     val plugin =
         BigQueryAgentAnalyticsPlugin(
@@ -48,8 +52,8 @@ fun analyticsApp(
                 BigQueryLoggerConfig(
                     projectId = projectId,
                     datasetId = datasetId,
-                    // Optional; defaults to "agent_events".
-                    tableName = "agent_events",
+                    // Defaults to "US"; pass your dataset's location instead.
+                    location = datasetLocation,
                 ),
         )
 
