@@ -1,7 +1,7 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
@@ -75,7 +75,7 @@ immediately:
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugins/plugin_basic)
 in the repository.
 
 ### Create Plugin class
@@ -252,6 +252,12 @@ methods, as shown in the following code example:
     	fmt.Printf("[Plugin] LLM request count: %d\n", p.LlmRequestCount)
     	return nil, nil
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:create_plugin"
     ```
 
 This example code implements callbacks for `before_agent_callback` and
@@ -568,6 +574,12 @@ a simple ADK agent.
     		}
     	}
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:register_plugin"
     ```
 
 ### Run the agent with the Plugin
