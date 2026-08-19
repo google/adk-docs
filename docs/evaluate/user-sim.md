@@ -309,7 +309,9 @@ instead.
     "tool_trajectory_avg_score": 1.0,
     "response_match_score": 0.5
   },
-  "use_live": true,
+  "live_model_config": {
+    "timeout_seconds": 300
+  },
   "user_simulator_config": {
     "type": "llm_audio",
     "model": "gemini-2.5-flash",
@@ -339,10 +341,13 @@ Key fields:
 !!! note "Live models require live inference"
 
     Evaluating a live agent requires live (bidirectional streaming) inference,
-    which is **not** the default. Enable it with `"use_live": true` in your
-    config file. Live API models (e.g. `gemini-*-live-*`) are not served over
-    the unary `generateContent` endpoint that non-live eval uses, so running
-    them without live mode fails.
+    which is **not** the default. Enable it by adding a `live_model_config`
+    block to your config file. Live API models (e.g. `gemini-*-live-*`) are not
+    served over the unary `generateContent` endpoint that non-live eval uses, so
+    running them without live mode fails.
+
+    `use_live` is an internal field set from `live_model_config`; putting it in
+    a config file has no effect.
 
     Using `cloud_tts` requires the `google-cloud-texttospeech` package (included
     in the `google-adk[eval]` extra) and access to the Cloud Text-to-Speech API.

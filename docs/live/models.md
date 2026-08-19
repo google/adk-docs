@@ -4,9 +4,9 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-Live agents require a Live API model — a standard Gemini model will not hold a
-bidirectional connection. For the models ADK supports outside live agents, and for
-non-Gemini providers, see [Models for agents](../agents/models/index.md).
+Live agents require a model that can hold a bidirectional connection; a standard Gemini
+model will not. For the models ADK supports outside live agents, and for non-Gemini
+providers, see [Models for agents](../agents/models/index.md).
 
 ## Live models
 
@@ -72,7 +72,6 @@ before you rely on a limit in production.
 
 | Limit | AI Studio | Agent Platform |
 |---|---|---|
-| Connection duration | ~10 min (ADK reconnects transparently via [session resumption](sessions.md#session-resumption)) | Not documented separately |
 | Session duration, audio-only | 15 min | 10 min |
 | Session duration, audio + video | 2 min | 10 min |
 | Concurrent sessions | 50 (Tier 1), 1,000 (Tier 2+) | Up to 1,000 per project |
@@ -161,7 +160,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 ## Model compatibility and availability
 
-For the latest information on Live API model compatibility and availability:
+For the latest information on model compatibility and availability:
 
 - **AI Studio**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models) and the [Live API capabilities guide](https://ai.google.dev/gemini-api/docs/live-api/capabilities)
 - **Agent Platform**: See the [Live API overview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api) and the [Agent Platform model documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)

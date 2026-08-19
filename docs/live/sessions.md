@@ -4,14 +4,13 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-A live agent is not a request and a response. It is a connection that stays open while
-the user talks, listens, interrupts, and falls silent.
+A live agent is a connection that stays open while the user talks, listens, interrupts, and
+falls silent.
 
-Live agents use the same `Session`, `SessionService`, and state model as any ADK agent —
-[Conversational context](../sessions/index.md) covers all of it, and none of it changes
-here. What changes is that a session now has a *connection* attached to it, one that can
-drop, time out, or outlive the model's context window. That connection is what this page is
-about. For what comes *back* out of it, see [Events](events.md); for the settings that shape
+Live agents use the same `Session`, `SessionService`, and state model as any ADK agent, all
+covered in [Conversational context](../sessions/index.md). What a live session adds is a
+*connection*: one that can drop, time out, or outlive the model's context window. For what
+comes *back* out of that connection, see [Events](events.md); for the settings that shape
 it, see [Configuration](configuration.md).
 
 ## Set up a live application
@@ -177,7 +176,7 @@ event types it yields and how to handle them, see [Events](events.md).
 | Exit condition | Trigger | Graceful |
 |---|---|---|
 | Manual close | `live_request_queue.close()` | Yes |
-| Workflow complete | Last agent in a live `SequentialAgent` calls `task_completed()` | Yes |
+| Workflow complete | Last agent in a live workflow calls `task_completed()` | Yes |
 | Session timeout | Live API duration limit reached (without compression) | Connection closed |
 | Early exit | `end_invocation` set by a tool or callback | Yes |
 | Error | Connection failure or unhandled exception | No |
@@ -231,11 +230,13 @@ At the transport layer, one more distinction matters for reliability:
 
 ### Platform limits
 
-Both backends cap connection duration, session duration, and concurrent sessions, and the
-exact numbers differ between them and change over time. They live in one place:
-[Supported models](models.md#platform-limits-and-quotas). Two of those caps shape the code
-on this page — session duration, which [context window compression](#context-window-compression)
-removes, and concurrent sessions, which you design against in
+Both backends cap connection duration, session duration, and concurrent sessions. The exact
+numbers differ by backend and change over time, so
+[Supported models](models.md#platform-limits-and-quotas) tracks them in one place.
+
+Two of those caps change how you write the code.
+[Context window compression](#context-window-compression) lifts the session-duration limit,
+and the concurrent-session ceiling is what you design against in
 [Concurrent sessions](#concurrent-sessions).
 
 ## Session resumption

@@ -12,9 +12,8 @@ laggy.
 
 `Event` is the same class ADK uses everywhere, documented in [Events](../events/index.md).
 A live session fills in fields a request/response agent never touches — audio blobs,
-transcriptions, interruption flags — and delivers them continuously instead of once. Those
-differences are what this page covers. For the loop that yields them, see
-[Sessions](sessions.md).
+transcriptions, interruption flags — and delivers them continuously instead of once. For the
+loop that yields them, see [Sessions](sessions.md).
 
 ## What a live event carries
 
@@ -57,7 +56,7 @@ events = [e for e in stream if e.author == "billing_agent"]
 Text arrives on `event.content.parts[].text`. In a live session this is thought summaries
 and other non-spoken content — **the model's spoken reply comes back as an
 [output transcription](configuration.md#audio-transcription), not a text part**, because
-every Live API model ADK supports takes audio in and produces audio out ([Supported models](models.md#live-models)).
+every [Live model](models.md#live-models) ADK supports takes audio in and produces audio out.
 
 ```python
 async for event in runner.run_live(...):
@@ -162,8 +161,7 @@ async for event in runner.run_live(...):
         enable_microphone()     # ready for the next turn
 ```
 
-Handling `interrupted` is the step most often missed. Without it, already-buffered audio
-keeps playing over the user.
+Without handling `interrupted`, already-buffered audio keeps playing over the user.
 
 ## Handling errors
 

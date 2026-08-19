@@ -65,8 +65,8 @@ The `RunConfig` class itself and `StreamingMode` enum are imported from `google.
 ## Response Modalities
 
 `response_modalities` controls the output format, and a session gets exactly one. **For live
-agents the value is always `["AUDIO"]`**: every Live API model ADK supports is a
-[Live model](models.md#live-models), and those accept no other modality.
+agents the value is always `["AUDIO"]`**, because every
+[Live model](models.md#live-models) ADK supports accepts no other modality.
 
 ADK fills this in for you when you leave it unset, so most live applications never touch the
 field.
@@ -100,7 +100,7 @@ what picks one**:
   `RunConfig.streaming_mode = StreamingMode.SSE` to stream that response back chunk by chunk
 
 The two model sets barely overlap. Standard Gemini models such as `gemini-flash-latest` do
-not speak the Live API protocol, and the Live API models in
+not hold a bidirectional connection, and the models in
 [Supported models](models.md#live-models) are meant to be driven with `run_live()`,
 so choosing a model is part of choosing a `Runner` method.
 
@@ -126,11 +126,12 @@ async for event in runner.run_live(..., run_config=run_config):
     ...
 ```
 
-**Note:** This distinction is about the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either one.
+This choice affects only how ADK talks to Gemini. Your client-facing architecture is
+independent: you can build WebSocket servers, REST APIs, or SSE endpoints on either path.
 
-For the `run_async()` / SSE path — `streaming_mode` values, progressive SSE streaming, and
-the language-specific configuration — see
-[Runtime configuration](../runtime/runconfig.md#enable-streaming).
+[Runtime configuration](../runtime/runconfig.md#enable-streaming) covers the `run_async()`
+and SSE path: `streaming_mode` values, progressive SSE streaming, and the
+language-specific configuration.
 
 ## Miscellaneous Controls
 
@@ -182,8 +183,8 @@ artifact service — ADK does not expire these for you.
 ### history_config
 
 When ADK opens a **new** Live API connection for a session that already has conversation
-history, it replays that history to the server. Because the history includes the model's own
-past turns, the server needs to be told not to answer them again. ADK handles this for you:
+history, it replays that history to the server. That history includes the model's own past
+turns, so the server has to be told not to answer them again. ADK handles this for you:
 before connecting, it sets
 `live_connect_config.history_config.initial_history_in_client_content = True` whenever there
 is history to send and no session resumption handle is in play.
@@ -370,8 +371,8 @@ often infer the language from the conversation and may ignore it.
 ## Voice activity detection (VAD)
 
 VAD detects when the user starts and stops speaking so the model can take turns naturally,
-including handling interruptions. **It is on by default** on all Live API models, and most
-applications need no configuration.
+including handling interruptions. **It is on by default** on all
+[Live models](models.md#live-models), and most applications need no configuration.
 
 Disable automatic VAD when your application decides turn boundaries itself: push-to-talk,
 client-side VAD, or any UX where the user signals when they are done. When you disable it,
