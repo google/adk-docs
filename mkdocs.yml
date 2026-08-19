@@ -441,8 +441,8 @@ nav:
         - Events: live/events.md
         - Audio and video: live/audio-video.md
         - Configuration: live/configuration.md
-        - Evaluation: live/evaluation.md
       - Production:
+        - Evaluation: live/evaluation.md
         - Build a custom server: live/custom-server.md
       - Reference:
         - Supported models: live/models.md

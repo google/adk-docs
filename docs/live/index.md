@@ -39,8 +39,9 @@ your agent code stays the same as the platform evolves.
 
     Build your first live agent and talk to it in the browser.
 
-    - [Quickstart (Python)](get-started/streaming-python.md)
-    - [Quickstart (Java)](get-started/streaming-java.md)
+    - [Start here](get-started/index.md) — pick a language and build one
+    - Jump straight to [Python](get-started/streaming-python.md) or
+      [Java](get-started/streaming-java.md)
 
 -   :material-book-open-variant: **Building**
 
@@ -61,6 +62,7 @@ your agent code stays the same as the platform evolves.
 
     Take a live agent beyond `adk web`.
 
+    - [Evaluation](evaluation.md) — score voice conversations before you ship
     - [Build a custom server](custom-server.md)
     - [Supported models](models.md)
 

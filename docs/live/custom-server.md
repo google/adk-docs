@@ -4,7 +4,7 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-`adk web` runs a live agent during development — it ships a browser client that captures the
+`adk web` runs a live agent during development. It ships a browser client that captures the
 microphone and camera, plays model audio, and renders transcripts, so you can talk to your
 agent with no code of your own. Shipping to production means replacing that: running your own
 server that bridges clients to `run_live()`, with the runner and session service initialized
@@ -16,9 +16,9 @@ lifecycle this example puts into practice.
 
 ## FastAPI application example
 
-Here's a complete FastAPI WebSocket application showing all four phases integrated with proper Bidi-streaming. The key pattern is **upstream/downstream tasks**: the upstream task receives messages from WebSocket and sends them to `LiveRequestQueue`, while the downstream task receives `Event` objects from `run_live()` and sends them to WebSocket.
-
-**Complete Implementation:**
+This FastAPI application implements the bridge. It runs two concurrent tasks: an upstream
+task that forwards WebSocket messages into `LiveRequestQueue`, and a downstream task that
+forwards `run_live()` events back out.
 
 ```python
 import asyncio
@@ -126,7 +126,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
 The bridge is two loops running at once, and that is what makes it bidirectional:
 
 - **Upstream** reads from the WebSocket and pushes into the `LiveRequestQueue`, so the user
-  can send input at any moment — including while the agent is mid-sentence.
+  can send input at any moment, including while the agent is mid-sentence.
 - **Downstream** reads events from `run_live()` and writes them to the WebSocket, streaming
   responses, transcriptions, and tool activity out as they happen.
 
@@ -134,14 +134,13 @@ Run them sequentially and you lose interruption: the server would be blocked rea
 agent's output while the user is trying to talk over it. `asyncio.gather()` is what keeps
 both directions live simultaneously.
 
-The `try/finally` matters as much as the `gather`. `live_request_queue.close()` must run on
-every exit path, including exceptions — an unclosed queue leaves the Live API without a
-termination signal and can strand a session against your
-[concurrent-session quota](sessions.md#concurrent-sessions) until it times out.
+`live_request_queue.close()` must run on every exit path, including exceptions. An unclosed
+queue leaves the Live API without a termination signal and can strand a session against your
+[concurrent-session quota](sessions.md#concurrent-sessions) until it times out, which is
+what the `try/finally` is for.
 
-Note that `gather(..., return_exceptions=True)` collects exceptions rather than raising
-them, so check the returned values if you need to distinguish a clean disconnect from a
-failure.
+`gather(..., return_exceptions=True)` collects exceptions rather than raising them, so check
+the returned values if you need to distinguish a clean disconnect from a failure.
 
 ### Production considerations
 
@@ -161,7 +160,7 @@ This example shows the core pattern. For production applications, consider:
 ## Connect a client
 
 Your server exposes a WebSocket; something has to talk to it. During development that is
-`adk web`. In production it is a client you write — a browser app, a mobile app, or a
+`adk web`. In production it is a client you write: a browser app, a mobile app, or a
 telephony or WebRTC bridge. Whatever you build inherits the same contract, so it is worth
 knowing exactly what `adk web` does and where it stops.
 
@@ -178,21 +177,21 @@ knowing exactly what `adk web` does and where it stops.
 **What it does not do**, and a production client may need:
 
 - No screen sharing, and no video without an active audio call.
-- No modality choice — responses are always `AUDIO`.
+- No modality choice; responses are always `AUDIO`.
 - No UI for proactivity, affective dialog, session resumption, `save_live_blob`, or explicit
   VAD signals. Those are set on the server through [`RunConfig`](configuration.md).
-- No manual [VAD](configuration.md#voice-activity-detection-vad) — it relies on the
+- No manual [VAD](configuration.md#voice-activity-detection-vad); it relies on the
   server-side automatic detection that is on by default.
 
 `adk web` and `adk api_server` both serve the same `/run_live` WebSocket; `adk api_server`
-just does not ship the browser client unless you pass `--with_ui`. So you can develop
+does not ship the browser client unless you pass `--with_ui`. You can therefore develop
 against `adk web` and point a custom client at either.
 
 ### The wire protocol
 
 The `/run_live` endpoint speaks **JSON text frames only**. Your client sends serialized
 [`LiveRequest`](sessions.md#liverequestqueue) objects and receives serialized
-[`Event`](events.md) objects. Binary data — audio and image bytes — is base64-encoded
+[`Event`](events.md) objects. Binary data (audio and image bytes) is base64-encoded
 *inside* the JSON, not sent as binary WebSocket frames.
 
 On the client, branch on the same event fields you would in Python, in camelCase:
@@ -216,15 +215,15 @@ websocket.onmessage = (message) => {
 };
 ```
 
-The media formats your client must produce and consume — sample rates, encodings, chunk
-sizes — are in [Audio and video](audio-video.md). The streaming flags it branches on
+The media formats your client must produce and consume (sample rates, encodings, chunk
+sizes) are in [Audio and video](audio-video.md). The streaming flags it branches on
 (`partial`, `turnComplete`, `interrupted`) and how transcriptions fragment are in
 [Events](events.md).
 
 ## Serializing events
 
 The `/run_live` endpoint between ADK and the Live API is JSON-text-only, but the transport
-between *your* server and *your* client is yours to design — and there you can send audio as
+between *your* server and *your* client is yours to design, and there you can send audio as
 binary frames to avoid base64 overhead.
 
 `Event` is a Pydantic model, so `model_dump_json()` converts it to a JSON string for a

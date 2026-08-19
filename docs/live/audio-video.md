@@ -99,10 +99,9 @@ live_request_queue.send_realtime(
 )
 ```
 
-The ~1 FPS ceiling is the important constraint: it is enough for a model to see what the
-user is pointing a camera at or discussing, but **not** for anything motion-dependent —
-action recognition, sports analysis, or motion tracking need temporal resolution this
-approach does not provide.
+At ~1 FPS the model can see what the user is pointing a camera at or discussing, but not
+anything motion-dependent. Action recognition, sports analysis, and motion tracking need
+temporal resolution this approach does not provide.
 
 In the [Shopper's Concierge demo](https://youtu.be/LwHPYyw7u6U?si=lG9gl9aSIuu-F4ME&t=40),
 the app sends a user-uploaded image with `send_realtime()`; the agent recognizes the context

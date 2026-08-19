@@ -9,23 +9,19 @@ edges, routing, and state are covered in [Graph workflows](../graphs/index.md), 
 broader multi-agent picture in [Workflows](../workflows/index.md). What changes under a live
 connection is the execution model.
 
-With a request/response agent, each agent transition is a fresh call you control. Under
-`run_live()`, a whole pipeline of agents runs *inside one open connection and one event
-loop*. The transitions are invisible to your code, and the user keeps talking through them.
+Under `run_live()`, a whole pipeline of agents runs *inside one open connection and one event
+loop*, so the caller hears a single continuous conversation. They keep talking while control
+moves from one agent to the next, and never hear the handoff.
 
-That shapes what correct application code looks like: one loop and one queue for the
-entire workflow, no matter how many agents it spans.
+That shapes your code too. With a request/response agent, each agent transition is a fresh
+call you control; here it is one loop and one queue for the entire workflow, no matter how
+many agents it spans.
 
-## Use a graph Workflow
+## Run agents in a graph
 
-A graph [`Workflow`](../graphs/index.md) is the way to sequence live agents in
-ADK 2.0. You define the agents as nodes and connect them with edges; the runner walks the
-graph over a single live session.
-
-Each agent you want to speak must set `mode='task'` (or `mode='chat'`). This is the one
-requirement that trips people up: an `LlmAgent` node with no `mode` defaults to
-`single_turn`, which runs without the live connection and ignores the audio queue. Set
-the mode explicitly on every node that talks.
+A graph [`Workflow`](../graphs/index.md) is how you sequence live agents in ADK 2.0. You
+define the agents as nodes and connect them with edges, and the runner walks the graph over a
+single live session:
 
 ```python
 from google.adk.agents.llm_agent import Agent
@@ -63,11 +59,16 @@ one event stream across all nodes. See the runnable
 [`live_workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_workflow)
 for a three-stage voice intake flow with typed handoffs and a live eval set.
 
-Each node opens its own Live API session for the duration of that node, and the workflow's
-`LiveRequestQueue` is shared across nodes in sequence. Fan-out (parallel live nodes sharing
-one queue) is not supported; keep live nodes on a single path.
+**Every agent that speaks needs `mode='task'` or `mode='chat'`.** As a node in a workflow, an
+`LlmAgent` with no `mode` falls back to `single_turn`, which runs outside the live connection
+and ignores the audio queue entirely, so the caller hears nothing from it. Set the mode
+explicitly on every node that talks.
 
-## Consume the event stream
+Each node opens its own Live API session for the duration of that node, and the workflow's
+`LiveRequestQueue` is shared across nodes in sequence. A single queue cannot feed two live
+nodes at once, so keep live nodes on one path rather than fanning out.
+
+## Read one event stream
 
 The stream is continuous across node transitions. Consume it with one loop and one queue,
 and read `event.author` to tell which agent is speaking.
@@ -91,9 +92,9 @@ async for event in runner.run_live(
 Do not open a new `run_live()` loop or a new `LiveRequestQueue` per agent. One loop and
 one queue serve the whole workflow; user input flows to whichever node is currently active.
 
-## Route with transfer_to_agent
+## Hand off mid-conversation
 
-A coordinator agent can hand the conversation to a specialist mid-session with
+A coordinator agent can pass the conversation to a specialist mid-session with
 `transfer_to_agent`. The handoff happens inside the same `run_live()` loop: ADK closes the
 coordinator's live connection, opens a fresh one for the specialist, and the user keeps
 talking.
@@ -109,12 +110,12 @@ from the coordinator do not carry over. To keep transfers on the coordinator's o
 set `disallow_transfer_to_peers` on the sub-agents; a disallowed sibling transfer raises a
 `ValueError`.
 
-## Template workflow agents
+## Legacy workflow agents
 
-`SequentialAgent`, `LoopAgent`, and `ParallelAgent` are **deprecated in favor of
-`Workflow`** and will be removed in a future release. `LoopAgent` and `ParallelAgent`
-raise `NotImplementedError` under `run_live()` and will crash a live session, so keep both
-off any live path. Prefer a graph `Workflow` for new code.
+Use a graph `Workflow` for new code. `SequentialAgent`, `LoopAgent`, and `ParallelAgent` are
+**deprecated in favor of `Workflow`** and will be removed in a future release. `LoopAgent`
+and `ParallelAgent` raise `NotImplementedError` under `run_live()` and will crash a live
+session, so keep both off any live path.
 
 `SequentialAgent` still runs in live mode. When it does, ADK adds a `task_completed`
 tool to each direct `LlmAgent` sub-agent and appends an instruction telling the model to

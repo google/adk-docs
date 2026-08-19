@@ -6,7 +6,7 @@ With this quickstart, you'll learn to create a simple agent and use ADK Streamin
 
 ## Supported models for voice/video streaming {#supported-models}
 
-In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+Voice and video streaming requires a Gemini model that supports the Live API. You can find the **model ID(s)** that support it in the documentation:
 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
