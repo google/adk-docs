@@ -84,8 +84,6 @@ fun main() =
         // --8<-- [end:gen_config]
 
         // --8<-- [start:schema_example]
-        // Schema here is ADK's own com.google.adk.kt.types.Schema, not the
-        // same-named type in the GenAI SDK.
         val capitalOutput =
             Schema(
                 type = Type.OBJECT,
@@ -96,12 +94,18 @@ fun main() =
                             Schema(
                                 type = Type.STRING,
                                 description = "The capital city of the country.",
-                                // JSON Schema constraints, added in adk-kotlin 0.8.0.
-                                minLength = 1,
-                                pattern = "^[A-Z][A-Za-z .'-]*",
+                                // Constraint fields, added in adk-kotlin 0.8.0.
+                                minLength = 2,
+                                maxLength = 60,
+                            ),
+                        "countryCode" to
+                            Schema(
+                                type = Type.STRING,
+                                description = "ISO 3166-1 alpha-2 code for the country.",
+                                pattern = "^[A-Z]{2}$",
                             ),
                     ),
-                required = listOf("capital"),
+                required = listOf("capital", "countryCode"),
             )
 
         val structuredCapitalAgent =
@@ -111,12 +115,11 @@ fun main() =
                 instruction =
                     Instruction(
                         "You are a Capital Information Agent. Given a country, respond ONLY " +
-                            "with a JSON object containing the capital. " +
-                            """Format: {"capital": "capital_name"}""",
+                            "with a JSON object holding the capital city and the country's " +
+                            "ISO 3166-1 alpha-2 code.",
                     ),
                 outputSchema = capitalOutput,
                 outputKey = "found_capital",
-                // Cannot use tools effectively here.
             )
         // --8<-- [end:schema_example]
 
