@@ -6,8 +6,7 @@
 
 Live agents require a Live API model — a standard Gemini model will not hold a
 bidirectional connection. For the models ADK supports outside live agents, and for
-non-Gemini providers, see [Models for agents](../agents/models/index.md); this page covers
-the Live API models, the backends that serve them, and their limits.
+non-Gemini providers, see [Models for agents](../agents/models/index.md).
 
 ## Live models
 
@@ -49,11 +48,21 @@ Switch with the `GOOGLE_GENAI_USE_ENTERPRISE` environment variable (`FALSE` for 
     for the current list.
 
 These models produce audio directly, with natural prosody, and detect the conversation
-language on their own. What you configure on top — voices, transcription, proactivity — lives
-in [Configuration](configuration.md); those settings and their per-model support are covered
-there rather than repeated here. One property is fixed at the model level and worth stating:
-Live models produce **audio only**. They do not support the `TEXT` response modality, so to
-get text alongside speech you use [audio transcription](configuration.md#audio-transcription).
+language on their own. What you configure on top — voices, transcription, turn detection —
+is described in [Configuration](configuration.md).
+
+One property is fixed at the model level: Live models produce **audio only**. They do not
+support the `TEXT` response modality, so to get text alongside speech you use
+[audio transcription](configuration.md#audio-transcription).
+
+### Per-model feature support
+
+A few `RunConfig` settings depend on which model you are running:
+
+| Feature | `gemini-live-2.5-flash-native-audio` |
+|---|---|
+| [Proactivity and affective dialog](configuration.md#proactivity-and-affective-dialog) | Opt-in via `RunConfig` |
+| [`response_scheduling`](tools.md#non-blocking-tools) on tools | Supported |
 
 ## Platform limits and quotas
 

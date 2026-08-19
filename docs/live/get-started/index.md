@@ -1,8 +1,10 @@
 # Build a streaming agent
 
-The Agent Development Kit (ADK) enables real-time, interactive experiences with your AI agents through streaming. This allows for features like live voice conversations, real-time tool use, and continuous updates from your agent.
+A streaming agent holds an open, two-way connection with the user: it listens while it
+speaks, and the user can interrupt it mid-sentence. That makes live voice conversation,
+real-time tool use, and continuous updates possible.
 
-This page provides quickstart examples to get you up and running with streaming capabilities in both Python and Java ADK.
+Pick your language and build one end to end.
 
 <div class="grid cards" markdown>
 
