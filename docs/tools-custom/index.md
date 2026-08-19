@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -530,7 +530,7 @@ By adhering to these guidelines, you provide the LLM with the clarity and struct
 ## Toolsets: Grouping and Dynamically Providing Tools
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 
@@ -600,11 +600,15 @@ In this example:
 *   The `close()` method is called to ensure any resources held by the toolset are released.
 *   The Kotlin example does not prefix the tool names, because adk-kotlin has no prefix mechanism and `BaseTool.name` is read-only. Its tools stay `greetUser`, `addNumbers` and `subtractNumbers`. Kotlin also keeps the two kinds of tool apart: individual tools go in `tools`, toolsets in `toolsets`.
 
-### Filtering which tools a toolset exposes with `ToolFilter`
+### Filter tools in toolsets
 
-<div class="language-support-tag" title="ToolFilter is a Kotlin API. Other languages offer their own tool filtering mechanisms.">
+<div class="language-support-tag" title="The version badge covers the Kotlin ToolFilter API shown here. Python, Java and TypeScript filter tools through their own BaseToolset APIs.">
    <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
+
+Every SDK lets a toolset narrow what it hands to the model, by name or by a
+predicate that sees the current context; Python, Java and TypeScript take that
+filter on `BaseToolset`. The example here is the Kotlin form.
 
 Rather than hard-coding the list inside `getTools()`, a toolset can accept a
 `ToolFilter` and apply it with `isToolSelected`, as `SimpleMathToolset` does in the
