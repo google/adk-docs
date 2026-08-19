@@ -10,8 +10,8 @@ agent with no code of your own. Shipping to production means replacing that: run
 server that bridges clients to `run_live()`, with the runner and session service initialized
 once at startup and one `LiveRequestQueue` per connected user.
 
-This page walks through a complete FastAPI implementation of that bridge, then covers how a
-client connects to it. It assumes you have read [Sessions](sessions.md), which covers the
+What follows is a complete FastAPI implementation of that bridge, and what a client needs to
+know to talk to it. It assumes you have read [Sessions](sessions.md), which covers the
 lifecycle this example puts into practice.
 
 ## FastAPI application example
@@ -121,58 +121,27 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
 
     All code examples assume an async context (within an `async def` or coroutine). They show the core logic without boilerplate wrapper functions.
 
-## Key concepts
+## Why two tasks
 
-**Upstream Task (WebSocket → LiveRequestQueue)**
+The bridge is two loops running at once, and that is what makes it bidirectional:
 
-The upstream task continuously receives messages from the WebSocket client and forwards them to the `LiveRequestQueue`. This enables the user to send messages to the agent at any time, even while the agent is generating a response.
+- **Upstream** reads from the WebSocket and pushes into the `LiveRequestQueue`, so the user
+  can send input at any moment — including while the agent is mid-sentence.
+- **Downstream** reads events from `run_live()` and writes them to the WebSocket, streaming
+  responses, transcriptions, and tool activity out as they happen.
 
-```python
-async def upstream_task() -> None:
-    """Receives messages from WebSocket and sends to LiveRequestQueue."""
-    try:
-        while True:
-            data: str = await websocket.receive_text()
-            content = types.Content(parts=[types.Part(text=data)])
-            live_request_queue.send_content(content)
-    except WebSocketDisconnect:
-        pass  # Client disconnected
-```
+Run them sequentially and you lose interruption: the server would be blocked reading the
+agent's output while the user is trying to talk over it. `asyncio.gather()` is what keeps
+both directions live simultaneously.
 
-**Downstream Task (run_live() → WebSocket)**
+The `try/finally` matters as much as the `gather`. `live_request_queue.close()` must run on
+every exit path, including exceptions — an unclosed queue leaves the Live API without a
+termination signal and can strand a session against your
+[concurrent-session quota](sessions.md#concurrent-sessions) until it times out.
 
-The downstream task continuously receives `Event` objects from `run_live()` and sends them to the WebSocket client. This streams the agent's responses, tool executions, transcriptions, and other events to the user in real-time.
-
-```python
-async def downstream_task() -> None:
-    """Receives Events from run_live() and sends to WebSocket."""
-    async for event in runner.run_live(
-        user_id=user_id,
-        session_id=session_id,
-        live_request_queue=live_request_queue,
-        run_config=run_config
-    ):
-        await websocket.send_text(
-            event.model_dump_json(exclude_none=True, by_alias=True)
-        )
-```
-
-**Concurrent Execution with Cleanup**
-
-Both tasks run concurrently using `asyncio.gather()`, enabling true Bidi-streaming. The `try/finally` block ensures `LiveRequestQueue.close()` is called even if exceptions occur, minimizing the session resource usage.
-
-```python
-try:
-    await asyncio.gather(
-        upstream_task(),
-        downstream_task(),
-        return_exceptions=True
-    )
-finally:
-    live_request_queue.close()  # Always cleanup
-```
-
-This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is the foundation of production-ready streaming applications. The lifecycle pattern (initialize once, stream many times) enables efficient resource usage and clean separation of concerns, with application components remaining stateless and reusable while session-specific state is isolated in `LiveRequestQueue`, `RunConfig`, and session records.
+Note that `gather(..., return_exceptions=True)` collects exceptions rather than raising
+them, so check the returned values if you need to distinguish a clean disconnect from a
+failure.
 
 ### Production considerations
 

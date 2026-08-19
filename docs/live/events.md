@@ -10,9 +10,10 @@ tool calls, token counts, and errors. A single spoken reply can arrive as dozens
 and handling them correctly is what makes a voice interface feel immediate rather than
 laggy.
 
-This page covers what live sessions put on an event, the event types you will encounter, the
-flags that drive a streaming UI, and how to handle errors in the loop. For the `Event` class
-itself, see [Events](../events/index.md). For the loop that yields them, see
+`Event` is the same class ADK uses everywhere, documented in [Events](../events/index.md).
+A live session fills in fields a request/response agent never touches — audio blobs,
+transcriptions, interruption flags — and delivers them continuously instead of once. Those
+differences are what this page covers. For the loop that yields them, see
 [Sessions](sessions.md).
 
 ## What a live event carries

@@ -6,13 +6,12 @@
 
 Live agents compose into the same graph workflows as any other ADK agent. Defining nodes and
 edges, routing, and state are covered in [Graph workflows](../graphs/index.md), and the
-broader multi-agent picture in [Workflows](../workflows/index.md). This page covers what
-changes when the workflow runs over a live connection.
+broader multi-agent picture in [Workflows](../workflows/index.md). What changes under a live
+connection is the execution model.
 
-What changes is the execution model. With a request/response agent, each agent transition is
-a fresh call you control. Under `run_live()`, a whole pipeline of agents runs *inside one
-open connection and one event loop*. The transitions are invisible to your code, and the
-user keeps talking through them.
+With a request/response agent, each agent transition is a fresh call you control. Under
+`run_live()`, a whole pipeline of agents runs *inside one open connection and one event
+loop*. The transitions are invisible to your code, and the user keeps talking through them.
 
 That shapes what correct application code looks like: one loop and one queue for the
 entire workflow, no matter how many agents it spans.

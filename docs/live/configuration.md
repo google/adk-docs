@@ -11,10 +11,9 @@ under. You pass it to
 applies to that session only. Two users of the same agent can run with completely
 different configurations.
 
-This page is the `RunConfig` reference for live agents, followed by the voice-facing
-settings: [transcription](#audio-transcription), [voice and language](#voice-and-language),
-[voice activity detection](#voice-activity-detection-vad), and
-[proactivity and affective dialog](#proactivity-and-affective-dialog).
+`RunConfig` is not live-specific; [Runtime configuration](../runtime/runconfig.md) documents
+the full class and the fields that apply to `run_async()`. What follows is the subset that
+matters under `run_live()`, plus the voice-facing settings that only exist in a live session.
 
 ## RunConfig Parameter Quick Reference
 
@@ -153,55 +152,32 @@ run_config = RunConfig(
 
 ### max_llm_calls
 
-This parameter caps the total number of LLM invocations allowed per invocation context, providing protection against runaway costs and infinite agent loops.
+`max_llm_calls` caps LLM invocations per invocation context, and
+[Runtime configuration](../runtime/runconfig.md#configure-runtime-limits-and-debugging)
+documents it in full.
 
-**Limitation for Bidi-streaming:**
-
-**The `max_llm_calls` limit does NOT apply to `run_live()`.** This parameter only protects `run_async()` flows. If you're building bidirectional streaming applications (the focus of this guide), you will NOT get automatic cost protection from this parameter.
-
-**For Live streaming sessions**, implement your own safeguards:
-
-- Session duration limits
-- Turn count tracking
-- Custom cost monitoring by tracking token usage in model turn events (see [Event types and handling](events.md#event-types))
-- Application-level circuit breakers
+**It does not apply to `run_live()`.** The parameter only guards the `run_async()` path, so
+a live session gets no automatic cost ceiling from it. Budget your own: cap session
+duration, count turns, watch `usage_metadata` on model events
+([Metadata](events.md#metadata)), and put a circuit breaker in front of the loop.
 
 ### save_live_blob
 
-This parameter controls whether audio and video streams are persisted to ADK's session and artifact services for debugging, compliance, and quality assurance purposes.
+`save_live_blob=True` persists the session's audio to the
+[session service](../sessions/index.md) as references and to the
+[artifact service](../artifacts/index.md) as files. Despite the name, **only audio is
+persisted** today, not video.
 
-!!! warning "Migration Note: save_live_audio Deprecated"
+Enable it for debugging voice behavior, or for audit trails in regulated environments. Leave
+it off otherwise: 16 kHz PCM input runs about **1.92 MB per minute per session**, written to
+two services, and that accumulates fast on a voice workload. If you need it in production,
+sample a fraction of sessions rather than all of them, and set a retention policy on the
+artifact service — ADK does not expire these for you.
 
-    **If you're using `save_live_audio`:** This parameter has been deprecated in favor of `save_live_blob`. ADK will automatically migrate `save_live_audio=True` to `save_live_blob=True` with a deprecation warning, but this compatibility layer will be removed in a future release. Update your code to use `save_live_blob` instead.
+!!! warning "`save_live_audio` is deprecated"
 
-Currently, **only audio is persisted** by ADK's implementation. When enabled, ADK persists audio streams to:
-
-- **[Session service](../sessions/index.md)**: Conversation history includes audio references
-- **[Artifact service](../artifacts/index.md)**: Audio files stored with unique IDs
-
-**Use cases:**
-
-- **Debugging**: Voice interaction issues, assistant behavior analysis
-- **Compliance**: Audit trails for regulated industries (healthcare, financial services)
-- **Quality Assurance**: Monitoring conversation quality, identifying issues
-- **Training Data**: Collecting data for model improvement
-- **Development/Testing**: Testing environments and cost-sensitive deployments
-
-**Storage considerations:**
-
-Enabling `save_live_blob=True` has significant storage implications:
-
-- **Audio file sizes**: At 16kHz PCM, audio input generates ~1.92 MB per minute
-- **Session storage**: Audio is stored in both session service and artifact service
-- **Retention policy**: Check your artifact service configuration for retention periods
-- **Cost impact**: Storage costs can accumulate quickly for high-volume voice applications
-
-**Best practices:**
-
-- Enable only when needed (debugging, compliance, training)
-- Implement retention policies to auto-delete old audio artifacts
-- Consider sampling (e.g., save 10% of sessions for quality monitoring)
-- Use compression if supported by your artifact service
+    ADK migrates `save_live_audio=True` to `save_live_blob=True` automatically and warns,
+    but the shim will be removed in a future release. Update to `save_live_blob`.
 
 ### history_config
 
@@ -236,90 +212,20 @@ run_config = RunConfig(
 
 ### custom_metadata
 
-This parameter allows you to attach arbitrary key-value metadata to events generated during the current invocation. The metadata is stored in the `Event.custom_metadata` field and persisted to session storage, enabling you to tag events with application-specific context for analytics, debugging, routing, or compliance tracking.
-
-**Configuration:**
+`custom_metadata` attaches an arbitrary JSON-serializable dict to every `Event` in the
+invocation, and it behaves the same in a live session as anywhere else — see
+[Runtime configuration](../runtime/runconfig.md#configure-runtime-limits-and-debugging).
 
 ```python
-from google.adk.agents.run_config import RunConfig
-
-# Attach metadata to all events in this invocation
 run_config = RunConfig(
-    custom_metadata={
-        "user_tier": "premium",
-        "session_type": "customer_support",
-        "campaign_id": "promo_2025",
-        "ab_test_variant": "variant_b"
-    }
+    response_modalities=["AUDIO"],
+    custom_metadata={"user_tier": "premium", "session_type": "support"},
 )
 ```
 
-**How it works:**
-
-When you provide `custom_metadata` in RunConfig:
-
-1. **Metadata attachment**: The dictionary is attached to every `Event` generated during the invocation
-2. **Session persistence**: Events with metadata are stored in the session service (database, Agent Platform, or in-memory)
-3. **Event access**: Retrieve metadata from any event via `event.custom_metadata`
-4. **A2A integration**: For Agent-to-Agent (A2A) communication, ADK automatically propagates A2A request metadata to this field
-
-**Type specification:**
-
-```python
-custom_metadata: Optional[dict[str, Any]] = None
-```
-
-The metadata is a flexible dictionary accepting any JSON-serializable values (strings, numbers, booleans, nested objects, arrays).
-
-**Use cases:**
-
-- **User segmentation**: Tag events with user tier, subscription level, or cohort information
-- **Session classification**: Label sessions by type (support, sales, onboarding) for analytics
-- **Campaign tracking**: Associate events with marketing campaigns or experiments
-- **A/B testing**: Track which variant of your application generated the event
-- **Compliance**: Attach jurisdiction, consent flags, or data retention policies
-- **Debugging**: Add trace IDs, feature flags, or environment identifiers
-- **Analytics**: Store custom dimensions for downstream analysis
-
-**Example - Retrieving metadata from events:**
-
-```python
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=queue,
-    run_config=RunConfig(
-        custom_metadata={"user_id": "user_123", "experiment": "new_ui"}
-    )
-):
-    if event.custom_metadata:
-        print(f"User: {event.custom_metadata.get('user_id')}")
-        print(f"Experiment: {event.custom_metadata.get('experiment')}")
-```
-
-**Agent-to-Agent (A2A) integration:**
-
-When using `RemoteA2AAgent`, ADK automatically extracts metadata from A2A requests and populates `custom_metadata`:
-
-```python
-# A2A request metadata is automatically mapped to custom_metadata
-# Source: a2a/converters/request_converter.py
-custom_metadata = {
-    "a2a_metadata": {
-        # Original A2A request metadata appears here
-    }
-}
-```
-
-This propagates metadata across agent boundaries in multi-agent systems.
-
-**Best practices:**
-
-- Use consistent key naming conventions across your application
-- Avoid storing sensitive data (PII, credentials) in metadata—use encryption if necessary
-- Keep metadata size reasonable to minimize storage overhead
-- Document your metadata schema for team consistency
-- Consider using metadata for session filtering and search in production debugging
+The live-specific consequence is scope: one `run_live()` call is one invocation, so the
+metadata is stamped on every event for the entire streaming session rather than a single
+turn. Read it back with `event.custom_metadata`.
 
 ### Other live-related fields
 

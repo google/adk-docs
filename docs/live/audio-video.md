@@ -6,12 +6,11 @@
 
 Audio and video are what make a live agent feel live, and they are where the exact formats
 matter. The Live API expects specific PCM sample rates for audio, and images and video
-frames go through a different send method than text. This page is the format contract: what
-you send, what comes back, and the constraints on each.
+frames go through a different send method than text.
 
-ADK does not convert media for you. Getting the sample rate, encoding, and MIME type right
-is your responsibility, and the wrong format produces silence, noise, or a connection error
-rather than a helpful message.
+**ADK does not convert media for you.** Getting the sample rate, encoding, and MIME type
+right is your responsibility, and the wrong format produces silence, noise, or a connection
+error rather than a helpful message. What follows is that contract.
 
 For the models that support these modalities, see [Supported models](models.md). For voices,
 transcription, and turn detection, see [Configuration](configuration.md). For a client that

@@ -5,13 +5,14 @@
 </div>
 
 A live agent is not a request and a response. It is a connection that stays open while
-the user talks, listens, interrupts, and falls silent. This page covers the machinery
-that keeps that connection alive: the components you set up once, the queue you push user
-input into, the `run_live()` loop you read from, and what happens when a connection drops
-or a conversation outgrows the model's context window.
+the user talks, listens, interrupts, and falls silent.
 
-For what comes *back* out of the loop, see [Events](events.md). For the settings that shape
-a session, see [Configuration](configuration.md).
+Live agents use the same `Session`, `SessionService`, and state model as any ADK agent —
+[Conversational context](../sessions/index.md) covers all of it, and none of it changes
+here. What changes is that a session now has a *connection* attached to it, one that can
+drop, time out, or outlive the model's context window. That connection is what this page is
+about. For what comes *back* out of it, see [Events](events.md); for the settings that shape
+it, see [Configuration](configuration.md).
 
 ## Set up a live application
 
