@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
 </div>
 
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
@@ -192,6 +192,25 @@ shows the BigQuery view optionally created when
       }
     }
     ```
+
+=== "Kotlin"
+
+    Add the plugin to your agent's `App` object. For prerequisites, see
+    [Prerequisites](#prerequisites). The plugin ships outside core, in
+    `com.google.adk:google-adk-kotlin-integrations`, and is JVM-only.
+
+    ```kotlin title="BigQueryAnalyticsExample.kt"
+    --8<-- "examples/kotlin/snippets/integrations/BigQueryAnalyticsExample.kt:quickstart"
+    ```
+
+    The Kotlin plugin logs a deliberately narrow slice of what the Python and
+    Java plugins do. It records `INVOCATION_STARTING` and `INVOCATION_COMPLETED`
+    only — none of the LLM, tool, state or HITL events in the table above — and
+    populates the identity columns plus `content`, leaving `trace_id`,
+    `latency_ms`, `attributes` and the rest null. Rows are written one at a time
+    with the `insertAll` streaming API, synchronously on the invocation path, so
+    each write adds latency to the turn rather than being batched away by the
+    Storage Write API.
 
 
 ### Run and test agent
