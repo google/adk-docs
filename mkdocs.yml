@@ -413,6 +413,7 @@ nav:
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
         - Java: a2a/quickstart-consuming-java.md
+        - Kotlin: a2a/quickstart-consuming-kotlin.md
       - A2A Extension: a2a/a2a-extension.md
     - Live and Voice Agents:
       - live/index.md
