@@ -148,7 +148,10 @@ The `GCPSkillRegistry` client constructor accepts the following options:
 
 ### Methods
 
-*   **`search_skills(query: str) -> List[Frontmatter]`**:
+Both methods are coroutines and take keyword-only arguments, so call them with
+`await` from an `async def`:
+
+*   **`async search_skills(*, query: str) -> list[Frontmatter]`**:
     Performs a semantic or keyword query against the registry catalog, returning a list of skill frontmatter metadata (names and descriptions).
-*   **`get_skill(name: str, version: Optional[str] = None) -> Skill`**:
-    Fetches the remote skill payload using the Vertex AI Client SDK for a specific skill name (and optional revision/version), unpacks it, and returns a loaded `Skill` object.
+*   **`async get_skill(*, name: str) -> Skill`**:
+    Fetches the remote skill payload using the Vertex AI Client SDK for a specific skill name, unpacks it, and returns a loaded `Skill` object.

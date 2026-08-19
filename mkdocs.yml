@@ -413,6 +413,7 @@ nav:
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
         - Java: a2a/quickstart-consuming-java.md
+        - Kotlin: a2a/quickstart-consuming-kotlin.md
       - A2A Extension: a2a/a2a-extension.md
     - Live and Voice Agents:
       - live/index.md
@@ -440,7 +441,7 @@ nav:
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
-      - Typescript ADK: api-reference/typescript/index.html
+      - TypeScript ADK: api-reference/typescript/index.html
       - Go ADK:
         - Go v2.x: https://pkg.go.dev/google.golang.org/adk/v2" target="_blank
         - Go v1.x: https://pkg.go.dev/google.golang.org/adk" target="_blank

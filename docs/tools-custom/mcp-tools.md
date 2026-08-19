@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
@@ -259,7 +259,7 @@ Event received: {"id":"8728380b-bfad-4d14-8421-fa98d09364f1","invocationId":"e-c
 Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"text":"There are three files in the directory: first, second, and third."}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544689}
 ```
 
-For Typescript, you can define an agent that initializes the `MCPToolset` as follows:
+For TypeScript, you can define an agent that initializes the `MCPToolset` as follows:
 
 ```typescript
 import 'dotenv/config';
@@ -1111,6 +1111,24 @@ if __name__ == "__main__":
             .build();
 
     McpToolset toolset = new McpToolset(streamableParams);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+
+    // Your ADK agent connects to the remote MCP service via Streamable HTTP
+    // headerProvider is suspend, so fetchToken() can await a fresh token per request;
+    // it also disables session reuse, so use StreamableHttp(headers = ...) for a fixed one.
+    val toolset =
+        McpToolset.McpToolsetConfig(
+            streamableHttpConnectionParams =
+                McpConnectionParameters.StreamableHttp(
+                    url = "https://your-mcp-server-url.run.app/mcp",
+                ),
+        ).toToolset(headerProvider = { mapOf("Authorization" to "Bearer ${fetchToken()}") })
     ```
 
 #### Pattern 3: Sidecar MCP Servers (GKE)

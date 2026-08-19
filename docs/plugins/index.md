@@ -1,7 +1,7 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
@@ -75,7 +75,7 @@ immediately:
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugins/plugin_basic)
 in the repository.
 
 ### Create Plugin class
@@ -116,7 +116,7 @@ methods, as shown in the following code example:
         print(f"[Plugin] LLM request count: {self.llm_request_count}")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript title="count_plugin.ts"
     import { BaseAgent, BasePlugin, Context } from "@google/adk";
@@ -254,6 +254,12 @@ methods, as shown in the following code example:
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:create_plugin"
+    ```
+
 This example code implements callbacks for `before_agent_callback` and
 `before_model_callback` to count execution of these tasks during the lifecycle
 of the agent.
@@ -320,7 +326,7 @@ a simple ADK agent.
         asyncio.run(main())
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import { InMemoryRunner, LlmAgent, FunctionTool } from "@google/adk";
@@ -570,6 +576,12 @@ a simple ADK agent.
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:register_plugin"
+    ```
+
 ### Run the agent with the Plugin
 
 Run the plugin as you typically would. The following shows how to run the
@@ -581,7 +593,7 @@ command line:
     python3 -m path.to.main.py
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```sh
     npx ts-node path.to.main.ts
@@ -758,7 +770,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onUserMessageCallback(
@@ -813,7 +825,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
@@ -906,7 +918,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[LlmResponse]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onModelErrorCallback(
@@ -987,7 +999,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[dict]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onToolErrorCallback(
@@ -1044,7 +1056,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[Event]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onEventCallback(
@@ -1098,7 +1110,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[None]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {

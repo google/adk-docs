@@ -48,8 +48,8 @@ for the primary controller agent and any additional sub-agents.
 
 ### Define app with root agent
 
-Create a ***root agent*** for your workflow by creating a subclass from the
-***Agent*** base class. Then define an ***App*** object and configure it with
+Create a ***root agent*** for your workflow by creating an instance of the
+***Agent*** class. Then define an ***App*** object and configure it with
 the ***root agent*** object and optional features, as shown in the following
 sample code:
 
@@ -70,7 +70,8 @@ sample code:
         name="agents",
         root_agent=root_agent,
         # Optionally include App-level features:
-        # plugins, context_cache_config, resumability_config
+        # plugins, context_cache_config, events_compaction_config,
+        # resumability_config
     )
     ```
 
@@ -159,7 +160,7 @@ You can use the ***Runner*** class to run your agent workflow using the
 
     The `Runner.run_debug()` command requires ADK Python v1.18.0 or higher.
     You can also use `Runner.run()`, which requires more setup code. For
-    more details, see the
+    more details, see the [Agent Runtime](/runtime/) guide.
 
 === "Python"
 
