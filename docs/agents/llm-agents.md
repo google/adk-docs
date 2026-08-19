@@ -574,6 +574,25 @@ schema definitions.
             .build();
     ```
 
+=== "Kotlin"
+
+    The input and output schema is ADK's own `com.google.adk.kt.types.Schema`,
+    not the same-named type in the GenAI SDK. Since v0.8.0 it carries the JSON
+    Schema constraint fields, so a constraint can be declared instead of
+    described: `pattern`/`minLength`/`maxLength` for strings,
+    `minimum`/`maximum` for numbers, `minItems`/`maxItems` for arrays, plus
+    `format`, `nullable`, `default`, `anyOf` and `title`.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:schema_example"
+    ```
+
+    Two of those fields carry conditions. Gemini rejects a schema whose `format`
+    is anything other than `int32`/`int64` on a number or `enum`/`date-time` on
+    a string. And `default` must hold a JSON-native value; serializing a
+    `Schema` that sets one needs a `Json` whose `serializersModule` has a
+    contextual serializer for `Any`, or it throws.
+
 ### Manage agent context
 
 Control whether the agent receives the prior conversation history.
