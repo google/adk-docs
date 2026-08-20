@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-kotlin">Kotlin v0.8.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
