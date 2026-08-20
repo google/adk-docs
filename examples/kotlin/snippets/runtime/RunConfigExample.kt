@@ -33,6 +33,8 @@ import kotlinx.coroutines.runBlocking
 val config =
     RunConfig(
         streamingMode = StreamingMode.SSE,
+        // Cap the LLM calls a single run may make. Defaults to 500.
+        maxLlmCalls = 200,
     )
 
 // Pass it to runner.runAsync
@@ -68,9 +70,11 @@ val metadataConfig =
 // --8<-- [end:custom_metadata]
 
 // --8<-- [start:streaming_config]
+// Kotlin has no supportCfc equivalent; the other tabs set it alongside these.
 val streamingConfig =
     RunConfig(
         streamingMode = StreamingMode.SSE,
+        maxLlmCalls = 150,
     )
 // --8<-- [end:streaming_config]
 
