@@ -196,8 +196,8 @@ a compactor object
 
 ### Define a Summarizer {#define-summarizer}
 You can customize the process of context compression by defining a summarizer.
-The `LlmEventSummarizer` (Python/Java) or `LlmSummarizer` (TypeScript) class allows
-you to specify a particular model for summarization.
+The `LlmEventSummarizer` (Python, Java and Kotlin) or `LlmSummarizer` (TypeScript)
+class allows you to specify a particular model for summarization.
 The following code example demonstrates how to define and configure a custom summarizer:
 
 === "Python"
@@ -278,8 +278,37 @@ The following code example demonstrates how to define and configure a custom sum
     });
     ```
 
-You can further refine the compactor by modifying its summarizer. In Python and Java,
-customize the `prompt_template` on `LlmEventSummarizer`. In TypeScript, customize
-the `prompt` on `LlmSummarizer`. For more details, see the
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.summarizer.EventsCompactionConfig
+    import com.google.adk.kt.summarizer.LlmEventSummarizer
+
+    // Define the AI model to be used for summarization:
+    val summarizationLlm = Gemini(name = "gemini-flash-latest")
+
+    // Create the summarizer with the custom model:
+    val mySummarizer = LlmEventSummarizer(model = summarizationLlm)
+
+    // Configure the App with the custom summarizer and compaction settings:
+    val app =
+        App(
+            appName = "my-agent",
+            rootAgent = rootAgent,
+            eventsCompactionConfig =
+                EventsCompactionConfig(
+                    compactionInterval = 3,
+                    overlapSize = 1,
+                    summarizer = mySummarizer,
+                ),
+        )
+    ```
+
+You can further refine the compactor by modifying its summarizer. In Python, Java
+and Kotlin, customize the prompt template on `LlmEventSummarizer` — the property is
+`prompt_template` in Python and Java, and `promptTemplate` in Kotlin. In TypeScript,
+customize the `prompt` on `LlmSummarizer`. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
