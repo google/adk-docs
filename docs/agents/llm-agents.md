@@ -663,6 +663,12 @@ Control whether the agent receives the prior conversation history.
             .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:include_contents"
+    ```
+
 !!! note "Go v2.0.0: agent execution modes"
 
     ADK Go v2.0.0 introduces an explicit `Mode` field on `llmagent.Config` that
