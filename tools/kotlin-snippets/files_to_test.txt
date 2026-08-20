@@ -41,3 +41,5 @@ snippets/tools/overview/CustomerSupport.kt
 snippets/tools/overview/DocAnalysisTools.kt
 snippets/tools/overview/OrderTools.kt
 snippets/sessions/RewindExample.kt
+snippets/tools/confirmation/ToolConfirmationExample.kt
+snippets/tools/confirmation/dynamic/ReimbursementTools.kt
