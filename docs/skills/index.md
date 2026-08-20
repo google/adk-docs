@@ -17,7 +17,8 @@ impact on the operating context window of the agent.
     respective ADK GitHub repositories:
     [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
     [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
-    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills).
+    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills),
+    [ADK Kotlin](https://github.com/google/adk-kotlin/issues/new).
 
 ## Get started
 
