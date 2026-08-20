@@ -359,7 +359,7 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
     	// ...
     	GenerateContentConfig: &genai.GenerateContentConfig{
     		SafetySettings: []*genai.SafetySetting{
-    			    		{
+    			{
     				Category:  genai.HarmCategoryHateSpeech,
     				Threshold: genai.HarmBlockThresholdBlockLowAndAbove,
     			},
