@@ -1,7 +1,7 @@
 # Rewind sessions for agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-kotlin">Kotlin v0.3.0</span>
 </div>
 
 The ADK session Rewind feature allows you to revert a session to a previous
