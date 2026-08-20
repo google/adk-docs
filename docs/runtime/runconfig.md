@@ -322,6 +322,20 @@ Not all parameters are available in every language. See the
     };
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.genai.types.AvatarConfig;
+
+    RunConfig config = RunConfig.builder()
+        .avatarConfig(
+            AvatarConfig.builder()
+                .avatarName("PREBUILT_AVATAR_ID")
+                .build())
+        .build();
+    ```
+
 ## Configure runtime limits and debugging
 
 Use these parameters to control runtime guardrails and debugging:
