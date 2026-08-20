@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.8.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -100,6 +100,15 @@ You can define [skills in code](#inline-skills) or load
 
     For a complete example, see the code sample in
     [skills](https://github.com/google/adk-go/tree/main/examples/skills).
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:get_started"
+    ```
+
+    For a complete example, see the code sample in
+    [skills](https://github.com/google/adk-kotlin/tree/main/examples/src/main/kotlin/com/google/adk/kt/examples/skills).
 
 !!! note "Check your working directory"
 
@@ -288,6 +297,17 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+=== "Kotlin"
+
+    !!! note
+        ADK Kotlin does not currently provide a standard Source for inline skills.
+        To define skills directly in code, you must implement the `SkillSource`
+        interface yourself, as shown below.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:inline_skill"
+    ```
+
 !!! note
     The `Source` interface can be backed by any data store (such as a database)
     to support dynamic use cases like live updates and personalization.
@@ -343,6 +363,12 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:filesystem_skill"
+    ```
+
 ## Skill processing and validation
 
 When you include skills in your agent, the agent uses a standardized process
@@ -356,4 +382,5 @@ Check out these resources for building agents with Skills:
 
 - [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/skills_agent)
 - [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills)
+- [Skills in Kotlin - code sample](https://github.com/google/adk-kotlin/tree/main/examples/src/main/kotlin/com/google/adk/kt/examples/skills)
 - Agent Skills [specification documentation](https://agentskills.io/)
