@@ -1452,9 +1452,10 @@ see the note below.)
 
 !!! note "Java attribute location"
 
-    The Java plugin writes the pair keys at the top level of `attributes`:
+    The Java plugin writes the pair keys at the top level of `attributes`, with
+    no `adk` wrapper:
     `"attributes": {"pause_kind": "tool", "function_call_id": "call-789"}`.
-    with no `adk` wrapper. In the base-table query below, replace
+    In the base-table query below, replace
     `'$.adk.pause_kind'` / `'$.adk.function_call_id'` with `'$.pause_kind'` /
     `'$.function_call_id'`. The view-based query works unchanged for both
     languages, because the views expose the keys as flat columns.
