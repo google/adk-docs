@@ -95,29 +95,22 @@ whether the context window is compressed:
     )
     ```
 
-## Enable streaming
+## Text response options { #enable-streaming }
 
-To control how the agent delivers responses, set the streaming mode parameter
-(`streaming_mode` in Python, Go, Java and Kotlin; `streamingMode` in
-TypeScript):
+You can control how an agent responds in text mode — word-by-word as it is
+generated, or as one full response — with the ***Streaming Mode*** parameter, as
+described below:
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
   per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
 - **`StreamingMode.SSE`**: Server-Sent Events streaming. The runner yields
   partial events as the LLM generates, enabling typewriter-style UIs and
   real-time chat displays.
-- **`StreamingMode.BIDI`**: Reserved for bidirectional streaming and **not
-  used** in the standard `run_async()` path. Passing it does not enable
-  streaming, and no error or warning is raised — the run behaves as if
-  `StreamingMode.NONE` had been set. Use `StreamingMode.SSE` for token
-  streaming. For bidirectional streaming, use `runner.run_live()` in the
-  languages that support it; see [Live and Voice Agents](../live/index.md).
 
-!!! warning "`run_live()` is not available in the TypeScript SDK"
-    The TypeScript SDK does not implement a live entry point: `Runner` exposes
-    no `runLive()`, and the agent-level live path throws
-    `Error: LlmAgent.runLiveFlow not implemented`. In TypeScript, use
-    `StreamingMode.SSE` with `runner.runAsync()`.
+There is another setting for the ***Streaming Mode*** parameter which enables
+bidirectional streaming of data, including voice input and output. This feature
+requires additional configuration beyond simple agents. For more information
+about this feature, see [Live and Voice Agents](../live/index.md).
 
 Set `support_cfc=True` alongside `StreamingMode.SSE` to enable Compositional
 Function Calling (CFC), which allows the model to dynamically compose and
@@ -125,11 +118,7 @@ execute function calls. CFC uses the Live API under the hood.
 
 !!! example "Experimental"
     CFC support is experimental and its API or behavior may change in future
-    releases. It is not yet implemented in the TypeScript SDK: setting
-    `supportCfc: true` yields a single event with
-    `errorCode: 'UNKNOWN_ERROR'` and
-    `errorMessage: 'CFC is not yet supported in callLlmAsync'`, and no
-    response text.
+    releases.
 
 === "Python"
 
@@ -272,11 +261,14 @@ response modalities.
 ## Configure live agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-java">Java</span>
 </div>
 
-When using `runner.run_live()`, configure real-time behavior with these
-additional parameters:
+ADK agents can support [Live and Voice Agents](../live/index.md) to create
+interactive agent experiences. You configure agents that support this
+functionality using the `runner.run_live()` method. When using
+`runner.run_live()`, configure real-time behavior with these additional
+parameters:
 
 - `realtime_input_config`: Configures how audio input is received from users.
 - `proactivity`: Allows the model to respond proactively and ignore irrelevant
@@ -300,12 +292,6 @@ additional parameters:
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.
 
-!!! note "TypeScript"
-    The TypeScript `RunConfig` type declares `enableAffectiveDialog`,
-    `proactivity` and `realtimeInputConfig`, but they only feed the live
-    connection, which the TypeScript SDK does not implement yet. Setting them
-    has no effect on a `runner.runAsync()` run.
-
 === "Python"
 
     ```python
@@ -322,6 +308,19 @@ Not all parameters are available in every language. See the
         GIL (e.g. `time.sleep()`, network calls, numpy). They do **not** help
         with pure Python CPU-bound code since the GIL prevents true parallel
         execution of Python bytecode.
+
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig } from '@google/adk';
+
+    const config: RunConfig = {
+        enableAffectiveDialog: true,
+        proactivity: {
+            proactiveAudio: true,
+        },
+    };
+    ```
 
 ## Configure runtime limits and debugging
 
