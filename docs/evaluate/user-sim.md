@@ -47,13 +47,6 @@ You can also specify a pre-built `user_persona` in the following manner:
 
 While the conversation plan dictates what must be accomplished, the persona dictates how the model phrases its queries and reacts to the agent's responses.
 
-!!! tip "Try it in Colab"
-
-    Test this entire workflow yourself in an interactive notebook on
-    [Simulating User Conversations to Dynamically Evaluate ADK Agents](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).
-    You'll define a conversation scenario, run a "dry run" to check the
-    dialogue, and then perform a full evaluation to score the agent's responses.
-
 ## User personas
 
 <div class="language-support-tag">
@@ -201,7 +194,8 @@ The below `EvalConfig` shows the default user simulator configuration:
         "thinking_budget": 10240
       }
     },
-    "max_allowed_invocations": 20
+    "max_allowed_invocations": 20,
+    "include_function_calls": false
   }
 }
 ```
@@ -213,7 +207,11 @@ The below `EvalConfig` shows the default user simulator configuration:
 *   `max_allowed_invocations`: The maximum user-agent interactions allowed
     before the conversation is forcefully terminated. This should be set to be
     greater than the longest reasonable user-agent interaction in your
-    `EvalSet`.
+    `EvalSet`. The initial fixed prompt counts as an invocation. Setting this
+    value to `-1` removes the innovation limit, which is not recommended.
+*   `include_function_calls`: Optional. Whether to include function calls and
+    responses in the conversation history prompt given to the user simulator.
+    Defaults to `false`.
 *   `custom_instructions`: Optional. Overrides the default instructions for the
     user simulator. The instruction string must contain the following formatting
     placeholders using

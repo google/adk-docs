@@ -53,25 +53,15 @@ integration is part of the core ADK library.
 pip install google-adk
 ```
 
-### Optional Dependencies
+### Required dependencies
 
-To use the full capabilities of the AgentRegistry integration, you may need to
-install additional extras depending on your use case:
-
-**For A2A (Agent-to-Agent) Support:** If you plan to use `get_remote_a2a_agent`
-or interact with remote A2A-compliant agents, install the `a2a` extra:
-
-```bash
-pip install "google-adk[a2a]"
-```
-
-**For Agent Identity (GCP Auth Provider):** If you need to use the
-`GcpAuthProvider` (e.g., when `get_mcp_toolset` automatically resolves
-authentication via IAM bindings for registered MCP servers), install the
-`agent-identity` extra:
+`google.adk.integrations.agent_registry` imports both the A2A SDK and the Agent
+Identity auth provider at module scope, so importing `AgentRegistry` raises
+`ImportError` on a core-only install. Install both the `a2a` and
+`agent-identity` extras:
 
 ```bash
-pip install "google-adk[agent-identity]"
+pip install "google-adk[a2a,agent-identity]"
 ```
 
 ## Use with Agent
@@ -210,10 +200,13 @@ The AgentRegistry constructor accepts the following arguments:
 - `header_provider` (Callable, optional): A callable that takes a
   ReadonlyContext and returns a dictionary of custom headers to be included in
   requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class)
-  or
-  [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a)
-  to the target services. This does not affect headers used to call the Agent
-  Registry API itself.
+  that `get_mcp_toolset` returns, to the target MCP server. These headers do not
+  affect calls to the Agent Registry API itself, and they do not affect requests
+  made by
+  [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a).
+  For those requests, pass an authenticated `httpx.AsyncClient` to
+  `get_remote_a2a_agent`, as shown in
+  [Remote A2A Agents](#remote-a2a-agents).
 
 ## Additional resources
 - [Sample Agent Code](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/agent_registry_agent)

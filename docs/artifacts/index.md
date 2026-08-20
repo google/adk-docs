@@ -41,7 +41,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
     print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {createPartFromBase64, type Part} from '@google/genai';
@@ -160,6 +160,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List Artifact keys`: Lists the unique filenames of artifacts within a given scope.
     * `Delete Artifact`: Removes an artifact (and potentially all its versions, depending on implementation).
     * `List versions`: Lists all available version numbers for a specific artifact filename.
+    * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
 * **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
@@ -185,7 +186,7 @@ Understanding artifacts involves grasping a few key components: the service that
     # Now, contexts within runs managed by this runner can use artifact methods
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {
@@ -285,7 +286,7 @@ Understanding artifacts involves grasping a few key components: the service that
     print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {createPartFromBase64, type Part} from '@google/genai';
@@ -351,6 +352,8 @@ Understanding artifacts involves grasping a few key components: the service that
 
 * **User Scope (`"user:"` prefix):** If you prefix the filename with `"user:"`, like `"user:profile.png"`, the artifact is associated only with the `app_name` and `user_id`. It can be accessed or updated from *any* session belonging to that user within the app.
 
+* **Listing behavior:** In Python, listing artifacts from within a session returns the session-scoped filenames *and* that user's user-scoped filenames, with the `"user:"` prefix retained, for example `["summary.txt", "user:settings.json"]`.
+
 
 === "Python"
 
@@ -371,7 +374,7 @@ Understanding artifacts involves grasping a few key components: the service that
     # and scope it to app_name and user_id, making it accessible across sessions for that user.
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     // Example illustrating namespace difference (conceptual)
@@ -429,7 +432,7 @@ These core concepts work together to provide a flexible system for managing bina
 
 The primary way you interact with artifacts within your agent's logic (specifically within callbacks or tools) is through methods provided by the `CallbackContext` and `ToolContext` objects. These methods abstract away the underlying storage details managed by the `ArtifactService`.
 
-*(Note: In TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type.)*
+*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type, and in Python both names remain usable as aliases of it.)*
 
 ### Prerequisite: Configuring the `ArtifactService`
 
@@ -461,7 +464,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     ```
     If no `artifact_service` is configured in the `InvocationContext` (which happens if it's not passed to the `Runner`), calling `save_artifact`, `load_artifact`, or `list_artifacts` on the context objects will raise a `ValueError`.
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import {
@@ -553,7 +556,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
 
 ### Accessing Methods
 
-The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks) in Python, Go, and Java and available on the unified `Context` in TypeScript.
+The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks) in Go and Java, and available on the unified `Context` in Python and TypeScript.
 
 #### Saving Artifacts
 
@@ -591,7 +594,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         #   await save_generated_report_py(callback_context, report_data)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -716,7 +719,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         #   await process_latest_report_py(callback_context)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -933,7 +936,7 @@ artifact in a later turn.
         ```python
         from google.adk.tools.tool_context import ToolContext
 
-        def list_user_files_py(tool_context: ToolContext) -> str:
+        async def list_user_files_py(tool_context: ToolContext) -> str:
             """Tool to list available artifacts for the user."""
             try:
                 available_files = await tool_context.list_artifacts()
@@ -955,7 +958,7 @@ artifact in a later turn.
         # list_files_tool = FunctionTool(func=list_user_files_py)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {Context} from '@google/adk';
@@ -1081,7 +1084,7 @@ artifact in a later turn.
     --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:listing_artifacts"
     ```
 
-These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
+These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether you reach them through the context object passed to your callbacks and tools or by interacting with the `BaseArtifactService` directly, regardless of the chosen backend storage implementation.
 
 ## Available Implementations
 
@@ -1090,7 +1093,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 ### InMemoryArtifactService
 
 *   **Storage Mechanism:**
-    *   Python: Uses a Python dictionary (`self.artifacts`) held in the application's memory. The dictionary keys represent the artifact path, and the values are lists of `types.Part`, where each list element is a version.
+    *   Python: Uses a Python dictionary (`self.artifacts`) held in the application's memory. The dictionary keys represent the artifact path, and the values are lists of entries, where each list element is a version holding the `types.Part` payload plus its `ArtifactVersion` metadata.
     *   Java: Uses nested `HashMap` instances (`private final Map<String, Map<String, Map<String, Map<String, List<Part>>>>> artifacts;`) held in memory. The keys at each level are `appName`, `userId`, `sessionId`, and `filename` respectively. The innermost `List<Part>` stores the versions of the artifact, where the list index corresponds to the version number.
 *   **Key Features:**
     *   **Simplicity:** Requires no external setup or dependencies beyond the core ADK library.
@@ -1113,7 +1116,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         # runner = Runner(..., artifact_service=in_memory_service_py)
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {InMemoryArtifactService} from '@google/adk';
@@ -1173,7 +1176,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 *   **Key Features:**
     *   **Persistence:** Artifacts stored in GCS persist across application restarts and deployments.
     *   **Scalability:** Leverages the scalability and durability of Google Cloud Storage.
-    *   **Versioning:** Explicitly stores each version as a distinct GCS object. The `saveArtifact` method in `GcsArtifactService`.
+    *   **Versioning:** Explicitly stores each version as a distinct GCS object. In Python, `save_artifact` assigns the next version number, starting at `0`, rather than overwriting an existing object.
     *   **Permissions Required:** The application environment needs appropriate credentials (e.g., Application Default Credentials) and IAM permissions to read from and write to the specified GCS bucket.
 *   **Use Cases:**
     *   Production environments requiring persistent artifact storage.
@@ -1204,7 +1207,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
             # Handle the error appropriately - maybe fall back to InMemory or raise
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         ```typescript
         import {GcsArtifactService} from '@google/adk';

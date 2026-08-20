@@ -1,7 +1,7 @@
 # Session: Tracking individual conversations
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 A `Session` represents a single conversation thread between a user and your
@@ -9,7 +9,7 @@ agent. Just like you wouldn't start every text message from scratch, agents need
 context regarding the ongoing interaction. The `Session` object in ADK is
 designed specifically to track and manage these individual conversation threads.
 
-## The `Session` object
+## `Session` objects
 
 When a user starts interacting with your agent, the `SessionService` creates a
 `Session` object (`google.adk.sessions.Session`). This object acts as the
@@ -36,6 +36,9 @@ are its key properties:
   an event occurred in this conversation thread.
 
 ### Example: Examining session properties
+
+The following code example demonstrates how to list various values stored in a
+session object:
 
 === "Python"
 
@@ -166,6 +169,41 @@ are its key properties:
 *(**Note:** The state shown above is only the initial state. State updates
 happen via events, as discussed in the State section.)*
 
+## Session lifecycle
+
+<img src="../../assets/event-loop.png" alt="Session lifecycle">
+
+Here’s a simplified flow of how `Session` and `SessionService` work together
+during a conversation turn:
+
+1. **Start or Resume:** Your application needs to use the `SessionService` to
+   either `create_session` (for a new chat) or use an existing session id.
+2. **Context Provided:** The `Runner` gets the appropriate `Session` object from
+   the appropriate service method, providing the agent with access to the
+   corresponding Session's `state` and `events`.
+3. **Agent Processing:** The user prompts the agent with a query. The agent
+   analyzes the query and potentially the session `state` and `events` history
+   to determine the response.
+4. **Response & State Update:** The agent generates a response (and potentially
+   flags data to be updated in the `state`). The `Runner` packages this as an
+   `Event`.
+5. **Save Interaction:** The `Runner` calls
+   `sessionService.append_event(session, event)` with the `session` and the new
+   `event` as the arguments. The service adds the `Event` to the history and
+   updates the session's `state` in storage based on information within the
+   event. The session's `last_update_time` also get updated.
+6. **Ready for Next:** The agent's response goes to the user. The updated
+   `Session` is now stored by the `SessionService`, ready for the next turn
+   (which restarts the cycle at step 1, usually with the continuation of the
+   conversation in the current session).
+7. **End Conversation:** When the conversation is over, your application calls
+   `sessionService.delete_session(...)` to clean up the stored session data if
+   it is no longer required.
+
+This cycle highlights how the `SessionService` ensures conversational continuity
+by managing the history and state associated with each `Session` object.
+
+
 ## Managing sessions with a `SessionService`
 
 As seen above, you don't typically create or manage `Session` objects directly.
@@ -239,7 +277,7 @@ the storage backend that best suits your needs:
 ### `VertexAiSessionService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 * **How it works:** Uses Google Cloud Agent Platform infrastructure via API
@@ -247,7 +285,8 @@ the storage backend that best suits your needs:
 * **Persistence:** Yes. Data is managed reliably and scalably via [Agent
   Runtime](/deploy/agent-runtime/).
 * **Requires:**
-    * A Google Cloud project (`pip install vertexai`)
+    * A Google Cloud project.
+    * The `gcp` extra, installed with `pip install google-adk[gcp]`.
     * A Google Cloud storage bucket that can be configured by this
       [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     * An Agent Runtime resource name/ID that can setup following this
@@ -261,7 +300,7 @@ the storage backend that best suits your needs:
 === "Python"
 
     ```py
-    # Requires: pip install google-adk[vertexai]
+    # Requires: pip install google-adk[gcp]
     # Plus GCP setup and authentication
     from google.adk.sessions import VertexAiSessionService
 
@@ -272,7 +311,7 @@ the storage backend that best suits your needs:
 
     session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
     # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
-    # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
+    # session = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
     ```
 
 === "Go"
@@ -319,6 +358,37 @@ the storage backend that best suits your needs:
             .blockingGet();
     ```
 
+=== "Kotlin"
+
+    `VertexAiSessionService` is JVM-only in ADK Kotlin. It is not available on
+    Android; use it from a server-side agent.
+
+    ```kotlin
+    import com.google.adk.kt.sessions.SessionKey
+    import com.google.adk.kt.sessions.VertexAiSessionService
+    import kotlinx.coroutines.runBlocking
+
+    // The reasoning engine is pinned here, at construction. In the other tabs
+    // the engine is chosen per call, through `app_name`; in Kotlin `appName`
+    // is never parsed for it and is only a label on the session.
+    val sessionService =
+        VertexAiSessionService(
+            project = "your-gcp-project-id",
+            location = "us-central1",
+            // The bare numeric engine id. A full
+            // "projects/.../reasoningEngines/..." resource name is rejected;
+            // project and location are separate arguments.
+            reasoningEngineId = "1234567890",
+        )
+
+    // Session methods are suspend functions; `runBlocking` here is the
+    // counterpart of the Java tab's `.blockingGet()`.
+    val mySession = runBlocking {
+        // A null id lets the service assign one.
+        sessionService.createSession(SessionKey("example-app", "u_123", id = null))
+    }
+    ```
+
 For more information on connecting to Google Cloud from ADK agents, see
 [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
@@ -331,7 +401,8 @@ For more information on connecting to Google Cloud from ADK agents, see
 * **How it works:** Connects to a relational database (e.g., PostgreSQL, MySQL,
   SQLite) to store session data persistently in tables.
 * **Persistence:** Yes. Data survives application restarts.
-* **Requires:** A configured database.
+* **Requires:** A configured database and the `db` extra, installed with
+  `pip install google-adk[db]`.
 * **Best for:** Applications needing reliable, persistent storage that you
   manage yourself.
 
@@ -371,40 +442,6 @@ through a two-tiered locking architecture:
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
-
-## The session lifecycle
-
-<img src="../../assets/event-loop.png" alt="Session lifecycle">
-
-Here’s a simplified flow of how `Session` and `SessionService` work together
-during a conversation turn:
-
-1. **Start or Resume:** Your application needs to use the `SessionService` to
-   either `create_session` (for a new chat) or use an existing session id.
-2. **Context Provided:** The `Runner` gets the appropriate `Session` object from
-   the appropriate service method, providing the agent with access to the
-   corresponding Session's `state` and `events`.
-3. **Agent Processing:** The user prompts the agent with a query. The agent
-   analyzes the query and potentially the session `state` and `events` history
-   to determine the response.
-4. **Response & State Update:** The agent generates a response (and potentially
-   flags data to be updated in the `state`). The `Runner` packages this as an
-   `Event`.
-5. **Save Interaction:** The `Runner` calls
-   `sessionService.append_event(session, event)` with the `session` and the new
-   `event` as the arguments. The service adds the `Event` to the history and
-   updates the session's `state` in storage based on information within the
-   event. The session's `last_update_time` also get updated.
-6. **Ready for Next:** The agent's response goes to the user. The updated
-   `Session` is now stored by the `SessionService`, ready for the next turn
-   (which restarts the cycle at step 1, usually with the continuation of the
-   conversation in the current session).
-7. **End Conversation:** When the conversation is over, your application calls
-   `sessionService.delete_session(...)` to clean up the stored session data if
-   it is no longer required.
-
-This cycle highlights how the `SessionService` ensures conversational continuity
-by managing the history and state associated with each `Session` object.
 
 ## Troubleshoot session errors
 
