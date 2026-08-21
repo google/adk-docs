@@ -1,7 +1,7 @@
 # Dynamic agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 The ADK framework provides a programmatic way to define workflows as a more
@@ -66,6 +66,24 @@ workflow containing a single node with a function:
     keep the written code as simple as possible. This annotation generates wrappers
     that allow the code to be run in the context of an ADK dynamic workflow.
 
+=== "TypeScript"
+
+    TypeScript has no `@node` decorator. `node(fn, options)` is the factory
+    form, and `ctx.runNode()` is the equivalent of `ctx.run_node()`:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/get_started.ts:get-started"
+    ```
+
+    Two things to know going in:
+
+    -   `ctx.runNode()` resolves to a node **result**, not the output
+        directly — read `.output`.
+    -   An orchestrator that calls `ctx.runNode()` must set
+        `rerunOnResume: true`, so its body re-runs on resume and
+        already-finished children are replayed from their checkpoints
+        rather than executed again.
+
 === "Go"
 
     In Go, `workflow.NewFunctionNode` replaces the `@node` decorator and
@@ -124,6 +142,29 @@ run within a workflow.
     functions from an external library, need to create multiple nodes from the
     same function with different configurations, or if you are managing node
     references in a registry for advanced orchestration.
+
+=== "TypeScript"
+
+    There are two ways to build a node: the `node(fn, options)` factory,
+    and the explicit `new FunctionNode(name, fn, config)` constructor.
+    Reach for the constructor when you are wrapping a function from another
+    library, need several differently-configured nodes from one function,
+    or keep node references in a registry for advanced orchestration.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/nodes.ts:node-forms"
+    ```
+
+    The most important option is `rerunOnResume`, which controls what
+    happens when a workflow resumes after a human-in-the-loop pause:
+
+    -   **`true` (re-entry):** the node body is re-run from the top. Use
+        this for any orchestrator that calls `ctx.runNode()` — the body
+        re-executes and already-completed child activations are skipped
+        automatically.
+    -   **`false` (handoff, the leaf default):** the resume payload is
+        routed to the node's successor as input, bypassing the interrupted
+        node entirely.
 
 === "Go"
 
@@ -196,6 +237,16 @@ execution logic (order and paths) for those nodes.
     )
     ```
 
+=== "TypeScript"
+
+    The orchestrator is an ordinary async function that awaits
+    `ctx.runNode()` for each child step, wrapped as a node with
+    `rerunOnResume: true` and used as the graph's only edge:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/nodes.ts:workflows"
+    ```
+
 === "Go"
 
     `workflow.NewDynamicNode` creates an orchestrator whose body calls
@@ -264,6 +315,20 @@ manually read and write session state keys for data transfer.
         return report_text
     ```
 
+=== "TypeScript"
+
+    `ctx.runNode()` hands you the child's result directly, so there are no
+    session-state keys to read and write just to move a value one step
+    downstream. It accepts anything node-like, including an `LlmAgent`,
+    without wrapping it in `node()` first:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/data_handling.ts:data-handling"
+    ```
+
+    Schemas work the same as in a graph — attach them to the nodes you
+    run, as the [sequence route](#sequence-route) below does.
+
 === "Go"
 
     In Go, `workflow.NewAgentNode` wraps an `agent.Agent` so it can be
@@ -303,6 +368,15 @@ as you can with graph-based workflows.
         report_text = await ctx.run_node(city_report_agent, city_time)
 
         return report_text
+    ```
+
+=== "TypeScript"
+
+    A sequential route is just awaiting `ctx.runNode()` calls one after
+    another — each finishes before the next starts:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/sequence_route.ts:sequence-route"
     ```
 
 === "Go"
@@ -366,6 +440,18 @@ workflows offer much more flexibility to define the routing logic you need.
       return code
     ```
 
+=== "TypeScript"
+
+    This is where dynamic workflows earn their keep: the iteration is an
+    ordinary loop, not a back-edge you have to reason about. Values live in
+    local variables, and state is written only where an agent's instruction
+    template needs to read it back. Unlike a graph cycle, the loop is
+    trivially bounded, so a stubborn model cannot spin forever:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/loop_route.ts:loop-route"
+    ```
+
 === "Go"
 
     In Go, the loop is a plain `for` loop inside the dynamic node body. The
@@ -411,6 +497,26 @@ Dynamic workflows in ADK can support parallel execution.
         The workflow framework ensures that if a dynamic workflow is resumed,
         only failed or interrupted worker nodes are re-executed, including
         parallel worker nodes.
+
+=== "TypeScript"
+
+    `ctx.runNode()` returns a promise, so starting every child before
+    awaiting any of them runs them concurrently, and `Promise.all` gathers
+    the results. Run ids are assigned in call order, so kick the children
+    off in a synchronous loop to keep them deterministic across a resume:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/parallel_route.ts:parallel-route"
+    ```
+
+    !!! tip "Tip: prefer the built-in parallel worker"
+
+        When the shape is simply "map one node over a list", use
+        `node(worker, {parallelWorker: true, maxParallelWorkers: 4})`. It
+        does the fan-out for you and bounds concurrency (default 8).
+        Hand-rolling it, as above, is for when you need custom scheduling
+        or partial-failure handling. On resume, only failed or interrupted
+        workers re-execute either way.
 
 === "Go"
 
@@ -468,6 +574,23 @@ Dynamic workflows in ADK can also include human input or human in the loop
 
         Parent nodes in dynamic workflows that call `ctx.run_node` must set
         `rerun_on_resume=True` to handle interruptions properly.
+
+=== "TypeScript"
+
+    The leaf node returns a `RequestInput` to pause the workflow, and keeps
+    the default `rerunOnResume: false` so the reply becomes its output. The
+    orchestrator that calls it must set `rerunOnResume: true`:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/human_input.ts:human-input"
+    ```
+
+    !!! important "Important: check `interruptIds` before deciding"
+
+        `ctx.runNode()` does **not** throw when a child interrupts. It
+        resolves with a result whose `interruptIds` are populated and whose
+        `output` is still `undefined`, so an orchestrator that does not
+        check will decide on an answer the human never gave.
 
 === "Go"
 
@@ -545,6 +668,16 @@ and logically remain the same for the input.
     `"1"` (represented as strings). Custom `run_id` values must contain at
     least one non-numeric character to avoid collisions with these
     auto-generated IDs.
+
+=== "TypeScript"
+
+    Pass `{runId}` as a trailing option to `ctx.runNode()`. The id must
+    contain at least one non-numeric character so it cannot collide with
+    the auto-generated sequential ids:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/dynamic/custom_run_ids.ts:custom-execution-ids"
+    ```
 
 === "Go"
 

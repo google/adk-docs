@@ -1,7 +1,7 @@
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Graph-based workflows in ADK define agent logic as a graph of execution nodes
@@ -33,6 +33,25 @@ agents.
         ),
       ],
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    export const rootAgent = new Workflow({
+      name: 'routing_workflow',
+      edges: [
+        ['START', processMessage, router],
+        [
+          router,
+          {
+            'output-1': response1,
+            'output-2': response2,
+            'output-3': response3,
+          },
+        ],
+      ],
+    });
     ```
 
 === "Go"
@@ -91,6 +110,19 @@ objects.
         return Event(output=input_text_modified)
     ```
 
+=== "TypeScript"
+
+    In ADK TypeScript v2.0.0, the primary node type is a `FunctionNode`,
+    built by passing a plain function to `node()`. A handler always takes
+    `(ctx, input)`; nothing is injected by parameter name. Returning a bare
+    value boxes it into an event's `output` for you, and returning
+    `createEvent({output})` is the explicit form — useful when you also need
+    to set `route` or `content`:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/function_node.ts:function-node"
+    ```
+
 === "Go"
 
     In ADK Go v2.0.0, the primary node type is `workflow.NewFunctionNode`.
@@ -134,6 +166,23 @@ A sequential route runs each node once, in the listed order.
             task_A_node,
             task_B_node,
             task_C_node)]           # 3 nodes run in order
+    ```
+
+=== "TypeScript"
+
+    An `edges` row starting with `'START'` runs each listed node once, in
+    order, forwarding every node's return value to the next one:
+
+    ```typescript
+    edges: [['START', taskANode]]                       // a single node
+    edges: [['START', taskANode, taskBNode, taskCNode]] // three, in order
+    ```
+
+    Listing `'START'` in more than one row fans out into parallel paths
+    instead — see [fan out and join](#parallel-tasks-fan-out-and-join-paths).
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/sequence.ts:sequence"
     ```
 
 === "Go"
@@ -183,6 +232,18 @@ A sequential route runs each node once, in the listed order.
             ),
         ],
     )
+    ```
+
+=== "TypeScript"
+
+    Branching is a node that emits a `route`, plus an edge row mapping each
+    route value to the node that handles it. Route values may be strings,
+    numbers or booleans, and `DEFAULT_ROUTE` matches when no other route on
+    the same source node did. A branch target is anything node-like:
+    `taskBNode` below is an `LlmAgent`, `taskCNode` a plain function.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/branches.ts:branches"
     ```
 
 === "Go"
@@ -289,6 +350,24 @@ before passing results to the next step.
         Make sure to include failsafe output from any node that outputs to a
         ***JoinNode***.
 
+=== "TypeScript"
+
+    A `JoinNode` is the fan-in barrier. It waits for every predecessor and
+    then hands its successor a record keyed by predecessor node name:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/fan_out_join.ts:fan-out-join"
+    ```
+
+    !!! warning "Caution: Stuck JoinNode from incomplete nodes"
+
+        The barrier waits for every predecessor to **complete**, not to
+        produce an output. A predecessor that finishes without one still
+        releases the join and arrives in the record as its name mapped to
+        `undefined`, so reading a field off it throws somewhere downstream,
+        far from the node that skipped it. Give anything feeding a join an
+        output of its own, and a `retryConfig` if it can fail.
+
 === "Go"
 
     ADK Go v2.0.0 provides `workflow.NewJoinNode` for true fan-in in the
@@ -370,6 +449,20 @@ accomplish this goal.
     its process, the parent node extracts data from the final leaf nodes and
     emits it as the output of the nested workflow.
 
+=== "TypeScript"
+
+    A `Workflow` is itself a node, so it can be dropped straight into
+    another workflow's edges to encapsulate a reusable sub-process:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/nested_workflow.ts:nested-workflow"
+    ```
+
+    **Nested workflow data output.** While the inner workflow runs, each of
+    its node events bubbles up to the parent for traceability. When it
+    finishes, the output of its terminal node becomes the output of the
+    nested-workflow node.
+
 === "Go"
 
     ADK Go v2.0.0 supports nested workflows in two complementary ways:
@@ -433,6 +526,24 @@ lifecycle on each iteration.
         ],
     )
     ```
+
+=== "TypeScript"
+
+    A loop is a **back-edge**: a downstream node routes back to an earlier
+    node, and the engine re-activates that node with a fresh lifecycle on
+    each iteration. The loop exits when the router picks the terminal
+    branch instead:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/routes/loop_escalation.ts:loop-escalation"
+    ```
+
+    !!! warning "Caution: Unbounded graph cycles"
+
+        A graph cycle is not capped by the framework. Make sure the exit
+        condition always becomes true, or bound the loop yourself with a
+        [dynamic workflow](/graphs/dynamic/#loop-route), where the
+        iteration is an ordinary loop you control.
 
 === "Go"
 

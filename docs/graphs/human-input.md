@@ -1,7 +1,7 @@
 # Human input for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Being able to request human input for data input, decision verification, or
@@ -38,6 +38,23 @@ the input process more predictable and reliable.
     In this code example, `step1` pauses the execution of the agent until the
     system receives an input from a user. Once the system receives input from the
     user, that input is passed to the next node.
+
+=== "TypeScript"
+
+    In ADK TypeScript v2.0.0, a human input node yields a `RequestInput`.
+    `step1` pauses the workflow until the user replies, and the reply is
+    handed to the next node as its input. A HITL node needs no model, which
+    makes the pause fully deterministic.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/human-input/get_started.ts:get-started"
+    ```
+
+    This is the default `rerunOnResume: false` handoff: the interrupted
+    node does **not** re-run — it completes with the user's reply as its
+    output. A node that calls `ctx.runNode()` needs `rerunOnResume: true`
+    instead; see
+    [human input in dynamic workflows](/graphs/dynamic/#human-input).
 
 === "Go"
 
@@ -76,6 +93,38 @@ the input process more predictable and reliable.
         human response must be provided in the specified format. For a better user
         experience, consider providing a user interface to collect structured data
         or use an Agent node to conform unstructured data to the format required.
+
+=== "TypeScript"
+
+    `RequestInput` takes the following configuration options:
+
+    -   **`message`:** Text shown to the user explaining what is being
+        asked.
+    -   **`payload`:** Structured data sent alongside the prompt, so a
+        client can render richer context.
+    -   **`responseSchema`:** The shape the reply is expected to take. It
+        travels on the interrupt as
+        `functionCall.args.response_schema`, which is what a client reads
+        to render a form for the reply.
+
+    `rerunOnResume` on the node controls what happens when the reply
+    arrives:
+
+    -   **`false`** (the leaf default): the reply is routed to the node's
+        successor as input, bypassing the interrupted node.
+    -   **`true`**: the node body is re-run from the top. Required for any
+        node that calls `ctx.runNode()`, so it can deliver cached child
+        results on resume.
+
+    !!! note "Note: Response schema input limitations"
+
+        `RequestInput` does not reformat a human reply to fit
+        `responseSchema` — the reply must already be in that shape. A reply
+        carrying an *object* is checked against the schema and a mismatch
+        fails loudly, leaving the interrupt open so the next reply answers
+        it; a plain-text reply is never schema-checked. For a better user
+        experience, collect structured data in your UI, or put an agent
+        node after the pause to normalize whatever the human typed.
 
 === "Go"
 
@@ -149,6 +198,16 @@ The following code examples demonstrate more detailed human input requests.
        )
     ```
 
+=== "TypeScript"
+
+    The following three-node graph builds a structured itinerary, sends it
+    as `payload` alongside the prompt so a client can render it, and acts
+    on the user's feedback:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/human-input/payload_and_schema.ts:payload-and-schema"
+    ```
+
 === "Go"
 
     The following code sample shows a three-node graph: a builder node generates
@@ -188,6 +247,19 @@ specific tool call.
                Example of attraction you liked
        """
        yield RequestInput(message=input_message, response_schema=str)
+    ```
+
+=== "TypeScript"
+
+    Set `requireConfirmation: true` on a `FunctionTool` and the agent pauses
+    for approval before that tool runs.
+
+    A graph HITL node is the other half of this: rather than confirming a
+    tool call, it can open the workflow by asking the user what they want.
+    `responseSchema: z.string()` asks for a plain text reply:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/human-input/initial_prompt.ts:initial-prompt"
     ```
 
 === "Go"
