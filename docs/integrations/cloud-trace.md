@@ -248,6 +248,30 @@ filter and analyze your agent's behavior:
 - `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
 - `gcp.vertex.agent.event_id`: The ID of the specific event.
 - `gen_ai.conversation.id`: The session ID.
+- `gcp.vertex.agent.llm_request`: Serialized LLM request containing prompt text and configuration.
+- `gcp.vertex.agent.llm_response`: Serialized LLM response containing model output.
+- `gcp.vertex.agent.tool_call_args`: Serialized arguments passed to tool calls.
+- `gcp.vertex.agent.tool_response`: Serialized result returned by the tool.
+- `gcp.vertex.agent.data`: Serialized data payloads sent to the agent.
+
+### Data privacy and message content in Cloud Trace
+
+To protect sensitive information and avoid capturing Personally Identifiable Information (PII) in production:
+
+- **Agent Engine deployment default:** When deploying an agent to Vertex AI Agent Engine with `adk deploy agent_engine --otel_to_cloud`, ADK automatically injects `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=false` into the environment unless explicitly specified in `.env`.
+- **Redacted placeholders:** When content capture in spans is disabled (`false`), payload attributes (`gcp.vertex.agent.llm_request`, `gcp.vertex.agent.llm_response`, `gcp.vertex.agent.tool_call_args`, `gcp.vertex.agent.tool_response`, and `gcp.vertex.agent.data`) are populated with empty JSON string placeholders (`"{}"`) in Cloud Trace spans.
+- **Enabling payloads for debugging:** If you need full request and response payloads in Cloud Trace during development or testing, you can explicitly enable them via environment variables:
+
+    ```bash
+    export ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=true
+    ```
+
+    Or opt into the standard OpenTelemetry GenAI semantic conventions:
+
+    ```bash
+    export OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental
+    export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_ONLY
+    ```
 
 ## Resources
 

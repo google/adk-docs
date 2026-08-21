@@ -56,9 +56,36 @@ To enable trace export to Google Cloud Trace, use the `--otel_to_cloud` flag:
 adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
-### Programmatic traces export
+#### Capture message content and payloads in spans
+
+By default in local Python development, ADK records prompts, LLM responses, tool arguments, and tool responses as JSON attributes on spans under the `gcp.vertex.agent.*` namespace (`gcp.vertex.agent.llm_request`, `gcp.vertex.agent.llm_response`, `gcp.vertex.agent.tool_call_args`, `gcp.vertex.agent.tool_response`, and `gcp.vertex.agent.data`).
+
+To prevent sensitive data or PII from being captured on these spans, set `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=false`:
+
+```bash
+export ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=false
+adk web path/to/your/agents_dir
+```
+
+When set to `false` (or `0`), these payload attributes are replaced with empty JSON string placeholders (`"{}"`).
+
+Additionally, you can configure prompt and response message content on spans following the OpenTelemetry GenAI Semantic Conventions via `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`:
+
+```bash
+export OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental
+export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=SPAN_ONLY
+```
+
+The available values are `NO_CONTENT` (default), `EVENT_ONLY`, `SPAN_ONLY`, and `SPAN_AND_EVENT`. Capturing content on spans requires `SPAN_ONLY` or `SPAN_AND_EVENT`, along with opting into experimental GenAI semantic conventions via `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
+
+!!! warning
+    Span content capture records raw user inputs, model outputs, and tool call arguments. In production environments, ensure appropriate data governance policies are in place, or disable span content via `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=false` (which is set automatically by `adk deploy agent_engine --otel_to_cloud`).
+
+## Programmatic traces export
 
 You can also configure trace export programmatically in your application code.
+
+### Python programmatic setup
 
 #### OTLP export setup
 
@@ -90,6 +117,37 @@ os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
 ```
+
+#### Capture prompt and span content programmatically
+
+You can toggle span payload capture globally via environment variables:
+
+```python
+import os
+
+# Disable custom ADK payload attributes on spans (sets attributes to "{}")
+os.environ["ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS"] = "false"
+
+# Or configure OpenTelemetry GenAI span message capturing
+os.environ["OTEL_SEMCONV_STABILITY_OPT_IN"] = "gen_ai_latest_experimental"
+os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "SPAN_ONLY"
+```
+
+To configure content capture per invocation rather than process-wide, set `RunConfig.telemetry`:
+
+```python
+from google.adk.agents.run_config import RunConfig
+from google.adk.telemetry import ContentCapturingMode, TelemetryConfig
+
+run_config = RunConfig(
+    telemetry=TelemetryConfig(
+        capture_message_content=ContentCapturingMode.SPAN_ONLY,
+        genai_semconv_stability_opt_in="experimental",
+    ),
+)
+```
+
+Setting `capture_message_content` to `SPAN_ONLY` or `SPAN_AND_EVENT` enables content capture on both experimental OpenTelemetry spans and ADK spans, while `EVENT_ONLY` or `NO_CONTENT` redacts span payloads.
 
 ### Kotlin programmatic setup
 
