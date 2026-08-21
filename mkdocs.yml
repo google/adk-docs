@@ -114,9 +114,12 @@ markdown_extensions:
       permalink: true
 
 
+# Hooks
+hooks:
+  - hooks/pagefind.py
+
 # Plugins
 plugins:
-  - search
   - macros:
       module_name: scripts/integrations
       # Set custom delimiters for J2 templates to avoid conflicts with Markdown
