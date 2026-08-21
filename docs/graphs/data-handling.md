@@ -1,7 +1,7 @@
 # Data handling for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Structuring and managing data between agents and graph-based nodes is critical
@@ -27,6 +27,31 @@ receives it as its typed input.
     -   **`message`**: Data intended as a response to a user.
     -   **`state`**: Data automatically persisted across nodes via ***Events***
         throughout an ADK session.
+
+=== "TypeScript"
+
+    In ADK TypeScript v2.0.0, nodes exchange data through events. The key
+    fields for node data handling are:
+
+    -   **`output`**: the value handed to the next node. Return it bare and
+        it is boxed into an event for you, or set it explicitly with
+        `createEvent({output})`.
+    -   **`content`**: a user-facing message. The runtime renders it, and
+        the graph does *not* forward it to the next node.
+    -   **`route`**: the routing key(s) that select which conditional edge
+        to follow.
+
+    Session state is separate from the event: a node reads and writes it
+    through `ctx.state`, and the accumulated delta is attached to that
+    node's events. State keys may carry a prefix that controls their
+    lifetime and scope:
+
+    | Prefix | Scope |
+    |---|---|
+    | `app:` | Shared across all users and sessions for the app |
+    | `user:` | Tied to the user, shared across their sessions |
+    | `temp:` | Discarded after the current invocation ends |
+    | *(none)* | Persists for the lifetime of the session |
 
 === "Go"
 
@@ -89,6 +114,23 @@ Each step in a workflow produces output for its successor.
     ***return*** or ***yield*** command without a parameter passes a `None` value
     to the next node.
 
+=== "TypeScript"
+
+    There are three equivalent ways to produce a node's output: return a
+    bare value, return `createEvent({output})`, or yield events from an
+    async generator when you want to stream progress alongside the result.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/node_output.ts:node-output"
+    ```
+
+    !!! warning "Caution: emit `output` from one event per execution"
+
+        Nothing enforces this, so getting it wrong is silent. A node may
+        yield any number of events carrying `output`, each overwrites the
+        last, and the successor receives only the final value. Carry
+        progress on `content` instead.
+
 === "Go"
 
     **workflow package**: a `FunctionNode` simply returns a typed Go value.
@@ -131,6 +173,18 @@ Each step in a workflow produces output for its successor.
         one ***yield*** in a node, having two or more ***yield*** commands with
         an ***Event.output*** results in a runtime error.
 
+=== "TypeScript"
+
+    `output` is not limited to text. Any serializable value flows to the
+    next node, which receives it as a typed object — no JSON parsing and no
+    state reads. Attaching an `outputSchema` to the producer, or an
+    `inputSchema` to the consumer, makes the contract explicit and
+    validates it at runtime:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/structured_output.ts:structured-output"
+    ```
+
 === "Go"
 
     **workflow package**: a `FunctionNode` can return any JSON-serializable
@@ -159,6 +213,16 @@ Each step in a workflow produces output for its successor.
         return Event(route="BUG")
     ```
 
+=== "TypeScript"
+
+    `route` is independent of `output`, so one event can both select a
+    branch and forward a payload to it. `DEFAULT_ROUTE` catches everything
+    no other branch matched:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/routing_output.ts:routing-output"
+    ```
+
 === "Go"
 
     **workflow package**: an emitting `FunctionNode` constructs a
@@ -182,6 +246,17 @@ Each step in a workflow produces output for its successor.
     async def user_message(node_input: str):
       """Tell user research process is starting."""
       yield Event(message="Beginning research process...")
+    ```
+
+=== "TypeScript"
+
+    A message for the human is the event's `content`. The runtime renders
+    it and the graph does **not** hand it to the next node — `content` is
+    for the user, `output` is for the next node. A node can emit both, as
+    two events of which only one carries `output`:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/user_message.ts:user-message"
     ```
 
 === "Go"
@@ -238,6 +313,25 @@ inside tools and callbacks regardless of which agent style you use.
         data* between nodes. Use artifacts or other data persistence mechanisms,
         such as database Tools, to persist large data resources during the life
         cycle of a Workflow.
+
+=== "TypeScript"
+
+    State is written through `ctx.state`, not returned. A write is visible
+    to every later node in the same run and is committed with the writing
+    node's events:
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/session_state.ts:session-state"
+    ```
+
+    !!! warning "Caution: `state` data limitations"
+
+        Session state is a lightweight key-value store. Do not use it to
+        move large payloads between nodes — use artifacts or a database
+        tool for those. Passing a value along an edge as node `output` is
+        also the better choice when only the next node needs it; reach for
+        state when a value has to outlive the run, or be read by a tool, a
+        callback, or `{key}` instruction templating.
 
 === "Go"
 
@@ -306,6 +400,23 @@ accepted and produced by any agent node.
     )
     ```
 
+=== "TypeScript"
+
+    Schemas are Zod objects, or a genai `Schema`. Where the schema goes
+    matters:
+
+    -   `LlmAgent.outputSchema` forces the model to answer in that shape.
+    -   `LlmAgent.inputSchema` is only consulted when the agent is exposed
+        as a **tool**. Inside a graph, the schema that validates a node's
+        input belongs on the node: `node(agent, {inputSchema})`.
+
+    Agents in a graph must run in `single_turn` (the default) or `task`
+    mode.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/schemas.ts:schemas"
+    ```
+
 === "Go"
 
     **workflow package**: use `workflow.NewAgentNodeTyped[Input, Output]` to
@@ -366,6 +477,23 @@ accepted and produced by any agent node.
             (START, city_generator_agent, lookup_time_function, city_report_agent)
         ],
     )
+    ```
+
+=== "TypeScript"
+
+    Two data-selection forms are available inside an agent instruction:
+
+    -   `{Class.field}` reads a field off **this** node's input.
+    -   `<Class.field from source_node>` reads a field off a named
+        predecessor's output. It is more restrictive, and unambiguous when
+        several upstream nodes share a field name.
+
+    Both are distinct from `{state_key}`, which reads session state. The
+    `Class.` prefix is documentation only — resolution uses the field name
+    after the dot.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/data-handling/structured_access.ts:structured-access"
     ```
 
 === "Go"
