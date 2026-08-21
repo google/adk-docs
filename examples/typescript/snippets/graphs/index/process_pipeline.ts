@@ -39,8 +39,6 @@ const processMessage = new LlmAgent({
       Reply with the categories only, nothing else.`,
 });
 
-// A route ARRAY fires every branch whose route key matches one of the listed
-// values (multi-route dispatch), rather than just the first match.
 const router = node(
   (_ctx: NodeContext, nodeInput: string) => {
     const text = String(nodeInput).toUpperCase();

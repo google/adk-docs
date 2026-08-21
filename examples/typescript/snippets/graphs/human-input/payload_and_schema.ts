@@ -39,7 +39,6 @@ const userFeedbackSchema = z.object({
   userResponse: z.string(),
 });
 
-// Stands in for the agent node that composes the base itinerary.
 const buildItinerary = node(
   (_ctx: NodeContext, city: string): ActivitiesList => {
     const place = city.trim() || "your city";
@@ -75,11 +74,8 @@ const getUserFeedback = node(
   { name: "get_user_feedback" },
 );
 
-// Receives the human's reply as its input (default handoff on resume).
 const applyFeedback = node(
   (_ctx: NodeContext, nodeInput: unknown) => {
-    // The reply is either the structured `UserFeedback` shape or, from an
-    // interactive client, plain text.
     const feedback =
       typeof nodeInput === "string"
         ? nodeInput

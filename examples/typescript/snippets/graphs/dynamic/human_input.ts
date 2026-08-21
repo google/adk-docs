@@ -37,10 +37,6 @@ const handleProcess = node(
   async (ctx: NodeContext, nodeInput: unknown) => {
     const approval = await ctx.runNode(getUserApproval, nodeInput);
 
-    // `ctx.runNode()` does NOT throw when a child interrupts: it resolves with
-    // a result whose `interruptIds` are populated and whose `output` is still
-    // undefined. Return without deciding — the workflow pauses and this body
-    // re-runs once the reply arrives.
     if (approval.interruptIds.length > 0) {
       return undefined;
     }

@@ -28,7 +28,6 @@ const router = node(
   (_ctx: NodeContext, nodeInput: string) =>
     createEvent({
       route: /bug|crash|error/i.test(nodeInput) ? "BUG" : "OTHER",
-      // Forwarded to whichever branch fires.
       output: nodeInput,
     }),
   { name: "router" },
@@ -52,7 +51,6 @@ export const rootAgent = new Workflow({
       router,
       {
         BUG: handleBug,
-        // Fires when no other route on this node matched.
         [DEFAULT_ROUTE]: handleAnythingElse,
       },
     ],

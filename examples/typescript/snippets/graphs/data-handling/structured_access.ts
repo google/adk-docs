@@ -49,14 +49,6 @@ const lookupTimeFunction = node(
 const cityReportAgent = new LlmAgent({
   name: "city_report_agent",
   model: "gemini-flash-latest",
-
-  // Data selection based on class and parameter — reads this node's own input:
-  // instruction: `Return a sentence in the following format:
-  //     It is {CityTime.timeInfo} in {CityTime.city} right now.`,
-
-  // More restrictive data selection, qualified by source node name. Keep the
-  // template on ONE line: a model reproduces a line break inside the format
-  // string, which splits the answer mid-sentence.
   instruction:
     "Return a sentence in the following format: It is " +
     "<CityTime.timeInfo from lookup_time_function> in " +

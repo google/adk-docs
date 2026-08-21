@@ -48,15 +48,11 @@ function lookupTimeFunction(_ctx: NodeContext, nodeInput: string): CityTime {
 const cityReportAgent = new LlmAgent({
   name: "city_report_agent",
   model: "gemini-flash-latest",
-  // `{CityTime.<field>}` selects a field off THIS node's input. The `CityTime.`
-  // prefix is documentation; only the field name after the dot is resolved.
   instruction: `Output the following line:
     It is {CityTime.timeInfo} in {CityTime.city} right now.`,
 });
 
 function completedMessageFunction(_ctx: NodeContext, nodeInput: string) {
-  // A user-facing message is the event's `content` which, unlike `output`, is
-  // not handed to the next node.
   return createEvent({
     content: {
       role: "model",
@@ -75,8 +71,6 @@ export const rootAgent = new Workflow({
         name: "lookup_time_function",
         outputSchema: cityTimeSchema,
       }),
-      // The validating schema belongs to the node wrapping the agent — an
-      // `LlmAgent.inputSchema` is only used when the agent is exposed as a tool.
       node(cityReportAgent, { inputSchema: cityTimeSchema }),
       node(completedMessageFunction, { name: "completed_message_function" }),
     ],

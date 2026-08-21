@@ -21,12 +21,8 @@ import { node, NodeContext, Workflow } from "@google/adk";
 
 const myNode = node(() => "Hello World", { name: "hello_node" });
 
-// An orchestrator that calls `ctx.runNode` must set `rerunOnResume: true`, so
-// its body re-runs on resume and already-finished children are replayed from
-// their checkpoints rather than executed again.
 const myWorkflow = node(
   async (ctx: NodeContext, _nodeInput: string) => {
-    // runNode executes a node and resolves to its RESULT, so read `.output`.
     const result = await ctx.runNode(myNode, "hello");
     return result.output;
   },

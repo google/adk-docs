@@ -23,8 +23,6 @@ import { createEvent, node, NodeContext, Workflow } from "@google/adk";
 const message = (text: string) =>
   createEvent({ content: { role: "model", parts: [{ text }] } });
 
-// Tell the user the research process is starting. No `output`, so nothing is
-// handed to the next node.
 const userMessage = node(
   async function* (_ctx: NodeContext, nodeInput: string) {
     yield message(`Beginning research process for "${nodeInput}"...`);
@@ -32,7 +30,6 @@ const userMessage = node(
   { name: "user_message" },
 );
 
-// A message AND an output in one node: two events, only one carrying `output`.
 const research = node(
   async function* () {
     yield message("Gathering sources...");

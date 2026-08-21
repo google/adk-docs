@@ -34,7 +34,6 @@ const router = node(
   { name: "router" },
 );
 
-// --- Sub-workflow B: title-case each word, then frame it. ---
 const workflowB = new Workflow({
   name: "workflow_B",
   edges: [
@@ -55,7 +54,6 @@ const workflowB = new Workflow({
   ],
 });
 
-// --- Sub-workflow C: lower-case, then frame it. ---
 const workflowC = new Workflow({
   name: "workflow_C",
   edges: [

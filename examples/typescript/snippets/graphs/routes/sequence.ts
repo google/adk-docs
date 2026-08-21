@@ -33,10 +33,8 @@ const taskCNode = node(
   { name: "task_C_node" },
 );
 
-// A single-node graph would simply be:
-//   edges: [['START', taskANode]]
 export const rootAgent = new Workflow({
   name: "sequential_workflow",
-  edges: [["START", taskANode, taskBNode, taskCNode]], // 3 nodes run in order
+  edges: [["START", taskANode, taskBNode, taskCNode]],
 });
 // --8<-- [end:sequence]

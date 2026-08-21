@@ -42,14 +42,12 @@ const router = node(
   { name: "router" },
 );
 
-// An agent to execute node B.
 const taskBNode = new LlmAgent({
   name: "task_B_agent",
   model: "gemini-flash-latest",
   instruction: "Answer the user in a single short sentence.",
 });
 
-// A FunctionNode to execute node C.
 const taskCNode = node(() => "Task C completed", { name: "task_C_node" });
 
 export const rootAgent = new Workflow({
@@ -59,7 +57,6 @@ export const rootAgent = new Workflow({
     [
       router,
       {
-        // "route value": node_to_run
         RUN_TASK_B: taskBNode,
         RUN_TASK_C: taskCNode,
       },

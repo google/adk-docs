@@ -40,8 +40,6 @@ const seedDraft = node(
   { name: "seed_draft" },
 );
 
-// Runs once per incoming trigger: first from seed_draft, then from every
-// refine pass around the back-edge.
 const critic = node(
   (_ctx: NodeContext, draft: Draft) =>
     createEvent({
@@ -74,7 +72,6 @@ export const rootAgent = new Workflow({
   edges: [
     ["START", seedDraft, critic],
     [critic, { REVISE: refine, DONE: finalize }],
-    // The back-edge that closes the loop.
     [refine, critic],
   ],
 });

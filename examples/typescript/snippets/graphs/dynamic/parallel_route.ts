@@ -29,7 +29,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /** The worker run once per list item. */
 const realNode = node(
   async (_ctx: NodeContext, item: string) => {
-    await sleep(200); // stand-in for real work
+    await sleep(200);
     return { item, length: item.length };
   },
   { name: "analyze_item" },
@@ -42,8 +42,6 @@ const parallelSupervisor = node(
       .map((item) => item.trim())
       .filter(Boolean);
 
-    // Run ids are assigned in CALL order, so kick the children off in a
-    // synchronous loop to keep them deterministic across a resume.
     const tasks = items.map((item) => ctx.runNode(realNode, item));
     const results = await Promise.all(tasks);
 

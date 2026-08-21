@@ -48,9 +48,6 @@ const processAllOrders = node(
     const orders = await getOrders();
 
     const processTasks = orders.map((order) =>
-      // Use runId to provide a custom identifier. It must contain at least one
-      // non-numeric character to avoid colliding with the auto-generated
-      // sequential numeric ids.
       ctx.runNode(processOrder, order, { runId: `order-${order.orderId}` }),
     );
 

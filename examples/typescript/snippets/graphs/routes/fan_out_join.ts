@@ -34,7 +34,6 @@ const parallelTaskC = node(
 
 const myJoinNode = new JoinNode({ name: "my_join_node" });
 
-// The join hands its successor a record keyed by predecessor node name.
 const finalTaskD = node(
   (_ctx: NodeContext, results: Record<string, unknown>) =>
     [
@@ -47,10 +46,6 @@ const finalTaskD = node(
 
 export const rootAgent = new Workflow({
   name: "fan_out_workflow",
-  // One edge row per parallel path. The equivalent shorthand nests the
-  // parallel nodes in an array:
-  //   [['START', [parallelTaskA, parallelTaskB, parallelTaskC], myJoinNode,
-  //     finalTaskD]]
   edges: [
     ["START", parallelTaskA, myJoinNode],
     ["START", parallelTaskB, myJoinNode],

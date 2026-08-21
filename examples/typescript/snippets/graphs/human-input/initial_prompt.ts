@@ -45,7 +45,6 @@ const initialPrompt = node(
   { name: "initial_prompt" },
 );
 
-// Receives the user's reply as its input and kicks off the real work.
 const buildItinerary = node(
   (_ctx: NodeContext, nodeInput: string) => {
     const [city = "your city"] = nodeInput.split(",");

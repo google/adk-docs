@@ -22,13 +22,8 @@ function myFunctionNode(_ctx: NodeContext, nodeInput: unknown): string {
   return `Hello ${nodeInput ?? "World"}`;
 }
 
-// Form 1 — the `node()` factory. TypeScript has no `@node` decorator form.
 const helloNode = node(myFunctionNode, { name: "hello_node" });
 
-// Form 2 — the explicit constructor, same function, different configuration.
-// Reach for it when you are wrapping a function from another library, need
-// several differently-configured nodes from one function, or keep node
-// references in a registry for advanced orchestration.
 const successNode = new FunctionNode("hello", myFunctionNode, {
   rerunOnResume: true,
 });
@@ -40,7 +35,6 @@ const myFormattingNode = node(
   { name: "my_formatting_node" },
 );
 
-// The orchestrator: run children in order and return the last result.
 const myWorkflow = node(
   async (ctx: NodeContext, nodeInput: unknown) => {
     const greeted = await ctx.runNode(helloNode, nodeInput);

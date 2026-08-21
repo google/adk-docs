@@ -38,10 +38,8 @@ const formatFunctionNode = node(
 
 const editorialWorkflow = node(
   async (ctx: NodeContext, userRequest: string) => {
-    // Agent node generates output.
     const rawDraft = await ctx.runNode(draftAgent, userRequest);
 
-    // Function node formats text.
     const formattedText = await ctx.runNode(
       formatFunctionNode,
       rawDraft.output,

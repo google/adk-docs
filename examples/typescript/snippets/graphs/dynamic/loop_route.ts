@@ -59,10 +59,7 @@ const codeWorkflow = node(
       findings: string;
     };
 
-    // Unlike a graph cycle, the loop is trivially bounded, so a stubborn model
-    // cannot spin forever burning live model calls.
     for (let round = 0; checkResp.findings && round < MAX_FIX_ROUNDS; round++) {
-      // The fixer agent reads `{code}` / `{findings}` from session state.
       ctx.state.set("code", code);
       ctx.state.set("findings", checkResp.findings);
 

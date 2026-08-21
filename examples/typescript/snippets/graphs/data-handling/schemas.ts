@@ -70,8 +70,6 @@ const searchFlightsApi = new FunctionTool({
   ],
 });
 
-// Turns the free-text request into the structured node input the searcher
-// expects. In a real app this would itself be an extraction agent.
 const parseRequest = node(
   (_ctx: NodeContext, nodeInput: string): FlightSearchInput => {
     const codes = nodeInput.toUpperCase().match(/\b[A-Z]{3}\b/g) ?? [];
@@ -89,7 +87,6 @@ const parseRequest = node(
   { name: "parse_request", outputSchema: flightSearchInputSchema },
 );
 
-// Agents in a graph must run in `single_turn` (the default) or `task` mode.
 const flightSearcher = new LlmAgent({
   name: "flight_searcher",
   model: "gemini-flash-latest",
@@ -117,7 +114,6 @@ export const rootAgent = new Workflow({
     [
       "START",
       parseRequest,
-      // The graph-level input contract for the agent node.
       node(flightSearcher, { inputSchema: flightSearchInputSchema }),
       renderResults,
     ],

@@ -30,7 +30,6 @@ const step1 = node(
 
 const step2 = node(
   (_ctx: NodeContext, nodeInput: string | number) => {
-    // An interactive reply arrives as text, so coerce before doing maths.
     const value = Number(nodeInput);
     return Number.isFinite(value)
       ? value * 2

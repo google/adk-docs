@@ -34,7 +34,6 @@ const emitStructuredOutput = node(
   { name: "emit_structured_output", outputSchema: cityInfoSchema },
 );
 
-// The successor receives the object itself — no JSON parsing, no state reads.
 const consumeStructuredOutput = node(
   (_ctx: NodeContext, cityInfo: CityInfo) =>
     `It is ${cityInfo.cityTime} in ${cityInfo.cityName} right now.`,

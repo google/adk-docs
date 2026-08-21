@@ -19,15 +19,9 @@
 // --8<-- [start:session-state]
 import { node, NodeContext, Workflow } from "@google/adk";
 
-// State-key prefixes control lifetime and scope:
-//   "app:<key>"   shared across all users and sessions of the app
-//   "user:<key>"  tied to the user, shared across their sessions
-//   "temp:<key>"  discarded when the current invocation ends
-//   "<key>"       persists for the lifetime of the session
 const initStateNode = node(
   (ctx: NodeContext, nodeInput: string) => {
     ctx.state.set("topic", nodeInput.trim());
-    // Scoped key: dropped when this invocation ends, never persisted.
     ctx.state.set("temp:started_at", new Date().toISOString());
     ctx.state.set("attempts", 0);
   },
@@ -36,7 +30,6 @@ const initStateNode = node(
 
 const taskAttemptNode = node(
   (ctx: NodeContext) => {
-    // Reads the value init_state_node wrote earlier in this same run.
     const attempts = ctx.state.get<number>("attempts") ?? 0;
     ctx.state.set("attempts", attempts + 1);
   },
