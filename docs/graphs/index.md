@@ -217,7 +217,6 @@ For information about building advanced pipelines, see
 There are some known limitations with graph-based workflows. They
 are *not compatible* with the following ADK features:
 
--   **Live streaming:** Not supported in graph-based workflows.
 -   **Integrations:** Some third-party
     [integrations](/integrations/) may not be compatible with graph-based
     workflows.
