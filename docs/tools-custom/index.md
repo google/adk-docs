@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -109,6 +109,12 @@ The following example showcases how an agent can use tools by **referencing thei
     --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/WeatherSentiment.kt:full_code"
+    ```
+
 ## Tool Context
 
 For more advanced scenarios, ADK allows you to access additional contextual information within your tool function by including the special parameter `tool_context: ToolContext`. By including this in the function signature, ADK will **automatically** provide an **instance of the ToolContext** class when your tool is called during agent execution.
@@ -192,6 +198,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/UserPreferenceTools.kt:example"
+    ```
+
 ### **Controlling Agent Flow**
 
 The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
@@ -226,6 +238,12 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/CustomerSupport.kt:full_code"
     ```
 
 ##### Explanation
@@ -337,6 +355,12 @@ These methods provide convenient ways for your tool to interact with persistent 
     //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
     // In the Agent, include this function tool.
     // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/DocAnalysisTools.kt:full_code"
     ```
 
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
@@ -489,6 +513,12 @@ Here are key guidelines for defining effective tool functions:
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/OrderTools.kt:snippet"
+    ```
+
 * **Simplicity and Focus:**
     * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
     * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
@@ -499,8 +529,8 @@ By adhering to these guidelines, you provide the LLM with the clarity and struct
 
 ## Toolsets: Grouping and Dynamically Providing Tools
 
-<div class="language-support-tag" title="This feature is currently available for Python and Typescript.">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">Typescript v0.2.0</span>
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 
@@ -555,6 +585,12 @@ Let's create a basic example of a toolset that provides simple arithmetic operat
     --8<-- "examples/java/snippets/src/main/java/tools/SimpleMathToolsetApp.java:init"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/overview/ToolsetExample.kt:init"
+    ```
+
 In this example:
 
 *   `SimpleMathToolset` implements `BaseToolset` and its `get_tools()` method returns `FunctionTool` instances for `add_numbers` and `subtract_numbers`. It also customizes their names using a prefix.
@@ -562,5 +598,27 @@ In this example:
 *   When `calculator_agent` is run, ADK will call `math_toolset_instance.get_tools()`. The agent's LLM will then have access to `greet_user`, `calculator_add_numbers`, and `calculator_subtract_numbers` to handle user requests.
 *   The `add_numbers` tool demonstrates writing to `tool_context.state`, and the agent's instruction mentions reading this state.
 *   The `close()` method is called to ensure any resources held by the toolset are released.
+*   The Kotlin example does not prefix the tool names, because adk-kotlin has no prefix mechanism and `BaseTool.name` is read-only. Its tools stay `greetUser`, `addNumbers` and `subtractNumbers`. Kotlin also keeps the two kinds of tool apart: individual tools go in `tools`, toolsets in `toolsets`.
+
+### Filter tools in toolsets
+
+<div class="language-support-tag" title="The version badge covers the Kotlin ToolFilter API shown here. Python, Java and TypeScript filter tools through their own BaseToolset APIs.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+</div>
+
+Every SDK lets a toolset narrow what it hands to the model, by name or by a
+predicate that sees the current context; Python, Java and TypeScript take that
+filter on `BaseToolset`. The example here is the Kotlin form.
+
+Rather than hard-coding the list inside `getTools()`, a toolset can accept a
+`ToolFilter` and apply it with `isToolSelected`, as `SimpleMathToolset` does in the
+Kotlin example above. `ToolFilter.allowList` selects tools by name, while
+`ToolFilter.Predicate` receives the `ReadonlyContext`, so the tool list can depend
+on session state or the current user. A null filter selects everything, which is
+why the same class also works unfiltered.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/tools/overview/ToolsetExample.kt:filter"
+```
 
 Toolsets offer a powerful way to organize, manage, and dynamically provide collections of tools to your ADK agents, leading to more modular, maintainable, and adaptable agentic applications.

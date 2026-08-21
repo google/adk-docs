@@ -58,7 +58,7 @@ root_agent = Agent(
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
    # Please fill in the latest model id that supports live from
-   # https://adk.dev/get-started/streaming/quickstart-streaming/#supported-models
+   # https://adk.dev/live/get-started/streaming-python/#supported-models
    model="...",
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
@@ -181,10 +181,10 @@ Stop `adk web` by pressing `Ctrl-C` on the console.
 
 ### Note on ADK Streaming
 
-The following features will be supported in the future versions of the ADK Streaming: Callback, LongRunningTool, ExampleTool, and Shell agent (e.g. SequentialAgent).
+Model callbacks (`before_model_callback` and `after_model_callback`) are not invoked on the streaming path; ADK only runs them on the `run_async` path. Agent callbacks (`before_agent_callback`, `after_agent_callback`) and tool callbacks (`before_tool_callback`, `after_tool_callback`) do run while streaming, as do `LongRunningFunctionTool` and `ExampleTool`. Of the workflow agents, only `SequentialAgent` supports streaming: `LoopAgent` and `ParallelAgent` raise `NotImplementedError`.
 
 Congratulations\! You've successfully created and interacted with your first Streaming agent using ADK\!
 
 ## Next steps: build custom streaming app
 
-The [Gemini Live API Toolkit development guide series](../../streaming/dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+The [Gemini Live API Toolkit development guide series](../dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.

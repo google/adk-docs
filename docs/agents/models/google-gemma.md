@@ -15,6 +15,13 @@ or with one of many self-hosting options on Google Cloud:
 [Google Kubernetes Engine](https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm),
 [Cloud Run](https://docs.cloud.google.com/run/docs/run-gemma-on-cloud-run).
 
+Gemma 3 needs a different model class than the Gemma 4 examples below. It has
+no native function calling or system instruction support, so ADK supplies
+workarounds in dedicated classes: use `Gemma(model="gemma-3-27b-it")` for the
+Gemini API and `Gemma3Ollama()` for Ollama, both from `google.adk.models`.
+`Gemma3Ollama` is only defined when [LiteLLM](/agents/models/litellm/) is
+installed (`litellm>=1.84`).
+
 ## Gemini API Example
 
 Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
@@ -125,7 +132,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
             model=model_name_at_endpoint,
             api_base=api_base_url,
             # Pass authentication headers if needed
-            extra_headers=auth_headers
+            extra_headers=auth_headers,
             # Alternatively, if endpoint uses an API key:
             # api_key="YOUR_ENDPOINT_API_KEY",
             extra_body={
@@ -243,7 +250,7 @@ import os
 import dotenv
 from google.adk.agents import LlmAgent
 from google.adk.models import Gemini
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 dotenv.load_dotenv()
@@ -272,7 +279,7 @@ def get_maps_mcp_toolset():
         print("Warning: MAPS_API_KEY environment variable not found.")
         maps_api_key = "no_api_found"
 
-    tools = MCPToolset(
+    tools = McpToolset(
         connection_params=StreamableHTTPConnectionParams(
             url=MAPS_MCP_URL,
             headers={
