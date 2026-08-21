@@ -174,7 +174,7 @@ button.md-content__button:hover svg {
   .md-header__inner {
     padding-right: 5rem;
   }
-
+  /* Add some length to search field */
   .md-header__inner pagefind-modal-trigger {
     width: 12rem;
   }
