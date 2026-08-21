@@ -117,7 +117,7 @@ Then tell the coding agent what you want to build:
 
 ```shell title="Coding agent prompt"
 Use agents-cli to build an agent that turns long text into short
-bullet-point summaries"*
+bullet-point summaries
 ```
 
 Your coding agent activates the `google-agents-cli-workflow` and
@@ -165,8 +165,9 @@ in a few paragraphs of text. The agent replies with a short bullet-point summary
 
 ## Next: Evaluate and deploy your agent
 
-Now that you have Agents CLI installed and your first agent running, evaluate
-and deploy it:
+Now that you have Agents CLI installed and your first agent running, you can 
+evaluate and deploy it with your coding agent using instructions like the
+following:
 
 *   ***"Write evals for this agent and run them"*** to
     [evaluate your agent](https://google.github.io/agents-cli/guide/evaluation/)
