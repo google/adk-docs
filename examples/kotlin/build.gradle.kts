@@ -30,6 +30,11 @@ dependencies {
     // own catalog; the spec and jsonrpc transport arrive transitively.
     implementation("com.google.adk:google-adk-kotlin-a2a:0.8.0")
     implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.0.0.Final")
+    // BigQueryAgentAnalyticsPlugin lives in the integrations module. Unlike the
+    // a2a artifact above, this one publishes google-cloud-bigquery and
+    // google-auth on jvmApiElements, so the BigQuery types its constructor
+    // defaults name arrive on the compile classpath with no second line.
+    implementation("com.google.adk:google-adk-kotlin-integrations:0.8.0")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
     implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.56.0")
