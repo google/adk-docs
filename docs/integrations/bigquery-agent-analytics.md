@@ -26,24 +26,28 @@ event views).
 
 Support for **ADK 2.0** multi-agent workflows extends tracing to agent
 transfers, state checkpoints, event compaction, and long-running tools. It adds
-four new event types — `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
-`EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an `attributes.adk` envelope
+four new event types: `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
+`EVENT_COMPACTION`, and `TOOL_PAUSED`. It also stamps an `attributes.adk` envelope
 on every row so you can reconstruct the agent execution graph and join a paused
-tool to the row that resumes it. Java emits `TOOL_PAUSED` and its pause/resume
-keys only. See [Agent workflow and pause/resume events
+tool to the row that resumes it. In **Java**, this support currently covers the
+`TOOL_PAUSED` event and its pause/resume pairing keys only (without the
+`attributes.adk` envelope). See [Agent workflow and pause/resume events
 (ADK 2.0)](#adk-2-events) for details.
 
-The plugin includes three reliability and observability fixes:
+The plugin includes three reliability and observability fixes (Java: v1.7.0 or
+later):
 
 - **Cross-region Storage Write API routing.** Writes to BigQuery datasets
   outside the `US` multi-region (for example `EU` or `northamerica-northeast1`)
   now route to the region that owns the write stream. Previously they could
   fail with a "session not found" / stream-not-found error and silently drop
   every row.
-- **Dropped-event observability.** Dropped rows are tracked per drop reason
-  and exposed via `BigQueryAgentAnalyticsPlugin.get_drop_stats()` (Python) or
-  `getDropStats()` (Java) so a host can poll and export the counts to its own
-  monitoring. The reason keys differ per language — see [Dropped-event
+- **Delivery and content-incident observability.** Delivery losses are tracked
+  per reason. Python also counts formatter and parser failures where a sentinel
+  row is written. The counters are exposed through
+  `BigQueryAgentAnalyticsPlugin.get_drop_stats()` (Python) or `getDropStats()`
+  (Java), so a host can poll and export them to its own monitoring. The reason
+  keys and semantics differ per language; see [Dropped-event
   observability](#dropped-event-observability).
 - **No duplicate spans in Cloud Trace.** When Agent Engine telemetry
   (`GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`) or any other Cloud Trace
@@ -51,6 +55,20 @@ The plugin includes three reliability and observability fixes:
   produces a duplicate span next to each framework span. The plugin still
   inherits `trace_id` from the ambient OTel span, so BigQuery rows continue to
   join cleanly to Cloud Trace traces.
+
+In Python v2.7.0 and later, every row also receives a stable `event_id` before
+it enters the write queue. The ID is preserved across Storage Write API
+retries, so consumers can identify retry duplicates. An opt-in
+`exactly_once_delivery` mode uses committed streams and explicit offsets to
+prevent duplicates from ambiguous retries within a live processor. This mode
+does not guarantee lossless delivery; see [Delivery and
+deduplication](#delivery-and-deduplication).
+
+The same Python release adds model and workflow termination details. Final
+`LLM_RESPONSE` rows include `finish_reason` and, when supplied by the model,
+a sanitized `error_message`. Workflow nodes can emit `NODE_OUTPUT` and
+`NODE_ERROR`, and unhandled agent or run exceptions emit `AGENT_ERROR` and
+`INVOCATION_ERROR`.
 
 !!! warning "BigQuery Storage Write API"
 
@@ -94,10 +112,12 @@ shows the BigQuery view optionally created when
 | `USER_MESSAGE_RECEIVED` | A user message enters the invocation | text summary / content parts | `v_user_message_received` |
 | `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
+| `INVOCATION_ERROR` | An invocation fails with an unhandled exception | error message, sanitized traceback | `v_invocation_error` |
 | `AGENT_STARTING` | Agent execution begins | instruction summary | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
+| `AGENT_ERROR` | Agent execution fails with an unhandled exception | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
-| `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, latency, TTFT | `v_llm_response` |
+| `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, finish reason, latency, TTFT | `v_llm_response` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
 | `TOOL_STARTING` | A tool begins execution | tool name, args, origin | `v_tool_starting` |
 | `TOOL_COMPLETED` | A tool succeeds | tool name, result, origin, latency | `v_tool_completed` |
@@ -115,6 +135,22 @@ shows the BigQuery view optionally created when
 | `AGENT_STATE_CHECKPOINT` | An agent snapshots its state (or marks the end of its run) | agent state, end-of-agent flag, source event ID | `v_agent_state_checkpoint` |
 | `EVENT_COMPACTION` | A window of events is compacted into a summary | window start/end timestamps, compacted content | `v_event_compaction` |
 | `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
+| `NODE_OUTPUT` | A workflow node emits a final structured output | output, node path, run ID, parent run ID | `v_node_output` |
+| `NODE_ERROR` | A workflow node ends with a non-model error | error code, error message, node path, run ID, parent run ID | `v_node_error` |
+
+## Installation
+
+For Python, install ADK with the dedicated BigQuery Agent Analytics extra. The
+extra includes the BigQuery clients, Cloud Storage client, and `pyarrow`
+required by the plugin:
+
+```bash
+pip install "google-adk[bigquery-analytics]>=2.7.0"
+```
+
+The `pyarrow` dependency is no longer included in the general `gcp` extra. If
+`pyarrow` is missing, the plugin's import error identifies the
+`bigquery-analytics` extra to install.
 
 ## Quickstart
 
@@ -239,7 +275,7 @@ LIMIT 20;
         #     for you.
         #   * If neither is available, the plugin falls back to a per-invocation
         #     trace_id and the parent-child hierarchy is still preserved in
-        #     BigQuery — no OTel setup needed.
+        #     BigQuery; no OTel setup needed.
         # Setting a bare `TracerProvider` with no ambient span will NOT cause
         # `trace_id` to be populated with a "real" OTel id; only an *active*
         # span does. See the "Tracing and observability" section for details.
@@ -550,14 +586,17 @@ account) under which the agent is running needs these Google Cloud roles:
     | `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
     | `queue_max_size` | `int` | `10000` | Bound the in-memory event queue |
     | `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
-    | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
+    | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` are [redacted](#built-in-redaction). |
     | `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
     | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
     | `create_views` | `bool` | `True` | Create per-event-type BigQuery views |
     | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
     | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
-    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*` — exact keys or `"prefix*"` patterns |
+    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*`: exact keys or `"prefix*"` patterns |
     | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time |
+    | `final_response_tool_names` | `FrozenSet[str]` | `frozenset()` | Log call arguments from selected successful tools as `AGENT_RESPONSE` payloads |
+    | `flush_on_run_end` | `bool` | `True` | Wait for queued rows to finish writing at the end of each run |
+    | `exactly_once_delivery` | `bool` | `False` | Use committed streams and explicit offsets to prevent ambiguous-retry duplicates within a live processor |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -566,6 +605,7 @@ account) under which the agent is running needs these Google Cloud roles:
     ```python
     import json
     import re
+    from typing import Any
 
     from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerConfig
 
@@ -616,19 +656,19 @@ account) under which the agent is running needs these Google Cloud roles:
       <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.4.0</span>
     </div>
 
-    Three options control what extra context lands in `attributes` — and whether
+    Three options control what extra context lands in `attributes` and whether
     payload columns are written at all. Each is listed in the
     `BigQueryLoggerConfig` options table above; the notes below add the
     cross-option rules the flat table can't express:
 
-    - **`enable_otel_correlation`** — the captured span context is a best-effort
+    - **`enable_otel_correlation`**: The captured span context is a best-effort
       Cloud Trace correlation key, not a foreign key; when disabled (the
       default) no `attributes.otel` is written.
-    - **`custom_metadata_allowlist`** — leaving it unset preserves the previous
+    - **`custom_metadata_allowlist`**: Leaving it unset preserves the previous
       behavior, where only the built-in `a2a:*` capture runs. Captured values
       pass the same safety pipeline as all other logged content (truncation,
       sensitive-key redaction, circular-reference handling).
-    - **`payload_column_denylist`** — only `content`, `content_parts`,
+    - **`payload_column_denylist`**: Only `content`, `content_parts`,
       `attributes`, and `latency_ms` may be listed; identity and correlation
       columns are protected and raise `ValueError`. The projection is applied
       schema-first, so the table schema, the written rows, and the auto-created
@@ -644,6 +684,65 @@ account) under which the agent is running needs these Google Cloud roles:
         # payload_column_denylist=["content_parts"],       # don't persist multimodal payloads
     )
     ```
+
+    ### Final-answer capture and end-of-run flushing
+
+    Use `final_response_tool_names` when an agent delivers its final answer by
+    calling a dedicated tool instead of yielding a plain-text final event. On a
+    successful matching tool call, the plugin writes the tool's call arguments
+    as an `AGENT_RESPONSE` row and adds `source_tool` to `attributes`.
+
+    The `flush_on_run_end` option defaults to `True`, which makes
+    `after_run_callback` wait for the current event loop's write queue. Set it
+    to `False` to remove that flush from the response path; the background
+    writer will continue draining the queue, so rows may appear in BigQuery
+    shortly after the run returns.
+
+    ```python
+    config = BigQueryLoggerConfig(
+        final_response_tool_names=frozenset({"submit_final_response"}),
+        flush_on_run_end=False,
+    )
+    ```
+
+    ### Delivery and deduplication {#delivery-and-deduplication}
+
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span>
+    </div>
+
+    Every row receives a 32-character hexadecimal `event_id` before enqueue.
+    The same ID is reused when the Storage Write API retries that row, making it
+    the deduplication key in the default delivery mode:
+
+    ```sql
+    SELECT *
+    FROM `your-gcp-project-id.adk_agent_logs.agent_events`
+    QUALIFY
+      event_id IS NULL
+      OR ROW_NUMBER() OVER (PARTITION BY event_id ORDER BY timestamp) = 1;
+    ```
+
+    The `event_id IS NULL` condition retains rows written before the column was
+    introduced.
+
+    Set `exactly_once_delivery=True` to use one loop-local committed stream and
+    explicit offsets. This prevents a retry whose first result was ambiguous
+    from creating a duplicate within the lifetime of that processor. It can
+    consume additional BigQuery `CreateWriteStream` quota when a stream must be
+    rotated.
+
+    ```python
+    config = BigQueryLoggerConfig(exactly_once_delivery=True)
+    ```
+
+    Despite its name, this option is not a lossless-delivery guarantee. Batches
+    can still be dropped after retry exhaustion, an offset conflict, or a
+    replacement-stream failure. After a failed stream rotation, events arriving
+    during the 30-second rotation backoff are also dropped. Monitor the
+    `offset_conflict` and other [drop
+    reasons](#dropped-event-observability), and retain `event_id` as a consumer
+    deduplication key.
 
 === "Java"
 
@@ -719,21 +818,27 @@ provides a comprehensive reference with example values.
 | Field Name | Type | Mode | Description | Example Value |
 | --- | --- | --- | --- | --- |
 | **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
-| **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include `LLM_REQUEST`, `LLM_RESPONSE`, `LLM_ERROR`, `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_ERROR`, `AGENT_STARTING`, `AGENT_COMPLETED`, `STATE_DELTA`, `INVOCATION_STARTING`, `INVOCATION_COMPLETED`, `USER_MESSAGE_RECEIVED`, HITL events (see [HITL events](#hitl-events)), and the ADK 2.0 workflow events `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and `TOOL_PAUSED` (see [Agent workflow and pause/resume events](#adk-2-events)). Used for high-level filtering. | `LLM_REQUEST` |
+| **event_id** | `STRING` | `NULLABLE` | A 32-character hexadecimal ID assigned before enqueue. Storage Write API retries preserve it so consumers can identify duplicate rows. Rows written before schema version 2 have `NULL`. | `ca5e3c9d99e24e46b614f2f44f93bf6e` |
+| **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include LLM, tool, agent, invocation, state, HITL, A2A, response, workflow, node output, and node error events described in [Event types and payloads](#event-types). Used for high-level filtering. | `LLM_REQUEST` |
 | **agent** | `STRING` | `NULLABLE` | The name of the agent responsible for this event. Defined during agent initialization or via the `root_agent_name` context. | `my_bq_agent` |
 | **session_id** | `STRING` | `NULLABLE` | A persistent identifier for the entire conversation thread. Stays constant across multiple turns and sub-agent calls. | `04275a01-1649-4a30-b6a7-5b443c69a7bc` |
 | **invocation_id** | `STRING` | `NULLABLE` | The unique identifier for a single execution turn or request cycle. Corresponds to `trace_id` in many contexts. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
 | **user_id** | `STRING` | `NULLABLE` | The identifier of the user (human or system) initiating the session. Extracted from the `User` object or metadata. | `test_user` |
 | **trace_id** | `STRING` | `NULLABLE` | Trace identifier. It is a 32-character hex OpenTelemetry trace ID when inherited from an ambient span (e.g. Agent Engine's invocation span or the ADK Runner span), so BigQuery rows join cleanly to your existing Cloud Trace traces. Without an ambient span, Python also generates that format as its per-invocation fallback, while Java falls back to the ADK invocation ID. Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
-| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span** — the plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. The root invocation span reuses the ambient OTel span's id when one is active; child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
+| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span.** The plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. The root invocation span reuses the ambient OTel span's id when one is active; child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
 | **parent_span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `4c4a42bfdeb84934` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
 | **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
-| **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
-| **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
+| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. It can be populated on a final `LLM_RESPONSE` whose `status` remains `OK`. | `Error 404: Dataset not found` |
+| **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` when content or metadata is truncated or replaced by a safety boundary, including the configured `max_content_length`, sanitizer depth or node budgets, and diagnostic-text sanitization. Ordinary structured sensitive-key redaction does not set it by itself. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
+
+The `event_id` column is part of schema version 2. With
+`auto_schema_upgrade=True` (the default), the plugin adds it to an existing
+table automatically. If you manage the table schema yourself, add the column
+before using ADK Python v2.7.0 or later.
 
 The plugin automatically creates the table if it does not exist. For production,
 you can optionally create the table manually using the DDL below.
@@ -744,6 +849,7 @@ you can optionally create the table manually using the DDL below.
     CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
     (
       timestamp TIMESTAMP NOT NULL OPTIONS(description="The UTC time at which the event was logged."),
+      event_id STRING OPTIONS(description="Unique ID assigned before enqueue and preserved across Storage Write API retries."),
       event_type STRING OPTIONS(description="Indicates the type of event being logged (e.g., 'LLM_REQUEST', 'TOOL_COMPLETED')."),
       agent STRING OPTIONS(description="The name of the ADK agent or author associated with the event."),
       session_id STRING OPTIONS(description="A unique identifier to group events within a single conversation or user session."),
@@ -770,7 +876,7 @@ you can optionally create the table manually using the DDL below.
       attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
       latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
       status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
-      error_message STRING OPTIONS(description="Populated if an error occurs."),
+      error_message STRING OPTIONS(description="Sanitized error or model termination diagnostic."),
       is_truncated BOOLEAN OPTIONS(description="Flag indicates if content was truncated.")
     )
     PARTITION BY DATE(timestamp)
@@ -815,9 +921,9 @@ plugin_staging = BigQueryAgentAnalyticsPlugin(
 You can also call the public async method `await plugin.create_analytics_views()`
 to manually refresh views, for example after a schema upgrade.
 
-Every view includes these **common columns**: `timestamp`, `event_type`,
-`agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`,
-`parent_span_id`, `status`, `error_message`, `is_truncated`.
+Every view includes these **common columns**: `timestamp`, `event_id`,
+`event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`,
+`span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`.
 
 The following table lists all auto-created views and their event-specific
 columns:
@@ -826,15 +932,17 @@ columns:
 | --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
+| **`v_agent_error`** | `total_ms` (INT64), `error_traceback` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
 | **`v_invocation_completed`** | *(common columns only)* |
+| **`v_invocation_error`** | `error_traceback` (STRING) |
 | **`v_state_delta`** | `state_delta` (JSON) |
 | **`v_hitl_credential_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_hitl_confirmation_request`** | `tool_name` (STRING), `tool_args` (JSON) |
@@ -845,14 +953,18 @@ columns:
 | **`v_agent_state_checkpoint`** | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
 | **`v_event_compaction`** | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON, holding the formatted summary string) |
 | **`v_tool_paused`** | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
+| **`v_node_output`** | `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `output` (JSON) |
+| **`v_node_error`** | `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `error_code` (STRING) |
 
 The four workflow views (`v_agent_transfer`, `v_agent_state_checkpoint`,
 `v_event_compaction`, `v_tool_paused`) and the `pause_kind` / `function_call_id`
 columns on `v_tool_completed` come with the [ADK 2.0 workflow event
-support](#adk-2-events). In **Java**, only `v_tool_paused` and the `pause_kind` /
-`function_call_id` columns on `v_tool_completed` are created;
-`v_agent_transfer`, `v_agent_state_checkpoint`, and `v_event_compaction` are
-Python-only (the Java plugin does not emit those events).
+support](#adk-2-events). In **Java** (v1.7.0+), only
+`v_tool_paused` and the `pause_kind` / `function_call_id` columns on
+`v_tool_completed` are created; `v_agent_transfer`, `v_agent_state_checkpoint`,
+and `v_event_compaction` are Python-only (the Java plugin does not emit those
+events). The `v_node_output` and `v_node_error` views are available in Python
+v2.7.0 and later.
 
 ## Event types and payloads {#event-types}
 
@@ -926,7 +1038,8 @@ Captures the model's output and token usage statistics.
       "prompt_token_count": 10129,
       "candidates_token_count": 19,
       "total_token_count": 10148
-    }
+    },
+    "finish_reason": "STOP"
   },
   "latency_ms": {
     "time_to_first_token_ms": 2579,
@@ -934,6 +1047,15 @@ Captures the model's output and token usage statistics.
   }
 }
 ```
+
+The plugin adds `finish_reason` only to final, non-partial responses. The
+`v_llm_response` view exposes it as a `STRING`, along with the final response's
+`cache_type`. When the model supplies termination diagnostics, the plugin
+stores a sanitized value in the common `error_message` column even though the
+row's `status` remains `OK`.
+
+Model finish and block reasons remain classified as `LLM_RESPONSE`. The plugin
+uses `LLM_ERROR` only when a model call raises an exception.
 
 **3. LLM_ERROR**
 
@@ -1040,9 +1162,9 @@ updated by tools).
 
 !!! note "Built-in redaction"
 
-    State keys prefixed with `temp:` or `secret:` are automatically redacted to
-    `[REDACTED]` in the logged `state_delta` (Java: `temp:` only). See
-    [Built-in redaction](#built-in-redaction) for details.
+    State keys prefixed with `temp:` are automatically redacted to `[REDACTED]`
+    in the logged `state_delta`. See [Built-in
+    redaction](#built-in-redaction) for details.
 
 ```json
 {
@@ -1062,10 +1184,17 @@ updated by tools).
 | ---------- | ------------------------ |
 | `INVOCATION_STARTING` | `{}` |
 | `INVOCATION_COMPLETED` | `{}` |
+| `INVOCATION_ERROR` | `{"error_traceback": "..."}` |
 | `AGENT_STARTING` | `"You are a helpful agent..."` |
 | `AGENT_COMPLETED` | `{}` |
+| `AGENT_ERROR` | `{"error_traceback": "..."}` |
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
 | `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
+
+The `AGENT_ERROR` and `INVOCATION_ERROR` rows have `status="ERROR"`, a
+sanitized `error_message`, and a sanitized traceback in `content`. The agent
+error view also exposes the elapsed `total_ms`. These events represent
+unhandled exceptions that escape agent or runner execution.
 
 **AGENT_RESPONSE**
 
@@ -1084,6 +1213,12 @@ Logged when the agent yields a final response to the user. The response text is 
   }
 }
 ```
+
+If `final_response_tool_names` contains the name of a successfully completed
+tool, the plugin also emits `AGENT_RESPONSE` with that tool's call arguments as
+the response payload and `source_tool` in `attributes`. This supports agents
+that deliver their final answer through a dedicated tool instead of a visible
+text event.
 
 ### Human-in-the-Loop (HITL) Events {#hitl-events}
 
@@ -1132,15 +1267,22 @@ Logged when an A2A remote agent call completes.
 ```json
 {
   "event_type": "A2A_INTERACTION",
-  "content": {
-    "response_content": "The remote agent's response...",
-    "a2a_task_id": "task-abc123",
-    "a2a_context_id": "ctx-def456",
-    "a2a_request": { ... },
-    "a2a_response": { ... }
+  "content": { "message": "The remote agent's response..." },
+  "attributes": {
+    "a2a_metadata": {
+      "a2a:task_id": "task-abc123",
+      "a2a:context_id": "ctx-def456",
+      "a2a:request": { ... },
+      "a2a:response": { "message": "The remote agent's response..." }
+    }
   }
 }
 ```
+
+The base row stores the response payload directly in `content` and keeps the
+namespaced A2A metadata in `attributes.a2a_metadata`. The
+`v_a2a_interaction` view exposes these as `response_content`, `a2a_task_id`,
+`a2a_context_id`, `a2a_request`, and `a2a_response`.
 
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
@@ -1151,9 +1293,11 @@ Logged when an A2A remote agent call completes.
 !!! note "Java support"
 
     The **Java** plugin supports a subset of this section: it emits
-    `TOOL_PAUSED` and the pause/resume pairing described below, but does **not**
-    emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or `EVENT_COMPACTION`, and
-    does not write the `attributes.adk` envelope.
+    `TOOL_PAUSED` and the pause/resume pairing described below,
+    but does **not** emit `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, or
+    `EVENT_COMPACTION`, and does not write the `attributes.adk` envelope. The
+    Java plugin stores `pause_kind` and `function_call_id` at the **top level**
+    of `attributes` instead (see the query note below).
 
 ADK 2.0 introduced multi-agent workflows (agents that transfer control,
 checkpoint their state, and compact long histories) and long-running tools that
@@ -1164,8 +1308,8 @@ rows back to the ADK event that produced them.
 #### The `attributes.adk` envelope
 
 The envelope is written by the **Python** plugin only. Every row now carries an
-`attributes.adk` object. `schema_version` and `app_name` are always present;
-the remaining fields are added only for rows that
+`attributes.adk` object. `schema_version` and
+`app_name` are always present; the remaining fields are added only for rows that
 originate from an ADK event (lifecycle and workflow events), so on a callback-only
 row they are simply absent (and resolve to SQL `NULL` when queried).
 
@@ -1177,7 +1321,10 @@ row they are simply absent (and resolve to SQL `NULL` when queried).
 | `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). |
 | `branch` | string | The event's branch, when the workflow runs branched paths. |
 | `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or `unknown`. |
-| `pause_kind` | string | On `TOOL_PAUSED`: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. On a resumed `TOOL_COMPLETED` row it is always `tool` — HITL completions are logged as `HITL_*_REQUEST_COMPLETED`, never `TOOL_COMPLETED`. |
+| `route` | string | The route selected by the event action, when set. |
+| `render_ui_widgets` | array | Serialized UI widgets requested by the event action, when set. |
+| `rewind_before_invocation_id` | string | Invocation ID that the event action requests rewinding before, when set. |
+| `pause_kind` | string | On `TOOL_PAUSED`: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. On a resumed `TOOL_COMPLETED` row it is always `tool`; HITL completions are logged as `HITL_*_REQUEST_COMPLETED`, never `TOOL_COMPLETED`. |
 | `function_call_id` | string | The function call ID. Set on `TOOL_PAUSED` and on the matching resumed `TOOL_COMPLETED` row so the two can be paired (ordinary tools only). |
 
 !!! tip "Querying the envelope"
@@ -1244,13 +1391,50 @@ text of the compacted window (a string), not a structured object.
 }
 ```
 
+#### NODE_OUTPUT and NODE_ERROR
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span>
+</div>
+
+For a final, non-partial event with a workflow node path, the plugin emits
+node-specific terminal rows as applicable:
+
+- `NODE_OUTPUT` is emitted when `event.output` is present and the node does not
+  use its message as the output. The event output is stored directly in
+  `content`.
+- `NODE_ERROR` is emitted when `event.error_code` is present and is not a model
+  finish or block reason. The code is stored in `content.error_code`, the
+  sanitized message is stored in `error_message`, and `status` is `ERROR`.
+
+Both auto-created views expose `node_path`, `node_run_id`, and
+`node_parent_run_id` from `attributes.adk.node`.
+
+```json
+{
+  "event_type": "NODE_ERROR",
+  "content": { "error_code": "VALIDATION_FAILED" },
+  "attributes": {
+    "adk": {
+      "node": {
+        "path": "workflow/validate@run-7",
+        "run_id": "run-7",
+        "parent_run_id": null
+      }
+    }
+  },
+  "status": "ERROR",
+  "error_message": "Input did not satisfy the node contract"
+}
+```
+
 #### TOOL_PAUSED and pause/resume pairing
 
 An ordinary long-running tool emits a `TOOL_PAUSED` row when it yields, and a
-`TOOL_COMPLETED` row when its result arrives — often on a later turn. Both rows
+`TOOL_COMPLETED` row when its result arrives, often on a later turn. Both rows
 carry the same `function_call_id` and a `pause_kind` of `tool`, so you can pair a
 pause with its completion and measure how long the tool was suspended. (HITL
-requests also emit `TOOL_PAUSED`, but their completions are logged differently —
+requests also emit `TOOL_PAUSED`, but their completions are logged differently;
 see the note below.)
 
 ```json
@@ -1268,9 +1452,10 @@ see the note below.)
 
 !!! note "Java attribute location"
 
-    The Java plugin writes the pair keys at the top level of `attributes` —
-    `"attributes": {"pause_kind": "tool", "function_call_id": "call-789"}` —
-    with no `adk` wrapper. In the base-table query below, replace
+    The Java plugin writes the pair keys at the top level of `attributes`, with
+    no `adk` wrapper:
+    `"attributes": {"pause_kind": "tool", "function_call_id": "call-789"}`.
+    In the base-table query below, replace
     `'$.adk.pause_kind'` / `'$.adk.function_call_id'` with `'$.pause_kind'` /
     `'$.function_call_id'`. The view-based query works unchanged for both
     languages, because the views expose the keys as flat columns.
@@ -1286,7 +1471,7 @@ see the note below.)
     `HITL_*_REQUEST` event as described in [HITL events](#hitl-events). When that
     request is also long-running, the plugin additionally emits a `TOOL_PAUSED`
     row whose `pause_kind` identifies the HITL kind (for example
-    `hitl_confirmation`) — giving HITL pauses the same visibility as tool pauses.
+    `hitl_confirmation`), which gives HITL pauses the same visibility as tool pauses.
 
     **A HITL completion does not arrive as `TOOL_COMPLETED`, though.** The user's
     response is logged as the corresponding `HITL_*_REQUEST_COMPLETED` event, not
@@ -1627,14 +1812,14 @@ Beyond row-level `agent_events`, the [BigQuery Agent Analytics
 SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK) can
 materialize a **context graph**: a queryable BigQuery [property
 graph](https://cloud.google.com/bigquery/docs/graph-overview) of your
-agent's decisions — the requests it handled, the options it weighed, and the
-outcomes it chose. It lets you trace *why* a decision happened with Graph Query
+agent's decisions, including the requests it handled, the options it weighed,
+and the outcomes it chose. It lets you trace *why* a decision happened with Graph Query
 Language (GQL), not just *that* an event was logged.
 
-![Context graph flow: an ADK agent's events flow through the BigQuery Agent Analytics plugin into the agent_events table; the SDK's bqaa context-graph command materializes a structured decision graph that auditors, operators, and executives consume through GQL in BigQuery Studio and Conversational Analytics — with no external graph database.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
+![Context graph flow: an ADK agent's events flow through the BigQuery Agent Analytics plugin into the agent_events table; the SDK's bqaa context-graph command materializes a structured decision graph that auditors, operators, and executives consume through GQL in BigQuery Studio and Conversational Analytics, with no external graph database.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
 
-The graph is defined by two declarative artifacts — your table DDL and a `CREATE
-PROPERTY GRAPH` schema — and the SDK's `bqaa context-graph --property-graph`
+The graph is defined by two declarative artifacts: your table DDL and a `CREATE
+PROPERTY GRAPH` schema. The SDK's `bqaa context-graph --property-graph`
 command derives the extraction (which entities and relationships to pull, and
 their column types) from them plus your live table schemas. No separate ontology
 or binding file is required for the common case; reach for an explicit
@@ -1642,20 +1827,20 @@ or binding file is required for the common case; reach for an explicit
 prompt, entity inheritance, derived properties, or column renames.
 
 Run it once locally, or on a schedule as a Cloud Run Job triggered by Cloud
-Scheduler — with split read-only-events / writable-graph datasets,
+Scheduler, with split read-only-events / writable-graph datasets,
 least-privilege service accounts, structured JSON logs, and Cloud Monitoring
 alerts. The operational reference (prerequisites, the IAM matrix, recommended
 schedules, the JSON log shape, monitoring, and teardown) lives in the SDK repo:
 
 - [Periodic materialization
-  codelab](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/codelabs/periodic_materialization.md)
-  — build and query a decision graph end to end.
+  codelab](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/codelabs/periodic_materialization.md):
+  Build and query a decision graph end to end.
 - [Scheduled deploy
-  runbook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/guides/scheduled-context-graph-deploy.md)
-  — take that graph to a hands-off scheduled deploy.
+  runbook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/guides/scheduled-context-graph-deploy.md):
+  Take that graph to a hands-off scheduled deploy.
 - [Deploy reference (Cloud Run + Cloud
-  Scheduler)](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/context_graph/periodic_materialization/README.md)
-  — the full IAM matrix, schedules, monitoring, and the Terraform module.
+  Scheduler)](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/context_graph/periodic_materialization/README.md):
+  The full IAM matrix, schedules, monitoring, and the Terraform module.
 
 ## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
@@ -1763,9 +1948,7 @@ app = App(
 ```
 
 ```text title="my_bq_agent/requirements.txt"
-google-adk[bigquery]
-google-cloud-bigquery-storage
-pyarrow
+google-adk[bigquery-analytics]>=2.7.0
 opentelemetry-api
 opentelemetry-sdk
 ```
@@ -1868,10 +2051,8 @@ remote_app = client.agent_engines.create(
         "display_name": "My BQ Analytics Agent",
         "staging_bucket": STAGING_BUCKET,
         "requirements": [
-            "google-adk[bigquery]",
+            "google-adk[bigquery-analytics]>=2.7.0",
             "google-cloud-aiplatform[agent_engines]",
-            "google-cloud-bigquery-storage",
-            "pyarrow",
             "opentelemetry-api",
             "opentelemetry-sdk",
         ],
@@ -1884,9 +2065,10 @@ print(f"Deployed agent: {remote_app.api_resource.name}")
 
 If events are not appearing in your BigQuery table after deployment:
 
-1. **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
-   Earlier versions do not flush pending events before the serverless runtime
-   suspends the process.
+1. **Check ADK version and extra**: Ensure
+   `google-adk[bigquery-analytics]>=2.7.0` is in your requirements. The extra
+   installs the Storage Write API, Cloud Storage, and `pyarrow` dependencies
+   required by the plugin.
 
 2. **Enable debug logging**: Add the following to the top of your `agent.py` to
    surface any silent errors:
@@ -1917,14 +2099,10 @@ If events are not appearing in your BigQuery table after deployment:
 
     The BigQuery Agent Analytics plugin captures detailed event payloads,
     including tool arguments, LLM prompts, and authentication-related events
-    (such as HITL credential requests). If your agent uses **authenticated
-    tools** (e.g., `AuthenticatedFunctionTool` with OAuth2), the plugin may log
-    sensitive values such as `client_secret`, `access_token`, or API keys into
-    the `content` column of your BigQuery table.
-
-    This is a known concern
-    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
-    and can lead to credential exposure in your analytics data.
+    (such as HITL credential requests). Built-in redaction covers common key
+    names and credential patterns, but it is not a general data-loss prevention
+    system. A secret under an application-specific key or in unrelated
+    free-form text can still be written to BigQuery.
 
 The plugin includes **built-in redaction** that automatically protects common
 secrets. For additional control, you can layer custom redaction on top.
@@ -1935,32 +2113,44 @@ secrets. For additional control, you can layer custom redaction on top.
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
-The plugin automatically redacts values for the following well-known key names
-(case-insensitive) wherever they appear in `content` or `attributes` JSON:
+The Python plugin normalizes key names to lowercase and treats hyphens like
+underscores. It recursively replaces values with `[REDACTED]` for these keys
+wherever they appear in structured `content` or `attributes`:
 
 `client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`,
-`password`
+`password`, `private_key`, `proxy_authorization`, `google_access_id`, `sig`,
+`signature`, `token`, `secret`, `authorization`, `x_api_key`,
+`x_amz_credential`, `x_amz_signature`, `x_goog_credential`,
+`x_goog_security_token`, `x_goog_signature`
 
-In addition, any state key prefixed with **`temp:`** or **`secret:`** is
-automatically replaced with `[REDACTED]` in the logged `state_delta`. This means
-ADK session state stored under the `secret:` scope (such as OAuth tokens cached
-by credential services) is never persisted in BigQuery.
+Any key prefixed with **`temp:`** is also replaced with `[REDACTED]`, including
+in session state and `state_delta`. A `secret:` prefix is not treated as a
+special prefix; use the `temp:` scope or a custom formatter for
+application-specific secret scopes.
+
+The plugin also sanitizes credential patterns in `error_message`, agent and run
+tracebacks, and external URIs. This includes authorization headers, bearer and
+basic credentials, signed-URL query parameters, and key/value fragments that
+use the sensitive names above. Encoded credential constructs that cannot be
+safely rewritten fail closed.
 
 !!! info "No configuration required"
 
     Built-in redaction is always active for structured attributes and state
     logging, and applies recursively to nested dictionaries and JSON-encoded
     strings within attribute values. Custom `content_formatter` runs **first**
-    on raw content, so use it to add masking for secrets that may appear in
-    free-form payloads.
+    on raw content. If it raises or returns an unsupported type, Python writes
+    `[FORMATTER_FAILED]` instead of the original content and increments the
+    `formatter_failed` incident counter.
 
 !!! note "Built-in redaction in Java"
 
-    The Java plugin redacts the same six key names (case-insensitive)
-    recursively across the assembled `attributes` tree — including session state
-    and state deltas — and any key prefixed with **`temp:`**. Unlike Python, the
-    Java plugin does **not** redact keys prefixed `secret:`; keep secrets out of
-    non-`temp:` state scopes or mask them with a custom `contentFormatter`.
+    The Java plugin includes built-in redaction in v1.7.0 and later.
+    It redacts `client_secret`, `access_token`, `refresh_token`, `id_token`,
+    `api_key`, and `password` (case-insensitive) recursively across the
+    assembled `attributes` tree, including session state and state deltas, and
+    any key prefixed with **`temp:`**. Keep secrets out of other state scopes or
+    mask them with a custom `contentFormatter`.
 
     A custom Java `contentFormatter` must be **thread-safe** (it is called
     concurrently across invocations) and **fast/non-blocking** (it runs on the
@@ -2161,14 +2351,16 @@ call) reconstructs cleanly from BigQuery.
   generated internally. It does **not** call
   `tracer.start_span(...)` on any configured OpenTelemetry
   `TracerProvider`, so its instrumentation never reaches your configured
-  exporter — this is what prevents duplicate spans in Cloud Trace when Agent
+  exporter. This is what prevents duplicate spans in Cloud Trace when Agent
   Engine telemetry is enabled (`GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`)
   or when you wire any other Cloud Trace exporter into the host process. The
-  Java plugin uses the same internal, ID-only span tracking.
+  same internal, ID-only span tracking applies to the Java plugin in v1.7.0
+  and later; earlier Java builds created plugin-owned OpenTelemetry
+  spans that could surface as duplicates next to framework spans.
 - **`trace_id` inherited from the ambient OTel span when present.** If the
-  surrounding runtime has already started an OTel span — Agent Engine's
+  surrounding runtime has already started an OTel span, such as Agent Engine's
   invocation span, the ADK `Runner` invocation span, or any span you opened
-  before the agent runs — the plugin reads its `trace_id` and stamps it on
+  before the agent runs. The plugin reads its `trace_id` and stamps it on
   every BigQuery row. BigQuery rows therefore join cleanly to your existing
   Cloud Trace traces via a shared `trace_id`.
 - **Fallback when no ambient span is present.** If no ambient OTel span is
@@ -2186,7 +2378,7 @@ call) reconstructs cleanly from BigQuery.
 !!! info "If you relied on the plugin to feed your OTel exporter"
 
     Some older configurations used the BQAA plugin as a side channel for
-    OpenTelemetry span emission — that path is intentionally gone. Configure
+    OpenTelemetry span emission; that path is intentionally gone. Configure
     OTel instrumentation in the host application instead (Agent Engine wires
     this automatically; for local deployments use ADK's own framework
     instrumentation or an explicit `TracerProvider`). The plugin's BigQuery
@@ -2198,16 +2390,19 @@ call) reconstructs cleanly from BigQuery.
 
     The plugin exposes several public methods for lifecycle management:
 
-    - **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this
-      before shutdown to avoid data loss.
+    - **`await plugin.flush()`**: Wait for pending events associated with the
+      current event loop to finish writing.
     - **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin,
       flushing pending events and releasing resources. The optional `timeout`
       parameter overrides `shutdown_timeout` from the config.
+    - **`await plugin.close()`**: Run the plugin-manager lifecycle contract. It
+      delegates to `shutdown()` and is called automatically when a runner closes
+      its plugins.
     - **`await plugin.create_analytics_views()`**: Manually (re-)create all
       per-event-type analytics views. Useful after a schema upgrade or when views
       need to be refreshed.
-    - **`plugin.get_drop_stats()`**: Return a snapshot of dropped-event counts per
-      `drop_reason`. See [Dropped-event
+    - **`plugin.get_drop_stats()`**: Return a snapshot of delivery-loss and
+      content-sanitization incident counts per reason. See [Dropped-event
       observability](#dropped-event-observability) below.
     - **Async context manager**: The plugin supports `async with` for automatic
       startup and shutdown:
@@ -2227,14 +2422,14 @@ call) reconstructs cleanly from BigQuery.
 
     - **`plugin.close()`**: Gracefully shuts down the plugin, flushing pending events and releasing resources (including the BigQuery write client and executors).
     - **Automatic Closure**: If you are using `InMemoryRunner`, calling `runner.close()` will automatically close all registered plugins, including the BigQuery Agent Analytics plugin.
-    - **`plugin.getDropStats()`**: Returns an `ImmutableMap<String, Long>` of
-      dropped-event counts per drop reason. See [Dropped-event
-      observability](#dropped-event-observability).
-    - **JVM shutdown hook**: The plugin registers a shutdown hook at
-      construction, so pending events are drained (best-effort, bounded by
-      `shutdownTimeout`) at JVM exit even if `close()` is never called. An
-      explicit `close()` deregisters the hook. Still prefer calling `close()`
-      for a deterministic flush.
+    - **`plugin.getDropStats()`** (v1.7.0+): Returns an
+      `ImmutableMap<String, Long>` of dropped-event counts per drop reason. See
+      [Dropped-event observability](#dropped-event-observability).
+    - **JVM shutdown hook** (v1.7.0+): The plugin registers
+      a shutdown hook at construction, so pending events are drained
+      (best-effort, bounded by `shutdownTimeout`) at JVM exit even if `close()`
+      is never called. An explicit `close()` deregisters the hook. Still prefer
+      calling `close()` for a deterministic flush.
 
     ```java
     // Manual shutdown
@@ -2247,38 +2442,60 @@ call) reconstructs cleanly from BigQuery.
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
-BigQuery logging is best-effort — events can be dropped when the in-memory
-queue overflows or when a write ultimately fails. The plugin tracks dropped
-rows per `drop_reason` and exposes a polling API so a host can detect, alert
-on, and ship the counts to its own monitoring.
+BigQuery logging is best-effort. Events can be dropped when the in-memory queue
+overflows, setup is unavailable, shutdown races a callback, or a write
+ultimately fails. The plugin also counts formatter and parser failures where the
+row is written with a sentinel in place of its content. The counters persist
+across loop cleanup and shutdown.
 
-**Drop reasons:**
+**Drop reasons (Python):**
 
-| Reason | Language | Cause |
-|---|---|---|
-| `queue_full` | Python, Java | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` / `queueMaxSize` on `BigQueryLoggerConfig`, raise `batch_size` / `batchSize` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
-| `arrow_prep_failed` | Python | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
-| `retry_exhausted` | Python | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
-| `non_retryable` | Python | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
-| `unexpected_error` | Python | Any other exception caught while preparing or writing the batch. |
-| `serialization_error` | Java | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
-| `append_error` | Java | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
-| `after_close` | Java | A row reached an already-closed per-invocation processor. |
-| `shutdown_timeout` | Java | Queued rows remained when the bounded final drain expired. |
-| `writer_permit_exhausted` | Java | The live-writer safety cap was exhausted — normally during a Storage Write outage or delayed cleanup. |
-| `writer_create_error` | Java | `StreamWriter` construction or processor startup failed. |
-| `late_after_finalize` | Java | Async work completed after its invocation was finalized or while the plugin was closing. |
+| Reason | Cause |
+|---|---|
+| `queue_full` | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` on `BigQueryLoggerConfig`, raise `batch_size` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
+| `arrow_prep_failed` | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
+| `retry_exhausted` | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
+| `non_retryable` | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
+| `unexpected_error` | Any other exception caught while preparing or writing the batch. |
+| `shutdown_timeout` | Rows remained queued when a bounded shutdown or close timed out. |
+| `shutdown_cancelled` | Rows remained queued when shutdown was cancelled by the host, such as by an outer close timeout. |
+| `offset_conflict` | In `exactly_once_delivery` mode, a committed stream rejected an offset or a replacement stream was unavailable. |
+| `setup_unavailable` | A row could not be admitted because plugin setup failed or remained in retry backoff. |
+| `shutdown_race` | A callback attempted to admit a row while shutdown was starting or in progress. |
+| `stale_loop` | Queued rows belonged to an event loop that had already closed and could no longer drain them. |
+| `formatter_failed` | The custom formatter failed or returned an unsupported type. The row is still written with `[FORMATTER_FAILED]`; this is an incident count, not a dropped-row count. |
+| `content_parse_failed` | Content parsing failed. The row is still written with `[CONTENT_PARSE_FAILED]`; this is an incident count, not a dropped-row count. |
+
+**Drop reasons (Java, v1.7.0+):**
+
+| Reason | Cause |
+|---|---|
+| `queue_full` | The in-memory batch queue overflowed. Increase `queueMaxSize` on `BigQueryLoggerConfig`, raise `batchSize`, or scale the consumer side. |
+| `append_error` | Batch preparation or append failed for a cause other than `AppendSerializationError`, including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
+| `serialization_error` | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
+| `after_close` | A row reached an already-closed per-invocation processor. |
+| `shutdown_timeout` | Queued rows remained when the bounded final drain expired. |
+| `writer_permit_exhausted` | The live-writer safety cap was exhausted, normally during a Storage Write outage or delayed cleanup. |
+| `writer_create_error` | `StreamWriter` construction or processor startup failed. |
+| `late_after_finalize` | Async work completed after its invocation was finalized or while the plugin was closing. |
 
 **Reading the counts:**
 
 === "Python"
 
     ```python
-    # Snapshot of {drop_reason: count} since plugin start.
+    # Snapshot of {reason: count} since plugin start.
     stats = plugin.get_drop_stats()
-    # Example: {"queue_full": 12, "retry_exhausted": 0, ...}
+    # Example: {"queue_full": 12, "retry_exhausted": 0,
+    #           "formatter_failed": 1, ...}
 
-    total_dropped = sum(stats.values())
+    loss_reasons = {
+        "queue_full", "arrow_prep_failed", "retry_exhausted",
+        "non_retryable", "unexpected_error", "shutdown_timeout",
+        "shutdown_cancelled", "offset_conflict", "setup_unavailable",
+        "shutdown_race", "stale_loop",
+    }
+    total_rows_lost = sum(stats.get(reason, 0) for reason in loss_reasons)
     ```
 
 === "Java"
@@ -2293,16 +2510,13 @@ on, and ship the counts to its own monitoring.
     long totalDropped = stats.values().stream().mapToLong(Long::longValue).sum();
     ```
 
-**Exporting to your monitoring system** — poll periodically and ship the deltas:
+**Exporting to your monitoring system**: Poll periodically and ship the deltas:
 
 ```python
 import asyncio
 
 async def export_loop(plugin):
-    last = {k: 0 for k in (
-        "queue_full", "arrow_prep_failed",
-        "retry_exhausted", "non_retryable", "unexpected_error",
-    )}
+    last = {}
     while True:
         current = plugin.get_drop_stats()
         for reason, count in current.items():
@@ -2316,10 +2530,13 @@ async def export_loop(plugin):
         await asyncio.sleep(60)
 ```
 
-Any non-zero count means analytics rows were dropped before reaching BigQuery.
-Alert on every reason; sustained `queue_full` or write-error counts
-(`retry_exhausted` / `non_retryable` in Python, `append_error` in Java)
-generally indicate throughput or Storage Write health problems.
+Alert on every non-zero reason. Most reasons mean rows were lost before reaching
+BigQuery. The `formatter_failed` and `content_parse_failed` reasons instead mean
+the row landed with sentinel content, so alert on them as privacy or data
+quality incidents. Sustained `queue_full`, `retry_exhausted`, `non_retryable`,
+or `offset_conflict` counts generally indicate throughput, delivery, or Storage
+Write health problems. In Java, the comparable write-error bucket is
+`append_error`.
 
 ### Multiprocessing and fork safety
 
@@ -2406,6 +2623,7 @@ suggestions, or encounter any issues, please reach out to the team at
 
 ## Additional resources
 
+- [Python plugin source](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/bigquery_agent_analytics_plugin.py)
 - [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
 - [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
 - [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
