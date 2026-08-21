@@ -574,6 +574,39 @@ schema definitions.
             .build();
     ```
 
+=== "Kotlin"
+
+    The input and output schema is ADK's own `com.google.adk.kt.types.Schema`,
+    not the same-named type in the GenAI SDK. Since adk-kotlin 0.8.0 it carries
+    the JSON Schema constraint fields: `pattern`, `minLength`, `maxLength`,
+    `minimum`, `maximum`, `minItems`, `maxItems`, `format`, `nullable`,
+    `default`, `anyOf` and `title`.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:schema_example"
+    ```
+
+    Four things are worth knowing before relying on this:
+
+    - **The constraints are the model's to honour.** ADK forwards them to the
+      API but never checks them; its own validation covers structure only —
+      `type`, `required`, `nullable`, `anyOf` and `items`.
+    - **`outputKey` receives a `Map`, not text.** With `outputSchema` set, the
+      parsed object is what lands in state. If the response fails validation,
+      ADK logs the error and stores the raw string under the same key, so the
+      value's type is the only signal of which happened.
+    - **Only a top-level object schema is accepted**, as in the Java ADK. A
+      top-level array or primitive fails validation.
+    - **Tools are not excluded.** On models that support a response schema
+      alongside tools the schema is applied directly; on models that do not,
+      ADK falls back to a `set_model_response` tool.
+
+    Two of the new fields carry conditions: Gemini rejects a `format` other than
+    `int32`/`int64` on `Type.INTEGER` or `Type.NUMBER`, or `enum`/`date-time` on
+    `Type.STRING`; and `default` must hold a JSON-native value, which ADK's own
+    `Json` serializes but a hand-rolled one without a contextual `Any`
+    serializer does not.
+
 ### Manage agent context
 
 Control whether the agent receives the prior conversation history.
