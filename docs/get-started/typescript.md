@@ -75,7 +75,7 @@ export const rootAgent = new LlmAgent({
   model: 'gemini-flash-latest',
   description: 'Tells the current time in a specified city.',
   instruction: `You are a helpful assistant that tells the current time in a city.
-                Use the 'getCurrentTime' tool for this purpose.`,
+                Use the 'get-current-time' tool for this purpose.`,
   tools: [getCurrentTime],
 });
 ```
