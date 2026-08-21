@@ -1,39 +1,31 @@
 # Agents CLI Quickstart for ADK
 
-[Agents CLI](https://google.github.io/agents-cli/) sets up and installs ADK,
-scaffolds a project you can evaluate and deploy, and teaches your coding agent
-how to use ADK through a bundled set of skills. It works with Antigravity,
-Claude Code, Codex, and any other skill-aware coding agent. Use it when you
-want to go from empty directory to a deployable ADK agent quickly.
+This guide shows you how to get up and running with Agent Development Kit (ADK) using 
+Agents CLI. You can use the Agents CLI tool set with coding agents like Antigravity, 
+Claude Code, and Codex to build, evaluate, and deploy ADK agents. For more information,
+see the [Agents CLI](https://google.github.io/agents-cli/) documentation.
+Before you start, make sure you have the following installed:
 
-![The ten stages of the agent development lifecycle](/assets/agents-cli-lifecycle.png)
-
-## Prerequisites
-
-Required:
-
-*   Python 3.11 or later
-*   [`uv`](https://docs.astral.sh/uv/getting-started/installation/), which
-    Agents CLI uses to manage environments and dependencies
+*   Python 3.11 or later: Agents CLI supports ADK agents in Python
+*   The [`uv`](https://docs.astral.sh/uv/getting-started/installation/) tool
+    to manage environments and dependencies
 *   [Node.js](https://nodejs.org/en/download), for installing the skills
-*   A coding agent, such as [Antigravity](https://antigravity.google/),
+*   Coding agent such as [Antigravity](https://antigravity.google/),
     [Claude Code](https://docs.anthropic.com/en/docs/claude-code), or
     [Codex](https://github.com/openai/codex)
 
-Optional, for deployment:
+If you want to deploy ADK agents to services like Google Cloud, make sure
+the following tools are also installed:
 
 *   [Google Cloud CLI](https://cloud.google.com/sdk/docs/install)
 *   [Terraform](https://developer.hashicorp.com/terraform/downloads)
 
-Agents CLI currently supports Python agents.
 
 ## Installation
 
-Install Agents CLI by running the following command. This installs the
-`agents-cli` command, the ADK Python packages your project will need, and the
-ADK skills into any coding agents already on your machine. This is the only
-command you run yourself; the rest of this guide goes through your coding
-agent.
+Install Agents CLI by running the following command. This step installs the
+`agents-cli` command, the ADK Python packages, and the ADK skills into any
+coding agents already on your machine:
 
 ```shell
 uvx google-agents-cli setup
@@ -59,6 +51,9 @@ uvx google-agents-cli setup
     npx skills add google/agents-cli
     ```
 
+The installation command is the only one you have to run yourself. Once 
+installed,  you can use your coding agent to build and run an ADK agent.
+
 ## Authenticate
 
 Agents CLI needs credentials for a generative AI API to run your agents. The
@@ -73,7 +68,7 @@ GEMINI_API_KEY=YOUR_API_KEY
 Comment out the three `GOOGLE_CLOUD_*` lines in the same file so the SDK uses
 your key instead of Vertex AI.
 
-??? note "Using Google Cloud (Vertex AI) instead"
+??? note "Using Google Cloud Agent Platform instead"
 
     If you already have a Google Cloud project, Agents CLI picks up your
     Application Default Credentials:
@@ -82,10 +77,10 @@ your key instead of Vertex AI.
     gcloud auth application-default login
     ```
 
-    Leave the `GOOGLE_CLOUD_*` lines in the generated `.env` file uncommented
-    and set them to your project. For the full setup — including quotas,
-    regions, and enterprise auth — see the
-    [Google Cloud setup guide](google-cloud.md).
+    Make sure the `GOOGLE_CLOUD_*` lines in the generated `.env` file are
+    uncommented and set them to your project identifiers. For more information
+    on connecting to Google Cloud services and projects with ADK, see the
+    [Google Cloud setup guide](/get-started/google-cloud/) for ADK.
 
 ## Build your agent
 
@@ -120,24 +115,19 @@ Open your coding agent and confirm it can see the skills:
 
 Then tell the coding agent what you want to build:
 
-> *"Use agents-cli to build an agent that turns long text into short
-> bullet-point summaries"*
+```shell title="Coding agent prompt"
+Use agents-cli to build an agent that turns long text into short
+bullet-point summaries"*
+```
 
 Your coding agent activates the `google-agents-cli-workflow` and
 `google-agents-cli-scaffold` skills, asks clarifying questions about the
 tools your agent calls, the inputs and outputs you expect, and the success
-criteria to evaluate against, and then scaffolds the project. It runs the
-commands below on your behalf — you can also run them directly in a terminal
-if you prefer:
-
-```shell
-agents-cli create my-agent --prototype --yes
-cd my-agent && agents-cli install
-```
+criteria to evaluate against, and then scaffolds the project.
 
 Next, your coding agent uses the `google-agents-cli-adk-code` skill to write
-your agent into `app/agent.py`. You end up with a working project — agent
-code, tests, and an eval dataset — laid out like this:
+your agent into `app/agent.py`. You end up with a working project with the
+agent code, tests, and an eval dataset in the following file structure:
 
 ```none
 my-agent/
@@ -156,8 +146,9 @@ my-agent/
     .env                        # API keys or project IDs
 ```
 
-Use `adk create` when you want a single-file agent for learning ADK. Use this
-project layout when you plan to test, evaluate, and deploy an agent.
+Use this project structure when you plan to test, evaluate, and deploy an agent.
+If you want a create single-file agent for learning ADK, use the `adk create` 
+command instead. 
 
 ## Run your agent
 
@@ -167,27 +158,27 @@ Ask your coding agent to start the local playground, or run it yourself:
 agents-cli playground
 ```
 
-This command starts the ADK web interface with hot reload, so it picks up your
-changes as you edit. You can access the playground at (http://localhost:8080).
-Select the agent at the upper left corner and paste in a few paragraphs of
-text. The agent replies with a short bullet-point summary.
+This command starts the ADK web interface with hot reload, so your changes 
+are reflected in the project as you edit. You can access the playground at 
+(http://localhost:8080). Select the agent at the upper left corner and paste
+in a few paragraphs of text. The agent replies with a short bullet-point summary.
 
 ## Next: Evaluate and deploy your agent
 
 Now that you have Agents CLI installed and your first agent running, evaluate
 and deploy it:
 
-*   *"Write evals for this agent and run them"* to
+*   ***"Write evals for this agent and run them"*** to
     [evaluate your agent](https://google.github.io/agents-cli/guide/evaluation/)
     against the success criteria you set when you scoped it. Your coding agent
     grades the results, groups the failures by cause, and tunes the agent's
     instructions until it passes
-*   *"Deploy this to Cloud Run"* to
+*   ***"Deploy this to Cloud Run"*** to
     [deploy your agent](/deploy/agent-runtime/agents-cli/) to Agent Runtime,
-    Cloud Run, or GKE
-*   *"Set up observability infrastructure for my agent"* to add prompt-response
-    logging and content logs
+    Cloud Run, or GKE.
+*   ***"Set up observability infrastructure for my agent"*** to add prompt-response
+    logging and content logs.
 
 For the full walkthrough, including evaluation, deployment, and observability,
-see
+see the Agents CLI
 [Tutorial: Build your first agent](https://google.github.io/agents-cli/guide/quickstart-tutorial/).
