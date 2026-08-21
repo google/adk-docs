@@ -82,7 +82,7 @@ from google.genai import types
 from temporalio import activity, workflow
 from temporalio.common import RetryPolicy
 from temporalio.contrib.google_adk_agents import TemporalModel
-from temporalio.contrib.google_adk_agents.workflow import activity_tool
+from temporalio.contrib.google_adk_agents.workflow import activity_as_tool
 from temporalio.workflow import ActivityConfig
 
 # A Temporal Activity
@@ -94,7 +94,7 @@ async def get_weather(city: str) -> str:
     return f"72°F and sunny in {city}"
 
 # Wrap the activity as an ADK tool.  This tool will get memoized, retried, and timed out.
-weather_tool = activity_tool(
+weather_tool = activity_as_tool(
     get_weather,
     start_to_close_timeout=timedelta(seconds=30),
     retry_policy=RetryPolicy(maximum_attempts=3),
@@ -245,7 +245,7 @@ and other ADK development commands without a running Temporal server. You won't
 get the benefits of durable execution in this mode, nor will you be precisely
 testing the production behavior.
 
-- `TemporalModel` and `activity_tool` work automatically — they detect they're
+- `TemporalModel` and `activity_as_tool` work automatically — they detect they're
   outside a workflow and call the underlying LLM or function directly.
 - `TemporalMcpToolSet` requires the `not_in_workflow_toolset` parameter (shown
   in the MCP example above) so it knows how to instantiate the toolset locally.
@@ -271,7 +271,7 @@ robust recovery. For example:
 
 | Capability | Description |
 | --- | --- |
-| Durable tool execution | `activity_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
+| Durable tool execution | `activity_as_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
 | MCP tool support | `TemporalMcpToolSet` executes MCP tools as Activities with full event propagation |
 | Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/sending-messages#sending-signals) and [Updates](https://docs.temporal.io/sending-messages#sending-updates) to wait for human input, and clients can send those to resume the Agent |
 | Deterministic runtime | `GoogleAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
