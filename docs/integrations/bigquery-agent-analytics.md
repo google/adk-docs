@@ -94,8 +94,10 @@ shows the BigQuery view optionally created when
 | `USER_MESSAGE_RECEIVED` | A user message enters the invocation | text summary / content parts | `v_user_message_received` |
 | `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
+| `INVOCATION_ERROR` | An unhandled exception escapes the runner | error message, error traceback, latency | `v_invocation_error` |
 | `AGENT_STARTING` | Agent execution begins | instruction summary | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
+| `AGENT_ERROR` | An unhandled exception escapes agent execution | error message, error traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
 | `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, latency, TTFT | `v_llm_response` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
@@ -222,7 +224,7 @@ LIMIT 20;
         from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
         from google.adk.agents import Agent
         from google.adk.models.google_llm import Gemini
-        from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+        from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 
         # --- OpenTelemetry note (no setup required for BQAA) ---
@@ -550,7 +552,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
     | `queue_max_size` | `int` | `10000` | Bound the in-memory event queue |
     | `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
-    | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
+    | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` are [redacted](#built-in-redaction); a `secret:` prefix is **not**. |
     | `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
     | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
     | `create_views` | `bool` | `True` | Create per-event-type BigQuery views |
@@ -558,6 +560,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
     | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*` — exact keys or `"prefix*"` patterns |
     | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time |
+    | `final_response_tool_names` | `frozenset[str]` | `frozenset()` | Name the tools that deliver a final answer in place of a plain-text final event, such as `submit_final_response`. A completed tool named here also logs its call arguments as an `AGENT_RESPONSE` event |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -833,8 +836,10 @@ columns:
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
+| **`v_agent_error`** | `total_ms` (INT64), `error_traceback` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
 | **`v_invocation_completed`** | *(common columns only)* |
+| **`v_invocation_error`** | `error_traceback` (STRING) |
 | **`v_state_delta`** | `state_delta` (JSON) |
 | **`v_hitl_credential_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_hitl_confirmation_request`** | `tool_name` (STRING), `tool_args` (JSON) |
@@ -1040,9 +1045,10 @@ updated by tools).
 
 !!! note "Built-in redaction"
 
-    State keys prefixed with `temp:` or `secret:` are automatically redacted to
-    `[REDACTED]` in the logged `state_delta` (Java: `temp:` only). See
-    [Built-in redaction](#built-in-redaction) for details.
+    State keys prefixed with `temp:` are automatically redacted to `[REDACTED]`
+    in the logged `state_delta`, in both Python and Java. There is no `secret:`
+    state scope, and a `secret:` prefix is **not** redacted. See [Built-in
+    redaction](#built-in-redaction) for details.
 
 ```json
 {
@@ -1714,7 +1720,7 @@ from google.adk.plugins.bigquery_agent_analytics_plugin import (
     BigQueryAgentAnalyticsPlugin,
     BigQueryLoggerConfig,
 )
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
@@ -1763,7 +1769,7 @@ app = App(
 ```
 
 ```text title="my_bq_agent/requirements.txt"
-google-adk[bigquery]
+google-adk[gcp]
 google-cloud-bigquery-storage
 pyarrow
 opentelemetry-api
@@ -1868,7 +1874,7 @@ remote_app = client.agent_engines.create(
         "display_name": "My BQ Analytics Agent",
         "staging_bucket": STAGING_BUCKET,
         "requirements": [
-            "google-adk[bigquery]",
+            "google-adk[gcp]",
             "google-cloud-aiplatform[agent_engines]",
             "google-cloud-bigquery-storage",
             "pyarrow",
@@ -1936,15 +1942,29 @@ secrets. For additional control, you can layer custom redaction on top.
 </div>
 
 The plugin automatically redacts values for the following well-known key names
-(case-insensitive) wherever they appear in `content` or `attributes` JSON:
+wherever they appear in `content` or `attributes` JSON. Matching is
+case-insensitive and treats `-` and `_` as equivalent, but it is an **exact key
+name match**, not a prefix or substring match:
 
-`client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`,
-`password`
+`access_token`, `api_key`, `authorization`, `client_secret`,
+`google_access_id`, `id_token`, `password`, `private_key`,
+`proxy_authorization`, `refresh_token`, `secret`, `sig`, `signature`, `token`,
+`x_amz_credential`, `x_amz_signature`, `x_api_key`, `x_goog_credential`,
+`x_goog_security_token`, `x_goog_signature`
 
-In addition, any state key prefixed with **`temp:`** or **`secret:`** is
-automatically replaced with `[REDACTED]` in the logged `state_delta`. This means
-ADK session state stored under the `secret:` scope (such as OAuth tokens cached
-by credential services) is never persisted in BigQuery.
+In addition, any state key prefixed with **`temp:`** is automatically replaced
+with `[REDACTED]` in the logged `state_delta`.
+
+!!! warning "A `secret:` prefix is **not** redacted"
+
+    ADK session state has only three scopes — `app:`, `user:` and `temp:`.
+    There is no `secret:` scope, and `secret:` is not treated as a redaction
+    prefix: a key such as `secret:api_key` matches neither the exact key names
+    above nor the `temp:` prefix, so **its value is written to BigQuery
+    verbatim**. Do not rely on a `secret:` prefix to keep OAuth tokens or API
+    keys out of your analytics table. Store them under a `temp:` key, under a
+    key whose exact name is in the list above, or strip them with a custom
+    `content_formatter`.
 
 !!! info "No configuration required"
 
@@ -1956,11 +1976,13 @@ by credential services) is never persisted in BigQuery.
 
 !!! note "Built-in redaction in Java"
 
-    The Java plugin redacts the same six key names (case-insensitive)
-    recursively across the assembled `attributes` tree — including session state
-    and state deltas — and any key prefixed with **`temp:`**. Unlike Python, the
-    Java plugin does **not** redact keys prefixed `secret:`; keep secrets out of
-    non-`temp:` state scopes or mask them with a custom `contentFormatter`.
+    The Java plugin redacts a shorter list of six key names, case-insensitive:
+    `client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key` and
+    `password`. It applies them recursively across the assembled `attributes`
+    tree — including session state and state deltas — and also redacts any key
+    prefixed with **`temp:`**. The Java plugin does **not** redact keys prefixed
+    `secret:` either; keep secrets out of non-`temp:` state scopes or mask them
+    with a custom `contentFormatter`.
 
     A custom Java `contentFormatter` must be **thread-safe** (it is called
     concurrently across invocations) and **fast/non-blocking** (it runs on the
@@ -2252,22 +2274,30 @@ queue overflows or when a write ultimately fails. The plugin tracks dropped
 rows per `drop_reason` and exposes a polling API so a host can detect, alert
 on, and ship the counts to its own monitoring.
 
-**Drop reasons:**
+**Drop reasons.** Most reasons mean the row never reached BigQuery. Two of them,
+`formatter_failed` and `content_parse_failed`, mean the row was written with its
+content replaced by a sentinel. The row outcome column records the difference.
 
-| Reason | Language | Cause |
-|---|---|---|
-| `queue_full` | Python, Java | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` / `queueMaxSize` on `BigQueryLoggerConfig`, raise `batch_size` / `batchSize` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
-| `arrow_prep_failed` | Python | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
-| `retry_exhausted` | Python | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
-| `non_retryable` | Python | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
-| `unexpected_error` | Python | Any other exception caught while preparing or writing the batch. |
-| `serialization_error` | Java | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
-| `append_error` | Java | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
-| `after_close` | Java | A row reached an already-closed per-invocation processor. |
-| `shutdown_timeout` | Java | Queued rows remained when the bounded final drain expired. |
-| `writer_permit_exhausted` | Java | The live-writer safety cap was exhausted — normally during a Storage Write outage or delayed cleanup. |
-| `writer_create_error` | Java | `StreamWriter` construction or processor startup failed. |
-| `late_after_finalize` | Java | Async work completed after its invocation was finalized or while the plugin was closing. |
+| Reason | Language | Row outcome | Cause |
+|---|---|---|---|
+| `queue_full` | Python, Java | Not written | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). Increase `queue_max_size` / `queueMaxSize` on `BigQueryLoggerConfig`, raise `batch_size` / `batchSize` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
+| `arrow_prep_failed` | Python | Not written | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
+| `retry_exhausted` | Python | Not written | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
+| `non_retryable` | Python | Not written | Storage Write API returned a non-retryable error (permissions, quota, schema rejection). Usually requires operator intervention. |
+| `unexpected_error` | Python | Not written | Any other exception caught while preparing or writing the batch. |
+| `shutdown_timeout` | Python, Java | Not written | Rows were still queued when the final drain deadline expired. Raise `shutdown_timeout` / `shutdownTimeout` on `BigQueryLoggerConfig`. |
+| `shutdown_cancelled` | Python | Not written | Shutdown was cancelled from outside, such as by a host close timeout, while rows were still queued. |
+| `shutdown_race` | Python | Not written | Shutdown crossed the row's plugin-startup attempt, so the row arrived with no processor to take it. |
+| `setup_unavailable` | Python | Not written | Plugin startup had not completed when the row arrived, for example because dataset or table setup failed. |
+| `stale_loop` | Python | Not written | The event loop owning the queued rows went away before they were drained. |
+| `formatter_failed` | Python | **Written** | A custom `content_formatter` raised, or returned an unsupported result type. The row is written with `content` set to `[FORMATTER_FAILED]`. |
+| `content_parse_failed` | Python | **Written** | Event content could not be parsed. The row is written with `content` set to `[CONTENT_PARSE_FAILED]`. |
+| `serialization_error` | Java | Not written | A row could not be serialized for the write stream (typically a schema/type mismatch). Inspect logs for the offending field. |
+| `append_error` | Java | Not written | Batch preparation or append failed for a cause other than `AppendSerializationError` — including timeouts, exhausted or non-retryable writes, and unexpected conversion failures. |
+| `after_close` | Java | Not written | A row reached an already-closed per-invocation processor. |
+| `writer_permit_exhausted` | Java | Not written | The live-writer safety cap was exhausted — normally during a Storage Write outage or delayed cleanup. |
+| `writer_create_error` | Java | Not written | `StreamWriter` construction or processor startup failed. |
+| `late_after_finalize` | Java | Not written | Async work completed after its invocation was finalized or while the plugin was closing. |
 
 **Reading the counts:**
 
@@ -2277,8 +2307,14 @@ on, and ship the counts to its own monitoring.
     # Snapshot of {drop_reason: count} since plugin start.
     stats = plugin.get_drop_stats()
     # Example: {"queue_full": 12, "retry_exhausted": 0, ...}
-
-    total_dropped = sum(stats.values())
+    # Summing every counter overstates loss: formatter_failed and
+    # content_parse_failed rows were written, only with sentinel content.
+    CONTENT_SENTINEL_REASONS = ("formatter_failed", "content_parse_failed")
+    total_dropped = sum(
+        count
+        for reason, count in stats.items()
+        if reason not in CONTENT_SENTINEL_REASONS
+    )
     ```
 
 === "Java"
@@ -2299,10 +2335,7 @@ on, and ship the counts to its own monitoring.
 import asyncio
 
 async def export_loop(plugin):
-    last = {k: 0 for k in (
-        "queue_full", "arrow_prep_failed",
-        "retry_exhausted", "non_retryable", "unexpected_error",
-    )}
+    last: dict[str, int] = {}  # reasons appear as they first occur
     while True:
         current = plugin.get_drop_stats()
         for reason, count in current.items():
