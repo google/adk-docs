@@ -95,18 +95,22 @@ whether the context window is compressed:
     )
     ```
 
-## Enable streaming
+## Text response options { #enable-streaming }
 
-To control how the agent delivers responses, set the `streaming_mode` parameter:
+You can control how an agent responds in text mode — word-by-word as it is
+generated, or as one full response — with the ***Streaming Mode*** parameter, as
+described below:
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
   per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
 - **`StreamingMode.SSE`**: Server-Sent Events streaming. The runner yields
   partial events as the LLM generates, enabling typewriter-style UIs and
   real-time chat displays.
-- **`StreamingMode.BIDI`**: Reserved for bidirectional streaming, but **not
-  used** in the standard `run_async()` path. For bidirectional streaming, use
-  `runner.run_live()` instead.
+
+There is another setting for the ***Streaming Mode*** parameter which enables
+bidirectional streaming of data, including voice input and output. This feature
+requires additional configuration beyond simple agents. For more information
+about this feature, see [Live and Voice Agents](../live/index.md).
 
 Set `support_cfc=True` alongside `StreamingMode.SSE` to enable Compositional
 Function Calling (CFC), which allows the model to dynamically compose and
@@ -135,7 +139,6 @@ execute function calls. CFC uses the Live API under the hood.
 
     const config: RunConfig = {
         streamingMode: StreamingMode.SSE,
-        supportCfc: true,
         maxLlmCalls: 150,
     };
     ```
@@ -258,11 +261,14 @@ response modalities.
 ## Configure live agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-java">Java</span>
 </div>
 
-When using `runner.run_live()`, configure real-time behavior with these
-additional parameters:
+ADK agents can support [Live and Voice Agents](../live/index.md) to create
+interactive agent experiences. You configure agents that support this
+functionality using the `runner.run_live()` method. When using
+`runner.run_live()`, configure real-time behavior with these additional
+parameters:
 
 - `realtime_input_config`: Configures how audio input is received from users.
 - `proactivity`: Allows the model to respond proactively and ignore irrelevant
@@ -314,6 +320,20 @@ Not all parameters are available in every language. See the
             proactiveAudio: true,
         },
     };
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.genai.types.AvatarConfig;
+
+    RunConfig config = RunConfig.builder()
+        .avatarConfig(
+            AvatarConfig.builder()
+                .avatarName("PREBUILT_AVATAR_ID")
+                .build())
+        .build();
     ```
 
 ## Configure runtime limits and debugging
