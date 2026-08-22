@@ -169,7 +169,7 @@ Both APIs provide the same core Live API technology, but differ in deployment pl
 | **Concurrent Sessions** | Tier-based quotas (see [API quotas](https://ai.google.dev/gemini-api/docs/quota)) | Up to 1,000 per project (configurable via quota requests) |
 | **Enterprise Features** | Basic | Advanced monitoring, logging, SLAs, session resumption (24h) |
 | **Setup Complexity** | Minimal (API key only) | Requires Google Cloud project setup |
-| **API Version** | `v1beta` | `v1beta1` |
+| **API Version** | `v1alpha` | `v1beta1` |
 | **API Endpoint** | `generativelanguage.googleapis.com` | `{location}-aiplatform.googleapis.com` |
 | **Billing** | Usage tracked via API key | Google Cloud project billing |
 
@@ -458,9 +458,9 @@ For production applications, choose a persistent session service based on your i
 - You need persistent storage with SQLite, PostgreSQL, or MySQL
 - You're building single-server apps (SQLite) or multi-server deployments (PostgreSQL/MySQL)
 - You want full control over data storage and backups
-- Examples:
-    - SQLite: `DatabaseSessionService(db_url="sqlite:///./sessions.db")`
-    - PostgreSQL: `DatabaseSessionService(db_url="postgresql://user:pass@host/db")`
+- Examples (ADK builds an **async** SQLAlchemy engine, so `db_url` must name an async driver—a sync URL such as `sqlite:///...` raises `ValueError`):
+    - SQLite: `DatabaseSessionService(db_url="sqlite+aiosqlite:///./sessions.db")`
+    - PostgreSQL: `DatabaseSessionService(db_url="postgresql+asyncpg://user:pass@host/db")`
 
 **Use `VertexAiSessionService` if:**
 
@@ -552,7 +552,7 @@ This pattern works correctly in all scenarios:
 - **Resuming conversations**: If the session already exists (e.g., reconnection after network interruption), the existing session is reused with full conversation history
 - **Idempotent**: Safe to call multiple times without errors
 
-**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session doesn't exist, `run_live()` will raise `ValueError: Session not found`.
+**Important**: The session must exist before calling `runner.run_live()` with the same identifiers. If the session does not exist, `run_live()` raises `SessionNotFoundError: Session not found: <session_id>`, a subclass of `ValueError`. Alternatively, construct the runner with `Runner(..., auto_create_session=True)` and ADK creates the missing session for you instead of raising.
 
 #### Create RunConfig
 
@@ -844,7 +844,7 @@ This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is
 
 This example shows the core pattern. For production applications, consider:
 
-- **Error handling (ADK)**: Add proper error handling for ADK streaming events. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
+- **Error handling (ADK)**: Check each event for an `error_code`, and also wrap the `run_live()` loop in `try`/`except` so that connection failures raised by the transport are caught. For details on error event handling, see [Part 3: Error Events](part3.md#error-events).
     - Handle task cancellation gracefully by catching `asyncio.CancelledError` during shutdown
     - Check exceptions from `asyncio.gather()` with `return_exceptions=True` - exceptions don't propagate automatically
 - **Error handling (Web)**: Handle web application-specific errors in upstream/downstream tasks. For example, with FastAPI you would need to:
