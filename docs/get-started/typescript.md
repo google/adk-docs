@@ -3,8 +3,8 @@
 This guide shows you how to get up and running with Agent Development Kit
 for TypeScript. Before you start, make sure you have the following installed:
 
-*   Node.js 24.13.0 or later
-*   Node Package Manager (npm) 11.8.0 or later
+*   Node.js 22 or later
+*   Node Package Manager (npm) 9 or later
 
 ## Create an agent project
 
@@ -43,7 +43,7 @@ npm init --yes
 npm pkg set type="module"
 npm pkg set main="agent.ts"
 # install ADK libraries
-npm install @google/adk
+npm install @google/adk zod
 # install dev tools as a dev dependency
 npm install -D @google/adk-devtools
 ```
@@ -60,7 +60,7 @@ import {z} from 'zod';
 
 /* Mock tool implementation */
 const getCurrentTime = new FunctionTool({
-  name: 'get_current_time',
+  name: 'getCurrentTime',
   description: 'Returns the current time in a specified city.',
   parameters: z.object({
     city: z.string().describe("The name of the city for which to retrieve the current time."),
