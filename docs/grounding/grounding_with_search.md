@@ -1,7 +1,7 @@
 # Grounding with Search for agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.2.0</span>
 </div>
 
 [Agent Search](/integrations/agent-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
@@ -19,7 +19,7 @@ Before creating a grounded agent, you must have an existing Agent Search Data St
 * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
 * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
 * For Python, open the **`.env`** file and specify your project ID and location.
-* For Java, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`).
+* For Java and Kotlin, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`), and set the variables below in that same environment rather than in a `.env` file.
 
 ```env title=".env"
 GOOGLE_GENAI_USE_ENTERPRISE=TRUE
