@@ -308,7 +308,7 @@ The following code example demonstrates how to define and configure a custom sum
 
 You can further refine the compactor by modifying its summarizer. In Python, Java
 and Kotlin, customize the prompt template on `LlmEventSummarizer` — the property is
-`prompt_template` in Python and Java, and `promptTemplate` in Kotlin. In TypeScript,
+`prompt_template` in Python, and `promptTemplate` in Java and Kotlin. In TypeScript,
 customize the `prompt` on `LlmSummarizer`. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
