@@ -140,8 +140,7 @@ methods, as shown in the following code example:
          * Count agent runs.
          */
         async beforeAgentCallback(
-            agent: BaseAgent,
-            context: Context
+            { agent, callbackContext }: { agent: BaseAgent; callbackContext: Context }
         ): Promise<Content | undefined> {
             this.agentCount++;
             console.log(`[Plugin] Agent run count: ${this.agentCount}`);
@@ -152,8 +151,7 @@ methods, as shown in the following code example:
          * Count LLM requests.
          */
         async beforeModelCallback(
-            context: Context,
-            llmRequest: LlmRequest
+            { callbackContext, llmRequest }: { callbackContext: Context; llmRequest: LlmRequest }
         ): Promise<LlmResponse | undefined> {
             this.llmRequestCount++;
             console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
