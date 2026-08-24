@@ -17,23 +17,23 @@
 // read and write just to move a value one step downstream.
 
 // --8<-- [start:data-handling]
-import { LlmAgent, node, NodeContext, Workflow } from "@google/adk";
+import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';
 
 const draftAgent = new LlmAgent({
-  name: "draft_agent",
-  model: "gemini-flash-latest",
-  instruction: "Write a short draft for the user request.",
+  name: 'draft_agent',
+  model: 'gemini-flash-latest',
+  instruction: 'Write a short draft for the user request.',
 });
 
 const formatFunctionNode = node(
   (_ctx: NodeContext, rawDraft: string) =>
     rawDraft
-      .split("\n")
+      .split('\n')
       .map((line) => line.trim())
       .filter(Boolean)
       .map((line) => `| ${line}`)
-      .join("\n"),
-  { name: "format_function_node" },
+      .join('\n'),
+  { name: 'format_function_node' },
 );
 
 const editorialWorkflow = node(
@@ -47,11 +47,11 @@ const editorialWorkflow = node(
 
     return formattedText.output;
   },
-  { name: "editorial_workflow", rerunOnResume: true },
+  { name: 'editorial_workflow', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", editorialWorkflow]],
+  name: 'root_agent',
+  edges: [['START', editorialWorkflow]],
 });
 // --8<-- [end:data-handling]

@@ -17,35 +17,35 @@
 // run, and is committed with the writing node's events.
 
 // --8<-- [start:session-state]
-import { node, NodeContext, Workflow } from "@google/adk";
+import { node, NodeContext, Workflow } from '@google/adk';
 
 const initStateNode = node(
   (ctx: NodeContext, nodeInput: string) => {
-    ctx.state.set("topic", nodeInput.trim());
-    ctx.state.set("temp:started_at", new Date().toISOString());
-    ctx.state.set("attempts", 0);
+    ctx.state.set('topic', nodeInput.trim());
+    ctx.state.set('temp:started_at', new Date().toISOString());
+    ctx.state.set('attempts', 0);
   },
-  { name: "init_state_node" },
+  { name: 'init_state_node' },
 );
 
 const taskAttemptNode = node(
   (ctx: NodeContext) => {
-    const attempts = ctx.state.get<number>("attempts") ?? 0;
-    ctx.state.set("attempts", attempts + 1);
+    const attempts = ctx.state.get<number>('attempts') ?? 0;
+    ctx.state.set('attempts', attempts + 1);
   },
-  { name: "task_attempt_node" },
+  { name: 'task_attempt_node' },
 );
 
 const readStateNode = node(
   (ctx: NodeContext) =>
-    `attempts state: ${ctx.state.get("attempts")} ` +
-    `(topic: ${ctx.state.get("topic")}, ` +
-    `started: ${ctx.state.get("temp:started_at")})`,
-  { name: "read_state_node" },
+    `attempts state: ${ctx.state.get('attempts')} ` +
+    `(topic: ${ctx.state.get('topic')}, ` +
+    `started: ${ctx.state.get('temp:started_at')})`,
+  { name: 'read_state_node' },
 );
 
 export const rootAgent = new Workflow({
-  name: "session_state_workflow",
-  edges: [["START", initStateNode, taskAttemptNode, readStateNode]],
+  name: 'session_state_workflow',
+  edges: [['START', initStateNode, taskAttemptNode, readStateNode]],
 });
 // --8<-- [end:session-state]

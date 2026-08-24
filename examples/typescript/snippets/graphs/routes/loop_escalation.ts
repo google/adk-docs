@@ -22,7 +22,7 @@
 //                                        router --DONE--> finalize
 
 // --8<-- [start:loop-escalation]
-import { createEvent, node, NodeContext, Workflow } from "@google/adk";
+import { createEvent, node, NodeContext, Workflow } from '@google/adk';
 
 interface Draft {
   topic: string;
@@ -37,16 +37,16 @@ const seedDraft = node(
     topic: topic.trim(),
     bullets: [`${topic.trim()} — point 1`],
   }),
-  { name: "seed_draft" },
+  { name: 'seed_draft' },
 );
 
 const critic = node(
   (_ctx: NodeContext, draft: Draft) =>
     createEvent({
-      route: draft.bullets.length >= REQUIRED_BULLETS ? "DONE" : "REVISE",
+      route: draft.bullets.length >= REQUIRED_BULLETS ? 'DONE' : 'REVISE',
       output: draft,
     }),
-  { name: "critic" },
+  { name: 'critic' },
 );
 
 const refine = node(
@@ -57,20 +57,20 @@ const refine = node(
       `${draft.topic} — point ${draft.bullets.length + 1}`,
     ],
   }),
-  { name: "refine" },
+  { name: 'refine' },
 );
 
 const finalize = node(
   (_ctx: NodeContext, draft: Draft) =>
     `Approved after ${draft.bullets.length} bullets:\n` +
-    draft.bullets.map((b) => `  • ${b}`).join("\n"),
-  { name: "finalize" },
+    draft.bullets.map((b) => `  • ${b}`).join('\n'),
+  { name: 'finalize' },
 );
 
 export const rootAgent = new Workflow({
-  name: "loop_workflow",
+  name: 'loop_workflow',
   edges: [
-    ["START", seedDraft, critic],
+    ['START', seedDraft, critic],
     [critic, { REVISE: refine, DONE: finalize }],
     [refine, critic],
   ],

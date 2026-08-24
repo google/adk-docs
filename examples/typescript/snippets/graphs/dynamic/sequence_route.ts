@@ -17,35 +17,35 @@
 // the same as in a graph: attach them to the nodes you run.
 
 // --8<-- [start:sequence-route]
-import { LlmAgent, node, NodeContext, Workflow } from "@google/adk";
-import { z } from "zod";
+import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';
+import { z } from 'zod';
 
 const cityTimeSchema = z.object({
-  timeInfo: z.string().describe("Time information."),
-  city: z.string().describe("City name."),
+  timeInfo: z.string().describe('Time information.'),
+  city: z.string().describe('City name.'),
 });
 type CityTime = z.infer<typeof cityTimeSchema>;
 
 const cityGeneratorAgent = new LlmAgent({
-  name: "city_generator_agent",
-  model: "gemini-flash-latest",
-  instruction: "Return the name of a random city. Return only the name.",
+  name: 'city_generator_agent',
+  model: 'gemini-flash-latest',
+  instruction: 'Return the name of a random city. Return only the name.',
 });
 
 /** Simulates returning the current time in a specified city. */
 const cityTimeFunction = node(
   (_ctx: NodeContext, city: string): CityTime => ({
-    timeInfo: "10:10 AM",
+    timeInfo: '10:10 AM',
     city: city.trim(),
   }),
-  { name: "city_time_function", outputSchema: cityTimeSchema },
+  { name: 'city_time_function', outputSchema: cityTimeSchema },
 );
 
 const cityReportAgent = node(
   new LlmAgent({
-    name: "city_report_agent",
-    model: "gemini-flash-latest",
-    instruction: "Output the data provided by the previous node as a sentence.",
+    name: 'city_report_agent',
+    model: 'gemini-flash-latest',
+    instruction: 'Output the data provided by the previous node as a sentence.',
   }),
   { inputSchema: cityTimeSchema },
 );
@@ -58,11 +58,11 @@ const cityWorkflow = node(
 
     return reportText.output;
   },
-  { name: "city_workflow", rerunOnResume: true },
+  { name: 'city_workflow', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", cityWorkflow]],
+  name: 'root_agent',
+  edges: [['START', cityWorkflow]],
 });
 // --8<-- [end:sequence-route]

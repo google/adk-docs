@@ -18,15 +18,15 @@
 // to read it back (`{code}`, `{findings}`).
 
 // --8<-- [start:loop-route]
-import { LlmAgent, node, NodeContext, Workflow } from "@google/adk";
+import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';
 
 /** Safety bound on the refine loop. */
 const MAX_FIX_ROUNDS = 3;
 
 const coderAgent = new LlmAgent({
-  name: "generator_agent",
-  model: "gemini-flash-latest",
-  instruction: "Write TypeScript code for the user request. Output code only.",
+  name: 'generator_agent',
+  model: 'gemini-flash-latest',
+  instruction: 'Write TypeScript code for the user request. Output code only.',
 });
 
 /** Simulates a compile / lint pass. Empty findings means "clean". */
@@ -34,19 +34,19 @@ const compileLintCheck = node(
   (_ctx: NodeContext, code: string) => {
     const findings: string[] = [];
     if (!/\/\*\*/.test(code)) {
-      findings.push("every function needs a JSDoc comment");
+      findings.push('every function needs a JSDoc comment');
     }
     if (!/\)\s*:\s*\w/.test(code)) {
-      findings.push("add return type annotations");
+      findings.push('add return type annotations');
     }
-    return { findings: findings.join("; ") };
+    return { findings: findings.join('; ') };
   },
-  { name: "lint_reviewer" },
+  { name: 'lint_reviewer' },
 );
 
 const fixerAgent = new LlmAgent({
-  name: "fixer_agent",
-  model: "gemini-flash-latest",
+  name: 'fixer_agent',
+  model: 'gemini-flash-latest',
   instruction: `Refactor current code {code}.
       Based on compile & lint review: {findings}
       Output code only.`,
@@ -60,8 +60,8 @@ const codeWorkflow = node(
     };
 
     for (let round = 0; checkResp.findings && round < MAX_FIX_ROUNDS; round++) {
-      ctx.state.set("code", code);
-      ctx.state.set("findings", checkResp.findings);
+      ctx.state.set('code', code);
+      ctx.state.set('findings', checkResp.findings);
 
       code = (
         await ctx.runNode(fixerAgent, { code, findings: checkResp.findings })
@@ -73,11 +73,11 @@ const codeWorkflow = node(
 
     return code;
   },
-  { name: "code_workflow", rerunOnResume: true },
+  { name: 'code_workflow', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", codeWorkflow]],
+  name: 'root_agent',
+  edges: [['START', codeWorkflow]],
 });
 // --8<-- [end:loop-route]

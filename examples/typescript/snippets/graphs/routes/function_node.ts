@@ -23,7 +23,7 @@ import {
   NodeContext,
   Workflow,
   type FunctionNodeHandler,
-} from "@google/adk";
+} from '@google/adk';
 
 /** A bare return value: boxed into an event's `output` for you. */
 const myFunctionNode: FunctionNodeHandler<string, string> = (
@@ -39,12 +39,12 @@ const myExplicitEventNode = (_ctx: NodeContext, nodeInput: string) =>
   createEvent({ output: `${nodeInput} IS AWESOME!` });
 
 export const rootAgent = new Workflow({
-  name: "function_node_pipeline",
+  name: 'function_node_pipeline',
   edges: [
     [
-      "START",
-      node(myFunctionNode, { name: "my_function_node" }),
-      node(myExplicitEventNode, { name: "add_suffix" }),
+      'START',
+      node(myFunctionNode, { name: 'my_function_node' }),
+      node(myExplicitEventNode, { name: 'add_suffix' }),
     ],
   ],
 });

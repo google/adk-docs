@@ -22,44 +22,44 @@
 // Both are distinct from `{state_key}`, which reads session state.
 
 // --8<-- [start:structured-access]
-import { LlmAgent, node, NodeContext, Workflow } from "@google/adk";
-import { z } from "zod";
+import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';
+import { z } from 'zod';
 
 const cityTimeSchema = z.object({
-  timeInfo: z.string().describe("Time information."),
-  city: z.string().describe("City name."),
+  timeInfo: z.string().describe('Time information.'),
+  city: z.string().describe('City name.'),
 });
 type CityTime = z.infer<typeof cityTimeSchema>;
 
 const cityGeneratorAgent = new LlmAgent({
-  name: "city_generator_agent",
-  model: "gemini-flash-latest",
-  instruction: "Return the name of a random city. Return only the name.",
+  name: 'city_generator_agent',
+  model: 'gemini-flash-latest',
+  instruction: 'Return the name of a random city. Return only the name.',
 });
 
 /** Simulates returning the current time in the specified city. */
 const lookupTimeFunction = node(
   (_ctx: NodeContext, city: string): CityTime => ({
-    timeInfo: "10:10 AM",
+    timeInfo: '10:10 AM',
     city: city.trim(),
   }),
-  { name: "lookup_time_function", outputSchema: cityTimeSchema },
+  { name: 'lookup_time_function', outputSchema: cityTimeSchema },
 );
 
 const cityReportAgent = new LlmAgent({
-  name: "city_report_agent",
-  model: "gemini-flash-latest",
+  name: 'city_report_agent',
+  model: 'gemini-flash-latest',
   instruction:
-    "Return a sentence in the following format: It is " +
-    "<CityTime.timeInfo from lookup_time_function> in " +
-    "<CityTime.city from lookup_time_function> right now.",
+    'Return a sentence in the following format: It is ' +
+    '<CityTime.timeInfo from lookup_time_function> in ' +
+    '<CityTime.city from lookup_time_function> right now.',
 });
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
+  name: 'root_agent',
   edges: [
     [
-      "START",
+      'START',
       cityGeneratorAgent,
       lookupTimeFunction,
       node(cityReportAgent, { inputSchema: cityTimeSchema }),

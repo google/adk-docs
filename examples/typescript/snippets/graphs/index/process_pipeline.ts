@@ -25,14 +25,14 @@ import {
   node,
   NodeContext,
   Workflow,
-} from "@google/adk";
+} from '@google/adk';
 
 /** The routes this graph has edges for. */
-const ROUTES = ["BUG", "CUSTOMER_SUPPORT", "LOGISTICS"] as const;
+const ROUTES = ['BUG', 'CUSTOMER_SUPPORT', 'LOGISTICS'] as const;
 
 const processMessage = new LlmAgent({
-  name: "process_message",
-  model: "gemini-flash-latest",
+  name: 'process_message',
+  model: 'gemini-flash-latest',
   instruction: `Classify user message into either "BUG", "CUSTOMER_SUPPORT",
       or "LOGISTICS". If you think a message applies to more than one category,
       reply with a comma separated list of categories.
@@ -47,32 +47,32 @@ const router = node(
     );
     return createEvent({ route: matched.length > 0 ? matched : DEFAULT_ROUTE });
   },
-  { name: "router" },
+  { name: 'router' },
 );
 
 /** Emits a user-facing message: `content`, with no `output`. */
 const message = (text: string) =>
-  createEvent({ content: { role: "model", parts: [{ text }] } });
+  createEvent({ content: { role: 'model', parts: [{ text }] } });
 
-const response1Bug = node(() => message("Handling bug..."), {
-  name: "response_1_bug",
+const response1Bug = node(() => message('Handling bug...'), {
+  name: 'response_1_bug',
 });
-const response2Support = node(() => message("Handling customer support..."), {
-  name: "response_2_support",
+const response2Support = node(() => message('Handling customer support...'), {
+  name: 'response_2_support',
 });
-const response3Logistics = node(() => message("Handling logistics..."), {
-  name: "response_3_logistics",
+const response3Logistics = node(() => message('Handling logistics...'), {
+  name: 'response_3_logistics',
 });
 const responseUnknown = node(
   (_ctx: NodeContext, nodeInput: string) =>
     message(`Could not classify that (classifier said: ${nodeInput}).`),
-  { name: "response_unknown" },
+  { name: 'response_unknown' },
 );
 
 export const rootAgent = new Workflow({
-  name: "routing_workflow",
+  name: 'routing_workflow',
   edges: [
-    ["START", processMessage, router],
+    ['START', processMessage, router],
     [
       router,
       {

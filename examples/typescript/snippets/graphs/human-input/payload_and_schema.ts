@@ -22,8 +22,8 @@
 // reply must already be in that shape.
 
 // --8<-- [start:payload-and-schema]
-import { node, NodeContext, RequestInput, Workflow } from "@google/adk";
-import { z } from "zod";
+import { node, NodeContext, RequestInput, Workflow } from '@google/adk';
+import { z } from 'zod';
 
 /**
  * Itinerary is a list of activities. Each activity has a name and a
@@ -41,16 +41,16 @@ const userFeedbackSchema = z.object({
 
 const buildItinerary = node(
   (_ctx: NodeContext, city: string): ActivitiesList => {
-    const place = city.trim() || "your city";
+    const place = city.trim() || 'your city';
     return {
       itinerary: [
-        { name: "Morning walk", description: `A stroll through old ${place}.` },
-        { name: "Local lunch", description: `Regional food in ${place}.` },
-        { name: "Museum visit", description: `The main museum of ${place}.` },
+        { name: 'Morning walk', description: `A stroll through old ${place}.` },
+        { name: 'Local lunch', description: `Regional food in ${place}.` },
+        { name: 'Museum visit', description: `The main museum of ${place}.` },
       ],
     };
   },
-  { name: "build_itinerary", outputSchema: activitiesListSchema },
+  { name: 'build_itinerary', outputSchema: activitiesListSchema },
 );
 
 /**
@@ -61,23 +61,23 @@ const getUserFeedback = node(
   async function* (_ctx: NodeContext, nodeInput: ActivitiesList) {
     const rendered = nodeInput.itinerary
       .map((a, i) => `  ${i + 1}. ${a.name} — ${a.description}`)
-      .join("\n");
+      .join('\n');
 
     yield new RequestInput({
       message:
         `Here is your recommended base itinerary:\n${rendered}\n\n` +
-        "Which of these items appeal to you (if any)?",
+        'Which of these items appeal to you (if any)?',
       payload: nodeInput,
       responseSchema: userFeedbackSchema,
     });
   },
-  { name: "get_user_feedback" },
+  { name: 'get_user_feedback' },
 );
 
 const applyFeedback = node(
   (_ctx: NodeContext, nodeInput: unknown) => {
     const feedback =
-      typeof nodeInput === "string"
+      typeof nodeInput === 'string'
         ? nodeInput
         : String(
             (nodeInput as { userResponse?: unknown } | null)?.userResponse ??
@@ -85,11 +85,11 @@ const applyFeedback = node(
           );
     return `Noted. Building the final itinerary around: ${feedback}`;
   },
-  { name: "apply_feedback" },
+  { name: 'apply_feedback' },
 );
 
 export const rootAgent = new Workflow({
-  name: "concierge_workflow",
-  edges: [["START", buildItinerary, getUserFeedback, applyFeedback]],
+  name: 'concierge_workflow',
+  edges: [['START', buildItinerary, getUserFeedback, applyFeedback]],
 });
 // --8<-- [end:payload-and-schema]

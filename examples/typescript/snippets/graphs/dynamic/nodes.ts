@@ -15,16 +15,16 @@
 // The two ways to build a node, and the orchestrator that composes them.
 
 // --8<-- [start:node-forms]
-import { FunctionNode, node, NodeContext, Workflow } from "@google/adk";
+import { FunctionNode, node, NodeContext, Workflow } from '@google/adk';
 
 /** The plain function both node forms wrap. */
 function myFunctionNode(_ctx: NodeContext, nodeInput: unknown): string {
-  return `Hello ${nodeInput ?? "World"}`;
+  return `Hello ${nodeInput ?? 'World'}`;
 }
 
-const helloNode = node(myFunctionNode, { name: "hello_node" });
+const helloNode = node(myFunctionNode, { name: 'hello_node' });
 
-const successNode = new FunctionNode("hello", myFunctionNode, {
+const successNode = new FunctionNode('hello', myFunctionNode, {
   rerunOnResume: true,
 });
 // --8<-- [end:node-forms]
@@ -32,7 +32,7 @@ const successNode = new FunctionNode("hello", myFunctionNode, {
 // --8<-- [start:workflows]
 const myFormattingNode = node(
   (_ctx: NodeContext, nodeInput: string) => `>> ${nodeInput.trim()} <<`,
-  { name: "my_formatting_node" },
+  { name: 'my_formatting_node' },
 );
 
 const myWorkflow = node(
@@ -42,11 +42,11 @@ const myWorkflow = node(
     const formatted = await ctx.runNode(myFormattingNode, again.output);
     return formatted.output;
   },
-  { name: "my_workflow", rerunOnResume: true },
+  { name: 'my_workflow', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", myWorkflow]],
+  name: 'root_agent',
+  edges: [['START', myWorkflow]],
 });
 // --8<-- [end:workflows]

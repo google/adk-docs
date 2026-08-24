@@ -15,33 +15,33 @@
 // A node hands data to its successor through the event's `output` field.
 
 // --8<-- [start:node-output]
-import { createEvent, node, NodeContext, Workflow } from "@google/adk";
+import { createEvent, node, NodeContext, Workflow } from '@google/adk';
 
 const returnRawValue = node(
   (_ctx: NodeContext, nodeInput: string) => nodeInput.toUpperCase(),
-  { name: "return_raw_value" },
+  { name: 'return_raw_value' },
 );
 
 const returnEventOutput = node(
   (_ctx: NodeContext, nodeInput: string) =>
     createEvent({ output: `${nodeInput}!` }),
-  { name: "return_event_output" },
+  { name: 'return_event_output' },
 );
 
 const yieldProgressThenOutput = node(
   async function* (_ctx: NodeContext, nodeInput: string) {
     yield createEvent({
-      content: { role: "model", parts: [{ text: "Working on it..." }] },
+      content: { role: 'model', parts: [{ text: 'Working on it...' }] },
     });
     yield createEvent({ output: `<<${nodeInput}>>` });
   },
-  { name: "yield_progress_then_output" },
+  { name: 'yield_progress_then_output' },
 );
 
 export const rootAgent = new Workflow({
-  name: "node_output_workflow",
+  name: 'node_output_workflow',
   edges: [
-    ["START", returnRawValue, returnEventOutput, yieldProgressThenOutput],
+    ['START', returnRawValue, returnEventOutput, yieldProgressThenOutput],
   ],
 });
 // --8<-- [end:node-output]

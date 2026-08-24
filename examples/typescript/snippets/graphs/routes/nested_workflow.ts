@@ -16,63 +16,63 @@
 // workflow's edges to encapsulate a reusable sub-process.
 
 // --8<-- [start:nested-workflow]
-import { createEvent, node, NodeContext, Workflow } from "@google/adk";
+import { createEvent, node, NodeContext, Workflow } from '@google/adk';
 
 const taskA1 = node(
   (_ctx: NodeContext, nodeInput: string) => nodeInput.trim(),
   {
-    name: "task_A1",
+    name: 'task_A1',
   },
 );
 
 const router = node(
   (_ctx: NodeContext, text: string) =>
     createEvent({
-      route: text === text.toUpperCase() ? "RUN_WORKFLOW_C" : "RUN_WORKFLOW_B",
+      route: text === text.toUpperCase() ? 'RUN_WORKFLOW_C' : 'RUN_WORKFLOW_B',
       output: text,
     }),
-  { name: "router" },
+  { name: 'router' },
 );
 
 const workflowB = new Workflow({
-  name: "workflow_B",
+  name: 'workflow_B',
   edges: [
     [
-      "START",
+      'START',
       node(
         (_ctx: NodeContext, text: string) =>
           text.replace(
             /(^|\P{L})(\p{L})/gu,
             (_m, sep: string, ch: string) => sep + ch.toUpperCase(),
           ),
-        { name: "b_title_case" },
+        { name: 'b_title_case' },
       ),
       node((_ctx: NodeContext, text: string) => `[B] ${text}`, {
-        name: "b_frame",
+        name: 'b_frame',
       }),
     ],
   ],
 });
 
 const workflowC = new Workflow({
-  name: "workflow_C",
+  name: 'workflow_C',
   edges: [
     [
-      "START",
+      'START',
       node((_ctx: NodeContext, text: string) => text.toLowerCase(), {
-        name: "c_lower_case",
+        name: 'c_lower_case',
       }),
       node((_ctx: NodeContext, text: string) => `[C] ${text}`, {
-        name: "c_frame",
+        name: 'c_frame',
       }),
     ],
   ],
 });
 
 export const rootAgent = new Workflow({
-  name: "parent_workflow",
+  name: 'parent_workflow',
   edges: [
-    ["START", taskA1, router],
+    ['START', taskA1, router],
     [
       router,
       {

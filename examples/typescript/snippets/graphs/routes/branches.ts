@@ -23,11 +23,11 @@ import {
   node,
   NodeContext,
   Workflow,
-} from "@google/adk";
+} from '@google/adk';
 
 const taskANode = node(
   (_ctx: NodeContext, nodeInput: string) => nodeInput.trim(),
-  { name: "task_A_node" },
+  { name: 'task_A_node' },
 );
 
 /** Stands in for an application-specific branch condition. */
@@ -37,23 +37,23 @@ const condition = (nodeInput: string) => /\d/.test(nodeInput);
 const router = node(
   (_ctx: NodeContext, nodeInput: string) =>
     condition(nodeInput)
-      ? createEvent({ route: "RUN_TASK_C", output: nodeInput })
-      : createEvent({ route: "RUN_TASK_B", output: nodeInput }),
-  { name: "router" },
+      ? createEvent({ route: 'RUN_TASK_C', output: nodeInput })
+      : createEvent({ route: 'RUN_TASK_B', output: nodeInput }),
+  { name: 'router' },
 );
 
 const taskBNode = new LlmAgent({
-  name: "task_B_agent",
-  model: "gemini-flash-latest",
-  instruction: "Answer the user in a single short sentence.",
+  name: 'task_B_agent',
+  model: 'gemini-flash-latest',
+  instruction: 'Answer the user in a single short sentence.',
 });
 
-const taskCNode = node(() => "Task C completed", { name: "task_C_node" });
+const taskCNode = node(() => 'Task C completed', { name: 'task_C_node' });
 
 export const rootAgent = new Workflow({
-  name: "routing_workflow",
+  name: 'routing_workflow',
   edges: [
-    ["START", taskANode, router],
+    ['START', taskANode, router],
     [
       router,
       {

@@ -22,7 +22,7 @@
 // handling.
 
 // --8<-- [start:parallel-route]
-import { node, NodeContext, Workflow } from "@google/adk";
+import { node, NodeContext, Workflow } from '@google/adk';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -32,13 +32,13 @@ const realNode = node(
     await sleep(200);
     return { item, length: item.length };
   },
-  { name: "analyze_item" },
+  { name: 'analyze_item' },
 );
 
 const parallelSupervisor = node(
   async (ctx: NodeContext, nodeInput: string) => {
     const items = nodeInput
-      .split(",")
+      .split(',')
       .map((item) => item.trim())
       .filter(Boolean);
 
@@ -47,17 +47,17 @@ const parallelSupervisor = node(
 
     return results.map((result) => result.output);
   },
-  { name: "parallel_supervisor", rerunOnResume: true },
+  { name: 'parallel_supervisor', rerunOnResume: true },
 );
 
 const summarize = node(
   (_ctx: NodeContext, results: Array<{ item: string; length: number }>) =>
-    results.map((r) => `${r.item}: ${r.length} chars`).join("\n"),
-  { name: "summarize" },
+    results.map((r) => `${r.item}: ${r.length} chars`).join('\n'),
+  { name: 'summarize' },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", parallelSupervisor, summarize]],
+  name: 'root_agent',
+  edges: [['START', parallelSupervisor, summarize]],
 });
 // --8<-- [end:parallel-route]

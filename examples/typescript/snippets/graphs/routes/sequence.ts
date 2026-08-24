@@ -16,25 +16,25 @@
 // return value is delivered to the next node as its input.
 
 // --8<-- [start:sequence]
-import { node, NodeContext, Workflow } from "@google/adk";
+import { node, NodeContext, Workflow } from '@google/adk';
 
 const taskANode = node(
   (_ctx: NodeContext, nodeInput: string) => `Summary: ${nodeInput.trim()}`,
-  { name: "task_A_node" },
+  { name: 'task_A_node' },
 );
 
 const taskBNode = node(
   (_ctx: NodeContext, summary: string) => summary.toUpperCase(),
-  { name: "task_B_node" },
+  { name: 'task_B_node' },
 );
 
 const taskCNode = node(
   (_ctx: NodeContext, shouted: string) => `${shouted} (done)`,
-  { name: "task_C_node" },
+  { name: 'task_C_node' },
 );
 
 export const rootAgent = new Workflow({
-  name: "sequential_workflow",
-  edges: [["START", taskANode, taskBNode, taskCNode]],
+  name: 'sequential_workflow',
+  edges: [['START', taskANode, taskBNode, taskCNode]],
 });
 // --8<-- [end:sequence]

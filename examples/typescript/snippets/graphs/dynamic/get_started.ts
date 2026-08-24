@@ -17,20 +17,20 @@
 // whatever order your loops and conditionals dictate.
 
 // --8<-- [start:get-started]
-import { node, NodeContext, Workflow } from "@google/adk";
+import { node, NodeContext, Workflow } from '@google/adk';
 
-const myNode = node(() => "Hello World", { name: "hello_node" });
+const myNode = node(() => 'Hello World', { name: 'hello_node' });
 
 const myWorkflow = node(
   async (ctx: NodeContext, _nodeInput: string) => {
-    const result = await ctx.runNode(myNode, "hello");
+    const result = await ctx.runNode(myNode, 'hello');
     return result.output;
   },
-  { name: "my_workflow", rerunOnResume: true },
+  { name: 'my_workflow', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", myWorkflow]],
+  name: 'root_agent',
+  edges: [['START', myWorkflow]],
 });
 // --8<-- [end:get-started]

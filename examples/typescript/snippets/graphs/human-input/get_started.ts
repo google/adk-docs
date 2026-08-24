@@ -19,13 +19,13 @@
 // deterministic.
 
 // --8<-- [start:get-started]
-import { node, NodeContext, RequestInput, Workflow } from "@google/adk";
+import { node, NodeContext, RequestInput, Workflow } from '@google/adk';
 
 const step1 = node(
   async function* () {
-    yield new RequestInput({ message: "Enter a number:" });
+    yield new RequestInput({ message: 'Enter a number:' });
   },
-  { name: "step1" },
+  { name: 'step1' },
 );
 
 const step2 = node(
@@ -35,11 +35,11 @@ const step2 = node(
       ? value * 2
       : `"${nodeInput}" is not a number.`;
   },
-  { name: "step2" },
+  { name: 'step2' },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", step1, step2]],
+  name: 'root_agent',
+  edges: [['START', step1, step2]],
 });
 // --8<-- [end:get-started]

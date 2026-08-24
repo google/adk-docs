@@ -23,31 +23,31 @@ import {
   node,
   NodeContext,
   Workflow,
-} from "@google/adk";
-import { z } from "zod";
+} from '@google/adk';
+import { z } from 'zod';
 
 const cityGeneratorAgent = new LlmAgent({
-  name: "city_generator_agent",
-  model: "gemini-flash-latest",
+  name: 'city_generator_agent',
+  model: 'gemini-flash-latest',
   instruction: `Return the name of a random city.
       Return only the name, nothing else.`,
 });
 
 /** The structured payload handed from the lookup node to the report agent. */
 const cityTimeSchema = z.object({
-  timeInfo: z.string().describe("Time information."),
-  city: z.string().describe("City name."),
+  timeInfo: z.string().describe('Time information.'),
+  city: z.string().describe('City name.'),
 });
 type CityTime = z.infer<typeof cityTimeSchema>;
 
 /** Simulates returning the current time in the specified city. */
 function lookupTimeFunction(_ctx: NodeContext, nodeInput: string): CityTime {
-  return { timeInfo: "10:10 AM", city: nodeInput.trim() };
+  return { timeInfo: '10:10 AM', city: nodeInput.trim() };
 }
 
 const cityReportAgent = new LlmAgent({
-  name: "city_report_agent",
-  model: "gemini-flash-latest",
+  name: 'city_report_agent',
+  model: 'gemini-flash-latest',
   instruction: `Output the following line:
     It is {CityTime.timeInfo} in {CityTime.city} right now.`,
 });
@@ -55,24 +55,24 @@ const cityReportAgent = new LlmAgent({
 function completedMessageFunction(_ctx: NodeContext, nodeInput: string) {
   return createEvent({
     content: {
-      role: "model",
+      role: 'model',
       parts: [{ text: `${nodeInput}\n WORKFLOW COMPLETED.` }],
     },
   });
 }
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
+  name: 'root_agent',
   edges: [
     [
-      "START",
+      'START',
       cityGeneratorAgent,
       node(lookupTimeFunction, {
-        name: "lookup_time_function",
+        name: 'lookup_time_function',
         outputSchema: cityTimeSchema,
       }),
       node(cityReportAgent, { inputSchema: cityTimeSchema }),
-      node(completedMessageFunction, { name: "completed_message_function" }),
+      node(completedMessageFunction, { name: 'completed_message_function' }),
     ],
   ],
 });

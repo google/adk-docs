@@ -21,7 +21,7 @@
 // own id, as below.
 
 // --8<-- [start:custom-execution-ids]
-import { node, NodeContext, Workflow } from "@google/adk";
+import { node, NodeContext, Workflow } from '@google/adk';
 
 interface Order {
   orderId: string;
@@ -31,16 +31,16 @@ interface Order {
 /** Stands in for loading orders from a database. */
 async function getOrders(): Promise<Order[]> {
   return [
-    { orderId: "a91", cartItems: ["keyboard", "mouse"] },
-    { orderId: "b02", cartItems: ["monitor"] },
-    { orderId: "c73", cartItems: ["dock", "cable", "hub"] },
+    { orderId: 'a91', cartItems: ['keyboard', 'mouse'] },
+    { orderId: 'b02', cartItems: ['monitor'] },
+    { orderId: 'c73', cartItems: ['dock', 'cable', 'hub'] },
   ];
 }
 
 const processOrder = node(
   (_ctx: NodeContext, order: Order) =>
     `order ${order.orderId}: ${order.cartItems.length} item(s) shipped`,
-  { name: "process_order" },
+  { name: 'process_order' },
 );
 
 const processAllOrders = node(
@@ -52,13 +52,13 @@ const processAllOrders = node(
     );
 
     const results = await Promise.all(processTasks);
-    return results.map((result) => result.output).join("\n");
+    return results.map((result) => result.output).join('\n');
   },
-  { name: "process_all_orders", rerunOnResume: true },
+  { name: 'process_all_orders', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", processAllOrders]],
+  name: 'root_agent',
+  edges: [['START', processAllOrders]],
 });
 // --8<-- [end:custom-execution-ids]

@@ -18,7 +18,7 @@
 // with the human's reply as its output.
 
 // --8<-- [start:human-input]
-import { node, NodeContext, RequestInput, Workflow } from "@google/adk";
+import { node, NodeContext, RequestInput, Workflow } from '@google/adk';
 
 /**
  * Pauses the workflow and waits for user input.
@@ -28,8 +28,8 @@ import { node, NodeContext, RequestInput, Workflow } from "@google/adk";
  * its output instead of the body running a second time to collect it.
  */
 const getUserApproval = node(
-  () => new RequestInput({ message: "Please approve this request (Yes/No)" }),
-  { name: "get_user_approval", rerunOnResume: false },
+  () => new RequestInput({ message: 'Please approve this request (Yes/No)' }),
+  { name: 'get_user_approval', rerunOnResume: false },
 );
 
 /** The orchestrator calling the interactive step. */
@@ -41,20 +41,20 @@ const handleProcess = node(
       return undefined;
     }
 
-    const userResponse = String(approval.output ?? "")
+    const userResponse = String(approval.output ?? '')
       .trim()
       .toLowerCase();
 
-    if (userResponse === "yes") {
-      return "Approved";
+    if (userResponse === 'yes') {
+      return 'Approved';
     }
-    return "Denied";
+    return 'Denied';
   },
-  { name: "handle_process", rerunOnResume: true },
+  { name: 'handle_process', rerunOnResume: true },
 );
 
 export const rootAgent = new Workflow({
-  name: "root_agent",
-  edges: [["START", handleProcess]],
+  name: 'root_agent',
+  edges: [['START', handleProcess]],
 });
 // --8<-- [end:human-input]

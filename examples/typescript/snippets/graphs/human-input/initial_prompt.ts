@@ -20,8 +20,8 @@
 // human's answer into that shape; the schema tells a client what to collect.
 
 // --8<-- [start:initial-prompt]
-import { node, NodeContext, RequestInput, Workflow } from "@google/adk";
-import { z } from "zod";
+import { node, NodeContext, RequestInput, Workflow } from '@google/adk';
+import { z } from 'zod';
 
 /** Asks the user for itinerary information. */
 const initialPrompt = node(
@@ -42,25 +42,25 @@ const initialPrompt = node(
       responseSchema: z.string(),
     });
   },
-  { name: "initial_prompt" },
+  { name: 'initial_prompt' },
 );
 
 const buildItinerary = node(
   (_ctx: NodeContext, nodeInput: string) => {
-    const [city = "your city"] = nodeInput.split(",");
+    const [city = 'your city'] = nodeInput.split(',');
     return (
       `Personalized itinerary for ${city.trim()}:\n` +
-      "  1. Morning walk through the old town\n" +
-      "  2. Lunch at a neighbourhood favourite\n" +
-      "  3. An afternoon activity matched to your hobby\n\n" +
+      '  1. Morning walk through the old town\n' +
+      '  2. Lunch at a neighbourhood favourite\n' +
+      '  3. An afternoon activity matched to your hobby\n\n' +
       `(based on: ${nodeInput.trim()})`
     );
   },
-  { name: "build_itinerary" },
+  { name: 'build_itinerary' },
 );
 
 export const rootAgent = new Workflow({
-  name: "concierge_workflow",
-  edges: [["START", initialPrompt, buildItinerary]],
+  name: 'concierge_workflow',
+  edges: [['START', initialPrompt, buildItinerary]],
 });
 // --8<-- [end:initial-prompt]

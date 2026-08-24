@@ -16,40 +16,40 @@
 // and then hands the next node an object keyed by predecessor node name.
 
 // --8<-- [start:fan-out-join]
-import { JoinNode, node, NodeContext, Workflow } from "@google/adk";
+import { JoinNode, node, NodeContext, Workflow } from '@google/adk';
 
 const parallelTaskA = node(
   (_ctx: NodeContext, text: string) => text.toUpperCase(),
-  { name: "parallel_task_A" },
+  { name: 'parallel_task_A' },
 );
 
 const parallelTaskB = node((_ctx: NodeContext, text: string) => text.length, {
-  name: "parallel_task_B",
+  name: 'parallel_task_B',
 });
 
 const parallelTaskC = node(
-  (_ctx: NodeContext, text: string) => text.split("").reverse().join(""),
-  { name: "parallel_task_C" },
+  (_ctx: NodeContext, text: string) => text.split('').reverse().join(''),
+  { name: 'parallel_task_C' },
 );
 
-const myJoinNode = new JoinNode({ name: "my_join_node" });
+const myJoinNode = new JoinNode({ name: 'my_join_node' });
 
 const finalTaskD = node(
   (_ctx: NodeContext, results: Record<string, unknown>) =>
     [
-      `Uppercase: ${results["parallel_task_A"]}`,
-      `Length:    ${results["parallel_task_B"]}`,
-      `Reversed:  ${results["parallel_task_C"]}`,
-    ].join("\n"),
-  { name: "final_task_D" },
+      `Uppercase: ${results['parallel_task_A']}`,
+      `Length:    ${results['parallel_task_B']}`,
+      `Reversed:  ${results['parallel_task_C']}`,
+    ].join('\n'),
+  { name: 'final_task_D' },
 );
 
 export const rootAgent = new Workflow({
-  name: "fan_out_workflow",
+  name: 'fan_out_workflow',
   edges: [
-    ["START", parallelTaskA, myJoinNode],
-    ["START", parallelTaskB, myJoinNode],
-    ["START", parallelTaskC, myJoinNode],
+    ['START', parallelTaskA, myJoinNode],
+    ['START', parallelTaskB, myJoinNode],
+    ['START', parallelTaskC, myJoinNode],
     [myJoinNode, finalTaskD],
   ],
 });

@@ -22,31 +22,31 @@ import {
   node,
   NodeContext,
   Workflow,
-} from "@google/adk";
+} from '@google/adk';
 
 const router = node(
   (_ctx: NodeContext, nodeInput: string) =>
     createEvent({
-      route: /bug|crash|error/i.test(nodeInput) ? "BUG" : "OTHER",
+      route: /bug|crash|error/i.test(nodeInput) ? 'BUG' : 'OTHER',
       output: nodeInput,
     }),
-  { name: "router" },
+  { name: 'router' },
 );
 
 const handleBug = node(
   (_ctx: NodeContext, nodeInput: string) => `Filed a bug for: ${nodeInput}`,
-  { name: "handle_bug" },
+  { name: 'handle_bug' },
 );
 
 const handleAnythingElse = node(
   (_ctx: NodeContext, nodeInput: string) => `No bug detected in: ${nodeInput}`,
-  { name: "handle_anything_else" },
+  { name: 'handle_anything_else' },
 );
 
 export const rootAgent = new Workflow({
-  name: "routing_output_workflow",
+  name: 'routing_output_workflow',
   edges: [
-    ["START", router],
+    ['START', router],
     [
       router,
       {

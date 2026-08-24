@@ -28,14 +28,14 @@ import {
   node,
   NodeContext,
   Workflow,
-} from "@google/adk";
-import { z } from "zod";
+} from '@google/adk';
+import { z } from 'zod';
 
 const flightSearchInputSchema = z.object({
   origin: z.string().describe('Origin airport code, e.g. "SFO".'),
   destination: z.string().describe('Destination airport code, e.g. "CDG".'),
   departureDate: z.string().describe('Departure date, e.g. "2026-03-15".'),
-  passengers: z.number().describe("Number of passengers."),
+  passengers: z.number().describe('Number of passengers.'),
 });
 type FlightSearchInput = z.infer<typeof flightSearchInputSchema>;
 
@@ -53,17 +53,17 @@ type FlightSearchOutput = z.infer<typeof flightSearchOutputSchema>;
 
 /** Stands in for a real flight-search API. */
 const searchFlightsApi = new FunctionTool({
-  name: "search_flights_api",
-  description: "Searches available flights for a route and date.",
+  name: 'search_flights_api',
+  description: 'Searches available flights for a route and date.',
   parameters: flightSearchInputSchema,
   execute: ({ origin, destination }) => [
     {
-      carrier: "AF",
+      carrier: 'AF',
       flightNumber: `AF${origin.length}${destination.length}0`,
       price: 812.4,
     },
     {
-      carrier: "UA",
+      carrier: 'UA',
       flightNumber: `UA${origin.length}${destination.length}1`,
       price: 947.0,
     },
@@ -78,22 +78,22 @@ const parseRequest = node(
       nodeInput.match(/(\d+)\s*(people|pax|passengers?)/i)?.[1],
     );
     return {
-      origin: codes[0] ?? "SFO",
-      destination: codes[1] ?? "CDG",
-      departureDate: date ?? "2026-03-15",
+      origin: codes[0] ?? 'SFO',
+      destination: codes[1] ?? 'CDG',
+      departureDate: date ?? '2026-03-15',
       passengers: Number.isFinite(passengers) ? passengers : 1,
     };
   },
-  { name: "parse_request", outputSchema: flightSearchInputSchema },
+  { name: 'parse_request', outputSchema: flightSearchInputSchema },
 );
 
 const flightSearcher = new LlmAgent({
-  name: "flight_searcher",
-  model: "gemini-flash-latest",
-  mode: "single_turn",
+  name: 'flight_searcher',
+  model: 'gemini-flash-latest',
+  mode: 'single_turn',
   instruction:
-    "Search for available flights with the search_flights_api tool and report " +
-    "every flight it returns plus the cheapest price.",
+    'Search for available flights with the search_flights_api tool and report ' +
+    'every flight it returns plus the cheapest price.',
   inputSchema: flightSearchInputSchema,
   outputSchema: flightSearchOutputSchema,
   tools: [searchFlightsApi],
@@ -104,15 +104,15 @@ const renderResults = node(
     `Cheapest: $${results.cheapestPrice}\n` +
     results.flights
       .map((f) => `  ${f.carrier} ${f.flightNumber} — $${f.price}`)
-      .join("\n"),
-  { name: "render_results", inputSchema: flightSearchOutputSchema },
+      .join('\n'),
+  { name: 'render_results', inputSchema: flightSearchOutputSchema },
 );
 
 export const rootAgent = new Workflow({
-  name: "flight_workflow",
+  name: 'flight_workflow',
   edges: [
     [
-      "START",
+      'START',
       parseRequest,
       node(flightSearcher, { inputSchema: flightSearchInputSchema }),
       renderResults,

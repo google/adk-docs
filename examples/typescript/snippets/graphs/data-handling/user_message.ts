@@ -17,35 +17,35 @@
 // `output` is for the next node.
 
 // --8<-- [start:user-message]
-import { createEvent, node, NodeContext, Workflow } from "@google/adk";
+import { createEvent, node, NodeContext, Workflow } from '@google/adk';
 
 /** Emits a user-facing message: `content`, with no `output`. */
 const message = (text: string) =>
-  createEvent({ content: { role: "model", parts: [{ text }] } });
+  createEvent({ content: { role: 'model', parts: [{ text }] } });
 
 const userMessage = node(
   async function* (_ctx: NodeContext, nodeInput: string) {
     yield message(`Beginning research process for "${nodeInput}"...`);
   },
-  { name: "user_message" },
+  { name: 'user_message' },
 );
 
 const research = node(
   async function* () {
-    yield message("Gathering sources...");
-    yield createEvent({ output: ["source-a", "source-b", "source-c"] });
+    yield message('Gathering sources...');
+    yield createEvent({ output: ['source-a', 'source-b', 'source-c'] });
   },
-  { name: "research" },
+  { name: 'research' },
 );
 
 const report = node(
   (_ctx: NodeContext, sources: string[]) =>
-    `Research complete. ${sources.length} sources: ${sources.join(", ")}.`,
-  { name: "report" },
+    `Research complete. ${sources.length} sources: ${sources.join(', ')}.`,
+  { name: 'report' },
 );
 
 export const rootAgent = new Workflow({
-  name: "user_message_workflow",
-  edges: [["START", userMessage, research, report]],
+  name: 'user_message_workflow',
+  edges: [['START', userMessage, research, report]],
 });
 // --8<-- [end:user-message]
