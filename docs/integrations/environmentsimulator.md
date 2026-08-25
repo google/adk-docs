@@ -1,7 +1,7 @@
 ---
 catalog_title: Environment Simulator
 catalog_description: Intercept tool calls to mock responses and inject faults for offline evaluation
-catalog_icon: /integrations/assets/environment-simulation.png
+catalog_icon: /integrations/assets/environmentsimulator.png
 catalog_tags: ["evaluation", "google"]
 ---
 
@@ -161,10 +161,10 @@ The root configuration object holds simulation parameters and internal model set
 | Field | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
 | `tool_simulation_configs` | `List[ToolSimulationConfig]` | `[]` | List of simulation rules per tool. Must contain at least one config. |
-| `simulation_model` | `str` | `"gemini-2.5-flash"` | The model used for tool connection analysis and mock generation. |
+| `simulation_model` | `str` | `gemini-flash-latest` | The model used for tool connection analysis and mock generation. |
 | `simulation_model_configuration` | `genai_types.GenerateContentConfig` | `ThinkingConfig(10240)` | Generation parameters passed to the simulation model. |
 | `tracing` | `Optional[str]` | `None` | Historical trace data in JSON string format providing context for mocks. |
-| `environment_data` | `Optional[str]` | `None` | Seed environment data (such as mock database tables) passed to mock strategies. |
+| `environment_data` | `Optional[str]` | `None` | Seed environment data, such as mock database tables, passed to mock strategies. |
 
 ### ToolSimulationConfig
 
@@ -191,7 +191,7 @@ Controls conditional fault injection and deterministic response overrides:
 
 When `MockStrategy.MOCK_STRATEGY_TOOL_SPEC` is enabled, the simulation engine uses `ToolConnectionAnalyzer` with the configured simulation model to inspect tool schemas and build a `ToolConnectionMap`.
 
-The analyzer identifies shared parameter dependencies across tools (such as an ID created by `create_ticket` and consumed by `get_ticket`), maintaining consistent state values throughout multi-turn agent interactions.
+The analyzer identifies shared parameter dependencies across tools, such as an ID created by `create_ticket` and consumed by `get_ticket`, maintaining consistent state values throughout multi-turn agent interactions.
 
 ## Additional resources
 
