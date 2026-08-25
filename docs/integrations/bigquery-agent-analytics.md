@@ -7,7 +7,7 @@ catalog_tags: ["observability", "google"]
 
 # BigQuery Agent Analytics plugin for ADK
 
-<div class="language-support-tag" title="Kotlin support covers invocation lifecycle logging only; see the Kotlin support note below.">
+<div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
 </div>
 
@@ -58,9 +58,9 @@ The plugin includes three reliability and observability fixes:
     For information on costs, see the [BigQuery
     documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
 
-!!! note "Kotlin support"
+??? note "Kotlin support"
 
-    The **Kotlin** plugin covers a small subset of this page. It logs
+    The **Kotlin** plugin supports subset of available features. It logs
     `INVOCATION_STARTING` and `INVOCATION_COMPLETED` only; it fills the identity
     columns and `content`, leaving `trace_id`, `span_id`, `latency_ms`,
     `attributes` and the rest null; and it creates **no views**, so the `v_*`
