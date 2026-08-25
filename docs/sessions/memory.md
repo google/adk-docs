@@ -52,8 +52,9 @@ to decide which is the best fit for your agent.
 | **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Knowledge Engine, the Agent Platform SDK (optional install). |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
 
-`VertexAiRagMemoryService` is only exported from `google.adk.memory` when the
-Agent Platform SDK is installed. Memory Bank and RAG-backed memory are
+You can always import `VertexAiRagMemoryService` from `google.adk.memory`, but
+constructing it raises `ImportError` unless the Agent Platform SDK is installed
+with `pip install google-adk[gcp]`. Memory Bank and RAG-backed memory are
 documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
 
 
@@ -597,6 +598,26 @@ For example, you can automate this step with a callback:
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
     ```
 
+### Write specific events or facts from a callback
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+</div>
+
+The `CallbackContext.addSessionToMemory` method is the default behavior for
+memory and saves the whole session of your agent. When you want finer control,
+`CallbackContext` also offers two more methods: `addEventsToMemory`, for a
+chosen subset of events, and `addMemory`, for facts you construct yourself.
+Both accept optional `customMetadata`, and both fill in the app, user and
+session from the current invocation.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:callback_memory_writes"
+```
+
+All three throw `IllegalStateException` if the runner has no memory service
+configured, so they fail at run time rather than at compile time.
+
 ## Extend memory capabilities
 
 Memory services extended from `BaseMemoryService` support adding sessions and
@@ -670,7 +691,7 @@ The memory workflow includes the following steps:
 6. **Results Returned:** The `MemoryService` searches its store, using keyword
    matching or semantic search, and returns matching snippets as a
    `SearchMemoryResponse` containing a list of `MemoryEntry` objects, each
-   holding `content`, and all optional: `author`, `timestamp`, and
+   holding `content`, and all optional: `id`, `author`, `timestamp`, and
    `custom_metadata`.
 7. **Agent Uses Results:** The tool returns these results to the agent, usually
    as part of the context or function response. The agent can then use this
