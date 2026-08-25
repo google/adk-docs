@@ -31,6 +31,57 @@ When metrics are enabled, ADK automatically instruments the agent's lifecycle, w
 | **`gen_ai.client.operation.duration`** | Histogram (seconds) | The latency of a single model `generate_content` call. | `gen_ai.agent.name`, `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, `gen_ai.response.model`, `error.type` |
 | **`gen_ai.client.token.usage`** | Histogram (tokens) | Token consumption per model call, split into input and output by `gen_ai.token.type`. | `gen_ai.agent.name`, `gen_ai.operation.name`, `gen_ai.provider.name`, `gen_ai.request.model`, `gen_ai.response.model`, `gen_ai.token.type` |
 
+### Experimental metrics
+
+ADK emits additional telemetry under the `adk.experimental.*` namespace, which covers span attributes as well as the metrics below. Nothing in it is part of an OpenTelemetry semantic convention yet, so names, attributes, and meaning can still change between releases. Explore them freely, and expect to revisit anything long-lived you build on them as the names settle.
+
+The metrics below aggregate token spend and call counts over a whole agent invocation or a whole workflow, the grain above the single model call that `gen_ai.client.*` measures, so you can ask what one turn cost without summing model calls yourself.
+
+They are off by default. To turn them on, set the environment variable:
+
+```bash
+export ADK_EXPERIMENTAL_TELEMETRY=true
+```
+
+You can also opt in per request, which takes precedence over the environment variable:
+
+```python
+from google.adk.agents.run_config import RunConfig
+from google.adk.telemetry import TelemetryConfig
+
+run_config = RunConfig(
+    telemetry=TelemetryConfig(adk_experimental_telemetry_opt_in=True)
+)
+```
+
+When neither is set, none of the metrics below are recorded.
+
+The eight `invoke_workflow` rows need one more thing: telemetry schema v2, which is the default on Vertex AI Agent Engine and off everywhere else. Set `ADK_TELEMETRY_SCHEMA_VERSION_OPT_IN=2` anywhere else, or those rows stay empty. The `invoke_agent` rows are unaffected, and an app built on the `Workflow` engine records per-node datapoints under either version.
+
+| Metric Name | Type | Description | Key Attributes (Dimensions) |
+| :--- | :--- | :--- | :--- |
+| **`adk.experimental.invoke_agent.input_tokens`** | Histogram (tokens) | Input (prompt) tokens summed over one agent invocation, including server-side tool results and cached prompt tokens. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_agent.output_tokens`** | Histogram (tokens) | Output (completion) tokens summed over one agent invocation, including reasoning tokens and the tokens spent emitting tool calls. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_agent.total_tokens`** | Histogram (tokens) | Input plus output tokens for one agent invocation. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_agent.cache_read.input_tokens`** | Histogram (tokens) | Input tokens served from a provider-managed cache, summed over one agent invocation. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_agent.reasoning.output_tokens`** | Histogram (tokens) | Output tokens spent on reasoning (chain-of-thought / extended thinking), summed over one agent invocation. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_agent.tool.input_tokens`** | Histogram (tokens) | Input tokens from server-side tool results the model fed back to itself within one request, such as code execution or search grounding. Zero for client-side function tools. | `gen_ai.agent.name` |
+| **`adk.experimental.invoke_workflow.input_tokens`** | Histogram (tokens) | The `input_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.output_tokens`** | Histogram (tokens) | The `output_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.total_tokens`** | Histogram (tokens) | The `total_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.cache_read.input_tokens`** | Histogram (tokens) | The `cache_read.input_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.reasoning.output_tokens`** | Histogram (tokens) | The `reasoning.output_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.tool.input_tokens`** | Histogram (tokens) | The `tool.input_tokens` above, summed across every agent that ran in one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.inference_calls`** | Histogram (count) | The number of inference (model) calls made across one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+| **`adk.experimental.invoke_workflow.tool_calls`** | Histogram (count) | The number of tool calls made across one workflow invocation. | `adk.experimental.root_agent.name`, `gen_ai.workflow.name`, `gen_ai.workflow.nested` (nested workflows only) |
+
+!!! warning
+    A nested workflow records a datapoint of its own, and its totals are also
+    folded into every workflow enclosing it, so summing an `invoke_workflow`
+    metric across all datapoints double counts.
+
+`gen_ai.workflow.nested` is set only on nested workflows, so excluding it leaves the outermost workflow alone, and that datapoint covers the whole turn. The workflow metrics carry no agent dimension, since a value spanning a whole workflow cannot be attributed to a single agent. They carry two names instead: `gen_ai.workflow.name` joins to `gen_ai.invoke_workflow.duration`, while `adk.experimental.root_agent.name` identifies the app, and the two disagree when a turn enters at a sub-agent.
+
 ---
 
 ## Metrics export setup
