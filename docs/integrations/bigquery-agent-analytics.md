@@ -60,10 +60,10 @@ The plugin includes three reliability and observability fixes:
 
 ??? note "Kotlin support"
 
-    The **Kotlin** plugin supports subset of available features. It logs
-    `INVOCATION_STARTING` and `INVOCATION_COMPLETED` only; it fills the identity
-    columns and `content`, leaving `trace_id`, `span_id`, `latency_ms`,
-    `attributes` and the rest null; and it creates **no views**, so the `v_*`
+    The **Kotlin** plugin supports a subset of the available features. It logs
+    `INVOCATION_STARTING` and `INVOCATION_COMPLETED` only. The plugin fills the 
+    identity columns and `content`, leaving `trace_id`, `span_id`, `latency_ms`,
+    `attributes` and the rest null. It creates **no views**, so the `v_*`
     views in the table below do not exist for Kotlin. Auto Schema Upgrade, tool
     provenance, HITL tracing, drop stats and the ADK 2.0 workflow events are not
     implemented.
