@@ -34,3 +34,9 @@ snippets/integrations/RagEngine.kt
 snippets/plugins/CountInvocationPlugin.kt
 snippets/context/CacheMetadataExample.kt
 snippets/a2a/A2AConsumer.kt
+snippets/tools/overview/ToolsetExample.kt
+snippets/tools/overview/WeatherSentiment.kt
+snippets/tools/overview/UserPreferenceTools.kt
+snippets/tools/overview/CustomerSupport.kt
+snippets/tools/overview/DocAnalysisTools.kt
+snippets/tools/overview/OrderTools.kt
