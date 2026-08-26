@@ -34,19 +34,28 @@ const router = node(
   { name: 'router' },
 );
 
+/**
+ * Upper-cases the first letter of each word.
+ *
+ * Unicode-aware on purpose: `\b\w` is ASCII-only, so `ü` never matches — and
+ * the word boundary it creates before the *next* ASCII letter upper-cases that
+ * one instead ("strässe" -> "SträSse"). A letter whose uppercase form is more
+ * than one code point (German `ß` -> "SS") is left alone rather than mangled.
+ */
+const titleCase = (text: string) =>
+  text.replace(/(^|\P{L})(\p{L})/gu, (_match, sep: string, ch: string) => {
+    const upper = ch.toUpperCase();
+    return sep + ([...upper].length === 1 ? upper : ch);
+  });
+
 const workflowB = new Workflow({
   name: 'workflow_B',
   edges: [
     [
       'START',
-      node(
-        (_ctx: NodeContext, text: string) =>
-          text.replace(
-            /(^|\P{L})(\p{L})/gu,
-            (_m, sep: string, ch: string) => sep + ch.toUpperCase(),
-          ),
-        { name: 'b_title_case' },
-      ),
+      node((_ctx: NodeContext, text: string) => titleCase(text), {
+        name: 'b_title_case',
+      }),
       node((_ctx: NodeContext, text: string) => `[B] ${text}`, {
         name: 'b_frame',
       }),

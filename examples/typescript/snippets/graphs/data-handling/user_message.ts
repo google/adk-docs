@@ -31,7 +31,7 @@ const userMessage = node(
 );
 
 const research = node(
-  async function* () {
+  async function* (_ctx: NodeContext) {
     yield message('Gathering sources...');
     yield createEvent({ output: ['source-a', 'source-b', 'source-c'] });
   },
