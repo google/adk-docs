@@ -60,19 +60,18 @@ The plugin includes three reliability and observability fixes:
 
 ??? note "Kotlin support"
 
-    The **Kotlin** plugin supports a subset of the available features. It logs
-    `INVOCATION_STARTING` and `INVOCATION_COMPLETED` only. The plugin fills the 
-    identity columns and `content`, leaving `trace_id`, `span_id`, `latency_ms`,
-    `attributes` and the rest null. It creates **no views**, so the `v_*`
-    views in the table below do not exist for Kotlin. Auto Schema Upgrade, tool
-    provenance, HITL tracing, drop stats and the ADK 2.0 workflow events are not
-    implemented.
+    The **Kotlin** plugin logs invocation lifecycle events. It writes an
+    `INVOCATION_STARTING` row when an invocation begins and an
+    `INVOCATION_COMPLETED` row when it ends, and creates the partitioned,
+    clustered events table on first use if it does not already exist.
 
-    It also ingests differently: rows go one at a time through
-    `tabledata.insertAll`, synchronously on the invocation path, not through the
-    gRPC Storage Write API described above. Those are separate billing lines:
-    inserted rows are charged with a 1 KB minimum each and no monthly free tier,
-    so cost scales with invocation count rather than bytes.
+    Rows are inserted one at a time through `tabledata.insertAll`, synchronously
+    on the invocation path, rather than through the Storage Write API used by
+    Python and Java.
+
+    The following are not implemented in Kotlin: LLM, tool, agent, state, HITL
+    and A2A events; the ADK 2.0 workflow events; automatic view creation; Auto
+    Schema Upgrade; tool provenance; GCS offloading; and drop statistics.
 
 ## Use cases
 
@@ -104,6 +103,10 @@ The following table lists all event types the plugin logs. For detailed payload
 examples, see [Event types and payloads](#event-types). The **View** column
 shows the BigQuery view optionally created when
 [`create_views`](#configuration-options) is enabled (the default).
+
+In **Kotlin**, the plugin logs `INVOCATION_STARTING` and `INVOCATION_COMPLETED`
+only and creates no views, so the other rows and the entire **View** column
+apply to Python and Java.
 
 | Event Type | Captured When | Key Payload Fields | View |
 | --- | --- | --- | --- |
@@ -223,22 +226,18 @@ shows the BigQuery view optionally created when
     --8<-- "examples/kotlin/snippets/integrations/BigQueryAnalyticsExample.kt:quickstart"
     ```
 
-    `BigQueryLoggerConfig` is the whole Kotlin configuration surface —
-    `projectId`, `datasetId`, `enabled` (default `true`), `location` (default
-    `"US"`, passed to the BigQuery client), `tableName` (default
-    `"agent_events"`) and `credentials` (default: application default
-    credentials). The options under [Configuration
-    options](#configuration-options) are Python and Java only.
+    The plugin creates the events table on first use, so the credentials in
+    scope need permission to create a table in the dataset, not only to insert
+    rows. Set `location` to your dataset's location; it defaults to `"US"`. For
+    the full set of options, see [Configuration
+    options](#configuration-options).
 
-    **Logging failures are swallowed.** If the table cannot be created or a row
-    cannot be inserted, the plugin logs and the invocation continues, so a
-    misconfigured agent looks healthy while writing nothing. When rows are
-    missing, raise the log level for
+    Logging never fails the turn: if the table cannot be created or a row cannot
+    be inserted, the plugin logs the error and the invocation continues. When
+    rows are missing, enable logging for
     `com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin` —
-    logs are emitted under that class name, not under the plugin's ADK name.
-    Note also that Kotlin writes `content` as
-    `{"message": "Invocation started"}` rather than the `{}` shown for these two
-    event types below.
+    logs are emitted under that class name, not under the plugin's ADK name
+    (`bigquery_agent_analytics`).
 
 
 ### Run and test agent
@@ -755,6 +754,44 @@ account) under which the agent is running needs these Google Cloud roles:
     BigQueryAgentAnalyticsPlugin plugin = new BigQueryAgentAnalyticsPlugin(config);
     ```
 
+=== "Kotlin"
+
+    In Kotlin, all configuration is managed via the `BigQueryLoggerConfig` data
+    class, which the plugin takes as its only required argument.
+
+    #### BigQueryLoggerConfig properties
+
+    | Option | Type | Default | Use when |
+    | --- | --- | --- | --- |
+    | `projectId` | `String` | *(required)* | Select the Google Cloud project |
+    | `datasetId` | `String` | *(required)* | Select the BigQuery dataset |
+    | `enabled` | `Boolean` | `true` | Temporarily disable logging |
+    | `location` | `String` | `"US"` | Match the BigQuery dataset location (for example, `"EU"` or `"us-central1"`) |
+    | `tableName` | `String` | `"agent_events"` | Use a custom table name |
+    | `credentials` | `Credentials?` | `null` | Use explicit service-account credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
+
+    The following code sample shows how to define a configuration for the
+    BigQuery Agent Analytics plugin in Kotlin:
+
+    ```kotlin
+    import com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin
+    import com.google.adk.kt.plugins.agentanalytics.BigQueryLoggerConfig
+
+    val config =
+        BigQueryLoggerConfig(
+            projectId = "my-project",
+            datasetId = "my_dataset",
+            location = "EU",
+            tableName = "agent_events",
+        )
+
+    val plugin = BigQueryAgentAnalyticsPlugin(config = config)
+    ```
+
+    The options listed under the **Python** and **Java** tabs, such as batching,
+    content formatting, event allowlists, GCS offloading, and view creation, do
+    not exist in Kotlin.
+
 
 ## Schema and production setup
 
@@ -762,6 +799,11 @@ account) under which the agent is running needs these Google Cloud roles:
 
 The events table (`agent_events`) uses a flexible schema. The following table
 provides a comprehensive reference with example values.
+
+In **Kotlin**, the plugin creates the table with these same columns but
+populates only `timestamp`, `event_type`, `agent`, `session_id`,
+`invocation_id`, `user_id`, and `content`. The remaining columns are always
+null.
 
 | Field Name | Type | Mode | Description | Example Value |
 | --- | --- | --- | --- | --- |
@@ -1113,6 +1155,10 @@ updated by tools).
 | `AGENT_COMPLETED` | `{}` |
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
 | `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
+
+In **Kotlin**, the two invocation events carry a summary message instead of an
+empty object: `{"message": "Invocation started"}` and
+`{"message": "Invocation completed"}`.
 
 **AGENT_RESPONSE**
 
