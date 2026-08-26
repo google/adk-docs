@@ -4,15 +4,13 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.3.10</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-## What is Model Context Protocol (MCP)?
-
-The **Model Context Protocol (MCP)** is an open standard for connecting Large Language Models (LLMs) to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
+The **Model Context Protocol (MCP)** is an open standard for connecting generative AI models to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
 
 ---
 
 ## Core architecture and concepts
 
-MCP follows a client-server architecture, defining how data or resources, interactive templates or prompts, and actionable functions or tools are exposed by an MCP server and consumed by an MCP client, which could be an LLM host application or an AI agent.
+MCP follows a client-server architecture, defining how data or resources, interactive templates or prompts, and actionable functions or tools are exposed by an MCP server and consumed by an MCP client, which could be an LLM host application or an AI agent. In ADK, you use the McpToolset class as an interface between MCP Servers and ADK agents. It is also possible to configure an ADK server as an MCP server for use by other client systems.
 
 ```mermaid
 sequenceDiagram
@@ -35,8 +33,6 @@ sequenceDiagram
 ## Prerequisites and setup rules
 
 Before you begin, ensure you have the following set up:
-
-### Checklist
 
 - **ADK Installed**: Complete standard ADK setup in your project environment.
 - **Runtime Requirements**: Python 3.10+ or Java 17+.
@@ -65,38 +61,35 @@ Before you begin, ensure you have the following set up:
 
 ---
 
-## Key considerations
+## MCP Implementation options
 
- When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents.
-
-### Compare tools
+ When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents. The following table works as a comparative guide to help you construct those agents.
 
 | Dimension | **Direct MCP Tool Integration** (`McpToolset`) | **Specialized Sub-Agent Delegation** (`AgentTool`) | **Agent-Exposed MCP Server** (`to_mcp_server`) |
 | :--- | :--- | :--- | :--- |
 | **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). |
 | **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. | **Isolated**: The external caller only receives the final aggregated response text/blocks. |
-| **Cognitive Load & Model Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. | Independent model reasoning dedicated solely to the wrapped task. |
-| **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | **Higher Cost & Variable Latency**: Multiplies LLM calls, sub-agent reasoning turns before returning to parent. | Client-driven; latency depends on internal agent execution depth. |
+| **AI Model Load and Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. | Independent model reasoning dedicated solely to the wrapped task. |
+| **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | **Higher Cost & Variable Latency**: Multiple LLM calls, sub-agent reasoning turns before returning to parent. | Client-driven; latency depends on internal agent execution depth. |
 | **Ideal Use Cases** | <ul><li>Deterministic API integrations: Postgres, BigQuery, GitHub, Google Maps.</li><li>File system operations & static resource reading.</li><li>Reusing standard pre-built community MCP servers.</li></ul> | <ul><li>Multi-step autonomous workflows requiring trial-and-error. For example: code debugging or research synthesis.</li><li>Tasks needing isolated personas or specialized instructions.</li><li>Scenarios with >20 tools where schema overload harms accuracy.</li></ul> | <ul><li>Exposing complex ADK multi-agent capabilities to external MCP-compliant ecosystems.</li><li>Integrating ADK agents into IDEs, editors, or A2A pipelines.</li></ul> |
 
 !!! note "State restoration"
 
-    While your agent preserves its session state during lifecycle events, it **does not** automatically re-establish active MCP connections upon restoration. It will re-initialize the connection as needed.
+    While ADK agents preserve session state during lifecycle events, they do not automatically re-establish active MCP connections upon restoration. Agents re-initialize connections as needed.
 
 ## Universal Setup Rules
 
   1. **Absolute Paths**: File system MCP servers require absolute path arguments: `os.path.abspath(...)`. Relative paths cause runtime resolution errors in subprocesses.
   2. **Package Discovery**: When running `adk web`, ensure an `__init__.py` file exists inside your agent folder so ADK can import the package.
-  3. **Windows Async Bug**: If you encounter `_make_subprocess_transport NotImplementedError` on Windows, start `adk web` with the `--no-reload` flag.
 
-## Understand uses and integrations
+### Understand uses and integrations
 
 There are two main integration patterns:
 
   1. **Use existing MCP Servers within ADK**: When an ADK agent acts as an MCP client.
   1. **Expose ADK Tools via an MCP Server**: When you build an MCP server that wraps ADK Tools to make them accessible to any MCP Client.
 
-### Use existing MCP Servers within ADK
+## Use existing MCP Servers within ADK
 
 The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
@@ -285,7 +278,7 @@ Unlike the previous local process example, this pattern connects your agent to a
     
 ---
 
-## Expose ADK Tools via a Custom MCP Server
+## Expose ADK Tools with MCP Server
 
 You can make ADK capabilities accessible to external MCP clients, such as Claude Desktop, IDEs, or custom hosts, in two ways:
 
