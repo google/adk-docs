@@ -232,7 +232,10 @@ manually read and write session state keys for data transfer.
     ```
 
     You can also pass specific data schemas using a defined class and configure
-    input and output schemas, similar to graph-based workflow nodes:
+    input and output schemas, similar to graph-based workflow nodes. To bind
+    named function parameters from input rather than workflow state, set
+    `parameter_binding="node_input"` and pass a dictionary whose keys match
+    the function's parameters:
 
     ```python
     from google.adk import Agent
@@ -244,7 +247,7 @@ manually read and write session state keys for data transfer.
         time_info: str  # time information
         city: str       # city name
 
-    @node
+    @node(parameter_binding="node_input")
     def city_time_function(city: str):
         """Simulate returning the current time in a specified city."""
         return CityTime(time_info="10:10 AM", city=city)
@@ -258,7 +261,9 @@ manually read and write session state keys for data transfer.
 
     @node # workflow node
     async def city_workflow(ctx: Context):
-        city_time = await ctx.run_node(city_time_function, "Paris")
+        city_time = await ctx.run_node(
+            city_time_function, node_input={"city": "Paris"}
+        )
         report_text = await ctx.run_node(city_report_agent, city_time)
 
         return report_text
@@ -299,7 +304,9 @@ as you can with graph-based workflows.
     @node # workflow node
     async def city_workflow(ctx: Context):
         city = await ctx.run_node(city_generator_agent)
-        city_time = await ctx.run_node(city_time_function, city)
+        city_time = await ctx.run_node(
+            city_time_function, node_input={"city": city}
+        )
         report_text = await ctx.run_node(city_report_agent, city_time)
 
         return report_text
