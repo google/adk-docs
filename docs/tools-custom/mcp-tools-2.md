@@ -65,36 +65,32 @@ Before you begin, ensure you have the following set up:
 
  When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents. The following table works as a comparative guide to help you construct those agents.
 
-| Dimension | **Direct MCP Tool Integration** (`McpToolset`) | **Specialized Sub-Agent Delegation** (`AgentTool`) | **Agent-Exposed MCP Server** (`to_mcp_server`) |
+| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](#agent-exposed-mcp-server-to_mcp_server) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](#specialized-sub-agent-delegation-agenttool) |
 | :--- | :--- | :--- | :--- |
-| **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). |
-| **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. | **Isolated**: The external caller only receives the final aggregated response text/blocks. |
-| **AI Model Load and Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. | Independent model reasoning dedicated solely to the wrapped task. |
-| **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | **Higher Cost & Variable Latency**: Multiple LLM calls, sub-agent reasoning turns before returning to parent. | Client-driven; latency depends on internal agent execution depth. |
-| **Ideal Use Cases** | <ul><li>Deterministic API integrations: Postgres, BigQuery, GitHub, Google Maps.</li><li>File system operations & static resource reading.</li><li>Reusing standard pre-built community MCP servers.</li></ul> | <ul><li>Multi-step autonomous workflows requiring trial-and-error. For example: code debugging or research synthesis.</li><li>Tasks needing isolated personas or specialized instructions.</li><li>Scenarios with >20 tools where schema overload harms accuracy.</li></ul> | <ul><li>Exposing complex ADK multi-agent capabilities to external MCP-compliant ecosystems.</li><li>Integrating ADK agents into IDEs, editors, or A2A pipelines.</li></ul> |
+| **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. |
+| **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Isolated**: The external caller only receives the final aggregated response text/blocks. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. |
+| **AI Model Load and Tiering** | Single model must understand all tool schemas, validation constraints, and workflow state simultaneously. | Independent model reasoning dedicated solely to the wrapped task. | Enables **model tiering**, for example: `gemini-2.5-pro` for orchestrator, and `gemini-2.5-flash` for sub-agent tool execution with dedicated system instructions. |
+| **Latency & Token Cost** | **Lower Cost & Predictable Latency**: 1 LLM turn + 1 deterministic tool invocation + 1 response generation turn. | Client-driven; latency depends on internal agent execution depth. | **Higher Cost & Variable Latency**: Multiple LLM calls, sub-agent reasoning turns before returning to parent. |
+| **Ideal Use Cases** | <ul><li>Deterministic API integrations: Postgres, BigQuery, GitHub, Google Maps.</li><li>File system operations & static resource reading.</li><li>Reusing standard pre-built community MCP servers.</li></ul> | <ul><li>Exposing complex ADK multi-agent capabilities to external MCP-compliant ecosystems.</li><li>Integrating ADK agents into IDEs, editors, or A2A pipelines.</li></ul> | <ul><li>Multi-step autonomous workflows requiring trial-and-error. For example: code debugging or research synthesis.</li><li>Tasks needing isolated personas or specialized instructions.</li><li>Scenarios with >20 tools where schema overload harms accuracy.</li></ul> |
 
 !!! note "State restoration"
 
     While ADK agents preserve session state during lifecycle events, they do not automatically re-establish active MCP connections upon restoration. Agents re-initialize connections as needed.
 
-## Universal Setup Rules
+## Understand uses and integrations
 
-  1. **Absolute Paths**: File system MCP servers require absolute path arguments: `os.path.abspath(...)`. Relative paths cause runtime resolution errors in subprocesses.
-  2. **Package Discovery**: When running `adk web`, ensure an `__init__.py` file exists inside your agent folder so ADK can import the package.
+There are three main integration patterns:
+1. **Direct MCP Tool Integration**: When an ADK agent acts as an MCP client using `McpToolset`.
+2. **Agent-Exposed MCP Server**: When you build an MCP server that wraps ADK Tools using `to_mcp_server`.
+3. **Specialized Sub-Agent Delegation**: When an agent delegates to a sub-agent using `AgentTool`.
+   
 
-### Understand uses and integrations
-
-There are two main integration patterns:
-
-  1. **Use existing MCP Servers within ADK**: When an ADK agent acts as an MCP client.
-  1. **Expose ADK Tools via an MCP Server**: When you build an MCP server that wraps ADK Tools to make them accessible to any MCP Client.
-
-## Use existing MCP Servers within ADK
+### Direct MCP Tool Integration (McpToolset)
 
 The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
 
-### Example: Local Stdio Transport (FileSystem MCP)
+#### Example: Local Stdio Transport (FileSystem MCP)
 
 This example sets up an ADK agent that connects to a local MCP file system server; it instantiates the McpToolset directly within the agent's tools list to enable file management capabilities.
 
@@ -201,7 +197,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
 
 ---
 
-### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
+#### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
 
 Before starting, follow the instructions for [Google Maps Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) to enable the service on your Google Cloud project and generate your Maps Platform API Key.
 Unlike the previous local process example, this pattern connects your agent to a remote, cloud-hosted MCP server using Server-Sent Events (SSE). It uses the Google Maps Grounding Lite service to demonstrate how to pass authentication headers, such as an API key, to a scalable endpoint.
@@ -278,7 +274,7 @@ Unlike the previous local process example, this pattern connects your agent to a
     
 ---
 
-## Expose ADK Tools with MCP Server
+### Agent-Exposed MCP Server (to_mcp_server)
 
 You can make ADK capabilities accessible to external MCP clients, such as Claude Desktop, IDEs, or custom hosts, in two ways:
 
@@ -287,7 +283,7 @@ You can make ADK capabilities accessible to external MCP clients, such as Claude
 
 ---
 
-### Expose an entire ADK Agent (`to_mcp_server`)
+#### Expose an entire ADK Agent (`to_mcp_server`)
 Use ADK's native `to_mcp_server()` utility to wrap an existing `LlmAgent` into a standard FastMCP server:
 
 ```python
@@ -310,7 +306,7 @@ if __name__ == "__main__":
 
 ---
 
-### Expose individual Tools
+#### Expose individual Tools
 
 If you only want to expose individual ADK tools without the full agent reasoning loop, wrap FunctionTool inside an MCP Server:
 
@@ -321,7 +317,34 @@ Install the MCP Server library in the same environment as your ADK installation:
      ```bash
      pip install mcp
      ```
+
+### Specialized Sub-Agent Delegation (AgentTool)
+
+The `AgentTool` pattern involves wrapping an MCP Server inside a dedicated sub-agent, and then providing that sub-agent to your main agent as a tool. 
+
+While powerful, **this is the least recommended pattern for standard implementations** due to the added complexity and performance overhead. It should generally be reserved for advanced, multi-agent architectures.
+
+#### Architectural Trade-offs
+Before choosing this pattern, consider the following drawbacks:
+* **Increased Latency & Cost:** Every time the parent agent needs to use an MCP tool, it must generate a prompt to the sub-agent. The sub-agent then executes the tool call and summarizes the result back. This "double-hop" adds significant latency and increases token consumption.
+* **Context Fragmentation:** The sub-agent only knows what the parent agent explicitly tells it. If the parent agent fails to pass relevant conversational context, the sub-agent might fail to execute the MCP tool correctly.
+* **Prompting Complexity:** You must carefully craft instructions for *both* agents—teaching the parent when to delegate, and teaching the sub-agent how to utilize the MCP server.
+
+#### When to use this pattern
+Despite its drawbacks, delegating MCP servers to a sub-agent is highly effective in a few specific scenarios:
+
+1. **Tool Overload (Cognitive Routing):** If your main agent already has dozens of tools, adding an entire MCP server's toolkit might overwhelm the LLM's cognitive capacity or exceed context limits. Hiding the MCP server behind a single `Database_Agent` or `DevOps_Agent` tool simplifies the parent's decision-making.
+2. **Multi-Step Reasoning Loops:** If using the MCP server requires autonomous trial-and-error (e.g., querying a database, getting an error, and rewriting the SQL), a sub-agent can handle that isolated reasoning loop without cluttering the parent agent's context window.
+3. **Security and Sandboxing:** If the MCP server exposes sensitive operations, placing it behind a sub-agent with a highly restrictive system instruction ensures the main agent (which interacts directly with unpredictable user input) cannot easily manipulate the tools.
+
+#### Implementation Overview
+To implement this pattern, you combine `McpToolset` and `AgentTool`:
+1. Initialize your MCP connection (e.g., HTTP or Stdio).
+2. Create a specific `LlmAgent` (the sub-agent) and attach the `McpToolset` to it.
+3. Wrap that sub-agent in an `AgentTool`.
+4. Provide the `AgentTool` to your root agent.
      
+
 ### Build the MCP server with ADK tools
 
 1. Create a new Python file for your MCP server, for example: `my_adk_mcp_server.py`.
@@ -400,7 +423,7 @@ if __name__ == "__main__":
         print("\nMCP Server (stdio) stopped by user.")
 ```
 
-#### Test your custom MCP server with an ADK Agent
+### Test your custom MCP server with an ADK Agent
 
 To test your custom server, you need to build an ADK agent that acts as a client. This agent uses the `McpToolset` to establish a connection to the server script you just created.
 
@@ -656,4 +679,4 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
 
 ## Further resources
 
-Once you understand the basics, explore [Advanced use cases](/advanced-mcp-tools) for complex implementations and custom integrations.
+Once you understand the basics, explore [Advanced use cases](/mcp-tools-advanced) for complex implementations and custom integrations.
