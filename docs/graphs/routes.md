@@ -113,11 +113,11 @@ objects.
 === "TypeScript"
 
     In ADK TypeScript v2.0.0, the primary node type is a `FunctionNode`,
-    built by passing a plain function to `node()`. A handler always takes
-    `(ctx, input)`; nothing is injected by parameter name. Returning a bare
-    value boxes it into an event's `output` for you, and returning
-    `createEvent({output})` is the explicit form — useful when you also need
-    to set `route` or `content`:
+    created by passing a function to `node()`. A handler always takes
+    `(ctx, input)` parameters; ADK does not inject values by parameter name.
+    Returning a value directly wraps it in the event's `output` field.
+    Returning `createEvent({output})` is the explicit form, which you need
+    when you also set `route` or `content`:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/function_node.ts:function-node"
@@ -170,16 +170,17 @@ A sequential route runs each node once, in the listed order.
 
 === "TypeScript"
 
-    An `edges` row starting with `'START'` runs each listed node once, in
-    order, forwarding every node's return value to the next one:
+    An `edges` row that starts with `'START'` runs each listed node once, in
+    order, and passes every node's return value to the next node:
 
     ```typescript
     edges: [['START', taskANode]]                       // a single node
     edges: [['START', taskANode, taskBNode, taskCNode]] // three, in order
     ```
 
-    Listing `'START'` in more than one row fans out into parallel paths
-    instead — see [fan out and join](#parallel-tasks-fan-out-and-join-paths).
+    Listing `'START'` in more than one row creates parallel paths instead.
+    For more information, see
+    [fan out and join](#parallel-tasks-fan-out-and-join-paths).
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/sequence.ts:sequence"
@@ -236,11 +237,12 @@ A sequential route runs each node once, in the listed order.
 
 === "TypeScript"
 
-    Branching is a node that emits a `route`, plus an edge row mapping each
-    route value to the node that handles it. Route values may be strings,
-    numbers or booleans, and `DEFAULT_ROUTE` matches when no other route on
-    the same source node did. A branch target is anything node-like:
-    `taskBNode` below is an `LlmAgent`, `taskCNode` a plain function.
+    Branching requires a node that emits a `route` value, and an edge row
+    that maps each route value to the node that handles it. Route values can
+    be strings, numbers, or booleans. The `DEFAULT_ROUTE` setting matches
+    when no other route on the same source node matches. A branch target can
+    be any node-like value: in this example, `taskBNode` is an `LlmAgent`
+    and `taskCNode` is a function.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/branches.ts:branches"
@@ -342,31 +344,15 @@ before passing results to the next step.
     ]
     ```
 
-    !!! warning "Caution: Stuck JoinNode from incomplete nodes"
-
-        The ***JoinNode*** object proceeds only after all its upstream nodes
-        have provided an Event output. If one of the upstream nodes fails to
-        provide output, the JoinNode is stuck and workflow execution stops.
-        Make sure to include failsafe output from any node that outputs to a
-        ***JoinNode***.
-
 === "TypeScript"
 
-    A `JoinNode` is the fan-in barrier. It waits for every predecessor and
-    then hands its successor a record keyed by predecessor node name:
+    A `JoinNode` is the fan-in barrier. This logic mechanism waits for every
+    predecessor task to complete, and then passes its successor a record
+    keyed by predecessor node name:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/fan_out_join.ts:fan-out-join"
     ```
-
-    !!! warning "Caution: Stuck JoinNode from incomplete nodes"
-
-        The barrier waits for every predecessor to **complete**, not to
-        produce an output. A predecessor that finishes without one still
-        releases the join and arrives in the record as its name mapped to
-        `undefined`, so reading a field off it throws somewhere downstream,
-        far from the node that skipped it. Give anything feeding a join an
-        output of its own, and a `retryConfig` if it can fail.
 
 === "Go"
 
@@ -402,13 +388,14 @@ before passing results to the next step.
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"
     ```
 
-    !!! warning "Caution: Stuck JoinNode from incomplete nodes"
+!!! warning "Caution: nodes that feed a JoinNode must produce output"
 
-        `workflow.NewJoinNode` proceeds only after every predecessor node has
-        emitted an `event.Output`. If a predecessor fails without emitting
-        output, the JoinNode is stuck and workflow execution stops. Attach a
-        `RetryConfig` to flaky predecessor nodes to guard against transient
-        failures.
+    A `JoinNode` releases only after all of its predecessor nodes finish.
+    Give every node that feeds a join an output of its own, and attach a
+    retry configuration to any node that can fail. A predecessor that
+    finishes without an output leaves the join with no value for that
+    branch, and the resulting failure appears downstream, away from the node
+    that caused it.
 
 ## Nested workflows
 
@@ -451,8 +438,8 @@ accomplish this goal.
 
 === "TypeScript"
 
-    A `Workflow` is itself a node, so it can be dropped straight into
-    another workflow's edges to encapsulate a reusable sub-process:
+    A `Workflow` is itself a node, so you can use one inside another
+    workflow's edges to encapsulate a reusable sub-process:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/nested_workflow.ts:nested-workflow"
@@ -529,21 +516,13 @@ lifecycle on each iteration.
 
 === "TypeScript"
 
-    A loop is a **back-edge**: a downstream node routes back to an earlier
-    node, and the engine re-activates that node with a fresh lifecycle on
-    each iteration. The loop exits when the router picks the terminal
-    branch instead:
+    A loop is a back-edge: a downstream node routes back to an earlier node,
+    and the engine re-activates that node with a fresh lifecycle on each
+    iteration. The loop exits when the router selects the terminal branch:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/routes/loop_escalation.ts:loop-escalation"
     ```
-
-    !!! warning "Caution: Unbounded graph cycles"
-
-        A graph cycle is not capped by the framework. Make sure the exit
-        condition always becomes true, or bound the loop yourself with a
-        [dynamic workflow](/graphs/dynamic/#loop-route), where the
-        iteration is an ordinary loop you control.
 
 === "Go"
 
@@ -555,3 +534,10 @@ lifecycle on each iteration.
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
     ```
+
+!!! warning "Caution: unbounded graph cycles"
+
+    A graph cycle is not bounded automatically. Make sure the exit condition
+    eventually becomes true, or express the iteration as a
+    [dynamic workflow](/graphs/dynamic/#loop-route), where the loop runs in
+    your own code and you control its bound.

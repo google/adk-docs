@@ -33,17 +33,17 @@ receives it as its typed input.
     In ADK TypeScript v2.0.0, nodes exchange data through events. The key
     fields for node data handling are:
 
-    -   **`output`**: the value handed to the next node. Return it bare and
-        it is boxed into an event for you, or set it explicitly with
-        `createEvent({output})`.
-    -   **`content`**: a user-facing message. The runtime renders it, and
-        the graph does *not* forward it to the next node.
-    -   **`route`**: the routing key(s) that select which conditional edge
-        to follow.
+    -   **`output`**: the value passed to the next node. Return a value
+        directly and ADK wraps it in an event, or set the field explicitly
+        with `createEvent({output})`.
+    -   **`content`**: a message for the user. The runtime renders this
+        field, but the graph does not pass it to the next node.
+    -   **`route`**: the routing keys that select which conditional edge to
+        follow.
 
-    Session state is separate from the event: a node reads and writes it
+    Session state is separate from the event. A node reads and writes state
     through `ctx.state`, and the accumulated delta is attached to that
-    node's events. State keys may carry a prefix that controls their
+    node's events. State keys can carry a prefix that controls their
     lifetime and scope:
 
     | Prefix | Scope |
@@ -117,8 +117,8 @@ Each step in a workflow produces output for its successor.
 === "TypeScript"
 
     There are three equivalent ways to produce a node's output: return a
-    bare value, return `createEvent({output})`, or yield events from an
-    async generator when you want to stream progress alongside the result.
+    value directly, return `createEvent({output})`, or yield events from an
+    async generator to stream progress alongside the result.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/node_output.ts:node-output"
@@ -126,10 +126,10 @@ Each step in a workflow produces output for its successor.
 
     !!! warning "Caution: emit `output` from one event per execution"
 
-        Nothing enforces this, so getting it wrong is silent. A node may
-        yield any number of events carrying `output`, each overwrites the
-        last, and the successor receives only the final value. Carry
-        progress on `content` instead.
+        A node can yield any number of events carrying `output`, and ADK
+        does not raise an error in this case. Each event overwrites the
+        previous one, and the successor node receives only the final value.
+        Use `content` for progress messages instead.
 
 === "Go"
 
@@ -175,11 +175,11 @@ Each step in a workflow produces output for its successor.
 
 === "TypeScript"
 
-    `output` is not limited to text. Any serializable value flows to the
-    next node, which receives it as a typed object — no JSON parsing and no
-    state reads. Attaching an `outputSchema` to the producer, or an
-    `inputSchema` to the consumer, makes the contract explicit and
-    validates it at runtime:
+    The `output` field is not limited to text. Any serializable value is
+    passed to the next node, which receives it as a typed object, with no
+    JSON parsing or state reads required. Attaching an `outputSchema` to the
+    producing node, or an `inputSchema` to the consuming node, makes the
+    contract explicit and validates it at runtime:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/structured_output.ts:structured-output"
@@ -215,9 +215,9 @@ Each step in a workflow produces output for its successor.
 
 === "TypeScript"
 
-    `route` is independent of `output`, so one event can both select a
-    branch and forward a payload to it. `DEFAULT_ROUTE` catches everything
-    no other branch matched:
+    The `route` value is independent of `output`, so one event can both
+    select a branch and forward a payload to it. The `DEFAULT_ROUTE` setting
+    catches any value that no other branch matched:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/routing_output.ts:routing-output"
@@ -250,10 +250,10 @@ Each step in a workflow produces output for its successor.
 
 === "TypeScript"
 
-    A message for the human is the event's `content`. The runtime renders
-    it and the graph does **not** hand it to the next node — `content` is
-    for the user, `output` is for the next node. A node can emit both, as
-    two events of which only one carries `output`:
+    A message for the user is the event's `content` field. The runtime
+    renders `content`, but the graph does not pass it to the next node. Use
+    `content` for the user and `output` for the next node. A node can emit
+    both by sending two events, where only one carries `output`:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/user_message.ts:user-message"
@@ -316,9 +316,9 @@ inside tools and callbacks regardless of which agent style you use.
 
 === "TypeScript"
 
-    State is written through `ctx.state`, not returned. A write is visible
-    to every later node in the same run and is committed with the writing
-    node's events:
+    Write state through `ctx.state` rather than returning it. A write is
+    visible to every later node in the same run, and is committed with the
+    writing node's events:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/session_state.ts:session-state"
@@ -327,11 +327,10 @@ inside tools and callbacks regardless of which agent style you use.
     !!! warning "Caution: `state` data limitations"
 
         Session state is a lightweight key-value store. Do not use it to
-        move large payloads between nodes — use artifacts or a database
-        tool for those. Passing a value along an edge as node `output` is
-        also the better choice when only the next node needs it; reach for
-        state when a value has to outlive the run, or be read by a tool, a
-        callback, or `{key}` instruction templating.
+        move large payloads between nodes; use artifacts or a database tool
+        instead. When only the next node needs a value, pass it along the
+        edge as node `output`. Use state when a value must outlive the run,
+        or be read by a tool, a callback, or `{key}` instruction templating.
 
 === "Go"
 
@@ -402,16 +401,17 @@ accepted and produced by any agent node.
 
 === "TypeScript"
 
-    Schemas are Zod objects, or a genai `Schema`. Where the schema goes
-    matters:
+    Schemas are Zod objects or a genai `Schema`. The location of the schema
+    determines its effect:
 
-    -   `LlmAgent.outputSchema` forces the model to answer in that shape.
-    -   `LlmAgent.inputSchema` is only consulted when the agent is exposed
-        as a **tool**. Inside a graph, the schema that validates a node's
-        input belongs on the node: `node(agent, {inputSchema})`.
+    -   The `LlmAgent.outputSchema` option requires the model to answer in
+        that shape.
+    -   The `LlmAgent.inputSchema` option applies only when the agent is
+        exposed as a tool. Inside a graph, set the schema that validates a
+        node's input on the node itself, using `node(agent, {inputSchema})`.
 
-    Agents in a graph must run in `single_turn` (the default) or `task`
-    mode.
+    Agents in a graph must run in `single_turn` mode, which is the default,
+    or `task` mode.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/schemas.ts:schemas"
@@ -483,14 +483,14 @@ accepted and produced by any agent node.
 
     Two data-selection forms are available inside an agent instruction:
 
-    -   `{Class.field}` reads a field off **this** node's input.
-    -   `<Class.field from source_node>` reads a field off a named
-        predecessor's output. It is more restrictive, and unambiguous when
-        several upstream nodes share a field name.
+    -   The `{Class.field}` form reads a field from this node's input.
+    -   The `<Class.field from source_node>` form reads a field from a named
+        predecessor's output. Use this form when several upstream nodes
+        share a field name.
 
-    Both are distinct from `{state_key}`, which reads session state. The
-    `Class.` prefix is documentation only — resolution uses the field name
-    after the dot.
+    Both forms are distinct from `{state_key}`, which reads session state.
+    The `Class.` prefix is documentation only; resolution uses the field
+    name after the dot.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/data-handling/structured_access.ts:structured-access"

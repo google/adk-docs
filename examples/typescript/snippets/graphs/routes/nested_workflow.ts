@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// A `Workflow` is itself a node, so it can be dropped straight into another
-// workflow's edges to encapsulate a reusable sub-process.
+// A `Workflow` is itself a node, so you can use one inside another workflow's
+// edges to encapsulate a reusable sub-process.
 
 // --8<-- [start:nested-workflow]
 import { createEvent, node, NodeContext, Workflow } from '@google/adk';

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // Passing data in a dynamic workflow is simpler than in a graph: `ctx.runNode()`
-// hands you the child's result directly, so there are no session-state keys to
-// read and write just to move a value one step downstream.
+// returns the child's result directly, so there are no session-state keys to
+// read and write to move a value one step downstream.
 
 // --8<-- [start:data-handling]
 import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';

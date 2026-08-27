@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// This is where dynamic workflows earn their keep: the iteration is an ordinary
-// loop, not a back-edge you have to reason about. Values live in local
-// variables; state is written only where an agent's instruction template needs
-// to read it back (`{code}`, `{findings}`).
+// A dynamic workflow defines the iteration as an ordinary loop rather than a
+// back-edge in a graph. Values are held in local variables, and state is
+// written only where an agent's instruction template needs to read it back
+// (`{code}`, `{findings}`).
 
 // --8<-- [start:loop-route]
 import { LlmAgent, node, NodeContext, Workflow } from '@google/adk';

@@ -103,13 +103,13 @@ function, and the final agent reports the information.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array whose
-    rows list the nodes to run in order. `node()` wraps a function, an
-    agent, a tool, or another `Workflow` as a graph node, and is where you
-    attach the node's name and its `inputSchema` / `outputSchema`
-    contracts — schemas are Zod objects, or a genai `Schema`. Each node's
-    return value is handed to the next node as its input, so no session
-    state writes are needed.
+    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array. Each row
+    lists the nodes to run in order. The `node()` function wraps a function,
+    an agent, a tool, or another `Workflow` as a graph node, and sets the
+    node's name and its `inputSchema` and `outputSchema` contracts. Schemas
+    are Zod objects or a genai `Schema`. Each node's return value is passed
+    to the next node as its input, so you do not need to write to session
+    state.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/index/get_started.ts:get-started"
@@ -211,11 +211,11 @@ translated into a graph-based agent:
 === "TypeScript"
 
     In ADK TypeScript v2.0.0, a router node returns an event carrying a
-    `route` value, built with `createEvent({route})`. A second edge row
-    maps each route value to the node that handles it. Setting `route` to
-    an *array* dispatches to every matching branch, which is what lets the
-    classifier below reply with more than one category, and `DEFAULT_ROUTE`
-    catches anything no branch matched.
+    `route` value, created with `createEvent({route})`. A second edge row
+    maps each route value to the node that handles it. Setting `route` to an
+    array dispatches to every matching branch, which lets the classifier in
+    this example return more than one category. The `DEFAULT_ROUTE` setting
+    catches any value that no branch matched.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/index/process_pipeline.ts:process-pipeline"

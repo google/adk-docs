@@ -68,21 +68,23 @@ workflow containing a single node with a function:
 
 === "TypeScript"
 
-    TypeScript has no `@node` decorator. `node(fn, options)` is the factory
-    form, and `ctx.runNode()` is the equivalent of `ctx.run_node()`:
+    TypeScript has no `@node` decorator. Use the `node(fn, options)` factory
+    function instead. The `ctx.runNode()` method is the equivalent of
+    `ctx.run_node()`:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/get_started.ts:get-started"
     ```
 
-    Two things to know going in:
+    When you write an orchestrator node, two details affect how you read
+    results and how the workflow behaves after a pause:
 
-    -   `ctx.runNode()` resolves to a node **result**, not the output
-        directly — read `.output`.
+    -   The `ctx.runNode()` method resolves to a node result, not to the
+        output value. Read the `.output` property to get the value.
     -   An orchestrator that calls `ctx.runNode()` must set
-        `rerunOnResume: true`, so its body re-runs on resume and
-        already-finished children are replayed from their checkpoints
-        rather than executed again.
+        `rerunOnResume: true`. This setting causes the node body to re-run
+        on resume, so already-finished children are replayed from their
+        checkpoints instead of being executed again.
 
 === "Go"
 
@@ -145,26 +147,28 @@ run within a workflow.
 
 === "TypeScript"
 
-    There are two ways to build a node: the `node(fn, options)` factory,
-    and the explicit `new FunctionNode(name, fn, config)` constructor.
-    Reach for the constructor when you are wrapping a function from another
-    library, need several differently-configured nodes from one function,
-    or keep node references in a registry for advanced orchestration.
+    There are two ways to build a node: the `node(fn, options)` factory
+    function, and the explicit `new FunctionNode(name, fn, config)`
+    constructor. Use the constructor when you are wrapping a function from
+    another library, need several differently configured nodes from one
+    function, or keep node references in a registry for advanced
+    orchestration.
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/nodes.ts:node-forms"
     ```
 
-    The most important option is `rerunOnResume`, which controls what
-    happens when a workflow resumes after a human-in-the-loop pause:
+    In this code sample, the most important option is `rerunOnResume`, which
+    controls what happens when a workflow resumes after a human-in-the-loop
+    pause:
 
-    -   **`true` (re-entry):** the node body is re-run from the top. Use
-        this for any orchestrator that calls `ctx.runNode()` — the body
-        re-executes and already-completed child activations are skipped
+    -   **`true` (re-entry):** the node body re-runs from the top. Use this
+        setting for any orchestrator that calls `ctx.runNode()`. The body
+        re-executes, and already-completed child activations are skipped
         automatically.
     -   **`false` (handoff, the leaf default):** the resume payload is
         routed to the node's successor as input, bypassing the interrupted
-        node entirely.
+        node.
 
 === "Go"
 
@@ -239,9 +243,9 @@ execution logic (order and paths) for those nodes.
 
 === "TypeScript"
 
-    The orchestrator is an ordinary async function that awaits
-    `ctx.runNode()` for each child step, wrapped as a node with
-    `rerunOnResume: true` and used as the graph's only edge:
+    The orchestrator is an async function that awaits `ctx.runNode()` for
+    each child step. Wrap it as a node with `rerunOnResume: true` and use it
+    as the graph's only edge:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/nodes.ts:workflows"
@@ -317,17 +321,17 @@ manually read and write session state keys for data transfer.
 
 === "TypeScript"
 
-    `ctx.runNode()` hands you the child's result directly, so there are no
-    session-state keys to read and write just to move a value one step
-    downstream. It accepts anything node-like, including an `LlmAgent`,
-    without wrapping it in `node()` first:
+    The `ctx.runNode()` function returns the child's result directly, so
+    there are no session-state keys to read and write to move a value one
+    step downstream. This function accepts any node-like value, including an
+    `LlmAgent`, without wrapping it in `node()` first:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/data_handling.ts:data-handling"
     ```
 
-    Schemas work the same as in a graph — attach them to the nodes you
-    run, as the [sequence route](#sequence-route) below does.
+    Schemas work the same way as in a graph. Attach them to the nodes you
+    run, as shown in the [sequence route](#sequence-route) section.
 
 === "Go"
 
@@ -372,8 +376,8 @@ as you can with graph-based workflows.
 
 === "TypeScript"
 
-    A sequential route is just awaiting `ctx.runNode()` calls one after
-    another — each finishes before the next starts:
+    A sequential route awaits `ctx.runNode()` calls one after another. Each
+    call finishes before the next one starts:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/sequence_route.ts:sequence-route"
@@ -442,11 +446,11 @@ workflows offer much more flexibility to define the routing logic you need.
 
 === "TypeScript"
 
-    This is where dynamic workflows earn their keep: the iteration is an
-    ordinary loop, not a back-edge you have to reason about. Values live in
-    local variables, and state is written only where an agent's instruction
-    template needs to read it back. Unlike a graph cycle, the loop is
-    trivially bounded, so a stubborn model cannot spin forever:
+    Dynamic workflows can help keep workflow logic simple by defining an
+    iteration as an ordinary loop rather than a back-edge in a graph. Values
+    are held in local variables, and state is written only where an agent's
+    instruction template needs to read it back. Unlike a graph cycle, the
+    loop is bounded by its loop condition:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/loop_route.ts:loop-route"
@@ -500,10 +504,11 @@ Dynamic workflows in ADK can support parallel execution.
 
 === "TypeScript"
 
-    `ctx.runNode()` returns a promise, so starting every child before
-    awaiting any of them runs them concurrently, and `Promise.all` gathers
-    the results. Run ids are assigned in call order, so kick the children
-    off in a synchronous loop to keep them deterministic across a resume:
+    The `ctx.runNode()` method returns a promise, so starting every child
+    before awaiting any of them runs the children concurrently, and
+    `Promise.all` collects the results. Run IDs are assigned in call order,
+    so start the children in a synchronous loop to keep the IDs
+    deterministic across a resume:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/parallel_route.ts:parallel-route"
@@ -511,12 +516,12 @@ Dynamic workflows in ADK can support parallel execution.
 
     !!! tip "Tip: prefer the built-in parallel worker"
 
-        When the shape is simply "map one node over a list", use
-        `node(worker, {parallelWorker: true, maxParallelWorkers: 4})`. It
-        does the fan-out for you and bounds concurrency (default 8).
-        Hand-rolling it, as above, is for when you need custom scheduling
-        or partial-failure handling. On resume, only failed or interrupted
-        workers re-execute either way.
+        To run one node over each item in a list, use
+        `node(worker, {parallelWorker: true, maxParallelWorkers: 4})`. This
+        option performs the fan-out and bounds concurrency, which defaults
+        to 8. Use the manual approach shown above when you need custom
+        scheduling or partial-failure handling. On resume, only failed or
+        interrupted workers re-execute in both cases.
 
 === "Go"
 
@@ -587,10 +592,12 @@ Dynamic workflows in ADK can also include human input or human in the loop
 
     !!! important "Important: check `interruptIds` before deciding"
 
-        `ctx.runNode()` does **not** throw when a child interrupts. It
-        resolves with a result whose `interruptIds` are populated and whose
-        `output` is still `undefined`, so an orchestrator that does not
-        check will decide on an answer the human never gave.
+        The `ctx.runNode()` method does **not** throw an error when a child
+        node interrupts. It returns normally, with the `interruptIds`
+        property of the result populated and the `output` property still
+        `undefined`. Check `interruptIds` before you use the result. An
+        orchestrator that skips this check treats the missing output as an
+        answer and continues with a value the user never supplied.
 
 === "Go"
 
@@ -671,9 +678,9 @@ and logically remain the same for the input.
 
 === "TypeScript"
 
-    Pass `{runId}` as a trailing option to `ctx.runNode()`. The id must
-    contain at least one non-numeric character so it cannot collide with
-    the auto-generated sequential ids:
+    Pass a `runId` as a trailing option to `ctx.runNode()`. The ID must
+    contain at least one non-numeric character so it does not collide with
+    the auto-generated sequential IDs:
 
     ```typescript
     --8<-- "examples/typescript/snippets/graphs/dynamic/custom_run_ids.ts:custom-execution-ids"
