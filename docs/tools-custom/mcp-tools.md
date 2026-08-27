@@ -676,3 +676,7 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
   ]
 
 ```
+
+## Further resources
+
+Once you understand the basics, explore [Advanced use cases](/mcp-tools-advanced) for complex implementations and custom integrations.
