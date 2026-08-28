@@ -607,7 +607,7 @@ schema definitions.
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:schema_example"
     ```
 
-    `format` accepts only the values the model allows for the field's type. For
+    The `format` field accepts only the values the model allows for the field's type. For
     the accepted values, see the Gemini [`Schema`
     reference](https://ai.google.dev/api/caching#Schema).
 
