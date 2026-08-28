@@ -207,14 +207,14 @@ You can modify the behavior of the confirmation requirement by using a function 
 
 === "Kotlin"
 
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/confirmation/dynamic/ReimbursementTools.kt:dynamic_confirmation"
+    ```
+
     !!! note
         The `@Tool` annotation's `requireConfirmation` flag is a compile-time
         constant, so a threshold is evaluated inside the tool using the
         `ToolContext`, as in ADK Java.
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/tools/confirmation/dynamic/ReimbursementTools.kt:dynamic_confirmation"
-    ```
 
 ## Advanced confirmation {#advanced-confirmation}
 
