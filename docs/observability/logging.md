@@ -217,6 +217,21 @@ To get detailed logs of agent activity (user messages, model requests/responses,
 --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
 ```
 
+#### Full debug capture to a file
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+To record the same activity in full, as YAML appended to `adk_debug.yaml` rather than truncated console output, use the `DebugLoggingPlugin`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
+```
+
+!!! warning
+    The output file holds raw prompts, tool arguments and session state. Treat it as sensitive.
+
 ### Go programmatic setup
 
 In Go, ADK uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry
