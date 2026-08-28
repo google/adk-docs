@@ -273,6 +273,121 @@ LLM. The LLM will not be aware of them and cannot pass arguments to them. It's
 best to rely on explicitly defined parameters for all data you expect from the
 LLM.
 
+##### Configure JSON schema tool declarations
+
+ADK generates JSON schemas from your function signatures using Pydantic for model function declarations. This feature (`JSON_SCHEMA_FOR_FUNC_DECL`) is **enabled by default** in ADK. 
+
+You can explicitly control or override this behavior using environment variables or directly in Python.
+
+###### Option 1: Configure via Command Line
+
+Set the appropriate environment variable in your terminal before launching your agent process:
+
+=== "macOS/Linux"
+
+    ```bash
+    export ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+    
+=== "Windows (Command Prompt)"
+
+    ```cmd
+    set ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+    
+=== "Windows (PowerShell)"
+
+    ```powershell
+    $env:ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL="1"
+    ```
+
+To disable JSON schema generation and fall back to legacy manual type parsing:
+
+=== "macOS/Linux"
+
+    ```bash
+    export ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+
+=== "Windows (Command Prompt)"
+
+    ```cmd
+    set ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+
+=== "Windows (PowerShell)"
+
+    ```powershell
+    $env:ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL="1"
+    ```
+
+###### Option 2: Configure in Python
+
+Use ADK's `override_feature_enabled` function before creating tools and agents:
+
+```python
+import asyncio
+from google.adk.features import FeatureName, override_feature_enabled
+from google.adk.agents import Agent
+from google.adk.tools import FunctionTool
+
+# Programmatically enable or disable the feature
+override_feature_enabled(FeatureName.JSON_SCHEMA_FOR_FUNC_DECL, True)
+
+def get_current_weather(location: str, unit: str = "celsius") -> str:
+    """Get the current weather for a given location.
+    
+    Args:
+        location: The city and state, e.g. San Francisco, CA
+        unit: Temperature unit ('celsius' or 'fahrenheit')
+    """
+    return f"Weather in {location}: 22° {unit.capitalize()}"
+
+async def main():
+    weather_tool = FunctionTool(func=get_current_weather)
+    
+    agent = Agent(
+        model="gemini-2.5-flash",
+        name="my_agent",
+        instruction="You are a helpful assistant.",
+        tools=[weather_tool]
+    )
+    # Execution logic here
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Alternatively, set the environment variable in your script before initializing agent components:
+
+```python
+import os
+import asyncio
+
+os.environ["ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL"] = "1"
+
+from google.adk.agents import Agent
+from google.adk.tools import FunctionTool
+
+def get_current_weather(location: str) -> str:
+    """Get the current weather for a given location."""
+    return f"Weather in {location}: 20°C"
+
+async def main():
+    weather_tool = FunctionTool(func=get_current_weather)
+    
+    agent = Agent(
+        model="gemini-2.5-flash",
+        name="my_agent",
+        instruction="You are a helpful assistant.",
+        tools=[weather_tool]
+    )
+    # Execution logic here
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 #### Context injection
 
 Context injection allows your custom functions to access the agent's
