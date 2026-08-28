@@ -611,7 +611,7 @@ schema definitions.
     the accepted values, see the Gemini [`Schema`
     reference](https://ai.google.dev/api/caching#Schema).
 
-    `default` must hold a JSON-native value. ADK's own `Json` serializes one,
+    The `default` field must contain a JSON-native value. ADK's own `Json` serializes one,
     but a hand-rolled serializer without a contextual `Any` serializer does not.
 
 ### Manage agent context
