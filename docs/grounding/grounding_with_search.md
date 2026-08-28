@@ -14,7 +14,7 @@ Before creating a grounded agent, you must have an existing Agent Search Data St
 
 ## Authentication Setup
 
-**Note: Agent Search requires Google Cloud Platform (Agent Platform) authentication. Google AI Studio is not supported for this tool.**
+Agent Search requires your ADK agent to be connected to a Google Cloud project authentication. You can not use a Gemini API Key from Google AI Studio when using this tool. For more information on connecting your ADK agent to Google Cloud projects, see the [Connect to Google Cloud](/get-started/google-cloud/) guide.
 
 * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
 * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
