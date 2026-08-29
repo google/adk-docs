@@ -70,7 +70,7 @@ val metadataConfig =
 // --8<-- [end:custom_metadata]
 
 // --8<-- [start:streaming_config]
-// Kotlin has no supportCfc equivalent; the other tabs set it alongside these.
+// Note: Kotlin currently has no supportCfc equivalent
 val streamingConfig =
     RunConfig(
         streamingMode = StreamingMode.SSE,
