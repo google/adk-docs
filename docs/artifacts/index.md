@@ -163,7 +163,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List versions`: Lists all available version numbers for a specific artifact filename.
     * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
-* **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Kotlin) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
 === "Python"
 
