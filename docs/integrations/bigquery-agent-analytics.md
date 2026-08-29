@@ -800,11 +800,6 @@ account) under which the agent is running needs these Google Cloud roles:
 The events table (`agent_events`) uses a flexible schema. The following table
 provides a comprehensive reference with example values.
 
-In **Kotlin**, the plugin creates the table with these same columns but
-populates only `timestamp`, `event_type`, `agent`, `session_id`,
-`invocation_id`, `user_id`, and `content`. The remaining columns are always
-null.
-
 | Field Name | Type | Mode | Description | Example Value |
 | --- | --- | --- | --- | --- |
 | **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
@@ -823,6 +818,11 @@ null.
 | **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
+
+In **Kotlin**, the plugin creates the table with these same columns but
+populates only `timestamp`, `event_type`, `agent`, `session_id`,
+`invocation_id`, `user_id`, and `content`. The remaining columns are always
+null.
 
 The plugin automatically creates the table if it does not exist. For production,
 you can optionally create the table manually using the DDL below.
