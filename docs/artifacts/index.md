@@ -103,7 +103,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 *   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
     *   An in-memory service for testing or temporary storage (e.g., `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
     *   A service for persistent storage using Google Cloud Storage (GCS) (e.g., `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
-    *   A service that persists artifacts to a directory on the local filesystem (e.g., `FileArtifactService` in Kotlin, which takes the base directory as its only argument).
+    *   A service that persists artifacts to a directory on the local filesystem, such as `FileArtifactService` in Kotlin, which takes the base directory as its only argument.
     The chosen service implementation handles versioning automatically when you save data.
 
 ## Why Use Artifacts?
