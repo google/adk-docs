@@ -72,7 +72,7 @@ The following examples show how to enable boolean confirmation:
     # This implementation method requires minimal code, but is limited to simple
     # approvals from the user or confirming system. For a complete example of this
     # approach, see the following code sample for a more detailed example:
-    # https://github.com/google/adk-python/blob/main/contributing/samples/human_tool_confirmation/agent.py
+    # https://github.com/google/adk-python/blob/main/contributing/samples/hitl/human_tool_confirmation/agent.py
     ```
 
 === "TypeScript"
