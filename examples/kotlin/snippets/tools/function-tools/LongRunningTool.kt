@@ -6,12 +6,10 @@ import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 import com.google.adk.kt.events.Event
 import com.google.adk.kt.models.Gemini
-import com.google.adk.kt.runners.Runner
+import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.FunctionResponse
 import com.google.adk.kt.types.Part
-import com.google.adk.kt.types.Role
-import kotlinx.coroutines.flow.toList
 
 // --8<-- [start:long_running_tool]
 data class ReimbursementApproval(
@@ -56,75 +54,52 @@ fun main() {
 // --8<-- [end:long_running_tool]
 
 // --8<-- [start:call_reimbursement_tool]
+private fun printText(event: Event) {
+    val text = event.content?.parts?.mapNotNull { it.text }?.joinToString("").orEmpty()
+    if (text.isNotEmpty()) println("[${event.author}]: $text")
+}
 
-/**
- * Drives the approval from the client side.
- *
- * `askForApproval` is long running, so its return value is only a `pending`
- * placeholder: the real decision arrives out of band and is handed back on a
- * later turn as a `FunctionResponse`.
- *
- * What turn 1 looks like depends on the app. Because this tool returns a value
- * rather than `Unit`, a non-resumable app emits the placeholder as a function
- * response and calls the model a second time, so the user sees an interim reply
- * before the decision exists. A resumable app pauses on the function call
- * instead, with no second model call.
- */
-suspend fun approveReimbursement(
-    runner: Runner,
+suspend fun callReimbursementAgent(
+    runner: InMemoryRunner,
     userId: String,
     sessionId: String,
+    query: String,
 ) {
-    val firstTurn =
-        runner
-            .runAsync(
-                userId = userId,
-                sessionId = sessionId,
-                newMessage = Content.fromText(Role.USER, "Please reimburse 200 USD for meals."),
-            ).toList()
-    firstTurn.printText()
-
-    // A pending call is one whose id the event also lists in longRunningToolIds.
-    val pendingCall =
-        firstTurn.firstNotNullOfOrNull { event ->
-            event.functionCalls().firstOrNull { it.id != null && it.id in event.longRunningToolIds }
-        }
-    if (pendingCall == null) {
-        println("The model answered without calling the tool; nothing to approve.")
-        return
-    }
-
-    // The id is not optional bookkeeping: the framework matches the response to
-    // the original call by id, and a missing or unknown one throws rather than
-    // degrading. It also tells a resumable app which invocation to resume, so no
-    // invocationId argument is needed here.
-    val approval =
-        Content(
-            role = Role.USER,
-            parts =
-                listOf(
-                    Part(
-                        functionResponse =
-                            FunctionResponse(
-                                name = pendingCall.name,
-                                id = pendingCall.id,
-                                response = mapOf("status" to "approved", "approver" to "Sean Zhou"),
-                            ),
-                    ),
-                ),
-        )
+    var pendingCallId: String? = null
+    var pendingResponse: FunctionResponse? = null
 
     runner
         .runAsync(
             userId = userId,
             sessionId = sessionId,
-            newMessage = approval,
-        ).toList()
-        .printText()
-}
+            newMessage = Content(role = "user", parts = listOf(Part(text = query))),
+        ).collect { event ->
+            val callId = pendingCallId
+            if (callId == null) {
+                // A long-running call is the one whose id the event lists in longRunningToolIds.
+                pendingCallId =
+                    event
+                        .functionCalls()
+                        .firstOrNull { it.id != null && it.id in event.longRunningToolIds }
+                        ?.id
+            } else {
+                event
+                    .functionResponses()
+                    .firstOrNull { it.id == callId }
+                    ?.let { pendingResponse = it }
+            }
+            printText(event)
+        }
 
-private fun List<Event>.printText() =
-    forEach { event ->
-        event.content?.parts?.forEach { part -> part.text?.let(::println) }
-    }
+    // The tool returned "pending" and the invocation paused. Resume it by sending the
+    // outcome back as a FunctionResponse carrying the same id.
+    val paused = pendingResponse ?: return
+    val updated = paused.copy(response = mapOf("status" to "approved"))
+    runner
+        .runAsync(
+            userId = userId,
+            sessionId = sessionId,
+            newMessage = Content(role = "user", parts = listOf(Part(functionResponse = updated))),
+        ).collect(::printText)
+}
 // --8<-- [end:call_reimbursement_tool]
