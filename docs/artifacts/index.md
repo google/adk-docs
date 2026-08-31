@@ -103,6 +103,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 *   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
     *   An in-memory service for testing or temporary storage (e.g., `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
     *   A service for persistent storage using Google Cloud Storage (GCS) (e.g., `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
+    *   A service that persists artifacts to a directory on the local filesystem, such as `FileArtifactService` in Kotlin, which takes the base directory as its only argument.
     The chosen service implementation handles versioning automatically when you save data.
 
 ## Why Use Artifacts?
@@ -162,7 +163,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List versions`: Lists all available version numbers for a specific artifact filename.
     * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
-* **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
 === "Python"
 
