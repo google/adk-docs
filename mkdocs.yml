@@ -462,3 +462,4 @@ nav:
 
   - ADK 2.0:
     - 2.0/index.md
+    - Agent pattern migration: 2.0/agent-pattern-migration.md

@@ -301,6 +301,7 @@ go get google.golang.org/adk@v1
 
 Read the developer guides for building agents with ADK 2.0 features:
 
+-   [**Agent pattern migration**](agent-pattern-migration.md) (SequentialAgent / ParallelAgent / LoopAgent to Workflow)
 -   [**Graph-based workflows**](/graphs/)
 -   [**Collaborative agents**](/workflows/collaboration/)
 -   [**Dynamic workflows**](/graphs/dynamic/)
