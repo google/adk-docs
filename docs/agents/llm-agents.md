@@ -475,10 +475,10 @@ schema definitions.
     Using `output_schema` with `tools` in the same LLM request is only supported
     by specific models, including [Gemini
     3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
-    For other models, workarounds using [function
-    tools](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py))
-    in ADK may not work reliably. In such cases, consider using sub-agents that
-    handle output formatting separately.
+    For other models, ADK falls back to a [`set_model_response` function
+    tool](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)
+    to collect the structured output, which may not work reliably. In such
+    cases, consider using sub-agents that handle output formatting separately.
 
 - **`output_key` (Optional):** Provide a string key. If set, the text content of
   the agent's *final* response will be automatically saved to the session's
@@ -489,6 +489,27 @@ schema definitions.
     - In Java: `session.state().put(outputKey, agentResponseText)`
     - In Golang, within a callback handler: `ctx.State().Set(output_key,
       agentResponseText)`
+
+    When `output_schema` is also set, the *parsed* response is stored instead of
+    the text: a `dict` in Python, and a `Map` in Java and Kotlin.
+
+!!! note "Schema validation in Java and Kotlin"
+
+    Java and Kotlin check the response against the *structure* of the schema —
+    `type`, `required`, `nullable`, `anyOf` and `items` (see
+    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
+    Constraint fields such as `pattern`, `minLength` and `minimum` are sent to
+    the model as part of the schema, but ADK does not re-check them, so the
+    model decides whether to honor them. Python validates against a Pydantic
+    model, which does enforce the constraints declared on it.
+
+    Java and Kotlin accept only a top-level object schema; a top-level array or
+    primitive fails validation. Python also supports list and primitive output
+    schemas.
+
+    If the response fails validation, ADK logs the error and stores the raw
+    response string under `output_key` instead of the parsed object (see
+    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
 === "Python"
 
@@ -573,6 +594,25 @@ schema definitions.
             // Cannot use tools(getCapitalCity) effectively here
             .build();
     ```
+
+=== "Kotlin"
+
+    The input and output schema is ADK's own `com.google.adk.kt.types.Schema`,
+    not the same-named type in the GenAI SDK. Starting with ADK Kotlin v0.8.0,
+    the JSON schema includes constraints for the following fields: `pattern`,
+    `minLength`, `maxLength`, `minimum`, `maximum`, `minItems`, `maxItems`,
+    `format`, `nullable`, `default`, `anyOf` and `title`.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:schema_example"
+    ```
+
+    The `format` field accepts only the values the model allows for the field's type. For
+    the accepted values, see the Gemini [`Schema`
+    reference](https://ai.google.dev/api/caching#Schema).
+
+    The `default` field must contain a JSON-native value. ADK's own `Json` serializes one,
+    but a hand-rolled serializer without a contextual `Any` serializer does not.
 
 ### Manage agent context
 
