@@ -679,6 +679,12 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:call_reimbursement_tool"
+    ```
+
 ??? "Python complete example: File Processing Simulation"
 
     ```python
