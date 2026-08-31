@@ -40,3 +40,4 @@ snippets/tools/overview/UserPreferenceTools.kt
 snippets/tools/overview/CustomerSupport.kt
 snippets/tools/overview/DocAnalysisTools.kt
 snippets/tools/overview/OrderTools.kt
+snippets/sessions/RewindExample.kt
