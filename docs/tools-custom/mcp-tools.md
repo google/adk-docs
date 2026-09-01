@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.3.10</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The **Model Context Protocol (MCP)** is an open standard for connecting generative AI models to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
@@ -65,7 +65,7 @@ Before you begin, ensure you have the following set up:
 
  When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents. The following table works as a comparative guide to help you construct those agents.
 
-| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](#agent-exposed-mcp-server-to_mcp_server) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](#specialized-sub-agent-delegation-agenttool) |
+| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](/docs/tools-custom/agent-as-mcp-server.md) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](/docs/tools-custom/agent-managed-mcp.md) |
 | :--- | :--- | :--- | :--- |
 | **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. |
 | **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Isolated**: The external caller only receives the final aggregated response text/blocks. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. |
@@ -79,7 +79,9 @@ Before you begin, ensure you have the following set up:
 
 ## Understand uses and integrations
 
-There are three main integration patterns:
+There are three main integration patterns. The direct integration is covered in this page and
+the other implementations are covered in their specific pages.
+
 1. **Direct MCP Tool Integration**: When an ADK agent acts as an MCP client using `McpToolset`.
 2. **Agent-Exposed MCP Server**: When you build an MCP server that wraps ADK Tools using `to_mcp_server`.
 3. **Specialized Sub-Agent Delegation**: When an agent delegates to a sub-agent using `AgentTool`.
@@ -274,199 +276,6 @@ Unlike the previous local process example, this pattern connects your agent to a
     
 ---
 
-### Agent-Exposed MCP Server (to_mcp_server)
-
-You can make ADK capabilities accessible to external MCP clients, such as Claude Desktop, IDEs, or custom hosts, in two ways:
-
-1. **Expose an entire Agent (`to_mcp_server`)**: One-line conversion that exposes full multi-turn agent reasoning and internal tool execution to external MCP clients.
-2. **Expose individual Tools (`FunctionTool`)**: Manually build a lightweight MCP server that wraps specific standalone ADK tools.
-
----
-
-#### Expose an entire ADK Agent (`to_mcp_server`)
-Use ADK's native `to_mcp_server()` utility to wrap an existing `LlmAgent` into a standard FastMCP server:
-
-```python
-from google.adk.agents import LlmAgent
-from google.adk.tools.load_web_page import load_web_page
-from google.adk.tools.mcp_tool import to_mcp_server
-# Define your ADK agent
-agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="web_reader_agent",
-    instruction="Fetch and summarize web content for the user.",
-    tools=[load_web_page],
-)
-# Convert the agent into an MCP server
-app = to_mcp_server(agent)
-if __name__ == "__main__":
-    # Runs the agent as a standard stdio MCP server
-    app.run()
-```
-
----
-
-#### Expose individual Tools
-
-If you only want to expose individual ADK tools without the full agent reasoning loop, wrap FunctionTool inside an MCP Server:
-
-#### Prerequisites
-
-Install the MCP Server library in the same environment as your ADK installation:
-
-     ```bash
-     pip install mcp
-     ```
-
-### Specialized Sub-Agent Delegation (AgentTool)
-
-The `AgentTool` pattern involves wrapping an MCP Server inside a dedicated sub-agent, and then providing that sub-agent to your main agent as a tool. 
-
-While powerful, **this is the least recommended pattern for standard implementations** due to the added complexity and performance overhead. It should generally be reserved for advanced, multi-agent architectures.
-
-#### Architectural Trade-offs
-Before choosing this pattern, consider the following drawbacks:
-* **Increased Latency & Cost:** Every time the parent agent needs to use an MCP tool, it must generate a prompt to the sub-agent. The sub-agent then executes the tool call and summarizes the result back. This "double-hop" adds significant latency and increases token consumption.
-* **Context Fragmentation:** The sub-agent only knows what the parent agent explicitly tells it. If the parent agent fails to pass relevant conversational context, the sub-agent might fail to execute the MCP tool correctly.
-* **Prompting Complexity:** You must carefully craft instructions for *both* agents—teaching the parent when to delegate, and teaching the sub-agent how to utilize the MCP server.
-
-#### When to use this pattern
-Despite its drawbacks, delegating MCP servers to a sub-agent is highly effective in a few specific scenarios:
-
-1. **Tool Overload (Cognitive Routing):** If your main agent already has dozens of tools, adding an entire MCP server's toolkit might overwhelm the LLM's cognitive capacity or exceed context limits. Hiding the MCP server behind a single `Database_Agent` or `DevOps_Agent` tool simplifies the parent's decision-making.
-2. **Multi-Step Reasoning Loops:** If using the MCP server requires autonomous trial-and-error (e.g., querying a database, getting an error, and rewriting the SQL), a sub-agent can handle that isolated reasoning loop without cluttering the parent agent's context window.
-3. **Security and Sandboxing:** If the MCP server exposes sensitive operations, placing it behind a sub-agent with a highly restrictive system instruction ensures the main agent (which interacts directly with unpredictable user input) cannot easily manipulate the tools.
-
-#### Implementation Overview
-To implement this pattern, you combine `McpToolset` and `AgentTool`:
-1. Initialize your MCP connection (e.g., HTTP or Stdio).
-2. Create a specific `LlmAgent` (the sub-agent) and attach the `McpToolset` to it.
-3. Wrap that sub-agent in an `AgentTool`.
-4. Provide the `AgentTool` to your root agent.
-     
-
-### Build the MCP server with ADK tools
-
-1. Create a new Python file for your MCP server, for example: `my_adk_mcp_server.py`.
-2. Implement server logic with the following code to your new file. This following script sets up an MCP server that exposes the ADK `load_web_page` tool.
-
-```python
-import asyncio
-import json
-import os
-from dotenv import load_dotenv
-
-from mcp import types as mcp_types
-from mcp.server.lowlevel import Server, NotificationOptions
-from mcp.server.models import InitializationOptions
-import mcp.server.stdio 
-
-from google.adk.tools.function_tool import FunctionTool
-from google.adk.tools.load_web_page import load_web_page 
-from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
-
-# Load environment variables (e.g., API keys required by ADK tools)
-load_dotenv() 
-
-adk_tool_to_expose = FunctionTool(load_web_page)
-app = Server("adk-tool-exposing-mcp-server")
-
-@app.list_tools()
-async def list_mcp_tools() -> list[mcp_types.Tool]:
-    """List tools exposed by this server."""
-    mcp_tool_schema = adk_to_mcp_tool_type(adk_tool_to_expose)
-    return [mcp_tool_schema]
-
-@app.call_tool()
-async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
-    """Execute a tool call requested by an MCP client."""
-    if name == adk_tool_to_expose.name:
-        try:
-            # Note: tool_context is None because the ADK tool runs outside a full ADK Runner.
-            # Tools requiring ToolContext features (like state or auth) need custom handling here.
-            adk_tool_response = await adk_tool_to_expose.run_async(
-                args=arguments,
-                tool_context=None,
-            )
-
-            # Serialize the ADK tool's response into MCP's expected Content format
-            response_text = json.dumps(adk_tool_response, indent=2)
-            return [mcp_types.TextContent(type="text", text=response_text)]
-
-        except Exception as e:
-            error_text = json.dumps({"error": f"Failed to execute tool '{name}': {str(e)}"})
-            return [mcp_types.TextContent(type="text", text=error_text)]
-    else:
-        error_text = json.dumps({"error": f"Tool '{name}' not implemented by this server."})
-        return [mcp_types.TextContent(type="text", text=error_text)]
-
-async def run_mcp_stdio_server():
-    """Run the MCP server over standard input/output."""
-    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        await app.run(
-            read_stream,
-            write_stream,
-            InitializationOptions(
-                server_name=app.name,
-                server_version="0.1.0",
-                capabilities=app.get_capabilities(
-                    notification_options=NotificationOptions(),
-                    experimental_capabilities={},
-                ),
-            ),
-        )
-
-if __name__ == "__main__":
-    try:
-        asyncio.run(run_mcp_stdio_server())
-    except KeyboardInterrupt:
-        print("\nMCP Server (stdio) stopped by user.")
-```
-
-### Test your custom MCP server with an ADK Agent
-
-To test your custom server, you need to build an ADK agent that acts as a client. This agent uses the `McpToolset` to establish a connection to the server script you just created.
-
-1. Set up your agent in a new directory such as `./adk_agent_samples/mcp_client_agent/`. Create an `agent.py` file and include an `__init__.py` alongside it to make it discoverable.
-
-```python
-from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
-
-# IMPORTANT: Provide the absolute path to the server script you built previously
-MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py"
-
-root_agent = LlmAgent(
-    model='gemini-flash-latest',
-    name='web_reader_mcp_client_agent',
-    instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
-    tools=[
-        McpToolset(
-            connection_params=StdioConnectionParams(
-                server_params=StdioServerParameters(
-                    command='python3', 
-                    args=[MCP_SERVER_SCRIPT], 
-                )
-            )
-        )
-    ],
-)
-```
-
-2. Navigate to your agent's parent directory in the terminal:
-
-```bash
-cd ./adk_agent_samples
-adk web
-```
-
-3. Open the ADK Web UI and select the web_reader_mcp_client_agent.
-4. Test the connection with a prompt such as: *Load the content from "https://example.com"*.
-
----
-
 ## Remote MCP Authentication and resource access
 
 This section shows you how to connect to remote MCP servers using authentication and how to read data **Resources** exposed by an MCP server. When an MCP server requires authentication, such as over Server-Sent Events `SseConnectionParams` or Streamable HTTP, `McpToolset` handles credential injection and token management automatically.
@@ -610,70 +419,6 @@ else:
           timeout=5,
       )
   )
-
-```
-
-## UI Rendering 
-
-Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Tool as MCP Server Tool
-    participant ADK as ADK Framework
-    participant UI as Client UI (adk web / Frontend)
-
-    Tool-->>ADK: Returns result + metadata (meta.ui.resourceUri = "ui://widgets/map")
-    ADK->>ADK: Detects meta.ui.resourceUri annotation
-    ADK-->>UI: Emits Event with UI rendering signal & Resource URI
-    UI->>Tool: Fetches UI bundle from Resource URI
-    UI-->>UI: Renders interactive widget in chat interface
-```
-
-### How It Works
-
-1. **Tool Registration**: The MCP tool declares a UI resource link in its schema definition metadata during `tools/list`: `_meta.ui.resourceUri = "ui://widgets/weather-card"`.
-2. **ADK Detection**: ADK reads the schema definition to detect `_meta.ui.resourceUri` and knows this tool supports an interactive UI.
-3. **Client Display**: Upon tool execution, ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
-
-```python
-from mcp import types as mcp_types
-from mcp.server.lowlevel import Server
-
-app = Server("weather-mcp-server")
-
-
-@app.list_tools()
-async def list_mcp_tools() -> list[mcp_types.Tool]:
-  """Declares the tool and attaches UI rendering metadata."""
-  return [
-      mcp_types.Tool(
-          name="get_weather",
-          description="Get weather forecast for a city.",
-          inputSchema={
-              "type": "object",
-              "properties": {"city": {"type": "string"}},
-              "required": ["city"],
-          },
-          meta={"ui": {"resourceUri": "ui://widgets/weather-card"}},
-      )
-  ]
-
-
-@app.call_tool()
-async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
-  """Executes the tool and returns standard text/data content."""
-  if name == "get_weather":
-    city = arguments.get("city", "Unknown")
-    return [
-        mcp_types.TextContent(
-            type="text", text=f"Weather in {city}: 72°F Sunny"
-        )
-    ]
-  return [
-      mcp_types.TextContent(type="text", text=f"Unknown tool: '{name}'")
-  ]
 
 ```
 
