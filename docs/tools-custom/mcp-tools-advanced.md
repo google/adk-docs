@@ -1,4 +1,4 @@
-# Advanced MCP Configuration & Production Guide
+# Advanced MCP configurations and production guide
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
@@ -8,7 +8,7 @@ This guide covers advanced integration patterns for the Model Context Protocol (
 
 ---
 
-## Choose your mechanism
+## Select a configuration pattern for your use case
 
 Use the matrix below to select the right configuration mechanism for your production workload:
 
@@ -22,6 +22,7 @@ Use the matrix below to select the right configuration mechanism for your produc
 | **Resolve tool naming collisions across servers** | Tool Namespacing & Filtering | `tool_name_prefix`, `tool_filter` | Aggregating multiple MCP servers (DB + GitHub) |
 | **Handle server-requested sampling or auth challenges** | Bi-directional Protocol Callbacks | `sampling_callback`, `elicitation_callback` | Server-initiated LLM generation & auth prompts |
 | **Inspect raw STDERR diagnostic streams** | Diagnostic Stream Logging | `errlog=sys.stderr` | Troubleshooting MCP subprocess crashes |
+| **Render rich, interactive visual widgets in chat** | Experimental UI Rendering | `meta.ui.resourceUri` | Maps, charts, weather cards, or custom forms |
 
 ---
 
@@ -384,6 +385,70 @@ with open("mcp_server_errors.log", "a") as error_file:
         errlog=error_file,  # Redirect subprocess STDERR to a log file
     )
 ```
+
+## UI Rendering 
+
+Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Tool as MCP Server Tool
+    participant ADK as ADK Framework
+    participant UI as Client UI (adk web / Frontend)
+
+    Tool-->>ADK: Returns result + metadata (meta.ui.resourceUri = "ui://widgets/map")
+    ADK->>ADK: Detects meta.ui.resourceUri annotation
+    ADK-->>UI: Emits Event with UI rendering signal & Resource URI
+    UI->>Tool: Fetches UI bundle from Resource URI
+    UI-->>UI: Renders interactive widget in chat interface
+```
+
+### How It Works
+
+1. **Tool Registration**: The MCP tool declares a UI resource link in its schema definition metadata during `tools/list`: `_meta.ui.resourceUri = "ui://widgets/weather-card"`.
+2. **ADK Detection**: ADK reads the schema definition to detect `_meta.ui.resourceUri` and knows this tool supports an interactive UI.
+3. **Client Display**: Upon tool execution, ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
+
+```python
+from mcp import types as mcp_types
+from mcp.server.lowlevel import Server
+
+app = Server("weather-mcp-server")
+
+
+@app.list_tools()
+async def list_mcp_tools() -> list[mcp_types.Tool]:
+  """Declares the tool and attaches UI rendering metadata."""
+  return [
+      mcp_types.Tool(
+          name="get_weather",
+          description="Get weather forecast for a city.",
+          inputSchema={
+              "type": "object",
+              "properties": {"city": {"type": "string"}},
+              "required": ["city"],
+          },
+          meta={"ui": {"resourceUri": "ui://widgets/weather-card"}},
+      )
+  ]
+
+
+@app.call_tool()
+async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
+  """Executes the tool and returns standard text/data content."""
+  if name == "get_weather":
+    city = arguments.get("city", "Unknown")
+    return [
+        mcp_types.TextContent(
+            type="text", text=f"Weather in {city}: 72°F Sunny"
+        )
+    ]
+  return [
+      mcp_types.TextContent(type="text", text=f"Unknown tool: '{name}'")
+  ]
+
+``` 
 
 ---
 
