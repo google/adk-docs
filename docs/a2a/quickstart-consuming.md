@@ -237,6 +237,42 @@ You can inject a list of `request_interceptors` to add middleware logic to A2A r
 *   **`before_request`**: Executed before the agent starts processing. You can modify the `A2AMessage`, or return an ADK `Event` to immediately abort the request and return that event to the caller.
 *   **`after_request`**: Executed after the agent has processed the request. You can modify the resulting ADK `Event`, or return `None` to filter out and drop the event entirely.
 
+#### Remote Agent Card Interceptors
+
+Use `card_request_interceptors` when the remote agent card itself requires
+per-invocation headers, such as a session-scoped authentication token. The
+`before_request` hook receives the current `InvocationContext` and returns an
+`A2aCardRequestConfig` containing the headers to send with the card request.
+This hook runs only when the card is fetched from an `http(s)` URL; it is
+ignored when `agent_card` is an `AgentCard` instance or a local file path.
+
+```python
+from google.adk.a2a.agent import A2aCardRequestConfig
+from google.adk.a2a.agent import A2aRemoteAgentConfig
+from google.adk.a2a.agent import CardRequestInterceptor
+
+
+async def add_session_token(context):
+    return A2aCardRequestConfig(
+        headers={"Authorization": f"Bearer {context.session.state['token']}"}
+    )
+
+
+prime_agent = RemoteA2aAgent(
+    name="prime_agent",
+    agent_card="https://example.com/.well-known/agent-card.json",
+    use_legacy=False,
+    config=A2aRemoteAgentConfig(
+        card_request_interceptors=[
+            CardRequestInterceptor(before_request=add_session_token)
+        ]
+    ),
+)
+```
+
+When more than one interceptor supplies the same header, the value from the
+later interceptor in the list wins.
+
 #### Request Parameters Configuration
 
 Through interceptors, you can also modify the `ParametersConfig` for the A2A request to inject:
