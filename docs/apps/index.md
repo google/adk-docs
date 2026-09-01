@@ -135,7 +135,7 @@ You can use the ***Runner*** class to run your agent workflow using the
 === "Java"
 
     ```java title="AppMain.java"
-    import com.google.adk.agents.Content;
+    import com.google.genai.types.Content;
     import com.google.adk.runner.Runner;
 
     public class AppMain {

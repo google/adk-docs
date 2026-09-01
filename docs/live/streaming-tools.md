@@ -96,7 +96,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
           contents = genai_types.Content(
               role="user",
-              parts=[image_part, genai_types.Part.from_text(prompt_text)],
+              parts=[image_part, genai_types.Part.from_text(text=prompt_text)],
           )
 
           # Call the model to generate content based on the provided image and prompt

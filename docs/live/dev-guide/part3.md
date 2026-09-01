@@ -1190,7 +1190,7 @@ When you implement custom tools or callbacks, you receive InvocationContext as a
 
 ```python
 # Example: Comprehensive tool implementation showing common InvocationContext patterns
-def my_tool(context: InvocationContext, query: str):
+async def my_tool(context: InvocationContext, query: str):
     # Access user identity
     user_id = context.session.user_id
 
@@ -1307,7 +1307,7 @@ async def handle_sequential_workflow():
                     # Check for audio data
                     if part.inline_data and part.inline_data.mime_type.startswith("audio/"):
                         # Your logic to play audio
-            await play_audio(part.inline_data.data)
+                        await play_audio(part.inline_data.data)
 
                     # Check for text data
                     if part.text:
