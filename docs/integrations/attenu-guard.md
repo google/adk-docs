@@ -1,6 +1,6 @@
 ---
 catalog_title: Attenu Guard
-catalog_description: Per-agent permissions on every tool call and agent transfer; a sub-agent never holds more than its parent, with an offline-verifiable audit log
+catalog_description: Give each sub-agent only the permissions its task needs
 catalog_icon: /integrations/assets/attenu-guard.png
 ---
 
@@ -15,7 +15,7 @@ catalog_icon: /integrations/assets/attenu-guard.png
 call and every agent-to-agent handoff. The ADK plugin
 (`attenu_guard.adapters.google_adk`) is one `BasePlugin`: register it once on
 your `App` and every agent in the tree is covered. When control reaches a
-sub-agent — by `transfer_to_agent`, `AgentTool`, or a task-mode sub-agent — the
+sub-agent (by `transfer_to_agent`, `AgentTool`, or a task-mode sub-agent), the
 plugin computes that agent's permission set as the *meet* of what the parent
 holds and what you declared for the child, so a sub-agent never holds more than
 its parent. Each tool call is checked before the tool body runs, and every
@@ -116,7 +116,7 @@ root.revoke(plugin.guard_for("summarizer").node_id)  # every descendant denies i
 
 ```bash
 attenu-guard view audit.jsonl          # render the delegation tree and verify the hash chain
-attenu-guard verify bundle.json        # integrity, child ⊆ parent, containment — from the file alone
+attenu-guard verify bundle.json        # integrity, child ⊆ parent, containment: all from the file alone
 ```
 
 ## Runnable example
@@ -138,7 +138,7 @@ and the [ADK page on attenu.io](https://attenu.io/docs/example-google-adk/).
 ## What the plugin does not do
 
 It does not inspect prompts or model output, and it does not decide what a
-task *should* be allowed to do — you declare each sub-agent's `Authority` and
+task *should* be allowed to do. You declare each sub-agent's `Authority` and
 each tool's `ToolAuthority` (the companion
 [attenu-derive](https://github.com/attenu-io/attenu-derive) engine can compute
 them from the app). Hook points and the trust boundary are documented in the
