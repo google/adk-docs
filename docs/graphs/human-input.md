@@ -20,19 +20,7 @@ the input process more predictable and reliable.
     add a human input node to a Workflow graph:
 
     ```python
-    from google.adk.events import RequestInput
-    from google.adk import Workflow
-
-    def step1(): # Human input step
-      yield RequestInput(message="Enter a number:")
-
-    def step2(node_input):
-      return node_input * 2
-
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[('START', step1, step2)],
-    )
+    --8<-- "examples/inline/python/graphs/human-input/001-get-started.py"
     ```
 
     In this code example, `step1` pauses the execution of the agent until the
@@ -159,32 +147,7 @@ The following code examples demonstrate more detailed human input requests.
     requests feedback from the user.
 
     ```python
-    class ActivitiesList(BaseModel):
-       """Itinerary should be a list of dictionaries for each activity. Each
-       activity has a name and a description"""
-       itinerary: List[Dict[str, str]]
-
-    class UserFeedback(BaseModel):
-       """Expected response structure from the user."""
-       user_response: str
-
-    async def get_user_feedback(node_input: ActivitiesList):
-       """
-       Retrieves the user's thoughts on the agents initial itinerary in order to
-       either expand on, change the list, or exit the loop
-       """
-       message = (
-           f"""
-           Here is your recommended base itinerary:\n{node_input}\n\n
-           Which of these items appeal to you (if any)?
-           """
-       )
-
-       yield RequestInput(
-           message=message,
-           payload=node_input,
-            response_schema=UserFeedback,
-       )
+    --8<-- "examples/inline/python/graphs/human-input/002-request-input-with-a-message-and-payload.py"
     ```
 
 === "TypeScript"
@@ -222,20 +185,7 @@ specific tool call.
     in a workflow node, including a ***response schema***:
 
     ```python
-    async def initial_prompt(ctx: Context):
-       """Ask the user for itinerary information"""
-       input_message = """
-           This is an interactive concierge workflow tasked with making you a great
-           itinerary for you in your city of choice. If you give some details about
-           yourself or what you are generally looking for I can better personalize
-           your itinerary.
-           For example, input your:
-               City (Required),
-               Age,
-               Hobby,
-               Example of attraction you liked
-       """
-       yield RequestInput(message=input_message, response_schema=str)
+    --8<-- "examples/inline/python/graphs/human-input/003-tool-confirmation-approval-prompts-in-ll.py"
     ```
 
 === "TypeScript"

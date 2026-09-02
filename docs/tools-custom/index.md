@@ -174,28 +174,7 @@ The `tool_context.state` attribute provides direct read and write access to the 
 === "Java"
 
     ```java
-    import com.google.adk.tools.FunctionTool;
-    import com.google.adk.tools.ToolContext;
-
-    // Updates a user-specific preference.
-    public Map<String, String> updateUserThemePreference(String value, ToolContext toolContext) {
-      String userPrefsKey = "user:preferences:theme";
-
-      // Get current preferences or initialize if none exist
-      String preference = toolContext.state().getOrDefault(userPrefsKey, "").toString();
-      if (preference.isEmpty()) {
-        preference = value;
-      }
-
-      // Write the updated dictionary back to the state
-      toolContext.state().put("user:preferences", preference);
-      System.out.printf("Tool: Updated user preference %s to %s", userPrefsKey, preference);
-
-      return Map.of("status", "success", "updated_preference", toolContext.state().get(userPrefsKey).toString());
-      // When the LLM calls updateUserThemePreference("dark"):
-      // The toolContext.state will be updated, and the change will be part of the
-      // resulting tool response event's actions.stateDelta.
-    }
+    --8<-- "examples/inline/java/tools-custom/index/001-state-management.java"
     ```
 
 === "Kotlin"
@@ -306,55 +285,7 @@ These methods provide convenient ways for your tool to interact with persistent 
 === "Java"
 
     ```java
-    // Analyzes a document using context from memory.
-    // You can also list, load and save artifacts using Callback Context or LoadArtifacts tool.
-    public static @NonNull Maybe<ImmutableMap<String, Object>> processDocument(
-        @Annotations.Schema(description = "The name of the document to analyze.") String documentName,
-        @Annotations.Schema(description = "The query for the analysis.") String analysisQuery,
-        ToolContext toolContext) {
-
-      // 1. List all available artifacts
-      System.out.printf(
-          "Listing all available artifacts %s:", toolContext.listArtifacts().blockingGet());
-
-      // 2. Load an artifact to memory
-      System.out.println("Tool: Attempting to load artifact: " + documentName);
-      Part documentPart = toolContext.loadArtifact(documentName, Optional.empty()).blockingGet();
-      if (documentPart == null) {
-        System.out.println("Tool: Document '" + documentName + "' not found.");
-        return Maybe.just(
-            ImmutableMap.<String, Object>of(
-                "status", "error", "message", "Document '" + documentName + "' not found."));
-      }
-      String documentText = documentPart.text().orElse("");
-      System.out.println(
-          "Tool: Loaded document '" + documentName + "' (" + documentText.length() + " chars).");
-
-      // 3. Perform analysis (placeholder)
-      String analysisResult =
-          "Analysis of '"
-              + documentName
-              + "' regarding '"
-              + analysisQuery
-              + " [Placeholder Analysis Result]";
-      System.out.println("Tool: Performed analysis.");
-
-      // 4. Save the analysis result as a new artifact
-      Part analysisPart = Part.fromText(analysisResult);
-      String newArtifactName = "analysis_" + documentName;
-
-      toolContext.saveArtifact(newArtifactName, analysisPart);
-
-      return Maybe.just(
-          ImmutableMap.<String, Object>builder()
-              .put("status", "success")
-              .put("analysis_artifact", newArtifactName)
-              .build());
-    }
-    // FunctionTool processDocumentTool =
-    //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
-    // In the Agent, include this function tool.
-    // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
+    --8<-- "examples/inline/java/tools-custom/index/002-example.java"
     ```
 
 === "Kotlin"
@@ -404,78 +335,13 @@ Here are key guidelines for defining effective tool functions:
 === "Python"
 
     ```python
-    def lookup_order_status(order_id: str) -> dict:
-      """Fetches the current status of a customer's order using its ID.
-
-      Use this tool ONLY when a user explicitly asks for the status of
-      a specific order and provides the order ID. Do not use it for
-      general inquiries.
-
-      Args:
-          order_id: The unique identifier of the order to look up.
-
-      Returns:
-          A dictionary indicating the outcome.
-          On success, status is 'success' and includes an 'order' dictionary.
-          On failure, status is 'error' and includes an 'error_message'.
-          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
-          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
-      """
-      # ... function implementation to fetch status ...
-      if status_details := fetch_status_from_backend(order_id):
-        return {
-            "status": "success",
-            "order": {
-                "state": status_details.state,
-                "tracking_number": status_details.tracking,
-            },
-        }
-      else:
-        return {"status": "error", "error_message": f"Order ID {order_id} not found."}
-
+    --8<-- "examples/inline/python/tools-custom/index/003-defining-effective-tool-functions.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    /**
-     * Fetches the current status of a customer's order using its ID.
-     *
-     * Use this tool ONLY when a user explicitly asks for the status of
-     * a specific order and provides the order ID. Do not use it for
-     * general inquiries.
-     *
-     * @param params The parameters for the function.
-     * @param params.order_id The unique identifier of the order to look up.
-     * @returns A dictionary indicating the outcome.
-     *          On success, status is 'success' and includes an 'order' dictionary.
-     *          On failure, status is 'error' and includes an 'error_message'.
-     *          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
-     *          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
-     */
-    async function lookupOrderStatus(params: { order_id: string }): Promise<Record<string, any>> {
-      // ... function implementation to fetch status from a backend ...
-      const status_details = await fetchStatusFromBackend(params.order_id);
-      if (status_details) {
-        return {
-          "status": "success",
-          "order": {
-            "state": status_details.state,
-            "tracking_number": status_details.tracking,
-          },
-        };
-      } else {
-        return { "status": "error", "error_message": `Order ID ${params.order_id} not found.` };
-      }
-    }
-
-    // Placeholder for a backend call
-    async function fetchStatusFromBackend(order_id: string): Promise<{state: string, tracking: string} | null> {
-        if (order_id === "12345") {
-            return { state: "shipped", tracking: "1Z9..." };
-        }
-        return null;
-    }
+    --8<-- "examples/inline/typescript/tools-custom/index/004-defining-effective-tool-functions.ts"
     ```
 
 === "Go"
@@ -487,30 +353,7 @@ Here are key guidelines for defining effective tool functions:
 === "Java"
 
     ```java
-    /**
-     * Retrieves the current weather report for a specified city.
-     *
-     * @param city The city for which to retrieve the weather report.
-     * @param toolContext The context for the tool.
-     * @return A dictionary containing the weather information.
-     */
-    public static Map<String, Object> getWeatherReport(String city, ToolContext toolContext) {
-        Map<String, Object> response = new HashMap<>();
-        if (city.toLowerCase(Locale.ROOT).equals("london")) {
-            response.put("status", "success");
-            response.put(
-                    "report",
-                    "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a"
-                            + " chance of rain.");
-        } else if (city.toLowerCase(Locale.ROOT).equals("paris")) {
-            response.put("status", "success");
-            response.put("report", "The weather in Paris is sunny with a temperature of 25 degrees Celsius.");
-        } else {
-            response.put("status", "error");
-            response.put("error_message", String.format("Weather information for '%s' is not available.", city));
-        }
-        return response;
-    }
+    --8<-- "examples/inline/java/tools-custom/index/005-defining-effective-tool-functions.java"
     ```
 
 === "Kotlin"

@@ -1,0 +1,15 @@
+import "google.golang.org/adk/v2/session"
+
+// 2. VertexAIService
+// Before running, ensure your environment is authenticated:
+// gcloud auth application-default login
+// export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+// export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+
+modelName := "gemini-flash-latest" // Replace with your desired model
+vertexService, err := session.VertexAIService(ctx, modelName)
+if err != nil {
+  log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+} else {
+  fmt.Println("Successfully initialized VertexAIService.")
+}

@@ -1,0 +1,1 @@
+agenttool.New(agent, &agenttool.Config{...})

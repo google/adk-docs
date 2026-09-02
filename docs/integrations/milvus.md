@@ -75,58 +75,13 @@ Cloud. If you use a non-default Milvus database, set `MILVUS_DB_NAME`.
     cross-session memory.
 
     ```python
-    from adk_milvus import MilvusMemoryService
-    from google.adk.agents import Agent
-    from google.adk.runners import Runner
-    from google.adk.sessions import InMemorySessionService
-    from google.genai import Client
-
-    genai_client = Client()
-
-    def embedding_function(texts):
-        response = genai_client.models.embed_content(
-            model="gemini-embedding-001",
-            contents=list(texts),
-        )
-        return [list(embedding.values) for embedding in response.embeddings]
-
-    memory_service = MilvusMemoryService(
-        embedding_function=embedding_function,
-        dimension=3072,
-        collection_name="adk_memory",
-    )
-
-    agent = Agent(
-        name="memory_agent",
-        model="gemini-flash-latest",
-        instruction="Use memory to personalize responses when relevant.",
-    )
-
-    runner = Runner(
-        app_name="milvus_memory_app",
-        agent=agent,
-        session_service=InMemorySessionService(),
-        memory_service=memory_service,
-    )
+    --8<-- "examples/inline/python/integrations/milvus/001-use-with-agent.py"
     ```
 
     After a useful session, add it to memory and search it later:
 
     ```python
-    session = await runner.session_service.get_session(
-        app_name="milvus_memory_app",
-        user_id="user-1",
-        session_id="session-1",
-    )
-    await memory_service.add_session_to_memory(session)
-
-    result = await memory_service.search_memory(
-        app_name="milvus_memory_app",
-        user_id="user-1",
-        query="what did the user say about database preferences?",
-    )
-    for memory in result.memories:
-        print(memory.content.parts[0].text)
+    --8<-- "examples/inline/python/integrations/milvus/002-use-with-agent.py"
     ```
 
 === "RAG toolset"
@@ -135,49 +90,7 @@ Cloud. If you use a non-default Milvus database, set `MILVUS_DB_NAME`.
     `MilvusToolset`.
 
     ```python
-    from adk_milvus import MilvusToolset
-    from adk_milvus import MilvusVectorStore
-    from adk_milvus import MilvusVectorStoreSettings
-    from google.adk.agents import Agent
-    from google.genai import Client
-
-    genai_client = Client()
-
-    def embedding_function(texts):
-        response = genai_client.models.embed_content(
-            model="gemini-embedding-001",
-            contents=list(texts),
-        )
-        return [list(embedding.values) for embedding in response.embeddings]
-
-    vector_store = MilvusVectorStore(
-        embedding_function=embedding_function,
-        settings=MilvusVectorStoreSettings(
-            collection_name="adk_rag",
-            dimension=3072,
-        ),
-    )
-
-    vector_store.add_texts(
-        [
-            "Milvus Lite is useful for local RAG development.",
-            "Zilliz Cloud provides managed Milvus for production workloads.",
-        ],
-        metadatas=[
-            {"source": "milvus-lite"},
-            {"source": "zilliz-cloud"},
-        ],
-    )
-
-    milvus_toolset = MilvusToolset(vector_store=vector_store)
-    tools = await milvus_toolset.get_tools_with_prefix()
-
-    agent = Agent(
-        name="rag_agent",
-        model="gemini-flash-latest",
-        instruction="Use retrieval context when answering questions.",
-        tools=tools,
-    )
+    --8<-- "examples/inline/python/integrations/milvus/003-use-with-agent.py"
     ```
 
 ## Available tools and operations

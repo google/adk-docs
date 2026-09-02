@@ -1,0 +1,14 @@
+// classifyNode emits an Event with Routes=[]string{"BUG"},
+// ["CUSTOMER_SUPPORT"], or ["LOGISTICS"] based on the message.
+edges := workflow.Concat(
+    workflow.Chain(workflow.Start, processMessage, classifyNode),
+    []workflow.Edge{
+        {From: classifyNode, To: bugHandler,       Route: workflow.StringRoute("BUG")},
+        {From: classifyNode, To: supportHandler,   Route: workflow.StringRoute("CUSTOMER_SUPPORT")},
+        {From: classifyNode, To: logisticsHandler, Route: workflow.StringRoute("LOGISTICS")},
+    },
+)
+rootAgent, _ := workflowagent.New(workflowagent.Config{
+    Name:  "routing_workflow",
+    Edges: edges,
+})

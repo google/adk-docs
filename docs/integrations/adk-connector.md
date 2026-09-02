@@ -74,92 +74,19 @@ messaging channels.
 === "Python (Telegram)"
 
     ```python
-    import os
-    from dotenv import load_dotenv
-    from google.adk.agents.llm_agent import Agent
-    from adk_connectors.telegram import TelegramConnector
-
-    # Load environment variables
-    load_dotenv()
-
-    # 1. Define your standard Google ADK Agent
-    assistant = Agent(
-        model='gemini-flash-latest',
-        name='my_assistant',
-        instruction='You are a helpful assistant.'
-    )
-
-    if __name__ == "__main__":
-        # 2. Retrieve your Telegram Bot Token
-        token = os.getenv("TELEGRAM_BOT_TOKEN")
-
-        # 3. Bind the connector
-        connector = TelegramConnector(
-            token=token,
-            agent=assistant
-        )
-
-        # 4. Start polling
-        connector.start()
+    --8<-- "examples/inline/python/integrations/adk-connector/001-use-with-agent.py"
     ```
 
 === "Python (Discord)"
 
     ```python
-    import os
-    from dotenv import load_dotenv
-    from google.adk.agents.llm_agent import Agent
-    from adk_connectors.discord import DiscordConnector
-
-    # Load environment variables
-    load_dotenv()
-
-    # 1. Define your standard Google ADK Agent
-    assistant = Agent(
-        model='gemini-flash-latest',
-        name='my_assistant',
-        instruction='You are a helpful assistant.'
-    )
-
-    if __name__ == "__main__":
-        # 2. Retrieve your Discord Bot Token
-        token = os.getenv("DISCORD_BOT_TOKEN")
-
-        # 3. Bind the connector
-        connector = DiscordConnector(
-            token=token,
-            agent=assistant
-        )
-
-        # 4. Start the bot!
-        connector.start()
+    --8<-- "examples/inline/python/integrations/adk-connector/002-use-with-agent.py"
     ```
 
 === "JavaScript / TypeScript (Telegram)"
 
     ```typescript
-    import { LlmAgent } from '@google/adk';
-    import { TelegramConnector } from 'adk-connector-js';
-    import dotenv from 'dotenv';
-
-    dotenv.config();
-
-    // 1. Define your standard Google ADK Agent
-    export const rootAgent = new LlmAgent({
-      name: 'my_assistant',
-      model: 'gemini-flash-latest',
-      instruction: 'You are a helpful assistant.'
-    });
-
-    // 2. Launch the Telegram Connector under script entrypoint
-    if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('agent.ts')) {
-      const connector = new TelegramConnector({
-        token: process.env.TELEGRAM_BOT_TOKEN!,
-        agent: rootAgent
-      });
-
-      connector.start();
-    }
+    --8<-- "examples/inline/typescript/integrations/adk-connector/003-use-with-agent.ts"
     ```
 
 ## Session sync with `adk web`
@@ -173,23 +100,13 @@ development environment.
     === "Telegram"
 
         ```python
-        connector = TelegramConnector(
-            token=token,
-            agent=assistant,
-            session_management_across_device=True,  # Spin up DB & mapping persistence
-            dev_user_id=os.getenv("TELEGRAM_USER_ID") # Syncs this ID to the "user" Web UI namespace
-        )
+        --8<-- "examples/inline/python/integrations/adk-connector/004-session-sync-with-adk-web.py"
         ```
 
     === "Discord"
 
         ```python
-        connector = DiscordConnector(
-            token=token,
-            agent=assistant,
-            session_management_across_device=True,  # Spin up DB & mapping persistence
-            dev_user_id=os.getenv("DISCORD_USER_ID")  # Syncs this ID to the "user" Web UI namespace
-        )
+        --8<-- "examples/inline/python/integrations/adk-connector/005-session-sync-with-adk-web.py"
         ```
 
 2. Run your bot script:

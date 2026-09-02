@@ -31,24 +31,7 @@ Enable local environment interactions by adding the ***EnvironmentToolset***
 with a ***LocalEnvironment*** instance to your agent's tools.
 
 ```python
-from google.adk import Agent
-from google.adk.environment import LocalEnvironment
-from google.adk.tools.environment import EnvironmentToolset
-
-root_agent = Agent(
-    model="gemini-flash-latest",
-    name="my_agent",
-    instruction="""
-    You are a helpful AI assistant that can use the local environment
-    to execute commands and file I/O. Follow the rules of the
-    environment and the user's instructions.
-    """,
-    tools=[
-        EnvironmentToolset(
-            environment=LocalEnvironment(),
-        ),
-    ],
-)
+--8<-- "examples/inline/python/integrations/environment-toolset/001-get-started.py"
 ```
 
 For a full implementation example, see the
@@ -104,10 +87,7 @@ The following code sample shows how to set these options for a
 ***LocalEnvironment*** object:
 
 ```python
-local_environment=LocalEnvironment(
-    working_dir="/tmp/my_agent_workspace",
-    env_vars={"PORT": "8080", "LOG_LEVEL": "DEBUG"},
-)
+--8<-- "examples/inline/python/integrations/environment-toolset/002-configuration-options.py"
 ```
 
 ### File operations

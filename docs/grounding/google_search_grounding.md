@@ -13,45 +13,19 @@ To enable Google Search Grounding, you include the search tool in your agent def
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import google_search
-
-    root_agent = Agent(
-        name="google_search_agent",
-        model="gemini-flash-latest",
-        instruction="Answer questions using Google Search when needed. Always cite sources.",
-        description="Professional search assistant with Google Search capabilities",
-        tools=[google_search]
-    )
+    --8<-- "examples/inline/python/grounding/google_search_grounding/001-creating-a-grounded-agent.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, GOOGLE_SEARCH } from '@google/adk';
-
-    const rootAgent = new LlmAgent({
-        name: "google_search_agent",
-        model: "gemini-flash-latest",
-        instruction: "Answer questions using Google Search when needed. Always cite sources.",
-        description: "Professional search assistant with Google Search capabilities",
-        tools: [GOOGLE_SEARCH],
-    });
+    --8<-- "examples/inline/typescript/grounding/google_search_grounding/002-creating-a-grounded-agent.ts"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.GoogleSearchTool;
-
-    LlmAgent rootAgent = LlmAgent.builder()
-        .name("google_search_agent")
-        .model("gemini-flash-latest")
-        .instruction("Answer questions using Google Search when needed. Always cite sources.")
-        .description("Professional search assistant with Google Search capabilities")
-        .tools(GoogleSearchTool.INSTANCE)
-        .build();
+    --8<-- "examples/inline/java/grounding/google_search_grounding/003-creating-a-grounded-agent.java"
     ```
 
 ## How grounding with Google Search works

@@ -63,106 +63,13 @@ uv add stackone-adk
     === "With App (Recommended)"
 
         ```python
-        import asyncio
-
-        from google.adk.agents import Agent
-        from google.adk.apps import App
-        from google.adk.runners import InMemoryRunner
-        from stackone_adk import StackOnePlugin
-
-
-        async def main():
-            plugin = StackOnePlugin()
-            # Or scope to a specific account:
-            # plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
-
-            tools = plugin.get_tools()
-            print(f"Discovered {len(tools)} tools")
-
-            agent = Agent(
-                model="gemini-flash-latest",
-                name="scheduling_agent",
-                description="Manages scheduling, HR, and CRM through StackOne.",
-                instruction=(
-                    "You are a helpful assistant powered by StackOne. "
-                    "You help users manage their scheduling, HR, and CRM tasks "
-                    "by using the available tools.\n\n"
-                    "Always be helpful and provide clear, organized responses."
-                ),
-                tools=tools,
-            )
-
-            app = App(
-                name="scheduling_app",
-                root_agent=agent,
-                plugins=[plugin],
-            )
-
-            async with InMemoryRunner(app=app) as runner:
-                events = await runner.run_debug(
-                    "Get my most recent scheduled meeting from Calendly.",
-                    quiet=True,
-                )
-                # Extract the agent's final text response
-                for event in reversed(events):
-                    if event.content and event.content.parts:
-                        text_parts = [p.text for p in event.content.parts if p.text]
-                        if text_parts:
-                            print("".join(text_parts))
-                            break
-
-
-        asyncio.run(main())
+        --8<-- "examples/inline/python/integrations/stackone/001-use-with-agent.py"
         ```
 
     === "With Runner Directly"
 
         ```python
-        import asyncio
-
-        from google.adk.agents import Agent
-        from google.adk.runners import InMemoryRunner
-        from stackone_adk import StackOnePlugin
-
-
-        async def main():
-            plugin = StackOnePlugin()
-            # Or scope to a specific account:
-            # plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
-
-            tools = plugin.get_tools()
-            print(f"Discovered {len(tools)} tools")
-
-            agent = Agent(
-                model="gemini-flash-latest",
-                name="scheduling_agent",
-                description="Manages scheduling, HR, and CRM through StackOne.",
-                instruction=(
-                    "You are a helpful assistant powered by StackOne. "
-                    "You help users manage their scheduling, HR, and CRM tasks "
-                    "by using the available tools.\n\n"
-                    "Always be helpful and provide clear, organized responses."
-                ),
-                tools=tools,
-            )
-
-            async with InMemoryRunner(
-                app_name="scheduling_app", agent=agent
-            ) as runner:
-                events = await runner.run_debug(
-                    "Get my most recent scheduled meeting from Calendly.",
-                    quiet=True,
-                )
-                # Extract the agent's final text response
-                for event in reversed(events):
-                    if event.content and event.content.parts:
-                        text_parts = [p.text for p in event.content.parts if p.text]
-                        if text_parts:
-                            print("".join(text_parts))
-                            break
-
-
-        asyncio.run(main())
+        --8<-- "examples/inline/python/integrations/stackone/002-use-with-agent.py"
         ```
 
 ## Search and execute mode
@@ -192,55 +99,7 @@ This mode requires `stackone-adk>=0.2.0`.
 === "Python"
 
     ```python
-    import asyncio
-
-    from google.adk.agents import Agent
-    from google.adk.apps import App
-    from google.adk.runners import InMemoryRunner
-    from stackone_adk import StackOnePlugin
-
-
-    async def main():
-        plugin = StackOnePlugin(
-            mode="search_and_execute",
-            account_ids=["YOUR_ACCOUNT_ID"],
-            search={"method": "auto", "top_k": 10},
-        )
-
-        agent = Agent(
-            model="gemini-flash-latest",
-            name="stackone_agent",
-            description="Connects to multiple SaaS providers through StackOne.",
-            instruction=(
-                "You are an assistant powered by StackOne. To answer the "
-                "user's request, first call tool_search with a short query "
-                "to find the right action, then call tool_execute with the "
-                "chosen tool name and parameters that match the schema "
-                "returned by tool_search."
-            ),
-            tools=plugin.get_tools(),
-        )
-
-        app = App(
-            name="stackone_app",
-            root_agent=agent,
-            plugins=[plugin],
-        )
-
-        async with InMemoryRunner(app=app) as runner:
-            events = await runner.run_debug(
-                "List the first 3 workers.",
-                quiet=True,
-            )
-            for event in reversed(events):
-                if event.content and event.content.parts:
-                    text_parts = [p.text for p in event.content.parts if p.text]
-                    if text_parts:
-                        print("".join(text_parts))
-                        break
-
-
-    asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/stackone/003-search-and-execute-mode.py"
     ```
 
 The model first calls `tool_search` with a natural-language query and receives
@@ -259,9 +118,7 @@ tools depend on which SaaS providers you have connected in your
 To list discovered tools:
 
 ```python
-plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID") # Optional: omit to use all connected accounts
-for tool in plugin.get_tools():
-    print(f"{tool.name}: {tool.description}")
+--8<-- "examples/inline/python/integrations/stackone/004-available-tools.py"
 ```
 
 ### Supported integration categories
@@ -305,20 +162,7 @@ Parameter | Type | Default | Description
 Filter tools by provider, action pattern, account ID, or any combination:
 
 ```python
-# Specify accounts
-plugin = StackOnePlugin(account_ids=["acct-hibob-1", "acct-bamboohr-1"])
-
-# Read-only operations
-plugin = StackOnePlugin(actions=["*_list_*", "*_get_*"])
-
-# Specific actions with glob patterns
-plugin = StackOnePlugin(actions=["calendly_list_events", "calendly_get_event_*"])
-
-# Combined filters
-plugin = StackOnePlugin(
-    actions=["*_list_*", "*_get_*"],
-    account_ids=["acct-hibob-1"],
-)
+--8<-- "examples/inline/python/integrations/stackone/005-tool-filtering.py"
 ```
 
 ## Additional resources

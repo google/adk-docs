@@ -1,0 +1,1 @@
+AgentTool.create(agent)

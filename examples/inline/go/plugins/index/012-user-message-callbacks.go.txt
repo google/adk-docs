@@ -1,0 +1,4 @@
+func (p *MyPlugin) OnUserMessageCallback(ctx agent.InvocationContext, msg *genai.Content) (*genai.Content, error) {
+  // Your implementation here
+  return nil, nil
+}

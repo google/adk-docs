@@ -44,16 +44,7 @@ This table provides a quick reference for all RunConfig parameters covered in th
 All configuration type classes referenced in the table above are imported from `google.genai.types`:
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# Configuration types are accessed via types module
-run_config = RunConfig(
-    session_resumption=types.SessionResumptionConfig(),
-    context_window_compression=types.ContextWindowCompressionConfig(...),
-    speech_config=types.SpeechConfig(...),
-    # etc.
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/001-runconfig-parameter-quick-reference.py"
 ```
 
 The `RunConfig` class itself and `StreamingMode` enum are imported from `google.adk.agents.run_config`.
@@ -65,42 +56,13 @@ Response modalities control how the model generates output—as text or audio. B
 **Configuration:**
 
 ```python
-# Phase 2: Session initialization - RunConfig determines streaming behavior
-
-# Default behavior: ADK automatically sets response_modalities to ["AUDIO"]
-# when not specified (required by native audio models)
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
-)
-
-# The above is equivalent to:
-run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Automatically set by ADK in run_live()
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
-)
-
-# ✅ CORRECT: Text-only responses
-run_config = RunConfig(
-    response_modalities=["TEXT"],  # Model responds with text only
-    streaming_mode=StreamingMode.BIDI  # Still uses bidirectional streaming
-)
-
-# ✅ CORRECT: Audio-only responses (explicit)
-run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Model responds with audio only
-    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/002-response-modalities.py"
 ```
 
 Both Gemini Live API and Gemini Live API (Agent Platform) restrict sessions to a single response modality. Attempting to use both will result in an API error:
 
 ```python
-# ❌ INCORRECT: Both modalities not supported
-run_config = RunConfig(
-    response_modalities=["TEXT", "AUDIO"],  # ERROR: Cannot use both
-    streaming_mode=StreamingMode.BIDI
-)
-# Error from Live API: "Only one response modality is supported per session"
+--8<-- "examples/inline/python/live/dev-guide/part4/003-correct-audio-only-responses-explicit.py"
 ```
 
 **Default Behavior:**
@@ -129,19 +91,7 @@ This guide focuses on `StreamingMode.BIDI`, which is required for real-time audi
 **Configuration:**
 
 ```python
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# BIDI streaming for real-time audio/video
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
-    response_modalities=["AUDIO"]  # Supports audio/video modalities
-)
-
-# SSE streaming for text-based interactions
-run_config = RunConfig(
-    streaming_mode=StreamingMode.SSE,
-    response_modalities=["TEXT"]  # Text-only modality
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/004-streamingmode-bidi-or-sse.py"
 ```
 
 ### Protocol and Implementation Differences
@@ -433,11 +383,7 @@ When ADK reconnects to the Live API, your application's event loop continues nor
 **Configuration:**
 
 ```python
-from google.genai import types
-
-run_config = RunConfig(
-    session_resumption=types.SessionResumptionConfig()
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/005-scope-of-adk-s-reconnection-management.py"
 ```
 
 **When NOT to Enable Session Resumption:**
@@ -551,18 +497,7 @@ Session duration management and context window compression are **Live API platfo
 ADK provides an easy way to configure context window compression through RunConfig. However, developers are responsible for appropriately configuring the compression parameters (`trigger_tokens` and `target_tokens`) based on their specific requirements—model context window size, expected conversation patterns, and quality needs:
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-# For gemini-2.5-flash-native-audio-preview-12-2025 (128k context window)
-run_config = RunConfig(
-    context_window_compression=types.ContextWindowCompressionConfig(
-        trigger_tokens=100000,  # Start compression at ~78% of 128k context
-        sliding_window=types.SlidingWindow(
-            target_tokens=80000  # Compress to ~62% of context, preserving recent turns
-        )
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/006-platform-behavior-and-official-limits.py"
 ```
 
 **How it works:**
@@ -645,12 +580,7 @@ While compression enables unlimited session duration, consider these trade-offs:
 - ✅ Session resumption handle caching and management
 
 ```python
-from google.genai import types
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    session_resumption=types.SessionResumptionConfig()
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/007-essential-enable-session-resumption.py"
 ```
 
 ### Recommended: Enable Context Window Compression for Unlimited Sessions
@@ -662,17 +592,7 @@ run_config = RunConfig(
 - ⚠️ **Use judiciously**: Compression adds latency during summarization and may lose conversational nuance—only enable when extended sessions are truly necessary for your use case
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    session_resumption=types.SessionResumptionConfig(),
-    context_window_compression=types.ContextWindowCompressionConfig(
-        trigger_tokens=100000,
-        sliding_window=types.SlidingWindow(target_tokens=80000)
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/008-recommended-enable-context-window-compre.py"
 ```
 
 ### Optional: Monitor Session Duration
@@ -799,20 +719,7 @@ This provides graceful degradation—users wait briefly during peak times rather
 ADK provides additional RunConfig options to control session behavior, manage costs, and persist audio data for debugging and compliance purposes.
 
 ```python
-run_config = RunConfig(
-    # Limit total LLM calls per invocation
-    max_llm_calls=500,  # Default: 500 (prevents runaway loops)
-                        # 0 or negative = unlimited (use with caution)
-
-    # Save audio/video artifacts for debugging/compliance
-    save_live_blob=True,  # Default: False
-
-    # Attach custom metadata to events
-    custom_metadata={"user_tier": "premium", "session_type": "support"},  # Default: None
-
-    # Enable compositional function calling (experimental)
-    support_cfc=True  # Default: False (Gemini 2.x models only)
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/009-miscellaneous-controls.py"
 ```
 
 ### max_llm_calls
@@ -874,17 +781,7 @@ This parameter allows you to attach arbitrary key-value metadata to events gener
 **Configuration:**
 
 ```python
-from google.adk.agents.run_config import RunConfig
-
-# Attach metadata to all events in this invocation
-run_config = RunConfig(
-    custom_metadata={
-        "user_tier": "premium",
-        "session_type": "customer_support",
-        "campaign_id": "promo_2025",
-        "ab_test_variant": "variant_b"
-    }
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/010-custommetadata.py"
 ```
 
 **How it works:**
@@ -899,7 +796,7 @@ When you provide `custom_metadata` in RunConfig:
 **Type specification:**
 
 ```python
-custom_metadata: Optional[dict[str, Any]] = None
+--8<-- "examples/inline/python/live/dev-guide/part4/011-attach-metadata-to-all-events-in-this-in.py"
 ```
 
 The metadata is a flexible dictionary accepting any JSON-serializable values (strings, numbers, booleans, nested objects, arrays).
@@ -917,16 +814,7 @@ The metadata is a flexible dictionary accepting any JSON-serializable values (st
 **Example - Retrieving metadata from events:**
 
 ```python
-async for event in runner.run_live(
-    session=session,
-    live_request_queue=queue,
-    run_config=RunConfig(
-        custom_metadata={"user_id": "user_123", "experiment": "new_ui"}
-    )
-):
-    if event.custom_metadata:
-        print(f"User: {event.custom_metadata.get('user_id')}")
-        print(f"Experiment: {event.custom_metadata.get('experiment')}")
+--8<-- "examples/inline/python/live/dev-guide/part4/012-attach-metadata-to-all-events-in-this-in.py"
 ```
 
 **Agent-to-Agent (A2A) integration:**
@@ -934,13 +822,7 @@ async for event in runner.run_live(
 When using `RemoteA2AAgent`, ADK automatically extracts metadata from A2A requests and populates `custom_metadata`:
 
 ```python
-# A2A request metadata is automatically mapped to custom_metadata
-# Source: a2a/converters/request_converter.py
-custom_metadata = {
-    "a2a_metadata": {
-        # Original A2A request metadata appears here
-    }
-}
+--8<-- "examples/inline/python/live/dev-guide/part4/013-attach-metadata-to-all-events-in-this-in.py"
 ```
 
 This enables seamless metadata propagation across agent boundaries in multi-agent architectures.
@@ -962,11 +844,7 @@ This parameter enables Compositional Function Calling (CFC), allowing the model 
 **Critical behavior:** When `support_cfc=True`, ADK **always uses the Live API** (WebSocket) internally, regardless of the `streaming_mode` setting. This is because only the Live API backend supports CFC capabilities.
 
 ```python
-# Even with SSE mode, ADK routes through Live API when CFC is enabled
-run_config = RunConfig(
-    support_cfc=True,
-    streaming_mode=StreamingMode.SSE  # ADK uses Live API internally
-)
+--8<-- "examples/inline/python/live/dev-guide/part4/014-supportcfc-experimental.py"
 ```
 
 **Model requirements:**

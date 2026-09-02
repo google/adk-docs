@@ -90,33 +90,13 @@ To inject a value from the session state, enclose the key of the desired state v
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-
-    story_generator = LlmAgent(
-        name="StoryGenerator",
-        model="gemini-flash-latest",
-        instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
-    )
-
-    # Assuming session.state['topic'] is set to "friendship", the LLM
-    # will receive the following instruction:
-    # "Write a short story about a cat, focusing on the theme: friendship."
+    --8<-- "examples/inline/python/sessions/state/001-using-key-templating.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent } from "@google/adk";
-
-    const storyGenerator = new LlmAgent({
-        name: "StoryGenerator",
-        model: "gemini-flash-latest",
-        instruction: "Write a short story about a cat, focusing on the theme: {topic}."
-    });
-
-    // Assuming session.state['topic'] is set to "friendship", the LLM
-    // will receive the following instruction:
-    // "Write a short story about a cat, focusing on the theme: friendship."
+    --8<-- "examples/inline/typescript/sessions/state/002-using-key-templating.ts"
     ```
 
 === "Go"
@@ -128,17 +108,7 @@ To inject a value from the session state, enclose the key of the desired state v
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-
-    LlmAgent storyGenerator = LlmAgent.builder()
-        .name("StoryGenerator")
-        .model(geminiModel)
-        .instruction("Write a short story about a cat, focusing on the theme: " + topic)
-        .build();
-
-    // Assuming session.state().put("topic", "friendship"), the LLM
-    // will receive the following instruction:
-    // "Write a short story about a cat, focusing on the theme: friendship."
+    --8<-- "examples/inline/java/sessions/state/003-using-key-templating.java"
     ```
 
 === "Kotlin"
@@ -167,37 +137,13 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.agents.readonly_context import ReadonlyContext
-
-    # This is an InstructionProvider
-    def my_instruction_provider(context: ReadonlyContext) -> str:
-        # No state injection occurs — curly braces are treated as literal text.
-        return 'Format your output as JSON: {"city": "<name>", "population": <number>}'
-
-    agent = LlmAgent(
-        model="gemini-flash-latest",
-        name="template_helper_agent",
-        instruction=my_instruction_provider
-    )
+    --8<-- "examples/inline/python/sessions/state/004-using-instructionprovider-for-full-contr.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, ReadonlyContext } from "@google/adk";
-
-    // This is an InstructionProvider
-    function myInstructionProvider(context: ReadonlyContext): string {
-        // No state injection occurs — curly braces are treated as literal text.
-        return 'Format your output as JSON: {"city": "<name>", "population": <number>}';
-    }
-
-    const agent = new LlmAgent({
-        model: "gemini-flash-latest",
-        name: "template_helper_agent",
-        instruction: myInstructionProvider
-    });
+    --8<-- "examples/inline/typescript/sessions/state/005-using-instructionprovider-for-full-contr.ts"
     ```
 
 === "Go"
@@ -209,24 +155,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 === "Java"
 
     ```java
-    import com.google.adk.agents.Instruction;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.agents.ReadonlyContext;
-    import io.reactivex.rxjava3.core.Single;
-
-    // This is an Instruction.Provider
-    Instruction.Provider myInstructionProvider = new Instruction.Provider(
-        (ReadonlyContext context) -> {
-            // No state injection occurs — curly braces are treated as literal text.
-            return Single.just("Format your output as JSON: {\"city\": \"<name>\", \"population\": <number>}");
-        }
-    );
-
-    LlmAgent agent = LlmAgent.builder()
-        .model("gemini-flash-latest")
-        .name("template_helper_agent")
-        .instruction(myInstructionProvider)
-        .build();
+    --8<-- "examples/inline/java/sessions/state/006-using-instructionprovider-for-full-contr.java"
     ```
 
 === "Kotlin"
@@ -240,21 +169,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.agents.readonly_context import ReadonlyContext
-    from google.adk.utils import instructions_utils
-
-    async def my_dynamic_instruction_provider(context: ReadonlyContext) -> str:
-        template = "This is a {adjective} instruction. Use JSON like: {\"key\": \"value\"}."
-        # This will inject the 'adjective' state variable.
-        # The JSON braces are left alone because their content is not a valid identifier.
-        return await instructions_utils.inject_session_state(template, context)
-
-    agent = LlmAgent(
-        model="gemini-flash-latest",
-        name="dynamic_template_helper_agent",
-        instruction=my_dynamic_instruction_provider
-    )
+    --8<-- "examples/inline/python/sessions/state/007-using-instructionprovider-for-full-contr.py"
     ```
 
 === "Go"
@@ -266,26 +181,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 === "Java"
 
     ```java
-    import com.google.adk.agents.Instruction;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.agents.ReadonlyContext;
-    import com.google.adk.utils.InstructionUtils;
-    import io.reactivex.rxjava3.core.Single;
-
-    Instruction.Provider myDynamicInstructionProvider = new Instruction.Provider(
-        (ReadonlyContext context) -> {
-            String template = "This is a " + adjective + " instruction. Use JSON like: {\"key\": \"value\"}.";
-            // This will inject the 'adjective' state variable.
-            // The JSON braces are left alone because their content is not a valid identifier.
-            return InstructionUtils.injectSessionState(context.invocationContext(), template);
-        }
-    );
-
-    LlmAgent agent = LlmAgent.builder()
-        .model("gemini-flash-latest")
-        .name("dynamic_template_helper_agent")
-        .instruction(myDynamicInstructionProvider)
-        .build();
+    --8<-- "examples/inline/java/sessions/state/008-using-instructionprovider-for-full-contr.java"
     ```
 
 **Benefits of Direct Injection**
@@ -314,98 +210,13 @@ This is the simplest method for saving an agent's final text response directly i
 === "Python"
 
     ```py
-    from google.adk.agents import LlmAgent
-    from google.adk.sessions import InMemorySessionService, Session
-    from google.adk.runners import Runner
-    from google.genai.types import Content, Part
-
-    # Define agent with output_key
-    greeting_agent = LlmAgent(
-        name="Greeter",
-        model="gemini-flash-latest", # Use a valid model
-        instruction="Generate a short, friendly greeting.",
-        output_key="last_greeting" # Save response to state['last_greeting']
-    )
-
-    # --- Setup Runner and Session ---
-    app_name, user_id, session_id = "state_app", "user1", "session1"
-    session_service = InMemorySessionService()
-    runner = Runner(
-        agent=greeting_agent,
-        app_name=app_name,
-        session_service=session_service
-    )
-    session = await session_service.create_session(app_name=app_name,
-                                        user_id=user_id,
-                                        session_id=session_id)
-    print(f"Initial state: {session.state}")
-
-    # --- Run the Agent ---
-    # The agent uses the output_key to put its response into the event's
-    # state_delta; the Runner hands that event to append_event, which
-    # applies the delta to the session state.
-    user_message = Content(parts=[Part(text="Hello")])
-    for event in runner.run(user_id=user_id,
-                            session_id=session_id,
-                            new_message=user_message):
-        if event.is_final_response():
-          print(f"Agent responded.") # Response text is also in event.content
-
-    # --- Check Updated State ---
-    updated_session = await session_service.get_session(app_name=app_name, user_id=user_id, session_id=session_id)
-    print(f"State after agent run: {updated_session.state}")
-    # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
+    --8<-- "examples/inline/python/sessions/state/009-how-state-is-updated-recommended-methods.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, Runner, InMemorySessionService, isFinalResponse } from "@google/adk";
-    import { Content } from "@google/genai";
-
-    // Define agent with outputKey
-    const greetingAgent = new LlmAgent({
-        name: "Greeter",
-        model: "gemini-flash-latest",
-        instruction: "Generate a short, friendly greeting.",
-        outputKey: "last_greeting" // Save response to state['last_greeting']
-    });
-
-    // --- Setup Runner and Session ---
-    const appName = "state_app";
-    const userId = "user1";
-    const sessionId = "session1";
-    const sessionService = new InMemorySessionService();
-    const runner = new Runner({
-        agent: greetingAgent,
-        appName: appName,
-        sessionService: sessionService
-    });
-    const session = await sessionService.createSession({
-        appName,
-        userId,
-        sessionId
-    });
-    console.log(`Initial state: ${JSON.stringify(session.state)}`);
-
-    // --- Run the Agent ---
-    // Runner handles calling appendEvent, which uses the outputKey
-    // to automatically create the stateDelta.
-    const userMessage: Content = { parts: [{ text: "Hello" }] };
-    for await (const event of runner.runAsync({
-        userId,
-        sessionId,
-        newMessage: userMessage
-    })) {
-        if (isFinalResponse(event)) {
-          console.log("Agent responded."); // Response text is also in event.content
-        }
-    }
-
-    // --- Check Updated State ---
-    const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
-    console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
-    // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
+    --8<-- "examples/inline/typescript/sessions/state/010-how-state-is-updated-recommended-methods.ts"
     ```
 
 === "Go"
@@ -429,108 +240,13 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 === "Python"
 
     ```py
-    from google.adk.sessions import InMemorySessionService, Session
-    from google.adk.events import Event, EventActions
-    from google.genai.types import Part, Content
-    import time
-
-    # --- Setup ---
-    session_service = InMemorySessionService()
-    app_name, user_id, session_id = "state_app_manual", "user2", "session2"
-    session = await session_service.create_session(
-        app_name=app_name,
-        user_id=user_id,
-        session_id=session_id,
-        state={"user:login_count": 0, "task_status": "idle"}
-    )
-    print(f"Initial state: {session.state}")
-
-    # --- Define State Changes ---
-    current_time = time.time()
-    state_changes = {
-        "task_status": "active",              # Update session state
-        "user:login_count": session.state.get("user:login_count", 0) + 1, # Update user state
-        "user:last_login_ts": current_time,   # Add user state
-        "temp:validation_needed": True        # Add temporary state (will be discarded)
-    }
-
-    # --- Create Event with Actions ---
-    actions_with_update = EventActions(state_delta=state_changes)
-    # This event might represent an internal system action, not just an agent response
-    system_event = Event(
-        invocation_id="inv_login_update",
-        author="system", # Or 'agent', 'tool' etc.
-        actions=actions_with_update,
-        timestamp=current_time
-        # content might be None or represent the action taken
-    )
-
-    # --- Append the Event (This updates the state) ---
-    await session_service.append_event(session, system_event)
-    print("`append_event` called with explicit state delta.")
-
-    # --- Check Updated State ---
-    updated_session = await session_service.get_session(app_name=app_name,
-                                                user_id=user_id,
-                                                session_id=session_id)
-    print(f"State after event: {updated_session.state}")
-    # Expected: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
-    # Note: 'temp:validation_needed' is NOT present.
+    --8<-- "examples/inline/python/sessions/state/011-how-state-is-updated-recommended-methods.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { InMemorySessionService, createEvent, createEventActions } from "@google/adk";
-
-    // --- Setup ---
-    const sessionService = new InMemorySessionService();
-    const appName = "state_app_manual";
-    const userId = "user2";
-    const sessionId = "session2";
-    const session = await sessionService.createSession({
-        appName,
-        userId,
-        sessionId,
-        state: { "user:login_count": 0, "task_status": "idle" }
-    });
-    console.log(`Initial state: ${JSON.stringify(session.state)}`);
-
-    // --- Define State Changes ---
-    const currentTime = Date.now();
-    const stateChanges = {
-        "task_status": "active",              // Update session state
-        "user:login_count": (session.state["user:login_count"] as number || 0) + 1, // Update user state
-        "user:last_login_ts": currentTime,   // Add user state
-        "temp:validation_needed": true        // Add temporary state (will be discarded)
-    };
-
-    // --- Create Event with Actions ---
-    const actionsWithUpdate = createEventActions({
-        stateDelta: stateChanges,
-    });
-    // This event might represent an internal system action, not just an agent response
-    const systemEvent = createEvent({
-        invocationId: "inv_login_update",
-        author: "system", // Or 'agent', 'tool' etc.
-        actions: actionsWithUpdate,
-        timestamp: currentTime
-        // content might be null or represent the action taken
-    });
-
-    // --- Append the Event (This updates the state) ---
-    await sessionService.appendEvent({ session, event: systemEvent });
-    console.log("`appendEvent` called with explicit state delta.");
-
-    // --- Check Updated State ---
-    const updatedSession = await sessionService.getSession({
-        appName,
-        userId,
-        sessionId
-    });
-    console.log(`State after event: ${JSON.stringify(updatedSession?.state)}`);
-    // Expected: {"user:login_count":1,"task_status":"active","user:last_login_ts":<timestamp>}
-    // Note: 'temp:validation_needed' is NOT present.
+    --8<-- "examples/inline/typescript/sessions/state/012-how-state-is-updated-recommended-methods.ts"
     ```
 
 === "Go"
@@ -569,44 +285,13 @@ For more comprehensive details on context objects, refer to the [Context documen
 === "Python"
 
     ```python
-    # In an agent callback or tool function
-    from google.adk.agents.callback_context import CallbackContext
-    # or, equivalently: from google.adk.tools.tool_context import ToolContext
-
-    def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
-                                     # ... other parameters ...
-                                    ):
-        # Update existing state
-        count = context.state.get("user_action_count", 0)
-        context.state["user_action_count"] = count + 1
-
-        # Add new state
-        context.state["temp:last_operation_status"] = "success"
-
-        # State changes are automatically part of the event's state_delta
-        # ... rest of callback/tool logic ...
+    --8<-- "examples/inline/python/sessions/state/013-how-state-is-updated-recommended-methods.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // In an agent callback or tool function
-    import { Context } from "@google/adk";
-
-    function myCallbackOrToolFunction(
-        context: Context,
-        // ... other parameters ...
-    ) {
-        // Update existing state
-        const count = context.state.get("user_action_count", 0);
-        context.state.set("user_action_count", count + 1);
-
-        // Add new state
-        context.state.set("temp:last_operation_status", "success");
-
-        // State changes are automatically part of the event's stateDelta
-        // ... rest of callback/tool logic ...
-    }
+    --8<-- "examples/inline/typescript/sessions/state/014-how-state-is-updated-recommended-methods.ts"
     ```
 
 === "Go"
@@ -618,23 +303,7 @@ For more comprehensive details on context objects, refer to the [Context documen
 === "Java"
 
     ```java
-    // In an agent callback or tool method
-    import com.google.adk.agents.CallbackContext; // or ToolContext
-    // ... other imports ...
-
-    public class MyAgentCallbacks {
-        public void onAfterAgent(CallbackContext callbackContext) {
-            // Update existing state
-            Integer count = (Integer) callbackContext.state().getOrDefault("user_action_count", 0);
-            callbackContext.state().put("user_action_count", count + 1);
-
-            // Add new state
-            callbackContext.state().put("temp:last_operation_status", "success");
-
-            // State changes are automatically part of the event's state_delta
-            // ... rest of callback logic ...
-        }
-    }
+    --8<-- "examples/inline/java/sessions/state/015-how-state-is-updated-recommended-methods.java"
     ```
 
 === "Kotlin"

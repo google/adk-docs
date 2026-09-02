@@ -44,25 +44,13 @@ First, you need to establish what the agent *is* and what it's *for*.
 === "Python"
 
     ```python
-    # Example: Defining the basic identity
-    capital_agent = LlmAgent(
-        model="gemini-flash-latest",
-        name="capital_agent",
-        description="Answers user questions about the capital city of a given country."
-        # instruction and tools will be added next
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/001-define-agent-identity-and-purpose.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Example: Defining the basic identity
-    const capitalAgent = new LlmAgent({
-        model: 'gemini-flash-latest',
-        name: 'capital_agent',
-        description: 'Answers user questions about the capital city of a given country.',
-        // instruction and tools will be added next
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/002-define-agent-identity-and-purpose.ts"
     ```
 
 === "Go"
@@ -74,14 +62,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 === "Java"
 
     ```java
-    // Example: Defining the basic identity
-    LlmAgent capitalAgent =
-        LlmAgent.builder()
-            .model("gemini-flash-latest")
-            .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
-            // instruction and tools will be added next
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/003-define-agent-identity-and-purpose.java"
     ```
 
 === "Kotlin"
@@ -131,41 +112,13 @@ tells the agent:
 === "Python"
 
     ```python
-    # Example: Adding instructions
-    capital_agent = LlmAgent(
-        model="gemini-flash-latest",
-        name="capital_agent",
-        description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country.
-    When a user asks for the capital of a country:
-    1. Identify the country name from the user's query.
-    2. Use the `get_capital_city` tool to find the capital.
-    3. Respond clearly to the user, stating the capital city.
-    Example Query: "What's the capital of {country}?"
-    Example Response: "The capital of France is Paris."
-    """,
-        # tools will be added next
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/004-guide-the-agent-with-instructions.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Example: Adding instructions
-    const capitalAgent = new LlmAgent({
-        model: 'gemini-flash-latest',
-        name: 'capital_agent',
-        description: 'Answers user questions about the capital city of a given country.',
-        instruction: `You are an agent that provides the capital city of a country.
-            When a user asks for the capital of a country:
-            1. Identify the country name from the user's query.
-            2. Use the \`getCapitalCity\` tool to find the capital.
-            3. Respond clearly to the user, stating the capital city.
-            Example Query: "What's the capital of {country}?"
-            Example Response: "The capital of France is Paris."
-            `,
-        // tools will be added next
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/005-guide-the-agent-with-instructions.ts"
     ```
 
 === "Go"
@@ -177,24 +130,7 @@ tells the agent:
 === "Java"
 
     ```java
-    // Example: Adding instructions
-    LlmAgent capitalAgent =
-        LlmAgent.builder()
-            .model("gemini-flash-latest")
-            .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
-            .instruction(
-                """
-                You are an agent that provides the capital city of a country.
-                When a user asks for the capital of a country:
-                1. Identify the country name from the user's query.
-                2. Use the `get_capital_city` tool to find the capital.
-                3. Respond clearly to the user, stating the capital city.
-                Example Query: "What's the capital of {country}?"
-                Example Response: "The capital of France is Paris."
-                """)
-            // tools will be added next
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/006-guide-the-agent-with-instructions.java"
     ```
 
 === "Kotlin"
@@ -234,62 +170,13 @@ on the conversation and its instructions.
 === "Python"
 
     ```python
-    # Define a tool function
-    def get_capital_city(country: str) -> str:
-      """Retrieves the capital city for a given country."""
-      # Replace with actual logic (e.g., API call, database lookup)
-      capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
-      return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
-
-    # Add the tool to the agent
-    capital_agent = LlmAgent(
-        model="gemini-flash-latest",
-        name="capital_agent",
-        description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
-        tools=[get_capital_city] # Provide the function directly
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/007-equip-the-agent-with-tools.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {z} from 'zod';
-    import { LlmAgent, FunctionTool } from '@google/adk';
-
-    // Define the schema for the tool's input parameters
-    const getCapitalCityParamsSchema = z.object({
-        country: z.string().describe('The country to get capital for.'),
-    });
-
-    // Define the tool function itself
-    async function getCapitalCity(params: z.infer<typeof getCapitalCityParamsSchema>): Promise<{ capitalCity: string }> {
-    const capitals: Record<string, string> = {
-        'france': 'Paris',
-        'japan': 'Tokyo',
-        'canada': 'Ottawa',
-    };
-    const result = capitals[params.country.toLowerCase()] ??
-        `Sorry, I don't know the capital of ${params.country}.`;
-    return {capitalCity: result}; // Tools must return an object
-    }
-
-    // Create an instance of the FunctionTool
-    const getCapitalCityTool = new FunctionTool({
-        name: 'getCapitalCity',
-        description: 'Retrieves the capital city for a given country.',
-        parameters: getCapitalCityParamsSchema,
-        execute: getCapitalCity,
-    });
-
-    // Add the tool to the agent
-    const capitalAgent = new LlmAgent({
-        model: 'gemini-flash-latest',
-        name: 'capitalAgent',
-        description: 'Answers user questions about the capital city of a given country.',
-        instruction: 'You are an agent that provides the capital city of a country...', // Note: the full instruction is omitted for brevity
-        tools: [getCapitalCityTool], // Provide the FunctionTool instance in an array
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/008-equip-the-agent-with-tools.ts"
     ```
 
 === "Go"
@@ -301,43 +188,13 @@ on the conversation and its instructions.
 === "Java"
 
     ```java
-
-    // Define a tool function
-    // Retrieves the capital city of a given country.
-    public static Map<String, Object> getCapitalCity(
-            @Schema(name = "country", description = "The country to get capital for")
-            String country) {
-      // Replace with actual logic (e.g., API call, database lookup)
-      Map<String, String> countryCapitals = new HashMap<>();
-      countryCapitals.put("canada", "Ottawa");
-      countryCapitals.put("france", "Paris");
-      countryCapitals.put("japan", "Tokyo");
-
-      String result =
-              countryCapitals.getOrDefault(
-                      country.toLowerCase(), "Sorry, I couldn't find the capital for " + country + ".");
-      return Map.of("result", result); // Tools must return a Map
-    }
-
-    // Add the tool to the agent
-    FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
-    LlmAgent capitalAgent =
-        LlmAgent.builder()
-            .model("gemini-flash-latest")
-            .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
-            .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
-            .tools(capitalTool) // Provide the function wrapped as a FunctionTool
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/009-equip-the-agent-with-tools.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_definition"
-
-    // Add the tool to the agent
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_usage"
+    --8<-- "examples/inline/kotlin/agents/llm-agents/010-equip-the-agent-with-tools.kt"
     ```
 
 Learn more about Tools in [Custom Tools](/tools-custom/).
@@ -359,60 +216,25 @@ You can adjust how the underlying AI model generates responses using
 === "Python"
 
     ```python
-    from google.genai import types
-
-    agent = LlmAgent(
-        # ... other params
-        generate_content_config=types.GenerateContentConfig(
-            temperature=0.2, # More deterministic output
-            max_output_tokens=250,
-            safety_settings=[
-                types.SafetySetting(
-                    category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                    threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-                )
-            ]
-        )
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/011-fine-tune-ai-model-operation.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { GenerateContentConfig } from '@google/genai';
-
-    const generateContentConfig: GenerateContentConfig = {
-        temperature: 0.2, // More deterministic output
-        maxOutputTokens: 250,
-    };
-
-    const agent = new LlmAgent({
-        // ... other params
-        generateContentConfig,
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/012-fine-tune-ai-model-operation.ts"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/genai"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
+    --8<-- "examples/inline/go/agents/llm-agents/013-fine-tune-ai-model-operation.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.genai.types.GenerateContentConfig;
-
-    LlmAgent agent =
-        LlmAgent.builder()
-            // ... other params
-            .generateContentConfig(GenerateContentConfig.builder()
-                .temperature(0.2F) // More deterministic output
-                .maxOutputTokens(250)
-                .build())
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/014-fine-tune-ai-model-operation.java"
     ```
 
 === "Kotlin"
@@ -436,23 +258,7 @@ at once.
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-
-    # Set a new default model for all agents
-    LlmAgent.set_default_model("gemini-flash-latest")
-
-    # This agent will now use "gemini-flash-latest" by default
-    agent_with_default_model = LlmAgent(
-        name="default_model_agent",
-        instruction="You are a helpful assistant."
-    )
-
-    # You can still override the default for specific agents
-    specific_agent = LlmAgent(
-        name="specific_model_agent",
-        model="gemini-pro-latest",
-        instruction="You are a creative writer."
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/015-configure-a-default-model.py"
     ```
 
 ### Structure data input and output {#data-handling}
@@ -516,46 +322,13 @@ schema definitions.
     The input and output schema is typically a `Pydantic` BaseModel.
 
     ```python
-    from pydantic import BaseModel, Field
-
-    class CapitalOutput(BaseModel):
-        capital: str = Field(description="The capital of the country.")
-
-    structured_capital_agent = LlmAgent(
-        # ... name, model, description
-        instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
-        output_schema=CapitalOutput, # Enforce JSON output
-        output_key="found_capital"  # Store result in state['found_capital']
-        # Cannot use tools=[get_capital_city] effectively here
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/016-structure-data-input-and-output-data-han.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {z} from 'zod';
-    import { Schema, Type } from '@google/genai';
-
-    // Define the schema for the output
-    const CapitalOutputSchema: Schema = {
-        type: Type.OBJECT,
-        properties: {
-            capital: {
-                type: Type.STRING,
-                description: 'The capital of the country.',
-            },
-        },
-        required: ['capital'],
-    };
-
-    // Create the LlmAgent instance
-    const structuredCapitalAgent = new LlmAgent({
-        // ... name, model, description
-        instruction: `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
-        outputSchema: CapitalOutputSchema, // Enforce JSON output
-        outputKey: 'found_capital', // Store result in state['found_capital']
-        // Cannot use tools effectively here
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/017-structure-data-input-and-output-data-han.ts"
     ```
 
 === "Go"
@@ -571,28 +344,7 @@ schema definitions.
      The input and output schema is a `google.genai.types.Schema` object.
 
     ```java
-    private static final Schema CAPITAL_OUTPUT =
-        Schema.builder()
-            .type("OBJECT")
-            .description("Schema for capital city information.")
-            .properties(
-                Map.of(
-                    "capital",
-                    Schema.builder()
-                        .type("STRING")
-                        .description("The capital city of the country.")
-                        .build()))
-            .build();
-
-    LlmAgent structuredCapitalAgent =
-        LlmAgent.builder()
-            // ... name, model, description
-            .instruction(
-                    "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
-            .outputKey("found_capital") // Store result in state.get("found_capital")
-            // Cannot use tools(getCapitalCity) effectively here
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/018-structure-data-input-and-output-data-han.java"
     ```
 
 === "Kotlin"
@@ -628,39 +380,25 @@ Control whether the agent receives the prior conversation history.
 === "Python"
 
     ```python
-    stateless_agent = LlmAgent(
-        # ... other params
-        include_contents='none'
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/019-manage-agent-context.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    const statelessAgent = new LlmAgent({
-        // ... other params
-        includeContents: 'none',
-    });
+    --8<-- "examples/inline/typescript/agents/llm-agents/020-manage-agent-context.ts"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/agent/llmagent"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
+    --8<-- "examples/inline/go/agents/llm-agents/021-manage-agent-context.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent.IncludeContents;
-
-    LlmAgent statelessAgent =
-        LlmAgent.builder()
-            // ... other params
-            .includeContents(IncludeContents.NONE)
-            .build();
+    --8<-- "examples/inline/java/agents/llm-agents/022-manage-agent-context.java"
     ```
 
 === "Kotlin"
@@ -711,20 +449,7 @@ reasoning and planning before execution. There are two main planners:
     internal reasoning process in the response.
 
     ```python
-    from google.adk import Agent
-    from google.adk.planners import BuiltInPlanner
-    from google.genai import types
-
-    my_agent = Agent(
-        model="gemini-flash-latest",
-        planner=BuiltInPlanner(
-            thinking_config=types.ThinkingConfig(
-                include_thoughts=True,
-                thinking_budget=1024,
-            )
-        ),
-        # ... your tools here
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/023-configure-a-planner.py"
     ```
 
 - **`PlanReActPlanner`:** This planner instructs the model to follow a specific
@@ -733,14 +458,7 @@ reasoning and planning before execution. There are two main planners:
   for models that don't have a built-in "thinking" feature*.
 
     ```python
-    from google.adk import Agent
-    from google.adk.planners import PlanReActPlanner
-
-    my_agent = Agent(
-        model="gemini-flash-latest",
-        planner=PlanReActPlanner(),
-        # ... your tools here
-    )
+    --8<-- "examples/inline/python/agents/llm-agents/024-configure-a-planner.py"
     ```
 
     The agent's response will follow a structured format:
@@ -763,120 +481,7 @@ reasoning and planning before execution. There are two main planners:
 Example for using built-in-planner:
 
 ```python
-from dotenv import load_dotenv
-
-
-import asyncio
-import os
-
-from google.genai import types
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.planners import BasePlanner, BuiltInPlanner, PlanReActPlanner
-from google.adk.models import LlmRequest
-
-from google.genai.types import ThinkingConfig
-from google.genai.types import GenerateContentConfig
-
-import datetime
-from zoneinfo import ZoneInfo
-
-APP_NAME = "weather_app"
-USER_ID = "1234"
-SESSION_ID = "session1234"
-
-def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
-
-    Args:
-        city (str): The name of the city for which to retrieve the weather report.
-
-    Returns:
-        dict: status and result or error msg.
-    """
-    if city.lower() == "new york":
-        return {
-            "status": "success",
-            "report": (
-                "The weather in New York is sunny with a temperature of 25 degrees"
-                " Celsius (77 degrees Fahrenheit)."
-            ),
-        }
-    else:
-        return {
-            "status": "error",
-            "error_message": f"Weather information for '{city}' is not available.",
-        }
-
-
-def get_current_time(city: str) -> dict:
-    """Returns the current time in a specified city.
-
-    Args:
-        city (str): The name of the city for which to retrieve the current time.
-
-    Returns:
-        dict: status and result or error msg.
-    """
-
-    if city.lower() == "new york":
-        tz_identifier = "America/New_York"
-    else:
-        return {
-            "status": "error",
-            "error_message": (
-                f"Sorry, I don't have timezone information for {city}."
-            ),
-        }
-
-    tz = ZoneInfo(tz_identifier)
-    now = datetime.datetime.now(tz)
-    report = (
-        f'The current time in {city} is {now.strftime("%Y-%m-%d %H:%M:%S %Z%z")}'
-    )
-    return {"status": "success", "report": report}
-
-# Step 1: Create a ThinkingConfig
-thinking_config = ThinkingConfig(
-    include_thoughts=True,   # Ask the model to include its thoughts in the response
-    thinking_budget=256      # Limit the 'thinking' to 256 tokens (adjust as needed)
-)
-print("ThinkingConfig:", thinking_config)
-
-# Step 2: Instantiate BuiltInPlanner
-planner = BuiltInPlanner(
-    thinking_config=thinking_config
-)
-print("BuiltInPlanner created.")
-
-# Step 3: Wrap the planner in an LlmAgent
-agent = LlmAgent(
-    model="gemini-flash-latest",  # Set your model name
-    name="weather_and_time_agent",
-    instruction="You are an agent that returns time and weather",
-    planner=planner,
-    tools=[get_weather, get_current_time]
-)
-
-# Session and Runner
-session_service = InMemorySessionService()
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
-runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
-
-# Agent Interaction
-def call_agent(query):
-    content = types.Content(role='user', parts=[types.Part(text=query)])
-    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
-
-    for event in events:
-        print(f"\nDEBUG EVENT: {event}\n")
-        if event.is_final_response() and event.content:
-            final_answer = event.content.parts[0].text.strip()
-            print("\n🟢 FINAL ANSWER\n", final_answer, "\n")
-
-call_agent("If it's raining in New York right now, what is the current temperature?")
+--8<-- "examples/inline/python/agents/llm-agents/025-configure-a-planner.py"
 ```
 
 ### Code execution

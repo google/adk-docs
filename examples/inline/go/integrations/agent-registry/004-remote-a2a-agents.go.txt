@@ -1,0 +1,14 @@
+import (
+	"golang.org/x/oauth2/google"
+
+	"google.golang.org/adk/v2/agentregistry"
+)
+
+httpClient, err := google.DefaultClient(ctx, "https://www.googleapis.com/auth/cloud-platform")
+if err != nil {
+	log.Fatalf("Failed to load Application Default Credentials: %v", err)
+}
+
+remoteAgent, err := registry.RemoteAgent(ctx, agentName,
+	agentregistry.WithA2AHTTPClient(httpClient),
+)

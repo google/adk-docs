@@ -48,55 +48,7 @@ Create the code for a basic agent that uses the built-in
 following code to the `my_agent/agent.go` file in your project directory:
 
 ```go title="my_agent/agent.go"
-package main
-
-import (
-	"context"
-	"log"
-	"os"
-
-	"google.golang.org/adk/v2/agent"
-	"google.golang.org/adk/v2/agent/llmagent"
-	"google.golang.org/adk/v2/cmd/launcher"
-	"google.golang.org/adk/v2/cmd/launcher/full"
-	"google.golang.org/adk/v2/model/gemini"
-	"google.golang.org/adk/v2/tool"
-	"google.golang.org/adk/v2/tool/geminitool"
-	"google.golang.org/genai"
-)
-
-func main() {
-	ctx := context.Background()
-
-	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
-		APIKey: os.Getenv("GOOGLE_API_KEY"),
-	})
-	if err != nil {
-		log.Fatalf("Failed to create model: %v", err)
-	}
-
-	timeAgent, err := llmagent.New(llmagent.Config{
-		Name:        "hello_time_agent",
-		Model:       model,
-		Description: "Tells the current time in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current time in a city.",
-		Tools: []tool.Tool{
-			geminitool.GoogleSearch{},
-		},
-	})
-	if err != nil {
-		log.Fatalf("Failed to create agent: %v", err)
-	}
-
-	config := &launcher.Config{
-		AgentLoader: agent.NewSingleLoader(timeAgent),
-	}
-
-	l := full.NewLauncher()
-	if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
-		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-	}
-}
+--8<-- "examples/inline/go/get-started/go/001-define-the-agent-code.go.txt"
 ```
 
 ### Configure project and dependencies

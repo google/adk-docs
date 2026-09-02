@@ -49,32 +49,7 @@ AI experiences using natural language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="elevenlabs_agent",
-            instruction="Help users generate speech, clone voices, and process audio",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="uvx",
-                            args=["elevenlabs-mcp"],
-                            env={
-                                "ELEVENLABS_API_KEY": ELEVENLABS_API_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/elevenlabs/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -82,29 +57,7 @@ AI experiences using natural language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "elevenlabs_agent",
-            instruction: "Help users generate speech, clone voices, and process audio",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "uvx",
-                        args: ["elevenlabs-mcp"],
-                        env: {
-                            ELEVENLABS_API_KEY: ELEVENLABS_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/elevenlabs/002-use-with-agent.ts"
         ```
 
 ## Available tools

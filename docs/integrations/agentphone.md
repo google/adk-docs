@@ -51,61 +51,13 @@ create autonomous AI voice agents using natural language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="agentphone_agent",
-            instruction="Help users make phone calls, send SMS, and manage phone numbers",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "agentphone-mcp",
-                            ],
-                            env={
-                                "AGENTPHONE_API_KEY": AGENTPHONE_API_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/agentphone/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="agentphone_agent",
-            instruction="Help users make phone calls, send SMS, and manage phone numbers",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.agentphone.to/mcp",
-                        headers={
-                            "Authorization": f"Bearer {AGENTPHONE_API_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/agentphone/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -113,58 +65,13 @@ create autonomous AI voice agents using natural language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "agentphone_agent",
-            instruction: "Help users make phone calls, send SMS, and manage phone numbers",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "agentphone-mcp"],
-                        env: {
-                            AGENTPHONE_API_KEY: AGENTPHONE_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/agentphone/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "agentphone_agent",
-            instruction: "Help users make phone calls, send SMS, and manage phone numbers",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.agentphone.to/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${AGENTPHONE_API_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/agentphone/004-use-with-agent.ts"
         ```
 
 ## Available tools

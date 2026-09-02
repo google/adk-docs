@@ -50,16 +50,7 @@ correctly.
 
     ???+ "Example: Required Parameters"
         ```python
-        def get_weather(city: str, unit: str):
-            """
-            Retrieves the weather for a city in the specified unit.
-
-            Args:
-                city (str): The city name.
-                unit (str): The temperature unit, either 'Celsius' or 'Fahrenheit'.
-            """
-            # ... function logic ...
-            return {"status": "success", "report": f"Weather for {city} is sunny."}
+        --8<-- "examples/inline/python/tools-custom/function-tools/001-required-parameters.py"
         ```
 
     In this example, both `city` and `unit` are mandatory. If the LLM tries to
@@ -79,15 +70,7 @@ correctly.
 
     ???+ "Example: Required Parameters"
         ```go
-        // GetWeatherParams defines the arguments for the getWeather tool.
-        type GetWeatherParams struct {
-            // This field is REQUIRED (no "omitempty").
-            // The jsonschema tag provides the description.
-            Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
-
-            // This field is also REQUIRED.
-            Unit     string `json:"unit" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
-        }
+        --8<-- "examples/inline/go/tools-custom/function-tools/002-required-parameters.go.txt"
         ```
 
     In this example, both `location` and `unit` are mandatory.
@@ -105,17 +88,7 @@ correctly.
 
     ???+ "Example: Required Parameters"
         ```java
-        // The @Schema annotation on the parameter provides the description.
-        public static Map<String, Object> getWeather(
-            @Schema(description = "The city and state, e.g., San Francisco, CA", name = "location")
-            String location,
-
-            @Schema(description = "The temperature unit, either 'Celsius' or 'Fahrenheit'", name = "unit")
-            String unit) {
-
-            // ... function logic ...
-            return Map.of("status", "success", "report", "Weather for " + location + " is sunny.");
-        }
+        --8<-- "examples/inline/java/tools-custom/function-tools/003-required-parameters.java"
         ```
 
     In this example, both `location` and `unit` are mandatory.
@@ -151,19 +124,7 @@ correctly.
 
     ???+ "Example: Optional Parameters"
         ```python
-        def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
-            """
-            Searches for flights.
-
-            Args:
-                destination (str): The destination city.
-                departure_date (str): The desired departure date.
-                flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
-            """
-            # ... function logic ...
-            if flexible_days > 0:
-                return {"status": "success", "report": f"Found flexible flights to {destination}."}
-            return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
+        --8<-- "examples/inline/python/tools-custom/function-tools/004-optional-parameters.py"
         ```
 
     Here, `flexible_days` is optional. The LLM can choose to provide it, but
@@ -176,17 +137,7 @@ correctly.
 
     ???+ "Example: Optional Parameters"
         ```go
-        // GetWeatherParams defines the arguments for the getWeather tool.
-        type GetWeatherParams struct {
-            // Location is required.
-            Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
-
-            // Unit is optional.
-            Unit string `json:"unit,omitempty" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
-
-            // Days is optional.
-            Days int `json:"days,omitzero" jsonschema:"The number of forecast days to return (defaults to 1)"`
-        }
+        --8<-- "examples/inline/go/tools-custom/function-tools/005-optional-parameters.go.txt"
         ```
     Here, `unit` and `days` are optional. The LLM can choose to provide them,
     but they are not required.
@@ -199,26 +150,7 @@ correctly.
 
     ???+ "Example: Optional Parameters"
         ```java
-        import java.util.Map;
-        import java.util.Optional;
-
-        public static Map<String, Object> searchFlights(
-            @Schema(description = "The destination city.", name = "destination")
-            String destination,
-
-            @Schema(description = "The desired departure date.", name = "departureDate")
-            String departureDate,
-
-            @Schema(description = "Number of flexible days for the search. Defaults to 0.", name = "flexibleDays")
-            Optional<Integer> flexibleDays) {
-
-            // ... function logic ...
-            int days = flexibleDays.orElse(0);
-            if (days > 0) {
-                return Map.of("status", "success", "report", "Found flexible flights to " + destination + ".");
-            }
-            return Map.of("status", "success", "report", "Found flights to " + destination + " on " + departureDate + ".");
-        }
+        --8<-- "examples/inline/java/tools-custom/function-tools/006-optional-parameters.java"
         ```
 
     Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's
@@ -248,20 +180,7 @@ optional parameter.
     === "Python"
 
         ```python
-        from typing import Optional
-
-        def create_user_profile(username: str, bio: Optional[str] = None):
-            """
-            Creates a new user profile.
-
-            Args:
-                username (str): The user's unique username.
-                bio (str, optional): A short biography for the user. Defaults to None.
-            """
-            # ... function logic ...
-            if bio:
-                return {"status": "success", "message": f"Profile for {username} created with a bio."}
-            return {"status": "success", "message": f"Profile for {username} created."}
+        --8<-- "examples/inline/python/tools-custom/function-tools/007-optional-parameters-with-typing-optional.py"
         ```
 
 ##### Variadic parameters (`*args` and `**kwargs`)
@@ -282,13 +201,7 @@ context data before your function runs and ensures this parameter is not visible
 to the LLM.
 
 ```python
-from google.adk.tools import ToolContext
-
-def my_tool(arg1: str, tool_context: ToolContext):
-    # Example: Accessing session state
-    user_id = tool_context.state.get("user_id")
-    # Example: Triggering an action
-    # tool_context.actions.transfer_to_agent = "secondary_agent"
+--8<-- "examples/inline/python/tools-custom/function-tools/008-context-injection.py"
 ```
 
 `ToolContext` provides access to:
@@ -304,11 +217,7 @@ the parameter anything you want. ADK detects it by its `ToolContext` type
 annotation rather than by name. For example, to use the name `ctx`:
 
 ```python
-from google.adk.tools import ToolContext
-
-def my_tool(arg1: str, ctx: ToolContext):
-    # 'ctx' receives the ToolContext because of its type annotation
-    user_id = ctx.state.get("user_id")
+--8<-- "examples/inline/python/tools-custom/function-tools/009-customize-the-parameter-name.py"
 ```
 
 #### Return type
@@ -397,18 +306,7 @@ afterwards.
         This tool retrieves the mocked value of a stock price.
 
         ```go
-        import (
-            "google.golang.org/adk/v2/agent"
-            "google.golang.org/adk/v2/agent/llmagent"
-            "google.golang.org/adk/v2/model/gemini"
-            "google.golang.org/adk/v2/runner"
-            "google.golang.org/adk/v2/session"
-            "google.golang.org/adk/v2/tool"
-            "google.golang.org/adk/v2/tool/functiontool"
-            "google.golang.org/genai"
-        )
-
-        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
+        --8<-- "examples/inline/go/tools-custom/function-tools/010-example.go.txt"
         ```
 
         The return value from this tool will be a `getStockPriceResults` instance.
@@ -535,58 +433,13 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/model/gemini"
-        "google.golang.org/adk/v2/tool"
-        "google.golang.org/adk/v2/tool/functiontool"
-        "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
+    --8<-- "examples/inline/go/tools-custom/function-tools/011-create-the-tool.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.LongRunningFunctionTool;
-    import java.util.HashMap;
-    import java.util.Map;
-
-    public class ExampleLongRunningFunction {
-
-      // Define your Long Running function.
-      // Ask for approval for the reimbursement.
-      public static Map<String, Object> askForApproval(String purpose, double amount) {
-        // Simulate creating a ticket and sending a notification
-        System.out.println(
-            "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
-
-        // Send a notification to the approver with the link of the ticket
-        Map<String, Object> result = new HashMap<>();
-        result.put("status", "pending");
-        result.put("approver", "Sean Zhou");
-        result.put("purpose", purpose);
-        result.put("amount", amount);
-        result.put("ticket-id", "approval-ticket-1");
-        return result;
-      }
-
-      public static void main(String[] args) throws NoSuchMethodException {
-        // Pass the method to LongRunningFunctionTool.create
-        LongRunningFunctionTool approveTool =
-            LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
-
-        // Include the tool in the agent
-        LlmAgent approverAgent =
-            LlmAgent.builder()
-                // ...
-                .tools(approveTool)
-                .build();
-      }
-    }
+    --8<-- "examples/inline/java/tools-custom/function-tools/012-create-the-tool.java"
     ```
 
 === "Kotlin"
@@ -744,31 +597,31 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
 === "Python"
 
     ```python
-    tools=[AgentTool(agent=agent_b)]
+    --8<-- "examples/inline/python/tools-custom/function-tools/013-use-agenttool.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    tools: [new AgentTool({agent: agentB})]
+    --8<-- "examples/inline/typescript/tools-custom/function-tools/014-use-agenttool.ts"
     ```
 
 === "Go"
 
     ```go
-    agenttool.New(agent, &agenttool.Config{...})
+    --8<-- "examples/inline/go/tools-custom/function-tools/015-use-agenttool.go.txt"
     ```
 
 === "Java"
 
     ```java
-    AgentTool.create(agent)
+    --8<-- "examples/inline/java/tools-custom/function-tools/016-use-agenttool.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    AgentTool(agent = agentB)
+    --8<-- "examples/inline/kotlin/tools-custom/function-tools/017-use-agenttool.kt"
     ```
 
 ### Customize your agent tool
@@ -801,16 +654,7 @@ If set to `True`, this customization instructs the framework to bypass the LLM-b
     === "Go"
 
         ```go
-        import (
-            "google.golang.org/adk/v2/agent"
-            "google.golang.org/adk/v2/agent/llmagent"
-            "google.golang.org/adk/v2/model/gemini"
-            "google.golang.org/adk/v2/tool"
-            "google.golang.org/adk/v2/tool/agenttool"
-            "google.golang.org/genai"
-        )
-
-        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go:agent_tool_example"
+        --8<-- "examples/inline/go/tools-custom/function-tools/018-skip-summarization.go.txt"
         ```
 
     === "Java"
@@ -847,35 +691,7 @@ If set to `True`, the tool automatically forwards any grounding metadata, such a
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import AgentTool
-
-    search_specialist_agent = Agent(
-        # Specify your generative model
-        model="gemini-flash-latest",
-        name="search_specialist_agent",
-        instruction=(
-            "You are a search expert. Find and "
-            "compile citations on requested topics."
-        ),
-        # Add any search tools here
-    )
-
-    search_agent_tool = AgentTool(
-        agent=search_specialist_agent,
-        # Keeps citations intact back to the root
-        propagate_grounding_metadata=True
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="root_agent",
-        description=(
-            "A central coordinator that delegates "
-            "to specialist agents."
-        ),
-        tools=[search_agent_tool]
-    )
+    --8<-- "examples/inline/python/tools-custom/function-tools/019-propagate-grounding-metadata.py"
     ```
         
 #### Control plugin inheritance
@@ -894,26 +710,5 @@ parameter.
 === "Python"
 
     ```python
-    from google.adk.tools import agent_tool
-
-    # Placeholder definition for MyImageAgent
-    class MyImageAgent:
-        def __init__(
-            self, name="My Agent", description="A simple image agent."
-        ):
-            self.name = name
-            # Added description attribute
-            self.description = description 
-
-    # Example 1: Isolate MyImageAgent from parent plugins 
-    my_isolated_tool = agent_tool.AgentTool(
-        agent=MyImageAgent(), # Instantiate MyImageAgent
-        include_plugins=False
-    )
-
-    # Example 2: Inherit plugins
-    my_observable_tool = agent_tool.AgentTool(
-        agent=MyImageAgent(), # Instantiate MyImageAgent
-        include_plugins=True
-    )
+    --8<-- "examples/inline/python/tools-custom/function-tools/020-control-plugin-inheritance.py"
     ```

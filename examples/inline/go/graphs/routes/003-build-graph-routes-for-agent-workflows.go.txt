@@ -1,0 +1,12 @@
+edges := workflow.Concat(
+    workflow.Chain(workflow.Start, classifyNode),
+    []workflow.Edge{
+        {From: classifyNode, To: responseA, Route: workflow.StringRoute("output-1")},
+        {From: classifyNode, To: responseB, Route: workflow.StringRoute("output-2")},
+        {From: classifyNode, To: responseC, Route: workflow.StringRoute("output-3")},
+    },
+)
+rootAgent, _ := workflowagent.New(workflowagent.Config{
+    Name:  "routing_workflow",
+    Edges: edges,
+})

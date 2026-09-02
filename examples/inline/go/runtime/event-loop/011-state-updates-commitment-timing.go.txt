@@ -1,0 +1,42 @@
+  // Inside agent logic (conceptual)
+
+func (a *Agent) RunConceptual(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
+  // The entire logic is wrapped in a function that will be returned as an iterator.
+  return func(yield func(*session.Event, error) bool) {
+      // ... previous code runs based on current state from the input `ctx` ...
+      // e.g., val := ctx.State().Get("field_1") might return "value_1" here.
+
+      // 1. Determine a change or output is needed, construct the event
+      updateData := map[string]interface{}{"field_1": "value_2"}
+      eventWithStateChange := session.NewEvent(ctx, ctx.InvocationID())
+      eventWithStateChange.Author = a.Name()
+      eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
+      // ... other event fields ...
+
+
+      // 2. Yield the event to the Runner for processing & commit.
+      // The agent's execution continues immediately after this call.
+      if !yield(eventWithStateChange, nil) {
+          // If yield returns false, it means the consumer (the Runner)
+          // has stopped listening, so we should stop producing events.
+          return
+      }
+
+      // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+      // This happens outside the agent, after the agent's iterator has
+      // produced the event.
+
+      // 3. The agent CANNOT immediately see the state change it just yielded.
+      // The state is immutable within a single `Run` invocation.
+      val := ctx.State().Get("field_1")
+      // `val` here is STILL "value_1" (or whatever it was at the start).
+      // The updated state ("value_2") will only be available in the `ctx`
+      // of the *next* `Run` invocation in a subsequent turn.
+
+      // ... subsequent code continues, potentially yielding more events ...
+      finalEvent := session.NewEvent(ctx, ctx.InvocationID())
+      finalEvent.Author = a.Name()
+      // ...
+      yield(finalEvent, nil)
+  }
+}

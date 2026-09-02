@@ -1,0 +1,3 @@
+import "google.golang.org/genai"
+
+--8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"

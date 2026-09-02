@@ -158,20 +158,7 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and an `agent_card`, which can be an `AgentCard` object, a URL (as in the example below), or a path to a local agent card file; the `description` field is optional and defaults to an empty string.
 
 ```python title="a2a_basic/agent.py"
-<...code truncated...>
-
-from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
-from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
-
-prime_agent = RemoteA2aAgent(
-    name="prime_agent",
-    description="Agent that handles checking if numbers are prime.",
-    agent_card=(
-        f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
-    ),
-)
-
-<...code truncated>
+--8<-- "examples/inline/python/a2a/quickstart-consuming/001-how-it-works.py"
 ```
 
 !!! note "Using the new A2A integration"
@@ -180,35 +167,7 @@ prime_agent = RemoteA2aAgent(
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
-from google.adk.agents.llm_agent import Agent
-from google.genai import types
-
-root_agent = Agent(
-    model="gemini-flash-latest",
-    name="root_agent",
-    instruction="""
-      <You are a helpful assistant that can roll dice and check if numbers are prime.
-      You delegate rolling dice tasks to the roll_agent and prime checking tasks to the prime_agent.
-      Follow these steps:
-      1. If the user asks to roll a die, delegate to the roll_agent.
-      2. If the user asks to check primes, delegate to the prime_agent.
-      3. If the user asks to roll a die and then check if the result is prime, call roll_agent first, then pass the result to prime_agent.
-      Always clarify the results before proceeding.>
-    """,
-    global_instruction=(
-        "You are DicePrimeBot, ready to roll dice and check prime numbers."
-    ),
-    sub_agents=[roll_agent, prime_agent],
-    tools=[example_tool],
-    generate_content_config=types.GenerateContentConfig(
-        safety_settings=[
-            types.SafetySetting(  # avoid false alarm about rolling dice.
-                category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                threshold=types.HarmBlockThreshold.OFF,
-            ),
-        ]
-    ),
-)
+--8<-- "examples/inline/python/a2a/quickstart-consuming/002-how-it-works.py"
 ```
 
 ### Advanced Configuration: Custom Converters and Interceptors
@@ -245,26 +204,7 @@ Through interceptors, you can also modify the `ParametersConfig` for the A2A req
 *   **`client_call_context`**: Inject specific client call contexts for the underlying transport.
 
 ```python
-<...code truncated...>
-
-from google.adk.a2a.agent import A2aRemoteAgentConfig
-from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
-from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
-
-prime_agent = RemoteA2aAgent(
-    name="prime_agent",
-    description="Agent that handles checking if numbers are prime.",
-    agent_card=(
-        f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
-    ),
-    use_legacy=False,
-    config=A2aRemoteAgentConfig(
-        a2a_message_converter=my_a2a_message_converter,
-        request_interceptors=[my_request_interceptor],
-    ),
-)
-
-<...code truncated>
+--8<-- "examples/inline/python/a2a/quickstart-consuming/003-request-parameters-configuration.py"
 ```
 
 

@@ -1,0 +1,16 @@
+import (
+    "fmt"
+    "google.golang.org/adk/v2/artifact"
+    "google.golang.org/adk/v2/session"
+)
+
+func handleArtifactChanges(event *session.Event) {
+    if len(event.Actions.ArtifactDelta) > 0 {
+        fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
+        // UI might refresh an artifact list
+        // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
+        for filename, version := range event.Actions.ArtifactDelta {
+            fmt.Printf("    Filename: %s, Version: %d\n", filename, version)
+        }
+    }
+}

@@ -1,0 +1,4 @@
+func (p *MyPlugin) OnEventCallback(ctx agent.InvocationContext, event *session.Event) (*session.Event, error) {
+  // Your implementation here
+  return nil, nil
+}

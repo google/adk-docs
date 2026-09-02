@@ -1,0 +1,19 @@
+import (
+    "fmt"
+    "google.golang.org/adk/v2/session"
+    "google.golang.org/genai"
+)
+
+func handleFunctionResponses(event *session.Event) {
+    if event.LLMResponse == nil || event.LLMResponse.Content == nil {
+        return
+    }
+    responses := event.Content.FunctionResponses()
+    if len(responses) > 0 {
+        for _, response := range responses {
+            toolName := response.Name
+            result := response.Response
+            fmt.Printf("  Tool Result: %s -> %v\n", toolName, result)
+        }
+    }
+}

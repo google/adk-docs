@@ -1,0 +1,44 @@
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/googleapis/mcp-toolbox-sdk-go/tbadk"
+	"google.golang.org/adk/v2/agent/llmagent"
+)
+
+func main() {
+
+  toolboxClient, err := tbadk.NewToolboxClient("https://127.0.0.1:5000")
+	if err != nil {
+		log.Fatalf("Failed to create MCP Toolbox client: %v", err)
+	}
+
+  // Load a specific set of tools
+  toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
+  if err != nil {
+    return fmt.Sprintln("Could not load MCP Toolbox Toolset", err)
+  }
+
+  toolsList := make([]tool.Tool, len(toolboxtools))
+    for i := range toolboxtools {
+      toolsList[i] = &toolboxtools[i]
+    }
+
+  llmagent, err := llmagent.New(llmagent.Config{
+    ...,
+    Tools:       toolsList,
+  })
+
+  // Load a single tool
+  tool, err := client.LoadTool("my-tool-name", ctx)
+  if err != nil {
+    return fmt.Sprintln("Could not load MCP Toolbox Tool", err)
+  }
+
+  llmagent, err := llmagent.New(llmagent.Config{
+    ...,
+    Tools:       []tool.Tool{&toolboxtool},
+  })
+}

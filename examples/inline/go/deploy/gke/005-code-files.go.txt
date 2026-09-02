@@ -1,0 +1,5 @@
+model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
+    Backend:  genai.BackendVertexAI,
+    Project:  os.Getenv("GOOGLE_CLOUD_PROJECT"),
+    Location: os.Getenv("GOOGLE_CLOUD_LOCATION"),
+})

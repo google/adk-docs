@@ -30,11 +30,7 @@ The `LlmRouter` function receives the map of available models and the current
 === "TypeScript"
 
     ```typescript
-    type LlmRouter = (
-      models: Readonly<Record<string, BaseLlm>>,
-      request: LlmRequest,
-      errorContext?: { failedKeys: ReadonlySet<string>; lastError: unknown },
-    ) => Promise<string | undefined> | string | undefined;
+    --8<-- "examples/inline/typescript/agents/models/routing/001-how-routing-works.ts"
     ```
 
 The `models` parameter accepts either a `Record<string, BaseLlm>` with explicit

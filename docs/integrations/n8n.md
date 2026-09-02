@@ -60,64 +60,13 @@ for detailed setup instructions.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        N8N_INSTANCE_URL = "https://localhost:5678"
-        N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="n8n_agent",
-            instruction="Help users manage and execute workflows in n8n",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "supergateway",
-                                "--streamableHttp",
-                                f"{N8N_INSTANCE_URL}/mcp-server/http",
-                                "--header",
-                                f"authorization:Bearer {N8N_MCP_TOKEN}"
-                            ]
-                        ),
-                        timeout=300,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/n8n/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        N8N_INSTANCE_URL = "https://localhost:5678"
-        N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="n8n_agent",
-            instruction="Help users manage and execute workflows in n8n",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url=f"{N8N_INSTANCE_URL}/mcp-server/http",
-                        headers={
-                            "Authorization": f"Bearer {N8N_MCP_TOKEN}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/n8n/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -125,64 +74,13 @@ for detailed setup instructions.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const N8N_INSTANCE_URL = "https://localhost:5678";
-        const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "n8n_agent",
-            instruction: "Help users manage and execute workflows in n8n",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "supergateway",
-                            "--streamableHttp",
-                            `${N8N_INSTANCE_URL}/mcp-server/http`,
-                            "--header",
-                            `authorization:Bearer ${N8N_MCP_TOKEN}`,
-                        ],
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/n8n/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const N8N_INSTANCE_URL = "https://localhost:5678";
-        const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "n8n_agent",
-            instruction: "Help users manage and execute workflows in n8n",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: `${N8N_INSTANCE_URL}/mcp-server/http`,
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${N8N_MCP_TOKEN}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/n8n/004-use-with-agent.ts"
         ```
 
 ## Available tools

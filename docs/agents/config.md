@@ -151,32 +151,13 @@ You can also bypass the CLI and dynamically load and execute a configuration-bas
 === "Python"
 
     ```python
-    import asyncio
-    from google.adk.agents import config_agent_utils
-    from google.adk.runners import Runner
-
-    async def main():
-        # Load the agent directly from the YAML config file
-        agent = config_agent_utils.from_config("my_agent/root_agent.yaml")
-        # ...
-
-    if __name__ == "__main__":
-        asyncio.run(main())
+    --8<-- "examples/inline/python/agents/config/001-run-programmatically.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.BaseAgent;
-    import com.google.adk.agents.ConfigAgentUtils;
-
-    public class AgentApp {
-        public static void main(String[] args) throws Exception {
-            // Load the agent directly from the YAML config file
-            BaseAgent agent = ConfigAgentUtils.fromConfig("my_agent/root_agent.yaml");
-            // ...
-        }
-    }
+    --8<-- "examples/inline/java/agents/config/002-run-programmatically.java"
     ```
 
 ## Example configs

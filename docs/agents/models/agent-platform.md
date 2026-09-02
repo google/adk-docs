@@ -29,46 +29,13 @@ to an endpoint.
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-    from google.genai import types # For config objects
-
-    # --- Example Agent using a Llama 3 model deployed from Model Garden ---
-
-    # Replace with your actual Agent Platform Endpoint resource name
-    llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
-
-    agent_llama3_vertex = LlmAgent(
-        model=llama3_endpoint,
-        name="llama3_vertex_agent",
-        instruction="You are a helpful assistant based on Llama 3, hosted on Agent Platform.",
-        generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
-        # ... other agent parameters
-    )
+    --8<-- "examples/inline/python/agents/models/agent-platform/001-model-garden-deployments.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-    import com.google.genai.types.GenerateContentConfig;
-
-    // ...
-
-    // Replace with your actual Agent Platform Endpoint resource name
-    String llama3Endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID";
-
-    LlmAgent agentLlama3Vertex = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(llama3Endpoint)
-            .build())
-        .name("llama3_vertex_agent")
-        .instruction("You are a helpful assistant based on Llama 3, hosted on Agent Platform.")
-        .generateContentConfig(GenerateContentConfig.builder()
-            .maxOutputTokens(2048)
-            .build())
-        // ... other agent parameters
-        .build();
+    --8<-- "examples/inline/java/agents/models/agent-platform/002-model-garden-deployments.java"
     ```
 
 ## Fine-tuned Model Endpoints
@@ -85,40 +52,13 @@ supported by Agent Platform) results in an endpoint that can be used directly.
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-
-    # --- Example Agent using a fine-tuned Gemini model endpoint ---
-
-    # Replace with your fine-tuned model's endpoint resource name
-    finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
-
-    agent_finetuned_gemini = LlmAgent(
-        model=finetuned_gemini_endpoint,
-        name="finetuned_gemini_agent",
-        instruction="You are a specialized assistant trained on specific data.",
-        # ... other agent parameters
-    )
+    --8<-- "examples/inline/python/agents/models/agent-platform/003-fine-tuned-model-endpoints.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-
-    // ...
-
-    // Replace with your fine-tuned model's endpoint resource name
-    String finetunedGeminiEndpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID";
-
-    LlmAgent agentFinetunedGemini = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(finetunedGeminiEndpoint)
-            .build())
-        .name("finetuned_gemini_agent")
-        .instruction("You are a specialized assistant trained on specific data.")
-        // ... other agent parameters
-        .build();
+    --8<-- "examples/inline/java/agents/models/agent-platform/004-fine-tuned-model-endpoints.java"
     ```
 
 ## Anthropic Claude on Agent Platform {#anthropic-claude}
@@ -161,21 +101,7 @@ Agent Platform.
     3. **Create the Agent:** Pass the Claude model string to `LlmAgent`:
 
        ```python
-       from google.adk.agents import LlmAgent
-       from google.genai import types
-
-       # --- Example Agent using Claude 3 Sonnet on Agent Platform ---
-
-       # Standard model name for Claude 3 Sonnet on Agent Platform
-       claude_model_vertexai = "claude-3-sonnet@20240229"
-
-       agent_claude_vertexai = LlmAgent(
-           model=claude_model_vertexai, # Pass the direct model string
-           name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 3 Sonnet on Agent Platform.",
-           generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
-           # ... other agent parameters
-       )
+       --8<-- "examples/inline/python/agents/models/agent-platform/005-anthropic-claude-on-agent-platform-anthr.py"
        ```
 
 === "Java"
@@ -197,55 +123,7 @@ Agent Platform.
         When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
 
     ```java
-    import com.anthropic.client.AnthropicClient;
-    import com.anthropic.client.okhttp.AnthropicOkHttpClient;
-    import com.anthropic.vertex.backends.VertexBackend;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Claude; // ADK's wrapper for Claude
-    import com.google.auth.oauth2.GoogleCredentials;
-    import java.io.IOException;
-
-    // ... other imports
-
-    public class ClaudeVertexAiAgent {
-
-        public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 3 Sonnet on Agent Platform (or other versions)
-            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
-
-            // Configure the AnthropicOkHttpClient with the VertexBackend
-            AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
-                .backend(
-                    VertexBackend.builder()
-                        .region("us-east5") // Specify your Agent Platform region
-                        .project("your-gcp-project-id") // Specify your GCP Project ID
-                        .googleCredentials(GoogleCredentials.getApplicationDefault())
-                        .build())
-                .build();
-
-            // Instantiate LlmAgent with the ADK Claude wrapper
-            LlmAgent agentClaudeVertexAi = LlmAgent.builder()
-                .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
-                .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 3 Sonnet on Agent Platform.")
-                // .generateContentConfig(...) // Optional: Add generation config if needed
-                // ... other agent parameters
-                .build();
-
-            return agentClaudeVertexAi;
-        }
-
-        public static void main(String[] args) {
-            try {
-                LlmAgent agent = createAgent();
-                System.out.println("Successfully created agent: " + agent.name());
-                // Here you would typically set up a Runner and Session to interact with the agent
-            } catch (IOException e) {
-                System.err.println("Failed to create agent: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
+    --8<-- "examples/inline/java/agents/models/agent-platform/006-anthropic-claude-on-agent-platform-anthr.java"
     ```
 
 ### Adaptive thinking
@@ -262,17 +140,7 @@ The recommended way to control reasoning depth is the `effort` field on
 `AnthropicGenerateContentConfig`:
 
 ```python
-from google.adk.agents import LlmAgent
-from google.adk.models import AnthropicGenerateContentConfig
-
-agent = LlmAgent(
-    model="claude-sonnet-4@20250514",  # Your Agent Platform Claude model ID.
-    name="claude_reasoning_agent",
-    instruction="You are a helpful assistant.",
-    generate_content_config=AnthropicGenerateContentConfig(
-        effort="high",  # One of: "low", "medium", "high", "xhigh", "max".
-    ),
-)
+--8<-- "examples/inline/python/agents/models/agent-platform/007-adaptive-thinking.py"
 ```
 
 *   The standard `thinking_config.thinking_level` is not supported for Claude.
@@ -308,15 +176,5 @@ Agent Platform offers a curated selection of open-source models, such as Meta Ll
     **Example:**
 
     ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.models.lite_llm import LiteLlm
-
-    # --- Example Agent using Meta's Llama 4 Scout ---
-    agent_llama_vertexai = LlmAgent(
-        model=LiteLlm(model="vertex_ai/meta/llama-4-scout-17b-16e-instruct-maas"), # LiteLLM model string format
-        name="llama4_agent",
-        instruction="You are a helpful assistant powered by Llama 4 Scout.",
-        # ... other agent parameters
-    )
-
+    --8<-- "examples/inline/python/agents/models/agent-platform/008-open-models-on-agent-platform-open-model.py"
     ```

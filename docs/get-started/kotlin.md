@@ -55,41 +55,7 @@ Add the following code to the `HelloTimeAgent.kt` file in your project
 directory:
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/HelloTimeAgent.kt"
-package com.example.agent
-
-import com.google.adk.kt.agents.Instruction
-import com.google.adk.kt.agents.LlmAgent
-import com.google.adk.kt.annotations.Param
-import com.google.adk.kt.annotations.Tool
-import com.google.adk.kt.models.Gemini
-
-class TimeService {
-    /** Mock tool implementation */
-    @Tool
-    fun getCurrentTime(
-        @Param("Name of the city to get the time for") city: String
-    ): Map<String, String> {
-        return mapOf("city" to city, "time" to "The time is 10:30am.")
-    }
-}
-
-object HelloTimeAgent {
-    @JvmField
-    val rootAgent = LlmAgent(
-        name = "hello_time_agent",
-        description = "Tells the current time in a specified city.",
-        model = Gemini(
-            name = "gemini-flash-latest",
-            apiKey = System.getenv("GOOGLE_API_KEY")
-                ?: error("GOOGLE_API_KEY environment variable not set."),
-        ),
-        instruction = Instruction(
-            "You are a helpful assistant that tells the current time in a city. "
-                + "Use the 'getCurrentTime' tool for this purpose."
-        ),
-        tools = TimeService().generatedTools(),
-    )
-}
+--8<-- "examples/inline/kotlin/get-started/kotlin/001-define-the-agent-code.kt"
 ```
 
 !!! note "About `@Tool` and KSP"
@@ -107,10 +73,7 @@ An ADK Kotlin agent project requires the following dependencies in your
 `build.gradle.kts` project file:
 
 ```kotlin title="my_agent/build.gradle.kts (partial)"
-dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.8.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.8.0")
-}
+--8<-- "examples/inline/kotlin/get-started/kotlin/002-configure-project-and-dependencies.kt"
 ```
 
 ??? info "Complete `build.gradle.kts` configuration for project"
@@ -118,36 +81,7 @@ dependencies {
     this project:
 
     ```kotlin title="my_agent/build.gradle.kts"
-    plugins {
-        kotlin("jvm") version "2.1.20"
-        id("com.google.devtools.ksp") version "2.1.20-2.0.1"
-        application
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.8.0")
-        implementation("com.google.adk:google-adk-kotlin-webserver:0.8.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:0.8.0")
-    }
-
-    kotlin {
-        jvmToolchain(17)
-    }
-
-    application {
-        mainClass.set(
-            project.findProperty("mainClass") as? String
-                ?: "com.example.agent.MainKt"
-        )
-    }
-
-    tasks.named<JavaExec>("run") {
-        standardInput = System.`in`
-    }
+    --8<-- "examples/inline/kotlin/get-started/kotlin/003-configure-project-and-dependencies.kt"
     ```
 
 ### Set your API key
@@ -189,13 +123,7 @@ command line. `ReplRunner` provides a built-in interactive REPL that handles
 user input, agent responses, and tool confirmation prompts.
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/Main.kt"
-package com.example.agent
-
-import com.google.adk.kt.runners.ReplRunner
-
-fun main() {
-    ReplRunner(HelloTimeAgent.rootAgent).start()
-}
+--8<-- "examples/inline/kotlin/get-started/kotlin/004-create-an-entry-point.kt"
 ```
 
 ## Run your agent
@@ -234,40 +162,13 @@ To run your agent with the ADK web interface, add the webserver dependency
 to your `build.gradle.kts`:
 
 ```kotlin title="my_agent/build.gradle.kts (add to dependencies)"
-dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.8.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:0.8.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.8.0")
-}
+--8<-- "examples/inline/kotlin/get-started/kotlin/005-run-with-web-interface.kt"
 ```
 
 Then create a `WebMain.kt` file alongside your `Main.kt`:
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/WebMain.kt"
-package com.example.agent
-
-import com.google.adk.kt.artifacts.InMemoryArtifactService
-import com.google.adk.kt.sessions.InMemorySessionService
-import com.google.adk.kt.webserver.AdkWebServer
-import com.google.adk.kt.webserver.loaders.SingleAgentLoader
-import com.google.adk.kt.webserver.telemetry.ApiServerSpanExporter
-
-fun main() {
-    val agent = HelloTimeAgent.rootAgent
-    val sessionService = InMemorySessionService()
-    val artifactService = InMemoryArtifactService()
-
-    val server = AdkWebServer(
-        port = 8080,
-        sessionService = sessionService,
-        artifactService = artifactService,
-        agentLoader = SingleAgentLoader(agent),
-        apiServerSpanExporter = ApiServerSpanExporter(),
-    )
-
-    println("Starting ADK web server on http://localhost:8080...")
-    server.start(wait = true)
-}
+--8<-- "examples/inline/kotlin/get-started/kotlin/006-run-with-web-interface.kt"
 ```
 
 Run the web server using the `-PmainClass` property to select the web

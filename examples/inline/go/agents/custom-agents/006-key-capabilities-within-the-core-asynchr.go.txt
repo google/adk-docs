@@ -1,0 +1,18 @@
+// The `ctx` (`agent.InvocationContext`) is passed directly to your agent's `Run` function.
+// Read data set by a previous agent
+previousResult, err := ctx.Session().State().Get("some_key")
+if err != nil {
+    // Handle cases where the key might not exist yet
+}
+
+// Make a decision based on state
+if val, ok := previousResult.(string); ok && val == "some_value" {
+    // ... call a specific sub-agent ...
+} else {
+    // ... call another sub-agent ...
+}
+
+// Store a result for a later step
+if err := ctx.Session().State().Set("my_custom_result", "calculated_value"); err != nil {
+    // Handle error
+}

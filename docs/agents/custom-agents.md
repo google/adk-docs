@@ -102,25 +102,13 @@ The core of any custom agent is the method where you define its unique asynchron
     1. **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance attributes like `self.my_llm_agent`) using their `run_async` method and yield their events:
 
           ```python
-          async for event in self.some_sub_agent.run_async(ctx):
-              # Optionally inspect or log the event
-              yield event # Pass the event up
+          --8<-- "examples/inline/python/agents/custom-agents/001-key-capabilities-within-the-core-asynchr.py"
           ```
 
     2. **Managing State:** Read from and write to the session state dictionary (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
 
           ```python
-          # Read data set by a previous agent
-          previous_result = ctx.session.state.get("some_key")
-
-          # Make a decision based on state
-          if previous_result == "some_value":
-              # ... call a specific sub-agent ...
-          else:
-              # ... call another sub-agent ...
-
-          # Store a result for a later step (often done via a sub-agent's output_key)
-          # ctx.session.state["my_custom_result"] = "calculated_value"
+          --8<-- "examples/inline/python/agents/custom-agents/002-key-capabilities-within-the-core-asynchr.py"
           ```
 
     3. **Implementing Control Flow:** Use standard Python constructs (`if`/`elif`/`else`, `for`/`while` loops, `try`/`except`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
@@ -130,27 +118,13 @@ The core of any custom agent is the method where you define its unique asynchron
     1.  **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance properties like `this.myLlmAgent`) using their `run` method and yield their events:
 
         ```typescript
-        for await (const event of this.someSubAgent.runAsync(ctx)) {
-            // Optionally inspect or log the event
-            yield event; // Pass the event up to the runner
-        }
+        --8<-- "examples/inline/typescript/agents/custom-agents/003-key-capabilities-within-the-core-asynchr.ts"
         ```
 
     2.  **Managing State:** Read from and write to the session state object (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
 
         ```typescript
-        // Read data set by a previous agent
-        const previousResult = ctx.session.state['some_key'];
-
-        // Make a decision based on state
-        if (previousResult === 'some_value') {
-          // ... call a specific sub-agent ...
-        } else {
-          // ... call another sub-agent ...
-        }
-
-        // Store a result for a later step (often done via a sub-agent's outputKey)
-        // ctx.session.state['my_custom_result'] = 'calculated_value';
+        --8<-- "examples/inline/typescript/agents/custom-agents/004-key-capabilities-within-the-core-asynchr.ts"
         ```
 
     3. **Implementing Control Flow:** Use standard TypeScript/JavaScript constructs (`if`/`else`, `for`/`while` loops, `try`/`catch`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
@@ -160,39 +134,12 @@ The core of any custom agent is the method where you define its unique asynchron
     1. **Calling Sub-Agents:** You invoke sub-agents by calling their `Run` method.
 
           ```go
-          // Example: Running one sub-agent and yielding its events
-          for event, err := range someSubAgent.Run(ctx) {
-              if err != nil {
-                  // Handle or propagate the error
-                  return
-              }
-              // Yield the event up to the caller
-              if !yield(event, nil) {
-                return
-              }
-          }
+          --8<-- "examples/inline/go/agents/custom-agents/005-key-capabilities-within-the-core-asynchr.go.txt"
           ```
 
     2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions.
           ```go
-          // The `ctx` (`agent.InvocationContext`) is passed directly to your agent's `Run` function.
-          // Read data set by a previous agent
-          previousResult, err := ctx.Session().State().Get("some_key")
-          if err != nil {
-              // Handle cases where the key might not exist yet
-          }
-
-          // Make a decision based on state
-          if val, ok := previousResult.(string); ok && val == "some_value" {
-              // ... call a specific sub-agent ...
-          } else {
-              // ... call another sub-agent ...
-          }
-
-          // Store a result for a later step
-          if err := ctx.Session().State().Set("my_custom_result", "calculated_value"); err != nil {
-              // Handle error
-          }
+          --8<-- "examples/inline/go/agents/custom-agents/006-key-capabilities-within-the-core-asynchr.go.txt"
           ```
 
     3. **Implementing Control Flow:** Use standard Go constructs (`if`/`else`, `for`/`switch` loops, goroutines, channels) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
@@ -204,37 +151,14 @@ The core of any custom agent is the method where you define its unique asynchron
            You typically chain `Flowable`s from sub-agents using RxJava operators like `concatWith`, `flatMapPublisher`, or `concatArray`.
 
            ```java
-           // Example: Running one sub-agent
-           // return someSubAgent.runAsync(ctx);
-
-           // Example: Running sub-agents sequentially
-           Flowable<Event> firstAgentEvents = someSubAgent1.runAsync(ctx)
-               .doOnNext(event -> System.out.println("Event from agent 1: " + event.id()));
-
-           Flowable<Event> secondAgentEvents = Flowable.defer(() ->
-               someSubAgent2.runAsync(ctx)
-                   .doOnNext(event -> System.out.println("Event from agent 2: " + event.id()))
-           );
-
-           return firstAgentEvents.concatWith(secondAgentEvents);
+           --8<-- "examples/inline/java/agents/custom-agents/007-key-capabilities-within-the-core-asynchr.java"
            ```
            The `Flowable.defer()` is often used for subsequent stages if their execution depends on the completion or state after prior stages.
 
     2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions. The session state is a `java.util.concurrent.ConcurrentMap<String, Object>` obtained via `ctx.session().state()`.
 
         ```java
-        // Read data set by a previous agent
-        Object previousResult = ctx.session().state().get("some_key");
-
-        // Make a decision based on state
-        if ("some_value".equals(previousResult)) {
-            // ... logic to include a specific sub-agent's Flowable ...
-        } else {
-            // ... logic to include another sub-agent's Flowable ...
-        }
-
-        // Store a result for a later step (often done via a sub-agent's output_key)
-        // ctx.session().state().put("my_custom_result", "calculated_value");
+        --8<-- "examples/inline/java/agents/custom-agents/008-key-capabilities-within-the-core-asynchr.java"
         ```
 
     3. **Implementing Control Flow:** Use standard language constructs (`if`/`else`, loops, `try`/`catch`) combined with reactive operators (RxJava) to create sophisticated workflows.
@@ -275,111 +199,25 @@ The foundation for structuring multi-agent systems is the parent-child relations
 === "Python"
 
     ```python
-    # Conceptual Example: Defining Hierarchy
-    from google.adk.agents import LlmAgent, BaseAgent
-
-
-    # Define individual agents
-    greeter = LlmAgent(name="Greeter", model="gemini-flash-latest")
-    task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
-
-
-    # Create parent agent and assign children via sub_agents
-    coordinator = LlmAgent(
-        name="Coordinator",
-        model="gemini-flash-latest",
-        description="I coordinate greetings and tasks.",
-        sub_agents=[ # Assign sub_agents here
-            greeter,
-            task_doer
-        ]
-    )
-
-
-    # Framework automatically sets:
-    # assert greeter.parent_agent == coordinator
-    # assert task_doer.parent_agent == coordinator
+    --8<-- "examples/inline/python/agents/custom-agents/009-agent-hierarchy-parent-agents-and-sub-ag.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Example: Defining Hierarchy
-    import { LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEventActions } from '@google/adk';
-
-    class TaskExecutorAgent extends BaseAgent {
-      async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
-        yield {
-          id: 'event-1',
-          invocationId: context.invocationId,
-          author: this.name,
-          content: { parts: [{ text: 'Task completed!' }] },
-          actions: createEventActions(),
-          timestamp: Date.now(),
-        };
-      }
-      async *runLiveImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
-        this.runAsyncImpl(context);
-      }
-    }
-
-    // Define individual agents
-    const greeter = new LlmAgent({name: 'Greeter', model: 'gemini-flash-latest'});
-    const taskDoer = new TaskExecutorAgent({name: 'TaskExecutor'}); // Custom non-LLM agent
-
-    // Create parent agent and assign children via subAgents
-    const coordinator = new LlmAgent({
-        name: 'Coordinator',
-        model: 'gemini-flash-latest',
-        description: 'I coordinate greetings and tasks.',
-        subAgents: [ // Assign subAgents here
-            greeter,
-            taskDoer
-        ],
-    });
-
-    // Framework automatically sets:
-    // console.assert(greeter.parentAgent === coordinator);
-    // console.assert(taskDoer.parentAgent === coordinator);
+    --8<-- "examples/inline/typescript/agents/custom-agents/010-agent-hierarchy-parent-agents-and-sub-ag.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchy"
+    --8<-- "examples/inline/go/agents/custom-agents/011-agent-hierarchy-parent-agents-and-sub-ag.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Defining Hierarchy
-    import com.google.adk.agents.SequentialAgent;
-    import com.google.adk.agents.LlmAgent;
-
-
-    // Define individual agents
-    LlmAgent greeter = LlmAgent.builder().name("Greeter").model("gemini-flash-latest").build();
-    SequentialAgent taskDoer = SequentialAgent.builder().name("TaskExecutor").subAgents(...).build(); // Sequential Agent
-
-
-    // Create parent agent and assign sub_agents
-    LlmAgent coordinator = LlmAgent.builder()
-        .name("Coordinator")
-        .model("gemini-flash-latest")
-        .description("I coordinate greetings and tasks")
-        .subAgents(greeter, taskDoer) // Assign sub_agents here
-        .build();
-
-
-    // Framework automatically sets:
-    // assert greeter.parentAgent().equals(coordinator);
-    // assert taskDoer.parentAgent().equals(coordinator);
+    --8<-- "examples/inline/java/agents/custom-agents/012-agent-hierarchy-parent-agents-and-sub-ag.java"
     ```
 
 === "Kotlin"
@@ -399,53 +237,25 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 === "Python"
 
     ```python
-    # Conceptual Example: Sequential Pipeline
-    from google.adk.agents import SequentialAgent, LlmAgent
-
-    step1 = LlmAgent(name="Step1_Fetch", output_key="data") # Saves output to state['data']
-    step2 = LlmAgent(name="Step2_Process", instruction="Process data from {data}.")
-
-    pipeline = SequentialAgent(name="MyPipeline", sub_agents=[step1, step2])
-    # When pipeline runs, Step2 can access the state['data'] set by Step1.
+    --8<-- "examples/inline/python/agents/custom-agents/013-workflow-agents-as-orchestrators.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Example: Sequential Pipeline
-    import { SequentialAgent, LlmAgent } from '@google/adk';
-
-    const step1 = new LlmAgent({name: 'Step1_Fetch', outputKey: 'data'}); // Saves output to state['data']
-    const step2 = new LlmAgent({name: 'Step2_Process', instruction: 'Process data from {data}.'});
-
-    const pipeline = new SequentialAgent({name: 'MyPipeline', subAgents: [step1, step2]});
-    // When pipeline runs, Step2 can access the state['data'] set by Step1.
+    --8<-- "examples/inline/typescript/agents/custom-agents/014-workflow-agents-as-orchestrators.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:sequential-pipeline"
+    --8<-- "examples/inline/go/agents/custom-agents/015-workflow-agents-as-orchestrators.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Sequential Pipeline
-    import com.google.adk.agents.SequentialAgent;
-    import com.google.adk.agents.LlmAgent;
-
-    LlmAgent step1 = LlmAgent.builder().name("Step1_Fetch").outputKey("data").build(); // Saves output to state.get("data")
-    LlmAgent step2 = LlmAgent.builder().name("Step2_Process").instruction("Process data from {data}.").build();
-
-    SequentialAgent pipeline = SequentialAgent.builder().name("MyPipeline").subAgents(step1, step2).build();
-    // When pipeline runs, Step2 can access the state.get("data") set by Step1.
+    --8<-- "examples/inline/java/agents/custom-agents/016-workflow-agents-as-orchestrators.java"
     ```
 
 === "Kotlin"
@@ -461,71 +271,25 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 === "Python"
 
     ```python
-    # Conceptual Example: Parallel Execution
-    from google.adk.agents import ParallelAgent, LlmAgent
-
-    fetch_weather = LlmAgent(name="WeatherFetcher", output_key="weather")
-    fetch_news = LlmAgent(name="NewsFetcher", output_key="news")
-
-    gatherer = ParallelAgent(name="InfoGatherer", sub_agents=[fetch_weather, fetch_news])
-    # When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
-    # A subsequent agent could read state['weather'] and state['news'].
+    --8<-- "examples/inline/python/agents/custom-agents/017-workflow-agents-as-orchestrators.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Example: Parallel Execution
-    import { ParallelAgent, LlmAgent } from '@google/adk';
-
-    const fetchWeather = new LlmAgent({name: 'WeatherFetcher', outputKey: 'weather'});
-    const fetchNews = new LlmAgent({name: 'NewsFetcher', outputKey: 'news'});
-
-    const gatherer = new ParallelAgent({name: 'InfoGatherer', subAgents: [fetchWeather, fetchNews]});
-    // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
-    // A subsequent agent could read state['weather'] and state['news'].
+    --8<-- "examples/inline/typescript/agents/custom-agents/018-workflow-agents-as-orchestrators.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/agent/workflowagents/parallelagent"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-execution"
+    --8<-- "examples/inline/go/agents/custom-agents/019-workflow-agents-as-orchestrators.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Parallel Execution
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.agents.ParallelAgent;
-
-
-    LlmAgent fetchWeather = LlmAgent.builder()
-        .name("WeatherFetcher")
-        .outputKey("weather")
-        .build();
-
-
-    LlmAgent fetchNews = LlmAgent.builder()
-        .name("NewsFetcher")
-        .instruction("news")
-        .build();
-
-
-    ParallelAgent gatherer = ParallelAgent.builder()
-        .name("InfoGatherer")
-        .subAgents(fetchWeather, fetchNews)
-        .build();
-
-
-    // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
-    // A subsequent agent could read state['weather'] and state['news'].
+    --8<-- "examples/inline/java/agents/custom-agents/020-workflow-agents-as-orchestrators.java"
     ```
 
 === "Kotlin"
@@ -541,110 +305,25 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 === "Python"
 
       ```python
-      # Conceptual Example: Loop with Condition
-      from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
-      from google.adk.events import Event, EventActions
-      from google.adk.agents.invocation_context import InvocationContext
-      from typing import AsyncGenerator
-
-      class CheckCondition(BaseAgent): # Custom agent to check state
-          async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-              status = ctx.session.state.get("status", "pending")
-              is_done = (status == "completed")
-              yield Event(author=self.name, actions=EventActions(escalate=is_done)) # Escalate if done
-
-      process_step = LlmAgent(name="ProcessingStep") # Agent that might update state['status']
-
-      poller = LoopAgent(
-          name="StatusPoller",
-          max_iterations=10,
-          sub_agents=[process_step, CheckCondition(name="Checker")]
-      )
-      # When poller runs, it executes process_step then Checker repeatedly
-      # until Checker escalates (state['status'] == 'completed') or 10 iterations pass.
+      --8<-- "examples/inline/python/agents/custom-agents/021-workflow-agents-as-orchestrators.py"
       ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Example: Loop with Condition
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEventActions, EventActions } from '@google/adk';
-
-    class CheckConditionAgent extends BaseAgent { // Custom agent to check state
-        async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
-            const status = ctx.session.state['status'] || 'pending';
-            const isDone = status === 'completed';
-            yield createEvent({ author: 'check_condition', actions: createEventActions({ escalate: isDone }) });
-        }
-
-        async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
-            // This is not implemented.
-        }
-    };
-
-    const processStep = new LlmAgent({name: 'ProcessingStep'}); // Agent that might update state['status']
-
-    const poller = new LoopAgent({
-        name: 'StatusPoller',
-        maxIterations: 10,
-        // Executes its sub_agents sequentially in a loop
-        subAgents: [processStep, new CheckConditionAgent ({name: 'Checker'})]
-    });
-    // When poller runs, it executes processStep then Checker repeatedly
-    // until Checker escalates (state['status'] === 'completed') or 10 iterations pass.
+    --8<-- "examples/inline/typescript/agents/custom-agents/022-workflow-agents-as-orchestrators.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "iter"
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/agent/workflowagents/loopagent"
-        "google.golang.org/adk/v2/session"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:loop-with-condition"
+    --8<-- "examples/inline/go/agents/custom-agents/023-workflow-agents-as-orchestrators.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Loop with Condition
-    // Custom agent to check state and potentially escalate
-    public static class CheckConditionAgent extends BaseAgent {
-      public CheckConditionAgent(String name, String description) {
-        super(name, description, List.of(), null, null);
-      }
-
-      @Override
-      protected Flowable<Event> runAsyncImpl(InvocationContext ctx) {
-        String status = (String) ctx.session().state().getOrDefault("status", "pending");
-        boolean isDone = "completed".equalsIgnoreCase(status);
-
-        // Emit an event that signals to escalate (exit the loop) if the condition is met.
-        // If not done, the escalate flag will be false or absent, and the loop continues.
-        Event checkEvent = Event.builder()
-                .author(name())
-                .id(Event.generateEventId()) // Important to give events unique IDs
-                .actions(EventActions.builder().escalate(isDone).build()) // Escalate if done
-                .build();
-        return Flowable.just(checkEvent);
-      }
-    }
-
-    // Agent that might update state.put("status")
-    LlmAgent processingStepAgent = LlmAgent.builder().name("ProcessingStep").build();
-    // Custom agent instance for checking the condition
-    CheckConditionAgent conditionCheckerAgent = new CheckConditionAgent(
-        "ConditionChecker",
-        "Checks if the status is 'completed'."
-    );
-    LoopAgent poller = LoopAgent.builder().name("StatusPoller").maxIterations(10).subAgents(processingStepAgent, conditionCheckerAgent).build();
-    // When poller runs, it executes processingStepAgent then conditionCheckerAgent repeatedly
-    // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
+    --8<-- "examples/inline/java/agents/custom-agents/024-workflow-agents-as-orchestrators.java"
     ```
 
 === "Kotlin"
@@ -673,70 +352,25 @@ The most fundamental way for agents operating within the same invocation (and th
 === "Python"
 
     ```python
-    # Conceptual Example: Using output_key and reading state
-    from google.adk.agents import LlmAgent, SequentialAgent
-
-
-    agent_A = LlmAgent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
-    agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in {capital_city}.")
-
-
-    pipeline = SequentialAgent(name="CityInfo", sub_agents=[agent_A, agent_B])
-    # AgentA runs, saves "Paris" to state['capital_city'].
-    # AgentB runs, its instruction processor reads state['capital_city'] to get "Paris".
+    --8<-- "examples/inline/python/agents/custom-agents/025-shared-session-state.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Example: Using outputKey and reading state
-    import { LlmAgent, SequentialAgent } from '@google/adk';
-
-    const agentA = new LlmAgent({name: 'AgentA', instruction: 'Find the capital of France.', outputKey: 'capital_city'});
-    const agentB = new LlmAgent({name: 'AgentB', instruction: 'Tell me about the city stored in {capital_city}.'});
-
-    const pipeline = new SequentialAgent({name: 'CityInfo', subAgents: [agentA, agentB]});
-    // AgentA runs, saves "Paris" to state['capital_city'].
-    // AgentB runs, its instruction processor reads state['capital_city'] to get "Paris".
+    --8<-- "examples/inline/typescript/agents/custom-agents/026-shared-session-state.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:output-key-state"
+    --8<-- "examples/inline/go/agents/custom-agents/027-shared-session-state.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Using outputKey and reading state
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.agents.SequentialAgent;
-
-
-    LlmAgent agentA = LlmAgent.builder()
-        .name("AgentA")
-        .instruction("Find the capital of France.")
-        .outputKey("capital_city")
-        .build();
-
-
-    LlmAgent agentB = LlmAgent.builder()
-        .name("AgentB")
-        .instruction("Tell me about the city stored in {capital_city}.")
-        .outputKey("capital_city")
-        .build();
-
-
-    SequentialAgent pipeline = SequentialAgent.builder().name("CityInfo").subAgents(agentA, agentB).build();
-    // AgentA runs, saves "Paris" to state('capital_city').
-    // AgentB runs, its instruction processor reads state.get("capital_city") to get "Paris".
+    --8<-- "examples/inline/java/agents/custom-agents/028-shared-session-state.java"
     ```
 
 === "Kotlin"
@@ -757,92 +391,25 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 === "Python"
 
     ```python
-    # Conceptual Setup: LLM Transfer
-    from google.adk.agents import LlmAgent
-
-
-    booking_agent = LlmAgent(name="Booker", description="Handles flight and hotel bookings.")
-    info_agent = LlmAgent(name="Info", description="Provides general information and answers questions.")
-
-
-    coordinator = LlmAgent(
-        name="Coordinator",
-        model="gemini-flash-latest",
-        instruction="You are an assistant. Delegate booking tasks to Booker and info requests to Info.",
-        description="Main coordinator.",
-        # AutoFlow is typically used implicitly here
-        sub_agents=[booking_agent, info_agent]
-    )
-    # If coordinator receives "Book a flight", its LLM should generate:
-    # FunctionCall(name='transfer_to_agent', args={'agent_name': 'Booker'})
-    # ADK framework then routes execution to booking_agent.
+    --8<-- "examples/inline/python/agents/custom-agents/029-llm-delegation-and-agent-transfer-delega.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Setup: LLM Transfer
-    import { LlmAgent } from '@google/adk';
-
-    const bookingAgent = new LlmAgent({name: 'Booker', description: 'Handles flight and hotel bookings.'});
-    const infoAgent = new LlmAgent({name: 'Info', description: 'Provides general information and answers questions.'});
-
-    const coordinator = new LlmAgent({
-        name: 'Coordinator',
-        model: 'gemini-flash-latest',
-        instruction: 'You are an assistant. Delegate booking tasks to Booker and info requests to Info.',
-        description: 'Main coordinator.',
-        // AutoFlow is typically used implicitly here
-        subAgents: [bookingAgent, infoAgent]
-    });
-    // If coordinator receives "Book a flight", its LLM should generate:
-    // {functionCall: {name: 'transfer_to_agent', args: {agent_name: 'Booker'}}}
-    // ADK framework then routes execution to bookingAgent.
+    --8<-- "examples/inline/typescript/agents/custom-agents/030-llm-delegation-and-agent-transfer-delega.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent/llmagent"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:llm-transfer"
+    --8<-- "examples/inline/go/agents/custom-agents/031-llm-delegation-and-agent-transfer-delega.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Setup: LLM Transfer
-    import com.google.adk.agents.LlmAgent;
-
-
-    LlmAgent bookingAgent = LlmAgent.builder()
-        .name("Booker")
-        .description("Handles flight and hotel bookings.")
-        .build();
-
-
-    LlmAgent infoAgent = LlmAgent.builder()
-        .name("Info")
-        .description("Provides general information and answers questions.")
-        .build();
-
-
-    // Define the coordinator agent
-    LlmAgent coordinator = LlmAgent.builder()
-        .name("Coordinator")
-        .model("gemini-flash-latest") // Or your desired model
-        .instruction("You are an assistant. Delegate booking tasks to Booker and info requests to Info.")
-        .description("Main coordinator.")
-        // AutoFlow will be used by default (implicitly) because subAgents are present
-        // and transfer is not disallowed.
-        .subAgents(bookingAgent, infoAgent)
-        .build();
-
-    // If coordinator receives "Book a flight", its LLM should generate:
-    // FunctionCall.builder.name("transferToAgent").args(ImmutableMap.of("agent_name", "Booker")).build()
-    // ADK framework then routes execution to bookingAgent.
+    --8<-- "examples/inline/java/agents/custom-agents/032-llm-delegation-and-agent-transfer-delega.java"
     ```
 
 === "Kotlin"
@@ -864,169 +431,25 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 === "Python"
 
     ```python
-    # Conceptual Setup: Agent as a Tool
-    from google.adk import Event
-    from google.adk.agents import LlmAgent, BaseAgent
-    from google.adk.tools import agent_tool
-    from google.genai import types
-    from pydantic import BaseModel
-
-
-    # Define a target agent (could be LlmAgent or custom BaseAgent)
-    class ImageGeneratorAgent(BaseAgent): # Example custom agent
-        name: str = "ImageGen"
-        description: str = "Generates an image based on a prompt."
-        # ... internal logic ...
-        async def _run_async_impl(self, ctx): # Simplified run logic
-            prompt = ctx.session.state.get("image_prompt", "default prompt")
-            # ... generate image bytes ...
-            image_bytes = b"..."
-            yield Event(author=self.name, content=types.Content(parts=[types.Part.from_bytes(image_bytes, "image/png")]))
-
-
-    image_agent = ImageGeneratorAgent()
-    image_tool = agent_tool.AgentTool(agent=image_agent) # Wrap the agent
-
-
-    # Parent agent uses the AgentTool
-    artist_agent = LlmAgent(
-        name="Artist",
-        model="gemini-flash-latest",
-        instruction="Create a prompt and use the ImageGen tool to generate the image.",
-        tools=[image_tool] # Include the AgentTool
-    )
-    # Artist LLM generates a prompt, then calls:
-    # FunctionCall(name='ImageGen', args={'image_prompt': 'a cat wearing a hat'})
-    # Framework calls image_tool.run_async(...), which runs ImageGeneratorAgent.
-    # The resulting image Part is returned to the Artist agent as the tool result.
+    --8<-- "examples/inline/python/agents/custom-agents/033-explicit-invocation-with-agenttool.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Conceptual Setup: Agent as a Tool
-    import { LlmAgent, BaseAgent, AgentTool, InvocationContext } from '@google/adk';
-    import type { Part, createEvent, Event } from '@google/genai';
-
-    // Define a target agent (could be LlmAgent or custom BaseAgent)
-    class ImageGeneratorAgent extends BaseAgent { // Example custom agent
-        constructor() {
-            super({name: 'ImageGen', description: 'Generates an image based on a prompt.'});
-        }
-        // ... internal logic ...
-        async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> { // Simplified run logic
-            const prompt = ctx.session.state['image_prompt'] || 'default prompt';
-            // ... generate image bytes ...
-            const imageBytes = new Uint8Array(); // placeholder
-            const imagePart: Part = {inlineData: {data: Buffer.from(imageBytes).toString('base64'), mimeType: 'image/png'}};
-            yield createEvent({content: {parts: [imagePart]}});
-        }
-
-        async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event, void, void> {
-            // Not implemented for this agent.
-        }
-    }
-
-    const imageAgent = new ImageGeneratorAgent();
-    const imageTool = new AgentTool({agent: imageAgent}); // Wrap the agent
-
-    // Parent agent uses the AgentTool
-    const artistAgent = new LlmAgent({
-        name: 'Artist',
-        model: 'gemini-flash-latest',
-        instruction: 'Create a prompt and use the ImageGen tool to generate the image.',
-        tools: [imageTool] // Include the AgentTool
-    });
-    // Artist LLM generates a prompt, then calls:
-    // {functionCall: {name: 'ImageGen', args: {image_prompt: 'a cat wearing a hat'}}}
-    // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
-    // The resulting image Part is returned to the Artist agent as the tool result.
+    --8<-- "examples/inline/typescript/agents/custom-agents/034-explicit-invocation-with-agenttool.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "fmt"
-        "iter"
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/model"
-        "google.golang.org/adk/v2/session"
-        "google.golang.org/adk/v2/tool"
-        "google.golang.org/adk/v2/tool/agenttool"
-        "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:agent-as-tool"
+    --8<-- "examples/inline/go/agents/custom-agents/035-explicit-invocation-with-agenttool.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Setup: Agent as a Tool
-    import com.google.adk.agents.BaseAgent;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.AgentTool;
-
-    // Example custom agent (could be LlmAgent or custom BaseAgent)
-    public class ImageGeneratorAgent extends BaseAgent  {
-
-
-      public ImageGeneratorAgent(String name, String description) {
-        super(name, description, List.of(), null, null);
-      }
-
-
-      // ... internal logic ...
-      @Override
-      protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) { // Simplified run logic
-        invocationContext.session().state().get("image_prompt");
-        // Generate image bytes
-        // ...
-
-
-        Event responseEvent = Event.builder()
-            .author(this.name())
-            .content(Content.fromParts(Part.fromText("...")))
-            .build();
-
-
-        return Flowable.just(responseEvent);
-      }
-
-
-      @Override
-      protected Flowable<Event> runLiveImpl(InvocationContext invocationContext) {
-        return null;
-      }
-    }
-
-    // Wrap the agent using AgentTool
-    ImageGeneratorAgent imageAgent = new ImageGeneratorAgent("image_agent", "generates images");
-    AgentTool imageTool = AgentTool.create(imageAgent);
-
-
-    // Parent agent uses the AgentTool
-    LlmAgent artistAgent = LlmAgent.builder()
-            .name("Artist")
-            .model("gemini-flash-latest")
-            .instruction(
-                    "You are an artist. Create a detailed prompt for an image and then " +
-                            "use the 'ImageGen' tool to generate the image. " +
-                            "The 'ImageGen' tool expects a single string argument named 'request' " +
-                            "containing the image prompt. The tool will return a JSON string in its " +
-                            "'result' field, containing 'image_base64', 'mime_type', and 'status'."
-            )
-            .description("An agent that can create images using a generation tool.")
-            .tools(imageTool) // Include the AgentTool
-            .build();
-
-
-    // Artist LLM generates a prompt, then calls:
-    // FunctionCall(name='ImageGen', args={'imagePrompt': 'a cat wearing a hat'})
-    // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
-    // The resulting image Part is returned to the Artist agent as the tool result.
+    --8<-- "examples/inline/java/agents/custom-agents/036-explicit-invocation-with-agenttool.java"
     ```
 
 === "Kotlin"
@@ -1156,8 +579,7 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 === "Python"
 
     ```python
-    GEMINI_2_FLASH = "gemini-flash-latest" # Define model constant
-    --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
+    --8<-- "examples/inline/python/agents/custom-agents/037-part-3-define-llm-sub-agents.py"
     ```
 
 === "TypeScript"
@@ -1219,28 +641,23 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     === "Python"
 
         ```python
-        # Full runnable code for the StoryFlowAgent example
-        --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py"
+        --8<-- "examples/inline/python/agents/custom-agents/038-storyflow-agent-code-listing.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        // Full runnable code for the StoryFlowAgent example
-
-        --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts"
+        --8<-- "examples/inline/typescript/agents/custom-agents/039-storyflow-agent-code-listing.ts"
         ```
 
     === "Go"
 
         ```go
-        # Full runnable code for the StoryFlowAgent example
-        --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:full_code"
+        --8<-- "examples/inline/go/agents/custom-agents/040-storyflow-agent-code-listing.go.txt"
         ```
 
     === "Java"
 
         ```java
-        # Full runnable code for the StoryFlowAgent example
-        --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:full_code"
+        --8<-- "examples/inline/java/agents/custom-agents/041-storyflow-agent-code-listing.java"
         ```

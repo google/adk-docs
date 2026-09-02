@@ -19,11 +19,7 @@ Before calling `send_realtime()`, ensure your audio data is already in the corre
 ADK does not perform audio format conversion. Sending audio in incorrect formats will result in poor quality or errors.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L181-L184" target="_blank">main.py:181-184</a>'
-audio_blob = types.Blob(
-    mime_type="audio/pcm;rate=16000",
-    data=audio_data
-)
-live_request_queue.send_realtime(audio_blob)
+--8<-- "examples/inline/python/live/dev-guide/part5/001-sending-audio-input.py"
 ```
 
 #### Best Practices for Sending Audio Input
@@ -54,89 +50,15 @@ In browser-based applications, capturing microphone audio and sending it to the 
 4. **WebSocket streaming**: Send PCM chunks to server via WebSocket
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-recorder.js#L7-L58" target="_blank">audio-recorder.js:7-58</a>'
-// Start audio recorder worklet
-export async function startAudioRecorderWorklet(audioRecorderHandler) {
-    // Create an AudioContext with 16kHz sample rate
-    // This matches the Live API's required input format (16-bit PCM @ 16kHz)
-    const audioRecorderContext = new AudioContext({ sampleRate: 16000 });
-
-    // Load the AudioWorklet module that will process audio in real-time
-    // AudioWorklet runs on a separate thread for low-latency, glitch-free audio processing
-    const workletURL = new URL("./pcm-recorder-processor.js", import.meta.url);
-    await audioRecorderContext.audioWorklet.addModule(workletURL);
-
-    // Request access to the user's microphone
-    // channelCount: 1 requests mono audio (single channel) as required by Live API
-    micStream = await navigator.mediaDevices.getUserMedia({
-        audio: { channelCount: 1 }
-    });
-    const source = audioRecorderContext.createMediaStreamSource(micStream);
-
-    // Create an AudioWorkletNode that uses our custom PCM recorder processor
-    // This node will capture audio frames and send them to our handler
-    const audioRecorderNode = new AudioWorkletNode(
-        audioRecorderContext,
-        "pcm-recorder-processor"
-    );
-
-    // Connect the microphone source to the worklet processor
-    // The processor will receive audio frames and post them via port.postMessage
-    source.connect(audioRecorderNode);
-    audioRecorderNode.port.onmessage = (event) => {
-        // Convert Float32Array to 16-bit PCM format required by Live API
-        const pcmData = convertFloat32ToPCM(event.data);
-
-        // Send the PCM data to the handler (which will forward to WebSocket)
-        audioRecorderHandler(pcmData);
-    };
-    return [audioRecorderNode, audioRecorderContext, micStream];
-}
-
-// Convert Float32 samples to 16-bit PCM
-function convertFloat32ToPCM(inputData) {
-    // Create an Int16Array of the same length
-    const pcm16 = new Int16Array(inputData.length);
-    for (let i = 0; i < inputData.length; i++) {
-        // Web Audio API provides Float32 samples in range [-1.0, 1.0]
-        // Multiply by 0x7fff (32767) to convert to 16-bit signed integer range [-32768, 32767]
-        pcm16[i] = inputData[i] * 0x7fff;
-    }
-    // Return the underlying ArrayBuffer (binary data) for efficient transmission
-    return pcm16.buffer;
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/002-handling-audio-input-at-the-client.js"
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L18" target="_blank">pcm-recorder-processor.js:1-18</a>'
-// pcm-recorder-processor.js - AudioWorklet processor for capturing audio
-class PCMProcessor extends AudioWorkletProcessor {
-    constructor() {
-        super();
-    }
-
-    process(inputs, outputs, parameters) {
-        if (inputs.length > 0 && inputs[0].length > 0) {
-            // Use the first channel (mono)
-            const inputChannel = inputs[0][0];
-            // Copy the buffer to avoid issues with recycled memory
-            const inputCopy = new Float32Array(inputChannel);
-            this.port.postMessage(inputCopy);
-        }
-        return true;
-    }
-}
-
-registerProcessor("pcm-recorder-processor", PCMProcessor);
+--8<-- "examples/inline/javascript/live/dev-guide/part5/003-handling-audio-input-at-the-client.js"
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L979-L988" target="_blank">app.js:977-986</a>'
-// Audio recorder handler - called for each audio chunk
-function audioRecorderHandler(pcmData) {
-    if (websocket && websocket.readyState === WebSocket.OPEN && is_audio) {
-        // Send audio as binary WebSocket frame (more efficient than base64 JSON)
-        websocket.send(pcmData);
-        console.log("[CLIENT TO AGENT] Sent audio chunk: %s bytes", pcmData.byteLength);
-    }
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/004-handling-audio-input-at-the-client.js"
 ```
 
 **Key Implementation Details:**
@@ -173,35 +95,7 @@ The audio data arrives as raw PCM bytes, ready for playback or further processin
 **Receiving Audio Output:**
 
 ```python
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# Configure for audio output
-run_config = RunConfig(
-    response_modalities=["AUDIO"],  # Required for audio responses
-    streaming_mode=StreamingMode.BIDI
-)
-
-# Process audio output from the model
-async for event in runner.run_live(
-    user_id="user_123",
-    session_id="session_456",
-    live_request_queue=live_request_queue,
-    run_config=run_config
-):
-    # Events may contain multiple parts (text, audio, etc.)
-    if event.content and event.content.parts:
-        for part in event.content.parts:
-            # Audio data arrives as inline_data with audio/pcm MIME type
-            if part.inline_data and part.inline_data.mime_type.startswith("audio/pcm"):
-                # The data is already decoded to raw bytes (24kHz, 16-bit PCM, mono)
-                audio_bytes = part.inline_data.data
-
-                # Your logic to stream audio to client
-                await stream_audio_to_client(audio_bytes)
-
-                # Or save to file
-                # with open("output.pcm", "ab") as f:
-                #     f.write(audio_bytes)
+--8<-- "examples/inline/python/live/dev-guide/part5/005-receiving-audio-output.py"
 ```
 
 !!! note "Automatic Base64 Decoding"
@@ -213,15 +107,7 @@ async for event in runner.run_live(
 The bidi-demo uses a different architectural approach: instead of processing audio on the server, it forwards all events (including audio data) to the WebSocket client and handles audio playback in the browser. This pattern separates concerns—the server focuses on ADK event streaming while the client handles media playback using Web Audio API.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L225-L233" target="_blank">main.py:225-233</a>'
-# The bidi-demo forwards all events (including audio) to the WebSocket client
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=live_request_queue,
-    run_config=run_config
-):
-    event_json = event.model_dump_json(exclude_none=True, by_alias=True)
-    await websocket.send_text(event_json)
+--8<-- "examples/inline/python/live/dev-guide/part5/006-handling-audio-events-at-the-client.py"
 ```
 
 **Demo Implementation (Client - JavaScript):**
@@ -229,155 +115,15 @@ async for event in runner.run_live(
 The client-side implementation involves three components: WebSocket message handling, audio player setup with AudioWorklet, and the AudioWorklet processor itself.
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L640-L690" target="_blank">app.js:638-688</a>'
-// 1. WebSocket Message Handler
-// Handle content events (text or audio)
-if (adkEvent.content && adkEvent.content.parts) {
-    const parts = adkEvent.content.parts;
-
-    for (const part of parts) {
-        // Handle inline data (audio)
-        if (part.inlineData) {
-            const mimeType = part.inlineData.mimeType;
-            const data = part.inlineData.data;
-
-            // Check if this is audio PCM data and the audio player is ready
-            if (mimeType && mimeType.startsWith("audio/pcm") && audioPlayerNode) {
-                // Decode base64 to ArrayBuffer and send to AudioWorklet for playback
-                audioPlayerNode.port.postMessage(base64ToArray(data));
-            }
-        }
-    }
-}
-
-// Decode base64 audio data to ArrayBuffer
-function base64ToArray(base64) {
-    // Convert base64url to standard base64 (RFC 4648 compliance)
-    // base64url uses '-' and '_' instead of '+' and '/', which are URL-safe
-    let standardBase64 = base64.replace(/-/g, '+').replace(/_/g, '/');
-
-    // Add padding '=' characters if needed
-    // Base64 strings must be multiples of 4 characters
-    while (standardBase64.length % 4) {
-        standardBase64 += '=';
-    }
-
-    // Decode base64 string to binary string using browser API
-    const binaryString = window.atob(standardBase64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    // Convert each character code (0-255) to a byte
-    for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    // Return the underlying ArrayBuffer (binary data)
-    return bytes.buffer;
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/007-the-bidi-demo-forwards-all-events-includ.js"
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/audio-player.js#L5-L24" target="_blank">audio-player.js:5-24</a>'
-// 2. Audio Player Setup
-// Start audio player worklet
-export async function startAudioPlayerWorklet() {
-    // Create an AudioContext with 24kHz sample rate
-    // This matches the Live API's output audio format (16-bit PCM @ 24kHz)
-    // Note: Different from input rate (16kHz) - Live API outputs at higher quality
-    const audioContext = new AudioContext({
-        sampleRate: 24000
-    });
-
-    // Load the AudioWorklet module that will handle audio playback
-    // AudioWorklet runs on audio rendering thread for smooth, low-latency playback
-    const workletURL = new URL('./pcm-player-processor.js', import.meta.url);
-    await audioContext.audioWorklet.addModule(workletURL);
-
-    // Create an AudioWorkletNode using our custom PCM player processor
-    // This node will receive audio data via postMessage and play it through speakers
-    const audioPlayerNode = new AudioWorkletNode(audioContext, 'pcm-player-processor');
-
-    // Connect the player node to the audio destination (speakers/headphones)
-    // This establishes the audio graph: AudioWorklet → AudioContext.destination
-    audioPlayerNode.connect(audioContext.destination);
-
-    return [audioPlayerNode, audioContext];
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/008-the-bidi-demo-forwards-all-events-includ.js"
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/static/js/pcm-player-processor.js#L5-L76" target="_blank">pcm-player-processor.js:5-76</a>'
-// 3. AudioWorklet Processor (Ring Buffer)
-// AudioWorklet processor that buffers and plays PCM audio
-class PCMPlayerProcessor extends AudioWorkletProcessor {
-    constructor() {
-        super();
-
-        // Initialize ring buffer (24kHz x 180 seconds = ~4.3 million samples)
-        // Ring buffer absorbs network jitter and ensures smooth playback
-        this.bufferSize = 24000 * 180;
-        this.buffer = new Float32Array(this.bufferSize);
-        this.writeIndex = 0;  // Where we write new audio data
-        this.readIndex = 0;   // Where we read for playback
-
-        // Handle incoming messages from main thread
-        this.port.onmessage = (event) => {
-            // Reset buffer on interruption (e.g., user interrupts model response)
-            if (event.data.command === 'endOfAudio') {
-                this.readIndex = this.writeIndex; // Clear the buffer by jumping read to write position
-                return;
-            }
-
-            // Decode Int16 array from incoming ArrayBuffer
-            // The Live API sends 16-bit PCM audio data
-            const int16Samples = new Int16Array(event.data);
-
-            // Add audio data to ring buffer for playback
-            this._enqueue(int16Samples);
-        };
-    }
-
-    // Push incoming Int16 data into ring buffer
-    _enqueue(int16Samples) {
-        for (let i = 0; i < int16Samples.length; i++) {
-            // Convert 16-bit integer to float in [-1.0, 1.0] required by Web Audio API
-            // Divide by 32768 (max positive value for signed 16-bit int)
-            const floatVal = int16Samples[i] / 32768;
-
-            // Store in ring buffer at current write position
-            this.buffer[this.writeIndex] = floatVal;
-            // Move write index forward, wrapping around at buffer end (circular buffer)
-            this.writeIndex = (this.writeIndex + 1) % this.bufferSize;
-
-            // Overflow handling: if write catches up to read, move read forward
-            // This overwrites oldest unplayed samples (rare, only under extreme network delay)
-            if (this.writeIndex === this.readIndex) {
-                this.readIndex = (this.readIndex + 1) % this.bufferSize;
-            }
-        }
-    }
-
-    // Called by Web Audio system automatically ~128 samples at a time
-    // This runs on the audio rendering thread for precise timing
-    process(inputs, outputs, parameters) {
-        const output = outputs[0];
-        const framesPerBlock = output[0].length;
-
-        for (let frame = 0; frame < framesPerBlock; frame++) {
-            // Write samples to output buffer (mono to stereo)
-            output[0][frame] = this.buffer[this.readIndex]; // left channel
-            if (output.length > 1) {
-                output[1][frame] = this.buffer[this.readIndex]; // right channel (duplicate for stereo)
-            }
-
-            // Move read index forward unless buffer is empty (underflow protection)
-            if (this.readIndex != this.writeIndex) {
-                this.readIndex = (this.readIndex + 1) % this.bufferSize;
-            }
-            // If readIndex == writeIndex, we're out of data - output silence (0.0)
-        }
-
-        return true; // Keep processor alive (return false to terminate)
-    }
-}
-
-registerProcessor('pcm-player-processor', PCMPlayerProcessor);
+--8<-- "examples/inline/javascript/live/dev-guide/part5/009-the-bidi-demo-forwards-all-events-includ.js"
 ```
 
 **Key Implementation Patterns:**
@@ -407,16 +153,7 @@ Both images and video in ADK Gemini Live API Toolkit are processed as JPEG frame
 - **Resolution**: 768x768 pixels (recommended)
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L202-L217" target="_blank">main.py:202-217</a>'
-# Decode base64 image data
-image_data = base64.b64decode(json_message["data"])
-mime_type = json_message.get("mimeType", "image/jpeg")
-
-# Send image as blob
-image_blob = types.Blob(
-    mime_type=mime_type,
-    data=image_data
-)
-live_request_queue.send_realtime(image_blob)
+--8<-- "examples/inline/python/live/dev-guide/part5/010-how-to-use-image-and-video.py"
 ```
 
 **Not Suitable For**:
@@ -449,106 +186,11 @@ In browser-based applications, capturing images from the user's webcam and sendi
 5. **WebSocket transmission**: Send as JSON message to server
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L803-L845" target="_blank">app.js:801-843</a>'
-// 1. Opening Camera Preview
-// Open camera modal and start preview
-async function openCameraPreview() {
-    try {
-        // Request access to the user's webcam with 768x768 resolution
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: { ideal: 768 },
-                height: { ideal: 768 },
-                facingMode: 'user'
-            }
-        });
-
-        // Set the stream to the video element
-        cameraPreview.srcObject = cameraStream;
-
-        // Show the modal
-        cameraModal.classList.add('show');
-
-    } catch (error) {
-        console.error('Error accessing camera:', error);
-        addSystemMessage(`Failed to access camera: ${error.message}`);
-    }
-}
-
-// Close camera modal and stop preview
-function closeCameraPreview() {
-    // Stop the camera stream
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-    }
-
-    // Clear the video source
-    cameraPreview.srcObject = null;
-
-    // Hide the modal
-    cameraModal.classList.remove('show');
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/011-handling-image-input-at-the-client.js"
 ```
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L848-L916" target="_blank">app.js:846-914</a>'
-// 2. Capturing and Sending Image
-// Capture image from the live preview
-function captureImageFromPreview() {
-    if (!cameraStream) {
-        addSystemMessage('No camera stream available');
-        return;
-    }
-
-    try {
-        // Create canvas to capture the frame
-        const canvas = document.createElement('canvas');
-        canvas.width = cameraPreview.videoWidth;
-        canvas.height = cameraPreview.videoHeight;
-        const context = canvas.getContext('2d');
-
-        // Draw current video frame to canvas
-        context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
-
-        // Convert canvas to data URL for display
-        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-        // Display the captured image in the chat
-        const imageBubble = createImageBubble(imageDataUrl, true);
-        messagesDiv.appendChild(imageBubble);
-
-        // Convert canvas to blob for sending to server
-        canvas.toBlob((blob) => {
-            // Convert blob to base64 for sending to server
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                // Remove data:image/jpeg;base64, prefix
-                const base64data = reader.result.split(',')[1];
-                sendImage(base64data);
-            };
-            reader.readAsDataURL(blob);
-        }, 'image/jpeg', 0.85);
-
-        // Close the camera modal
-        closeCameraPreview();
-
-    } catch (error) {
-        console.error('Error capturing image:', error);
-        addSystemMessage(`Failed to capture image: ${error.message}`);
-    }
-}
-
-// Send image to server
-function sendImage(base64Image) {
-    if (websocket && websocket.readyState === WebSocket.OPEN) {
-        const jsonMessage = JSON.stringify({
-            type: "image",
-            data: base64Image,
-            mimeType: "image/jpeg"
-        });
-        websocket.send(jsonMessage);
-        console.log("[CLIENT TO AGENT] Sent image");
-    }
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/012-handling-image-input-at-the-client.js"
 ```
 
 **Key Implementation Details:**
@@ -639,16 +281,7 @@ When building ADK applications, you'll need to specify which model to use. The r
 **Recommended Pattern:**
 
 ```python
-import os
-from google.adk.agents import Agent
-
-# Use environment variable with fallback to a sensible default
-agent = Agent(
-    name="my_agent",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
-    tools=[...],
-    instruction="..."
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/013-how-to-handle-model-names.py"
 ```
 
 **Why use environment variables:**
@@ -675,24 +308,13 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
     **Correct order in `main.py`:**
 
     ```python
-    from dotenv import load_dotenv
-    from pathlib import Path
-
-    # Load .env file BEFORE importing agent
-    load_dotenv(Path(__file__).parent / ".env")
-
-    # Now safe to import modules that use environment variables
-    from google_search_agent.agent import agent
+    --8<-- "examples/inline/python/live/dev-guide/part5/014-demoagentmodel-gemini-live-2-5-flash-nat.py"
     ```
 
     **Incorrect order (will not work):**
 
     ```python
-    from dotenv import load_dotenv
-    from google_search_agent.agent import agent  # Agent reads env var here
-
-    # Too late! Agent already initialized with default model
-    load_dotenv(Path(__file__).parent / ".env")
+    --8<-- "examples/inline/python/live/dev-guide/part5/015-demoagentmodel-gemini-live-2-5-flash-nat.py"
     ```
 
     This is a Python import behavior: when you import a module, its top-level code executes immediately. If your agent module calls `os.getenv("DEMO_AGENT_MODEL")` at import time, the `.env` file must already be loaded.
@@ -726,37 +348,7 @@ The Live API provides built-in audio transcription capabilities that automatical
 **Configuration:**
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-# Default behavior: Audio transcription is ENABLED by default
-# Both input and output transcription are automatically configured
-run_config = RunConfig(
-    response_modalities=["AUDIO"]
-    # input_audio_transcription defaults to AudioTranscriptionConfig()
-    # output_audio_transcription defaults to AudioTranscriptionConfig()
-)
-
-# To disable transcription explicitly:
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    input_audio_transcription=None,   # Explicitly disable user input transcription
-    output_audio_transcription=None   # Explicitly disable model output transcription
-)
-
-# Enable only input transcription (disable output):
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    input_audio_transcription=types.AudioTranscriptionConfig(),  # Explicitly enable (redundant with default)
-    output_audio_transcription=None  # Explicitly disable
-)
-
-# Enable only output transcription (disable input):
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    input_audio_transcription=None,  # Explicitly disable
-    output_audio_transcription=types.AudioTranscriptionConfig()  # Explicitly enable (redundant with default)
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/016-audio-transcription.py"
 ```
 
 **Event Structure**:
@@ -764,16 +356,7 @@ run_config = RunConfig(
 Transcriptions are delivered as `types.Transcription` objects on the `Event` object:
 
 ```python
-from dataclasses import dataclass
-from typing import Optional
-from google.genai import types
-
-@dataclass
-class Event:
-    content: Optional[Content]  # Audio/text content
-    input_transcription: Optional[types.Transcription]  # User speech → text
-    output_transcription: Optional[types.Transcription]  # Model speech → text
-    # ... other fields
+--8<-- "examples/inline/python/live/dev-guide/part5/017-enable-only-output-transcription-disable.py"
 ```
 
 !!! note "Learn More"
@@ -791,37 +374,7 @@ Transcriptions arrive as separate fields in the event stream, not as content par
 **Processing Transcriptions:**
 
 ```python
-from google.adk.runners import Runner
-
-# ... runner setup code ...
-
-async for event in runner.run_live(...):
-    # User's speech transcription (from input audio)
-    if event.input_transcription:  # First check: transcription object exists
-        # Access the transcription text and status
-        user_text = event.input_transcription.text
-        is_finished = event.input_transcription.finished
-
-        # Second check: text is not None or empty
-        # This handles cases where transcription is in progress or empty
-        if user_text and user_text.strip():
-            print(f"User said: {user_text} (finished: {is_finished})")
-
-            # Your caption update logic
-            update_caption(user_text, is_user=True, is_final=is_finished)
-
-    # Model's speech transcription (from output audio)
-    if event.output_transcription:  # First check: transcription object exists
-        model_text = event.output_transcription.text
-        is_finished = event.output_transcription.finished
-
-        # Second check: text is not None or empty
-        # This handles cases where transcription is in progress or empty
-        if model_text and model_text.strip():
-            print(f"Model said: {model_text} (finished: {is_finished})")
-
-            # Your caption update logic
-            update_caption(model_text, is_user=False, is_final=is_finished)
+--8<-- "examples/inline/python/live/dev-guide/part5/018-enable-only-output-transcription-disable.py"
 ```
 
 !!! tip "Best Practice for Transcription Null Checking"
@@ -844,102 +397,14 @@ In web applications, transcription events need to be forwarded from the server t
 3. **UI rendering**: Display partial transcriptions with typing indicators, finalize when `finished: true`
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L532-L655" target="_blank">app.js:530-653</a>'
-// Handle input transcription (user's spoken words)
-if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
-    const transcriptionText = adkEvent.inputTranscription.text;
-    const isFinished = adkEvent.inputTranscription.finished;
-
-    if (transcriptionText) {
-        if (currentInputTranscriptionId == null) {
-            // Create new transcription bubble
-            currentInputTranscriptionId = Math.random().toString(36).substring(7);
-            currentInputTranscriptionElement = createMessageBubble(
-                transcriptionText,
-                true,  // isUser
-                !isFinished  // isPartial
-            );
-            currentInputTranscriptionElement.id = currentInputTranscriptionId;
-            currentInputTranscriptionElement.classList.add("transcription");
-            messagesDiv.appendChild(currentInputTranscriptionElement);
-        } else {
-            // Update existing transcription bubble
-            if (currentOutputTranscriptionId == null && currentMessageId == null) {
-                // Accumulate input transcription text (Live API sends incremental pieces)
-                const existingText = currentInputTranscriptionElement
-                    .querySelector(".bubble-text").textContent;
-                const cleanText = existingText.replace(/\.\.\.$/, '');
-                const accumulatedText = cleanText + transcriptionText;
-                updateMessageBubble(
-                    currentInputTranscriptionElement,
-                    accumulatedText,
-                    !isFinished
-                );
-            }
-        }
-
-        // If transcription is finished, reset the state
-        if (isFinished) {
-            currentInputTranscriptionId = null;
-            currentInputTranscriptionElement = null;
-        }
-    }
-}
-
-// Handle output transcription (model's spoken words)
-if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
-    const transcriptionText = adkEvent.outputTranscription.text;
-    const isFinished = adkEvent.outputTranscription.finished;
-
-    if (transcriptionText) {
-        // Finalize any active input transcription when model starts responding
-        if (currentInputTranscriptionId != null && currentOutputTranscriptionId == null) {
-            const textElement = currentInputTranscriptionElement
-                .querySelector(".bubble-text");
-            const typingIndicator = textElement.querySelector(".typing-indicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-            currentInputTranscriptionId = null;
-            currentInputTranscriptionElement = null;
-        }
-
-        if (currentOutputTranscriptionId == null) {
-            // Create new transcription bubble for model
-            currentOutputTranscriptionId = Math.random().toString(36).substring(7);
-            currentOutputTranscriptionElement = createMessageBubble(
-                transcriptionText,
-                false,  // isUser
-                !isFinished  // isPartial
-            );
-            currentOutputTranscriptionElement.id = currentOutputTranscriptionId;
-            currentOutputTranscriptionElement.classList.add("transcription");
-            messagesDiv.appendChild(currentOutputTranscriptionElement);
-        } else {
-            // Update existing transcription bubble
-            const existingText = currentOutputTranscriptionElement
-                .querySelector(".bubble-text").textContent;
-            const cleanText = existingText.replace(/\.\.\.$/, '');
-            updateMessageBubble(
-                currentOutputTranscriptionElement,
-                cleanText + transcriptionText,
-                !isFinished
-            );
-        }
-
-        // If transcription is finished, reset the state
-        if (isFinished) {
-            currentOutputTranscriptionId = null;
-            currentOutputTranscriptionElement = null;
-        }
-    }
-}
+--8<-- "examples/inline/javascript/live/dev-guide/part5/019-handling-audio-transcription-at-the-clie.js"
 ```
 
 **Key Implementation Patterns:**
 
 1. **Incremental Text Accumulation**: The Live API may send transcriptions in multiple chunks. Accumulate text by appending new pieces to existing content:
    ```javascript
-   const accumulatedText = cleanText + transcriptionText;
+   --8<-- "examples/inline/javascript/live/dev-guide/part5/020-handling-audio-transcription-at-the-clie.js"
    ```
 
 2. **Partial vs Finished States**: Use the `finished` flag to determine whether to show typing indicators:
@@ -948,11 +413,7 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
 
 3. **Bubble State Management**: Track current transcription bubbles separately for input and output using IDs. Create new bubbles only when starting fresh transcriptions:
    ```javascript
-   if (currentInputTranscriptionId == null) {
-       // Create new bubble
-   } else {
-       // Update existing bubble
-   }
+   --8<-- "examples/inline/javascript/live/dev-guide/part5/021-handling-audio-transcription-at-the-clie.js"
    ```
 
 4. **Turn Coordination**: When the model starts responding (first output transcription arrives), finalize any active input transcription to prevent overlapping updates.
@@ -999,30 +460,7 @@ You can configure `speech_config` on a per-agent basis by creating a custom `Gem
 **Configuration:**
 
 ```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.tools import google_search
-
-# Create a Gemini instance with custom speech config
-custom_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Puck"
-            )
-        ),
-        language_code="en-US"
-    )
-)
-
-# Pass the Gemini instance to the agent
-agent = Agent(
-    model=custom_llm,
-    tools=[google_search],
-    instruction="You are a helpful assistant."
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/022-agent-level-configuration.py"
 ```
 
 ### RunConfig-Level Configuration
@@ -1032,20 +470,7 @@ You can also set `speech_config` in RunConfig to apply a default voice configura
 **Configuration:**
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Kore"
-            )
-        ),
-        language_code="en-US"
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/023-runconfig-level-configuration.py"
 ```
 
 ### Configuration Precedence
@@ -1061,42 +486,7 @@ When both agent-level (via `Gemini` instance) and session-level (via `RunConfig`
 **Example:**
 
 ```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.agents.run_config import RunConfig
-from google.adk.tools import google_search
-
-# Create Gemini instance with custom voice
-custom_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Puck"  # Agent-level: highest priority
-            )
-        )
-    )
-)
-
-# Agent uses the Gemini instance with custom voice
-agent = Agent(
-    model=custom_llm,
-    tools=[google_search],
-    instruction="You are a helpful assistant."
-)
-
-# RunConfig with default voice (will be overridden by agent's Gemini config)
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Kore"  # This is overridden for the agent above
-            )
-        )
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/024-configuration-precedence.py"
 ```
 
 ### Multi-Agent Voice Configuration
@@ -1106,59 +496,7 @@ For multi-agent workflows, you can assign different voices to different agents b
 **Multi-Agent Example:**
 
 ```python
-from google.genai import types
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.agents.run_config import RunConfig
-
-# Customer service agent with a friendly voice
-customer_service_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Aoede"  # Friendly, warm voice
-            )
-        )
-    )
-)
-
-customer_service_agent = Agent(
-    name="customer_service",
-    model=customer_service_llm,
-    instruction="You are a friendly customer service representative."
-)
-
-# Technical support agent with a professional voice
-technical_support_llm = Gemini(
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    speech_config=types.SpeechConfig(
-        voice_config=types.VoiceConfig(
-            prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                voice_name="Charon"  # Professional, authoritative voice
-            )
-        )
-    )
-)
-
-technical_support_agent = Agent(
-    name="technical_support",
-    model=technical_support_llm,
-    instruction="You are a technical support specialist."
-)
-
-# Root agent that coordinates the workflow
-root_agent = Agent(
-    name="root_agent",
-    model="gemini-2.5-flash-native-audio-preview-12-2025",
-    instruction="Coordinate customer service and technical support.",
-    sub_agents=[customer_service_agent, technical_support_agent]
-)
-
-# RunConfig without speech_config - each agent uses its own voice
-run_config = RunConfig(
-    response_modalities=["AUDIO"]
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/025-multi-agent-voice-configuration.py"
 ```
 
 In this example, when the customer service agent speaks, users hear the "Aoede" voice. When the technical support agent takes over, users hear the "Charon" voice. This creates a more engaging and natural multi-agent experience.
@@ -1263,28 +601,13 @@ When you disable VAD (which is enabled by default), you must use manual activity
 **Default behavior (VAD enabled, no configuration needed):**
 
 ```python
-from google.adk.agents.run_config import RunConfig
-
-# VAD is enabled by default - no explicit configuration needed
-run_config = RunConfig(
-    response_modalities=["AUDIO"]
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/026-vad-configurations.py"
 ```
 
 **Disable automatic VAD (enables manual turn control):**
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    realtime_input_config=types.RealtimeInputConfig(
-        automatic_activity_detection=types.AutomaticActivityDetection(
-            disabled=True  # Disable automatic VAD
-        )
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/027-vad-is-enabled-by-default-no-explicit-co.py"
 ```
 
 ### Client-Side VAD Example
@@ -1303,21 +626,7 @@ When building voice-enabled applications, you may want to implement client-side 
 **Configuration:**
 
 ```python
-from fastapi import FastAPI, WebSocket
-from google.adk.agents.run_config import RunConfig, StreamingMode
-from google.adk.agents.live_request_queue import LiveRequestQueue
-from google.genai import types
-
-# Configure RunConfig to disable automatic VAD
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
-    response_modalities=["AUDIO"],
-    realtime_input_config=types.RealtimeInputConfig(
-        automatic_activity_detection=types.AutomaticActivityDetection(
-            disabled=True  # Client handles VAD
-        )
-    )
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/028-server-side-configuration.py"
 ```
 
 #### WebSocket Upstream Task
@@ -1325,33 +634,7 @@ run_config = RunConfig(
 **Implementation:**
 
 ```python
-async def upstream_task(websocket: WebSocket, live_request_queue: LiveRequestQueue):
-    """Receives audio and activity signals from client."""
-    try:
-        while True:
-            # Receive JSON message from WebSocket
-            message = await websocket.receive_json()
-
-            if message.get("type") == "activity_start":
-                # Client detected voice - signal the model
-                live_request_queue.send_activity_start()
-
-            elif message.get("type") == "activity_end":
-                # Client detected silence - signal the model
-                live_request_queue.send_activity_end()
-
-            elif message.get("type") == "audio":
-                # Stream audio chunk to the model
-                import base64
-                audio_data = base64.b64decode(message["data"])
-                audio_blob = types.Blob(
-                    mime_type="audio/pcm;rate=16000",
-                    data=audio_data
-                )
-                live_request_queue.send_realtime(audio_blob)
-
-    except WebSocketDisconnect:
-        live_request_queue.close()
+--8<-- "examples/inline/python/live/dev-guide/part5/029-websocket-upstream-task.py"
 ```
 
 #### Client-Side VAD Implementation
@@ -1359,35 +642,7 @@ async def upstream_task(websocket: WebSocket, live_request_queue: LiveRequestQue
 **Implementation:**
 
 ```javascript
-// vad-processor.js - AudioWorklet processor for voice detection
-class VADProcessor extends AudioWorkletProcessor {
-    constructor() {
-        super();
-        this.threshold = 0.05;  // Adjust based on environment
-    }
-
-    process(inputs, outputs, parameters) {
-        const input = inputs[0];
-        if (input && input.length > 0) {
-            const channelData = input[0];
-            let sum = 0;
-
-            // Calculate RMS (Root Mean Square)
-            for (let i = 0; i < channelData.length; i++) {
-                sum += channelData[i] ** 2;
-            }
-            const rms = Math.sqrt(sum / channelData.length);
-
-            // Signal voice detection status
-            this.port.postMessage({
-                voice: rms > this.threshold,
-                rms: rms
-            });
-        }
-        return true;
-    }
-}
-registerProcessor('vad-processor', VADProcessor);
+--8<-- "examples/inline/javascript/live/dev-guide/part5/030-client-side-vad-implementation.js"
 ```
 
 #### Client-Side Coordination
@@ -1395,51 +650,7 @@ registerProcessor('vad-processor', VADProcessor);
 **Coordinating VAD Signals:**
 
 ```javascript
-// Main application logic
-let isSilence = true;
-let lastVoiceTime = 0;
-const SILENCE_TIMEOUT = 2000;  // 2 seconds of silence before sending activity_end
-
-// Set up VAD processor
-const vadNode = new AudioWorkletNode(audioContext, 'vad-processor');
-vadNode.port.onmessage = (event) => {
-    const { voice, rms } = event.data;
-
-    if (voice) {
-        // Voice detected
-        if (isSilence) {
-            // Transition from silence to speech - send activity_start
-            websocket.send(JSON.stringify({ type: "activity_start" }));
-            isSilence = false;
-        }
-        lastVoiceTime = Date.now();
-    } else {
-        // No voice detected - check if silence timeout exceeded
-        if (!isSilence && Date.now() - lastVoiceTime > SILENCE_TIMEOUT) {
-            // Sustained silence - send activity_end
-            websocket.send(JSON.stringify({ type: "activity_end" }));
-            isSilence = true;
-        }
-    }
-};
-
-// Set up audio recorder to stream chunks
-audioRecorderNode.port.onmessage = (event) => {
-    const audioData = event.data;  // Float32Array
-
-    // Only send audio when voice is detected
-    if (!isSilence) {
-        // Convert to PCM16 and send to server
-        const pcm16 = convertFloat32ToPCM(audioData);
-        const base64Audio = arrayBufferToBase64(pcm16);
-
-        websocket.send(JSON.stringify({
-            type: "audio",
-            mime_type: "audio/pcm;rate=16000",
-            data: base64Audio
-        }));
-    }
-};
+--8<-- "examples/inline/javascript/live/dev-guide/part5/031-client-side-coordination.js"
 ```
 
 **Key Implementation Details:**
@@ -1484,16 +695,7 @@ The Live API offers advanced conversational features that enable more natural an
 **Configuration:**
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig
-
-run_config = RunConfig(
-    # Model can initiate responses without explicit prompts
-    proactivity=types.ProactivityConfig(proactive_audio=True),
-
-    # Model adapts to user emotions
-    enable_affective_dialog=True
-)
+--8<-- "examples/inline/python/live/dev-guide/part5/032-proactivity-and-affective-dialog.py"
 ```
 
 **Proactivity:**
@@ -1517,34 +719,7 @@ The model analyzes emotional cues in voice tone and content to:
 **Practical Example - Customer Service Bot**:
 
 ```python
-from google.genai import types
-from google.adk.agents.run_config import RunConfig, StreamingMode
-
-# Configure for empathetic customer service
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI,
-
-    # Model can proactively offer help
-    proactivity=types.ProactivityConfig(proactive_audio=True),
-
-    # Model adapts to customer emotions
-    enable_affective_dialog=True
-)
-
-# Example interaction (illustrative - actual model behavior may vary):
-# Customer: "I've been waiting for my order for three weeks..."
-# [Model may detect frustration in tone and adapt response]
-# Model: "I'm really sorry to hear about this delay. Let me check your order
-#        status right away. Can you provide your order number?"
-#
-# [Proactivity in action]
-# Model: "I see you previously asked about shipping updates. Would you like
-#        me to set up notifications for future orders?"
-#
-# Note: Proactive and affective behaviors are probabilistic. The model's
-# emotional awareness and proactive suggestions will vary based on context,
-# conversation history, and inherent model variability.
+--8<-- "examples/inline/python/live/dev-guide/part5/033-proactivity-and-affective-dialog.py"
 ```
 
 ### Platform Compatibility

@@ -442,10 +442,7 @@ including Gemini Enterprise Agent Platform, see the
             You can then replace the `model` string in `root_agent` in the `agent.py` file you created earlier ([jump to section](#agentpy)). Your code should look something like:
 
             ```py
-            root_agent = Agent(
-                name="weather_time_agent",
-                model="replace-me-with-model-id", #e.g. gemini-2.0-flash-live-001
-                ...
+            --8<-- "examples/inline/python/tutorials/multi-tool-agent/001-4-run-your-agent-run-your-agent.py"
             ```
 
         ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)

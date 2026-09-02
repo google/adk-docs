@@ -131,12 +131,7 @@ To enable detailed logging, including `DEBUG` level messages, add the following
 to the top of your script:
 
 ```python
-import logging
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
-)
+--8<-- "examples/inline/python/observability/logging/001-logging-level.py"
 ```
 
 #### Capture prompt content
@@ -145,23 +140,14 @@ You can enable full prompt logging programmatically by setting an environment
 variable:
 
 ```python
-import os
-
-os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
+--8<-- "examples/inline/python/observability/logging/002-capture-prompt-content.py"
 ```
 
 To scope content capture to a single run instead of the whole process, set
 `RunConfig.telemetry` rather than the environment variable:
 
 ```python
-from google.adk.agents.run_config import RunConfig
-from google.adk.telemetry import ContentCapturingMode, TelemetryConfig
-
-run_config = RunConfig(
-    telemetry=TelemetryConfig(
-        capture_message_content=ContentCapturingMode.SPAN_AND_EVENT,
-    ),
-)
+--8<-- "examples/inline/python/observability/logging/003-capture-prompt-content.py"
 ```
 
 #### OTLP export
@@ -170,13 +156,7 @@ To export logs to an OpenTelemetry Collector (or an OTLP-compatible backend)
 programmatically:
 
 ```python
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
-
-os.environ["OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"] = "http://your-collector:4318/v1/logs"
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers()
+--8<-- "examples/inline/python/observability/logging/004-otlp-export.py"
 ```
 
 #### GCP export setup
@@ -185,16 +165,7 @@ To export logs to Google Cloud Logging programmatically, use the OpenTelemetry
 Google Cloud exporter. Here is an example in Python:
 
 ```python
-from google.adk.telemetry.google_cloud import get_gcp_exporters
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
-
-gcp_exporters = get_gcp_exporters(
-  enable_cloud_logging = True,
-)
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers([gcp_exporters])
+--8<-- "examples/inline/python/observability/logging/005-gcp-export-setup.py"
 ```
 
 ### Kotlin programmatic setup
@@ -242,24 +213,7 @@ configuration and the standard `log` package for general events.
 You can enable full prompt logging programmatically when initializing telemetry:
 
 ```go
-package main
-
-import (
-	"context"
-	"google.golang.org/adk/v2/telemetry"
-)
-
-func main() {
-	ctx := context.Background()
-	tp, err := telemetry.New(ctx,
-		telemetry.WithGenAICaptureMessageContent(true),
-	)
-	if err != nil {
-		// handle error
-	}
-	defer tp.Shutdown(ctx)
-	tp.SetGlobalOtelProviders()
-}
+--8<-- "examples/inline/go/observability/logging/006-capture-prompt-content.go.txt"
 ```
 
 #### OTLP export
@@ -274,24 +228,7 @@ automatically use these settings when initialized.
 To export logs to Google Cloud Logging, use the `WithOtelToCloud` option:
 
 ```go
-package main
-
-import (
-	"context"
-	"google.golang.org/adk/v2/telemetry"
-)
-
-func main() {
-	ctx := context.Background()
-	tp, err := telemetry.New(ctx,
-		telemetry.WithOtelToCloud(true),
-	)
-	if err != nil {
-		// handle error
-	}
-	defer tp.Shutdown(ctx)
-	tp.SetGlobalOtelProviders()
-}
+--8<-- "examples/inline/go/observability/logging/007-gcp-export-setup.go.txt"
 ```
 
 If using the Go launcher, you can also enable GCP export via the CLI flag:

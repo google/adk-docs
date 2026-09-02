@@ -1,0 +1,7 @@
+import (
+  "log"
+
+  "google.golang.org/genai"
+)
+
+--8<-- "examples/go/snippets/artifacts/main.go:representation"

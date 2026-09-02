@@ -49,18 +49,7 @@ Use the following command to start the ADK web interface:
     and Web UI into a single binary:
 
     ```go title="main.go"
-    import (
-        "google.golang.org/adk/v2/cmd/launcher"
-        "google.golang.org/adk/v2/cmd/launcher/full"
-    )
-
-    func main() {
-        // ... build your agent and config ...
-        l := full.NewLauncher()
-        if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
-            log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-        }
-    }
+    --8<-- "examples/inline/go/runtime/web-interface/index/001-start-the-web-interface.go.txt"
     ```
 
     Then start the web interface by passing the `web`, `api`, and `webui`

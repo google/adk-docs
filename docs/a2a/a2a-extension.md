@@ -31,13 +31,7 @@ To activate the extension, the client can instantiate the `RemoteA2aAgent` with 
 Activating this extension implies that the server will use the new agent executor implementation.
 
 ```python
-from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
-
-remote_agent = RemoteA2aAgent(
-    name="remote_agent",
-    agent_card="http://localhost:8000/a2a/remote_agent/.well-known/agent-card.json",
-    use_legacy=False,
-)
+--8<-- "examples/inline/python/a2a/a2a-extension/001-client-side-extension-activation.py"
 ```
 
 The `A2aAgentExecutor` uses by default the new implementation, if the a2a extension is detected in the request.

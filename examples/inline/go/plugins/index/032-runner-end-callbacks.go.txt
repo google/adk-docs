@@ -1,0 +1,3 @@
+func (p *MyPlugin) AfterRunCallback(ctx agent.InvocationContext) {
+  // Your implementation here
+}

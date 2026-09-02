@@ -20,38 +20,13 @@ agents.
 === "Python"
 
     ```python
-    root_agent = Workflow(
-      name="routing_workflow",
-      edges=[
-        ("START", process_message, router),
-        (router,
-          {
-            "output-1": response_1,
-            "output-2": response_2,
-            "output-3": response_3,
-          },
-        ),
-      ],
-    )
+    --8<-- "examples/inline/python/graphs/routes/001-build-graph-routes-for-agent-workflows.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    export const rootAgent = new Workflow({
-      name: 'routing_workflow',
-      edges: [
-        ['START', processMessage, router],
-        [
-          router,
-          {
-            'output-1': response1,
-            'output-2': response2,
-            'output-3': response3,
-          },
-        ],
-      ],
-    });
+    --8<-- "examples/inline/typescript/graphs/routes/002-build-graph-routes-for-agent-workflows.ts"
     ```
 
 === "Go"
@@ -66,18 +41,7 @@ agents.
     the whole graph is wrapped in a `workflowagent.New` call:
 
     ```go
-    edges := workflow.Concat(
-        workflow.Chain(workflow.Start, classifyNode),
-        []workflow.Edge{
-            {From: classifyNode, To: responseA, Route: workflow.StringRoute("output-1")},
-            {From: classifyNode, To: responseB, Route: workflow.StringRoute("output-2")},
-            {From: classifyNode, To: responseC, Route: workflow.StringRoute("output-3")},
-        },
-    )
-    rootAgent, _ := workflowagent.New(workflowagent.Config{
-        Name:  "routing_workflow",
-        Edges: edges,
-    })
+    --8<-- "examples/inline/go/graphs/routes/003-build-graph-routes-for-agent-workflows.go.txt"
     ```
 
 The advantage of using a graph-based agent workflow is the significant increase
@@ -103,11 +67,7 @@ objects.
     and sends a text output:
 
     ```python
-    from google.adk import Event
-
-    def my_function_node(node_input: str):
-        input_text_modified = node_input.upper()
-        return Event(output=input_text_modified)
+    --8<-- "examples/inline/python/graphs/routes/004-nodes.py"
     ```
 
 === "TypeScript"
@@ -161,11 +121,7 @@ A sequential route runs each node once, in the listed order.
     graph execution, with each listed node executed in sequence:
 
     ```python
-    edges=[("START", task_A_node)]  # single node run
-    edges=[("START",
-            task_A_node,
-            task_B_node,
-            task_C_node)]           # 3 nodes run in order
+    --8<-- "examples/inline/python/graphs/routes/005-route-sequences.py"
     ```
 
 === "TypeScript"
@@ -174,8 +130,7 @@ A sequential route runs each node once, in the listed order.
     order, and passes every node's return value to the next node:
 
     ```typescript
-    edges: [['START', taskANode]]                       // a single node
-    edges: [['START', taskANode, taskBNode, taskCNode]] // three, in order
+    --8<-- "examples/inline/typescript/graphs/routes/006-route-sequences.ts"
     ```
 
     Listing `'START'` in more than one row creates parallel paths instead.
@@ -204,35 +159,7 @@ A sequential route runs each node once, in the listed order.
     `Event(route=...)` value, which the `edges` dict dispatches to different nodes.
 
     ```python
-    from google.adk import Event, Workflow
-    from google.adk.agents import Agent
-
-
-    def router(node_input: str):
-        """Route to task B or C based on node_input."""
-        if condition(node_input):
-            return Event(route="RUN_TASK_C")
-        return Event(route="RUN_TASK_B")
-
-    task_B_node = Agent(name="task_B_agent") # An agent to execute node B
-
-    def task_C_node(node_input: str):
-        """A FunctionNode to execute node C."""
-        return Event(output="Task C completed")
-
-    root_agent = Workflow(
-        name="routing_workflow",
-        edges=[
-            ("START", task_A_node, router),
-            (router,
-              {
-                # "route value": node_to_run
-                "RUN_TASK_B": task_B_node,
-                "RUN_TASK_C": task_C_node,
-              },
-            ),
-        ],
-    )
+    --8<-- "examples/inline/python/graphs/routes/007-route-branches-and-conditional-execution.py"
     ```
 
 === "TypeScript"
@@ -264,20 +191,7 @@ A sequential route runs each node once, in the listed order.
     The following pattern is the Go equivalent of the Python router:
 
     ```go
-    // classifyNode emits an Event with Routes=[]string{"BUG"},
-    // ["CUSTOMER_SUPPORT"], or ["LOGISTICS"] based on the message.
-    edges := workflow.Concat(
-        workflow.Chain(workflow.Start, processMessage, classifyNode),
-        []workflow.Edge{
-            {From: classifyNode, To: bugHandler,       Route: workflow.StringRoute("BUG")},
-            {From: classifyNode, To: supportHandler,   Route: workflow.StringRoute("CUSTOMER_SUPPORT")},
-            {From: classifyNode, To: logisticsHandler, Route: workflow.StringRoute("LOGISTICS")},
-        },
-    )
-    rootAgent, _ := workflowagent.New(workflowagent.Config{
-        Name:  "routing_workflow",
-        Edges: edges,
-    })
+    --8<-- "examples/inline/go/graphs/routes/008-route-branches-and-conditional-execution.go.txt"
     ```
 
     `workflow.EdgeBuilder` provides a fluent alternative to assembling the
@@ -285,17 +199,7 @@ A sequential route runs each node once, in the listed order.
     `AddFanIn` methods express the same topology with less repetition:
 
     ```go
-    eb := workflow.NewEdgeBuilder()
-    eb.Add(workflow.Start, processMessage)
-    eb.Add(processMessage, classifyNode)
-    eb.AddRoute(classifyNode, bugHandler,       workflow.StringRoute("BUG"))
-    eb.AddRoute(classifyNode, supportHandler,   workflow.StringRoute("CUSTOMER_SUPPORT"))
-    eb.AddRoute(classifyNode, logisticsHandler, workflow.StringRoute("LOGISTICS"))
-
-    rootAgent, _ := workflowagent.New(workflowagent.Config{
-        Name:  "routing_workflow",
-        Edges: eb.Build(),
-    })
+    --8<-- "examples/inline/go/graphs/routes/009-route-branches-and-conditional-execution.go.txt"
     ```
 
     For complete, runnable routing examples see:
@@ -332,16 +236,7 @@ before passing results to the next step.
     from these nodes to the next node.
 
     ```python
-    from google.adk.workflow import JoinNode
-
-    my_join_node = JoinNode(name="my_join_node")
-
-    edges=[
-        ("START", parallel_task_A, my_join_node),
-        ("START", parallel_task_B, my_join_node),
-        ("START", parallel_task_C, my_join_node),
-        (my_join_node, final_task_D),
-    ]
+    --8<-- "examples/inline/python/graphs/routes/010-parallel-tasks-fan-out-and-join-paths.py"
     ```
 
 === "TypeScript"
@@ -367,18 +262,7 @@ before passing results to the next step.
     [complex workflow example](https://github.com/google/adk-go/tree/v2/examples/workflow/complex)):
 
     ```go
-    gatherNode := workflow.NewJoinNode("gather")
-
-    eb := workflow.NewEdgeBuilder()
-    eb.AddFanOut(workflow.Start, researchNodeA, researchNodeB, researchNodeC)
-    eb.AddFanIn(gatherNode, researchNodeA, researchNodeB, researchNodeC)
-    eb.Add(gatherNode, formatNode)
-    eb.Add(formatNode, synthesisNode)
-
-    rootAgent, _ := workflowagent.New(workflowagent.Config{
-        Name:  "research_pipeline",
-        Edges: eb.Build(),
-    })
+    --8<-- "examples/inline/go/graphs/routes/011-parallel-tasks-fan-out-and-join-paths.go.txt"
     ```
 
     The following snippet shows the complete fan-out / join pattern using
@@ -411,19 +295,7 @@ accomplish this goal.
 === "Python"
 
     ```python
-    from google.adk import Workflow
-
-    root_agent = Workflow(
-        name="parent_workflow",
-        edges=[
-           ("START", task_A1, router),
-           (router, {
-                "RUN_WORKFLOW_B": workflow_B,
-                "RUN_WORKFLOW_C": workflow_C,
-                },
-           ),
-        ],
-    )
+    --8<-- "examples/inline/python/graphs/routes/012-nested-workflows.py"
     ```
 
     #### Nested workflow data output
@@ -462,13 +334,7 @@ accomplish this goal.
     as the node output on the outer graph's edge:
 
     ```go
-    innerNode, _ := workflow.NewAgentNode(innerWorkflowAgent, workflow.NodeConfig{})
-
-    outerEdges := workflow.Chain(workflow.Start, outerStepNode, innerNode, finalNode)
-    rootAgent, _ := workflowagent.New(workflowagent.Config{
-        Name:  "parent_workflow",
-        Edges: outerEdges,
-    })
+    --8<-- "examples/inline/go/graphs/routes/013-nested-workflows.go.txt"
     ```
 
     The following snippet shows both the inner and outer graph construction.
@@ -491,27 +357,7 @@ lifecycle on each iteration.
 === "Python"
 
     ```python
-    from google.adk import Event, Workflow
-
-
-    def router(node_input: str):
-        """Route to task B or C based on node_input."""
-        if condition(node_input):
-            return Event(route="RUN_TASK_C")
-        return Event(route="RUN_TASK_B")
-
-    root_agent = Workflow(
-        name="routing_workflow",
-        edges=[
-            ("START", task_A_node, router),
-            (router,
-              {
-                "RUN_TASK_B": task_B_node,
-                "RUN_TASK_C": task_C_node,
-              },
-            ),
-        ],
-    )
+    --8<-- "examples/inline/python/graphs/routes/014-loop-and-escalation-exit.py"
     ```
 
 === "TypeScript"

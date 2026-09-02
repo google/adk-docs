@@ -72,62 +72,7 @@ Instrument an ADK agent with the Zespan SDK to start capturing traces:
     and spread its `.callbacks` into your `LlmAgent`.
 
     ```python
-    import asyncio
-    import os
-
-    import zespan
-    from zespan import ZespanADKCallbackHandler
-    from google.adk.agents import LlmAgent
-    from google.adk.runners import InMemoryRunner
-    from google.genai import types
-
-    zespan.init(api_key=os.environ["ZESPAN_API_KEY"])
-
-    handler = ZespanADKCallbackHandler()
-
-
-    def get_weather(city: str) -> dict:
-        """Retrieves the current weather report for a specified city."""
-        if city.lower() == "new york":
-            return {
-                "status": "success",
-                "report": "The weather in New York is sunny with a temperature of 25°C.",
-            }
-        return {
-            "status": "error",
-            "error_message": f"Weather information for '{city}' is not available.",
-        }
-
-
-    agent = LlmAgent(
-        name="weather_agent",
-        model="gemini-flash-latest",
-        description="Agent to answer weather questions.",
-        instruction="Use the available tools to find an answer.",
-        tools=[get_weather],
-        **handler.callbacks,
-    )
-
-
-    async def main():
-        runner = InMemoryRunner(agent=agent, app_name="weather_app")
-        await runner.session_service.create_session(
-            app_name="weather_app", user_id="user", session_id="session"
-        )
-        async for event in runner.run_async(
-            user_id="user",
-            session_id="session",
-            new_message=types.Content(
-                role="user",
-                parts=[types.Part(text="What is the weather in New York?")],
-            ),
-        ):
-            if event.is_final_response():
-                print(event.content.parts[0].text.strip())
-
-
-    if __name__ == "__main__":
-        asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/zespan/001-send-traces.py"
     ```
 
 === "TypeScript"
@@ -138,79 +83,14 @@ Instrument an ADK agent with the Zespan SDK to start capturing traces:
     the full event stream, including delegations.
 
     ```typescript
-    import { zespan, instrumentADK } from "@zespan/sdk";
-    import { LlmAgent, InMemoryRunner } from "@google/adk";
-
-    zespan.init({ apiKey: process.env.ZESPAN_API_KEY! });
-
-    function getWeather(city: string): object {
-      if (city.toLowerCase() === "new york") {
-        return {
-          status: "success",
-          report: "The weather in New York is sunny with a temperature of 25°C.",
-        };
-      }
-      return {
-        status: "error",
-        error_message: `Weather information for '${city}' is not available.`,
-      };
-    }
-
-    const coordinator = new LlmAgent({
-      name: "weather_agent",
-      model: "gemini-flash-latest",
-      description: "Agent to answer weather questions.",
-      instruction: "Use the available tools to find an answer.",
-      tools: [getWeather],
-    });
-
-    const runner = new InMemoryRunner({
-      agent: coordinator,
-      appName: "weather_app",
-    });
-
-    const { runner: tracedRunner } = instrumentADK({ coordinator, runner });
-
-    for await (const event of tracedRunner.runEphemeral({
-      userId: "user",
-      newMessage: { parts: [{ text: "What is the weather in New York?" }] },
-    })) {
-      if (event.isFinalResponse()) {
-        console.log(event.content.parts[0].text);
-      }
-    }
+    --8<-- "examples/inline/typescript/integrations/zespan/002-send-traces.ts"
     ```
 
     **`ZespanADKCallbackHandler`** uses ADK's native callback system; spread
     `.callbacks` into your agent config.
 
     ```typescript
-    import { zespan, ZespanADKCallbackHandler } from "@zespan/sdk";
-    import { LlmAgent, InMemoryRunner } from "@google/adk";
-
-    zespan.init({ apiKey: process.env.ZESPAN_API_KEY! });
-
-    const handler = new ZespanADKCallbackHandler();
-
-    const agent = new LlmAgent({
-      name: "weather_agent",
-      model: "gemini-flash-latest",
-      description: "Agent to answer weather questions.",
-      instruction: "Use the available tools to find an answer.",
-      tools: [getWeather],
-      ...handler.callbacks,
-    });
-
-    const runner = new InMemoryRunner({ agent, appName: "weather_app" });
-
-    for await (const event of runner.runEphemeral({
-      userId: "user",
-      newMessage: { parts: [{ text: "What is the weather in New York?" }] },
-    })) {
-      if (event.isFinalResponse()) {
-        console.log(event.content.parts[0].text);
-      }
-    }
+    --8<-- "examples/inline/typescript/integrations/zespan/003-send-traces.ts"
     ```
 
 ## Multi-agent systems
@@ -223,21 +103,7 @@ Zespan links coordinator and sub-agent spans into a single trace:
     Spans are linked under a single trace via the shared ADK invocation ID.
 
     ```python
-    handler = ZespanADKCallbackHandler()
-
-    specialist = LlmAgent(
-        name="lookup_agent",
-        model="gemini-flash-latest",
-        tools=[lookup_tool],
-        **handler.callbacks,
-    )
-
-    coordinator = LlmAgent(
-        name="coordinator",
-        model="gemini-flash-latest",
-        sub_agents=[specialist],
-        **handler.callbacks,
-    )
+    --8<-- "examples/inline/python/integrations/zespan/004-multi-agent-systems.py"
     ```
 
 === "TypeScript"
@@ -245,42 +111,13 @@ Zespan links coordinator and sub-agent spans into a single trace:
     With `instrumentADK`, all `subAgents` are wrapped recursively and automatically.
 
     ```typescript
-    const specialist = new LlmAgent({
-      name: "lookup_agent",
-      model: "gemini-flash-latest",
-      tools: [lookupTool],
-    });
-
-    const coordinator = new LlmAgent({
-      name: "coordinator",
-      model: "gemini-flash-latest",
-      subAgents: [specialist],
-    });
-
-    const { runner: tracedRunner } = instrumentADK({
-      coordinator,
-      runner: new InMemoryRunner({ agent: coordinator, appName: "my_app" }),
-    });
+    --8<-- "examples/inline/typescript/integrations/zespan/005-multi-agent-systems.ts"
     ```
 
     With `ZespanADKCallbackHandler`, spread the same instance into every agent.
 
     ```typescript
-    const handler = new ZespanADKCallbackHandler();
-
-    const specialist = new LlmAgent({
-      name: "lookup_agent",
-      model: "gemini-flash-latest",
-      tools: [lookupTool],
-      ...handler.callbacks,
-    });
-
-    const coordinator = new LlmAgent({
-      name: "coordinator",
-      model: "gemini-flash-latest",
-      subAgents: [specialist],
-      ...handler.callbacks,
-    });
+    --8<-- "examples/inline/typescript/integrations/zespan/006-multi-agent-systems.ts"
     ```
 
 ## View traces in the dashboard

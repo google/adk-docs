@@ -37,61 +37,13 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="hugging_face_agent",
-            instruction="Help users get information from Hugging Face",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params = StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@llmindset/hf-mcp-server",
-                            ],
-                            env={
-                                "HF_TOKEN": HUGGING_FACE_TOKEN,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/hugging-face/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="hugging_face_agent",
-            instruction="Help users get information from Hugging Face",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://huggingface.co/mcp",
-                        headers={
-                            "Authorization": f"Bearer {HUGGING_FACE_TOKEN}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/hugging-face/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -99,58 +51,13 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "hugging_face_agent",
-            instruction: "Help users get information from Hugging Face",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "@llmindset/hf-mcp-server"],
-                        env: {
-                            HF_TOKEN: HUGGING_FACE_TOKEN,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/hugging-face/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "hugging_face_agent",
-            instruction: "Help users get information from Hugging Face",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://huggingface.co/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/hugging-face/004-use-with-agent.ts"
         ```
 
 ## Available tools

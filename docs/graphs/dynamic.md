@@ -39,27 +39,7 @@ workflow containing a single node with a function:
 === "Python"
 
     ```python
-    from google.adk import Context
-    from google.adk import Workflow
-    from google.adk.workflow import node
-    from typing import Any
-
-    @node(name="hello_node")
-    def my_node(node_input: Any):
-        return "Hello World"
-
-    # define a dynamic workflow node
-    @node(rerun_on_resume=True)
-    async def my_workflow(ctx: Context, node_input: str) -> str:
-        # run_node executes a node and returns its output
-        result = await ctx.run_node(my_node, node_input="hello")
-        return result
-
-    # Run the workflow
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[("START", my_workflow)],
-    )
+    --8<-- "examples/inline/python/graphs/dynamic/001-get-started.py"
     ```
 
     This example uses the [***@node***](#node) annotation for convenience and to
@@ -119,25 +99,14 @@ run within a workflow.
     boilerplate to a minimum:
 
     ```python
-    @node(name="hello_node")
-    def my_function_node(node_input: Any):
-        return "Hello World"
+    --8<-- "examples/inline/python/graphs/dynamic/002-nodes-node.py"
     ```
 
     The following code snippet shows the equivalent code *without* the
     ***@node*** annotation:
 
     ```python
-    # base function
-    def my_function_node(node_input: Any):
-        return "Hello World"
-
-    # FunctionNode wrapper with options
-    success_node = FunctionNode(
-        my_function_node,
-        name="hello",
-        rerun_on_resume=True,
-    )
+    --8<-- "examples/inline/python/graphs/dynamic/003-nodes-node.py"
     ```
 
     Creating the node wrapper code yourself can be useful if you are wrapping
@@ -202,19 +171,7 @@ run within a workflow.
         Explicit `&false` is always respected on any node type.
 
     ```go
-    // NewDynamicNode: nil RerunOnResume is automatically set to &true.
-    // Passing &rerun explicitly is equivalent and makes the intent clear.
-    rerun := true
-    orchestratorNode := workflow.NewDynamicNode[string, string]("my_workflow",
-        myOrchestratorfn,
-        workflow.NodeConfig{RerunOnResume: &rerun}, // re-entry: node body re-runs on resume
-    )
-
-    // NewFunctionNode: nil RerunOnResume stays nil → engine treats as handoff.
-    handoffNode := workflow.NewFunctionNode("leaf_node",
-        myLeafFn,
-        workflow.NodeConfig{}, // nil RerunOnResume → handoff for FunctionNode
-    )
+    --8<-- "examples/inline/go/graphs/dynamic/004-nodes-node.go.txt"
     ```
 
 
@@ -227,18 +184,7 @@ execution logic (order and paths) for those nodes.
 === "Python"
 
     ```python
-    @node(rerun_on_resume=True)
-    async def my_workflow(ctx):
-        # run_node executes a node and returns its output
-        result = await ctx.run_node(my_function_node, node_input="Hello")
-        result_formatted = await ctx.run_node(my_formatting_node, node_input=result)
-        return result_formatted
-
-    # Run the workflow
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[("START", my_workflow)],
-    )
+    --8<-- "examples/inline/python/graphs/dynamic/005-workflows.py"
     ```
 
 === "TypeScript"
@@ -272,51 +218,14 @@ manually read and write session state keys for data transfer.
 === "Python"
 
     ```python
-    from google.adk import Context
-    from google.adk.workflow import node
-
-    @node(rerun_on_resume=True)
-    async def editorial_workflow(ctx: Context, user_request: str):
-        # Agent Node generates output
-        raw_draft = await ctx.run_node(draft_agent, user_request)
-
-        # Function Node formats text
-        formatted_text = await ctx.run_node(format_function_node, raw_draft)
-
-        return formatted_text
+    --8<-- "examples/inline/python/graphs/dynamic/006-data-handling.py"
     ```
 
     You can also pass specific data schemas using a defined class and configure
     input and output schemas, similar to graph-based workflow nodes:
 
     ```python
-    from google.adk import Agent
-    from google.adk import Context
-    from google.adk.workflow import node
-    from pydantic import BaseModel
-
-    class CityTime(BaseModel):
-        time_info: str  # time information
-        city: str       # city name
-
-    @node
-    def city_time_function(city: str):
-        """Simulate returning the current time in a specified city."""
-        return CityTime(time_info="10:10 AM", city=city)
-
-    city_report_agent = Agent(
-        name="city_report_agent",
-        model="gemini-flash-latest",
-        input_schema=CityTime,
-        instruction="""output the data provided by the previous node.""",
-    )
-
-    @node # workflow node
-    async def city_workflow(ctx: Context):
-        city_time = await ctx.run_node(city_time_function, "Paris")
-        report_text = await ctx.run_node(city_report_agent, city_time)
-
-        return report_text
+    --8<-- "examples/inline/python/graphs/dynamic/007-data-handling.py"
     ```
 
 === "TypeScript"
@@ -365,13 +274,7 @@ as you can with graph-based workflows.
     function node, and a second agent:
 
     ```python
-    @node # workflow node
-    async def city_workflow(ctx: Context):
-        city = await ctx.run_node(city_generator_agent)
-        city_time = await ctx.run_node(city_time_function, city)
-        report_text = await ctx.run_node(city_report_agent, city_time)
-
-        return report_text
+    --8<-- "examples/inline/python/graphs/dynamic/008-sequence-route.py"
     ```
 
 === "TypeScript"
@@ -403,45 +306,7 @@ workflows offer much more flexibility to define the routing logic you need.
     a workflow loop for generating, reviewing, and updating code:
 
     ```python
-    from google.adk import Context
-    from google.adk import Event
-    from google.adk.agents import LlmAgent
-    from google.adk.workflow import node
-
-    coder_agent = LlmAgent(
-        name="generator_agent",
-        model="gemini-flash-latest",
-        instruction="Write python code for user request.",
-        output_schema=str,
-    )
-
-    @node(name="lint_reviewer")
-    async def compile_lint_check(ctx: Context, code: str):
-        # Simulate API call or lint check
-        class Response:
-            findings = ""
-        return Response()
-
-    fixer_agent = LlmAgent(
-        name="fixer_agent",
-        model="gemini-flash-latest",
-        instruction="""Refactor current code {code}.
-            Based on compile & lint review: {findings}""",
-        output_schema=str,
-    )
-
-    @node # workflow node
-    async def code_workflow(ctx: Context, user_request: str):
-      code = await ctx.run_node(coder_agent, user_request)
-      check_resp = await ctx.run_node(compile_lint_check, code)
-
-      while check_resp.findings:
-        yield Event(state={"code": code, "findings": check_resp.findings})
-        code = await ctx.run_node(fixer_agent, {"code": code, "findings": check_resp.findings})
-
-        check_resp = await ctx.run_node(compile_lint_check, code)
-
-      return code
+    --8<-- "examples/inline/python/graphs/dynamic/009-loop-route.py"
     ```
 
 === "TypeScript"
@@ -475,25 +340,7 @@ Dynamic workflows in ADK can support parallel execution.
     In Python, you can use `asyncio.gather` to build parallel execution:
 
     ```python
-    import asyncio
-    from typing import Any
-    from google.adk import Context
-    from google.adk.workflow import BaseNode, node
-
-
-    @node(rerun_on_resume=True)
-    async def parallel_supervisor(
-        ctx: Context, node_input: list[Any], real_node: BaseNode
-    ):
-        """Runs a worker node in parallel for each item in the input list."""
-        tasks = []
-        for item in node_input:
-            # ctx.run_node returns a future. Append instead of awaiting immediately.
-            tasks.append(ctx.run_node(real_node, item))
-
-        # Collect all results in parallel
-        results = await asyncio.gather(*tasks)
-        return results
+    --8<-- "examples/inline/python/graphs/dynamic/010-parallel-execution-routes.py"
     ```
 
     !!! tip "Tip: Resuming parallel nodes"
@@ -553,26 +400,7 @@ Dynamic workflows in ADK can also include human input or human in the loop
     workflow:
 
     ```python
-    from typing import Any
-    from google.adk import Context
-    from google.adk.events import RequestInput
-    from google.adk.workflow import node
-
-
-    @node(rerun_on_resume=False)
-    async def get_user_approval(ctx: Context, node_input: Any):
-        """Yields a RequestInput to pause the workflow and wait for user input."""
-        yield RequestInput(message="Please approve this request (Yes/No)")
-
-
-    @node(rerun_on_resume=True)
-    async def handle_process(ctx: Context, node_input: Any):
-        """The orchestrator calling the interactive step."""
-        user_response = await ctx.run_node(get_user_approval)
-
-        if user_response.lower() == "yes":
-            return "Approved"
-        return "Denied"
+    --8<-- "examples/inline/python/graphs/dynamic/011-human-input.py"
     ```
 
     !!! important "Important: Parent nodes with `ctx.run_node`"
@@ -645,30 +473,7 @@ and logically remain the same for the input.
 === "Python"
 
     ```python
-    from google.adk import Context
-    from google.adk.workflow import node
-    from pydantic import BaseModel
-    from typing import Any
-    import asyncio
-
-    class Order(BaseModel):
-      order_id: str
-      cart_items: list[Product]
-
-    @node(rerun_on_resume=True)
-    async def process_all_orders(ctx: Context, node_input: Any):
-      orders = await get_orders()
-
-      process_tasks = []
-      for order in orders:
-        # Use run_id to provide a custom identifier.
-        # Custom run_ids must contain at least one non-numeric character
-        # to avoid collision with auto-generated sequential numeric IDs.
-        task = ctx.run_node(process_order, order, run_id=f"order-{order.order_id}")
-        process_tasks.append(task)
-
-      results = await asyncio.gather(*process_tasks)
-      return results
+    --8<-- "examples/inline/python/graphs/dynamic/012-custom-execution-ids.py"
     ```
 
     By default, auto-generated run IDs are sequential integers starting from

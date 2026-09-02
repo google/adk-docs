@@ -22,30 +22,7 @@ The following code example shows a basic implementation for using OpenAI models 
 === "Go"
 
     ```go
-    import (
-    	"context"
-    	"log"
-
-    	"github.com/openai/openai-go/v3"
-    	"google.golang.org/adk/v2/agent/llmagent"
-    	"google.golang.org/adk/v2/model/openaimodel"
-    )
-
-    // Instantiate the model
-    llm, err := openaimodel.NewModel(context.Background(), openai.ChatModelGPT4oMini, &openaimodel.ClientConfig{})
-    if err != nil {
-      log.Fatal(err)
-    }
-
-    // Create the agent
-    agent, err := llmagent.New(llmagent.Config{
-      Name:        "openai_agent",
-      Model:       llm,
-      Instruction: "You are a helpful AI assistant.",
-    })
-    if err != nil {
-      log.Fatal(err)
-    }
+    --8<-- "examples/inline/go/agents/models/openai/001-get-started.go.txt"
     ```
 
 For a complete, runnable sample, see [examples/openai/](https://github.com/google/adk-go/tree/main/examples/openai) in the ADK Go repository.

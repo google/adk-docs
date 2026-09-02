@@ -44,31 +44,7 @@ project cycles, and automate development workflows using natural language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="linear_agent",
-            instruction="Help users manage issues, projects, and cycles in Linear",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "mcp-remote",
-                                "https://mcp.linear.app/mcp",
-                            ]
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/linear/001-use-with-agent.py"
         ```
 
         !!! note
@@ -81,27 +57,7 @@ project cycles, and automate development workflows using natural language.
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="linear_agent",
-            instruction="Help users manage issues, projects, and cycles in Linear",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.linear.app/mcp",
-                        headers={
-                            "Authorization": f"Bearer {LINEAR_API_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/linear/002-use-with-agent.py"
         ```
 
         !!! note
@@ -115,24 +71,7 @@ project cycles, and automate development workflows using natural language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "linear_agent",
-            instruction: "Help users manage issues, projects, and cycles in Linear",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "mcp-remote", "https://mcp.linear.app/mcp"],
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/linear/003-use-with-agent.ts"
         ```
 
         !!! note
@@ -145,30 +84,7 @@ project cycles, and automate development workflows using natural language.
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const LINEAR_API_KEY = "YOUR_LINEAR_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "linear_agent",
-            instruction: "Help users manage issues, projects, and cycles in Linear",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.linear.app/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${LINEAR_API_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/linear/004-use-with-agent.ts"
         ```
 
         !!! note

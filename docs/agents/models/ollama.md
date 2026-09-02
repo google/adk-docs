@@ -15,21 +15,7 @@ following code example shows a basic implementation for using Gemma open
 models with your agents:
 
 ```py
-root_agent = Agent(
-    model=LiteLlm(model="ollama_chat/gemma3:latest"),
-    name="dice_agent",
-    description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
-    ),
-    instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
-    """,
-    tools=[
-        roll_die,
-        check_prime,
-    ],
-)
+--8<-- "examples/inline/python/agents/models/ollama/001-get-started.py"
 ```
 
 !!! warning "Warning: Use `ollama_chat`interface"
@@ -127,21 +113,7 @@ requires setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
 Note that the `API_BASE` value has *`/v1`* at the end.
 
 ```py
-root_agent = Agent(
-    model=LiteLlm(model="openai/mistral-small3.1"),
-    name="dice_agent",
-    description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
-    ),
-    instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
-    """,
-    tools=[
-        roll_die,
-        check_prime,
-    ],
-)
+--8<-- "examples/inline/python/agents/models/ollama/002-use-openai-provider.py"
 ```
 
 ```bash
@@ -156,8 +128,7 @@ You can see the request sent to the Ollama server by adding the following in
 your agent code just after imports.
 
 ```py
-import litellm
-litellm._turn_on_debug()
+--8<-- "examples/inline/python/agents/models/ollama/003-debugging.py"
 ```
 
 Look for a line like the following:

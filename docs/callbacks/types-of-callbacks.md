@@ -22,13 +22,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     runtime `TypeError` failures.
 
     ```python
-    # Correct
-    def before_agent_callback(callback_context):
-        ...
-
-    # Incorrect
-    def before_agent_callback(ctx):
-        ...
+    --8<-- "examples/inline/python/callbacks/types-of-callbacks/001-agent-lifecycle-callbacks.py"
     ```
 
     | Callback | Required parameter names |
@@ -65,11 +59,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     Assign the list to the callback field on the agent:
 
     ```python
-    root_agent = LlmAgent(
-        name="my_agent",
-        model="gemini-flash-latest",
-        before_model_callback=[check_policy, log_request],
-    )
+    --8<-- "examples/inline/python/callbacks/types-of-callbacks/002-agent-lifecycle-callbacks.py"
     ```
 
 ### Before Agent Callback

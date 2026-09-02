@@ -1,0 +1,2 @@
+import "google.golang.org/adk/v2/session"
+inMemoryService := session.InMemoryService()

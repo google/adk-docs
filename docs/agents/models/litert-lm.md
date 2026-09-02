@@ -70,27 +70,7 @@ connect to the locally hosted LiteRT-LM instance serving the Gemma
 model configuration described above:
 
 ```py
-from google.adk.agents import Agent
-from google.adk.models import Gemini
-
-root_agent = Agent(
-    model=Gemini(
-        model="gemma3n-e2b",
-        base_url="http://localhost:8001",
-    ),
-    name="dice_agent",
-    description=(
-        "hello world agent that can roll a die of 8 sides and check prime"
-        " numbers."
-    ),
-    instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
-    """,
-    tools=[
-        roll_die,
-        check_prime,
-    ],
-)
+--8<-- "examples/inline/python/agents/models/litert-lm/001-configure-your-agent.py"
 ```
 
 Then run the agent as usual:
@@ -178,17 +158,7 @@ In your `build.gradle.kts`, add `com.google.adk:google-adk-kotlin-litertlm` and
 `com.google.ai.edge.litertlm:litertlm-jvm` to your dependencies:
 
 ```kt
-repositories {
-    mavenCentral()
-    google()
-}
-
-dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.8.0")
-    implementation("com.google.adk:google-adk-kotlin-litertlm:0.8.0")
-    implementation("com.google.ai.edge.litertlm:litertlm-jvm:0.13.1")
-    // other dependencies...
-}
+--8<-- "examples/inline/kotlin/agents/models/litert-lm/002-add-dependencies.kt"
 ```
 
 ### Configure agent model
@@ -201,33 +171,7 @@ getting started guide. The following code example shows you how to
 configure an `LlmAgent`, and set the `model` parameter to a `LiteRtLmModel`:
 
 ```kt
- object HelloTimeAgent {
-
-    // Get model path from environment variable.
-    private val modelPath: String by lazy {
-        System.getenv("LITERT_LM_MODEL_PATH")
-            ?: throw IllegalStateException(
-                "LITERT_LM_MODEL_PATH environment variable must be set pointing to a .litertlm file."
-            )
-    }
-
-    @JvmField
-    val rootAgent =
-        LlmAgent(
-            name = "hello_time_agent",
-            description = "Tells the current time in a specified city.",
-            model =
-                LiteRtLmModel.create(
-                    EngineConfig(modelPath = modelPath, backend = Backend.CPU())
-                ),
-            instruction =
-                Instruction(
-                    "You are a helpful assistant that tells the current time in a city. " +
-                        "Use the 'getCurrentTime' tool for this purpose."
-                ),
-            tools = TimeService().generatedTools(),
-        )
-}
+--8<-- "examples/inline/kotlin/agents/models/litert-lm/003-configure-agent-model.kt"
 ```
 
 In this example, the path to the LiteRT-LM model file is read from the

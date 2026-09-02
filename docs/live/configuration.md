@@ -13,38 +13,13 @@ For example, if you want to set voice config, you can leverage speech_config.
 === "Python"
 
     ```python
-    voice_config = genai_types.VoiceConfig(
-        prebuilt_voice_config=genai_types.PrebuiltVoiceConfigDict(
-            voice_name='Aoede'
-        )
-    )
-    speech_config = genai_types.SpeechConfig(voice_config=voice_config)
-    run_config = RunConfig(speech_config=speech_config)
-
-    runner.run_live(
-        # ...,
-        run_config=run_config,
-    )
+    --8<-- "examples/inline/python/live/configuration/001-configuring-streaming-behavior.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.genai.types.PrebuiltVoiceConfig;
-    import com.google.genai.types.SpeechConfig;
-    import com.google.genai.types.VoiceConfig;
-
-    VoiceConfig voiceConfig =
-        VoiceConfig.builder()
-            .prebuiltVoiceConfig(PrebuiltVoiceConfig.builder().voiceName("Aoede").build())
-            .build();
-    SpeechConfig speechConfig = SpeechConfig.builder().voiceConfig(voiceConfig).build();
-    RunConfig runConfig = RunConfig.builder().setSpeechConfig(speechConfig).build();
-
-    runner.runLive(
-        // ...,
-        runConfig);
+    --8<-- "examples/inline/java/live/configuration/002-configuring-streaming-behavior.java"
     ```
 
 

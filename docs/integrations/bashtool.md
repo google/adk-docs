@@ -31,17 +31,7 @@ pip install google-adk
 To use the Bash Tool, instantiate `ExecuteBashTool` and include it in your agent's `tools` list. Ensure `my_workspace_path` is defined prior to running the snippet as a valid directory path string:
 
 ```python
-from google.adk.tools.bash_tool import ExecuteBashTool, BashToolPolicy
-
-policy = BashToolPolicy(
-    allowed_command_prefixes=("ls", "cat", "grep"),
-    timeout_seconds=30,
-    max_memory_bytes=1024 * 1024 * 512,   # 512MB
-    max_file_size_bytes=1024 * 1024 * 10, # 10MB
-    max_child_processes=5
-)
-
-tool = ExecuteBashTool(workspace=my_workspace_path, policy=policy)
+--8<-- "examples/inline/python/integrations/bashtool/001-use-with-agent.py"
 ```
 
 ## Security and execution safeguards
@@ -53,12 +43,7 @@ Because executing arbitrary code carries inherent risks, the `ExecuteBashTool` i
 By default, `BashToolPolicy` is initialized with `allowed_command_prefixes=("*",)`. This means that **all commands are permitted by default**. To secure your application, you must explicitly restrict the allowed commands when initializing the policy:
 
 ```python
-# Secure implementation example
-from google.adk.tools.bash_tool import BashToolPolicy
-
-strict_policy = BashToolPolicy(
-    allowed_command_prefixes=("ls ", "cat ", "pwd")
-)
+--8<-- "examples/inline/python/integrations/bashtool/002-default-policy-allows-all-commands.py"
 ```
 
 ### Built-in protections

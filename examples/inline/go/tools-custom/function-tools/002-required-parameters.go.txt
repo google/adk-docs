@@ -1,0 +1,9 @@
+// GetWeatherParams defines the arguments for the getWeather tool.
+type GetWeatherParams struct {
+    // This field is REQUIRED (no "omitempty").
+    // The jsonschema tag provides the description.
+    Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+
+    // This field is also REQUIRED.
+    Unit     string `json:"unit" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+}

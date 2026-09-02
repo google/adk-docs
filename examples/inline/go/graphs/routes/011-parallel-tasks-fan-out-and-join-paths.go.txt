@@ -1,0 +1,12 @@
+gatherNode := workflow.NewJoinNode("gather")
+
+eb := workflow.NewEdgeBuilder()
+eb.AddFanOut(workflow.Start, researchNodeA, researchNodeB, researchNodeC)
+eb.AddFanIn(gatherNode, researchNodeA, researchNodeB, researchNodeC)
+eb.Add(gatherNode, formatNode)
+eb.Add(formatNode, synthesisNode)
+
+rootAgent, _ := workflowagent.New(workflowagent.Config{
+    Name:  "research_pipeline",
+    Edges: eb.Build(),
+})

@@ -1,0 +1,15 @@
+reimburseTool, _ := functiontool.New(functiontool.Config{
+    Name:        "reimburse",
+    Description: "Reimburse an amount",
+    // Set RequireConfirmation to true to require user confirmation
+    // for the tool call.
+    RequireConfirmation: true,
+}, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    // actual implementation
+    return ReimburseResult{Status: "ok"}, nil
+})
+
+rootAgent, _ := llmagent.New(llmagent.Config{
+    // ...
+    Tools: []tool.Tool{reimburseTool},
+})

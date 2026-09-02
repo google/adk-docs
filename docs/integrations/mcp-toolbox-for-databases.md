@@ -114,17 +114,7 @@ documentation:
     from your server using ADK:
 
     ```python
-    from google.adk import Agent
-    from google.adk.tools.toolbox_toolset import ToolboxToolset
-
-    toolset = ToolboxToolset(
-        server_url="http://127.0.0.1:5000"
-    )
-
-    root_agent = Agent(
-        ...,
-        tools=[toolset] # Provide the toolset to the Agent
-    )
+    --8<-- "examples/inline/python/integrations/mcp-toolbox-for-databases/001-install-client-sdk-for-adk.py"
     ```
 
     ### Authentication
@@ -136,16 +126,7 @@ documentation:
     Recommended for Cloud Run, GKE, or local development with `gcloud auth login`.
 
     ```python
-    from google.adk.tools.toolbox_toolset import ToolboxToolset
-    from toolbox_adk import CredentialStrategy
-
-    # target_audience: The URL of your MCP Toolbox server
-    creds = CredentialStrategy.workload_identity(target_audience="<TOOLBOX_URL>")
-
-    toolset = ToolboxToolset(
-        server_url="<TOOLBOX_URL>",
-        credentials=creds
-    )
+    --8<-- "examples/inline/python/integrations/mcp-toolbox-for-databases/002-install-client-sdk-for-adk.py"
     ```
 
     ### Advanced Configuration
@@ -156,13 +137,7 @@ documentation:
         These values are hidden from the model.
 
     ```python
-    toolset = ToolboxToolset(
-        server_url="...",
-        bound_params={
-            "region": "us-central1",
-            "api_key": lambda: get_api_key() # Can be a callable
-        }
-    )
+    --8<-- "examples/inline/python/integrations/mcp-toolbox-for-databases/003-install-client-sdk-for-adk.py"
     ```
 
 === "TypeScript"
@@ -180,50 +155,7 @@ documentation:
     from your server using ADK:
 
     ```typescript
-    import {InMemoryRunner, LlmAgent} from '@google/adk';
-    import {Content} from '@google/genai';
-    import {ToolboxClient} from '@toolbox-sdk/adk'
-
-    const toolboxClient = new ToolboxClient("http://127.0.0.1:5000");
-    const loadedTools = await toolboxClient.loadToolset();
-
-    export const rootAgent = new LlmAgent({
-      name: 'weather_time_agent',
-      model: 'gemini-flash-latest',
-      description:
-        'Agent to answer questions about the time and weather in a city.',
-      instruction:
-        'You are a helpful agent who can answer user questions about the time and weather in a city.',
-      tools: loadedTools,
-    });
-
-    async function main() {
-      const userId = 'test_user';
-      const appName = rootAgent.name;
-      const runner = new InMemoryRunner({agent: rootAgent, appName});
-      const session = await runner.sessionService.createSession({
-        appName,
-        userId,
-      });
-
-      const prompt = 'What is the weather in New York? And the time?';
-      const content: Content = {
-        role: 'user',
-        parts: [{text: prompt}],
-      };
-      console.log(content);
-      for await (const e of runner.runAsync({
-        userId,
-        sessionId: session.id,
-        newMessage: content,
-      })) {
-        if (e.content?.parts?.[0]?.text) {
-          console.log(`${e.author}: ${JSON.stringify(e.content, null, 2)}`);
-        }
-      }
-    }
-
-    main().catch(console.error);
+    --8<-- "examples/inline/typescript/integrations/mcp-toolbox-for-databases/004-install-client-sdk-for-adk.ts"
     ```
 
 === "Go"
@@ -241,50 +173,7 @@ documentation:
     from your server using ADK:
 
     ```go
-    package main
-
-    import (
-    	"context"
-    	"fmt"
-
-    	"github.com/googleapis/mcp-toolbox-sdk-go/tbadk"
-    	"google.golang.org/adk/v2/agent/llmagent"
-    )
-
-    func main() {
-
-      toolboxClient, err := tbadk.NewToolboxClient("https://127.0.0.1:5000")
-    	if err != nil {
-    		log.Fatalf("Failed to create MCP Toolbox client: %v", err)
-    	}
-
-      // Load a specific set of tools
-      toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
-      if err != nil {
-        return fmt.Sprintln("Could not load MCP Toolbox Toolset", err)
-      }
-
-      toolsList := make([]tool.Tool, len(toolboxtools))
-        for i := range toolboxtools {
-          toolsList[i] = &toolboxtools[i]
-        }
-
-      llmagent, err := llmagent.New(llmagent.Config{
-        ...,
-        Tools:       toolsList,
-      })
-
-      // Load a single tool
-      tool, err := client.LoadTool("my-tool-name", ctx)
-      if err != nil {
-        return fmt.Sprintln("Could not load MCP Toolbox Tool", err)
-      }
-
-      llmagent, err := llmagent.New(llmagent.Config{
-        ...,
-        Tools:       []tool.Tool{&toolboxtool},
-      })
-    }
+    --8<-- "examples/inline/go/integrations/mcp-toolbox-for-databases/005-install-client-sdk-for-adk.go.txt"
     ```
 
 ## Advanced MCP Toolbox Features

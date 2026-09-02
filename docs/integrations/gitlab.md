@@ -47,36 +47,7 @@ searches, and automate development workflows using natural language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        # Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
-        GITLAB_INSTANCE_URL = "gitlab.com"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="gitlab_agent",
-            instruction="Help users get information from GitLab",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params = StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "mcp-remote",
-                                f"https://{GITLAB_INSTANCE_URL}/api/v4/mcp",
-                                "--static-oauth-client-metadata",
-                                "{\"scope\": \"mcp\"}",
-                            ],
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/gitlab/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -84,33 +55,7 @@ searches, and automate development workflows using natural language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        // Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
-        const GITLAB_INSTANCE_URL = "gitlab.com";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "gitlab_agent",
-            instruction: "Help users get information from GitLab",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "mcp-remote",
-                            `https://${GITLAB_INSTANCE_URL}/api/v4/mcp`,
-                            "--static-oauth-client-metadata",
-                            '{"scope": "mcp"}',
-                        ],
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/gitlab/002-use-with-agent.ts"
         ```
 
 !!! note

@@ -57,25 +57,7 @@ Create the `PerseusVaultMemoryService`, pass it to your `Runner`, and give the
 agent the `load_memory` tool so it can recall past sessions:
 
 ```python
-from adk_perseus_vault_memory import PerseusVaultMemoryService
-from google.adk.agents import Agent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.adk.tools import load_memory
-
-agent = Agent(
-    name="memory_assistant",
-    model="gemini-flash-latest",
-    instruction="You are a helpful assistant with long-term memory.",
-    tools=[load_memory],
-)
-
-runner = Runner(
-    agent=agent,
-    app_name="perseus_vault_app",
-    session_service=InMemorySessionService(),
-    memory_service=PerseusVaultMemoryService(db_path="~/.adk/vault.db"),
-)
+--8<-- "examples/inline/python/integrations/perseus-vault/001-use-with-agent.py"
 ```
 
 After a session completes, call `await memory_service.add_session_to_memory(session)`
@@ -95,33 +77,14 @@ Then use the prebuilt `perseus_context_agent`, which resolves `@file`,
 `@search`, and `@memory` directives at inference time:
 
 ```python
-from adk_perseus_vault_memory.perseus_context import perseus_context_agent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-
-# The pre-built agent ships without a model; set one before use.
-perseus_context_agent.model = "gemini-flash-latest"
-
-runner = Runner(
-    agent=perseus_context_agent,
-    app_name="perseus_app",
-    session_service=InMemorySessionService(),
-    memory_service=PerseusVaultMemoryService(db_path="~/.adk/vault.db"),
-)
+--8<-- "examples/inline/python/integrations/perseus-vault/002-perseus-live-context-optional.py"
 ```
 
 Set Perseus directives via session state when creating the session (inside an
 async function):
 
 ```python
-session = await runner.session_service.create_session(
-    app_name="perseus_app",
-    user_id="user",
-    state={
-        "_perseus_directives": "@file AGENTS.md @file README.md @memory deployment",
-        "_perseus_workspace": "/path/to/project",
-    },
-)
+--8<-- "examples/inline/python/integrations/perseus-vault/003-the-pre-built-agent-ships-without-a-mode.py"
 ```
 
 ## Available memory operations

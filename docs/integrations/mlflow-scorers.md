@@ -78,62 +78,13 @@ SAFETY metric, which manages its own model selection, so the scorer raises
 Call a scorer directly:
 
 ```python
-from mlflow.genai.scorers.google_adk import ToolTrajectory
-
-scorer = ToolTrajectory(match_type="EXACT", threshold=0.5)
-feedback = scorer(
-    inputs="Book a flight to Paris",
-    outputs="Booked flight AA123 to Paris",
-    expectations={
-        "expected_tool_calls": [
-            {"name": "search_flights", "args": {"destination": "Paris"}},
-            {"name": "book_flight", "args": {"flight_id": "AA123"}},
-        ],
-        "actual_tool_calls": [
-            {"name": "search_flights", "args": {"destination": "Paris"}},
-            {"name": "book_flight", "args": {"flight_id": "AA123"}},
-        ],
-    },
-)
-
-print(feedback.value)            # "yes" or "no"
-print(feedback.metadata["score"]) # 1.0 on a full match
+--8<-- "examples/inline/python/integrations/mlflow-scorers/001-quick-start.py"
 ```
 
 Or compose multiple scorers in a single evaluation:
 
 ```python
-import mlflow
-from mlflow.genai.scorers.google_adk import (
-    ToolTrajectory,
-    ResponseMatch,
-    ResponseEvaluation,
-)
-
-eval_data = [
-    {
-        "inputs": {"query": "Find me a flight to Paris next Friday."},
-        "outputs": "I found 3 flights to Paris on Friday: AA101, DL202, UA303.",
-        "expectations": {
-            "expected_tool_calls": [
-                {"name": "search_flights", "args": {"destination": "Paris"}},
-            ],
-            "actual_tool_calls": [
-                {"name": "search_flights", "args": {"destination": "Paris"}},
-            ],
-            "expected_response": "Here are flights to Paris next Friday.",
-        },
-    },
-]
-
-results = mlflow.genai.evaluate(
-    data=eval_data,
-    scorers=[
-        ToolTrajectory(match_type="EXACT", threshold=0.5),
-        ResponseMatch(threshold=0.5),
-        ResponseEvaluation(threshold=0.6),
-    ],
-)
+--8<-- "examples/inline/python/integrations/mlflow-scorers/002-quick-start.py"
 ```
 
 ## How tool calls are resolved
@@ -163,15 +114,7 @@ any explicit data plumbing.
 threshold, and a sample count for majority voting:
 
 ```python
-from mlflow.genai.scorers.google_adk import Hallucination, ResponseEvaluation
-
-response_eval = ResponseEvaluation(
-    model="gemini-flash-latest",
-    threshold=0.5,
-    num_samples=5,
-)
-
-hallucination = Hallucination(model="gemini-flash-latest", threshold=0.5)
+--8<-- "examples/inline/python/integrations/mlflow-scorers/003-llm-judge-configuration.py"
 ```
 
 The model must be a name that ADK's `LLMRegistry` can resolve, such as
@@ -184,9 +127,7 @@ into Google's model registry.
 `gcloud auth application-default login` (or a service account):
 
 ```python
-from mlflow.genai.scorers.google_adk import Safety
-
-safety = Safety(threshold=0.5)
+--8<-- "examples/inline/python/integrations/mlflow-scorers/004-llm-judge-configuration.py"
 ```
 
 When auth is missing, the LLM-judge scorers return a `Feedback` with an `error`

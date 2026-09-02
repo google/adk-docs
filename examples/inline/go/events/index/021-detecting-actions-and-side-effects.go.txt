@@ -1,0 +1,11 @@
+import (
+    "fmt"
+    "google.golang.org/adk/v2/session"
+)
+
+func handleStateChanges(event *session.Event) {
+    if len(event.Actions.StateDelta) > 0 {
+        fmt.Printf("  State changes: %v\n", event.Actions.StateDelta)
+        // Update local UI or application state if necessary
+    }
+}

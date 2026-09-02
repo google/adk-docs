@@ -1,0 +1,4 @@
+toolset, err := registry.MCPToolset(ctx, mcpServerName,
+	agentregistry.WithMCPHTTPClient(httpClient),
+	agentregistry.WithMCPHeaders(map[string]string{"X-Tenant-Id": "acme"}),
+)

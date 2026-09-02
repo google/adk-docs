@@ -1,0 +1,7 @@
+innerNode, _ := workflow.NewAgentNode(innerWorkflowAgent, workflow.NodeConfig{})
+
+outerEdges := workflow.Chain(workflow.Start, outerStepNode, innerNode, finalNode)
+rootAgent, _ := workflowagent.New(workflowagent.Config{
+    Name:  "parent_workflow",
+    Edges: outerEdges,
+})

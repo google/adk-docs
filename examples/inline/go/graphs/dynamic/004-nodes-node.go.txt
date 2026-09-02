@@ -1,0 +1,13 @@
+// NewDynamicNode: nil RerunOnResume is automatically set to &true.
+// Passing &rerun explicitly is equivalent and makes the intent clear.
+rerun := true
+orchestratorNode := workflow.NewDynamicNode[string, string]("my_workflow",
+    myOrchestratorfn,
+    workflow.NodeConfig{RerunOnResume: &rerun}, // re-entry: node body re-runs on resume
+)
+
+// NewFunctionNode: nil RerunOnResume stays nil → engine treats as handoff.
+handoffNode := workflow.NewFunctionNode("leaf_node",
+    myLeafFn,
+    workflow.NodeConfig{}, // nil RerunOnResume → handoff for FunctionNode
+)

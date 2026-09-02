@@ -43,60 +43,13 @@ session object:
 === "Python"
 
     ```py
-    from google.adk.sessions import InMemorySessionService, Session
-
-    # Create a simple session to examine its properties
-    temp_service = InMemorySessionService()
-    example_session = await temp_service.create_session(
-        app_name="my_app",
-        user_id="example_user",
-        state={"initial_key": "initial_value"} # State can be initialized
-    )
-
-    print(f"--- Examining Session Properties ---")
-    print(f"ID (`id`):                {example_session.id}")
-    print(f"Application Name (`app_name`): {example_session.app_name}")
-    print(f"User ID (`user_id`):         {example_session.user_id}")
-    print(f"State (`state`):           {example_session.state}") # Note: Only shows initial state here
-    print(f"Events (`events`):         {example_session.events}") # Initially empty
-    print(f"Last Update (`last_update_time`): {example_session.last_update_time:.2f}")
-    print(f"---------------------------------")
-
-    # Clean up (optional for this example)
-    await temp_service.delete_session(app_name=example_session.app_name,
-                                user_id=example_session.user_id, session_id=example_session.id)
-    print("The final status of temp_service - ", temp_service)
+    --8<-- "examples/inline/python/sessions/session/index/001-example-examining-session-properties.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { InMemorySessionService } from "@google/adk";
-
-    // Create a simple session to examine its properties
-    const tempService = new InMemorySessionService();
-    const exampleSession = await tempService.createSession({
-        appName: "my_app",
-        userId: "example_user",
-        state: {"initial_key": "initial_value"} // State can be initialized
-    });
-
-    console.log("--- Examining Session Properties ---");
-    console.log(`ID ('id'):                ${exampleSession.id}`);
-    console.log(`Application Name ('appName'): ${exampleSession.appName}`);
-    console.log(`User ID ('userId'):         ${exampleSession.userId}`);
-    console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
-    console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
-    console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
-    console.log("---------------------------------");
-
-    // Clean up (optional for this example)
-    const finalStatus = await tempService.deleteSession({
-        appName: exampleSession.appName,
-        userId: exampleSession.userId,
-        sessionId: exampleSession.id
-    });
-    console.log("The final status of temp_service - ", finalStatus);
+    --8<-- "examples/inline/typescript/sessions/session/index/002-example-examining-session-properties.ts"
     ```
 
 === "Go"
@@ -108,62 +61,13 @@ session object:
 === "Java"
 
     ```java
-    import com.google.adk.sessions.InMemorySessionService;
-    import com.google.adk.sessions.Session;
-    import java.util.concurrent.ConcurrentMap;
-    import java.util.concurrent.ConcurrentHashMap;
-
-    String sessionId = "123";
-    String appName = "example-app"; // Example app name
-    String userId = "example-user"; // Example user id
-    ConcurrentMap<String, Object> initialState = new ConcurrentHashMap<>(Map.of("newKey", "newValue"));
-    InMemorySessionService exampleSessionService = new InMemorySessionService();
-
-    // Create Session
-    Session exampleSession = exampleSessionService.createSession(
-        appName, userId, initialState, Optional.of(sessionId)).blockingGet();
-    System.out.println("Session created successfully.");
-
-    System.out.println("--- Examining Session Properties ---");
-    System.out.printf("ID (`id`): %s%n", exampleSession.id());
-    System.out.printf("Application Name (`appName`): %s%n", exampleSession.appName());
-    System.out.printf("User ID (`userId`): %s%n", exampleSession.userId());
-    System.out.printf("State (`state`): %s%n", exampleSession.state());
-    System.out.println("------------------------------------");
-
-
-    // Clean up (optional for this example)
-    var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
+    --8<-- "examples/inline/java/sessions/session/index/003-example-examining-session-properties.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.sessions.InMemorySessionService
-    import com.google.adk.kt.sessions.SessionKey
-
-    val sessionId = "123"
-    val appName = "example-app"
-    val userId = "example-user"
-    val initialState = mapOf("newKey" to "newValue")
-    val sessionService = InMemorySessionService()
-
-    // Create Session
-    val exampleSession = sessionService.createSession(
-        key = SessionKey(appName, userId, sessionId),
-        state = initialState
-    )
-    println("Session created successfully.")
-
-    println("--- Examining Session Properties ---")
-    println("ID (`id`):                ${exampleSession.key.id}")
-    println("Application Name (`appName`): ${exampleSession.key.appName}")
-    println("User ID (`userId`):         ${exampleSession.key.userId}")
-    println("State (`state`):           ${exampleSession.state}")
-    println("------------------------------------")
-
-    // Clean up (optional for this example)
-    sessionService.deleteSession(exampleSession.key)
+    --8<-- "examples/inline/kotlin/sessions/session/index/004-example-examining-session-properties.kt"
     ```
 
 *(**Note:** The state shown above is only the initial state. State updates
@@ -242,36 +146,31 @@ the storage backend that best suits your needs:
 === "Python"
 
     ```py
-    from google.adk.sessions import InMemorySessionService
-    session_service = InMemorySessionService()
+    --8<-- "examples/inline/python/sessions/session/index/005-inmemorysessionservice.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { InMemorySessionService } from "@google/adk";
-    const sessionService = new InMemorySessionService();
+    --8<-- "examples/inline/typescript/sessions/session/index/006-inmemorysessionservice.ts"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/session"
-    inMemoryService := session.InMemoryService()
+    --8<-- "examples/inline/go/sessions/session/index/007-inmemorysessionservice.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.sessions.InMemorySessionService;
-    InMemorySessionService exampleSessionService = new InMemorySessionService();
+    --8<-- "examples/inline/java/sessions/session/index/008-inmemorysessionservice.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.sessions.InMemorySessionService
-    val sessionService = InMemorySessionService()
+    --8<-- "examples/inline/kotlin/sessions/session/index/009-inmemorysessionservice.kt"
     ```
 
 ### `VertexAiSessionService`
@@ -300,62 +199,19 @@ the storage backend that best suits your needs:
 === "Python"
 
     ```py
-    # Requires: pip install google-adk[gcp]
-    # Plus GCP setup and authentication
-    from google.adk.sessions import VertexAiSessionService
-
-    PROJECT_ID = "your-gcp-project-id"
-    LOCATION = "us-central1"
-    # The app_name used with this service should be the Reasoning Engine ID or name
-    REASONING_ENGINE_APP_NAME = "projects/your-gcp-project-id/locations/us-central1/reasoningEngines/your-engine-id"
-
-    session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
-    # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
-    # session = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
+    --8<-- "examples/inline/python/sessions/session/index/010-vertexaisessionservice.py"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/session"
-
-    // 2. VertexAIService
-    // Before running, ensure your environment is authenticated:
-    // gcloud auth application-default login
-    // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-    // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
-
-    modelName := "gemini-flash-latest" // Replace with your desired model
-    vertexService, err := session.VertexAIService(ctx, modelName)
-    if err != nil {
-      log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-    } else {
-      fmt.Println("Successfully initialized VertexAIService.")
-    }
+    --8<-- "examples/inline/go/sessions/session/index/011-vertexaisessionservice.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Please look at the set of requirements above, consequently export the following in your bashrc file:
-    // export GOOGLE_CLOUD_PROJECT=my_gcp_project
-    // export GOOGLE_CLOUD_LOCATION=us-central1
-    // export GOOGLE_API_KEY=my_api_key
-
-    import com.google.adk.sessions.VertexAiSessionService;
-    import java.util.UUID;
-
-    String sessionId = UUID.randomUUID().toString();
-    String reasoningEngineAppName = "123456789";
-    String userId = "u_123"; // Example user id
-    ConcurrentMap<String, Object> initialState = new
-        ConcurrentHashMap<>(); // No initial state needed for this example
-
-    VertexAiSessionService sessionService = new VertexAiSessionService();
-    Session mySession =
-        sessionService
-            .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
-            .blockingGet();
+    --8<-- "examples/inline/java/sessions/session/index/012-vertexaisessionservice.java"
     ```
 
 === "Kotlin"
@@ -364,29 +220,7 @@ the storage backend that best suits your needs:
     Android; use it from a server-side agent.
 
     ```kotlin
-    import com.google.adk.kt.sessions.SessionKey
-    import com.google.adk.kt.sessions.VertexAiSessionService
-    import kotlinx.coroutines.runBlocking
-
-    // The reasoning engine is pinned here, at construction. In the other tabs
-    // the engine is chosen per call, through `app_name`; in Kotlin `appName`
-    // is never parsed for it and is only a label on the session.
-    val sessionService =
-        VertexAiSessionService(
-            project = "your-gcp-project-id",
-            location = "us-central1",
-            // The bare numeric engine id. A full
-            // "projects/.../reasoningEngines/..." resource name is rejected;
-            // project and location are separate arguments.
-            reasoningEngineId = "1234567890",
-        )
-
-    // Session methods are suspend functions; `runBlocking` here is the
-    // counterpart of the Java tab's `.blockingGet()`.
-    val mySession = runBlocking {
-        // A null id lets the service assign one.
-        sessionService.createSession(SessionKey("example-app", "u_123", id = null))
-    }
+    --8<-- "examples/inline/kotlin/sessions/session/index/013-vertexaisessionservice.kt"
     ```
 
 For more information on connecting to Google Cloud from ADK agents, see
@@ -407,12 +241,7 @@ For more information on connecting to Google Cloud from ADK agents, see
   manage yourself.
 
 ```py
-from google.adk.sessions import DatabaseSessionService
-# Example using a local SQLite file:
-# Note: The implementation requires an async database driver.
-# For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
-db_url = "sqlite+aiosqlite:///./my_agent_data.db"
-session_service = DatabaseSessionService(db_url=db_url)
+--8<-- "examples/inline/python/sessions/session/index/014-databasesessionservice.py"
 ```
 
 #### Concurrency and locking

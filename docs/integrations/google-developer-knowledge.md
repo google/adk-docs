@@ -45,25 +45,7 @@ Guide](https://developers.google.com/knowledge/mcp#installation) for the precise
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        DEVELOPER_KNOWLEDGE_API_KEY = "YOUR_DEVELOPER_KNOWLEDGE_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="google_knowledge_agent",
-            instruction="Search Google developer documentation for implementation guidance.",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://developerknowledge.googleapis.com/mcp",
-                        headers={"X-Goog-Api-Key": DEVELOPER_KNOWLEDGE_API_KEY},
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/google-developer-knowledge/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -71,30 +53,7 @@ Guide](https://developers.google.com/knowledge/mcp#installation) for the precise
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const DEVELOPER_KNOWLEDGE_API_KEY = "YOUR_DEVELOPER_KNOWLEDGE_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "google_knowledge_agent",
-            instruction: "Search Google developer documentation for implementation guidance.",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://developerknowledge.googleapis.com/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                "X-Goog-Api-Key": DEVELOPER_KNOWLEDGE_API_KEY,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/google-developer-knowledge/002-use-with-agent.ts"
         ```
 
 ## Available tools

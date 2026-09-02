@@ -11,51 +11,25 @@ to `runner.run_async()` or `runner.run_live()` to override default behavior.
 === "Python"
 
     ```python
-    from google.adk.agents.run_config import RunConfig, StreamingMode
-
-    config = RunConfig(
-        streaming_mode=StreamingMode.SSE,
-        max_llm_calls=200,
-    )
-
-    async for event in runner.run_async(
-        ...,
-        run_config=config,
-    ):
-        ...
+    --8<-- "examples/inline/python/runtime/runconfig/001-runtime-configuration.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { RunConfig, StreamingMode } from '@google/adk';
-
-    const config: RunConfig = {
-      streamingMode: StreamingMode.SSE,
-      maxLlmCalls: 200,
-    };
+    --8<-- "examples/inline/typescript/runtime/runconfig/002-runtime-configuration.ts"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/agent"
-
-    config := agent.RunConfig{
-        StreamingMode: agent.StreamingModeSSE,
-    }
+    --8<-- "examples/inline/go/runtime/runconfig/003-runtime-configuration.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.agents.RunConfig.StreamingMode;
-
-    RunConfig config = RunConfig.builder()
-        .streamingMode(StreamingMode.SSE)
-        .maxLlmCalls(200)
-        .build();
+    --8<-- "examples/inline/java/runtime/runconfig/004-runtime-configuration.java"
     ```
 
 === "Kotlin"
@@ -87,12 +61,7 @@ whether the context window is compressed:
 === "Python"
 
     ```python
-    from google.adk.agents.run_config import RunConfig
-    from google.adk.sessions.base_session_service import GetSessionConfig
-
-    config = RunConfig(
-        get_session_config=GetSessionConfig(num_recent_events=50),
-    )
+    --8<-- "examples/inline/python/runtime/runconfig/005-manage-sessions-and-context.py"
     ```
 
 ## Enable streaming
@@ -119,47 +88,25 @@ execute function calls. CFC uses the Live API under the hood.
 === "Python"
 
     ```python
-    from google.adk.agents.run_config import RunConfig, StreamingMode
-
-    config = RunConfig(
-        streaming_mode=StreamingMode.SSE,
-        support_cfc=True,
-        max_llm_calls=150,
-    )
+    --8<-- "examples/inline/python/runtime/runconfig/006-enable-streaming.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { RunConfig, StreamingMode } from '@google/adk';
-
-    const config: RunConfig = {
-        streamingMode: StreamingMode.SSE,
-        supportCfc: true,
-        maxLlmCalls: 150,
-    };
+    --8<-- "examples/inline/typescript/runtime/runconfig/007-enable-streaming.ts"
     ```
 
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/agent"
-
-    config := agent.RunConfig{
-        StreamingMode: agent.StreamingModeSSE,
-    }
+    --8<-- "examples/inline/go/runtime/runconfig/003-runtime-configuration.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.agents.RunConfig.StreamingMode;
-
-    RunConfig config = RunConfig.builder()
-        .streamingMode(StreamingMode.SSE)
-        .maxLlmCalls(150)
-        .build();
+    --8<-- "examples/inline/java/runtime/runconfig/009-enable-streaming.java"
     ```
 
 === "Kotlin"
@@ -188,71 +135,19 @@ response modalities.
 === "Python"
 
     ```python
-    from google.adk.agents.run_config import RunConfig, StreamingMode
-    from google.genai import types
-
-    config = RunConfig(
-        speech_config=types.SpeechConfig(
-            language_code="en-US",
-            voice_config=types.VoiceConfig(
-                prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                    voice_name="Kore"
-                )
-            ),
-        ),
-        response_modalities=["AUDIO", "TEXT"],
-        streaming_mode=StreamingMode.SSE,
-        max_llm_calls=1000,
-    )
+    --8<-- "examples/inline/python/runtime/runconfig/010-configure-audio-and-speech.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { RunConfig, StreamingMode } from '@google/adk';
-    import { Modality } from '@google/genai';
-
-    const config: RunConfig = {
-        speechConfig: {
-            languageCode: "en-US",
-            voiceConfig: {
-                prebuiltVoiceConfig: {
-                    voiceName: "Kore"
-                }
-            },
-        },
-        responseModalities: [Modality.AUDIO, Modality.TEXT],
-        streamingMode: StreamingMode.SSE,
-        maxLlmCalls: 1000,
-    };
+    --8<-- "examples/inline/typescript/runtime/runconfig/011-configure-audio-and-speech.ts"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.agents.RunConfig.StreamingMode;
-    import com.google.common.collect.ImmutableList;
-    import com.google.genai.types.Modality;
-    import com.google.genai.types.PrebuiltVoiceConfig;
-    import com.google.genai.types.SpeechConfig;
-    import com.google.genai.types.VoiceConfig;
-
-    RunConfig runConfig =
-        RunConfig.builder()
-            .streamingMode(StreamingMode.SSE)
-            .maxLlmCalls(1000)
-            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO), new Modality(Modality.Known.TEXT)))
-            .speechConfig(
-                SpeechConfig.builder()
-                    .voiceConfig(
-                        VoiceConfig.builder()
-                            .prebuiltVoiceConfig(
-                                PrebuiltVoiceConfig.builder().voiceName("Kore").build())
-                            .build())
-                    .languageCode("en-US")
-                    .build())
-            .build();
+    --8<-- "examples/inline/java/runtime/runconfig/012-configure-audio-and-speech.java"
     ```
 
 ## Configure live agents
@@ -289,12 +184,7 @@ Not all parameters are available in every language. See the
 === "Python"
 
     ```python
-    from google.adk.agents.run_config import RunConfig, ToolThreadPoolConfig
-
-    config = RunConfig(
-        save_live_blob=True,
-        tool_thread_pool_config=ToolThreadPoolConfig(max_workers=8),
-    )
+    --8<-- "examples/inline/python/runtime/runconfig/013-configure-live-agents.py"
     ```
 
     !!! note "Thread pool and the GIL"
@@ -306,14 +196,7 @@ Not all parameters are available in every language. See the
 === "TypeScript"
 
     ```typescript
-    import { RunConfig } from '@google/adk';
-
-    const config: RunConfig = {
-        enableAffectiveDialog: true,
-        proactivity: {
-            proactiveAudio: true,
-        },
-    };
+    --8<-- "examples/inline/typescript/runtime/runconfig/014-configure-live-agents.ts"
     ```
 
 ## Configure runtime limits and debugging

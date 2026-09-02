@@ -31,51 +31,13 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
 === "Python"
 
     ```python
-
-    from google.adk.agents import LlmAgent
-    from google.adk.models.apigee_llm import ApigeeLlm
-
-    # Instantiate the ApigeeLlm wrapper
-    model = ApigeeLlm(
-        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/models/hello_world_apigeellm).
-        model="apigee/gemini-flash-latest",
-        # The proxy URL of your deployed Apigee proxy including the base path
-        proxy_url=f"https://{APIGEE_PROXY_URL}",
-        # Pass necessary authentication/authorization headers (like an API key)
-        custom_headers={"foo": "bar"}
-    )
-
-    # Pass the configured model wrapper to your LlmAgent
-    agent = LlmAgent(
-        model=model,
-        name="my_governed_agent",
-        instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
-        # ... other agent parameters
-    )
-
+    --8<-- "examples/inline/python/agents/models/apigee/001-implementation-example.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.ApigeeLlm;
-    import com.google.common.collect.ImmutableMap;
-
-    ApigeeLlm apigeeLlm =
-            ApigeeLlm.builder()
-                .modelName("apigee/gemini-flash-latest") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
-                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
-                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
-                .build();
-    LlmAgent agent =
-        LlmAgent.builder()
-            .model(apigeeLlm)
-            .name("my_governed_agent")
-            .description("my_governed_agent")
-            .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
-            // tools will be added next
-            .build();
+    --8<-- "examples/inline/java/agents/models/apigee/002-implementation-example.java"
     ```
 
 With this configuration, every API call from your agent will be routed through
@@ -96,30 +58,5 @@ The `CompletionsHTTPClient` is a generic HTTP client designed for compatibility 
 ### Implementation example
 
 ```python
-
-import asyncio
-from google.adk.models.apigee_llm import CompletionsHTTPClient
-from google.adk.models.llm_request import LlmRequest
-from google.genai import types
-
-async def test_client():
-    # 1. Initialize the client
-    client = CompletionsHTTPClient(
-        base_url="https://your-apigee-proxy-url.com/v1",
-        headers={"Authorization": "Bearer YOUR_API_KEY"}
-    )
-
-    # 2. Construct a minimal request
-    request = LlmRequest(
-        model="gpt-4o",  # Replace with your target model ID
-        contents=[types.Content(role="user", parts=[types.Part.from_text(text="Hello!")])]
-    )
-
-    # 3. Execute a non-streaming generation
-    async for response in client.generate_content_async(request, stream=False):
-        if response.content and response.content.parts:
-            print(f"Response: {response.content.parts[0].text}")
-
-if __name__ == "__main__":
-    asyncio.run(test_client())
+--8<-- "examples/inline/python/agents/models/apigee/003-implementation-example.py"
 ```

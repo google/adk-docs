@@ -1,0 +1,47 @@
+package main
+
+import (
+	"fmt"
+
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/plugin"
+    "google.golang.org/genai"
+)
+
+/**
+ * A custom plugin that counts agent and tool invocations.
+ */
+type CountInvocationPlugin struct {
+	AgentCount      int
+	ToolCount       int
+	LlmRequestCount int
+}
+
+func NewCountInvocationPlugin() (*plugin.Plugin, error) {
+	p := &CountInvocationPlugin{}
+	return plugin.New(plugin.Config{
+		Name:                "count_invocation",
+		BeforeAgentCallback: p.BeforeAgentCallback,
+		BeforeModelCallback: p.BeforeModelCallback,
+	})
+}
+
+/**
+ * Count agent runs.
+ */
+func (p *CountInvocationPlugin) BeforeAgentCallback(ctx agent.CallbackContext) (*genai.Content, error) {
+	p.AgentCount++
+	fmt.Printf("[Plugin] Agent run count: %d\n", p.AgentCount)
+	return nil, nil
+}
+
+/**
+ * Count LLM requests.
+ */
+func (p *CountInvocationPlugin) BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+	p.LlmRequestCount++
+	fmt.Printf("[Plugin] LLM request count: %d\n", p.LlmRequestCount)
+	return nil, nil
+}

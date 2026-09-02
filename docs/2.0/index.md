@@ -260,14 +260,7 @@ that reads this property without handling `undefined` no longer compiles under
 `strict` mode.
 
 ```typescript
-// Before (ADK TypeScript 1.x)
-const name = ctx.agent.name;
-
-// After (ADK TypeScript 2.0), inside an agent's own execution
-const name = requireAgent(ctx).name;
-
-// After (ADK TypeScript 2.0), outside an agent's own execution
-const name = ctx.agent?.name;
+--8<-- "examples/inline/typescript/2.0/index/001-context-invocationcontext-agent-is-optio.ts"
 ```
 
 **Migration action:** Inside an agent's own execution, call `requireAgent(ctx)`,
@@ -347,13 +340,7 @@ logic into the execution lifecycle.
 `session.NewEvent` now requires a `context.Context` as its first argument:
 
 ```go
-// Before (ADK Go 1.x)
-ev := session.NewEvent(ctx.InvocationID())
-// or
-ev := session.NewEventWithContext(ctx, ctx.InvocationID())
-
-// After (ADK Go 2.0)
-ev := session.NewEvent(ctx, ctx.InvocationID())
+--8<-- "examples/inline/go/2.0/index/002-event-construction-session-newevent-sign.go.txt"
 ```
 
 The event ID and timestamp are now obtained through the `platform` package,

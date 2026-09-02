@@ -215,10 +215,7 @@ processing.
 Use the `remote_app` object to create a connection to a deployed, remote agent:
 
 ```py
-# If you are in a new script or used the ADK CLI to deploy, you can connect like this:
-# remote_app = agent_engines.get("your-agent-resource-name")
-remote_session = await remote_app.async_create_session(user_id="u_456")
-print(remote_session)
+--8<-- "examples/inline/python/deploy/agent-runtime/test/001-create-a-remote-session.py"
 ```
 
 Expected output for `create_session` (remote):
@@ -238,12 +235,7 @@ deployed agent on Agent Runtime.
 #### Send queries to your remote agent
 
 ```py
-async for event in remote_app.async_stream_query(
-    user_id="u_456",
-    session_id=remote_session["id"],
-    message="whats the weather in new york",
-):
-    print(event)
+--8<-- "examples/inline/python/deploy/agent-runtime/test/002-send-queries-to-your-remote-agent.py"
 ```
 
 Expected output for `async_stream_query` (remote):
@@ -268,22 +260,7 @@ To send multimodal queries (e.g., including images) to your agent, you can const
 To include an image, you can use `types.Part.from_uri`, providing a Google Cloud Storage (GCS) URI for the image.
 
 ```python
-from google.genai import types
-
-image_part = types.Part.from_uri(
-    file_uri="gs://cloud-samples-data/generative-ai/image/scones.jpg",
-    mime_type="image/jpeg",
-)
-text_part = types.Part.from_text(
-    text="What is in this image?",
-)
-
-async for event in remote_app.async_stream_query(
-    user_id="u_456",
-    session_id=remote_session["id"],
-    message=[text_part, image_part],
-):
-    print(event)
+--8<-- "examples/inline/python/deploy/agent-runtime/test/003-sending-multimodal-queries.py"
 ```
 
 !!!note
@@ -298,7 +275,7 @@ your cloud resources after you have finished. You can delete the deployed Agent
 Runtime instance to avoid any unexpected charges on your Google Cloud account.
 
 ```python
-remote_app.delete(force=True)
+--8<-- "examples/inline/python/deploy/agent-runtime/test/004-clean-up-deployments.py"
 ```
 
 The `force=True` parameter also deletes any child resources that were generated

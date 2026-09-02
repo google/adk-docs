@@ -1,0 +1,5 @@
+import (
+  "google.golang.org/adk/v2/artifact"
+)
+
+--8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"

@@ -32,38 +32,13 @@ ADK project's App object, as shown below:
 === "Python"
 
     ```python
-    from google.adk.apps.app import App
-    from google.adk.plugins import ReflectAndRetryToolPlugin
-
-    app = App(
-        name="my_app",
-        root_agent=root_agent,
-        plugins=[
-            ReflectAndRetryToolPlugin(max_retries=3),
-        ],
-    )
+    --8<-- "examples/inline/python/integrations/reflect-and-retry/001-add-reflect-and-retry-plugin.py"
     ```
 
 === "Go"
 
     ```go
-    import (
-    	"google.golang.org/adk/v2/plugin/retryandreflect"
-    	"google.golang.org/adk/v2/runner"
-    )
-
-    // ... create rootAgent and sessionService ...
-
-    r, err := runner.New(runner.Config{
-    	AppName:        "my_app",
-    	Agent:          rootAgent,
-    	SessionService: sessionService,
-    	PluginConfig: runner.PluginConfig{
-    		Plugins: []*plugin.Plugin{
-    			retryandreflect.MustNew(retryandreflect.WithMaxRetries(3)),
-    		},
-    	},
-    })
+    --8<-- "examples/inline/go/integrations/reflect-and-retry/002-add-reflect-and-retry-plugin.go.txt"
     ```
 
 
@@ -99,16 +74,7 @@ demonstrates a simple extension of the behavior by selecting
 responses with an error status:
 
 ```python
-class CustomRetryPlugin(ReflectAndRetryToolPlugin):
-  async def extract_error_from_result(self, *, tool, tool_args,tool_context,
-  result):
-    # Detect error based on response content
-    if result.get('status') == 'error':
-        return result
-    return None  # No error detected
-
-# add this modified plugin to your App object:
-error_handling_plugin = CustomRetryPlugin(max_retries=5)
+--8<-- "examples/inline/python/integrations/reflect-and-retry/003-advanced-configuration.py"
 ```
 
 ## Next steps

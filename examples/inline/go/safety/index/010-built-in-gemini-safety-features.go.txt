@@ -1,0 +1,16 @@
+import (
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/genai"
+)
+
+agent, _ := llmagent.New(llmagent.Config{
+	// ...
+	GenerateContentConfig: &genai.GenerateContentConfig{
+		SafetySettings: []*genai.SafetySetting{
+			{
+				Category:  genai.HarmCategoryHateSpeech,
+				Threshold: genai.HarmBlockThresholdBlockLowAndAbove,
+			},
+		},
+	},
+})

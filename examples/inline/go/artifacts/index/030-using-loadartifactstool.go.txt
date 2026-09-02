@@ -1,0 +1,15 @@
+import (
+  "google.golang.org/adk/v2/agent/llmagent"
+  "google.golang.org/adk/v2/tool"
+  "google.golang.org/adk/v2/tool/loadartifactstool"
+)
+
+agent, err := llmagent.New(llmagent.Config{
+    Name:        "artifact_reader",
+    Model:       model,
+    Instruction: "Answer questions about available user files. " +
+        "When user asks about artifacts, load them and describe them.",
+    Tools: []tool.Tool{
+        loadartifactstool.New(),
+    },
+})

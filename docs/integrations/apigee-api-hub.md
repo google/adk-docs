@@ -66,22 +66,7 @@ you only need to follow a subset of these steps.
     and OpenID Connect. We will soon add support for various OAuth2 flows.
 
     ```py
-    from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-    from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset
-
-    # Provide authentication for your APIs. Not required if your APIs don't required authentication.
-    auth_scheme, auth_credential = token_to_scheme_credential(
-        "apikey", "query", "apikey", apikey_credential_str
-    )
-
-    sample_toolset = APIHubToolset(
-        name="apihub-sample-tool",
-        description="Sample Tool",
-        access_token="...",  # Copy your access token generated in step 1
-        apihub_resource_name="...", # API Hub resource name
-        auth_scheme=auth_scheme,
-        auth_credential=auth_credential,
-    )
+    --8<-- "examples/inline/python/integrations/apigee-api-hub/001-create-an-api-hub-toolset.py"
     ```
 
     For production deployment we recommend using a service account instead of an
@@ -100,21 +85,13 @@ you only need to follow a subset of these steps.
    definition:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
-    from .tools import sample_toolset
-
-    root_agent = LlmAgent(
-        model='gemini-flash-latest',
-        name='enterprise_assistant',
-        instruction='Help user, leverage the tools you have access to',
-        tools=[sample_toolset],
-    )
+    --8<-- "examples/inline/python/integrations/apigee-api-hub/002-create-an-api-hub-toolset.py"
     ```
 
 5. Configure your `__init__.py` to expose your agent
 
     ```py
-    from . import agent
+    --8<-- "examples/inline/python/integrations/apigee-api-hub/003-create-an-api-hub-toolset.py"
     ```
 
 6. Start the Google ADK Web UI and try your agent:

@@ -1,0 +1,35 @@
+// Simplified view of logic inside Agent.Run, callbacks, or tools
+
+// ... previous code runs based on current state ...
+
+// 1. Determine a change or output is needed, construct the event
+// Example: Updating state
+updateData := map[string]interface{}{"field_1": "value_2"}
+eventWithStateChange := &Event{
+    Author: self.Name(),
+    Actions: &EventActions{StateDelta: updateData},
+    Content: genai.NewContentFromText("State updated.", "model"),
+    // ... other event fields ...
+}
+
+// 2. Yield the event to the Runner for processing & commit
+// In Go, this is done by sending the event to a channel.
+eventsChan <- eventWithStateChange
+// <<<<<<<<<<<< EXECUTION PAUSES HERE (conceptually) >>>>>>>>>>>>
+// The Runner on the other side of the channel will receive and process the event.
+// The agent's goroutine might continue, but the logical flow waits for the next input or step.
+
+// <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+
+// 3. Resume execution ONLY after Runner is done processing the above event.
+// In a real Go implementation, this would likely be handled by the agent receiving
+// a new RunRequest or context indicating the next step. The updated state
+// would be part of the session object in that new request.
+// For this conceptual example, we'll just check the state.
+val := ctx.State.Get("field_1")
+// here `val` is guaranteed to be "value_2" because the Runner would have
+// updated the session state before calling the agent again.
+fmt.Printf("Resumed execution. Value of field_1 is now: %v\n", val)
+
+// ... subsequent code continues ...
+// Maybe send another event to the channel later...

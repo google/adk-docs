@@ -39,6 +39,7 @@ jobs:
           --no-progress
           --root-dir "$(pwd)/docs"
           './**/*.md'
+          './examples/inline/**'
         fail: true
         failIfEmpty: true
       env:

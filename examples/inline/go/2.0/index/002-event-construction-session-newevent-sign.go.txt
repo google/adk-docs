@@ -1,0 +1,7 @@
+// Before (ADK Go 1.x)
+ev := session.NewEvent(ctx.InvocationID())
+// or
+ev := session.NewEventWithContext(ctx, ctx.InvocationID())
+
+// After (ADK Go 2.0)
+ev := session.NewEvent(ctx, ctx.InvocationID())

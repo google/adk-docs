@@ -44,37 +44,7 @@ workflows using natural language, with approval prompts on every write operation
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="marketing_agent",
-            instruction=(
-                "You are a performance marketing agent that helps users manage "
-                "ad campaigns, run analytics, sync e-commerce data, and "
-                "execute marketing workflows across Google Ads, Meta Ads, GA4, "
-                "TikTok Ads, LinkedIn Ads, Shopify, HubSpot, and more. "
-                "Always confirm with the user before any write operation."
-            ),
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "mcp-remote",
-                                "https://api.markifact.com/mcp",
-                            ],
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/markifact/001-use-with-agent.py"
         ```
 
         !!! note
@@ -86,32 +56,7 @@ workflows using natural language, with approval prompts on every write operation
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
-
-        MARKIFACT_ACCESS_TOKEN = "YOUR_MARKIFACT_ACCESS_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="marketing_agent",
-            instruction=(
-                "You are a performance marketing agent that helps users manage "
-                "ad campaigns, run analytics, sync e-commerce data, and "
-                "execute marketing workflows across Google Ads, Meta Ads, GA4, "
-                "TikTok Ads, LinkedIn Ads, Shopify, HubSpot, and more. "
-                "Always confirm with the user before any write operation."
-            ),
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://api.markifact.com/mcp",
-                        headers={
-                            "Authorization": f"Bearer {MARKIFACT_ACCESS_TOKEN}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/markifact/002-use-with-agent.py"
         ```
 
         !!! note
@@ -124,33 +69,7 @@ workflows using natural language, with approval prompts on every write operation
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "marketing_agent",
-            instruction:
-                "You are a performance marketing agent that helps users manage " +
-                "ad campaigns, run analytics, sync e-commerce data, and " +
-                "execute marketing workflows across Google Ads, Meta Ads, GA4, " +
-                "TikTok Ads, LinkedIn Ads, Shopify, HubSpot, and more. " +
-                "Always confirm with the user before any write operation.",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "mcp-remote",
-                            "https://api.markifact.com/mcp",
-                        ],
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/markifact/003-use-with-agent.ts"
         ```
 
         !!! note
@@ -162,35 +81,7 @@ workflows using natural language, with approval prompts on every write operation
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const MARKIFACT_ACCESS_TOKEN = "YOUR_MARKIFACT_ACCESS_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "marketing_agent",
-            instruction:
-                "You are a performance marketing agent that helps users manage " +
-                "ad campaigns, run analytics, sync e-commerce data, and " +
-                "execute marketing workflows across Google Ads, Meta Ads, GA4, " +
-                "TikTok Ads, LinkedIn Ads, Shopify, HubSpot, and more. " +
-                "Always confirm with the user before any write operation.",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://api.markifact.com/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${MARKIFACT_ACCESS_TOKEN}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/markifact/004-use-with-agent.ts"
         ```
 
         !!! note

@@ -37,63 +37,19 @@ To enable Grounding with Search, you include the search tool in your agent defin
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import VertexAiSearchTool
-
-    # Configuration
-    DATASTORE_ID = "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID"
-
-    root_agent = Agent(
-        name="vertex_search_agent",
-        model="gemini-flash-latest",
-        instruction="Answer questions using Agent Search to find information from internal documents. Always cite sources when available.",
-        description="Enterprise document search assistant with Agent Search capabilities",
-        tools=[VertexAiSearchTool(data_store_id=DATASTORE_ID)]
-    )
+    --8<-- "examples/inline/python/grounding/grounding_with_search/001-creating-a-grounded-agent.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.VertexAiSearchTool;
-
-    // Configuration
-    String DATASTORE_ID = "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID";
-
-    LlmAgent rootAgent = LlmAgent.builder()
-        .name("vertex_search_agent")
-        .model("gemini-flash-latest")
-        .instruction("Answer questions using Agent Search to find information from internal documents. Always cite sources when available.")
-        .description("Enterprise document search assistant with Agent Search capabilities")
-        .tools(VertexAiSearchTool.builder().dataStoreId(DATASTORE_ID).build())
-        .build();
+    --8<-- "examples/inline/java/grounding/grounding_with_search/002-creating-a-grounded-agent.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.agents.Instruction
-    import com.google.adk.kt.agents.LlmAgent
-    import com.google.adk.kt.models.Gemini
-    import com.google.adk.kt.tools.VertexAiSearchTool
-
-    // Configuration
-    val DATASTORE_ID =
-        "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID"
-
-    val rootAgent =
-        LlmAgent(
-            name = "vertex_search_agent",
-            model = Gemini(name = "gemini-flash-latest"),
-            instruction =
-                Instruction(
-                    "Answer questions using Agent Search to find information from internal " +
-                        "documents. Always cite sources when available.",
-                ),
-            description = "Enterprise document search assistant with Agent Search capabilities",
-            tools = listOf(VertexAiSearchTool(dataStoreId = DATASTORE_ID)),
-        )
+    --8<-- "examples/inline/kotlin/grounding/grounding_with_search/003-creating-a-grounded-agent.kt"
     ```
 
 ## How Grounding with Search works
@@ -198,44 +154,19 @@ Since grounding metadata is provided, you can choose to implement citation displ
 === "Python"
 
     ```python
-    for event in events:
-        if event.is_final_response() and event.content and event.content.parts:
-            print(event.content.parts[0].text)
-
-            # Optional: Show source count
-            if event.grounding_metadata and event.grounding_metadata.grounding_chunks:
-                print(f"\nBased on {len(event.grounding_metadata.grounding_chunks)} documents")
+    --8<-- "examples/inline/python/grounding/grounding_with_search/004-optional-citation-display.py"
     ```
 
 === "Java"
 
     ```java
-    for (Event event : events) {
-        if (event.finalResponse()) {
-            System.out.println(event.content().parts().get(0).text());
-
-            // Optional: Show source count
-            if (event.groundingMetadata().isPresent()) {
-                System.out.println("\nBased on " + event.groundingMetadata().get().groundingChunks().size() + " documents");
-            }
-        }
-    }
+    --8<-- "examples/inline/java/grounding/grounding_with_search/005-optional-citation-display.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    events.collect { event ->
-        if (event.isFinalResponse) {
-            println(event.content?.parts?.firstOrNull()?.text)
-
-            // Optional: Show source count
-            val chunks = event.groundingMetadata?.groundingChunks
-            if (!chunks.isNullOrEmpty()) {
-                println("\nBased on ${chunks.size} documents")
-            }
-        }
-    }
+    --8<-- "examples/inline/kotlin/grounding/grounding_with_search/006-optional-citation-display.kt"
     ```
 
 **Enhanced Citation Display (Optional):** You can implement interactive citations that show which documents support each statement. The grounding metadata provides all necessary information to map text segments to source documents.

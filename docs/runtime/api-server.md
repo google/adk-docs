@@ -33,18 +33,7 @@ Use the following command to run your agent in an ADK API server:
     the REST API, Web UI, and other modes into a single binary:
 
     ```go title="main.go"
-    import (
-        "google.golang.org/adk/v2/cmd/launcher"
-        "google.golang.org/adk/v2/cmd/launcher/full"
-    )
-
-    func main() {
-        // ... build your agent and config ...
-        l := full.NewLauncher()
-        if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
-            log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-        }
-    }
+    --8<-- "examples/inline/go/runtime/api-server/001-start-the-api-server.go.txt"
     ```
 
     Then start the API server by passing the `web` and `api` subcommands on

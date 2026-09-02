@@ -1,0 +1,4 @@
+func (p *MyPlugin) OnModelErrorCallback(ctx agent.CallbackContext, req *model.LLMRequest, err error) (*model.LLMResponse, error) {
+  // Your implementation here
+  return nil, nil
+}

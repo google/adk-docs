@@ -17,16 +17,7 @@ You'll learn how to process different event types (text, audio, transcriptions, 
 **Usage:**
 
 ```python title='Source reference: <a href="https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/runners.py" target="_blank">runners.py</a>'
-# The method signature reveals the thoughtful design
-async def run_live(
-    self,
-    *,                                      # Keyword-only arguments
-    user_id: Optional[str] = None,          # User identification (required unless session provided)
-    session_id: Optional[str] = None,       # Session tracking (required unless session provided)
-    live_request_queue: LiveRequestQueue,   # The bidirectional communication channel
-    run_config: Optional[RunConfig] = None, # Streaming behavior configuration
-    session: Optional[Session] = None,      # Deprecated: use user_id and session_id instead
-) -> AsyncGenerator[Event, None]:           # Generator yielding conversation events
+--8<-- "examples/inline/python/live/dev-guide/part3/001-method-signature-and-flow.py"
 ```
 
 As its signature tells, every streaming conversation needs identity (user_id), continuity (session_id), communication (live_request_queue), and configuration (run_config). The return type—an async generator of Events—promises real-time delivery without overwhelming system resources.
@@ -57,15 +48,7 @@ end
 The simplest way to consume events from `run_live()` is to iterate over the async generator with a for-loop:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L225-L233" target="_blank">main.py:225-233</a>'
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=live_request_queue,
-    run_config=run_config
-):
-    event_json = event.model_dump_json(exclude_none=True, by_alias=True)
-    logger.debug(f"[SERVER] Event: {event_json}")
-    await websocket.send_text(event_json)
+--8<-- "examples/inline/python/live/dev-guide/part3/002-basic-usage-pattern.py"
 ```
 
 !!! note "Session Identifiers"
@@ -201,10 +184,7 @@ Events have two important ID fields:
 **Usage:**
 
 ```python
-# All events in this streaming session will have the same invocation_id
-async for event in runner.run_live(...):
-    print(f"Event ID: {event.id}")              # Unique per event
-    print(f"Invocation ID: {event.invocation_id}")  # Same for all events in session
+--8<-- "examples/inline/python/live/dev-guide/part3/003-understanding-event-identity.py"
 ```
 
 **Use cases:**
@@ -254,14 +234,7 @@ The most common event type, containing the model's text responses when you speci
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    if event.content and event.content.parts:
-        if event.content.parts[0].text:
-            text = event.content.parts[0].text
-
-            if not event.partial:
-                # Your logic to update streaming display
-                update_streaming_display(text)
+--8<-- "examples/inline/python/live/dev-guide/part3/004-text-events.py"
 ```
 
 #### Default Response Modality Behavior
@@ -279,11 +252,7 @@ When `response_modalities` is not explicitly set (i.e., `None`), ADK automatical
 **Example:**
 
 ```python
-# Explicit text mode
-run_config = RunConfig(
-    response_modalities=["TEXT"],
-    streaming_mode=StreamingMode.BIDI
-)
+--8<-- "examples/inline/python/live/dev-guide/part3/005-default-response-modality-behavior.py"
 ```
 
 **Key Event Flags:**
@@ -305,26 +274,7 @@ When `response_modalities` is configured to `["AUDIO"]` in your `RunConfig`, the
 **Configuration:**
 
 ```python
-# Configure RunConfig for audio responses
-run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI
-)
-
-# Audio arrives as inline_data in event.content.parts
-async for event in runner.run_live(..., run_config=run_config):
-    if event.content and event.content.parts:
-        part = event.content.parts[0]
-        if part.inline_data:
-            # Audio event structure:
-            # part.inline_data.data: bytes (raw PCM audio)
-            # part.inline_data.mime_type: str (e.g., "audio/pcm")
-            audio_data = part.inline_data.data
-            mime_type = part.inline_data.mime_type
-
-            print(f"Received {len(audio_data)} bytes of {mime_type}")
-            # Your logic to play audio
-            await play_audio(audio_data)
+--8<-- "examples/inline/python/live/dev-guide/part3/006-audio-events.py"
 ```
 
 !!! note "Learn More"
@@ -343,21 +293,7 @@ When audio data is aggregated and saved as files in artifacts, ADK yields events
 **Receiving Audio File References:**
 
 ```python
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=queue,
-    run_config=run_config
-):
-    if event.content and event.content.parts:
-        for part in event.content.parts:
-            if part.file_data:
-                # Audio aggregated into a file saved in artifacts
-                file_uri = part.file_data.file_uri
-                mime_type = part.file_data.mime_type
-
-                print(f"Audio file saved: {file_uri} ({mime_type})")
-                # Retrieve audio file from artifact service for playback
+--8<-- "examples/inline/python/live/dev-guide/part3/007-audio-events-with-file-data.py"
 ```
 
 **File Data vs Inline Data:**
@@ -382,19 +318,7 @@ Usage metadata events contain token usage information for monitoring costs and q
 **Accessing Token Usage:**
 
 ```python
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=queue,
-    run_config=run_config
-):
-    if event.usage_metadata:
-        print(f"Prompt tokens: {event.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {event.usage_metadata.candidates_token_count}")
-        print(f"Total tokens: {event.usage_metadata.total_token_count}")
-
-        # Track cumulative usage across the session
-        total_tokens += event.usage_metadata.total_token_count or 0
+--8<-- "examples/inline/python/live/dev-guide/part3/008-metadata-events.py"
 ```
 
 **Available Metadata Fields:**
@@ -415,16 +339,7 @@ When transcription is enabled in `RunConfig`, you receive transcriptions as sepa
 **Configuration:**
 
 ```python
-async for event in runner.run_live(...):
-    # User's spoken words (when input_audio_transcription enabled)
-    if event.input_transcription:
-        # Your logic to display user transcription
-        display_user_transcription(event.input_transcription)
-
-    # Model's spoken words (when output_audio_transcription enabled)
-    if event.output_transcription:
-        # Your logic to display model transcription
-        display_model_transcription(event.output_transcription)
+--8<-- "examples/inline/python/live/dev-guide/part3/009-transcription-events.py"
 ```
 
 These enable accessibility features and conversation logging without separate transcription services.
@@ -440,14 +355,7 @@ When the model requests tool execution:
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    if event.content and event.content.parts:
-        for part in event.content.parts:
-            if part.function_call:
-                # Model is requesting a tool execution
-                tool_name = part.function_call.name
-                tool_args = part.function_call.args
-                # ADK handles execution automatically
+--8<-- "examples/inline/python/live/dev-guide/part3/010-tool-call-events.py"
 ```
 
 ADK processes tool calls automatically—you typically don't need to handle these directly unless implementing custom tool execution logic.
@@ -463,39 +371,7 @@ Production applications need robust error handling to gracefully handle model er
 **Usage:**
 
 ```python
-import logging
-
-logger = logging.getLogger(__name__)
-
-try:
-    async for event in runner.run_live(...):
-        # Handle errors from the model or connection
-        if event.error_code:
-            logger.error(f"Model error: {event.error_code} - {event.error_message}")
-
-            # Send error notification to client
-            await websocket.send_json({
-                "type": "error",
-                "code": event.error_code,
-                "message": event.error_message
-            })
-
-            # Decide whether to continue or break based on error severity
-            if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
-                # Content policy violations - usually cannot retry
-                break  # Terminal error - exit loop
-            elif event.error_code == "MAX_TOKENS":
-                # Token limit reached - may need to adjust configuration
-                break
-            # For other errors, you might continue or implement retry logic
-            continue  # Transient error - keep processing
-
-        # Normal event processing only if no error
-        if event.content and event.content.parts:
-            # ... handle content
-            pass
-finally:
-    queue.close()  # Always cleanup connection
+--8<-- "examples/inline/python/live/dev-guide/part3/011-error-events.py"
 ```
 
 !!! note
@@ -513,13 +389,7 @@ You're building a customer support chatbot. A user asks an inappropriate questio
 **Example:**
 
 ```python
-if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
-    # Model has stopped generating - continuation is impossible
-    await websocket.send_json({
-        "type": "error",
-        "message": "I can't help with that request. Please ask something else."
-    })
-    break  # Exit loop - model won't send more events for this turn
+--8<-- "examples/inline/python/live/dev-guide/part3/012-error-events.py"
 ```
 
 **Why `break`?** The model has terminated its response. No more events will come for this turn. Continuing would just waste resources waiting for events that won't arrive.
@@ -533,11 +403,7 @@ You're building a voice transcription service. Midway through transcribing, ther
 **Example:**
 
 ```python
-if event.error_code == "UNAVAILABLE":
-    # Temporary network issue
-    logger.warning(f"Network hiccup: {event.error_message}")
-    # Don't notify user for brief transient issues that may self-resolve
-    continue  # Keep listening - model may recover and continue
+--8<-- "examples/inline/python/live/dev-guide/part3/013-error-events.py"
 ```
 
 **Why `continue`?** This is a transient error. The connection might recover, and the model may continue streaming the transcription. Breaking would prematurely end a potentially recoverable stream.
@@ -555,14 +421,7 @@ You're generating a long-form article and hit the maximum token limit:
 **Example:**
 
 ```python
-if event.error_code == "MAX_TOKENS":
-    # Model has reached output limit
-    await websocket.send_json({
-        "type": "complete",
-        "message": "Response reached maximum length",
-        "truncated": True
-    })
-    break  # Model has finished - no more tokens will be generated
+--8<-- "examples/inline/python/live/dev-guide/part3/014-error-events.py"
 ```
 
 **Why `break`?** The model has reached its output limit and stopped. Continuing won't yield more tokens.
@@ -576,22 +435,7 @@ You're running a high-traffic application that occasionally hits rate limits:
 **Example:**
 
 ```python
-retry_count = 0
-max_retries = 3
-
-async for event in runner.run_live(...):
-    if event.error_code == "RESOURCE_EXHAUSTED":
-        retry_count += 1
-        if retry_count > max_retries:
-            logger.error("Max retries exceeded")
-            break  # Give up after multiple failures
-
-        # Wait and retry
-        await asyncio.sleep(2 ** retry_count)  # Exponential backoff
-        continue  # Keep listening - rate limit may clear
-
-    # Reset counter on successful event
-    retry_count = 0
+--8<-- "examples/inline/python/live/dev-guide/part3/015-error-events.py"
 ```
 
 **Why `continue` (initially)?** Rate limits are often temporary. With exponential backoff, the stream may recover. But after multiple failures, `break` to avoid infinite waiting.
@@ -613,11 +457,7 @@ async for event in runner.run_live(...):
 **Usage:**
 
 ```python
-try:
-    async for event in runner.run_live(...):
-        # ... error handling ...
-finally:
-    queue.close()  # Cleanup runs whether you break or finish normally
+--8<-- "examples/inline/python/live/dev-guide/part3/016-error-events.py"
 ```
 
 Whether you `break` or the loop finishes naturally, `finally` ensures the connection closes properly.
@@ -667,17 +507,7 @@ This flag helps you distinguish between incremental text chunks and complete mer
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    if event.content and event.content.parts:
-        if event.content.parts[0].text:
-            text = event.content.parts[0].text
-
-            if event.partial:
-                # Your streaming UI update logic here
-                update_streaming_display(text)
-            else:
-                # Your complete message display logic here
-                display_complete_message(text)
+--8<-- "examples/inline/python/live/dev-guide/part3/017-handling-partial.py"
 ```
 
 **`partial` Flag Semantics:**
@@ -725,13 +555,7 @@ When users send new input while the model is still generating a response (common
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    if event.interrupted:
-        # Your logic to stop displaying partial text and clear typing indicators
-        stop_streaming_display()
-
-        # Your logic to show interruption in UI (optional)
-        show_user_interruption_indicator()
+--8<-- "examples/inline/python/live/dev-guide/part3/018-handling-interrupted-flag.py"
 ```
 
 **Example - Interruption Scenario:**
@@ -761,15 +585,7 @@ When the model finishes its complete response, you'll receive an event with `tur
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    if event.turn_complete:
-        # Your logic to update UI to show "ready for input" state
-        enable_user_input()
-        # Your logic to hide typing indicator
-        hide_typing_indicator()
-
-        # Your logic to mark conversation boundary in logs
-        log_turn_boundary()
+--8<-- "examples/inline/python/live/dev-guide/part3/019-handling-turncomplete-flag.py"
 ```
 
 **Event Flag Combinations:**
@@ -786,27 +602,7 @@ Understanding how `turn_complete` and `interrupted` combine helps you handle all
 **Implementation:**
 
 ```python
-async for event in runner.run_live(...):
-    # Handle streaming text
-    if event.content and event.content.parts and event.content.parts[0].text:
-        if event.partial:
-            # Your logic to show typing indicator and update partial text
-            update_streaming_text(event.content.parts[0].text)
-        else:
-            # Your logic to display complete text chunk
-            display_text(event.content.parts[0].text)
-
-    # Handle interruption
-    if event.interrupted:
-        # Your logic to stop audio playback and clear indicators
-        stop_audio_playback()
-        clear_streaming_indicators()
-
-    # Handle turn completion
-    if event.turn_complete:
-        # Your logic to enable user input
-        show_input_ready_state()
-        enable_microphone()
+--8<-- "examples/inline/python/live/dev-guide/part3/020-handling-turncomplete-flag.py"
 ```
 
 **Common Use Cases:**
@@ -832,16 +628,7 @@ This provides a simple one-liner to convert ADK events into JSON format that can
 The `model_dump_json()` method serializes an `Event` object to a JSON string:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
-async def downstream_task() -> None:
-    """Receives Events from run_live() and sends to WebSocket."""
-    async for event in runner.run_live(
-        user_id=user_id,
-        session_id=session_id,
-        live_request_queue=live_request_queue,
-        run_config=run_config
-    ):
-        event_json = event.model_dump_json(exclude_none=True, by_alias=True)
-        await websocket.send_text(event_json)
+--8<-- "examples/inline/python/live/dev-guide/part3/021-using-event-modeldumpjson.py"
 ```
 
 **What gets serialized:**
@@ -878,23 +665,7 @@ Pydantic's `model_dump_json()` supports several useful parameters:
 **Usage:**
 
 ```python
-# Exclude None values for smaller payloads (with camelCase field names)
-event_json = event.model_dump_json(exclude_none=True, by_alias=True)
-
-# Custom exclusions (e.g., skip large binary audio)
-event_json = event.model_dump_json(
-    exclude={'content': {'parts': {'__all__': {'inline_data'}}}},
-    by_alias=True
-)
-
-# Include only specific fields
-event_json = event.model_dump_json(
-    include={'content', 'author', 'turn_complete', 'interrupted'},
-    by_alias=True
-)
-
-# Pretty-printed JSON (for debugging)
-event_json = event.model_dump_json(indent=2, by_alias=True)
+--8<-- "examples/inline/python/live/dev-guide/part3/022-serialization-options.py"
 ```
 
 The bidi-demo uses `exclude_none=True` to minimize payload size by omitting fields with None values.
@@ -906,77 +677,7 @@ This shows how to parse and handle serialized events on the client side, enablin
 On the client side (JavaScript/TypeScript), parse the JSON back to objects:
 
 ```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/2f7b82f182659e0990bfb86f6ef400dd82633c07/python/agents/bidi-demo/app/static/js/app.js#L341-L690" target="_blank">app.js:339-688</a>'
-// Handle incoming messages
-websocket.onmessage = function (event) {
-    // Parse the incoming ADK Event
-    const adkEvent = JSON.parse(event.data);
-
-    // Handle turn complete event
-    if (adkEvent.turnComplete === true) {
-        // Remove typing indicator from current message
-        if (currentBubbleElement) {
-            const textElement = currentBubbleElement.querySelector(".bubble-text");
-            const typingIndicator = textElement.querySelector(".typing-indicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-        }
-        currentMessageId = null;
-        currentBubbleElement = null;
-        return;
-    }
-
-    // Handle interrupted event
-    if (adkEvent.interrupted === true) {
-        // Stop audio playback if it's playing
-        if (audioPlayerNode) {
-            audioPlayerNode.port.postMessage({ command: "endOfAudio" });
-        }
-
-        // Keep the partial message but mark it as interrupted
-        if (currentBubbleElement) {
-            const textElement = currentBubbleElement.querySelector(".bubble-text");
-
-            // Remove typing indicator
-            const typingIndicator = textElement.querySelector(".typing-indicator");
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-
-            // Add interrupted marker
-            currentBubbleElement.classList.add("interrupted");
-        }
-
-        currentMessageId = null;
-        currentBubbleElement = null;
-        return;
-    }
-
-    // Handle content events (text or audio)
-    if (adkEvent.content && adkEvent.content.parts) {
-        const parts = adkEvent.content.parts;
-
-        for (const part of parts) {
-            // Handle text
-            if (part.text) {
-                // Add a new message bubble for a new turn
-                if (currentMessageId == null) {
-                    currentMessageId = Math.random().toString(36).substring(7);
-                    currentBubbleElement = createMessageBubble(part.text, false, true);
-                    currentBubbleElement.id = currentMessageId;
-                    messagesDiv.appendChild(currentBubbleElement);
-                } else {
-                    // Update the existing message bubble with accumulated text
-                    const existingText = currentBubbleElement.querySelector(".bubble-text").textContent;
-                    const cleanText = existingText.replace(/\.\.\.$/, '');
-                    updateMessageBubble(currentBubbleElement, cleanText + part.text, true);
-                }
-
-                scrollToBottom();
-            }
-        }
-    }
-};
+--8<-- "examples/inline/javascript/live/dev-guide/part3/023-deserializing-on-the-client.js"
 ```
 
 !!! note "Demo Implementation"
@@ -990,29 +691,7 @@ Base64-encoded binary audio in JSON significantly increases payload size. For pr
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    # Check for binary audio
-    has_audio = (
-        event.content and
-        event.content.parts and
-        any(p.inline_data for p in event.content.parts)
-    )
-
-    if has_audio:
-        # Send audio via binary WebSocket frame
-        for part in event.content.parts:
-            if part.inline_data:
-                await websocket.send_bytes(part.inline_data.data)
-
-        # Send metadata only (much smaller)
-        metadata_json = event.model_dump_json(
-            exclude={'content': {'parts': {'__all__': {'inline_data'}}}},
-            by_alias=True
-        )
-        await websocket.send_text(metadata_json)
-    else:
-        # Text-only events can be sent as JSON
-        await websocket.send_text(event.model_dump_json(exclude_none=True, by_alias=True))
+--8<-- "examples/inline/python/live/dev-guide/part3/024-optimization-for-audio-transmission.py"
 ```
 
 This approach reduces bandwidth by ~75% for audio-heavy streams while maintaining full event metadata.
@@ -1041,16 +720,7 @@ This creates significant implementation overhead, especially in streaming contex
 With ADK, tool execution becomes declarative. Simply define tools on your Agent:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16" target="_blank">agent.py:11-16</a>'
-import os
-from google.adk.agents import Agent
-from google.adk.tools import google_search
-
-agent = Agent(
-    name="google_search_agent",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
-    tools=[google_search],
-    instruction="You are a helpful assistant that can search the web."
-)
+--8<-- "examples/inline/python/live/dev-guide/part3/025-how-adk-simplifies-tool-use.py"
 ```
 
 When you call `runner.run_live()`, ADK automatically:
@@ -1069,14 +739,7 @@ When tools execute, you'll receive events through the `run_live()` async generat
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    # Function call event - model requesting tool execution
-    if event.get_function_calls():
-        print(f"Model calling: {event.get_function_calls()[0].name}")
-
-    # Function response event - tool execution result
-    if event.get_function_responses():
-        print(f"Tool result: {event.get_function_responses()[0].response}")
+--8<-- "examples/inline/python/live/dev-guide/part3/026-tool-execution-events.py"
 ```
 
 You don't need to handle the execution yourself—ADK does it automatically. You just observe the events as they flow through the conversation.
@@ -1189,46 +852,7 @@ When you implement custom tools or callbacks, you receive InvocationContext as a
 **Example Use Cases in Tool Development:**
 
 ```python
-# Example: Comprehensive tool implementation showing common InvocationContext patterns
-def my_tool(context: InvocationContext, query: str):
-    # Access user identity
-    user_id = context.session.user_id
-
-    # Check if this is the user's first message
-    event_count = len(context.session.events)
-    if event_count == 0:
-        return "Welcome! This is your first message."
-
-    # Access conversation history
-    recent_events = context.session.events[-5:]  # Last 5 events
-
-    # Access persistent session state
-    # Session state persists across invocations (not just this streaming session)
-    user_preferences = context.session.state.get('user_preferences', {})
-
-    # Update session state (will be persisted)
-    context.session.state['last_query_time'] = datetime.now().isoformat()
-
-    # Access services for persistence
-    if context.artifact_service:
-        # Store large files/audio
-        await context.artifact_service.save_artifact(
-            app_name=context.session.app_name,
-            user_id=context.session.user_id,
-            session_id=context.session.id,
-            filename="result.bin",
-            artifact=types.Part(inline_data=types.Blob(mime_type="application/octet-stream", data=data)),
-        )
-
-    # Process the query with context
-    result = process_query(query, context=recent_events, preferences=user_preferences)
-
-    # Terminate conversation in specific scenarios
-    if result.get('error'):
-        # Processing error - stop conversation
-        context.end_invocation = True
-
-    return result
+--8<-- "examples/inline/python/live/dev-guide/part3/027-what-invocationcontext-contains.py"
 ```
 
 Understanding InvocationContext is essential for grasping how ADK maintains state, coordinates execution, and enables advanced features like multi-agent workflows and resumability. Even if you never touch it directly, knowing what flows through your application helps you design better agents and debug issues more effectively.
@@ -1258,13 +882,7 @@ ADK automatically adds a `task_completed()` function to each agent in the sequen
 **Usage:**
 
 ```python
-# SequentialAgent automatically adds this tool to each sub-agent
-def task_completed():
-    """
-    Signals that the agent has successfully completed the user's question
-    or task.
-    """
-    return 'Task completion signaled.'
+--8<-- "examples/inline/python/live/dev-guide/part3/028-sequentialagent-with-bidi-streaming.py"
 ```
 
 ### Recommended Pattern: Transparent Sequential Flow
@@ -1274,50 +892,7 @@ The key insight is that **agent transitions happen transparently** within the sa
 **Usage:**
 
 ```python
-async def handle_sequential_workflow():
-    """Recommended pattern for SequentialAgent with BIDI streaming."""
-
-    # 1. Single queue shared across all agents in the sequence
-    queue = LiveRequestQueue()
-
-    # 2. Background task captures user input continuously
-    async def capture_user_input():
-        while True:
-            # Your logic to read audio from microphone
-            audio_chunk = await microphone.read()
-            queue.send_realtime(
-                blob=types.Blob(data=audio_chunk, mime_type="audio/pcm")
-            )
-
-    input_task = asyncio.create_task(capture_user_input())
-
-    try:
-        # 3. Single event loop handles ALL agents seamlessly
-        async for event in runner.run_live(
-            user_id="user_123",
-            session_id="session_456",
-            live_request_queue=queue,
-        ):
-            # Events flow seamlessly across agent transitions
-            current_agent = event.author
-
-            # Handle audio and text output
-            if event.content and event.content.parts:
-                for part in event.content.parts:
-                    # Check for audio data
-                    if part.inline_data and part.inline_data.mime_type.startswith("audio/"):
-                        # Your logic to play audio
-            await play_audio(part.inline_data.data)
-
-                    # Check for text data
-                    if part.text:
-                        await display_text(f"[{current_agent}] {part.text}")
-
-            # No special transition handling needed!
-
-    finally:
-        input_task.cancel()
-        queue.close()
+--8<-- "examples/inline/python/live/dev-guide/part3/029-recommended-pattern-transparent-sequenti.py"
 ```
 
 ### Event Flow During Agent Transitions
@@ -1359,15 +934,7 @@ Use one event loop for all agents in the sequence:
 **Usage:**
 
 ```python
-# ✅ CORRECT: One loop handles all agents
-async for event in runner.run_live(...):
-    # Your event handling logic here
-    await handle_event(event)  # Works for Agent1, Agent2, Agent3...
-
-# ❌ INCORRECT: Don't break the loop or create multiple loops
-for agent in agents:
-    async for event in runner.run_live(...):  # WRONG!
-        ...
+--8<-- "examples/inline/python/live/dev-guide/part3/030-1-single-event-loop.py"
 ```
 
 #### 2. Persistent Queue
@@ -1386,14 +953,7 @@ User speaks → Queue → Agent3 (reviewer)
 **Don't create new queues per agent:**
 
 ```python
-# ❌ INCORRECT: New queue per agent
-for agent in agents:
-    new_queue = LiveRequestQueue()  # WRONG!
-
-# ✅ CORRECT: Single queue for entire workflow
-queue = LiveRequestQueue()
-async for event in runner.run_live(live_request_queue=queue):
-    ...
+--8<-- "examples/inline/python/live/dev-guide/part3/031-user-input-flows-to-whichever-agent-is-c.py"
 ```
 
 #### 3. Agent-Aware UI (Optional)
@@ -1403,17 +963,7 @@ Track which agent is active for better user experience:
 **Usage:**
 
 ```python
-current_agent_name = None
-
-async for event in runner.run_live(...):
-    # Detect agent transitions
-    if event.author and event.author != current_agent_name:
-        current_agent_name = event.author
-        # Your logic to update UI indicator
-        await update_ui_indicator(f"Now: {current_agent_name}")
-
-    # Your event handling logic here
-    await handle_event(event)
+--8<-- "examples/inline/python/live/dev-guide/part3/032-3-agent-aware-ui-optional.py"
 ```
 
 #### 4. Transition Notifications
@@ -1423,20 +973,7 @@ Optionally notify users when agents hand off:
 **Usage:**
 
 ```python
-async for event in runner.run_live(...):
-    # Detect task completion (transition signal)
-    if event.content and event.content.parts:
-        for part in event.content.parts:
-            if (part.function_response and
-                part.function_response.name == "task_completed"):
-                # Your logic to display transition notification
-                await display_notification(
-                    f"✓ {event.author} completed. Handing off to next agent..."
-                )
-                continue
-
-    # Your event handling logic here
-    await handle_event(event)
+--8<-- "examples/inline/python/live/dev-guide/part3/033-4-transition-notifications.py"
 ```
 
 ### Key Differences: transfer_to_agent vs task_completed

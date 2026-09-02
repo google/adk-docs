@@ -143,32 +143,7 @@ apply to Python and Java.
     [Prerequisites](#prerequisites).
 
     ```python title="agent.py"
-    import os
-    from google.adk.agents import Agent
-    from google.adk.apps import App
-    from google.adk.models.google_llm import Gemini
-    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
-
-    os.environ['GOOGLE_CLOUD_PROJECT'] = 'your-gcp-project-id'
-    os.environ['GOOGLE_CLOUD_LOCATION'] = 'us-central1'
-    os.environ['GOOGLE_GENAI_USE_ENTERPRISE'] = 'True'
-
-    plugin = BigQueryAgentAnalyticsPlugin(
-        project_id="your-gcp-project-id",
-        dataset_id="your-big-query-dataset-id",
-    )
-
-    root_agent = Agent(
-        model=Gemini(model="gemini-flash-latest"),
-        name='my_agent',
-        instruction="You are a helpful assistant.",
-    )
-
-    app = App(
-        name="my_agent",
-        root_agent=root_agent,
-        plugins=[plugin],
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/001-quickstart.py"
     ```
 
 === "Java"
@@ -177,39 +152,7 @@ apply to Python and Java.
     [Prerequisites](#prerequisites).
 
     ```java title="Agent.java"
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.models.Gemini;
-    import com.google.adk.plugins.Plugin;
-    import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
-    import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
-    import com.google.adk.runner.InMemoryRunner;
-    import com.google.common.collect.ImmutableList;
-
-    public final class Agent {
-      public static void main(String[] args) throws Exception {
-        Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(
-            BigQueryLoggerConfig.builder()
-                .projectId("your-gcp-project-id")
-                .datasetId("your-big-query-dataset-id")
-                .tableName("agent_events") // Optional, defaults to "events" in Java
-                .build());
-
-        InMemoryRunner runner = new InMemoryRunner(
-            LlmAgent.builder()
-                .model(Gemini.builder().modelName("gemini-2.5-flash").build())
-                .name("my_agent")
-                .instruction("You are a helpful assistant.")
-                .build(),
-            "my_agent",
-            ImmutableList.of(bqLoggingPlugin));
-
-        // Use runner ...
-
-        // Close runner to flush and close plugin
-        runner.close().blockingAwait();
-      }
-    }
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/002-quickstart.java"
     ```
 
 === "Kotlin"
@@ -219,7 +162,7 @@ apply to Python and Java.
     core, so add the integrations artifact:
 
     ```kotlin title="build.gradle.kts"
-    implementation("com.google.adk:google-adk-kotlin-integrations:0.8.0")
+    --8<-- "examples/inline/kotlin/integrations/bigquery-agent-analytics/003-quickstart.kt"
     ```
 
     ```kotlin title="BigQueryAnalyticsExample.kt"
@@ -261,250 +204,13 @@ LIMIT 20;
     === "Python"
 
         ```python title="my_bq_agent/agent.py"
-        # my_bq_agent/agent.py
-        import os
-        import google.auth
-        from google.adk.apps import App
-        from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
-        from google.adk.agents import Agent
-        from google.adk.models.google_llm import Gemini
-        from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-
-        # --- OpenTelemetry note (no setup required for BQAA) ---
-        # The BQAA plugin does NOT export OTel spans of its own. It tracks the
-        # parent-child hierarchy on an internal stack: the root invocation span
-        # reuses the ambient OTel span's id (as a 16-hex string) when one is
-        # active, and child BQAA spans are generated internally as 16-hex
-        # strings. The plugin's `trace_id`
-        # column inherits from whichever OpenTelemetry span is active in the
-        # surrounding runtime when the agent runs:
-        #   * Agent Engine wires its invocation span automatically, so
-        #     `trace_id` in BigQuery joins to Cloud Trace out of the box.
-        #   * Locally, framework-instrumented runners open an invocation span
-        #     for you.
-        #   * If neither is available, the plugin falls back to a per-invocation
-        #     trace_id and the parent-child hierarchy is still preserved in
-        #     BigQuery — no OTel setup needed.
-        # Setting a bare `TracerProvider` with no ambient span will NOT cause
-        # `trace_id` to be populated with a "real" OTel id; only an *active*
-        # span does. See the "Tracing and observability" section for details.
-
-        # --- Configuration ---
-        PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
-        DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-        # GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
-        # BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
-        # like "US" or "EU", or a single region like "us-central1".
-        VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
-        BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
-        GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
-
-        if PROJECT_ID == "your-gcp-project-id":
-            raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
-
-        # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
-        os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
-        os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
-        os.environ['GOOGLE_GENAI_USE_ENTERPRISE'] = 'True'
-
-        # --- Initialize the Plugin with Config ---
-        bq_config = BigQueryLoggerConfig(
-            enabled=True,
-            gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
-            log_multi_modal_content=True,
-            max_content_length=500 * 1024, # 500 KB limit for inline text
-            batch_size=1, # Default is 1 for low latency, increase for high throughput
-            shutdown_timeout=10.0
-        )
-
-        bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
-            project_id=PROJECT_ID,
-            dataset_id=DATASET_ID,
-            table_id="agent_events", # default table name is agent_events
-            config=bq_config,
-            location=BQ_LOCATION
-        )
-
-        # --- Initialize Tools and Model ---
-        credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-        bigquery_toolset = BigQueryToolset(
-            credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-        )
-
-        llm = Gemini(model="gemini-flash-latest")
-
-        root_agent = Agent(
-            model=llm,
-            name='my_bq_agent',
-            instruction="You are a helpful assistant with access to BigQuery tools.",
-            tools=[bigquery_toolset]
-        )
-
-        # --- Create the App ---
-        app = App(
-            name="my_bq_agent",
-            root_agent=root_agent,
-            plugins=[bq_logging_plugin],
-        )
+        --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/004-run-and-test-agent.py"
         ```
 
     === "Java"
 
         ```java
-        package adk.plugins.agentanalytics.demo;
-
-        import static java.nio.charset.StandardCharsets.UTF_8;
-        import static java.util.Collections.singletonList;
-
-        import com.google.adk.agents.LlmAgent;
-        import com.google.adk.agents.RunConfig;
-        import com.google.adk.events.Event;
-        import com.google.adk.models.Gemini;
-        import com.google.adk.plugins.Plugin;
-        import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
-        import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
-        import com.google.adk.runner.InMemoryRunner;
-        import com.google.adk.sessions.Session;
-        import com.google.adk.tools.FunctionTool;
-        import com.google.adk.tools.ToolContext;
-        import com.google.genai.types.Content;
-        import com.google.genai.types.GenerateContentConfig;
-        import com.google.genai.types.Part;
-        import io.opentelemetry.sdk.OpenTelemetrySdk;
-        import io.opentelemetry.sdk.common.CompletableResultCode;
-        import io.opentelemetry.sdk.trace.SdkTracerProvider;
-        import io.opentelemetry.sdk.trace.data.SpanData;
-        import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-        import io.opentelemetry.sdk.trace.export.SpanExporter;
-        import io.reactivex.rxjava3.core.Flowable;
-        import java.util.Collection;
-        import java.util.Scanner;
-
-        /** Demo agent showing how to use BigQueryAgentAnalyticsPlugin. */
-        public final class BqDemoAgent {
-          private static final String PROJECT_ID = "your-gcp-project-id";
-          private static final String DATASET_ID = "your-gcp-dataset_id";
-          private static final String TABLE_ID = "your-gcp-table";
-          private static final String GCS_BUCKET_NAME = "your-gcs-bucket-name";
-          private static final String API_KEY = "your-api_key";
-
-          // A simple tool to demonstrate tool execution logging
-          public static String reverseString(String input, ToolContext toolContext) {
-            return new StringBuilder(input).reverse().toString();
-          }
-
-          public static void main(String[] args) throws Exception {
-            // 0. Initialize OpenTelemetry
-            initOpenTelemetry();
-
-            // 1. Configure the BigQuery Logger
-            BigQueryLoggerConfig config =
-                BigQueryLoggerConfig.builder()
-                    .projectId(PROJECT_ID)
-                    .datasetId(DATASET_ID)
-                    .tableName(TABLE_ID)
-                    .gcsBucketName(GCS_BUCKET_NAME)
-                    .createViews(true)
-                    .build();
-
-            // 2. Create the plugin instance
-            Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(config);
-
-            // 3. Initialize the model (Gemini)
-            Gemini model =
-                Gemini.builder()
-                    .modelName("gemini-3-flash-preview") // Use appropriate model
-                    .apiKey(API_KEY)
-                    .build();
-
-            // 4. Create the agent with the tool and plugin
-            LlmAgent agent =
-                LlmAgent.builder()
-                    .model(model)
-                    .name("bq_demo_agent")
-                    .instruction(
-                        "You are a helpful assistant. You have a tool 'reverseString' that you can use to"
-                            + " reverse text.")
-                    .tools(FunctionTool.create(BqDemoAgent.class, "reverseString"))
-                    .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
-                    .build();
-
-            // 5. Initialize the runner
-            InMemoryRunner runner =
-                new InMemoryRunner(agent, "bq_demo_agent", singletonList(bqLoggingPlugin));
-
-            // 6. Create a session
-            Session session =
-                runner.sessionService().createSession(runner.appName(), "demo_user").blockingGet();
-
-            RunConfig runConfig = RunConfig.builder().build();
-
-            System.out.println("Agent ready. Type 'quit' to exit.");
-
-            try (Scanner scanner = new Scanner(System.in, UTF_8)) {
-              while (true) {
-                System.out.print("\nUser: ");
-                String userInput = scanner.nextLine();
-                if (userInput.trim().equalsIgnoreCase("quit")) {
-                  break;
-                }
-
-                Content userMsg = Content.fromParts(Part.fromText(userInput));
-
-                // Run the agent and stream events
-                Flowable<Event> events =
-                    runner.runAsync(session.userId(), session.id(), userMsg, runConfig);
-
-                System.out.print("Agent: ");
-                events.blockingForEach(
-                    event -> {
-                      if (event.finalResponse()) {
-                        System.out.println(event.stringifyContent());
-                      }
-                    });
-              }
-            } finally {
-              System.out.println("Closing runner (flushing remaining logs)...");
-              runner.close().blockingAwait();
-              System.out.println("Done.");
-            }
-          }
-
-          private static void initOpenTelemetry() {
-            PrintingSpanExporter exporter = new PrintingSpanExporter();
-            SdkTracerProvider tracerProvider =
-                SdkTracerProvider.builder().addSpanProcessor(SimpleSpanProcessor.create(exporter)).build();
-            OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
-          }
-
-          private static class PrintingSpanExporter implements SpanExporter {
-            @Override
-            public CompletableResultCode export(Collection<SpanData> spans) {
-              for (SpanData span : spans) {
-                System.out.println("--- Span: " + span.getName() + " ---");
-                System.out.println("  TraceId: " + span.getTraceId());
-                System.out.println("  SpanId: " + span.getSpanId());
-                System.out.println("  ParentSpanId: " + span.getParentSpanId());
-                System.out.println("  Attributes: " + span.getAttributes());
-                System.out.println("------------------------");
-              }
-              return CompletableResultCode.ofSuccess();
-            }
-
-            @Override
-            public CompletableResultCode flush() {
-              return CompletableResultCode.ofSuccess();
-            }
-
-            @Override
-            public CompletableResultCode shutdown() {
-              return CompletableResultCode.ofSuccess();
-            }
-          }
-
-          private BqDemoAgent() {}
-        }
+        --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/005-run-and-test-agent.java"
         ```
 
 !!! tip "Deploying to Agent Runtime?"
@@ -566,12 +272,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `credentials` | `Optional[google.auth.credentials.Credentials]` | `None` | Use explicit service-account, impersonated, or cross-project credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
 
     ```python
-    plugin = BigQueryAgentAnalyticsPlugin(
-        project_id="my-project",
-        dataset_id="my_dataset",
-        batch_size=10,           # forwarded to BigQueryLoggerConfig
-        shutdown_timeout=5.0,    # forwarded to BigQueryLoggerConfig
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/006-configuration-options-configuration-opti.py"
     ```
 
     ### BigQueryLoggerConfig options
@@ -610,50 +311,7 @@ account) under which the agent is running needs these Google Cloud roles:
     Agent Analytics plugin:
 
     ```python
-    import json
-    import re
-
-    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerConfig
-
-    def redact_dollar_amounts(event_content: Any, event_type: str) -> str:
-        """
-        Custom formatter to redact dollar amounts (e.g., $600, $12.50)
-        and ensure JSON output if the input is a dict.
-
-        Args:
-            event_content: The raw content of the event.
-            event_type: The event type string (e.g., "LLM_REQUEST", "LLM_RESPONSE").
-        """
-        text_content = ""
-        if isinstance(event_content, dict):
-            text_content = json.dumps(event_content)
-        else:
-            text_content = str(event_content)
-
-        # Regex to find dollar amounts: $ followed by digits, optionally with commas or decimals.
-        # Examples: $600, $1,200.50, $0.99
-        redacted_content = re.sub(r'\$\d+(?:,\d{3})*(?:\.\d+)?', 'xxx', text_content)
-
-        return redacted_content
-
-    config = BigQueryLoggerConfig(
-        enabled=True,
-        event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Only log these events
-        # event_denylist=["TOOL_STARTING"], # Skip these events
-        shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
-        max_content_length=500, # Truncate content to 500 chars
-        content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
-        queue_max_size=10000, # Max events to hold in memory
-        auto_schema_upgrade=True, # Automatically add new columns to existing tables
-        create_views=True, # Automatically create per-event-type views
-        # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
-    )
-
-    plugin = BigQueryAgentAnalyticsPlugin(
-        project_id="my-project",
-        dataset_id="my_dataset",
-        config=config,
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/007-configuration-options-configuration-opti.py"
     ```
 
     ### Trace correlation, metadata capture, and column projection
@@ -684,11 +342,7 @@ account) under which the agent is running needs these Google Cloud roles:
       `custom_metadata_allowlist` is rejected at construction.
 
     ```python
-    config = BigQueryLoggerConfig(
-        enable_otel_correlation=True,                      # join key against Cloud Trace
-        custom_metadata_allowlist=["ticket_id", "exp:*"],  # capture selected custom_metadata keys
-        # payload_column_denylist=["content_parts"],       # don't persist multimodal payloads
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/008-configuration-options-configuration-opti.py"
     ```
 
 === "Java"
@@ -728,30 +382,7 @@ account) under which the agent is running needs these Google Cloud roles:
     Agent Analytics plugin in Java:
 
     ```java
-    import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
-    import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
-    import java.time.Duration;
-    import java.util.function.BiFunction;
-
-    // Custom formatter to redact dollar amounts
-    BiFunction<Object, String, Object> redactDollarAmounts = (content, eventType) -> {
-      String textContent = content.toString();
-      return textContent.replaceAll("\\$\\d+(?:,\\d{3})*(?:\\.\\d+)?", "xxx");
-    };
-
-    BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
-        .enabled(true)
-        .projectId("my-project")
-        .datasetId("my_dataset")
-        .tableName("agent_events")
-        .batchSize(1)
-        .batchFlushInterval(Duration.ofMillis(500))
-        .contentFormatter(redactDollarAmounts)
-        .autoSchemaUpgrade(true)
-        .createViews(true)
-        .build();
-
-    BigQueryAgentAnalyticsPlugin plugin = new BigQueryAgentAnalyticsPlugin(config);
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/009-configuration-options-configuration-opti.java"
     ```
 
 === "Kotlin"
@@ -774,18 +405,7 @@ account) under which the agent is running needs these Google Cloud roles:
     BigQuery Agent Analytics plugin in Kotlin:
 
     ```kotlin
-    import com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin
-    import com.google.adk.kt.plugins.agentanalytics.BigQueryLoggerConfig
-
-    val config =
-        BigQueryLoggerConfig(
-            projectId = "my-project",
-            datasetId = "my_dataset",
-            location = "EU",
-            tableName = "agent_events",
-        )
-
-    val plugin = BigQueryAgentAnalyticsPlugin(config = config)
+    --8<-- "examples/inline/kotlin/integrations/bigquery-agent-analytics/010-configuration-options-configuration-opti.kt"
     ```
 
     The options listed under the **Python** and **Java** tabs, such as batching,
@@ -885,20 +505,7 @@ plugin instances write to different tables in the same dataset, preventing
 view-name collisions:
 
 ```python
-# Two plugins in the same dataset with distinct view prefixes
-plugin_prod = BigQueryAgentAnalyticsPlugin(
-    project_id=PROJECT_ID, dataset_id=DATASET_ID,
-    table_id="agent_events_prod",
-    config=BigQueryLoggerConfig(view_prefix="v_prod"),
-)
-# Creates views: v_prod_llm_request, v_prod_tool_completed, ...
-
-plugin_staging = BigQueryAgentAnalyticsPlugin(
-    project_id=PROJECT_ID, dataset_id=DATASET_ID,
-    table_id="agent_events_staging",
-    config=BigQueryLoggerConfig(view_prefix="v_staging"),
-)
-# Creates views: v_staging_llm_request, v_staging_tool_completed, ...
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/011-automatically-created-views.py"
 ```
 
 You can also call the public async method `await plugin.create_analytics_views()`
@@ -1794,65 +1401,11 @@ my_bq_agent/
 ```
 
 ```python title="my_bq_agent/__init__.py"
-from . import agent
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/012-step-1-define-the-agent-and-plugin.py"
 ```
 
 ```python title="my_bq_agent/agent.py"
-import os
-import google.auth
-from google.adk.agents import Agent
-from google.adk.apps import App
-from google.adk.models.google_llm import Gemini
-from google.adk.plugins.bigquery_agent_analytics_plugin import (
-    BigQueryAgentAnalyticsPlugin,
-    BigQueryLoggerConfig,
-)
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# --- Configuration ---
-PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
-DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
-# BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
-# a single region like "us-central1"). This is separate from the Agent Platform
-# region used by GOOGLE_CLOUD_LOCATION.
-BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
-
-os.environ["GOOGLE_GENAI_USE_ENTERPRISE"] = "True"
-
-# --- Plugin ---
-bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
-    project_id=PROJECT_ID,
-    dataset_id=DATASET_ID,
-    location=BQ_LOCATION,
-    config=BigQueryLoggerConfig(
-        batch_size=1,
-        batch_flush_interval=0.5,
-        log_session_metadata=True,
-    ),
-)
-
-# --- Tools ---
-credentials, _ = google.auth.default(
-    scopes=["https://www.googleapis.com/auth/cloud-platform"]
-)
-bigquery_toolset = BigQueryToolset(
-    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-)
-
-# --- Agent ---
-root_agent = Agent(
-    model=Gemini(model="gemini-flash-latest"),
-    name="my_bq_agent",
-    instruction="You are a helpful assistant with access to BigQuery tools.",
-    tools=[bigquery_toolset],
-)
-
-# --- App (required for Agent Runtime with plugins) ---
-app = App(
-    name="my_bq_agent",
-    root_agent=root_agent,
-    plugins=[bq_analytics_plugin],
-)
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/013-step-1-define-the-agent-and-plugin.py"
 ```
 
 ```text title="my_bq_agent/requirements.txt"
@@ -1901,25 +1454,7 @@ Note the **Resource name** for the next step.
 After deployment, you can query the agent using the Agent Platform SDK:
 
 ```python title="test_deployed_agent.py"
-import uuid
-import vertexai
-
-PROJECT_ID = "your-gcp-project-id"
-LOCATION = "us-central1"
-AGENT_ID = "751619551677906944"  # from deployment output
-
-vertexai.init(project=PROJECT_ID, location=LOCATION)
-client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
-
-agent = client.agent_engines.get(
-    name=f"projects/{PROJECT_ID}/locations/{LOCATION}/reasoningEngines/{AGENT_ID}"
-)
-
-user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-for chunk in agent.stream_query(
-    message="List datasets in my project", user_id=user_id
-):
-    print(chunk, end="", flush=True)
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/014-step-3-test-the-deployed-agent.py"
 ```
 
 ### Step 4: Verify events in BigQuery
@@ -1943,34 +1478,7 @@ You can also deploy programmatically using the Agent Platform SDK directly. This
 is useful for CI/CD pipelines or custom deployment workflows:
 
 ```python title="deploy.py"
-import vertexai
-from my_bq_agent.agent import app
-
-PROJECT_ID = "your-gcp-project-id"
-LOCATION = "us-central1"
-STAGING_BUCKET = "gs://your-staging-bucket"
-
-vertexai.init(
-    project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET
-)
-client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
-
-remote_app = client.agent_engines.create(
-    agent=app,
-    config={
-        "display_name": "My BQ Analytics Agent",
-        "staging_bucket": STAGING_BUCKET,
-        "requirements": [
-            "google-adk[bigquery]",
-            "google-cloud-aiplatform[agent_engines]",
-            "google-cloud-bigquery-storage",
-            "pyarrow",
-            "opentelemetry-api",
-            "opentelemetry-sdk",
-        ],
-    },
-)
-print(f"Deployed agent: {remote_app.api_resource.name}")
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/015-alternative-deploy-using-the-agent-platf.py"
 ```
 
 ### Troubleshooting
@@ -1985,9 +1493,7 @@ If events are not appearing in your BigQuery table after deployment:
    surface any silent errors:
 
     ```python
-    import logging
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("google_adk").setLevel(logging.DEBUG)
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/016-troubleshooting.py"
     ```
 
 3. **Check IAM permissions**: The Agent Runtime service account needs
@@ -2070,133 +1576,13 @@ or mask sensitive fields before they are written:
 === "Python"
 
     ```python
-    import json
-    import re
-    from typing import Any
-
-    SENSITIVE_KEYS = {"client_secret", "access_token", "refresh_token", "api_key", "secret"}
-
-    def redact_credentials(event_content: Any, event_type: str) -> str:
-        """Redact OAuth secrets and tokens from logged content."""
-        if isinstance(event_content, dict):
-            text = json.dumps(event_content)
-        else:
-            text = str(event_content)
-
-        for key in SENSITIVE_KEYS:
-            # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
-            text = re.sub(
-                rf'("{key}"\s*:\s*)"[^"]*"',
-                rf'\1"[REDACTED]"',
-                text,
-                flags=re.IGNORECASE,
-            )
-        return text
-
-    config = BigQueryLoggerConfig(
-        content_formatter=redact_credentials,
-        # ... other options
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/017-use-contentformatter-to-redact-additiona.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-    import com.google.adk.models.LlmRequest;
-    import com.google.adk.models.LlmResponse;
-    import com.google.adk.runner.Runner;
-    import com.google.genai.types.Content;
-    import com.google.genai.types.GenerateContentConfig;
-    import com.google.genai.types.Part;
-    import java.util.ArrayList;
-    import java.util.List;
-
-    public final class AgentContentFormatter {
-      private static final String PROJECT_ID = "your-gcp-project-id";
-      private static final String DATASET_ID = "your-gcp-dataset_id";
-      private static final String TABLE_ID = "your-gcp-table";
-      private static final String API_KEY = "your-api_key";
-      private static final String GCS_BUCKET_NAME = "your-gcs-bucket-name";
-
-      /** Returns the formatter logic you want to test. */
-      private static Object formatter(Object content, String eventType) {
-        if (content instanceof LlmRequest req) {
-          List<Content> maskedContents = new ArrayList<>();
-          for (Content c : req.contents()) {
-            maskedContents.add(maskContent(c));
-          }
-          return req.toBuilder().contents(maskedContents).build();
-        } else if (content instanceof LlmResponse res) {
-          if (res.content().isPresent()) {
-            return res.toBuilder().content(maskContent(res.content().get())).build();
-          }
-          return res;
-        } else if (content instanceof Content content2) {
-          return maskContent(content2);
-        } else if (content instanceof Map<?, ?> map) {
-          Map<Object, Object> maskedMap = new LinkedHashMap<>();
-          for (Map.Entry<?, ?> entry : map.entrySet()) {
-            maskedMap.put(entry.getKey(), formatter(entry.getValue(), eventType));
-          }
-          return maskedMap;
-        }
-        return content;
-      }
-
-      private static Content maskContent(Content originalContent) {
-        if (originalContent.parts().isPresent()) {
-          List<Part> maskedParts = new ArrayList<>();
-          for (Part part : originalContent.parts().get()) {
-            if (part.text().isPresent() && part.text().get().contains("secret")) {
-              String maskedText = part.text().get().replace("secret", "****");
-              maskedParts.add(part.toBuilder().text(maskedText).build());
-            } else {
-              maskedParts.add(part);
-            }
-          }
-          return originalContent.toBuilder().parts(maskedParts).build();
-        }
-        return originalContent;
-      }
-
-      public static void main(String[] args) throws Exception {
-        // 1. Setup Config with custom formatter
-        BigQueryLoggerConfig config =
-            BigQueryLoggerConfig.builder()
-                .projectId(PROJECT_ID)
-                .datasetId(DATASET_ID)
-                .tableName(TABLE_ID)
-                .gcsBucketName(GCS_BUCKET_NAME)
-                .contentFormatter(AgentContentFormatter::formatter)
-                .logMultiModalContent(true)
-                .build();
-
-        // 2. Setup Plugin
-        BigQueryAgentAnalyticsPlugin plugin = new BigQueryAgentAnalyticsPlugin(config);
-
-        // 3. Setup Agent that responds
-        LlmAgent agent =
-            LlmAgent.builder()
-                .model(
-                    Gemini.builder()
-                        .modelName("gemini-3-flash-preview") // use appropriate model
-                        .apiKey(API_KEY)
-                        .build())
-                .name("bq_demo_agent")
-                .instruction("You are a helpful assistant")
-                .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
-                .build();
-
-        // 4. Setup Runner
-        Runner runner = Runner.builder().agent(agent).appName("test_app").plugins(plugin).build();
-        // 5. Use runner to run some scenarios
-        ...
-      }
-
-      private AgentContentFormatter() {}
-    }
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/018-use-contentformatter-to-redact-additiona.java"
     ```
 
 ### Use `event_denylist` to skip credential events
@@ -2206,27 +1592,13 @@ If you do not need to log authentication-related events, exclude them entirely:
 === "Python"
 
     ```python
-    config = BigQueryLoggerConfig(
-        event_denylist=[
-            "HITL_CREDENTIAL_REQUEST",
-            "HITL_CREDENTIAL_REQUEST_COMPLETED",
-        ],
-        # ... other options
-    )
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/019-use-eventdenylist-to-skip-credential-eve.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.common.collect.ImmutableList;
-
-    BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
-        .eventDenylist(ImmutableList.of(
-            "HITL_CREDENTIAL_REQUEST",
-            "HITL_CREDENTIAL_REQUEST_COMPLETED"
-        ))
-        // ... other options
-        .build();
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/020-use-eventdenylist-to-skip-credential-eve.java"
     ```
 
 ### General best practices
@@ -2306,12 +1678,7 @@ call) reconstructs cleanly from BigQuery.
       startup and shutdown:
 
         ```python
-        async with BigQueryAgentAnalyticsPlugin(
-            project_id=PROJECT_ID, dataset_id=DATASET_ID
-        ) as plugin:
-            # plugin is initialized and ready to use
-            ...
-        # plugin.shutdown() is called automatically on exit
+        --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/021-public-methods.py"
         ```
 
 === "Java"
@@ -2330,8 +1697,7 @@ call) reconstructs cleanly from BigQuery.
       for a deterministic flush.
 
     ```java
-    // Manual shutdown
-    plugin.close().blockingAwait();
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/022-public-methods.java"
     ```
 
 ### Dropped-event observability {#dropped-event-observability}
@@ -2367,46 +1733,19 @@ on, and ship the counts to its own monitoring.
 === "Python"
 
     ```python
-    # Snapshot of {drop_reason: count} since plugin start.
-    stats = plugin.get_drop_stats()
-    # Example: {"queue_full": 12, "retry_exhausted": 0, ...}
-
-    total_dropped = sum(stats.values())
+    --8<-- "examples/inline/python/integrations/bigquery-agent-analytics/023-dropped-event-observability-dropped-even.py"
     ```
 
 === "Java"
 
     ```java
-    // Snapshot of {drop_reason: count} since plugin start.
-    ImmutableMap<String, Long> stats = plugin.getDropStats();
-    // Example: {queue_full=12, append_error=0, serialization_error=0,
-    //           after_close=0, shutdown_timeout=0, writer_permit_exhausted=0,
-    //           writer_create_error=0, late_after_finalize=0}
-
-    long totalDropped = stats.values().stream().mapToLong(Long::longValue).sum();
+    --8<-- "examples/inline/java/integrations/bigquery-agent-analytics/024-dropped-event-observability-dropped-even.java"
     ```
 
 **Exporting to your monitoring system** — poll periodically and ship the deltas:
 
 ```python
-import asyncio
-
-async def export_loop(plugin):
-    last = {k: 0 for k in (
-        "queue_full", "arrow_prep_failed",
-        "retry_exhausted", "non_retryable", "unexpected_error",
-    )}
-    while True:
-        current = plugin.get_drop_stats()
-        for reason, count in current.items():
-            delta = count - last.get(reason, 0)
-            if delta:
-                # e.g. metric_client.write_point(
-                #         metric="bqaa_dropped_events",
-                #         labels={"reason": reason}, value=delta)
-                ...
-        last = current
-        await asyncio.sleep(60)
+--8<-- "examples/inline/python/integrations/bigquery-agent-analytics/025-dropped-event-observability-dropped-even.py"
 ```
 
 Any non-zero count means analytics rows were dropped before reaching BigQuery.

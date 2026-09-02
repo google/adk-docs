@@ -1,0 +1,5 @@
+import "google.golang.org/adk/v2/agent"
+
+config := agent.RunConfig{
+    StreamingMode: agent.StreamingModeSSE,
+}

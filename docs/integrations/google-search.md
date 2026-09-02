@@ -32,17 +32,7 @@ The `google_search` tool allows the agent to perform web searches using Google S
 === "TypeScript"
 
     ```typescript
-    import {GOOGLE_SEARCH, LlmAgent} from '@google/adk';
-
-    export const rootAgent = new LlmAgent({
-      model: 'gemini-flash-latest',
-      name: 'root_agent',
-      description:
-          'an agent whose job it is to perform Google search queries and answer questions about the results.',
-      instruction:
-          'You are an agent whose job is to perform Google search queries and answer questions about the results.',
-      tools: [GOOGLE_SEARCH],
-    });
+    --8<-- "examples/inline/typescript/integrations/google-search/001-gemini-api-google-search-tool-for-adk.ts"
     ```
 
 === "Go"

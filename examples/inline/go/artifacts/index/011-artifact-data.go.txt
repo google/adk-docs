@@ -1,0 +1,8 @@
+import (
+  "log"
+  "os"
+
+  "google.golang.org/genai"
+)
+
+--8<-- "examples/go/snippets/artifacts/main.go:artifact-data"

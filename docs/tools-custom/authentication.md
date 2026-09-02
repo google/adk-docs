@@ -176,18 +176,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       Create a tool requiring an API Key.
 
       ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-      auth_scheme, auth_credential = token_to_scheme_credential(
-          "apikey", "query", "apikey", "YOUR_API_KEY_STRING"
-      )
-      sample_api_toolset = OpenAPIToolset(
-          spec_str="...",  # Fill this with an OpenAPI spec string
-          spec_str_type="yaml",
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
+      --8<-- "examples/inline/python/tools-custom/authentication/001-use-openapi-based-toolsets-openapitoolse.py"
       ```
 
 === "OAuth2"
@@ -195,39 +184,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       Create a tool requiring OAuth2.
 
       ```py
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-      from fastapi.openapi.models import OAuth2
-      from fastapi.openapi.models import OAuthFlowAuthorizationCode
-      from fastapi.openapi.models import OAuthFlows
-      from google.adk.auth import AuthCredential
-      from google.adk.auth import AuthCredentialTypes
-      from google.adk.auth import OAuth2Auth
-
-      auth_scheme = OAuth2(
-          flows=OAuthFlows(
-              authorizationCode=OAuthFlowAuthorizationCode(
-                  authorizationUrl="https://accounts.google.com/o/oauth2/auth",
-                  tokenUrl="https://oauth2.googleapis.com/token",
-                  scopes={
-                      "https://www.googleapis.com/auth/calendar": "calendar scope"
-                  },
-              )
-          )
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OAUTH2,
-          oauth2=OAuth2Auth(
-              client_id=YOUR_OAUTH_CLIENT_ID,
-              client_secret=YOUR_OAUTH_CLIENT_SECRET
-          ),
-      )
-
-      calendar_api_toolset = OpenAPIToolset(
-          spec_str=google_calendar_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
+      --8<-- "examples/inline/python/tools-custom/authentication/002-use-openapi-based-toolsets-openapitoolse.py"
       ```
 
 === "Service Account"
@@ -235,20 +192,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       Create a tool requiring Service Account.
 
       ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-      service_account_cred = json.loads(service_account_json_str)
-      auth_scheme, auth_credential = service_account_dict_to_scheme_credential(
-          config=service_account_cred,
-          scopes=["https://www.googleapis.com/auth/cloud-platform"],
-      )
-      sample_toolset = OpenAPIToolset(
-          spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='json',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
+      --8<-- "examples/inline/python/tools-custom/authentication/003-use-openapi-based-toolsets-openapitoolse.py"
       ```
 
 === "OpenID connect"
@@ -256,29 +200,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       Create a tool requiring OpenID connect.
 
       ```py
-      from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
-      from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-      auth_scheme = OpenIdConnectWithConfig(
-          authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
-          token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES']
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
-          oauth2=OAuth2Auth(
-              client_id="...",
-              client_secret="...",
-          )
-      )
-
-      userinfo_toolset = OpenAPIToolset(
-          spec_str=content, # Fill in an actual spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
+      --8<-- "examples/inline/python/tools-custom/authentication/004-use-openapi-based-toolsets-openapitoolse.py"
       ```
 
 #### Use Google API toolsets (e.g., `calendar_tool_set`)
@@ -288,18 +210,7 @@ These toolsets often have dedicated configuration methods.
 Tip: For how to create a Google OAuth Client ID & Secret, see this guide: [Get your Google API Client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id)
 
 ```py
-# Example: Configuring Google Calendar Tools
-from google.adk.tools.google_api_tool import calendar_tool_set
-
-client_id = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
-client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
-
-# Use the specific configure method for this toolset type
-calendar_tool_set.configure_auth(
-    client_id=oauth_client_id, client_secret=oauth_client_secret
-)
-
-# agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
+--8<-- "examples/inline/python/tools-custom/authentication/005-use-google-api-toolsets-e-g-calendartool.py"
 ```
 
 #### Use ID token
@@ -315,27 +226,7 @@ If your agent calls a restricted service, for example a private Cloud Run or Clo
 To implement ID token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
 
 ```python
-from google.adk.auth.auth_credential import ServiceAccount
-from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_scheme_credential
-from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-# Configure the ServiceAccount to use ID token authentication.
-# Replace <YOUR_AUDIENCE_URL> with the URL of the service you are calling.
-sa_config = ServiceAccount(
-    use_default_credential=True,
-    use_id_token=True,
-    audience="<YOUR_AUDIENCE_URL>",
-)
-
-auth_scheme, auth_credential = service_account_scheme_credential(sa_config)
-
-sample_toolset = OpenAPIToolset(
-    spec_str=sa_openapi_spec_str, # Fill this with an OpenAPI spec
-    spec_str_type="json",
-    auth_scheme=auth_scheme,
-    auth_credential=auth_credential,
-)
-
+--8<-- "examples/inline/python/tools-custom/authentication/006-configuration.py"
 ```
 
 !!! tip "Troubleshooting authentication errors"
@@ -381,18 +272,7 @@ configuration block.
 Follow this example to configure the key:
 
 ```python
-from google.adk.auth.auth_credential import AuthCredential
-from google.adk.auth.auth_credential import AuthCredentialTypes
-
-# Configure the tool to look for "my_frontend_token" in the session state
-credentials_config = AuthCredential(
-    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
-    google_credentials_config={
-        # Do not hardcode authentication keys in production code
-        "external_access_token_key": "get_my_frontend_token" 
-    }
-)
-
+--8<-- "examples/inline/python/tools-custom/authentication/007-use-external-access-tokens.py"
 ```
 
 #### Authentication request flow
@@ -426,66 +306,13 @@ Here's the step-by-step process for your client application:
 * Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
 
 ```python
-
-# runner = Runner(...)
-# session = await session_service.create_session(...)
-# content = types.Content(...) # User's initial query
-
-print("\nRunning agent...")
-events_async = runner.run_async(
-    session_id=session.id, user_id='user', new_message=content
-)
-
-auth_request_function_call_id, auth_config = None, None
-
-async for event in events_async:
-    # Use helper to check for the specific auth request event
-    if (auth_request_function_call := get_auth_request_function_call(event)):
-        print("--> Authentication required by agent.")
-        # Store the ID needed to respond later
-        if not (auth_request_function_call_id := auth_request_function_call.id):
-            raise ValueError(f'Cannot get function call id from function call: {auth_request_function_call}')
-        # Get the AuthConfig containing the auth_uri etc.
-        auth_config = get_auth_config(auth_request_function_call)
-        break # Stop processing events for now, need user interaction
-
-if not auth_request_function_call_id:
-    print("\nAuth not required or agent finished.")
-    # return # Or handle final response if received
-
+--8<-- "examples/inline/python/tools-custom/authentication/008-handle-the-interactive-oauth-oidc-flow-c.py"
 ```
 
 *Helper functions `helpers.py`:*
 
 ```py
-from google.adk.events import Event
-from google.adk.auth import AuthConfig # Import necessary type
-from google.genai import types
-
-def get_auth_request_function_call(event: Event) -> types.FunctionCall:
-    # Get the special auth request function call from the event
-    if not event.content or not event.content.parts:
-        return
-    for part in event.content.parts:
-        if (
-            part
-            and part.function_call
-            and part.function_call.name == 'adk_request_credential'
-            and event.long_running_tool_ids
-            and part.function_call.id in event.long_running_tool_ids
-        ):
-
-            return part.function_call
-
-def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
-    # Extracts the AuthConfig object from the arguments of the auth request function call
-    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
-        raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
-    if isinstance(auth_config, dict):
-        auth_config = AuthConfig.model_validate(auth_config)
-    elif not isinstance(auth_config, AuthConfig):
-        raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
-    return auth_config
+--8<-- "examples/inline/python/tools-custom/authentication/009-content-types-content-user-s-initial-que.py"
 ```
 
 **Step 2: Redirect User for Authorization**
@@ -495,24 +322,7 @@ def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfi
 * Direct the user to this complete URL (e.g., open it in their browser).
 
 ```py
-# (Continuing after detecting auth needed)
-
-if auth_request_function_call_id and auth_config:
-    # Get the base authorization URL from the AuthConfig
-    base_auth_uri = auth_config.exchanged_auth_credential.oauth2.auth_uri
-
-    if base_auth_uri:
-        redirect_uri = 'http://localhost:8000/callback' # MUST match your OAuth client app config
-        # Append redirect_uri (use urlencode in production)
-        auth_request_uri = base_auth_uri + f'&redirect_uri={redirect_uri}'
-        # Now you need to redirect your end user to this auth_request_uri or ask them to open this auth_request_uri in their browser
-        # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your application to access their data
-        # And then the auth provider will redirect the end user to the redirect_uri you provided
-        # Next step: Get this callback URL from the user (or your web server handler)
-    else:
-         print("ERROR: Auth URI not found in auth_config.")
-         # Handle error
-
+--8<-- "examples/inline/python/tools-custom/authentication/010-content-types-content-user-s-initial-que.py"
 ```
 
 **Step 3. Handle the Redirect Callback (Client):**
@@ -533,51 +343,7 @@ if auth_request_function_call_id and auth_config:
 * Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
 
 ```py
-# (Continuing after user interaction)
-
-    # Simulate getting the callback URL (e.g., from user paste or web handler)
-    auth_response_uri = await get_user_input(
-        f'Paste the full callback URL here:\n> '
-    )
-    auth_response_uri = auth_response_uri.strip() # Clean input
-
-    if not auth_response_uri:
-        print("Callback URL not provided. Aborting.")
-        return
-
-    # Update the received AuthConfig with the callback details
-    auth_config.exchanged_auth_credential.oauth2.auth_response_uri = auth_response_uri
-    # Also include the redirect_uri used, as the token exchange might need it
-    auth_config.exchanged_auth_credential.oauth2.redirect_uri = redirect_uri
-
-    # Construct the FunctionResponse Content object
-    auth_content = types.Content(
-        role='user', # Role can be 'user' when sending a FunctionResponse
-        parts=[
-            types.Part(
-                function_response=types.FunctionResponse(
-                    id=auth_request_function_call_id,       # Link to the original request
-                    name='adk_request_credential', # Special framework function name
-                    response=auth_config.model_dump() # Send back the *updated* AuthConfig
-                )
-            )
-        ],
-    )
-
-    # --- Resume Execution ---
-    print("\nSubmitting authentication details back to the agent...")
-    events_async_after_auth = runner.run_async(
-        session_id=session.id,
-        user_id='user',
-        new_message=auth_content, # Send the FunctionResponse back
-    )
-
-    # --- Process Final Agent Output ---
-    print("\n--- Agent Response after Authentication ---")
-    async for event in events_async_after_auth:
-        # Process events normally, expecting the tool call to succeed now
-        print(event) # Print the full event for inspection
-
+--8<-- "examples/inline/python/tools-custom/authentication/011-continuing-after-detecting-auth-needed.py"
 ```
 
 !!! note "Note: Authorization response with Resume feature"
@@ -618,15 +384,7 @@ This section focuses on implementing the authentication logic *inside* your cust
 Your function signature *must* include [`tool_context: ToolContext`](../tools-custom/index.md#tool-context). ADK automatically injects this object, providing access to state and auth mechanisms.
 
 ```py
-from google.adk.tools import FunctionTool, ToolContext
-from typing import Dict
-
-def my_authenticated_tool_function(param1: str, ..., tool_context: ToolContext) -> dict:
-    # ... your logic ...
-    pass
-
-my_tool = FunctionTool(func=my_authenticated_tool_function)
-
+--8<-- "examples/inline/python/tools-custom/authentication/012-prerequisites.py"
 ```
 
 ### Authentication Logic within the Tool Function
@@ -638,36 +396,7 @@ Implement the following steps inside your function:
 Inside your tool function, first check if valid credentials (e.g., access/refresh tokens) are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.invocation_context.session.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.invocation_context.session.state.get(credential_name, None)`.
 
 ```py
-from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
-
-# Inside your tool function
-TOKEN_CACHE_KEY = "my_tool_tokens" # Choose a unique key
-SCOPES = ["scope1", "scope2"] # Define required scopes
-
-creds = None
-cached_token_info = tool_context.state.get(TOKEN_CACHE_KEY)
-if cached_token_info:
-    try:
-        creds = Credentials.from_authorized_user_info(cached_token_info, SCOPES)
-        if not creds.valid and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json()) # Update cache
-        elif not creds.valid:
-            creds = None # Invalid, needs re-auth
-            tool_context.state[TOKEN_CACHE_KEY] = None
-    except Exception as e:
-        print(f"Error loading/refreshing cached creds: {e}")
-        creds = None
-        tool_context.state[TOKEN_CACHE_KEY] = None
-
-if creds and creds.valid:
-    # Skip to Step 5: Make Authenticated API Call
-    pass
-else:
-    # Proceed to Step 2...
-    pass
-
+--8<-- "examples/inline/python/tools-custom/authentication/013-authentication-logic-within-the-tool-fun.py"
 ```
 
 **Step 2: Check for Auth Response from Client**
@@ -676,27 +405,7 @@ else:
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py
-# Use auth_scheme and auth_credential configured in the tool.
-# exchanged_credential: AuthCredential | None
-
-exchanged_credential = tool_context.get_auth_response(AuthConfig(
-  auth_scheme=auth_scheme,
-  raw_auth_credential=auth_credential,
-))
-# If exchanged_credential is not None, then there is already an exchanged credential from the auth response.
-if exchanged_credential:
-   # ADK exchanged the access token already for us
-        access_token = exchanged_credential.oauth2.access_token
-        refresh_token = exchanged_credential.oauth2.refresh_token
-        creds = Credentials(
-            token=access_token,
-            refresh_token=refresh_token,
-            token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
-            client_id=auth_credential.oauth2.client_id,
-            client_secret=auth_credential.oauth2.client_secret,
-            scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
-        )
-    # Cache the token in session state and call the API, skip to step 5
+--8<-- "examples/inline/python/tools-custom/authentication/014-inside-your-tool-function.py"
 ```
 
 **Step 3: Initiate Authentication Request**
@@ -704,15 +413,7 @@ if exchanged_credential:
 If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the tool needs to start the OAuth flow. Define the AuthScheme and initial AuthCredential and call `tool_context.request_credential()`. Return a response indicating authorization is needed.
 
 ```py
-# Use auth_scheme and auth_credential configured in the tool.
-
-  tool_context.request_credential(AuthConfig(
-    auth_scheme=auth_scheme,
-    raw_auth_credential=auth_credential,
-  ))
-  return {'pending': true, 'message': 'Awaiting user authentication.'}
-
-# By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
+--8<-- "examples/inline/python/tools-custom/authentication/015-adk-exchanged-the-access-token-already-f.py"
 ```
 
 **Step 4: Exchange Authorization Code for Tokens**
@@ -724,12 +425,7 @@ ADK automatically generates oauth authorization URL and presents it to your ***A
 After successfully obtaining the token from ADK (Step 2) or if the token is still valid (Step 1), **immediately store** the new `Credentials` object in `tool_context.state` (serialized, e.g., as JSON) using your cache key.
 
 ```py
-# Inside your tool function, after obtaining 'creds' (either refreshed or newly exchanged)
-# Cache the new/refreshed tokens
-tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json())
-print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
-# Proceed to Step 6 (Make API Call)
-
+--8<-- "examples/inline/python/tools-custom/authentication/016-by-setting-requestcredential-adk-detects.py"
 ```
 
 **Step 6: Make Authenticated API Call**
@@ -738,19 +434,7 @@ print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
 * Include error handling, especially for `HttpError` 401/403, which might mean the token expired or was revoked between calls. If you get such an error, consider clearing the cached token (`tool_context.state.pop(...)`) and potentially returning the `auth_required` status again to force re-authentication.
 
 ```py
-# Inside your tool function, using the valid 'creds' object
-# Ensure creds is valid before proceeding
-if not creds or not creds.valid:
-   return {"status": "error", "error_message": "Cannot proceed without valid credentials."}
-
-try:
-   service = build("calendar", "v3", credentials=creds) # Example
-   api_result = service.events().list(...).execute()
-   # Proceed to Step 7
-except Exception as e:
-   # Handle API errors (e.g., check for 401/403, maybe clear cache and re-request auth)
-   print(f"ERROR: API call failed: {e}")
-   return {"status": "error", "error_message": f"API call failed: {e}"}
+--8<-- "examples/inline/python/tools-custom/authentication/017-proceed-to-step-6-make-api-call.py"
 ```
 
 **Step 7: Return Tool Result**
@@ -759,10 +443,7 @@ except Exception as e:
 * **Crucially, include a**  along with the data.
 
 ```py
-# Inside your tool function, after successful API call
-    processed_result = [...] # Process api_result for the LLM
-    return {"status": "success", "data": processed_result}
-
+--8<-- "examples/inline/python/tools-custom/authentication/018-handle-api-errors-e-g-check-for-401-403.py"
 ```
 
 ??? "Full Code"

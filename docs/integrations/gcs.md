@@ -45,16 +45,7 @@ Recommended for local development and deployment to Google Cloud, including
 Agent Runtime, Cloud Run, and GKE.
 
 ```python
-import google.auth
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# Load Application Default Credentials
-credentials, _ = google.auth.default()
-
-# Configure the toolset
-credentials_config = GCSCredentialsConfig(credentials=credentials)
-gcs_toolset = GCSToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/gcs/001-application-default-credentials.py"
 ```
 
 ### Service Account
@@ -62,16 +53,7 @@ gcs_toolset = GCSToolset(credentials_config=credentials_config)
 Allows providing credentials from a service account file.
 
 ```python
-import google.auth
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# Load Service Account credentials
-credentials, _ = google.auth.load_credentials_from_file('path/to/key.json')
-
-# Configure the toolset
-credentials_config = GCSCredentialsConfig(credentials=credentials)
-gcs_toolset = GCSToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/gcs/002-service-account.py"
 ```
 
 ### External Access Token
@@ -80,16 +62,7 @@ For acting on behalf of an end-user, such as via an OAuth2 flow or an external
 identity provider.
 
 ```python
-from google.oauth2.credentials import Credentials
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# Assume 'user_token' is obtained via an external OAuth flow
-credentials = Credentials(token=user_token)
-
-# Configure the toolset
-credentials_config = GCSCredentialsConfig(credentials=credentials)
-gcs_toolset = GCSToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/gcs/003-external-access-token.py"
 ```
 
 ### External Auth Providers
@@ -98,14 +71,7 @@ For platforms like Gemini Enterprise where the token is managed externally by
 the environment or platform.
 
 ```python
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# The key used to look up the access token in the session state
-credentials_config = GCSCredentialsConfig(
-    external_access_token_key="YOUR_AUTH_ID"
-)
-gcs_toolset = GCSToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/gcs/004-external-auth-providers.py"
 ```
 
 ### Interactive Auth (ADK Web)
@@ -114,15 +80,7 @@ For interactive sessions using `adk web` interface to trigger an OAuth 2.0
 login flow.
 
 ```python
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# Provide OAuth 2.0 Client ID and Secret
-credentials_config = GCSCredentialsConfig(
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET"
-)
-gcs_toolset = GCSToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/gcs/005-interactive-auth-adk-web.py"
 ```
 
 ## Use with agent
@@ -131,40 +89,7 @@ The following example shows how to configure credentials and instantiate the
 storage toolset with write access enabled.
 
 ```python
-import google.auth
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.integrations.gcs import GCSToolset
-from google.adk.integrations.gcs.settings import GCSToolSettings, Capabilities
-from google.adk.integrations.gcs.gcs_credentials import GCSCredentialsConfig
-
-# 1. Load Application Default Credentials (ADC)
-application_default_credentials, _ = google.auth.default()
-
-# 2. Configure credentials config
-credentials_config = GCSCredentialsConfig(
-    credentials=application_default_credentials
-)
-
-# 3. Configure settings (allow read and write operations)
-tool_settings = GCSToolSettings(capabilities=[Capabilities.READ_WRITE])
-
-# 4. Instantiate the GCS Toolset
-gcs_toolset = GCSToolset(
-    credentials_config=credentials_config,
-    gcs_tool_settings=tool_settings
-)
-
-# 5. Define an LLM Agent with the toolset
-agent = LlmAgent(
-    model="gemini-2.5-flash",
-    name="gcs_agent",
-    description="Agent for interacting with GCS buckets and objects.",
-    instruction="""
-        You are a storage assistant agent. Use the GCS tools to answer questions,
-        list objects, upload files, or perform admin tasks as requested.
-    """,
-    tools=[gcs_toolset]
-)
+--8<-- "examples/inline/python/integrations/gcs/006-use-with-agent.py"
 ```
 
 ## Available tools

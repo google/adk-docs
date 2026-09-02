@@ -1,0 +1,11 @@
+// GetWeatherParams defines the arguments for the getWeather tool.
+type GetWeatherParams struct {
+    // Location is required.
+    Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+
+    // Unit is optional.
+    Unit string `json:"unit,omitempty" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+
+    // Days is optional.
+    Days int `json:"days,omitzero" jsonschema:"The number of forecast days to return (defaults to 1)"`
+}

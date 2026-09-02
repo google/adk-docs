@@ -1,0 +1,77 @@
+package main
+
+import (
+    "context"
+    "fmt"
+    "log"
+    "os"
+    "strings"
+
+    "google.golang.org/adk/v2/agent"
+    "google.golang.org/adk/v2/agent/llmagent"
+    "google.golang.org/adk/v2/cmd/launcher"
+    "google.golang.org/adk/v2/cmd/launcher/full"
+    "google.golang.org/adk/v2/model/gemini"
+    "google.golang.org/adk/v2/tool"
+    "google.golang.org/adk/v2/tool/functiontool"
+    "google.golang.org/genai"
+)
+
+type getCapitalCityArgs struct {
+    Country string `json:"country" jsonschema:"The country to look up."`
+}
+
+func getCapitalCity(_ tool.Context, args getCapitalCityArgs) (string, error) {
+    capitals := map[string]string{
+        "france":  "Paris",
+        "japan":   "Tokyo",
+        "canada":  "Ottawa",
+    }
+    capital, ok := capitals[strings.ToLower(args.Country)]
+    if !ok {
+        return "", fmt.Errorf("capital not found for %s", args.Country)
+    }
+    return capital, nil
+}
+
+func main() {
+    ctx := context.Background()
+
+    model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
+        APIKey: os.Getenv("GOOGLE_API_KEY"),
+    })
+    if err != nil {
+        log.Fatalf("Failed to create model: %v", err)
+    }
+
+    capitalTool, err := functiontool.New(
+        functiontool.Config{
+            Name:        "get_capital_city",
+            Description: "Retrieves the capital city for a given country.",
+        },
+        getCapitalCity,
+    )
+    if err != nil {
+        log.Fatalf("Failed to create tool: %v", err)
+    }
+
+    capitalAgent, err := llmagent.New(llmagent.Config{
+        Name:        "capital_agent",
+        Model:       model,
+        Description: "Answers questions about capital cities.",
+        Instruction: "You are an agent that provides the capital city of a country.",
+        Tools:       []tool.Tool{capitalTool},
+    })
+    if err != nil {
+        log.Fatalf("Failed to create agent: %v", err)
+    }
+
+    config := &launcher.Config{
+        AgentLoader: agent.NewSingleLoader(capitalAgent),
+    }
+
+    l := full.NewLauncher()
+    if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
+        log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+    }
+}

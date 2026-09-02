@@ -40,36 +40,7 @@ retrieve information using semantic search.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        QDRANT_URL = "http://localhost:6333"  # Or your Qdrant Cloud URL
-        COLLECTION_NAME = "my_collection"
-        # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="qdrant_agent",
-            instruction="Help users store and retrieve information using semantic search",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="uvx",
-                            args=["mcp-server-qdrant"],
-                            env={
-                                "QDRANT_URL": QDRANT_URL,
-                                "COLLECTION_NAME": COLLECTION_NAME,
-                                # "QDRANT_API_KEY": QDRANT_API_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/qdrant/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -77,33 +48,7 @@ retrieve information using semantic search.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const QDRANT_URL = "http://localhost:6333"; // Or your Qdrant Cloud URL
-        const COLLECTION_NAME = "my_collection";
-        // const QDRANT_API_KEY = "YOUR_QDRANT_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "qdrant_agent",
-            instruction: "Help users store and retrieve information using semantic search",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "uvx",
-                        args: ["mcp-server-qdrant"],
-                        env: {
-                            QDRANT_URL: QDRANT_URL,
-                            COLLECTION_NAME: COLLECTION_NAME,
-                            // QDRANT_API_KEY: QDRANT_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/qdrant/002-use-with-agent.ts"
         ```
 
 ## Available tools
@@ -133,12 +78,7 @@ Variable | Description | Default
 You can customize the tool descriptions to guide the agent's behavior:
 
 ```python
-env={
-    "QDRANT_URL": "http://localhost:6333",
-    "COLLECTION_NAME": "code-snippets",
-    "TOOL_STORE_DESCRIPTION": "Store code snippets with descriptions. The 'information' parameter should contain a description of what the code does, while the actual code should be in 'metadata.code'.",
-    "TOOL_FIND_DESCRIPTION": "Search for relevant code snippets using natural language. Describe the functionality you're looking for.",
-}
+--8<-- "examples/inline/python/integrations/qdrant/003-custom-tool-descriptions.py"
 ```
 
 ## Additional resources

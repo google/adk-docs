@@ -66,10 +66,7 @@ To enable ADK to determine which `BaseAuthProvider` to use for a given
 `CredentialManager`. This needs to be done only once in the agent code.
 
 ```python
-from google.adk.auth.credential_manager import CredentialManager
-from google.adk.integrations.agent_identity import GcpAuthProvider
-
-CredentialManager.register_auth_provider(GcpAuthProvider())
+--8<-- "examples/inline/python/integrations/agent-identity/001-register-auth-provider.py"
 ```
 
 ### Configure tools
@@ -83,21 +80,7 @@ sample](https://github.com/google/adk-python/tree/main/src/google/adk/integratio
 for a complete example.
 
 ```python
-from google.adk.integrations.agent_identity import GcpAuthProviderScheme
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool import StreamableHTTPConnectionParams
-
-auth_scheme = GcpAuthProviderScheme(
-    name="projects/PROJECT_ID/locations/LOCATION/connectors/AUTH_PROVIDER_NAME",
-    # continue_uri is only needed for 3-legged OAuth flows. This URI receives
-    # the redirect after user consent and must be hosted by your application.
-    continue_uri=CONTINUE_URI
-)
-
-toolset = McpToolset(
-    connection_params=StreamableHTTPConnectionParams(url="https://YOUR_MCP_SERVER_URL"),
-    auth_scheme=auth_scheme,
-)
+--8<-- "examples/inline/python/integrations/agent-identity/002-configure-tools.py"
 ```
 
 ### Handle OAuth consent

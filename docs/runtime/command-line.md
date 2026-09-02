@@ -34,18 +34,7 @@ Use the following command to run your agent in the ADK command line interface:
     subcommand keyword is given:
 
     ```go title="main.go"
-    import (
-        "google.golang.org/adk/v2/cmd/launcher"
-        "google.golang.org/adk/v2/cmd/launcher/full"
-    )
-
-    func main() {
-        // ... build your agent and config ...
-        l := full.NewLauncher()
-        if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
-            log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-        }
-    }
+    --8<-- "examples/inline/go/runtime/command-line/001-run-an-agent.go.txt"
     ```
 
     Run the agent in console mode with either of the following commands:

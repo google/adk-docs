@@ -1,0 +1,1 @@
+implementation("com.google.adk:google-adk-kotlin-integrations:0.8.0")

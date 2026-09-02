@@ -63,30 +63,13 @@ pre-instantiated `enterprise_web_search` tool:
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import enterprise_web_search
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="enterprise_search_agent",
-        instruction="Answer user questions accurately using enterprise-compliant web search results.",
-        tools=[enterprise_web_search],
-    )
+    --8<-- "examples/inline/python/integrations/enterprise-web-search/001-use-with-agent.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, ENTERPRISE_WEB_SEARCH } from "@google/adk";
-
-    const rootAgent = new LlmAgent({
-      model: "gemini-flash-latest",
-      name: "enterprise_search_agent",
-      instruction: "Answer user questions accurately using enterprise-compliant web search results.",
-      tools: [ENTERPRISE_WEB_SEARCH],
-    });
-
-    export { rootAgent };
+    --8<-- "examples/inline/typescript/integrations/enterprise-web-search/002-use-with-agent.ts"
     ```
     
 ## Selection guidance

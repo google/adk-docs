@@ -1,0 +1,11 @@
+// Example: Running one sub-agent and yielding its events
+for event, err := range someSubAgent.Run(ctx) {
+    if err != nil {
+        // Handle or propagate the error
+        return
+    }
+    // Yield the event up to the caller
+    if !yield(event, nil) {
+      return
+    }
+}

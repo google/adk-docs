@@ -74,66 +74,7 @@ Create an ADK agent and wrap it in a Temporal Workflow. Use `TemporalModel` to
 route LLM calls through Temporal Activities.
 
 ```python
-from contextlib import aclosing
-from datetime import timedelta
-from google.adk.agents import Agent
-from google.adk.runners import InMemoryRunner
-from google.genai import types
-from temporalio import activity, workflow
-from temporalio.common import RetryPolicy
-from temporalio.contrib.google_adk_agents import TemporalModel
-from temporalio.contrib.google_adk_agents.workflow import activity_tool
-from temporalio.workflow import ActivityConfig
-
-# A Temporal Activity
-
-@activity.defn
-async def get_weather(city: str) -> str:
-    """Get current weather for a city."""
-    # Your weather API call here
-    return f"72°F and sunny in {city}"
-
-# Wrap the activity as an ADK tool.  This tool will get memoized, retried, and timed out.
-weather_tool = activity_tool(
-    get_weather,
-    start_to_close_timeout=timedelta(seconds=30),
-    retry_policy=RetryPolicy(maximum_attempts=3),
-)
-
-# Use your agent
-agent = Agent(
-    name="weather_agent",
-    model=TemporalModel(
-      "gemini-flash-latest",
-      activity_config=ActivityConfig(summary="Weather Agent")),
-    tools=[weather_tool],
-)
-
-# Drop your agent in a Workflow to give it durable execution.
-
-@workflow.defn
-class WeatherAgentWorkflow:
-    @workflow.run
-    async def run(self, user_message: str) -> str:
-        # For testing; for production, use Runner()
-        runner = InMemoryRunner(agent=agent, app_name="weather_app")
-        session = await runner.session_service.create_session(
-            user_id="user", app_name="weather_app"
-        )
-        result = ""
-        async with aclosing(runner.run_async(
-            user_id="user",
-            session_id=session.id,
-            new_message=types.Content(
-                role="user", parts=[types.Part.from_text(text=user_message)]
-            ),
-        )) as events:
-            async for event in events:
-                if event.content and event.content.parts:
-                    for part in event.content.parts:
-                        if part.text:
-                            result = part.text
-        return result
+--8<-- "examples/inline/python/integrations/temporal/001-basic-setup.py"
 ```
 
 **2. Configure and start the worker**
@@ -142,49 +83,13 @@ Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a
 Workflow on a distributed system:
 
 ```python
-import asyncio
-from temporalio.client import Client
-from temporalio.worker import Worker
-from temporalio.contrib.google_adk_agents import GoogleAdkPlugin
-
-async def main():
-    client = await Client.connect(
-        "localhost:7233",
-        plugins=[GoogleAdkPlugin()]
-    )
-
-    worker = Worker(
-        client,
-        task_queue="my-agent-task-queue",
-        workflows=[WeatherAgentWorkflow],
-        activities=[get_weather],
-    )
-    await worker.run()
-
-asyncio.run(main())
+--8<-- "examples/inline/python/integrations/temporal/002-drop-your-agent-in-a-workflow-to-give-it.py"
 ```
 
 **3. Start a workflow execution**
 
 ```python
-import asyncio
-from temporalio.client import Client
-from temporalio.contrib.google_adk_agents import GoogleAdkPlugin
-
-async def start():
-    client = await Client.connect(
-        "localhost:7233",
-        plugins=[GoogleAdkPlugin()]
-    )
-    result = await client.execute_workflow(
-        WeatherAgentWorkflow.run,
-        "What's the weather in San Francisco?",
-        id="weather-agent-1",
-        task_queue="my-agent-task-queue",
-    )
-    print(result)
-
-asyncio.run(start())
+--8<-- "examples/inline/python/integrations/temporal/003-drop-your-agent-in-a-workflow-to-give-it.py"
 ```
 
 ### Using MCP tools
@@ -193,48 +98,7 @@ Execute [MCP](/mcp/) tools as Temporal
 Activities:
 
 ```python
-from google.adk.agents import Agent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
-from temporalio.client import Client
-from temporalio.contrib.google_adk_agents import (
-    GoogleAdkPlugin,
-    TemporalModel,
-    TemporalMcpToolSet,
-    TemporalMcpToolSetProvider,
-)
-
-# Define a shared factory for your MCP toolset.
-# Both the worker (TemporalMcpToolSetProvider) and agent (TemporalMcpToolSet) use it.
-def toolset_factory(_):
-    return McpToolset(
-        connection_params=StdioConnectionParams(
-            server_params=StdioServerParameters(
-                command="npx",
-                args=["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"],
-            ),
-        ),
-    )
-
-# The provider tells the worker how to instantiate the toolset.
-toolset_provider = TemporalMcpToolSetProvider("my-tools", toolset_factory)
-
-# Configure the client with the toolset provider
-async def main():
-    client = await Client.connect(
-        "localhost:7233",
-        plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
-    )
-    # ... start a worker or execute a workflow with this client
-
-# Reference the toolset by name when you declare your Agent (inside a @workflow.run).
-# not_in_workflow_toolset lets this agent also run locally with `adk web`.
-agent = Agent(
-    name="tool_agent",
-    model=TemporalModel("gemini-flash-latest"),
-    tools=[TemporalMcpToolSet("my-tools", not_in_workflow_toolset=toolset_factory)],
-)
+--8<-- "examples/inline/python/integrations/temporal/004-using-mcp-tools.py"
 ```
 
 ### Local development with `adk web`

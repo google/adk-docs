@@ -411,21 +411,7 @@ These components are created once when your application starts and shared across
 The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15" target="_blank">agent.py:10-15</a>'
-"""Google Search Agent definition for ADK Gemini Live API Toolkit demo."""
-
-import os
-from google.adk.agents import Agent
-from google.adk.tools import google_search
-
-# Default models for Live API with native audio support:
-# - Gemini Live API: gemini-2.5-flash-native-audio-preview-12-2025
-# - Gemini Live API (Agent Platform): gemini-live-2.5-flash-native-audio
-agent = Agent(
-    name="google_search_agent",
-    model=os.getenv("DEMO_AGENT_MODEL", "gemini-2.5-flash-native-audio-preview-12-2025"),
-    tools=[google_search],
-    instruction="You are a helpful assistant that can search the web."
-)
+--8<-- "examples/inline/python/live/dev-guide/part1/001-define-your-agent.py"
 ```
 
 The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](/agents/).
@@ -445,10 +431,7 @@ The ADK [Session](/sessions/session/) manages conversation state and history acr
 To create a `Session`, or get an existing one for a specified `session_id`, every ADK application needs to have a [SessionService](/sessions/session/#managing-sessions-with-a-sessionservice). For development purpose, ADK provides a simple `InMemorySessionService` that will lose the `Session` state when the application shuts down.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L37" target="_blank">main.py:37</a>'
-from google.adk.sessions import InMemorySessionService
-
-# Define your session service
-session_service = InMemorySessionService()
+--8<-- "examples/inline/python/live/dev-guide/part1/002-define-your-sessionservice.py"
 ```
 
 For production applications, choose a persistent session service based on your infrastructure:
@@ -476,16 +459,7 @@ Both provide session persistence capabilities—choose based on your infrastruct
 The [Runner](/runtime/) provides the runtime for the `Agent`. It manages the conversation flow, coordinates tool execution, handles events, and integrates with session storage. You create one runner instance at application startup and reuse it for all streaming sessions.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L50" target="_blank">main.py:50,53</a>'
-from google.adk.runners import Runner
-
-APP_NAME = "bidi-demo"
-
-# Define your runner
-runner = Runner(
-    app_name=APP_NAME,
-    agent=agent,
-    session_service=session_service
-)
+--8<-- "examples/inline/python/live/dev-guide/part1/003-define-your-runner.py"
 ```
 
 The `app_name` parameter is required and identifies your application in session storage. All sessions for your application are organized under this name.
@@ -532,18 +506,7 @@ This design enables scenarios like:
 The recommended production pattern is to check if a session exists first, then create it only if needed. This approach safely handles both new sessions and conversation resumption:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L155-L161" target="_blank">main.py:155-161</a>'
-# Get or create session (handles both new sessions and reconnections)
-session = await session_service.get_session(
-    app_name=APP_NAME,
-    user_id=user_id,
-    session_id=session_id
-)
-if not session:
-    await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=user_id,
-        session_id=session_id
-    )
+--8<-- "examples/inline/python/live/dev-guide/part1/004-recommended-pattern-get-or-create.py"
 ```
 
 This pattern works correctly in all scenarios:
@@ -559,18 +522,7 @@ This pattern works correctly in all scenarios:
 [RunConfig](part4.md) defines the streaming behavior for this specific session—which modalities to use (text or audio), whether to enable transcription, voice activity detection, proactivity, and other advanced features.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L110-L124" target="_blank">main.py:110-124</a>'
-from google.adk.agents.run_config import RunConfig, StreamingMode
-from google.genai import types
-
-# Native audio models require AUDIO response modality with audio transcription
-response_modalities = ["AUDIO"]
-run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI,
-    response_modalities=response_modalities,
-    input_audio_transcription=types.AudioTranscriptionConfig(),
-    output_audio_transcription=types.AudioTranscriptionConfig(),
-    session_resumption=types.SessionResumptionConfig()
-)
+--8<-- "examples/inline/python/live/dev-guide/part1/005-create-runconfig.py"
 ```
 
 `RunConfig` is **session-specific**—each streaming session can have different configuration. For example, one user might prefer text-only responses while another uses voice mode. See [Part 4: Understanding RunConfig](part4.md) for complete configuration options.
@@ -580,9 +532,7 @@ run_config = RunConfig(
 `LiveRequestQueue` is the communication channel for sending messages to the agent during streaming. It's a thread-safe async queue that buffers user messages (text content, audio blobs, activity signals) for orderly processing.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L163" target="_blank">main.py:163</a>'
-from google.adk.agents.live_request_queue import LiveRequestQueue
-
-live_request_queue = LiveRequestQueue()
+--8<-- "examples/inline/python/live/dev-guide/part1/006-create-liverequestqueue.py"
 ```
 
 `LiveRequestQueue` is **session-specific and stateful**—you create a new queue for each streaming session and close it when the session ends. Unlike `Agent` and `Runner`, queues cannot be reused across sessions.
@@ -602,18 +552,7 @@ Once the streaming loop is running, you can send messages to the agent and recei
 Use `LiveRequestQueue` methods to send different types of messages to the agent during the streaming session:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
-from google.genai import types
-
-# Send text content
-content = types.Content(parts=[types.Part(text=json_message["text"])])
-live_request_queue.send_content(content)
-
-# Send audio blob
-audio_blob = types.Blob(
-    mime_type="audio/pcm;rate=16000",
-    data=audio_data
-)
-live_request_queue.send_realtime(audio_blob)
+--8<-- "examples/inline/python/live/dev-guide/part1/007-send-messages-to-the-agent.py"
 ```
 
 These methods are **non-blocking**—they immediately add messages to the queue without waiting for processing. This enables smooth, responsive user experiences even during heavy AI processing.
@@ -625,14 +564,7 @@ See [Part 2: Sending messages with LiveRequestQueue](part2.md) for detailed API 
 The `run_live()` async generator continuously yields `Event` objects as the agent processes input and generates responses. Each event represents a discrete occurrence—partial text generation, audio chunks, tool execution, transcription, interruption, or turn completion.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
-async for event in runner.run_live(
-    user_id=user_id,
-    session_id=session_id,
-    live_request_queue=live_request_queue,
-    run_config=run_config
-):
-    event_json = event.model_dump_json(exclude_none=True, by_alias=True)
-    await websocket.send_text(event_json)
+--8<-- "examples/inline/python/live/dev-guide/part1/008-receive-and-process-events.py"
 ```
 
 Events are designed for **streaming delivery**—you receive partial responses as they're generated, not just complete messages. This enables real-time UI updates and responsive user experiences.
@@ -648,7 +580,7 @@ When the streaming session should end (user disconnects, conversation completes,
 Send a close signal through the queue to terminate the streaming loop:
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L253" target="_blank">main.py:253</a>'
-live_request_queue.close()
+--8<-- "examples/inline/python/live/dev-guide/part1/009-close-the-queue.py"
 ```
 
 This signals `run_live()` to stop yielding events and exit the async generator loop. The agent completes any in-progress processing and the streaming session ends cleanly.
@@ -664,116 +596,7 @@ Here's a complete FastAPI WebSocket application showing all four phases integrat
 **Complete Implementation:**
 
 ```python
-import asyncio
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from google.adk.runners import Runner
-from google.adk.agents.run_config import RunConfig, StreamingMode
-from google.adk.agents.live_request_queue import LiveRequestQueue
-from google.adk.sessions import InMemorySessionService
-from google.genai import types
-from google_search_agent.agent import agent
-
-# ========================================
-# Phase 1: Application Initialization (once at startup)
-# ========================================
-
-APP_NAME = "bidi-demo"
-
-app = FastAPI()
-
-# Define your session service
-session_service = InMemorySessionService()
-
-# Define your runner
-runner = Runner(
-    app_name=APP_NAME,
-    agent=agent,
-    session_service=session_service
-)
-
-# ========================================
-# WebSocket Endpoint
-# ========================================
-
-@app.websocket("/ws/{user_id}/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str) -> None:
-    await websocket.accept()
-
-    # ========================================
-    # Phase 2: Session Initialization (once per streaming session)
-    # ========================================
-
-    # Create RunConfig
-    response_modalities = ["AUDIO"]
-    run_config = RunConfig(
-        streaming_mode=StreamingMode.BIDI,
-        response_modalities=response_modalities,
-        input_audio_transcription=types.AudioTranscriptionConfig(),
-        output_audio_transcription=types.AudioTranscriptionConfig(),
-        session_resumption=types.SessionResumptionConfig()
-    )
-
-    # Get or create session
-    session = await session_service.get_session(
-        app_name=APP_NAME,
-        user_id=user_id,
-        session_id=session_id
-    )
-    if not session:
-        await session_service.create_session(
-            app_name=APP_NAME,
-            user_id=user_id,
-            session_id=session_id
-        )
-
-    # Create LiveRequestQueue
-    live_request_queue = LiveRequestQueue()
-
-    # ========================================
-    # Phase 3: Active Session (concurrent bidirectional communication)
-    # ========================================
-
-    async def upstream_task() -> None:
-        """Receives messages from WebSocket and sends to LiveRequestQueue."""
-        try:
-            while True:
-                # Receive text message from WebSocket
-                data: str = await websocket.receive_text()
-
-                # Send to LiveRequestQueue
-                content = types.Content(parts=[types.Part(text=data)])
-                live_request_queue.send_content(content)
-        except WebSocketDisconnect:
-            # Client disconnected - signal queue to close
-            pass
-
-    async def downstream_task() -> None:
-        """Receives Events from run_live() and sends to WebSocket."""
-        async for event in runner.run_live(
-            user_id=user_id,
-            session_id=session_id,
-            live_request_queue=live_request_queue,
-            run_config=run_config
-        ):
-            # Send event as JSON to WebSocket
-            await websocket.send_text(
-                event.model_dump_json(exclude_none=True, by_alias=True)
-            )
-
-    # Run both tasks concurrently
-    try:
-        await asyncio.gather(
-            upstream_task(),
-            downstream_task(),
-            return_exceptions=True
-        )
-    finally:
-        # ========================================
-        # Phase 4: Session Termination
-        # ========================================
-
-        # Always close the queue, even if exceptions occurred
-        live_request_queue.close()
+--8<-- "examples/inline/python/live/dev-guide/part1/010-fastapi-application-example.py"
 ```
 
 !!! note "Async Context Required"
@@ -794,15 +617,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
 The upstream task continuously receives messages from the WebSocket client and forwards them to the `LiveRequestQueue`. This enables the user to send messages to the agent at any time, even while the agent is generating a response.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L169-L217" target="_blank">main.py:169-217</a>'
-async def upstream_task() -> None:
-    """Receives messages from WebSocket and sends to LiveRequestQueue."""
-    try:
-        while True:
-            data: str = await websocket.receive_text()
-            content = types.Content(parts=[types.Part(text=data)])
-            live_request_queue.send_content(content)
-    except WebSocketDisconnect:
-        pass  # Client disconnected
+--8<-- "examples/inline/python/live/dev-guide/part1/011-key-concepts.py"
 ```
 
 **Downstream Task (run_live() → WebSocket)**
@@ -810,17 +625,7 @@ async def upstream_task() -> None:
 The downstream task continuously receives `Event` objects from `run_live()` and sends them to the WebSocket client. This streams the agent's responses, tool executions, transcriptions, and other events to the user in real-time.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L219-L234" target="_blank">main.py:219-234</a>'
-async def downstream_task() -> None:
-    """Receives Events from run_live() and sends to WebSocket."""
-    async for event in runner.run_live(
-        user_id=user_id,
-        session_id=session_id,
-        live_request_queue=live_request_queue,
-        run_config=run_config
-    ):
-        await websocket.send_text(
-            event.model_dump_json(exclude_none=True, by_alias=True)
-        )
+--8<-- "examples/inline/python/live/dev-guide/part1/012-key-concepts.py"
 ```
 
 **Concurrent Execution with Cleanup**
@@ -828,14 +633,7 @@ async def downstream_task() -> None:
 Both tasks run concurrently using `asyncio.gather()`, enabling true Bidi-streaming. The `try/finally` block ensures `LiveRequestQueue.close()` is called even if exceptions occur, minimizing the session resource usage.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L238-L253" target="_blank">main.py:238-253</a>'
-try:
-    await asyncio.gather(
-        upstream_task(),
-        downstream_task(),
-        return_exceptions=True
-    )
-finally:
-    live_request_queue.close()  # Always cleanup
+--8<-- "examples/inline/python/live/dev-guide/part1/013-key-concepts.py"
 ```
 
 This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is the foundation of production-ready streaming applications. The lifecycle pattern (initialize once, stream many times) enables efficient resource usage and clean separation of concerns, with application components remaining stateless and reusable while session-specific state is isolated in `LiveRequestQueue`, `RunConfig`, and session records.

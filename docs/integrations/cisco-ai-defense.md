@@ -54,20 +54,13 @@ for tool inspection).
 Add Cisco AI Defense to any ADK agent with a single line:
 
 ```python
-from aidefense_google_adk import defend
-
-agent = defend(agent, mode="enforce")
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/001-quickstart.py"
 ```
 
 Or get a plugin for the entire app:
 
 ```python
-from google.adk.apps import App
-
-from aidefense_google_adk import defend
-
-plugin = defend(mode="enforce")
-app = App(name="my_app", root_agent=agent, plugins=[plugin])
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/002-quickstart.py"
 ```
 
 ### Global plugin
@@ -76,27 +69,7 @@ Use `CiscoAIDefensePlugin` to apply inspection globally to all agents in a
 Runner:
 
 ```python
-from google.adk.agents import LlmAgent
-from google.adk.apps import App
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-
-from aidefense_google_adk import CiscoAIDefensePlugin
-
-agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="assistant",
-    instruction="You are a helpful assistant.",
-)
-
-app = App(
-    name="my_app",
-    root_agent=agent,
-    plugins=[
-        CiscoAIDefensePlugin(mode="enforce"),
-    ],
-)
-runner = Runner(app=app, session_service=InMemorySessionService())
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/003-global-plugin.py"
 ```
 
 ### Per-agent callbacks
@@ -104,17 +77,7 @@ runner = Runner(app=app, session_service=InMemorySessionService())
 Use `make_aidefense_callbacks` to wire inspection into a specific agent:
 
 ```python
-from google.adk.agents import LlmAgent
-from aidefense_google_adk import make_aidefense_callbacks
-
-cbs = make_aidefense_callbacks(mode="enforce")
-
-agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="assistant",
-    instruction="You are a helpful assistant.",
-)
-cbs.apply_to(agent)  # wires all 4 callbacks
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/004-per-agent-callbacks.py"
 ```
 
 ## Modes
@@ -130,11 +93,7 @@ Mode | Behavior
 Modes can be set globally or per-channel:
 
 ```python
-CiscoAIDefensePlugin(
-    mode="monitor",      # default for both
-    llm_mode="enforce",  # override for LLM only
-    mcp_mode="off",      # override for tools only
-)
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/005-modes.py"
 ```
 
 ## Violation callback
@@ -143,13 +102,7 @@ Use the `on_violation` callback to receive notifications for every violation in
 both `monitor` and `enforce` modes:
 
 ```python
-def handle_violation(result):
-    print(f"Violation: {result.action} / {result.severity}")
-
-CiscoAIDefensePlugin(
-    mode="monitor",
-    on_violation=handle_violation,
-)
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/006-violation-callback.py"
 ```
 
 ## Retry and fail-open support
@@ -158,31 +111,13 @@ For automatic retry with exponential backoff, fail-open/fail-closed semantics,
 and structured `Decision` objects, use the `AgentsecPlugin` variant:
 
 ```python
-from google.adk.apps import App
-
-from aidefense_google_adk import AgentsecPlugin
-
-app = App(
-    name="my_app",
-    root_agent=agent,
-    plugins=[
-        AgentsecPlugin(
-            mode="enforce",
-            fail_open=True,
-            retry_total=3,
-            retry_backoff=0.5,
-        ),
-    ],
-)
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/007-retry-and-fail-open-support.py"
 ```
 
 Or at the per-agent level:
 
 ```python
-from aidefense_google_adk import make_agentsec_callbacks
-
-cbs = make_agentsec_callbacks(mode="enforce", fail_open=True)
-cbs.apply_to(agent)
+--8<-- "examples/inline/python/integrations/cisco-ai-defense/008-retry-and-fail-open-support.py"
 ```
 
 ## Additional resources

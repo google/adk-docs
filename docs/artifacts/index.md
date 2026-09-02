@@ -21,77 +21,25 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 === "Python"
 
     ```py
-    # Example of how an artifact might be represented as a types.Part
-    import google.genai.types as types
-
-    # Assume 'image_bytes' contains the binary data of a PNG image
-    image_bytes = b'\x89PNG\r\n\x1a\n...' # Placeholder for actual image bytes
-
-    image_artifact = types.Part(
-        inline_data=types.Blob(
-            mime_type="image/png",
-            data=image_bytes
-        )
-    )
-
-    # You can also use the convenience constructor:
-    # image_artifact_alt = types.Part.from_bytes(data=image_bytes, mime_type="image/png")
-
-    print(f"Artifact MIME Type: {image_artifact.inline_data.mime_type}")
-    print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
+    --8<-- "examples/inline/python/artifacts/index/001-what-are-artifacts.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {createPartFromBase64, type Part} from '@google/genai';
-
-    // Assume 'imageBytes' contains the binary data of a PNG image.
-    const imageBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
-
-    // Using Buffer.from(bytes).toString('base64') for Node.js environments.
-    const imageArtifact: Part = createPartFromBase64(
-      Buffer.from(imageBytes).toString('base64'),
-      'image/png',
-    );
-
-    console.log(`Artifact MIME Type: ${imageArtifact.inlineData?.mimeType}`);
-    // Note: Accessing raw bytes would require decoding from base64.
+    --8<-- "examples/inline/typescript/artifacts/index/002-what-are-artifacts.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-      "log"
-
-      "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/artifacts/main.go:representation"
+    --8<-- "examples/inline/go/artifacts/index/003-what-are-artifacts.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.genai.types.Part;
-    import java.nio.charset.StandardCharsets;
-
-    public class ArtifactExample {
-        public static void main(String[] args) {
-            // Assume 'imageBytes' contains the binary data of a PNG image
-            byte[] imageBytes = {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, (byte) 0x0D, (byte) 0x0A, (byte) 0x1A, (byte) 0x0A, (byte) 0x01, (byte) 0x02}; // Placeholder for actual image bytes
-
-            // Create an image artifact using Part.fromBytes
-            Part imageArtifact = Part.fromBytes(imageBytes, "image/png");
-
-            System.out.println("Artifact MIME Type: " + imageArtifact.inlineData().get().mimeType().get());
-            System.out.println(
-                "Artifact Data (first 10 bytes): "
-                    + new String(imageArtifact.inlineData().get().data().get(), 0, 10, StandardCharsets.UTF_8)
-                    + "...");
-        }
-    }
+    --8<-- "examples/inline/java/artifacts/index/004-what-are-artifacts.java"
     ```
 
 === "Kotlin"
@@ -168,88 +116,25 @@ Understanding artifacts involves grasping a few key components: the service that
 === "Python"
 
     ```py
-    from google.adk.runners import Runner
-    from google.adk.artifacts import InMemoryArtifactService # Or GcsArtifactService
-    from google.adk.agents import LlmAgent # Any agent
-    from google.adk.sessions import InMemorySessionService
-
-    # Example: Configuring the Runner with an Artifact Service
-    my_agent = LlmAgent(name="artifact_user_agent", model="gemini-flash-latest")
-    artifact_service = InMemoryArtifactService() # Choose an implementation
-    session_service = InMemorySessionService()
-
-    runner = Runner(
-        agent=my_agent,
-        app_name="my_artifact_app",
-        session_service=session_service,
-        artifact_service=artifact_service # Provide the service instance here
-    )
-    # Now, contexts within runs managed by this runner can use artifact methods
+    --8<-- "examples/inline/python/artifacts/index/005-artifact-service-baseartifactservice.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {
-      InMemoryArtifactService,
-      InMemorySessionService,
-      LlmAgent,
-      Runner,
-    } from '@google/adk';
-
-    // Example: Configuring the Runner with an Artifact Service
-    const myAgent = new LlmAgent({
-      name: 'artifact_user_agent',
-      model: 'gemini-flash-latest',
-    });
-    const artifactService = new InMemoryArtifactService();
-    const sessionService = new InMemorySessionService();
-
-    const runner = new Runner({
-      agent: myAgent,
-      appName: 'my_artifact_app',
-      sessionService: sessionService,
-      artifactService: artifactService,
-    });
-    // Now, contexts within runs managed by this runner can use artifact methods.
+    --8<-- "examples/inline/typescript/artifacts/index/006-artifact-service-baseartifactservice.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-      "context"
-      "log"
-
-      "google.golang.org/adk/v2/agent/llmagent"
-      "google.golang.org/adk/v2/artifact"
-      "google.golang.org/adk/v2/model/gemini"
-      "google.golang.org/adk/v2/runner"
-      "google.golang.org/adk/v2/session"
-      "google.golang.org/genai"
-	)
-
-	--8<-- "examples/go/snippets/artifacts/main.go:configure-runner"
+    --8<-- "examples/inline/go/artifacts/index/007-artifact-service-baseartifactservice.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.runner.Runner;
-    import com.google.adk.sessions.InMemorySessionService;
-    import com.google.adk.artifacts.InMemoryArtifactService;
-
-    // Example: Configuring the Runner with an Artifact Service
-    LlmAgent myAgent =  LlmAgent.builder()
-      .name("artifact_user_agent")
-      .model("gemini-flash-latest")
-      .build();
-    InMemoryArtifactService artifactService = new InMemoryArtifactService(); // Choose an implementation
-    InMemorySessionService sessionService = new InMemorySessionService();
-
-    Runner runner = new Runner(myAgent, "my_artifact_app", artifactService, sessionService); // Provide the service instance here
-    // Now, contexts within runs managed by this runner can use artifact methods
+    --8<-- "examples/inline/java/artifacts/index/008-artifact-service-baseartifactservice.java"
     ```
 
 === "Kotlin"
@@ -270,51 +155,19 @@ Understanding artifacts involves grasping a few key components: the service that
 === "Python"
 
     ```python
-    import google.genai.types as types
-
-    # Example: Creating an artifact Part from raw bytes
-    pdf_bytes = b'%PDF-1.4...' # Your raw PDF data
-    pdf_mime_type = "application/pdf"
-
-    # Using the constructor
-    pdf_artifact_py = types.Part(
-        inline_data=types.Blob(data=pdf_bytes, mime_type=pdf_mime_type)
-    )
-
-    # Using the convenience class method (equivalent)
-    pdf_artifact_alt_py = types.Part.from_bytes(data=pdf_bytes, mime_type=pdf_mime_type)
-
-    print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
+    --8<-- "examples/inline/python/artifacts/index/009-artifact-data.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {createPartFromBase64, type Part} from '@google/genai';
-
-    // Example: Creating an artifact Part from raw bytes.
-    const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]);
-    const pdfMimeType = 'application/pdf';
-
-    // Using Buffer.from(bytes).toString('base64') for Node.js environments.
-    const pdfArtifact: Part = createPartFromBase64(
-      Buffer.from(pdfBytes).toString('base64'),
-      pdfMimeType,
-    );
-    console.log(`Created TypeScript artifact with MIME Type: ${pdfArtifact.inlineData?.mimeType}`);
+    --8<-- "examples/inline/typescript/artifacts/index/010-artifact-data.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-      "log"
-      "os"
-
-      "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/artifacts/main.go:artifact-data"
+    --8<-- "examples/inline/go/artifacts/index/011-artifact-data.go.txt"
     ```
 
 === "Java"
@@ -359,66 +212,25 @@ Understanding artifacts involves grasping a few key components: the service that
 === "Python"
 
     ```python
-    # Example illustrating namespace difference (conceptual)
-
-    # Session-specific artifact filename
-    session_report_filename = "summary.txt"
-
-    # User-specific artifact filename
-    user_config_filename = "user:settings.json"
-
-    # When saving 'summary.txt' via context.save_artifact,
-    # it's tied to the current app_name, user_id, and session_id.
-
-    # When saving 'user:settings.json' via context.save_artifact,
-    # the ArtifactService implementation should recognize the "user:" prefix
-    # and scope it to app_name and user_id, making it accessible across sessions for that user.
+    --8<-- "examples/inline/python/artifacts/index/012-namespacing-session-vs-user.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Example illustrating namespace difference (conceptual)
-
-    // Session-specific artifact filename
-    const sessionReportFilename = "summary.txt";
-
-    // User-specific artifact filename
-    const userConfigFilename = "user:settings.json";
-
-    // When saving 'summary.txt' via context.saveArtifact, it's tied to the current appName, userId, and sessionId.
-    // When saving 'user:settings.json' via context.saveArtifact, the ArtifactService implementation recognizes the "user:" prefix and scopes it to appName and userId, making it accessible across sessions for that user.
+    --8<-- "examples/inline/typescript/artifacts/index/013-namespacing-session-vs-user.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-      "log"
-    )
-
-    --8<-- "examples/go/snippets/artifacts/main.go:namespacing"
+    --8<-- "examples/inline/go/artifacts/index/014-namespacing-session-vs-user.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // Example illustrating namespace difference (conceptual)
-
-    // Session-specific artifact filename
-    String sessionReportFilename = "summary.txt";
-
-    // User-specific artifact filename
-    String userConfigFilename = "user:settings.json"; // The "user:" prefix is key
-
-    // When saving 'summary.txt' via context.save_artifact,
-    // it's tied to the current app_name, user_id, and session_id.
-    // artifactService.saveArtifact(appName, userId, sessionId1, sessionReportFilename, someData);
-
-    // When saving 'user:settings.json' via context.save_artifact,
-    // the ArtifactService implementation should recognize the "user:" prefix
-    // and scope it to app_name and user_id, making it accessible across sessions for that user.
-    // artifactService.saveArtifact(appName, userId, sessionId1, userConfigFilename, someData);
+    --8<-- "examples/inline/java/artifacts/index/015-namespacing-session-vs-user.java"
     ```
 
 === "Kotlin"
@@ -444,73 +256,21 @@ Before you can use any artifact methods via the context objects, you **must** pr
     In Python, you provide this instance when initializing your `Runner`.
 
     ```python
-    from google.adk.runners import Runner
-    from google.adk.artifacts import InMemoryArtifactService # Or GcsArtifactService
-    from google.adk.agents import LlmAgent
-    from google.adk.sessions import InMemorySessionService
-
-    # Your agent definition
-    agent = LlmAgent(name="my_agent", model="gemini-flash-latest")
-
-    # Instantiate the desired artifact service
-    artifact_service = InMemoryArtifactService()
-
-    # Provide it to the Runner
-    runner = Runner(
-        agent=agent,
-        app_name="artifact_app",
-        session_service=InMemorySessionService(),
-        artifact_service=artifact_service # Service must be provided here
-    )
+    --8<-- "examples/inline/python/artifacts/index/016-prerequisite-configuring-the-artifactser.py"
     ```
     If no `artifact_service` is configured in the `InvocationContext` (which happens if it's not passed to the `Runner`), calling `save_artifact`, `load_artifact`, or `list_artifacts` on the context objects will raise a `ValueError`.
 
 === "TypeScript"
 
     ```typescript
-    import {
-      InMemoryArtifactService,
-      InMemorySessionService,
-      LlmAgent,
-      Runner,
-    } from '@google/adk';
-
-    // Your agent definition.
-    const agent = new LlmAgent({
-      name: 'my_agent',
-      model: 'gemini-flash-latest',
-    });
-
-    // Instantiate the desired artifact service.
-    const artifactService = new InMemoryArtifactService();
-
-    // Provide it to the Runner.
-    const runner = new Runner({
-      agent: agent,
-      appName: 'artifact_app',
-      sessionService: new InMemorySessionService(),
-      artifactService: artifactService,
-    });
-    // If no artifactService is configured, calling artifact methods on context objects will throw an error.
+    --8<-- "examples/inline/typescript/artifacts/index/017-prerequisite-configuring-the-artifactser.ts"
     ```
     In Java, if an `ArtifactService` instance is not available (e.g., `null`) when artifact operations are attempted, it would typically result in a `NullPointerException` or a custom error, depending on how your application is structured. Robust applications often use dependency injection frameworks to manage service lifecycles and ensure availability.
 
 === "Go"
 
     ```go
-    import (
-      "context"
-      "log"
-
-      "google.golang.org/adk/v2/agent/llmagent"
-      "google.golang.org/adk/v2/artifact"
-      "google.golang.org/adk/v2/model/gemini"
-      "google.golang.org/adk/v2/runner"
-      "google.golang.org/adk/v2/session"
-      "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/artifacts/main.go:prerequisite"
+    --8<-- "examples/inline/go/artifacts/index/018-prerequisite-configuring-the-artifactser.go.txt"
     ```
 
 === "Java"
@@ -518,32 +278,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     In Java, you would instantiate a `BaseArtifactService` implementation and then ensure it's accessible to the parts of your application that manage artifacts. This is often done through dependency injection or by explicitly passing the service instance.
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.artifacts.InMemoryArtifactService; // Or GcsArtifactService
-    import com.google.adk.runner.Runner;
-    import com.google.adk.sessions.InMemorySessionService;
-
-    public class SampleArtifactAgent {
-
-      public static void main(String[] args) {
-
-        // Your agent definition
-        LlmAgent agent = LlmAgent.builder()
-            .name("my_agent")
-            .model("gemini-flash-latest")
-            .build();
-
-        // Instantiate the desired artifact service
-        InMemoryArtifactService artifactService = new InMemoryArtifactService();
-
-        // Provide it to the Runner
-        Runner runner = new Runner(agent,
-            "APP_NAME",
-            artifactService, // Service must be provided here
-            new InMemorySessionService());
-
-      }
-    }
+    --8<-- "examples/inline/java/artifacts/index/019-prerequisite-configuring-the-artifactser.java"
     ```
 
 === "Kotlin"
@@ -566,106 +301,24 @@ The artifact interaction methods are available directly on instances of `Callbac
     === "Python"
 
         ```python
-        import google.genai.types as types
-        from google.adk.agents.callback_context import CallbackContext # Or ToolContext
-
-        async def save_generated_report_py(context: CallbackContext, report_bytes: bytes):
-            """Saves generated PDF report bytes as an artifact."""
-            report_artifact = types.Part.from_bytes(
-                data=report_bytes,
-                mime_type="application/pdf"
-            )
-            filename = "generated_report.pdf"
-
-            try:
-                version = await context.save_artifact(filename=filename, artifact=report_artifact)
-                print(f"Successfully saved Python artifact '{filename}' as version {version}.")
-                # The event generated after this callback will contain:
-                # event.actions.artifact_delta == {"generated_report.pdf": version}
-            except ValueError as e:
-                print(f"Error saving Python artifact: {e}. Is ArtifactService configured in Runner?")
-            except Exception as e:
-                # Handle potential storage errors (e.g., GCS permissions)
-                print(f"An unexpected error occurred during Python artifact save: {e}")
-
-        # --- Example Usage Concept (Python) ---
-        # async def main_py():
-        #   callback_context: CallbackContext = ... # obtain context
-        #   report_data = b'...' # Assume this holds the PDF bytes
-        #   await save_generated_report_py(callback_context, report_data)
+        --8<-- "examples/inline/python/artifacts/index/020-saving-artifacts.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        import {Context} from '@google/adk';
-        import {createPartFromBase64, type Part} from '@google/genai';
-
-        async function saveGeneratedReport(context: Context, reportBytes: Uint8Array): Promise<void> {
-          /** Saves generated PDF report bytes as an artifact. */
-          const reportArtifact: Part = createPartFromBase64(
-            Buffer.from(reportBytes).toString('base64'),
-            'application/pdf',
-          );
-
-          const filename = 'generated_report.pdf';
-
-          try {
-            const version = await context.saveArtifact(filename, reportArtifact);
-            console.log(`Successfully saved TypeScript artifact '${filename}' as version ${version}.`);
-          } catch (e: any) {
-            console.error(
-              `Error saving TypeScript artifact: ${e.message}. Is ArtifactService configured in Runner?`,
-            );
-          }
-        }
+        --8<-- "examples/inline/typescript/artifacts/index/021-saving-artifacts.ts"
         ```
     === "Go"
 
         ```go
-        import (
-          "log"
-
-          "google.golang.org/adk/v2/agent"
-          "google.golang.org/adk/v2/model"
-          "google.golang.org/genai"
-        )
-
-        --8<-- "examples/go/snippets/artifacts/main.go:saving-artifacts"
+        --8<-- "examples/inline/go/artifacts/index/022-saving-artifacts.go.txt"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.agents.CallbackContext;
-        import com.google.adk.artifacts.BaseArtifactService;
-        import com.google.adk.artifacts.InMemoryArtifactService;
-        import com.google.genai.types.Part;
-        import java.nio.charset.StandardCharsets;
-
-        public class SaveArtifactExample {
-
-        public void saveGeneratedReport(CallbackContext callbackContext, byte[] reportBytes) {
-        // Saves generated PDF report bytes as an artifact.
-        Part reportArtifact = Part.fromBytes(reportBytes, "application/pdf");
-        String filename = "generatedReport.pdf";
-
-            callbackContext.saveArtifact(filename, reportArtifact);
-            System.out.println("Successfully saved Java artifact '" + filename);
-            // The event generated after this callback will contain:
-            // event().actions().artifactDelta == {"generated_report.pdf": version}
-        }
-
-        // --- Example Usage Concept (Java) ---
-        public static void main(String[] args) {
-            BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
-            SaveArtifactExample myTool = new SaveArtifactExample();
-            byte[] reportData = "...".getBytes(StandardCharsets.UTF_8); // PDF bytes
-            CallbackContext callbackContext; // ... obtain callback context from your app
-            myTool.saveGeneratedReport(callbackContext, reportData);
-            // Due to async nature, in a real app, ensure program waits or handles completion.
-          }
-        }
+        --8<-- "examples/inline/java/artifacts/index/023-saving-artifacts.java"
         ```
 
     === "Kotlin"
@@ -683,170 +336,25 @@ The artifact interaction methods are available directly on instances of `Callbac
     === "Python"
 
         ```python
-        import google.genai.types as types
-        from google.adk.agents.callback_context import CallbackContext # Or ToolContext
-
-        async def process_latest_report_py(context: CallbackContext):
-            """Loads the latest report artifact and processes its data."""
-            filename = "generated_report.pdf"
-            try:
-                # Load the latest version
-                report_artifact = await context.load_artifact(filename=filename)
-
-                if report_artifact and report_artifact.inline_data:
-                    print(f"Successfully loaded latest Python artifact '{filename}'.")
-                    print(f"MIME Type: {report_artifact.inline_data.mime_type}")
-                    # Process the report_artifact.inline_data.data (bytes)
-                    pdf_bytes = report_artifact.inline_data.data
-                    print(f"Report size: {len(pdf_bytes)} bytes.")
-                    # ... further processing ...
-                else:
-                    print(f"Python artifact '{filename}' not found.")
-
-                # Example: Load a specific version (if version 0 exists)
-                # specific_version_artifact = await context.load_artifact(filename=filename, version=0)
-                # if specific_version_artifact:
-                #     print(f"Loaded version 0 of '{filename}'.")
-
-            except ValueError as e:
-                print(f"Error loading Python artifact: {e}. Is ArtifactService configured?")
-            except Exception as e:
-                # Handle potential storage errors
-                print(f"An unexpected error occurred during Python artifact load: {e}")
-
-        # --- Example Usage Concept (Python) ---
-        # async def main_py():
-        #   callback_context: CallbackContext = ... # obtain context
-        #   await process_latest_report_py(callback_context)
+        --8<-- "examples/inline/python/artifacts/index/024-loading-artifacts.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        import {Context} from '@google/adk';
-
-        async function processLatestReport(context: Context): Promise<void> {
-          /** Loads the latest report artifact and processes its data. */
-          const filename = 'generated_report.pdf';
-          try {
-            // Load the latest version
-            const reportArtifact = await context.loadArtifact(filename);
-
-            if (reportArtifact?.inlineData) {
-              console.log(`Successfully loaded latest TypeScript artifact '${filename}'.`);
-              console.log(`MIME Type: ${reportArtifact.inlineData.mimeType}`);
-              // Process the reportArtifact.inlineData.data (base64 string)
-              const pdfData = Buffer.from(reportArtifact.inlineData.data || '', 'base64');
-              console.log(`Report size: ${pdfData.length} bytes.`);
-              // ... further processing ...
-            } else {
-              console.log(`TypeScript artifact '${filename}' not found.`);
-            }
-          } catch (e: any) {
-            console.error(
-              `Error loading TypeScript artifact: ${e.message}. Is ArtifactService configured?`,
-            );
-          }
-        }
+        --8<-- "examples/inline/typescript/artifacts/index/025-loading-artifacts.ts"
         ```
 
     === "Go"
 
         ```go
-        import (
-          "log"
-
-          "google.golang.org/adk/v2/agent"
-          "google.golang.org/adk/v2/model"
-        )
-
-        --8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"
+        --8<-- "examples/inline/go/artifacts/index/026-loading-artifacts.go.txt"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.artifacts.BaseArtifactService;
-        import com.google.genai.types.Part;
-        import io.reactivex.rxjava3.core.MaybeObserver;
-        import io.reactivex.rxjava3.disposables.Disposable;
-        import java.util.Optional;
-
-        public class MyArtifactLoaderService {
-
-            private final BaseArtifactService artifactService;
-            private final String appName;
-
-            public MyArtifactLoaderService(BaseArtifactService artifactService, String appName) {
-                this.artifactService = artifactService;
-                this.appName = appName;
-            }
-
-            public void processLatestReportJava(String userId, String sessionId, String filename) {
-                // Load the latest version by passing Optional.empty() for the version
-                artifactService
-                        .loadArtifact(appName, userId, sessionId, filename, Optional.empty())
-                        .subscribe(
-                                new MaybeObserver<Part>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
-                                        // Optional: handle subscription
-                                    }
-
-                                    @Override
-                                    public void onSuccess(Part reportArtifact) {
-                                        System.out.println(
-                                                "Successfully loaded latest Java artifact '" + filename + "'.");
-                                        reportArtifact
-                                                .inlineData()
-                                                .ifPresent(
-                                                        blob -> {
-                                                            System.out.println(
-                                                                    "MIME Type: " + blob.mimeType().orElse("N/A"));
-                                                            byte[] pdfBytes = blob.data().orElse(new byte[0]);
-                                                            System.out.println("Report size: " + pdfBytes.length + " bytes.");
-                                                            // ... further processing of pdfBytes ...
-                                                        });
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        // Handle potential storage errors or other exceptions
-                                        System.err.println(
-                                                "An error occurred during Java artifact load for '"
-                                                        + filename
-                                                        + "': "
-                                                        + e.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onComplete() {
-                                        // Called if the artifact (latest version) is not found
-                                        System.out.println("Java artifact '" + filename + "' not found.");
-                                    }
-                                });
-
-                // Example: Load a specific version (e.g., version 0)
-                /*
-                artifactService.loadArtifact(appName, userId, sessionId, filename, Optional.of(0))
-                    .subscribe(part -> {
-                        System.out.println("Loaded version 0 of Java artifact '" + filename + "'.");
-                    }, throwable -> {
-                        System.err.println("Error loading version 0 of '" + filename + "': " + throwable.getMessage());
-                    }, () -> {
-                        System.out.println("Version 0 of Java artifact '" + filename + "' not found.");
-                    });
-                */
-            }
-
-            // --- Example Usage Concept (Java) ---
-            public static void main(String[] args) {
-                // BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
-                // MyArtifactLoaderService loader = new MyArtifactLoaderService(service, "myJavaApp");
-                // loader.processLatestReportJava("user123", "sessionABC", "java_report.pdf");
-                // Due to async nature, in a real app, ensure program waits or handles completion.
-            }
-        }
+        --8<-- "examples/inline/java/artifacts/index/027-loading-artifacts.java"
         ```
 
     === "Kotlin"
@@ -874,20 +382,7 @@ artifact in a later turn.
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.tools.load_artifacts_tool import LoadArtifactsTool
-
-    root_agent = LlmAgent(
-        name="artifact_reader",
-        model="gemini-flash-latest",
-        instruction=(
-            "Answer questions about available user files. "
-            "Call load_artifacts before answering when you need file contents."
-        ),
-        tools=[
-            LoadArtifactsTool(),
-        ],
-    )
+    --8<-- "examples/inline/python/artifacts/index/028-using-loadartifactstool.py"
     ```
 
     Make sure the `Runner` for this agent is configured with an
@@ -903,9 +398,7 @@ artifact in a later turn.
     them into Markdown tables:
 
     ```python
-    tools=[
-        LoadArtifactsTool(enable_spreadsheet_parsing=True),
-    ]
+    --8<-- "examples/inline/python/artifacts/index/029-using-loadartifactstool.py"
     ```
 
     - Each sheet is rendered as a separate Markdown table under a sheet heading.
@@ -915,21 +408,7 @@ artifact in a later turn.
 === "Go"
 
     ```go
-    import (
-      "google.golang.org/adk/v2/agent/llmagent"
-      "google.golang.org/adk/v2/tool"
-      "google.golang.org/adk/v2/tool/loadartifactstool"
-    )
-
-    agent, err := llmagent.New(llmagent.Config{
-        Name:        "artifact_reader",
-        Model:       model,
-        Instruction: "Answer questions about available user files. " +
-            "When user asks about artifacts, load them and describe them.",
-        Tools: []tool.Tool{
-            loadartifactstool.New(),
-        },
-    })
+    --8<-- "examples/inline/go/artifacts/index/030-using-loadartifactstool.go.txt"
     ```
 
     Make sure the `runner.Config` for this agent includes an
@@ -951,148 +430,25 @@ artifact in a later turn.
     === "Python"
 
         ```python
-        from google.adk.tools.tool_context import ToolContext
-
-        async def list_user_files_py(tool_context: ToolContext) -> str:
-            """Tool to list available artifacts for the user."""
-            try:
-                available_files = await tool_context.list_artifacts()
-                if not available_files:
-                    return "You have no saved artifacts."
-                else:
-                    # Format the list for the user/LLM
-                    file_list_str = "\n".join([f"- {fname}" for fname in available_files])
-                    return f"Here are your available Python artifacts:\n{file_list_str}"
-            except ValueError as e:
-                print(f"Error listing Python artifacts: {e}. Is ArtifactService configured?")
-                return "Error: Could not list Python artifacts."
-            except Exception as e:
-                print(f"An unexpected error occurred during Python artifact list: {e}")
-                return "Error: An unexpected error occurred while listing Python artifacts."
-
-        # This function would typically be wrapped in a FunctionTool
-        # from google.adk.tools import FunctionTool
-        # list_files_tool = FunctionTool(func=list_user_files_py)
+        --8<-- "examples/inline/python/artifacts/index/031-listing-artifact-filenames.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        import {Context} from '@google/adk';
-
-        async function listUserFiles(context: Context): Promise<string> {
-          /** Tool to list available artifacts for the user. */
-          try {
-            const availableFiles = await context.listArtifacts();
-            if (!availableFiles || availableFiles.length === 0) {
-              return 'You have no saved artifacts.';
-            } else {
-              // Format the list for the user/LLM
-              const fileListStr = availableFiles.map((fname) => `- ${fname}`).join('\n');
-              return `Here are your available TypeScript artifacts:\n${fileListStr}`;
-            }
-          } catch (e: any) {
-            console.error(
-              `Error listing TypeScript artifacts: ${e.message}. Is ArtifactService configured?`,
-            );
-            return 'Error: Could not list TypeScript artifacts.';
-          }
-        }
+        --8<-- "examples/inline/typescript/artifacts/index/032-listing-artifact-filenames.ts"
         ```
 
     === "Go"
 
         ```go
-        import (
-          "fmt"
-          "log"
-          "strings"
-
-          "google.golang.org/adk/v2/agent"
-          "google.golang.org/adk/v2/model"
-          "google.golang.org/genai"
-        )
-
-        --8<-- "examples/go/snippets/artifacts/main.go:listing-artifacts"
+        --8<-- "examples/inline/go/artifacts/index/033-listing-artifact-filenames.go.txt"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.artifacts.BaseArtifactService;
-        import com.google.adk.artifacts.ListArtifactsResponse;
-        import com.google.common.collect.ImmutableList;
-        import io.reactivex.rxjava3.core.SingleObserver;
-        import io.reactivex.rxjava3.disposables.Disposable;
-
-        public class MyArtifactListerService {
-
-            private final BaseArtifactService artifactService;
-            private final String appName;
-
-            public MyArtifactListerService(BaseArtifactService artifactService, String appName) {
-                this.artifactService = artifactService;
-                this.appName = appName;
-            }
-
-            // Example method that might be called by a tool or agent logic
-            public void listUserFilesJava(String userId, String sessionId) {
-                artifactService
-                        .listArtifactKeys(appName, userId, sessionId)
-                        .subscribe(
-                                new SingleObserver<ListArtifactsResponse>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
-                                        // Optional: handle subscription
-                                    }
-
-                                    @Override
-                                    public void onSuccess(ListArtifactsResponse response) {
-                                        ImmutableList<String> availableFiles = response.filenames();
-                                        if (availableFiles.isEmpty()) {
-                                            System.out.println(
-                                                    "User "
-                                                            + userId
-                                                            + " in session "
-                                                            + sessionId
-                                                            + " has no saved Java artifacts.");
-                                        } else {
-                                            StringBuilder fileListStr =
-                                                    new StringBuilder(
-                                                            "Here are the available Java artifacts for user "
-                                                                    + userId
-                                                                    + " in session "
-                                                                    + sessionId
-                                                                    + ":\n");
-                                            for (String fname : availableFiles) {
-                                                fileListStr.append("- ").append(fname).append("\n");
-                                            }
-                                            System.out.println(fileListStr.toString());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        System.err.println(
-                                                "Error listing Java artifacts for user "
-                                                        + userId
-                                                        + " in session "
-                                                        + sessionId
-                                                        + ": "
-                                                        + e.getMessage());
-                                        // In a real application, you might return an error message to the user/LLM
-                                    }
-                                });
-            }
-
-            // --- Example Usage Concept (Java) ---
-            public static void main(String[] args) {
-                // BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
-                // MyArtifactListerService lister = new MyArtifactListerService(service, "myJavaApp");
-                // lister.listUserFilesJava("user123", "sessionABC");
-                // Due to async nature, in a real app, ensure program waits or handles completion.
-            }
-        }
+        --8<-- "examples/inline/java/artifacts/index/034-listing-artifact-filenames.java"
         ```
 
 === "Kotlin"
@@ -1124,60 +480,25 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
     === "Python"
 
         ```python
-        from google.adk.artifacts import InMemoryArtifactService
-
-        # Simply instantiate the class
-        in_memory_service_py = InMemoryArtifactService()
-
-        # Then pass it to the Runner
-        # runner = Runner(..., artifact_service=in_memory_service_py)
+        --8<-- "examples/inline/python/artifacts/index/035-inmemoryartifactservice.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        import {InMemoryArtifactService} from '@google/adk';
-
-        // Simply instantiate the class
-        const inMemoryService = new InMemoryArtifactService();
-
-        // This instance would then be provided to your Runner.
-        // const runner = new Runner({
-        //   /* other services */,
-        //   artifactService: inMemoryService
-        // });
+        --8<-- "examples/inline/typescript/artifacts/index/036-inmemoryartifactservice.ts"
         ```
 
     === "Go"
 
         ```go
-        import (
-          "google.golang.org/adk/v2/artifact"
-        )
-
-        --8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"
+        --8<-- "examples/inline/go/artifacts/index/037-inmemoryartifactservice.go.txt"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.artifacts.BaseArtifactService;
-        import com.google.adk.artifacts.InMemoryArtifactService;
-
-        public class InMemoryServiceSetup {
-            public static void main(String[] args) {
-                // Simply instantiate the class
-                BaseArtifactService inMemoryServiceJava = new InMemoryArtifactService();
-
-                System.out.println("InMemoryArtifactService (Java) instantiated: " + inMemoryServiceJava.getClass().getName());
-
-                // This instance would then be provided to your Runner.
-                // Runner runner = new Runner(
-                //     /* other services */,
-                //     inMemoryServiceJava
-                // );
-            }
-        }
+        --8<-- "examples/inline/java/artifacts/index/038-inmemoryartifactservice.java"
         ```
 
     === "Kotlin"
@@ -1204,46 +525,13 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
     === "Python"
 
         ```python
-        from google.adk.artifacts import GcsArtifactService
-
-        # Specify the GCS bucket name
-        gcs_bucket_name_py = "your-gcs-bucket-for-adk-artifacts" # Replace with your bucket name
-
-        try:
-            gcs_service_py = GcsArtifactService(bucket_name=gcs_bucket_name_py)
-            print(f"Python GcsArtifactService initialized for bucket: {gcs_bucket_name_py}")
-            # Ensure your environment has credentials to access this bucket.
-            # e.g., via Application Default Credentials (ADC)
-
-            # Then pass it to the Runner
-            # runner = Runner(..., artifact_service=gcs_service_py)
-
-        except Exception as e:
-            # Catch potential errors during GCS client initialization (e.g., auth issues)
-            print(f"Error initializing Python GcsArtifactService: {e}")
-            # Handle the error appropriately - maybe fall back to InMemory or raise
+        --8<-- "examples/inline/python/artifacts/index/039-gcsartifactservice.py"
         ```
 
     === "TypeScript"
 
         ```typescript
-        import {GcsArtifactService} from '@google/adk';
-
-        // Specify the GCS bucket name.
-        const gcsBucketName = 'your-gcs-bucket-for-adk-artifacts';
-
-        try {
-          const gcsService = new GcsArtifactService(gcsBucketName);
-          console.log(`TypeScript GcsArtifactService initialized for bucket: ${gcsBucketName}`);
-          // Ensure your environment has credentials to access this bucket.
-          // e.g., via Application Default Credentials (ADC).
-
-          // Then pass it to the Runner.
-          // const runner = new Runner({..., artifactService: gcsService});
-        } catch (e: any) {
-          // Catch potential errors during GCS client initialization (e.g., auth issues).
-          console.error(`Error initializing TypeScript GcsArtifactService: ${e.message}`);
-        }
+        --8<-- "examples/inline/typescript/artifacts/index/040-gcsartifactservice.ts"
         ```
 
     === "Java"

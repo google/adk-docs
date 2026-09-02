@@ -1,0 +1,18 @@
+package main
+
+import (
+	"context"
+	"google.golang.org/adk/v2/telemetry"
+)
+
+func main() {
+	ctx := context.Background()
+	tp, err := telemetry.New(ctx,
+		telemetry.WithOtelToCloud(true),
+	)
+	if err != nil {
+		// handle error
+	}
+	defer tp.Shutdown(ctx)
+	tp.SetGlobalOtelProviders()
+}

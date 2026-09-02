@@ -1,0 +1,3 @@
+import "google.golang.org/adk/v2/agent"
+
+--8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"

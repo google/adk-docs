@@ -1,0 +1,27 @@
+import (
+    "context"
+    "os"
+
+    "google.golang.org/adk/v2/agent/llmagent"
+    "google.golang.org/adk/v2/tool/skilltoolset/skill"
+    "google.golang.org/adk/v2/tool/skilltoolset"
+    "google.golang.org/adk/v2/tool"
+)
+
+mySkillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
+    Source: skill.NewFileSystemSource(os.DirFS("./skills")),
+})
+if err != nil {
+    // handle error
+}
+
+rootAgent, err := llmagent.New(llmagent.Config{
+    Name:        "skill_user_agent",
+    Model:       model,
+    Description: "An agent that can use specialized skills.",
+    Instruction: "You are a helpful assistant that can leverage skills to perform tasks.",
+    Toolsets:    []tool.Toolset{mySkillToolset},
+})
+if err != nil {
+    // handle error
+}

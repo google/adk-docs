@@ -1,0 +1,65 @@
+// Pseudocode: Handling final responses in application (Go)
+import (
+    "fmt"
+    "strings"
+    "google.golang.org/adk/v2/session"
+    "google.golang.org/genai"
+)
+
+// isFinalResponse checks if an event is a final response suitable for display.
+func isFinalResponse(event *session.Event) bool {
+    if event.LLMResponse != nil {
+        // Condition 1: Tool result with skip summarization.
+        if event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 && event.Actions.SkipSummarization {
+            return true
+        }
+        // Condition 2: Long-running tool call.
+        if len(event.LongRunningToolIDs) > 0 {
+            return true
+        }
+        // Condition 3: A complete message without tool calls or responses.
+        if (event.LLMResponse.Content == nil ||
+            (len(event.LLMResponse.Content.FunctionCalls()) == 0 && len(event.LLMResponse.Content.FunctionResponses()) == 0)) &&
+            !event.LLMResponse.Partial {
+            return true
+        }
+    }
+    return false
+}
+
+func handleFinalResponses() {
+    var fullResponseText strings.Builder
+    // for event := range runner.Run(...) { // Example loop
+    // 	// Accumulate streaming text if needed...
+    // 	if event.LLMResponse != nil && event.LLMResponse.Partial && event.LLMResponse.Content != nil {
+    // 		if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
+    // 			fullResponseText.WriteString(event.LLMResponse.Content.Parts[0].Text)
+    // 		}
+    // 	}
+    //
+    // 	// Check if it's a final, displayable event
+    // 	if isFinalResponse(event) {
+    // 		fmt.Println("\n--- Final Output Detected ---")
+    // 		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+    // 			if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
+    // 				// If it's the final part of a stream, use accumulated text
+    // 				finalText := fullResponseText.String()
+    // 				if !event.LLMResponse.Partial {
+    // 					finalText += event.LLMResponse.Content.Parts[0].Text
+    // 				}
+    // 				fmt.Printf("Display to user: %s\n", strings.TrimSpace(finalText))
+    // 				fullResponseText.Reset() // Reset accumulator
+    // 			}
+    // 		} else if event.Actions.SkipSummarization && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 {
+    // 			// Handle displaying the raw tool result if needed
+    // 			responseData := event.LLMResponse.Content.FunctionResponses()[0].Response
+    // 			fmt.Printf("Display raw tool result: %v\n", responseData)
+    // 		} else if len(event.LongRunningToolIDs) > 0 {
+    // 			fmt.Println("Display message: Tool is running in background...")
+    // 		} else {
+    // 			// Handle other types of final responses if applicable
+    // 			fmt.Println("Display: Final non-textual response or signal.")
+    // 		}
+    // 	}
+    // }
+}

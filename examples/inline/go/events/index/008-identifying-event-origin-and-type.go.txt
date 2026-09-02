@@ -1,0 +1,58 @@
+  // Pseudocode: Basic event identification (Go)
+import (
+  "fmt"
+  "google.golang.org/adk/v2/session"
+  "google.golang.org/genai"
+)
+
+func hasFunctionCalls(content *genai.Content) bool {
+  if content == nil {
+    return false
+  }
+  for _, part := range content.Parts {
+    if part.FunctionCall != nil {
+      return true
+    }
+  }
+  return false
+}
+
+func hasFunctionResponses(content *genai.Content) bool {
+  if content == nil {
+    return false
+  }
+  for _, part := range content.Parts {
+    if part.FunctionResponse != nil {
+      return true
+    }
+  }
+  return false
+}
+
+func processEvents(events <-chan *session.Event) {
+  for event := range events {
+    fmt.Printf("Event from: %s\n", event.Author)
+
+    if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+      if hasFunctionCalls(event.LLMResponse.Content) {
+        fmt.Println("  Type: Tool Call Request")
+      } else if hasFunctionResponses(event.LLMResponse.Content) {
+        fmt.Println("  Type: Tool Result")
+      } else if len(event.LLMResponse.Content.Parts) > 0 {
+        if event.LLMResponse.Content.Parts[0].Text != "" {
+          if event.LLMResponse.Partial {
+            fmt.Println("  Type: Streaming Text Chunk")
+          } else {
+            fmt.Println("  Type: Complete Text Message")
+          }
+        } else {
+          fmt.Println("  Type: Other Content (e.g., code result)")
+        }
+      }
+    } else if len(event.Actions.StateDelta) > 0 {
+      fmt.Println("  Type: State Update")
+    } else {
+      fmt.Println("  Type: Control Signal or Other")
+    }
+  }
+}

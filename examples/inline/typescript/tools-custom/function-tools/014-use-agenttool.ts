@@ -1,0 +1,1 @@
+tools: [new AgentTool({agent: agentB})]

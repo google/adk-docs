@@ -1,0 +1,4 @@
+func (p *MyPlugin) OnToolErrorCallback(ctx tool.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
+  // Your implementation here
+  return nil, nil
+}

@@ -1,0 +1,8 @@
+import (
+  "google.golang.org/adk/v2/memory"
+  "google.golang.org/adk/v2/session"
+)
+
+// Services must be shared across runners to share state and memory.
+sessionService := session.InMemoryService()
+memoryService := memory.InMemoryService()

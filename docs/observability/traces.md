@@ -65,13 +65,7 @@ You can also configure trace export programmatically in your application code.
 To enable tracing and export spans to an OpenTelemetry Collector programmatically:
 
 ```python
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
-
-os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = "http://your-collector:4318/v1/traces"
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers()
+--8<-- "examples/inline/python/observability/traces/001-otlp-export-setup.py"
 ```
 
 #### GCP export setup
@@ -79,16 +73,7 @@ maybe_set_otel_providers()
 To export traces to Google Cloud Trace programmatically, use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
 
 ```python
-from google.adk.telemetry.google_cloud import get_gcp_exporters
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
-
-gcp_exporters = get_gcp_exporters(
-  enable_cloud_tracing = True,
-)
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers([gcp_exporters])
+--8<-- "examples/inline/python/observability/traces/002-gcp-export-setup.py"
 ```
 
 ### Kotlin programmatic setup

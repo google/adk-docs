@@ -165,66 +165,19 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
     1. This is the Capital Agent example inside the `capital_agent` directory
 
         ```python title="capital_agent/agent.py"
-        from google.adk.agents import LlmAgent 
-
-        # Define a tool function
-        def get_capital_city(country: str) -> str:
-          """Retrieves the capital city for a given country."""
-          # Replace with actual logic (e.g., API call, database lookup)
-          capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
-          return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
-
-        # Add the tool to the agent
-        capital_agent = LlmAgent(
-            model="gemini-flash-latest",
-            name="capital_agent", #name of your agent
-            description="Answers user questions about the capital city of a given country.",
-            instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
-            tools=[get_capital_city] # Provide the function directly
-        )
-
-        # ADK will discover the root_agent instance
-        root_agent = capital_agent
+        --8<-- "examples/inline/python/deploy/gke/001-code-files.py"
         ```
 
         Mark your directory as a python package
 
         ```python title="capital_agent/__init__.py"
-
-        from . import agent
+        --8<-- "examples/inline/python/deploy/gke/002-code-files.py"
         ```
 
     2. This file sets up the FastAPI application using `get_fast_api_app()` from ADK:
 
         ```python title="main.py"
-        import os
-
-        import uvicorn
-        from fastapi import FastAPI
-        from google.adk.cli.fast_api import get_fast_api_app
-
-        # Get the directory where main.py is located
-        AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # Example session service URI (e.g., SQLite)
-        # Note: Use 'sqlite+aiosqlite' instead of 'sqlite' because DatabaseSessionService requires an async driver
-        SESSION_SERVICE_URI = "sqlite+aiosqlite:///./sessions.db"
-        # Example allowed origins for CORS
-        ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
-        # Set web=True if you intend to serve a web interface, False otherwise
-        SERVE_WEB_INTERFACE = True
-
-        # Call the function to get the FastAPI app instance
-        # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app: FastAPI = get_fast_api_app(
-            agents_dir=AGENT_DIR,
-            session_service_uri=SESSION_SERVICE_URI,
-            allow_origins=ALLOWED_ORIGINS,
-            web=SERVE_WEB_INTERFACE,
-        )
-
-        if __name__ == "__main__":
-            # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
-            uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+        --8<-- "examples/inline/python/deploy/gke/003-code-files.py"
         ```
 
         *Note: We specify `agent_dir` to the directory `main.py` is in and use `os.environ.get("PORT", 8080)` for Cloud Run compatibility.*
@@ -265,94 +218,14 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
        `api`, and `webui` subcommands that start the REST API server and web interface:
 
         ```go title="main.go"
-        package main
-
-        import (
-            "context"
-            "fmt"
-            "log"
-            "os"
-            "strings"
-
-            "google.golang.org/adk/v2/agent"
-            "google.golang.org/adk/v2/agent/llmagent"
-            "google.golang.org/adk/v2/cmd/launcher"
-            "google.golang.org/adk/v2/cmd/launcher/full"
-            "google.golang.org/adk/v2/model/gemini"
-            "google.golang.org/adk/v2/tool"
-            "google.golang.org/adk/v2/tool/functiontool"
-            "google.golang.org/genai"
-        )
-
-        type getCapitalCityArgs struct {
-            Country string `json:"country" jsonschema:"The country to look up."`
-        }
-
-        func getCapitalCity(_ tool.Context, args getCapitalCityArgs) (string, error) {
-            capitals := map[string]string{
-                "france":  "Paris",
-                "japan":   "Tokyo",
-                "canada":  "Ottawa",
-            }
-            capital, ok := capitals[strings.ToLower(args.Country)]
-            if !ok {
-                return "", fmt.Errorf("capital not found for %s", args.Country)
-            }
-            return capital, nil
-        }
-
-        func main() {
-            ctx := context.Background()
-
-            model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
-                APIKey: os.Getenv("GOOGLE_API_KEY"),
-            })
-            if err != nil {
-                log.Fatalf("Failed to create model: %v", err)
-            }
-
-            capitalTool, err := functiontool.New(
-                functiontool.Config{
-                    Name:        "get_capital_city",
-                    Description: "Retrieves the capital city for a given country.",
-                },
-                getCapitalCity,
-            )
-            if err != nil {
-                log.Fatalf("Failed to create tool: %v", err)
-            }
-
-            capitalAgent, err := llmagent.New(llmagent.Config{
-                Name:        "capital_agent",
-                Model:       model,
-                Description: "Answers questions about capital cities.",
-                Instruction: "You are an agent that provides the capital city of a country.",
-                Tools:       []tool.Tool{capitalTool},
-            })
-            if err != nil {
-                log.Fatalf("Failed to create agent: %v", err)
-            }
-
-            config := &launcher.Config{
-                AgentLoader: agent.NewSingleLoader(capitalAgent),
-            }
-
-            l := full.NewLauncher()
-            if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
-                log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-            }
-        }
+        --8<-- "examples/inline/go/deploy/gke/004-code-files.go.txt"
         ```
 
         To use Agent Platform instead of AI Studio, set `genai.ClientConfig` to use
         the Agent Platform backend:
 
         ```go
-        model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
-            Backend:  genai.BackendVertexAI,
-            Project:  os.Getenv("GOOGLE_CLOUD_PROJECT"),
-            Location: os.Getenv("GOOGLE_CLOUD_LOCATION"),
-        })
+        --8<-- "examples/inline/go/deploy/gke/005-code-files.go.txt"
         ```
 
     2. Define the container image. Go compiles to a self-contained static binary,

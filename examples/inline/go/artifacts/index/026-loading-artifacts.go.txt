@@ -1,0 +1,8 @@
+import (
+  "log"
+
+  "google.golang.org/adk/v2/agent"
+  "google.golang.org/adk/v2/model"
+)
+
+--8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"

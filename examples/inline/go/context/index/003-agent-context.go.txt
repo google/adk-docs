@@ -1,0 +1,2 @@
+/* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+--8<-- "examples/go/snippets/context/main.go:conceptual_runner_example"

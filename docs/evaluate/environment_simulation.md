@@ -65,37 +65,7 @@ The following example shows how to create an environment simulation as one of th
 
 
 ```python
-from google.adk.agents import LlmAgent
-from google.adk.tools.environment_simulation import EnvironmentSimulationFactory
-from google.adk.tools.environment_simulation.environment_simulation_config import (
-    EnvironmentSimulationConfig,
-    InjectedError,
-    InjectionConfig,
-    ToolSimulationConfig,
-)
-
-config = EnvironmentSimulationConfig(
-    tool_simulation_configs=[
-        ToolSimulationConfig(
-            tool_name="get_user_profile",
-            injection_configs=[
-                InjectionConfig(
-                    injected_error=InjectedError(
-                        injected_http_error_code=503,
-                        error_message="Service temporarily unavailable.",
-                    )
-                )
-            ],
-        )
-    ]
-)
-
-agent = LlmAgent(
-    name="my_agent",
-    model="gemini-flash-latest",
-    tools=[get_user_profile],
-    before_tool_callback=EnvironmentSimulationFactory.create_callback(config),
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/001-using-as-a-callback.py"
 ```
 
 ### Using as a plugin
@@ -103,28 +73,7 @@ agent = LlmAgent(
 The following example shows how to create environment simulation as an ADK agent plugin.
 
 ```python
-from google.adk.apps import App
-from google.adk.tools.environment_simulation import EnvironmentSimulationFactory
-from google.adk.tools.environment_simulation.environment_simulation_config import (
-    EnvironmentSimulationConfig,
-    MockStrategy,
-    ToolSimulationConfig,
-)
-
-config = EnvironmentSimulationConfig(
-    tool_simulation_configs=[
-        ToolSimulationConfig(
-            tool_name="search_products",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        )
-    ]
-)
-
-app = App(
-    name="my_app",
-    root_agent=my_agent,
-    plugins=[EnvironmentSimulationFactory.create_plugin(config)],
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/002-using-as-a-plugin.py"
 ```
 
 ## Configuration reference
@@ -201,23 +150,7 @@ criteria are met (and whose probability check passes) is applied.
 The following example shows how to inject errors with specific error code and error message to the agent.
 
 ```python
-from google.adk.tools.environment_simulation.environment_simulation_config import (
-    InjectedError,
-    InjectionConfig,
-    ToolSimulationConfig,
-)
-
-ToolSimulationConfig(
-    tool_name="charge_payment",
-    injection_configs=[
-        InjectionConfig(
-            injected_error=InjectedError(
-                injected_http_error_code=402,
-                error_message="Payment declined.",
-            )
-        )
-    ],
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/003-injecting-errors.py"
 ```
 
 The agent will receive `{"error_code": 402, "error_message": "Payment
@@ -229,9 +162,7 @@ agent handles payment failures.
 Use the following InjectionConfig to specify a success response with fixed response payload. 
 
 ```python
-InjectionConfig(
-    injected_response={"status": "ok", "order_id": "ORD-9999"}
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/004-injecting-fixed-responses.py"
 ```
 
 ### Conditional injection with argument matching
@@ -239,13 +170,7 @@ InjectionConfig(
 Use `match_args` to inject only when specific arguments are passed.
 
 ```python
-InjectionConfig(
-    match_args={"item_id": "ITEM-404"},
-    injected_error=InjectedError(
-        injected_http_error_code=404,
-        error_message="Item not found.",
-    ),
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/005-conditional-injection-with-argument-matc.py"
 ```
 
 Here, the error is injected only when the tool is called with
@@ -258,14 +183,7 @@ Set `injection_probability` to a value between `0.0` and `1.0` to simulate flaky
 behavior. For reproducible test runs, pin the random outcome with `random_seed`.
 
 ```python
-InjectionConfig(
-    injection_probability=0.3,
-    random_seed=42,
-    injected_error=InjectedError(
-        injected_http_error_code=500,
-        error_message="Internal server error.",
-    ),
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/006-probabilistic-injection.py"
 ```
 
 ### Injecting latency
@@ -274,10 +192,7 @@ Use `injected_latency_seconds` to simulate slow backend responses, useful for
 testing timeout handling or user experience under degraded conditions.
 
 ```python
-InjectionConfig(
-    injected_latency_seconds=5.0,
-    injected_response={"result": "slow but successful"},
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/007-injecting-latency.py"
 ```
 
 ### Combining multiple injection configs
@@ -286,25 +201,7 @@ Multiple injection configs on a single tool are checked in order. You can
 combine them to test multiple scenarios:
 
 ```python
-ToolSimulationConfig(
-    tool_name="get_inventory",
-    injection_configs=[
-        # Always fail for a specific out-of-stock item
-        InjectionConfig(
-            match_args={"sku": "OOS-001"},
-            injected_response={"quantity": 0, "available": False},
-        ),
-        # Randomly fail 20% of the time for all other items
-        InjectionConfig(
-            injection_probability=0.2,
-            random_seed=7,
-            injected_error=InjectedError(
-                injected_http_error_code=503,
-                error_message="Inventory service unavailable.",
-            ),
-        ),
-    ],
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/008-combining-multiple-injection-configs.py"
 ```
 
 ## Mock strategy mode
@@ -323,28 +220,7 @@ The simulator uses an LLM to:
     resource that was never created.
 
 ```python
-from google.adk.tools.environment_simulation.environment_simulation_config import (
-    EnvironmentSimulationConfig,
-    MockStrategy,
-    ToolSimulationConfig,
-)
-
-config = EnvironmentSimulationConfig(
-    tool_simulation_configs=[
-        ToolSimulationConfig(
-            tool_name="create_order",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        ),
-        ToolSimulationConfig(
-            tool_name="get_order",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        ),
-        ToolSimulationConfig(
-            tool_name="cancel_order",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        ),
-    ]
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/009-mock-strategy-mode.py"
 ```
 
 With this config, the simulator will automatically generate an `order_id` when
@@ -358,25 +234,7 @@ more realistic. This can be a JSON string representing a snapshot of your
 database or any structured context the LLM should use when generating responses.
 
 ```python
-import json
-
-db_snapshot = {
-    "products": [
-        {"id": "P-001", "name": "Wireless Headphones", "price": 79.99, "stock": 12},
-        {"id": "P-002", "name": "USB-C Hub", "price": 34.99, "stock": 0},
-    ],
-    "warehouse_location": "US-WEST-2",
-}
-
-config = EnvironmentSimulationConfig(
-    tool_simulation_configs=[
-        ToolSimulationConfig(
-            tool_name="search_products",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        ),
-    ],
-    environment_data=json.dumps(db_snapshot),
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/010-providing-environment-data.py"
 ```
 
 The LLM will use this data to return product names, prices, and stock levels
@@ -388,33 +246,7 @@ Feed traces generated in the agent to be mocked through `tracing` to make mock
 responses more realistic.
 
 ```python
-import json
-
-agent_traces = [
-    {
-        "invocation_id": "inv-001",
-        "user_content": {"role": "user", "parts": [{"text": "Search for high-end headphones"}]},
-        "intermediate_data": {
-            "tool_uses": [
-                {
-                    "name": "search_products",
-                    "args": {"query": "high-end headphones"},
-                    "response": {"products": [{"id": "P-123", "name": "Premium Wireless ANC Headphones"}]}
-                }
-            ]
-        }
-    }
-]
-
-config = EnvironmentSimulationConfig(
-    tool_simulation_configs=[
-        ToolSimulationConfig(
-            tool_name="search_products",
-            mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-        ),
-    ],
-    tracing=json.dumps(agent_traces),
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/011-providing-tracing-data.py"
 ```
 
 The LLM will use this data to return product names, prices, and stock levels
@@ -427,20 +259,6 @@ Injections are always checked first; the mock strategy fires only when no
 injection applies.
 
 ```python
-ToolSimulationConfig(
-    tool_name="send_notification",
-    injection_configs=[
-        # Always fail for a known-bad recipient
-        InjectionConfig(
-            match_args={"recipient_id": "INVALID"},
-            injected_error=InjectedError(
-                injected_http_error_code=400,
-                error_message="Invalid recipient.",
-            ),
-        ),
-    ],
-    # For all other recipients, generate a plausible success response
-    mock_strategy_type=MockStrategy.MOCK_STRATEGY_TOOL_SPEC,
-)
+--8<-- "examples/inline/python/evaluate/environment_simulation/012-mixing-injections-and-mock-strategy.py"
 ```
 

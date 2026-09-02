@@ -1,0 +1,12 @@
+reimburseTool, _ := functiontool.New(functiontool.Config{
+    Name:        "reimburse",
+    Description: "Reimburse an amount",
+    // RequireConfirmationProvider allows for dynamic determination
+    // of whether user confirmation is needed.
+    RequireConfirmationProvider: func(args ReimburseArgs) bool {
+        return args.Amount > 1000
+    },
+}, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    // actual implementation
+    return ReimburseResult{Status: "ok"}, nil
+})

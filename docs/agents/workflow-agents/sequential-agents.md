@@ -56,7 +56,7 @@ Using a `SequentialAgent` makes it simple to define this exection flow, as shown
 in the following code snippet:
 
 ```py
-SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
+--8<-- "examples/inline/python/agents/workflow-agents/sequential-agents/001-full-example-code-development-pipeline.py"
 ```
 
 This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/##data-handling)**.

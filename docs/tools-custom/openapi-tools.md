@@ -54,28 +54,13 @@ Follow these steps to integrate an OpenAPI spec into your agent:
 2. **Instantiate Toolset**: Create an `OpenAPIToolset` instance, passing the spec content and type (`spec_str`/`spec_dict`, `spec_str_type`). Provide authentication details (`auth_scheme`, `auth_credential`) if required by the API.
 
     ```python
-    from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-    # Example with a JSON string
-    openapi_spec_json = '...' # Your OpenAPI JSON string
-    toolset = OpenAPIToolset(spec_str=openapi_spec_json, spec_str_type="json")
-
-    # Example with a dictionary
-    # openapi_spec_dict = {...} # Your OpenAPI spec as a dict
-    # toolset = OpenAPIToolset(spec_dict=openapi_spec_dict)
+    --8<-- "examples/inline/python/tools-custom/openapi-tools/001-usage-workflow.py"
     ```
 
 3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
 
     ```python
-    from google.adk.agents import LlmAgent
-
-    my_agent = LlmAgent(
-        name="api_interacting_agent",
-        model="gemini-flash-latest", # Or your preferred model
-        tools=[toolset], # Pass the toolset
-        # ... other agent config ...
-    )
+    --8<-- "examples/inline/python/tools-custom/openapi-tools/002-usage-workflow.py"
     ```
 
 4. **Instruct agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.

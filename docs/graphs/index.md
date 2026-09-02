@@ -57,48 +57,7 @@ function, and the final agent reports the information.
 === "Python"
 
     ```python
-    from google.adk import Agent
-    from google.adk import Workflow
-    from google.adk import Event
-    from pydantic import BaseModel
-
-    city_generator_agent = Agent(
-        name="city_generator_agent",
-        model="gemini-flash-latest",
-        instruction="""Return the name of a random city.
-          Return only the name, nothing else.""",
-        output_schema=str,
-    )
-
-    class CityTime(BaseModel):
-        time_info: str  # time information
-        city: str       # city name
-
-    def lookup_time_function(node_input: str):
-        """Simulate returning the current time in the specified city."""
-        return CityTime(time_info="10:10 AM", city=node_input)
-
-    city_report_agent = Agent(
-        name="city_report_agent",
-        model="gemini-flash-latest",
-        input_schema=CityTime,
-        instruction="""Output following line:
-        It is {CityTime.time_info} in {CityTime.city} right now.""",
-        output_schema=str,
-    )
-
-    def completed_message_function(node_input: str):
-        return Event(
-            message=f"{node_input}\n WORKFLOW COMPLETED.",
-        )
-
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[
-            ("START", city_generator_agent, lookup_time_function,
-              city_report_agent, completed_message_function)
-        ],
-    )
+    --8<-- "examples/inline/python/graphs/index/001-get-started.py"
     ```
 
 === "TypeScript"
@@ -169,43 +128,7 @@ translated into a graph-based agent:
 === "Python"
 
     ```python
-    process_message = Agent(
-        name="process_message",
-        model="gemini-flash-latest",
-        instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
-          or "LOGISTICS". If you think a message applies to more than one category,
-          reply with a comma separated list of categories.
-       """,
-        output_schema=str,
-    )
-
-    def router(node_input: str):
-        routes = node_input.split(",")
-        routes = [route.strip() for route in routes]
-        return Event(route=routes)
-
-    def response_1_bug():
-        return Event(message="Handling bug...")
-
-    def response_2_support():
-        return Event(message="Handling customer support...")
-
-    def response_3_logistics():
-        return Event(message="Handling logistics...")
-
-    root_agent = Workflow(
-       name="routing_workflow",
-       edges=[
-           ("START", process_message, router),
-           ( router,
-               {
-                   "BUG": response_1_bug,
-                   "CUSTOMER_SUPPORT": response_2_support,
-                   "LOGISTICS": response_3_logistics,
-               }
-           )
-       ],
-    )
+    --8<-- "examples/inline/python/graphs/index/002-build-processes-with-graphs.py"
     ```
 
 === "TypeScript"

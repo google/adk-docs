@@ -59,20 +59,7 @@ The following examples show how to enable boolean confirmation:
 === "Python"
 
     ```python
-    root_agent = Agent(
-        # ...
-        tools = [
-            # Set require_confirmation to True to require user confirmation
-            # for the tool call.
-            FunctionTool(reimburse, require_confirmation=True),
-        ],
-        # ...
-    )
-
-    # This implementation method requires minimal code, but is limited to simple
-    # approvals from the user or confirming system. For a complete example of this
-    # approach, see the following code sample for a more detailed example:
-    # https://github.com/google/adk-python/blob/main/contributing/samples/human_tool_confirmation/agent.py
+    --8<-- "examples/inline/python/tools-custom/confirmation/001-boolean-confirmation-boolean-confirmatio.py"
     ```
 
 === "TypeScript"
@@ -88,35 +75,13 @@ The following examples show how to enable boolean confirmation:
 === "Go"
 
     ```go
-    reimburseTool, _ := functiontool.New(functiontool.Config{
-        Name:        "reimburse",
-        Description: "Reimburse an amount",
-        // Set RequireConfirmation to true to require user confirmation
-        // for the tool call.
-        RequireConfirmation: true,
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
-        // actual implementation
-        return ReimburseResult{Status: "ok"}, nil
-    })
-
-    rootAgent, _ := llmagent.New(llmagent.Config{
-        // ...
-        Tools: []tool.Tool{reimburseTool},
-    })
+    --8<-- "examples/inline/go/tools-custom/confirmation/002-boolean-confirmation-boolean-confirmatio.go.txt"
     ```
 
 === "Java"
 
     ```java
-    LlmAgent rootAgent = LlmAgent.builder()
-        // ...
-        .tools(
-            // Set requireConfirmation to true to require user confirmation
-            // for the tool call.
-            FunctionTool.create(myClassInstance, "reimburse", true)
-        )
-        // ...
-        .build();
+    --8<-- "examples/inline/java/tools-custom/confirmation/003-boolean-confirmation-boolean-confirmatio.java"
     ```
 
 === "Kotlin"
@@ -132,20 +97,7 @@ You can modify the behavior of the confirmation requirement by using a function 
 === "Python"
 
     ```python
-    async def confirmation_threshold(
-        amount: int, tool_context: ToolContext
-    ) -> bool:
-      """Returns true if the amount is greater than 1000."""
-      return amount > 1000
-
-    root_agent = Agent(
-        # ...
-        tools = [
-            # Pass the threshold function to dynamically require confirmation
-            FunctionTool(reimburse, require_confirmation=confirmation_threshold),
-        ],
-        # ...
-    )
+    --8<-- "examples/inline/python/tools-custom/confirmation/004-require-confirmation-function.py"
     ```
 
 === "TypeScript"
@@ -157,52 +109,13 @@ You can modify the behavior of the confirmation requirement by using a function 
 === "Go"
 
     ```go
-    reimburseTool, _ := functiontool.New(functiontool.Config{
-        Name:        "reimburse",
-        Description: "Reimburse an amount",
-        // RequireConfirmationProvider allows for dynamic determination
-        // of whether user confirmation is needed.
-        RequireConfirmationProvider: func(args ReimburseArgs) bool {
-            return args.Amount > 1000
-        },
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
-        // actual implementation
-        return ReimburseResult{Status: "ok"}, nil
-    })
+    --8<-- "examples/inline/go/tools-custom/confirmation/005-require-confirmation-function.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // In ADK Java, dynamic threshold confirmation logic is evaluated directly
-    // inside the tool logic using the ToolContext rather than via a lambda parameter.
-    public Map<String, Object> reimburse(
-        @Schema(name="amount") int amount, ToolContext toolContext) {
-
-      // 1. Dynamic threshold check
-      if (amount > 1000) {
-        Optional<ToolConfirmation> toolConfirmation = toolContext.toolConfirmation();
-        if (toolConfirmation.isEmpty()) {
-           toolContext.requestConfirmation("Amount > 1000 requires approval.");
-           return Map.of("status", "Pending manager approval.");
-        } else if (!toolConfirmation.get().confirmed()) {
-           return Map.of("status", "Reimbursement rejected.");
-        }
-      }
-
-      // 2. Proceed with actual tool logic
-      return Map.of("status", "ok", "reimbursedAmount", amount);
-    }
-
-    LlmAgent rootAgent = LlmAgent.builder()
-        // ...
-        .tools(
-            // No requireConfirmation flag is set because the custom threshold
-            // logic is already handled inside the method!
-            FunctionTool.create(this, "reimburse")
-        )
-        // ...
-        .build();
+    --8<-- "examples/inline/java/tools-custom/confirmation/006-require-confirmation-function.java"
     ```
 
 === "Kotlin"
@@ -249,33 +162,7 @@ time off requests for an employee:
 === "Python"
 
     ```python
-    def request_time_off(days: int, tool_context: ToolContext):
-        """Request day off for the employee."""
-        # ...
-        tool_confirmation = tool_context.tool_confirmation
-        if not tool_confirmation:
-            tool_context.request_confirmation(
-                hint=(
-                    'Please approve or reject the tool call request_time_off() by'
-                    ' responding with a FunctionResponse with an expected'
-                    ' ToolConfirmation payload.'
-                ),
-                payload={
-                    'approved_days': 0,
-                },
-            )
-            # Return intermediate status indicating that the tool is waiting for
-            # a confirmation response:
-            return {'status': 'Manager approval is required.'}
-
-        approved_days = tool_confirmation.payload['approved_days']
-        approved_days = min(approved_days, days)
-        if approved_days == 0:
-            return {'status': 'The time off request is rejected.', 'approved_days': 0}
-        return {
-            'status': 'ok',
-            'approved_days': approved_days,
-        }
+    --8<-- "examples/inline/python/tools-custom/confirmation/007-confirmation-definition.py"
     ```
 
 === "TypeScript"
@@ -287,68 +174,13 @@ time off requests for an employee:
 === "Go"
 
     ```go
-    func requestTimeOff(ctx tool.Context, args RequestTimeOffArgs) (map[string]any, error) {
-        confirmation := ctx.ToolConfirmation()
-        if confirmation == nil {
-            ctx.RequestConfirmation(
-                "Please approve or reject the tool call requestTimeOff() by "+
-                "responding with a FunctionResponse with an expected "+
-                "ToolConfirmation payload.",
-                map[string]any{"approved_days": 0},
-            )
-            return map[string]any{"status": "Manager approval is required."}, nil
-        }
-
-        payload := confirmation.Payload.(map[string]any)
-        // Values in map[string]any from JSON are float64 by default in Go
-        approvedDays := int(payload["approved_days"].(float64))
-        approvedDays = min(approvedDays, args.Days)
-
-        if approvedDays == 0 {
-            return map[string]any{"status": "The time off request is rejected.", "approved_days": 0}, nil
-        }
-
-        return map[string]any{
-            "status": "ok",
-            "approved_days": approvedDays,
-        }, nil
-    }
+    --8<-- "examples/inline/go/tools-custom/confirmation/008-confirmation-definition.go.txt"
     ```
 
 === "Java"
 
     ```java
-    public Map<String, Object> requestTimeOff(
-        @Schema(name="days") int days,
-        ToolContext toolContext) {
-        // Request day off for the employee.
-        // ...
-        Optional<ToolConfirmation> toolConfirmation = toolContext.toolConfirmation();
-        if (toolConfirmation.isEmpty()) {
-            toolContext.requestConfirmation(
-                "Please approve or reject the tool call requestTimeOff() by " +
-                "responding with a FunctionResponse with an expected " +
-                "ToolConfirmation payload.",
-                Map.of("approved_days", 0)
-            );
-            // Return intermediate status indicating that the tool is waiting for
-            // a confirmation response:
-            return Map.of("status", "Manager approval is required.");
-        }
-
-        Map<String, Object> payload = (Map<String, Object>) toolConfirmation.get().payload();
-        int approvedDays = (int) payload.get("approved_days");
-        approvedDays = Math.min(approvedDays, days);
-
-        if (approvedDays == 0) {
-            return Map.of("status", "The time off request is rejected.", "approved_days", 0);
-        }
-
-        return Map.of(
-            "status", "ok",
-            "approved_days", approvedDays
-        );
-    }
+    --8<-- "examples/inline/java/tools-custom/confirmation/009-confirmation-definition.java"
     ```
 
 === "Kotlin"

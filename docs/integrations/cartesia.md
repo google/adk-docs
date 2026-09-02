@@ -45,33 +45,7 @@ across languages, and create audio content using natural language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="cartesia_agent",
-            instruction="Help users generate speech and work with audio content",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="uvx",
-                            args=["cartesia-mcp"],
-                            env={
-                                "CARTESIA_API_KEY": CARTESIA_API_KEY,
-                                # "OUTPUT_DIRECTORY": "/path/to/output",  # Optional
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/cartesia/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -79,30 +53,7 @@ across languages, and create audio content using natural language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "cartesia_agent",
-            instruction: "Help users generate speech and work with audio content",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "uvx",
-                        args: ["cartesia-mcp"],
-                        env: {
-                            CARTESIA_API_KEY: CARTESIA_API_KEY,
-                            // OUTPUT_DIRECTORY: "/path/to/output",  // Optional
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/cartesia/002-use-with-agent.ts"
         ```
 
 ## Available tools

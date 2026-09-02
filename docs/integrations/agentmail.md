@@ -44,35 +44,7 @@ language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        AGENTMAIL_API_KEY = "YOUR_AGENTMAIL_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="agentmail_agent",
-            instruction="Help users manage email inboxes and send messages",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "agentmail-mcp",
-                            ],
-                            env={
-                                "AGENTMAIL_API_KEY": AGENTMAIL_API_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/agentmail/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -80,29 +52,7 @@ language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const AGENTMAIL_API_KEY = "YOUR_AGENTMAIL_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "agentmail_agent",
-            instruction: "Help users manage email inboxes and send messages",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "agentmail-mcp"],
-                        env: {
-                            AGENTMAIL_API_KEY: AGENTMAIL_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/agentmail/002-use-with-agent.ts"
         ```
 
 ## Available tools

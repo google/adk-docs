@@ -1,0 +1,101 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/plugin"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
+	"google.golang.org/genai"
+)
+
+type helloWorldArgs struct {
+	Query string `json:"query"`
+}
+
+type helloWorldResult struct {
+	Result string `json:"result"`
+}
+
+func helloWorld(ctx tool.Context, args helloWorldArgs) (helloWorldResult, error) {
+	output := fmt.Sprintf("Hello world: query is [%s]", args.Query)
+	fmt.Println(output)
+	return helloWorldResult{Result: output}, nil
+}
+
+func main() {
+	ctx := context.Background()
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("failed to create model: %v", err)
+	}
+
+	helloWorldTool, err := functiontool.New(functiontool.Config{
+		Name:        "hello_world",
+		Description: "Prints hello world with user query.",
+	}, helloWorld)
+	if err != nil {
+		log.Fatalf("failed to create tool: %v", err)
+	}
+
+	rootAgent, err := llmagent.New(llmagent.Config{
+		Model:       model,
+		Name:        "hello_world",
+		Description: "Prints hello world with user query.",
+		Instruction: "Use hello_world tool to print hello world and user query.",
+		Tools:       []tool.Tool{helloWorldTool},
+	})
+	if err != nil {
+		log.Fatalf("failed to create agent: %v", err)
+	}
+
+	// Create your plugin.
+	countPlugin, err := NewCountInvocationPlugin()
+	if err != nil {
+		log.Fatalf("failed to create plugin: %v", err)
+	}
+
+	sessionService := session.InMemoryService()
+	// Add your plugin here. You can add multiple plugins.
+	r, err := runner.New(runner.Config{
+		AppName:        "test_app_with_plugin",
+		Agent:          rootAgent,
+		SessionService: sessionService,
+		PluginConfig: runner.PluginConfig{
+			Plugins: []*plugin.Plugin{countPlugin},
+		},
+	})
+	if err != nil {
+		log.Fatalf("failed to create runner: %v", err)
+	}
+
+	// The rest is the same as starting a regular ADK runner.
+	sessResp, err := sessionService.Create(ctx, &session.CreateRequest{
+		AppName: "test_app_with_plugin",
+		UserID:  "user",
+	})
+	if err != nil {
+		log.Fatalf("failed to create session: %v", err)
+	}
+	sess := sessResp.Session
+
+	prompt := "hello world"
+	input := genai.NewContentFromText(prompt, genai.RoleUser)
+
+	for event, err := range r.Run(ctx, "user", sess.ID(), input, agent.RunConfig{}) {
+		if err != nil {
+			log.Printf("AGENT_ERROR: %v", err)
+			continue
+		}
+		if event.Author != "" {
+			fmt.Printf("** Got event from %s\n", event.Author)
+		}
+	}
+}

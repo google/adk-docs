@@ -1,0 +1,8 @@
+import (
+    "google.golang.org/adk/v2/agent"
+    "google.golang.org/adk/v2/agent/llmagent"
+    "google.golang.org/adk/v2/agent/workflowagents/parallelagent"
+    "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
+)
+
+--8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-gather-pattern"

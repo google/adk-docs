@@ -1,0 +1,6 @@
+import (
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/session"
+)
+
+--8<-- "examples/go/snippets/context/main.go:invocation_context_agent"

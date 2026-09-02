@@ -1,0 +1,24 @@
+import (
+    "os"
+
+    "google.golang.org/adk/v2/tool/skilltoolset/skill"
+    "google.golang.org/adk/v2/tool/skilltoolset"
+)
+
+// ...
+
+source := skill.NewFileSystemSource(os.DirFS("./skills"))
+
+// This example doesn't use any optional wrappers, but you can use them if
+// needed, e.g.:
+//   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
+//   source, _, err = skill.WithCompletePreloadSource(ctx, source)
+// For more information about these and other wrappers, see
+// https://pkg.go.dev/google.golang.org/adk/v2/tool/skilltoolset/skill#Source.
+
+skillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
+    Source: source,
+})
+if err != nil {
+    // handle error
+}

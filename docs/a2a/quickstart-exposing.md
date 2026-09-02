@@ -60,22 +60,13 @@ The sample consists of :
 You can take an existing agent built using ADK and make it A2A-compatible by simply wrapping it using the `to_a2a()` function. For example, if you have an agent like the following defined in `root_agent`:
 
 ```python
-# Your agent code here
-root_agent = Agent(
-    model='gemini-flash-latest',
-    name='hello_world_agent',
-
-    <...your agent code...>
-)
+--8<-- "examples/inline/python/a2a/quickstart-exposing/001-exposing-the-remote-agent-with-the-toa2a.py"
 ```
 
 Then you can make it A2A-compatible simply by using `to_a2a(root_agent)`:
 
 ```python
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
-
-# Make your agent A2A-compatible
-a2a_app = to_a2a(root_agent, port=8001)
+--8<-- "examples/inline/python/a2a/quickstart-exposing/002-your-agent-code-here.py"
 ```
 
 The `to_a2a()` function will even auto-generate an agent card in-memory behind-the-scenes by [extracting skills, capabilities, and metadata from ADK agent](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/utils/agent_card_builder.py), so that the well-known agent card is made available when the agent endpoint is served using `uvicorn`.
@@ -84,30 +75,12 @@ You can also provide your own agent card by using the `agent_card` parameter. Th
 
 **Example with an `AgentCard` object:**
 ```python
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from a2a.types import AgentCard
-
-# Define A2A agent card
-my_agent_card = AgentCard(
-    name="file_agent",
-    url="http://example.com",
-    description="Test agent from file",
-    version="1.0.0",
-    capabilities={},
-    skills=[],
-    default_input_modes=["text/plain"],
-    default_output_modes=["text/plain"],
-    supports_authenticated_extended_card=False,
-)
-a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
+--8<-- "examples/inline/python/a2a/quickstart-exposing/003-make-your-agent-a2a-compatible.py"
 ```
 
 **Example with a path to a JSON file:**
 ```python
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
-
-# Load A2A agent card from a file
-a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
+--8<-- "examples/inline/python/a2a/quickstart-exposing/004-define-a2a-agent-card.py"
 ```
 
 ### Under the hood: to_a2a() method
@@ -279,12 +252,7 @@ The new version of the [agent executor](https://github.com/google/adk-python/blo
 However, you can also bypass the extension and force the server to use the new executor version by setting the `force_new_version=True` flag when instantiating the `A2aAgentExecutor`. This allows you to use the new executor logic without needing to modify existing clients to send the extension.
 
 ```python
-from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
-
-executor = A2aAgentExecutor(
-            ...,
-            force_new_version=True
-        )
+--8<-- "examples/inline/python/a2a/quickstart-exposing/005-agent-executor-v2.py"
 ```
 
 ## Next Steps

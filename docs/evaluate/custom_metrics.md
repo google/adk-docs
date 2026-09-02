@@ -27,19 +27,7 @@ intermediate responses, and final response for that turn.
 Your custom metric function must have the following signature:
 
 ```python
-from typing import Optional
-from google.adk.evaluation.eval_case import Invocation
-from google.adk.evaluation.eval_metrics import EvalMetric
-from google.adk.evaluation.conversation_scenarios import ConversationScenario
-from google.adk.evaluation.evaluator import EvaluationResult
-
-def my_custom_metric_function(
-    eval_metric: EvalMetric,
-    actual_invocations: list[Invocation],
-    expected_invocations: Optional[list[Invocation]],
-    conversation_scenario: Optional[ConversationScenario],
-) -> EvaluationResult:
-  ...
+--8<-- "examples/inline/python/evaluate/custom_metrics/001-define-a-custom-metric.py"
 ```
 
 The function should return an `EvaluationResult` object with the
@@ -52,52 +40,7 @@ Here is a simple example of a custom metric that checks if the agent's final
 response in each turn matches the expected final response exactly.
 
 ```python
-import statistics
-from typing import Optional
-
-from google.adk.evaluation.conversation_scenarios import ConversationScenario
-from google.adk.evaluation.eval_case import Invocation
-from google.adk.evaluation.eval_metrics import EvalMetric
-from google.adk.evaluation.eval_metrics import EvalStatus
-from google.adk.evaluation.evaluator import EvaluationResult, PerInvocationResult
-
-def check_final_response_exact_match(
-    eval_metric: EvalMetric,
-    actual_invocations: list[Invocation],
-    expected_invocations: Optional[list[Invocation]],
-    conversation_scenario: Optional[ConversationScenario],
-) -> EvaluationResult:
-  """Checks if the final response of the first turn matches the expected
-  response."""
-  if not expected_invocations:
-    return EvaluationResult(overall_score=0.0, overall_eval_status=EvalStatus.NOT_EVALUATED)
-
-  per_invocation_results = []
-
-  for actual, expected in zip(actual_invocations, expected_invocations):
-    actual_final_response = "".join([part.text for part in actual.final_response.parts])
-    expected_final_response = "".join([part.text for part in expected.final_response.parts])
-    score = 1.0 if actual_final_response == expected_final_response else 0.0
-    eval_status = EvalStatus.PASSED if score else EvalStatus.FAILED
-    invocation_result = PerInvocationResult(
-        actual_invocation=actual,
-        expected_invocation=expected,
-        score=score,
-        eval_status=eval_status
-    )
-    per_invocation_results.append(invocation_result)
-
-  average_score = statistics.mean(result.score for result in per_invocation_results)
-
-  threshold = eval_metric.criterion.threshold
-  overall_eval_status = (
-    EvalStatus.PASSED if average_score >= threshold else EvalStatus.FAILED
-  )
-  return EvaluationResult(
-      overall_score=average_score,
-      overall_eval_status=overall_eval_status,
-      per_invocation_results=per_invocation_results,
-  )
+--8<-- "examples/inline/python/evaluate/custom_metrics/002-example.py"
 ```
 
 #### Async Metric
@@ -109,65 +52,7 @@ The following is an example of a custom metric function that uses a fake async
 profanity checker API to check if the agent response contains profanity.
 
 ```python
-import asyncio
-import statistics
-from typing import Optional
-
-from google.adk.evaluation.conversation_scenarios import ConversationScenario
-from google.adk.evaluation.eval_case import Invocation
-from google.adk.evaluation.eval_metrics import EvalMetric
-from google.adk.evaluation.eval_metrics import EvalStatus
-from google.adk.evaluation.evaluator import EvaluationResult, PerInvocationResult
-
-class ProfanityChecker:
-  """A fake profanity checker that mimics an async API."""
-
-  async def check(self, text: str) -> bool:
-    """Returns True if profanity is detected, False otherwise."""
-    await asyncio.sleep(0.01)
-    return "profanity" in text.lower()
-
-profanity_checker = ProfanityChecker()
-
-async def check_for_profanity(
-    eval_metric: EvalMetric,
-    actual_invocations: list[Invocation],
-    expected_invocations: Optional[list[Invocation]],
-    conversation_scenario: Optional[ConversationScenario],
-) -> EvaluationResult:
-  """Checks if the agent response contains profanity using a fake async API."""
-  per_invocation_results = []
-
-  for invocation in actual_invocations:
-    agent_response = "".join(part.text for part in invocation.final_response.parts)
-    has_profanity = await profanity_checker.check(agent_response)
-    score = 0.0 if has_profanity else 1.0
-    eval_status = EvalStatus.FAILED if has_profanity else EvalStatus.PASSED
-
-    invocation_result = PerInvocationResult(
-        actual_invocation=invocation,
-        score=score,
-        eval_status=eval_status
-    )
-    per_invocation_results.append(invocation_result)
-
-  scores = [
-      result.score
-      for result in per_invocation_results
-      if result.eval_status != EvalStatus.NOT_EVALUATED
-  ]
-
-  average_score = statistics.mean(scores)
-
-  threshold = eval_metric.criterion.threshold
-  overall_eval_status = (
-      EvalStatus.PASSED if average_score >= threshold else EvalStatus.FAILED
-  )
-  return EvaluationResult(
-      overall_score=average_score,
-      overall_eval_status=overall_eval_status,
-      per_invocation_results=per_invocation_results,
-  )
+--8<-- "examples/inline/python/evaluate/custom_metrics/003-async-metric.py"
 ```
 
 ## Use a Custom Metric

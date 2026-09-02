@@ -38,28 +38,7 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 To implement this in your project, use the following configuration:
 
 ```python
-# 1. Correct the import path to use the google.adk namespace
-from google.adk.apps.app import App, EventsCompactionConfig
-from google.adk.agents import Agent
-
-# 2. Initialize your root agent (required for App setup)
-root_agent = Agent(
-    name="my_root_agent",
-    description="Main coordinating agent for the workflow."
-)
-
-# 3. Token-based configuration: Activates the priority/pre-call layer
-compaction_config = EventsCompactionConfig(
-    token_threshold=4000,     # Triggers compaction when actual token count exceeds this
-    event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
-)
-
-# 4. Register with required name and root_agent fields, and the config object
-app = App(
-    name="my_compacting_agent_app",
-    root_agent=root_agent,
-    events_compaction_config=compaction_config
-)
+--8<-- "examples/inline/python/context/compaction/001-configuration-settings.py"
 ```
 
 ## Sliding window compaction
@@ -71,10 +50,7 @@ agent, it summarizes data from older events once it reaches a threshold of a
 specific number of workflow events, or invocations, with the current Session.
 
 ```python
-# (Optional) Event-based, sliding window as supplementary setting
-compaction_config = EventsCompactionConfig(
-    compaction_interval=10,   # Number of turns between standard compactions
-    overlap_size=2,           # Number of events to retain as overlapping context
+--8<-- "examples/inline/python/context/compaction/002-sliding-window-compaction.py"
 ```
 
 ## Configure context compaction
@@ -89,73 +65,25 @@ in the following sample code:
 === "Python"
 
     ```python
-    from google.adk.apps.app import App
-    from google.adk.apps.app import EventsCompactionConfig
-
-    app = App(
-        name='my-agent',
-        root_agent=root_agent,
-        events_compaction_config=EventsCompactionConfig(
-            compaction_interval=3,  # Trigger compaction every 3 new invocations.
-            overlap_size=1          # Include last invocation from the previous window.
-        ),
-    )
+    --8<-- "examples/inline/python/context/compaction/003-configure-context-compaction.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.apps.App;
-    import com.google.adk.summarizer.EventsCompactionConfig;
-
-    App app = App.builder()
-        .name("my-agent")
-        .rootAgent(rootAgent)
-        .eventsCompactionConfig(EventsCompactionConfig.builder()
-            .compactionInterval(3)  // Trigger compaction every 3 new invocations.
-            .overlapSize(1)         // Include last invocation from the previous window.
-            .build())
-        .build();
+    --8<-- "examples/inline/java/context/compaction/004-configure-context-compaction.java"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {Gemini, LlmAgent, LlmSummarizer, TokenBasedContextCompactor} from '@google/adk';
-
-    const agent = new LlmAgent({
-      name: 'my-agent',
-      model: 'gemini-flash-latest',
-      contextCompactors: [
-        new TokenBasedContextCompactor({
-          tokenThreshold: 1000, // Trigger compaction when session exceeds 1000 tokens.
-          eventRetentionSize: 1, // Keep at least 1 raw event (overlap).
-          summarizer: new LlmSummarizer({
-            llm: new Gemini({model: 'gemini-flash-latest'}),
-          }),
-        }),
-      ],
-    });
+    --8<-- "examples/inline/typescript/context/compaction/005-configure-context-compaction.ts"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.apps.App
-    import com.google.adk.kt.summarizer.EventsCompactionConfig
-
-    // tokenThreshold and eventRetentionSize must be set together; either alone throws.
-    // Kotlin also accepts the compactionInterval/overlapSize pair used in the other tabs.
-    val app =
-        App(
-            appName = "my-agent",
-            rootAgent = rootAgent,
-            eventsCompactionConfig =
-                EventsCompactionConfig(
-                    tokenThreshold = 1000, // Compact when the last prompt exceeds 1000 tokens.
-                    eventRetentionSize = 1, // Keep at least 1 raw event.
-                ),
-        )
+    --8<-- "examples/inline/kotlin/context/compaction/006-configure-context-compaction.kt"
     ```
 
 Once configured, the ADK `Runner` handles the compaction process in the
@@ -203,107 +131,25 @@ The following code example demonstrates how to define and configure a custom sum
 === "Python"
 
     ```python
-    from google.adk.apps.app import App, EventsCompactionConfig
-    from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
-    from google.adk.models import Gemini
-
-    # Define the AI model to be used for summarization:
-    summarization_llm = Gemini(model="gemini-flash-latest")
-
-    # Create the summarizer with the custom model:
-    my_summarizer = LlmEventSummarizer(llm=summarization_llm)
-
-    # Configure the App with the custom summarizer and compaction settings:
-    app = App(
-        name='my-agent',
-        root_agent=root_agent,
-        events_compaction_config=EventsCompactionConfig(
-            compaction_interval=3,
-            overlap_size=1,
-            summarizer=my_summarizer,
-        ),
-    )
+    --8<-- "examples/inline/python/context/compaction/007-define-a-summarizer-define-summarizer.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.apps.App;
-    import com.google.adk.models.Gemini;
-    import com.google.adk.summarizer.EventsCompactionConfig;
-    import com.google.adk.summarizer.LlmEventSummarizer;
-
-    // Define the AI model to be used for summarization:
-    Gemini summarizationLlm = Gemini.builder()
-        .model("gemini-flash-latest")
-        .build();
-
-    // Create the summarizer with the custom model:
-    LlmEventSummarizer mySummarizer = new LlmEventSummarizer(summarizationLlm);
-
-    // Configure the App with the custom summarizer and compaction settings:
-    App app = App.builder()
-        .name("my-agent")
-        .rootAgent(rootAgent)
-        .eventsCompactionConfig(EventsCompactionConfig.builder()
-            .compactionInterval(3)
-            .overlapSize(1)
-            .summarizer(mySummarizer)
-            .build())
-        .build();
+    --8<-- "examples/inline/java/context/compaction/008-define-a-summarizer-define-summarizer.java"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {Gemini, LlmAgent, LlmSummarizer, TokenBasedContextCompactor} from '@google/adk';
-
-    // Define the AI model to be used for summarization:
-    const summarizationLlm = new Gemini({model: 'gemini-flash-latest'});
-
-    // Create the summarizer with the custom model:
-    const mySummarizer = new LlmSummarizer({llm: summarizationLlm});
-
-    // Configure the agent with the custom summarizer and compaction settings:
-    const agent = new LlmAgent({
-      name: 'my-agent',
-      model: 'gemini-flash-latest',
-      contextCompactors: [
-        new TokenBasedContextCompactor({
-          tokenThreshold: 1000,
-          eventRetentionSize: 1,
-          summarizer: mySummarizer,
-        }),
-      ],
-    });
+    --8<-- "examples/inline/typescript/context/compaction/009-define-a-summarizer-define-summarizer.ts"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.apps.App
-    import com.google.adk.kt.models.Gemini
-    import com.google.adk.kt.summarizer.EventsCompactionConfig
-    import com.google.adk.kt.summarizer.LlmEventSummarizer
-
-    // Define the AI model to be used for summarization:
-    val summarizationLlm = Gemini(name = "gemini-flash-latest")
-
-    // Create the summarizer with the custom model:
-    val mySummarizer = LlmEventSummarizer(model = summarizationLlm)
-
-    // Configure the App with the custom summarizer and compaction settings:
-    val app =
-        App(
-            appName = "my-agent",
-            rootAgent = rootAgent,
-            eventsCompactionConfig =
-                EventsCompactionConfig(
-                    compactionInterval = 3,
-                    overlapSize = 1,
-                    summarizer = mySummarizer,
-                ),
-        )
+    --8<-- "examples/inline/kotlin/context/compaction/010-define-a-summarizer-define-summarizer.kt"
     ```
 
 You can further refine the compactor by modifying its summarizer. In Python, Java

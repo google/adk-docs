@@ -46,10 +46,7 @@ The following code example show how to modify the `get_weather()` function to
 operate asynchronously and allow for parallel execution:
 
 ```python
- async def get_weather(city: str) -> dict:
-      async with aiohttp.ClientSession() as session:
-          async with session.get(f"http://api.weather.com/{city}") as response:
-              return await response.json()
+--8<-- "examples/inline/python/tools-custom/performance/001-example-of-http-web-call.py"
 ```
 
 ### Example of database call
@@ -58,9 +55,7 @@ The following code example show how to write a database calling function to
 operate asynchronously:
 
 ```python
-async def query_database(query: str) -> list:
-      async with asyncpg.connect("postgresql://...") as conn:
-          return await conn.fetch(query)
+--8<-- "examples/inline/python/tools-custom/performance/002-example-of-database-call.py"
 ```
 
 ### Example of yielding behavior for long loops
@@ -70,16 +65,7 @@ requests, consider adding yielding code to allow other tools to execute, as
 shown in the following code sample:
 
 ```python
-async def process_data(data: list) -> dict:
-      results = []
-      for i, item in enumerate(data):
-          processed = await process_item(item)  # Yield point
-          results.append(processed)
-
-          # Add periodic yield points for long loops
-          if i % 100 == 0:
-              await asyncio.sleep(0)  # Yield control
-      return {"results": results}
+--8<-- "examples/inline/python/tools-custom/performance/003-example-of-yielding-behavior-for-long-lo.py"
 ```
 
 !!! tip "Important"
@@ -93,17 +79,7 @@ for better management of available computing resources, as shown in the
 following example:
 
 ```python
-async def cpu_intensive_tool(data: list) -> dict:
-      loop = asyncio.get_event_loop()
-
-      # Use thread pool for CPU-bound work
-      with ThreadPoolExecutor() as executor:
-          result = await loop.run_in_executor(
-              executor,
-              expensive_computation,
-              data
-          )
-      return {"result": result}
+--8<-- "examples/inline/python/tools-custom/performance/004-example-of-thread-pools-for-intensive-op.py"
 ```
 
 ### Example of process chunking
@@ -114,26 +90,7 @@ data, and yielding processing time between the chunks, as shown in the following
 example:
 
 ```python
- async def process_large_dataset(dataset: list) -> dict:
-      results = []
-      chunk_size = 1000
-
-      for i in range(0, len(dataset), chunk_size):
-          chunk = dataset[i:i + chunk_size]
-
-          # Process chunk in thread pool
-          loop = asyncio.get_event_loop()
-          with ThreadPoolExecutor() as executor:
-              chunk_result = await loop.run_in_executor(
-                  executor, process_chunk, chunk
-              )
-
-          results.extend(chunk_result)
-
-          # Yield control between chunks
-          await asyncio.sleep(0)
-
-      return {"total_processed": len(results), "results": results}
+--8<-- "examples/inline/python/tools-custom/performance/005-example-of-process-chunking.py"
 ```
 
 ## Write parallel-ready prompts and tool descriptions
@@ -160,19 +117,7 @@ The following example shows a tool function description that hints at more
 efficient use through parallel execution:
 
 ```python
- async def get_weather(city: str) -> dict:
-      """Get current weather for a single city.
-
-      This function is optimized for parallel execution - call multiple times for different cities.
-
-      Args:
-          city: Name of the city, for example: 'London', 'New York'
-
-      Returns:
-          Weather data including temperature, conditions, humidity
-      """
-      await asyncio.sleep(2)  # Simulate API call
-      return {"city": city, "temp": 72, "condition": "sunny"}
+--8<-- "examples/inline/python/tools-custom/performance/006-write-parallel-ready-prompts-and-tool-de.py"
 ```
 
 ## Next steps

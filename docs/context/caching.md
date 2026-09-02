@@ -24,81 +24,19 @@ these settings, as shown in the following code sample:
 === "Python"
 
     ```python
-    from google.adk import Agent
-    from google.adk.apps.app import App
-    from google.adk.agents.context_cache_config import ContextCacheConfig
-
-    root_agent = Agent(
-      # configure an agent using Gemini 2.0 or higher
-    )
-
-    # Create the app with context caching configuration
-    app = App(
-        name='my-caching-agent-app',
-        root_agent=root_agent,
-        context_cache_config=ContextCacheConfig(
-            min_tokens=2048,    # Minimum tokens to trigger caching
-            ttl_seconds=600,    # Store for up to 10 minutes
-            cache_intervals=5,  # Refresh after 5 uses
-        ),
-    )
+    --8<-- "examples/inline/python/context/caching/001-configure-context-caching.py"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.BaseAgent;
-    import com.google.adk.agents.ContextCacheConfig;
-    import com.google.adk.apps.App;
-    import java.time.Duration;
-
-    // Create the app with context caching configuration
-    App app = App.builder()
-                 .name("my-caching-agent-app")
-                 .rootAgent(rootAgent)
-                 .contextCacheConfig(
-                     new ContextCacheConfig(
-                         5, /* cache_intervals (max invocations) */
-                         Duration.ofMinutes(10), /* ttl */
-                         2048 /* min_tokens */))
-                 .build();
+    --8<-- "examples/inline/java/context/caching/002-configure-context-caching.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.agents.ContextCacheConfig
-    import com.google.adk.kt.agents.LlmAgent
-    import com.google.adk.kt.annotations.ExperimentalContextCachingFeature
-    import com.google.adk.kt.apps.App
-    import com.google.adk.kt.models.Gemini
-    import com.google.adk.kt.types.HttpOptions
-    import kotlin.time.Duration.Companion.minutes
-    import kotlin.time.Duration.Companion.seconds
-
-    val rootAgent =
-        LlmAgent(
-            name = "my_caching_agent",
-            // configure an agent using Gemini 2.0 or higher
-            model = Gemini(name = "gemini-flash-latest"),
-        )
-
-    // Create the app with context caching configuration
-    @OptIn(ExperimentalContextCachingFeature::class)
-    val app =
-        App(
-            appName = "my-caching-agent-app",
-            rootAgent = rootAgent,
-            contextCacheConfig =
-                ContextCacheConfig(
-                    // Gemini applies its own minimum cacheable size, which varies by model
-                    minTokens = 8192,
-                    ttl = 10.minutes, // Store for up to 10 minutes
-                    cacheIntervals = 5, // Refresh after 5 uses
-                    // On timeout the create fails and the request proceeds uncached.
-                    createHttpOptions = HttpOptions(timeout = 10.seconds),
-                ),
-        )
+    --8<-- "examples/inline/kotlin/context/caching/003-configure-context-caching.kt"
     ```
 
 ## Configuration settings

@@ -54,8 +54,7 @@ Integrating AgentOps into your ADK application is straightforward:
     Add the following lines at the beginning of your ADK application script (e.g., your main Python file running the ADK `Runner`):
 
     ```python
-    import agentops
-    agentops.init()
+    --8<-- "examples/inline/python/integrations/agentops/001-getting-started-with-agentops-and-adk.py"
     ```
 
     This will initiate an AgentOps session as well as automatically track ADK agents.
@@ -63,19 +62,7 @@ Integrating AgentOps into your ADK application is straightforward:
     Detailed example:
 
     ```python
-    import agentops
-    import os
-    from dotenv import load_dotenv
-
-    # Load environment variables (optional, if you use a .env file for API keys)
-    load_dotenv()
-
-    agentops.init(
-        api_key=os.getenv("AGENTOPS_API_KEY"), # Your AgentOps API Key
-        trace_name="my-adk-app-trace"  # Optional: A name for your trace
-        # auto_start_session=True is the default.
-        # Set to False if you want to manually control session start/end.
-    )
+    --8<-- "examples/inline/python/integrations/agentops/002-getting-started-with-agentops-and-adk.py"
     ```
 
     > 🚨 🔑 You can find your AgentOps API key on your [AgentOps Dashboard](https://app.agentops.ai/) after signing up. It's recommended to set it as an environment variable (`AGENTOPS_API_KEY`).

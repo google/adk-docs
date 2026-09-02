@@ -48,42 +48,7 @@ Add the following code to the `HelloTimeAgent.java` file in your project
 directory:
 
 ```java title="my_agent/src/main/java/com/example/agent/HelloTimeAgent.java"
-package com.example.agent;
-
-import com.google.adk.agents.BaseAgent;
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.tools.Annotations.Schema;
-import com.google.adk.tools.FunctionTool;
-
-import java.util.Map;
-
-public class HelloTimeAgent {
-
-    public static BaseAgent ROOT_AGENT = initAgent();
-
-    private static BaseAgent initAgent() {
-        return LlmAgent.builder()
-            .name("hello-time-agent")
-            .description("Tells the current time in a specified city")
-            .instruction("""
-                You are a helpful assistant that tells the current time in a city.
-                Use the 'getCurrentTime' tool for this purpose.
-                """)
-            .model("gemini-flash-latest")
-            .tools(FunctionTool.create(HelloTimeAgent.class, "getCurrentTime"))
-            .build();
-    }
-
-    /** Mock tool implementation */
-    @Schema(description = "Get the current time for a given city")
-    public static Map<String, String> getCurrentTime(
-        @Schema(name = "city", description = "Name of the city to get the time for") String city) {
-        return Map.of(
-            "city", city,
-            "forecast", "The time is 10:30am."
-        );
-    }
-}
+--8<-- "examples/inline/java/get-started/java/001-define-the-agent-code.java"
 ```
 
 !!! warning "Caution: Gemini 3 compatibility"
@@ -191,51 +156,7 @@ Create a `AgentCliRunner.java` class to allow you to run and interact with
 running agent.
 
 ```java title="my_agent/src/main/java/com/example/agent/AgentCliRunner.java"
-package com.example.agent;
-
-import com.google.adk.agents.RunConfig;
-import com.google.adk.events.Event;
-import com.google.adk.runner.InMemoryRunner;
-import com.google.adk.sessions.Session;
-import com.google.genai.types.Content;
-import com.google.genai.types.Part;
-import io.reactivex.rxjava3.core.Flowable;
-import java.util.Scanner;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-public class AgentCliRunner {
-
-    public static void main(String[] args) {
-        RunConfig runConfig = RunConfig.builder().build();
-        InMemoryRunner runner = new InMemoryRunner(HelloTimeAgent.ROOT_AGENT);
-
-        Session session = runner
-                .sessionService()
-                .createSession(runner.appName(), "user1234")
-                .blockingGet();
-
-        try (Scanner scanner = new Scanner(System.in, UTF_8)) {
-            while (true) {
-                System.out.print("\nYou > ");
-                String userInput = scanner.nextLine();
-                if ("quit".equalsIgnoreCase(userInput)) {
-                    break;
-                }
-
-                Content userMsg = Content.fromParts(Part.fromText(userInput));
-                Flowable<Event> events = runner.runAsync(session.userId(), session.id(), userMsg, runConfig);
-
-                System.out.print("\nAgent > ");
-                events.blockingForEach(event -> {
-                    if (event.finalResponse()) {
-                        System.out.println(event.stringifyContent());
-                    }
-                });
-            }
-        }
-    }
-}
+--8<-- "examples/inline/java/get-started/java/002-create-an-agent-command-line-interface.java"
 ```
 
 ## Run your agent

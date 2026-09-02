@@ -61,56 +61,7 @@ Initialize Respan before running the ADK agent. All ADK runs started after
 initialization are traced automatically.
 
 ```python
-import asyncio
-
-from google.adk.agents import Agent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.genai import types
-from respan import Respan
-from respan_instrumentation_google_adk import GoogleADKInstrumentor
-
-respan = Respan(
-    instrumentations=[GoogleADKInstrumentor()],
-    environment="development",
-)
-
-agent = Agent(
-    name="assistant",
-    model="gemini-flash-latest",
-    instruction="You are a concise assistant.",
-)
-
-
-async def main():
-    session_service = InMemorySessionService()
-    session = await session_service.create_session(
-        app_name="respan-adk-demo",
-        user_id="user_1",
-    )
-    runner = Runner(
-        agent=agent,
-        app_name="respan-adk-demo",
-        session_service=session_service,
-    )
-    message = types.Content(
-        role="user",
-        parts=[types.Part(text="Say hello in one sentence.")],
-    )
-
-    async for event in runner.run_async(
-        user_id="user_1",
-        session_id=session.id,
-        new_message=message,
-    ):
-        if event.is_final_response():
-            print(event.content.parts[0].text)
-
-    respan.flush()
-    respan.shutdown()
-
-
-asyncio.run(main())
+--8<-- "examples/inline/python/integrations/respan/001-trace-an-adk-agent.py"
 ```
 
 Open the [Respan traces page](https://platform.respan.ai/platform/traces) to see
@@ -122,19 +73,7 @@ Use `propagate_attributes()` to add per-request identifiers and metadata to all
 spans produced inside the context.
 
 ```python
-from respan import Respan, propagate_attributes
-from respan_instrumentation_google_adk import GoogleADKInstrumentor
-
-respan = Respan(instrumentations=[GoogleADKInstrumentor()])
-
-
-async def handle_user_request(user_id: str, message: str):
-    with propagate_attributes(
-        customer_identifier=user_id,
-        thread_identifier="conversation_123",
-        metadata={"source": "web"},
-    ):
-        return await run_adk_agent(message)
+--8<-- "examples/inline/python/integrations/respan/002-add-request-metadata.py"
 ```
 
 ## Trace tool calls
@@ -143,20 +82,7 @@ ADK tools are captured as child tool spans with serialized inputs, outputs, and
 timing.
 
 ```python
-from google.adk.agents import Agent
-
-
-def get_weather(city: str) -> str:
-    """Return a deterministic weather report for a city."""
-    return f"{city}: sunny, 72F, light wind"
-
-
-agent = Agent(
-    name="weather_agent",
-    model="gemini-flash-latest",
-    instruction="Use the get_weather tool when weather is requested.",
-    tools=[get_weather],
-)
+--8<-- "examples/inline/python/integrations/respan/003-trace-tool-calls.py"
 ```
 
 ## Use the Respan gateway
@@ -172,20 +98,7 @@ export RESPAN_MODEL="openai/gpt-5-mini"
 ```
 
 ```python
-import os
-
-from google.adk.agents import Agent
-from google.adk.models.lite_llm import LiteLlm
-
-agent = Agent(
-    name="assistant",
-    model=LiteLlm(
-        model=os.getenv("RESPAN_MODEL", "openai/gpt-5-mini"),
-        api_key=os.environ["RESPAN_API_KEY"],
-        api_base=os.getenv("RESPAN_BASE_URL", "https://api.respan.ai/api"),
-    ),
-    instruction="You are a concise assistant.",
-)
+--8<-- "examples/inline/python/integrations/respan/004-use-the-respan-gateway.py"
 ```
 
 ## Resources

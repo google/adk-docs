@@ -1,0 +1,2 @@
+# Full runnable code for the StoryFlowAgent example
+--8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:full_code"

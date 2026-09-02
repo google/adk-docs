@@ -1,0 +1,4 @@
+func (p *MyPlugin) BeforeRunCallback(ctx agent.InvocationContext) (*genai.Content, error) {
+  // Your implementation here
+  return nil, nil
+}

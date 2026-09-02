@@ -38,9 +38,7 @@ Before responding to a user, an agent typically performs a series of actions, wh
 For example:
 
 ```python
-# Trajectory evaluation will compare
-expected_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
-actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
+--8<-- "examples/inline/python/evaluate/index/001-evaluate-trajectory-and-tool-use.py"
 ```
 
 ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
@@ -567,16 +565,7 @@ pytest tests/integration/
 Here is an example of a `pytest` test case that runs a single test file:
 
 ```py
-from google.adk.evaluation.agent_evaluator import AgentEvaluator
-import pytest
-
-@pytest.mark.asyncio
-async def test_with_single_test_file():
-    """Test the agent's basic ability via a session file."""
-    await AgentEvaluator.evaluate(
-        agent_module="home_automation_agent",
-        eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
-    )
+--8<-- "examples/inline/python/evaluate/index/002-example-test-code.py"
 ```
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.

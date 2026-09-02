@@ -59,49 +59,7 @@ working_dir/
 
 === "Python"
     ```python
-    # weather_agent/agent.py
-
-    import os
-    from google.adk.agents import Agent
-
-    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "{your-project-id}")
-    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
-    os.environ.setdefault("GOOGLE_GENAI_USE_ENTERPRISE", "True")
-
-
-    # Define a tool function
-    def get_weather(city: str) -> dict:
-        """Retrieves the current weather report for a specified city.
-
-        Args:
-            city (str): The name of the city for which to retrieve the weather report.
-
-        Returns:
-            dict: status and result or error msg.
-        """
-        if city.lower() == "new york":
-            return {
-                "status": "success",
-                "report": (
-                    "The weather in New York is sunny with a temperature of 25 degrees"
-                    " Celsius (77 degrees Fahrenheit)."
-                ),
-            }
-        else:
-            return {
-                "status": "error",
-                "error_message": f"Weather information for '{city}' is not available.",
-            }
-
-
-    # Create an agent with tools
-    root_agent = Agent(
-        name="weather_agent",
-        model="gemini-flash-latest",
-        description="Agent to answer questions using weather tools.",
-        instruction="You must use the available tools to find an answer.",
-        tools=[get_weather],
-    )
+    --8<-- "examples/inline/python/integrations/cloud-trace/001-overview.py"
     ```
 
 ## Cloud Trace setup
@@ -140,12 +98,7 @@ agent using the ADK CLI.
     If you are using the Agent Platform SDK `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
 
     ```python
-    from vertexai.agent_engines import AdkApp
-
-    adk_app = AdkApp(
-        agent=root_agent,
-        enable_tracing=True,
-    )
+    --8<-- "examples/inline/python/integrations/cloud-trace/002-use-adk-app-abstractions.py"
     ```
 
 #### Use telemetry modules
@@ -155,69 +108,19 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
 === "Python"
 
     ```python
-    from google.adk.telemetry import google_cloud
-    from google.adk.telemetry.setup import maybe_set_otel_providers
-
-    # Get GCP exporters configuration
-    hooks = google_cloud.get_gcp_exporters(enable_cloud_tracing=True)
-
-    # Initialize and set global OTel providers
-    maybe_set_otel_providers(otel_hooks_to_setup=[hooks])
+    --8<-- "examples/inline/python/integrations/cloud-trace/003-use-telemetry-modules.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { getGcpExporters, maybeSetOtelProviders } from '@google/adk';
-
-    // Get GCP exporters configuration
-    const gcpExporters = await getGcpExporters({
-      enableTracing: true,
-    });
-
-    // Initialize and set global OTel providers
-    maybeSetOtelProviders([gcpExporters]);
-
-    // ... your agent code ...
+    --8<-- "examples/inline/typescript/integrations/cloud-trace/004-use-telemetry-modules.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-    	"context"
-    	"log"
-    	"time"
-
-    	"google.golang.org/adk/v2/telemetry"
-    )
-
-    func main() {
-    	ctx := context.Background()
-
-    	// Initialize telemetry with cloud export enabled.
-    	// By default, the GCP project ID is read from the GOOGLE_CLOUD_PROJECT environment variable.
-    	// You can also specify it explicitly using telemetry.WithGcpResourceProject("my-project").
-    	telemetryProviders, err := telemetry.New(ctx,
-    		telemetry.WithOtelToCloud(true),
-    		// telemetry.WithGcpResourceProject("your-project-id"),
-    	)
-    	if err != nil {
-    		log.Fatalf("failed to initialize telemetry: %v", err)
-    	}
-    	defer func() {
-    		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    		defer cancel()
-    		if err := telemetryProviders.Shutdown(shutdownCtx); err != nil {
-    			log.Printf("failed to shutdown telemetry: %v", err)
-    		}
-    	}()
-
-    	// Register as global OTel providers
-    	telemetryProviders.SetGlobalOtelProviders()
-
-    	// ... your agent code ...
-    }
+    --8<-- "examples/inline/go/integrations/cloud-trace/005-use-telemetry-modules.go.txt"
     ```
 
 ## Inspect Cloud Trace data

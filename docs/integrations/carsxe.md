@@ -51,61 +51,13 @@ authenticates with your API key via the `X-API-Key` header.
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-    CARSXE_API_KEY = "YOUR_CARSXE_API_KEY"
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="carsxe_agent",
-        instruction=(
-            "You are a vehicle data assistant. Use the CarsXE tools to decode "
-            "VINs and license plates and to look up specifications, market value, "
-            "history, recalls, and OBD-II codes."
-        ),
-        tools=[
-            McpToolset(
-                connection_params=StreamableHTTPConnectionParams(
-                    url="https://mcp.carsxe.com/mcp",
-                    headers={"X-API-Key": CARSXE_API_KEY},
-                ),
-            )
-        ],
-    )
+    --8<-- "examples/inline/python/integrations/carsxe/001-use-with-agent.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, MCPToolset } from "@google/adk";
-
-    const CARSXE_API_KEY = "YOUR_CARSXE_API_KEY";
-
-    const rootAgent = new LlmAgent({
-        model: "gemini-flash-latest",
-        name: "carsxe_agent",
-        instruction:
-            "You are a vehicle data assistant. Use the CarsXE tools to decode " +
-            "VINs and license plates and to look up specifications, market value, " +
-            "history, recalls, and OBD-II codes.",
-        tools: [
-            new MCPToolset({
-                type: "StreamableHTTPConnectionParams",
-                url: "https://mcp.carsxe.com/mcp",
-                transportOptions: {
-                    requestInit: {
-                        headers: {
-                            "X-API-Key": CARSXE_API_KEY,
-                        },
-                    },
-                },
-            }),
-        ],
-    });
-
-    export { rootAgent };
+    --8<-- "examples/inline/typescript/integrations/carsxe/002-use-with-agent.ts"
     ```
 
 ## Available tools

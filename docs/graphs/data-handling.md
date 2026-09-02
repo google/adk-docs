@@ -99,11 +99,7 @@ Each step in a workflow produces output for its successor.
     Use the ***return*** or ***yield*** syntax to hand off data to the next node:
 
     ```python
-    from google.adk import Event
-
-    def my_function_node(node_input: str):
-        output_value = node_input.upper()
-        return Event(output=output_value) # "THE RESULT"
+    --8<-- "examples/inline/python/graphs/data-handling/001-node-output.py"
     ```
 
     Use the ***return*** syntax when outputting ***Event*** data that does not
@@ -157,13 +153,7 @@ Each step in a workflow produces output for its successor.
     You can pass longer, structured data in a serializable format:
 
     ```python
-    def my_function_node_3():
-        yield Event(
-            output={
-                "city_name": "Paris",
-                "city_time": "10:10 AM",
-            },
-        )
+    --8<-- "examples/inline/python/graphs/data-handling/002-node-output-passing-structured-data.py"
     ```
 
     !!! warning "Caution: Event.output limitation"
@@ -209,8 +199,7 @@ Each step in a workflow produces output for its successor.
     dispatch:
 
     ```python
-    def router(node_input: str):
-        return Event(route="BUG")
+    --8<-- "examples/inline/python/graphs/data-handling/003-routing-output.py"
     ```
 
 === "TypeScript"
@@ -243,9 +232,7 @@ Each step in a workflow produces output for its successor.
     user rather than pass data to the next node:
 
     ```python
-    async def user_message(node_input: str):
-      """Tell user research process is starting."""
-      yield Event(message="Beginning research process...")
+    --8<-- "examples/inline/python/graphs/data-handling/004-user-facing-messages.py"
     ```
 
 === "TypeScript"
@@ -284,27 +271,7 @@ inside tools and callbacks regardless of which agent style you use.
     available to downstream nodes:
 
     ```python
-    async def init_state_node(attempts: int = 0):
-      yield Event(
-          state={
-              "attempts": attempts,
-          },
-      )
-
-    async def task_attempt_node(node_input: Content, attempts: int):
-      yield Event(
-          state={
-              "attempts": attempts + 1,
-          },
-      )
-
-    async def read_state_node(ctx: Context):
-      print(f"attempts state: {ctx.state}") # attempts state: attempts: 1
-
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[("START", init_state_node, task_attempt_node, read_state_node)],
-    )
+    --8<-- "examples/inline/python/graphs/data-handling/005-session-state-and-state-scopes.py"
     ```
 
     !!! warning "Caution: `state` property data limitations"
@@ -368,35 +335,7 @@ accepted and produced by any agent node.
     ***BaseModel*** to constrain any agent's input and output:
 
     ```python
-    from google.adk import Agent
-    from pydantic import BaseModel
-
-    class FlightSearchInput(BaseModel):
-        origin: str           # Airport code "SFO"
-        destination: str      # Airport code "CDG"
-        departure_date: date  # date(2026, 3, 15)
-        passengers: int = 1   # Number of passengers
-
-    class FlightSearchOutput(BaseModel):
-        flights: list[Flight]
-        cheapest_price: float
-
-    flight_searcher = Agent(
-        name="flight_searcher",
-        instruction="Search for available flights.",
-        input_schema=FlightSearchInput,
-        output_schema=FlightSearchOutput,
-        tools=[search_flights_api],
-        mode="single_turn",
-        ...
-    )
-
-    assistant = Agent(
-        name="assistant",
-        instruction="You help users plan trips.",
-        sub_agents=[flight_searcher],
-        ...
-    )
+    --8<-- "examples/inline/python/graphs/data-handling/006-constrain-node-data-with-schemas.py"
     ```
 
 === "TypeScript"
@@ -444,39 +383,7 @@ accepted and produced by any agent node.
     of the source node:
 
     ```python
-    class CityTime(BaseModel):
-        time_info: str  # time information
-        city: str       # city name
-
-    def lookup_time_function(city: str):
-        """Simulate returning the current time in the specified city."""
-        return Event(output=CityTime(time_info='10:10 AM', city=city))
-
-    city_report_agent = Agent(
-        name="city_report_agent",
-        model="gemini-flash-latest",
-        input_schema=CityTime,
-
-        # data selection based on class and parameter
-        # instruction="""
-        #     Return a sentence in the following format:
-        #     It is {CityTime.time_info} in {CityTime.city} right now.
-        # """,
-
-        # more restrictive data selection based on source node name
-        instruction="""
-            Return a sentence in the following format:
-            It is <CityTime.time_info from lookup_time_function> in
-            <CityTime.city from lookup_time_function> right now.
-        """,
-    )
-
-    root_agent = Workflow(
-        name="root_agent",
-        edges=[
-            (START, city_generator_agent, lookup_time_function, city_report_agent)
-        ],
-    )
+    --8<-- "examples/inline/python/graphs/data-handling/007-access-structured-data-in-agents.py"
     ```
 
 === "TypeScript"

@@ -31,22 +31,7 @@ The following code examples show a basic implementation for using Claude models
 in your agents:
 
 ```java
-public static LlmAgent createAgent() {
-
-  AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
-      .apiKey("ANTHROPIC_API_KEY")
-      .build();
-
-  Claude claudeModel = new Claude(
-      "claude-sonnet-4-6", anthropicClient
-  );
-
-  return LlmAgent.builder()
-      .name("claude_direct_agent")
-      .model(claudeModel)
-      .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
-      .build();
-}
+--8<-- "examples/inline/java/agents/models/anthropic/001-get-started.java"
 ```
 
 ### Prerequisites
@@ -65,42 +50,5 @@ name and an `AnthropicOkHttpClient` configured with your API key. Then, pass the
 `Claude` instance to your `LlmAgent`, as shown in the following example:
 
 ```java
-import com.anthropic.client.AnthropicClient;
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.models.Claude;
-import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
-
-public class DirectAnthropicAgent {
-
-  private static final String CLAUDE_MODEL_ID = "claude-sonnet-4-6"; // Or your preferred Claude model
-
-  public static LlmAgent createAgent() {
-
-    // It's recommended to load sensitive keys from a secure config
-    AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
-        .apiKey("ANTHROPIC_API_KEY")
-        .build();
-
-    Claude claudeModel = new Claude(
-        CLAUDE_MODEL_ID,
-        anthropicClient
-    );
-
-    return LlmAgent.builder()
-        .name("claude_direct_agent")
-        .model(claudeModel)
-        .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
-        // ... other LlmAgent configurations
-        .build();
-  }
-
-  public static void main(String[] args) {
-    try {
-      LlmAgent agent = createAgent();
-      System.out.println("Successfully created direct Anthropic agent: " + agent.name());
-    } catch (IllegalStateException e) {
-      System.err.println("Error creating agent: " + e.getMessage());
-    }
-  }
-}
+--8<-- "examples/inline/java/agents/models/anthropic/002-example-implementation.java"
 ```

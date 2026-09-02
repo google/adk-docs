@@ -29,32 +29,7 @@ You can define [skills in code](#inline-skills) or load
 === "Python"
 
     ```python
-    import pathlib
-
-    from google.adk import Agent
-    from google.adk.skills import load_skill_from_dir
-    from google.adk.tools import skill_toolset
-
-    weather_skill = load_skill_from_dir(
-        pathlib.Path(__file__).parent / "skills" / "weather_skill"
-    )
-
-    my_skill_toolset = skill_toolset.SkillToolset(
-        skills=[weather_skill],
-        additional_tools=[get_weather_tool],
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="skill_user_agent",
-        description="An agent that can use specialized skills.",
-        instruction=(
-            "You are a helpful assistant that can leverage skills to perform tasks."
-        ),
-        tools=[
-            my_skill_toolset,
-        ],
-    )
+    --8<-- "examples/inline/python/skills/index/001-get-started.py"
     ```
 
     For a complete code example of an ADK agent with a Skill, including both
@@ -70,33 +45,7 @@ You can define [skills in code](#inline-skills) or load
 === "Go"
 
     ```go
-    import (
-        "context"
-        "os"
-
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/tool/skilltoolset/skill"
-        "google.golang.org/adk/v2/tool/skilltoolset"
-        "google.golang.org/adk/v2/tool"
-    )
-
-    mySkillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
-        Source: skill.NewFileSystemSource(os.DirFS("./skills")),
-    })
-    if err != nil {
-        // handle error
-    }
-
-    rootAgent, err := llmagent.New(llmagent.Config{
-        Name:        "skill_user_agent",
-        Model:       model,
-        Description: "An agent that can use specialized skills.",
-        Instruction: "You are a helpful assistant that can leverage skills to perform tasks.",
-        Toolsets:    []tool.Toolset{mySkillToolset},
-    })
-    if err != nil {
-        // handle error
-    }
+    --8<-- "examples/inline/go/skills/index/002-get-started.go.txt"
     ```
 
     For a complete example, see the code sample in
@@ -204,26 +153,7 @@ You can define Skills within the code of your agent, as shown below.
 === "Python"
 
     ```python
-    from google.adk.skills import models
-
-    greeting_skill = models.Skill(
-        frontmatter=models.Frontmatter(
-            name="greeting-skill",
-            description=(
-                "A friendly greeting skill that can say hello to a specific person."
-            ),
-        ),
-        instructions=(
-            "Step 1: Read the 'references/hello_world.txt' file to understand how"
-            " to greet the user. Step 2: Return a greeting based on the reference."
-        ),
-        resources=models.Resources(
-            references={
-                "hello_world.txt": "Hello! So glad to have you here!",
-                "example.md": "This is an example reference.",
-            },
-        ),
-    )
+    --8<-- "examples/inline/python/skills/index/003-define-skills-in-code-inline-skills.py"
     ```
 
 === "TypeScript"
@@ -241,61 +171,7 @@ You can define Skills within the code of your agent, as shown below.
         interface yourself, as shown below.
 
     ```go
-    import (
-        "context"
-        "io"
-        "slices"
-        "strings"
-
-        "google.golang.org/adk/v2/tool/skilltoolset/skill"
-    )
-
-    // Example implementation of a static in-memory skill.Source:
-    type StaticSource struct{}
-
-    func (s *StaticSource) ListFrontmatters(ctx context.Context) ([]*skill.Frontmatter, error) {
-        return []*skill.Frontmatter{
-            {Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."},
-        }, nil
-    }
-
-    func (s *StaticSource) LoadFrontmatter(ctx context.Context, name string) (*skill.Frontmatter, error) {
-        if name != "greeting-skill" {
-            return nil, skill.ErrSkillNotFound
-        }
-        return &skill.Frontmatter{Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."}, nil
-    }
-
-    func (s *StaticSource) LoadInstructions(ctx context.Context, name string) (string, error) {
-        if name != "greeting-skill" {
-            return "", skill.ErrSkillNotFound
-        }
-        return "Step 1: Read the 'references/hello_world.txt' file to understand how to greet the user. Step 2: Return a greeting based on the reference.", nil
-    }
-
-    func (s *StaticSource) ListResources(ctx context.Context, name, subpath string) ([]string, error) {
-        if name != "greeting-skill" {
-            return nil, skill.ErrSkillNotFound
-        }
-        if !slices.Contains([]string{"", ".", "references", "references/"}, subpath) {
-            return nil, skill.ErrResourceNotFound
-        }
-        return []string{"references/hello_world.txt", "references/example.md"}, nil
-    }
-
-    func (s *StaticSource) LoadResource(ctx context.Context, name, resourcePath string) (io.ReadCloser, error) {
-        if name != "greeting-skill" {
-            return nil, skill.ErrSkillNotFound
-        }
-        switch resourcePath {
-        case "references/hello_world.txt":
-            return io.NopCloser(strings.NewReader("Hello! So glad to have you here!")), nil
-        case "references/example.md":
-            return io.NopCloser(strings.NewReader("This is an example reference.")), nil
-        default:
-            return nil, skill.ErrResourceNotFound
-        }
-    }
+    --8<-- "examples/inline/go/skills/index/004-define-skills-in-code-inline-skills.go.txt"
     ```
 
 === "Kotlin"
@@ -318,50 +194,13 @@ You can define Skills within the code of your agent, as shown below.
 === "Python"
 
     ```python
-    import pathlib
-
-    from google.adk.skills import load_skill_from_dir
-    from google.adk.tools import skill_toolset
-
-    greeting_skill = load_skill_from_dir(
-        pathlib.Path(__file__).parent / "skills" / "greeting-skill"
-    )
-    weather_skill = load_skill_from_dir(
-        pathlib.Path(__file__).parent / "skills" / "weather-skill"
-    )
-
-    my_skill_toolset = skill_toolset.SkillToolset(
-        skills=[weather_skill, greeting_skill],
-    )
+    --8<-- "examples/inline/python/skills/index/005-read-skills-from-filesystem-filesystem-s.py"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "os"
-
-        "google.golang.org/adk/v2/tool/skilltoolset/skill"
-        "google.golang.org/adk/v2/tool/skilltoolset"
-    )
-
-    // ...
-
-    source := skill.NewFileSystemSource(os.DirFS("./skills"))
-
-    // This example doesn't use any optional wrappers, but you can use them if
-    // needed, e.g.:
-    //   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
-    //   source, _, err = skill.WithCompletePreloadSource(ctx, source)
-    // For more information about these and other wrappers, see
-    // https://pkg.go.dev/google.golang.org/adk/v2/tool/skilltoolset/skill#Source.
-
-    skillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
-        Source: source,
-    })
-    if err != nil {
-        // handle error
-    }
+    --8<-- "examples/inline/go/skills/index/006-read-skills-from-filesystem-filesystem-s.go.txt"
     ```
 
 === "Kotlin"

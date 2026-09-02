@@ -1,0 +1,1 @@
+APP_ID = agent_engine.api_resource.name.split('/')[-1]

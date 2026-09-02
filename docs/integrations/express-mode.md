@@ -56,29 +56,19 @@ Next, create your Agent Runtime instance using the Agent Platform SDK.
 1. Import Agent Platform SDK.
 
     ```py
-    import vertexai
-    from vertexai import agent_engines
+    --8<-- "examples/inline/python/integrations/express-mode/001-configure-agent-runtime-container.py"
     ```
 
 2. Initialize the Agent Platform Client with your API key and create an agent engine instance.
 
     ```py
-    # Create Agent Runtime with Gen AI SDK
-    client = vertexai.Client(
-      api_key="YOUR_API_KEY",
-    )
-
-    agent_engine = client.agent_engines.create(
-      config={
-        "display_name": "Demo Agent Runtime",
-        "description": "Agent Runtime for Session and Memory",
-      })
+    --8<-- "examples/inline/python/integrations/express-mode/002-configure-agent-runtime-container.py"
     ```
 
 3. Get the Agent Runtime name and ID from the response to use with Memories and Sessions.
 
     ```py
-    APP_ID = agent_engine.api_resource.name.split('/')[-1]
+    --8<-- "examples/inline/python/integrations/express-mode/003-configure-agent-runtime-container.py"
     ```
 
 ## Manage Sessions with `VertexAiSessionService` {#agent-runtime-session-service}
@@ -88,19 +78,7 @@ is compatible with Agent Platform Express Mode API Keys. You can instead initial
 the session object without any project or location.
 
 ```py
-# Requires: pip install google-adk[gcp]
-# Plus environment variable setup:
-# GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-# GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-from google.adk.sessions import VertexAiSessionService
-
-# The app_name used with this service should be the Reasoning Engine ID or name
-APP_ID = "your-reasoning-engine-id"
-
-# Project and location are not required when initializing with Agent Platform express mode
-session_service = VertexAiSessionService(agent_engine_id=APP_ID)
-# Use REASONING_ENGINE_APP_ID when calling service methods, e.g.:
-# session = await session_service.create_session(app_name=APP_ID, user_id= ...)
+--8<-- "examples/inline/python/integrations/express-mode/004-manage-sessions-with-vertexaisessionserv.py"
 ```
 
 !!! info "Session Service Quotas"
@@ -117,19 +95,7 @@ is compatible with Agent Platform express mode API Keys. You can instead initial
 the memory object without any project or location.
 
 ```py
-# Requires: pip install google-adk[gcp]
-# Plus environment variable setup:
-# GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-# GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-from google.adk.memory import VertexAiMemoryBankService
-
-# The app_name used with this service should be the Reasoning Engine ID or name
-APP_ID = "your-reasoning-engine-id"
-
-# Project and location are not required when initializing with express mode
-memory_service = VertexAiMemoryBankService(agent_engine_id=APP_ID)
-# Generate a memory from that session so the Agent can remember relevant details about the user
-# memory = await memory_service.add_session_to_memory(session)
+--8<-- "examples/inline/python/integrations/express-mode/005-manage-memory-with-vertexaimemorybankser.py"
 ```
 
 !!! info "Memory Service Quotas"

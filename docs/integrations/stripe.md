@@ -41,64 +41,13 @@ operations.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="stripe_agent",
-            instruction="Help users manage their Stripe account",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@stripe/mcp",
-                                "--tools=all",
-                                # (Optional) Specify which tools to enable
-                                # "--tools=customers.read,invoices.read,products.read",
-                            ],
-                            env={
-                                "STRIPE_SECRET_KEY": STRIPE_SECRET_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/stripe/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="stripe_agent",
-            instruction="Help users manage their Stripe account",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.stripe.com",
-                        headers={
-                            "Authorization": f"Bearer {STRIPE_SECRET_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/stripe/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -106,64 +55,13 @@ operations.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "stripe_agent",
-            instruction: "Help users manage their Stripe account",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "@stripe/mcp",
-                            "--tools=all",
-                            // (Optional) Specify which tools to enable
-                            // "--tools=customers.read,invoices.read,products.read",
-                        ],
-                        env: {
-                            STRIPE_SECRET_KEY: STRIPE_SECRET_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/stripe/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "stripe_agent",
-            instruction: "Help users manage their Stripe account",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.stripe.com",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/stripe/004-use-with-agent.ts"
         ```
 
 !!! tip "Best practices"

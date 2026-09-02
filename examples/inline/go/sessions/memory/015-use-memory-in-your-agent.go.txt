@@ -1,0 +1,12 @@
+import (
+    "google.golang.org/adk/v2/agent/llmagent"
+    "google.golang.org/adk/v2/tool"
+    "google.golang.org/adk/v2/tool/preloadmemorytool"
+)
+
+agent, _ := llmagent.New(llmagent.Config{
+    Model:       model,
+    Name:        "weather_sentiment_agent",
+    Instruction: "...",
+    Tools:       []tool.Tool{preloadmemorytool.New()},
+})

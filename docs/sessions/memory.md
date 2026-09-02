@@ -68,36 +68,25 @@ required.
 === "Python"
 
     ```py
-    from google.adk.memory import InMemoryMemoryService
-    memory_service = InMemoryMemoryService()
+    --8<-- "examples/inline/python/sessions/memory/001-inmemorymemoryservice.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { InMemoryMemoryService } from '@google/adk';
-    const memoryService = new InMemoryMemoryService();
+    --8<-- "examples/inline/typescript/sessions/memory/002-inmemorymemoryservice.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-      "google.golang.org/adk/v2/memory"
-      "google.golang.org/adk/v2/session"
-    )
-
-    // Services must be shared across runners to share state and memory.
-    sessionService := session.InMemoryService()
-    memoryService := memory.InMemoryService()
+    --8<-- "examples/inline/go/sessions/memory/003-inmemorymemoryservice.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.memory.InMemoryMemoryService;
-
-    InMemoryMemoryService memoryService = new InMemoryMemoryService();
+    --8<-- "examples/inline/java/sessions/memory/004-inmemorymemoryservice.java"
     ```
 
 === "Kotlin"
@@ -114,96 +103,7 @@ simplicity.
 === "Python"
 
     ```py
-    import asyncio
-    from google.adk.agents import LlmAgent
-    from google.adk.sessions import InMemorySessionService, Session
-    from google.adk.memory import InMemoryMemoryService # Import MemoryService
-    from google.adk.runners import Runner
-    from google.adk.tools import load_memory # Tool to query memory
-    from google.genai.types import Content, Part
-
-    # --- Constants ---
-    APP_NAME = "memory_example_app"
-    USER_ID = "mem_user"
-    MODEL = "gemini-flash-latest" # Use a valid model
-
-    # --- Agent Definitions ---
-    # Agent 1: Simple agent to capture information
-    info_capture_agent = LlmAgent(
-        model=MODEL,
-        name="InfoCaptureAgent",
-        instruction="Acknowledge the user's statement.",
-    )
-
-    # Agent 2: Agent that can use memory
-    memory_recall_agent = LlmAgent(
-        model=MODEL,
-        name="MemoryRecallAgent",
-        instruction="Answer the user's question. Use the 'load_memory' tool "
-                    "if the answer might be in past conversations.",
-        tools=[load_memory] # Give the agent the tool
-    )
-
-    # --- Services ---
-    # Services must be shared across runners to share state and memory
-    session_service = InMemorySessionService()
-    memory_service = InMemoryMemoryService() # Use in-memory for demo
-
-    async def run_scenario():
-        # --- Scenario ---
-
-        # Turn 1: Capture some information in a session
-        print("--- Turn 1: Capturing Information ---")
-        runner1 = Runner(
-            # Start with the info capture agent
-            agent=info_capture_agent,
-            app_name=APP_NAME,
-            session_service=session_service,
-            memory_service=memory_service # Provide the memory service to the Runner
-        )
-        session1_id = "session_info"
-        await runner1.session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=session1_id)
-        user_input1 = Content(parts=[Part(text="My favorite project is Project Alpha.")], role="user")
-
-        # Run the agent
-        final_response_text = "(No final response)"
-        async for event in runner1.run_async(user_id=USER_ID, session_id=session1_id, new_message=user_input1):
-            if event.is_final_response() and event.content and event.content.parts:
-                final_response_text = event.content.parts[0].text
-        print(f"Agent 1 Response: {final_response_text}")
-
-        # Get the completed session
-        completed_session1 = await runner1.session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session1_id)
-
-        # Add this session's content to the Memory Service
-        print("\n--- Adding Session 1 to Memory ---")
-        await memory_service.add_session_to_memory(completed_session1)
-        print("Session added to memory.")
-
-        # Turn 2: Recall the information in a new session
-        print("\n--- Turn 2: Recalling Information ---")
-        runner2 = Runner(
-            # Use the second agent, which has the memory tool
-            agent=memory_recall_agent,
-            app_name=APP_NAME,
-            session_service=session_service, # Reuse the same service
-            memory_service=memory_service   # Reuse the same service
-        )
-        session2_id = "session_recall"
-        await runner2.session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=session2_id)
-        user_input2 = Content(parts=[Part(text="What is my favorite project?")], role="user")
-
-        # Run the second agent
-        final_response_text_2 = "(No final response)"
-        async for event in runner2.run_async(user_id=USER_ID, session_id=session2_id, new_message=user_input2):
-            if event.is_final_response() and event.content and event.content.parts:
-                final_response_text_2 = event.content.parts[0].text
-        print(f"Agent 2 Response: {final_response_text_2}")
-
-    # To run this example, you can use the following snippet:
-    # asyncio.run(run_scenario())
-
-    # await run_scenario()
+    --8<-- "examples/inline/python/sessions/memory/005-inmemorymemoryservice.py"
     ```
 
 === "TypeScript"
@@ -237,34 +137,13 @@ You can also search memory from within a custom tool by using the tool context.
 === "Python"
 
     ```python
-    from google.adk.tools import ToolContext
-
-    async def search_past_conversations(
-        query: str, tool_context: ToolContext
-    ) -> dict:
-        response = await tool_context.search_memory(query)
-        return {
-            "results": [
-                part.text
-                for entry in response.memories
-                for part in (entry.content.parts or [])
-                if part.text
-            ]
-        }
+    --8<-- "examples/inline/python/sessions/memory/006-search-memory-within-a-tool.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    // Within a tool implementation
-    async runAsync({ args, toolContext }: RunAsyncToolRequest) {
-      const query = args['query'] as string;
-      const response = await toolContext.searchMemory(query);
-      // process response
-      return {
-        memories: response.memories.map(m => m.content.parts?.map(p => p.text).join(' ')).join('\n')
-      };
-    }
+    --8<-- "examples/inline/typescript/sessions/memory/007-search-memory-within-a-tool.ts"
     ```
 
 === "Go"
@@ -276,15 +155,7 @@ You can also search memory from within a custom tool by using the tool context.
 === "Java"
 
     ```java
-    // Within a tool implementation
-    public Single<ToolOutput> execute(ToolContext context) {
-      String query = ...; // get query from arguments
-      return context.searchMemory(query)
-          .map(response -> {
-              // process response
-              return new ToolOutput(response.memories().toString());
-          });
-    }
+    --8<-- "examples/inline/java/sessions/memory/008-search-memory-within-a-tool.java"
     ```
 
 === "Kotlin"
@@ -323,19 +194,7 @@ How it works depends on the `enable_consolidation` option:
   separate memory item.
 
     ```python
-    from google.adk.memory import VertexAiMemoryBankService
-    from google.adk.memory.memory_entry import MemoryEntry
-    from google.genai.types import Content, Part
-
-    memory_service = VertexAiMemoryBankService(...)
-
-    await memory_service.add_memory(
-        app_name="my-app",
-        user_id="user-123",
-        memories=[
-            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is blue.")]))
-        ]
-    )
+    --8<-- "examples/inline/python/sessions/memory/009-direct-memory-ingestion-with-addmemory.py"
     ```
 
 - **Creation with Consolidation:** If you set `enable_consolidation` to `True`
@@ -345,14 +204,7 @@ How it works depends on the `enable_consolidation` option:
   more coherent knowledge base.
 
     ```python
-    await memory_service.add_memory(
-        app_name="my-app",
-        user_id="user-123",
-        memories=[
-            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is light blue.")]))
-        ],
-        custom_metadata={"enable_consolidation": True}
-    )
+    --8<-- "examples/inline/python/sessions/memory/010-direct-memory-ingestion-with-addmemory.py"
     ```
 
 ### Prerequisites
@@ -399,19 +251,7 @@ instantiating the `VertexAiMemoryBankService` and passing it to the `Runner`.
 === "Python"
 
     ```py
-    from google import adk
-    from google.adk.memory import VertexAiMemoryBankService
-
-    memory_service = VertexAiMemoryBankService(
-        project="PROJECT_ID",
-        location="LOCATION",
-        agent_engine_id="AGENT_ENGINE_ID"
-    )
-
-    runner = adk.Runner(
-        ...
-        memory_service=memory_service
-    )
+    --8<-- "examples/inline/python/sessions/memory/011-configuration.py"
     ```
 
 === "Kotlin"
@@ -431,13 +271,7 @@ memories produced by Memory Bank. Requires the Agent Platform SDK.
 === "Python"
 
     ```py
-    from google.adk.memory import VertexAiRagMemoryService
-
-    memory_service = VertexAiRagMemoryService(
-        rag_corpus="projects/PROJECT_ID/locations/LOCATION/ragCorpora/CORPUS_ID",
-        similarity_top_k=5,
-        vector_distance_threshold=0.6,
-    )
+    --8<-- "examples/inline/python/sessions/memory/012-rag-memory.py"
     ```
 
 === "Kotlin"
@@ -460,59 +294,25 @@ retrieve memories. ADK includes two pre-built tools for retrieving memories:
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import preload_memory
-
-    agent = Agent(
-        model=MODEL_ID,
-        name='weather_sentiment_agent',
-        instruction="...",
-        tools=[preload_memory]
-    )
+    --8<-- "examples/inline/python/sessions/memory/013-use-memory-in-your-agent.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, PRELOAD_MEMORY } from '@google/adk';
-
-    const agent = new LlmAgent({
-        model: MODEL_ID,
-        name: 'weather_sentiment_agent',
-        instruction: "...",
-        tools: [PRELOAD_MEMORY]
-    });
+    --8<-- "examples/inline/typescript/sessions/memory/014-use-memory-in-your-agent.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/tool"
-        "google.golang.org/adk/v2/tool/preloadmemorytool"
-    )
-
-    agent, _ := llmagent.New(llmagent.Config{
-        Model:       model,
-        Name:        "weather_sentiment_agent",
-        Instruction: "...",
-        Tools:       []tool.Tool{preloadmemorytool.New()},
-    })
+    --8<-- "examples/inline/go/sessions/memory/015-use-memory-in-your-agent.go.txt"
     ```
 
 === "Java"
 
     ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.LoadMemoryTool;
-
-    LlmAgent agent = new LlmAgent.Builder()
-        .model(MODEL_ID)
-        .name("weather_sentiment_agent")
-        .instruction("...")
-        .tools(new LoadMemoryTool())
-        .build();
+    --8<-- "examples/inline/java/sessions/memory/016-use-memory-in-your-agent.java"
     ```
 
 === "Kotlin"
@@ -527,69 +327,19 @@ For example, you can automate this step with a callback:
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools import preload_memory
-
-    async def auto_save_session_to_memory_callback(callback_context):
-        await callback_context.add_session_to_memory()
-
-    agent = Agent(
-        model=MODEL,
-        name="Generic_QA_Agent",
-        instruction="Answer the user's questions",
-        tools=[preload_memory],
-        after_agent_callback=auto_save_session_to_memory_callback,
-    )
+    --8<-- "examples/inline/python/sessions/memory/017-use-memory-in-your-agent.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { LlmAgent, PRELOAD_MEMORY, SingleAgentCallback } from '@google/adk';
-
-    const autoSaveSessionToMemoryCallback: SingleAgentCallback = async (callbackContext) => {
-        if (callbackContext.invocationContext.memoryService) {
-            await callbackContext.invocationContext.memoryService.addSessionToMemory(
-                callbackContext.invocationContext.session
-            );
-        }
-    };
-
-    const agent = new LlmAgent({
-        model: MODEL,
-        name: "Generic_QA_Agent",
-        instruction: "Answer the user's questions",
-        tools: [PRELOAD_MEMORY],
-        afterAgentCallback: autoSaveSessionToMemoryCallback,
-    });
+    --8<-- "examples/inline/typescript/sessions/memory/018-use-memory-in-your-agent.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-        "context"
-        "google.golang.org/adk/v2/agent"
-        "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/session"
-        "google.golang.org/adk/v2/tool"
-        "google.golang.org/adk/v2/tool/loadmemorytool"
-    )
-
-    func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
-        if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
-            return nil, err
-        }
-        return nil, nil
-    }
-
-    agent, _ := llmagent.New(llmagent.Config{
-        Model:               model,
-        Name:                "Generic_QA_Agent",
-        Instruction:         "Answer the user's questions",
-        Tools:               []tool.Tool{loadmemorytool.New()},
-        AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
-    })
+    --8<-- "examples/inline/go/sessions/memory/019-use-memory-in-your-agent.go.txt"
     ```
 
 === "Kotlin"
@@ -627,42 +377,7 @@ such as `InMemoryMemoryService` to amend memory data, as shown in the
 following code example:
 
 ```python
-import asyncio
-from google.adk.memory import InMemoryMemoryService
-
-# Assume my_memory_service is an instance of InMemoryMemoryService
-# and my_latest_events is a list of new adk.Event objects from the latest turn.
-my_latest_events = [...]
-
-async def update_incremental_memory(my_memory_service, my_latest_events):
-    # Example 1: Basic incremental update
-    await my_memory_service.add_events_to_memory(
-        app_name="my-app",
-        user_id="my-user",
-        events=my_latest_events,
-        session_id="my-optional-session-id"
-    )
-
-    # Example 2: Incremental update with Custom Metadata
-    await my_memory_service.add_events_to_memory(
-        app_name="my-app",
-        user_id="my-user",
-        events=my_latest_events,
-        session_id="my-optional-session-id",
-        custom_metadata={
-            "my_custom_key": "my_custom_value"
-        }
-    )
-
-async def update_session_memory(my_memory_service, my_completed_session):
-    # Example 3: Applying custom metadata to a full session
-    await my_memory_service.add_session_to_memory(
-        session=my_completed_session,
-        custom_metadata={
-            "category": "user_preference"
-        }
-    )
-
+--8<-- "examples/inline/python/sessions/memory/020-extend-memory-capabilities.py"
 ```
 
 ## Advanced concepts
@@ -718,45 +433,7 @@ any other `BaseMemoryService` implementation, for a separate knowledge base.
 === "Python"
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.memory import InMemoryMemoryService
-    from google.adk.tools import ToolContext
-
-    # Second memory service for docs lookup; could be any BaseMemoryService.
-    docs_memory = InMemoryMemoryService()
-
-
-    async def search_all_memory(query: str, tool_context: ToolContext) -> dict:
-        """Search both the conversational memory and the docs corpus."""
-        conversational = await tool_context.search_memory(query)
-        docs = await docs_memory.search_memory(
-            app_name="docs", user_id="shared", query=query
-        )
-        return {
-            "from_conversations": [
-                part.text
-                for entry in conversational.memories
-                for part in (entry.content.parts or [])
-                if part.text
-            ],
-            "from_docs": [
-                part.text
-                for entry in docs.memories
-                for part in (entry.content.parts or [])
-                if part.text
-            ],
-        }
-
-
-    agent = Agent(
-        model="gemini-flash-latest",
-        name="multi_memory_agent",
-        instruction=(
-            "Answer questions using both your conversation history and the "
-            "docs knowledge base. Use the search_all_memory tool."
-        ),
-        tools=[search_all_memory],
-    )
+    --8<-- "examples/inline/python/sessions/memory/021-example-use-two-memory-services.py"
     ```
 
 === "Kotlin"

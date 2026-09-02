@@ -73,46 +73,7 @@ pip install google-adk adk-aerospike
     agent with persisted sessions.
 
     ```python
-    import asyncio
-
-    from adk_aerospike import AerospikeSessionService
-    from google.adk.agents import LlmAgent
-    from google.adk.runners import Runner
-    from google.genai import types
-
-    async def main() -> None:
-        session_service = AerospikeSessionService.from_uri(
-            "aerospike://localhost:3000/adk"
-        )
-        agent = LlmAgent(
-            name="assistant",
-            model="gemini-flash-latest",
-            instruction="Be helpful. Keep replies under 30 words.",
-        )
-        runner = Runner(
-            agent=agent,
-            app_name="myapp",
-            session_service=session_service,
-        )
-
-        session = await session_service.create_session(
-            app_name="myapp", user_id="user-1"
-        )
-        async for event in runner.run_async(
-            user_id="user-1",
-            session_id=session.id,
-            new_message=types.Content(
-                role="user", parts=[types.Part(text="Hello")]
-            ),
-        ):
-            if event.content:
-                for part in event.content.parts or []:
-                    if part.text:
-                        print(part.text)
-
-        session_service.close()
-
-    asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/aerospike/001-use-with-agent.py"
     ```
 
 === "Session API"
@@ -121,50 +82,7 @@ pip install google-adk adk-aerospike
     keys follow ADK conventions (`app:`, `user:`, `temp:`).
 
     ```python
-    import asyncio
-
-    from adk_aerospike import AerospikeSessionService
-    from google.adk.events import Event, EventActions
-    from google.genai import types
-
-    async def main() -> None:
-        svc = AerospikeSessionService.from_uri("aerospike://localhost:3000/adk")
-
-        session = await svc.create_session(
-            app_name="support_bot",
-            user_id="alice",
-            state={
-                "topic": "billing",
-                "app:tenant": "acme-corp",
-                "user:nickname": "Allie",
-                "temp:scratch": "throwaway",
-            },
-        )
-
-        await svc.append_event(
-            session,
-            Event(
-                invocation_id="i1",
-                author="user",
-                content=types.Content(
-                    role="user",
-                    parts=[types.Part(text="Where is my invoice?")],
-                ),
-                actions=EventActions(state_delta={"turn": 1}),
-            ),
-        )
-
-        fetched = await svc.get_session(
-            app_name="support_bot",
-            user_id="alice",
-            session_id=session.id,
-        )
-        print(fetched.state)
-        # topic, turn, app:tenant, user:nickname — temp: keys are not persisted
-
-        svc.close()
-
-    asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/aerospike/002-use-with-agent.py"
     ```
 
 === "Memory service"
@@ -173,47 +91,7 @@ pip install google-adk adk-aerospike
     vector index).
 
     ```python
-    import asyncio
-
-    from adk_aerospike import AerospikeMemoryService
-    from google.adk.events import Event, EventActions
-    from google.adk.sessions import Session
-    from google.genai import types
-
-    async def main() -> None:
-        memory = AerospikeMemoryService.from_uri(
-            "aerospike://localhost:3000/adk", top_k=10
-        )
-
-        session = Session(
-            id="s-1",
-            app_name="support_bot",
-            user_id="alice",
-            events=[
-                Event(
-                    invocation_id="i",
-                    author="user",
-                    content=types.Content(
-                        role="user",
-                        parts=[types.Part(text="Python uses duck typing.")],
-                    ),
-                    actions=EventActions(),
-                ),
-            ],
-        )
-        await memory.add_session_to_memory(session)
-
-        resp = await memory.search_memory(
-            app_name="support_bot",
-            user_id="alice",
-            query="python duck typing",
-        )
-        for m in resp.memories:
-            print(m.content.parts[0].text)
-
-        memory.close()
-
-    asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/aerospike/003-use-with-agent.py"
     ```
 
 === "Artifact service"
@@ -222,66 +100,13 @@ pip install google-adk adk-aerospike
     cross-session visibility.
 
     ```python
-    import asyncio
-
-    from adk_aerospike import AerospikeArtifactService
-    from google.genai import types
-
-    async def main() -> None:
-        svc = AerospikeArtifactService.from_uri(
-            "aerospike://localhost:3000/adk"
-        )
-
-        await svc.save_artifact(
-            app_name="support_bot",
-            user_id="alice",
-            session_id="s-1",
-            filename="report.pdf",
-            artifact=types.Part(
-                inline_data=types.Blob(
-                    mime_type="application/pdf", data=b"%PDF-1.4..."
-                ),
-            ),
-        )
-
-        latest = await svc.load_artifact(
-            app_name="support_bot",
-            user_id="alice",
-            session_id="s-1",
-            filename="report.pdf",
-        )
-        print(latest.inline_data.mime_type)
-
-        svc.close()
-
-    asyncio.run(main())
+    --8<-- "examples/inline/python/integrations/aerospike/004-use-with-agent.py"
     ```
 
 === "All three services"
 
     ```python
-    from adk_aerospike import (
-        AerospikeArtifactService,
-        AerospikeMemoryService,
-        AerospikeSessionService,
-    )
-    from google.adk.agents import LlmAgent
-    from google.adk.runners import Runner
-
-    uri = "aerospike://localhost:3000/adk"
-
-    session_service = AerospikeSessionService.from_uri(uri)
-    artifact_service = AerospikeArtifactService.from_uri(uri)
-    memory_service = AerospikeMemoryService.from_uri(uri)
-
-    agent = LlmAgent(name="assistant", model="gemini-flash-latest")
-    runner = Runner(
-        agent=agent,
-        app_name="myapp",
-        session_service=session_service,
-        artifact_service=artifact_service,
-        memory_service=memory_service,
-    )
+    --8<-- "examples/inline/python/integrations/aerospike/005-use-with-agent.py"
     ```
 
 === "`adk web` and `adk run`"
@@ -289,9 +114,7 @@ pip install google-adk adk-aerospike
     Register URI schemes once (for example in `services.py` next to your agent):
 
     ```python
-    import adk_aerospike
-
-    adk_aerospike.register()
+    --8<-- "examples/inline/python/integrations/aerospike/006-use-with-agent.py"
     ```
 
     Then point the CLI at the same namespace for each storage role:

@@ -43,27 +43,7 @@ business data using natural language, without writing SQL or custom scripts.
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        WINDSOR_API_KEY = "YOUR_WINDSOR_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="windsor_agent",
-            instruction="Help users analyze their marketing and business data.",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.windsor.ai",
-                        headers={
-                            "Authorization": f"Bearer {WINDSOR_API_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/windsor-ai/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -71,30 +51,7 @@ business data using natural language, without writing SQL or custom scripts.
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const WINDSOR_API_KEY = "YOUR_WINDSOR_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "windsor_agent",
-            instruction: "Help users analyze their marketing and business data.",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.windsor.ai",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${WINDSOR_API_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/windsor-ai/002-use-with-agent.ts"
         ```
 
 ## Capabilities

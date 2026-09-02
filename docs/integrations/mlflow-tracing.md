@@ -50,20 +50,7 @@ Initialize the OTLP exporter and global tracer provider in code before importing
 or constructing ADK agents/tools:
 
 ```python
-# my_agent/agent.py
-from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-
-exporter = OTLPSpanExporter(
-    endpoint="http://localhost:5000/v1/traces",
-    headers={"x-mlflow-experiment-id": "123"}  # replace with your experiment id
-)
-
-provider = TracerProvider()
-provider.add_span_processor(SimpleSpanProcessor(exporter))
-trace.set_tracer_provider(provider)  # set BEFORE importing/using ADK
+--8<-- "examples/inline/python/integrations/mlflow-tracing/001-configure-opentelemetry-required.py"
 ```
 
 This configures the OpenTelemetry pipeline and sends ADK spans to the MLflow
@@ -75,27 +62,7 @@ Now you can add the agent code for a simple math agent, after the code that
 sets up the OTLP exporter and tracer provider:
 
 ```python
-# my_agent/agent.py
-from google.adk.agents import LlmAgent
-from google.adk.tools import FunctionTool
-
-
-def calculator(a: float, b: float) -> str:
-    """Add two numbers and return the result."""
-    return str(a + b)
-
-
-calculator_tool = FunctionTool(func=calculator)
-
-root_agent = LlmAgent(
-    name="MathAgent",
-    model="gemini-flash-latest",
-    instruction=(
-        "You are a helpful assistant that can do math. "
-        "When asked a math problem, use the calculator tool to solve it."
-    ),
-    tools=[calculator_tool],
-)
+--8<-- "examples/inline/python/integrations/mlflow-tracing/002-example-trace-an-adk-agent.py"
 ```
 
 Run the agent with:

@@ -1,0 +1,1 @@
+LoopAgent(sub_agents=[WriterAgent, CriticAgent], max_iterations=5)

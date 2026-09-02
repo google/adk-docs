@@ -40,35 +40,7 @@ filtering, and search across multiple indexes with reranking.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        PINECONE_API_KEY = "YOUR_PINECONE_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="pinecone_agent",
-            instruction="Help users manage and search their Pinecone vector indexes",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@pinecone-database/mcp",
-                            ],
-                            env={
-                                "PINECONE_API_KEY": PINECONE_API_KEY,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/pinecone/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -76,29 +48,7 @@ filtering, and search across multiple indexes with reranking.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const PINECONE_API_KEY = "YOUR_PINECONE_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "pinecone_agent",
-            instruction: "Help users manage and search their Pinecone vector indexes",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "@pinecone-database/mcp"],
-                        env: {
-                            PINECONE_API_KEY: PINECONE_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/pinecone/002-use-with-agent.ts"
         ```
 
 !!! note

@@ -1,0 +1,16 @@
+import (
+    "fmt"
+    "google.golang.org/adk/v2/session"
+)
+
+func handleControlFlow(event *session.Event) {
+    if event.Actions.TransferToAgent != "" {
+        fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
+    }
+    if event.Actions.Escalate {
+        fmt.Println("  Signal: Escalate (terminate loop)")
+    }
+    if event.Actions.SkipSummarization {
+        fmt.Println("  Signal: Skip summarization for tool result")
+    }
+}

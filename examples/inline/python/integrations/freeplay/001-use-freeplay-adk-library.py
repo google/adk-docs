@@ -1,0 +1,2 @@
+from freeplay_python_adk.client import FreeplayADK
+FreeplayADK.initialize_observability()

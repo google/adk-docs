@@ -162,15 +162,7 @@ across supported languages. For a guided introduction, start with the
     processor to your `build.gradle.kts`:
 
     ```kotlin title="build.gradle.kts"
-    plugins {
-        kotlin("jvm") version "2.1.20"
-        id("com.google.devtools.ksp") version "2.1.20-2.0.1"
-    }
-
-    dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.8.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:0.8.0")
-    }
+    --8<-- "examples/inline/kotlin/get-started/installation/001-advanced-setup.kt"
     ```
 
     The KSP processor generates code for the `@Tool` annotation used to

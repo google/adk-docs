@@ -82,35 +82,7 @@ agent can operate autonomously with built-in protections.
         your browser to grant the agent access to your connected ad accounts.
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="advertising_agent",
-            instruction=(
-                "You are an advertising agent that helps users create, manage, "
-                "and optimize ad campaigns across Google Ads, Meta Ads, "
-                "LinkedIn Ads, and TikTok Ads."
-            ),
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "mcp-remote",
-                                "https://mcp.adspirer.com/mcp",
-                            ],
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/adspirer/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
@@ -119,30 +91,7 @@ agent can operate autonomously with built-in protections.
         using Streamable HTTP without the OAuth browser flow.
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
-
-        ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="advertising_agent",
-            instruction=(
-                "You are an advertising agent that helps users create, manage, "
-                "and optimize ad campaigns across Google Ads, Meta Ads, "
-                "LinkedIn Ads, and TikTok Ads."
-            ),
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.adspirer.com/mcp",
-                        headers={
-                            "Authorization": f"Bearer {ADSPIRER_ACCESS_TOKEN}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/adspirer/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -154,31 +103,7 @@ agent can operate autonomously with built-in protections.
         your browser to grant the agent access to your connected ad accounts.
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "advertising_agent",
-            instruction:
-                "You are an advertising agent that helps users create, manage, " +
-                "and optimize ad campaigns across Google Ads, Meta Ads, " +
-                "LinkedIn Ads, and TikTok Ads.",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "mcp-remote",
-                            "https://mcp.adspirer.com/mcp",
-                        ],
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/adspirer/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
@@ -187,33 +112,7 @@ agent can operate autonomously with built-in protections.
         using Streamable HTTP without the OAuth browser flow.
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "advertising_agent",
-            instruction:
-                "You are an advertising agent that helps users create, manage, " +
-                "and optimize ad campaigns across Google Ads, Meta Ads, " +
-                "LinkedIn Ads, and TikTok Ads.",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.adspirer.com/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${ADSPIRER_ACCESS_TOKEN}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/adspirer/004-use-with-agent.ts"
         ```
 
 ## Capabilities

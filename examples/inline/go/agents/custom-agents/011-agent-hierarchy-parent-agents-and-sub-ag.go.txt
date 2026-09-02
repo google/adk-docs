@@ -1,0 +1,6 @@
+import (
+    "google.golang.org/adk/v2/agent"
+    "google.golang.org/adk/v2/agent/llmagent"
+)
+
+--8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchy"

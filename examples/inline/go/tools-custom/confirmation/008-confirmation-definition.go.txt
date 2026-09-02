@@ -1,0 +1,26 @@
+func requestTimeOff(ctx tool.Context, args RequestTimeOffArgs) (map[string]any, error) {
+    confirmation := ctx.ToolConfirmation()
+    if confirmation == nil {
+        ctx.RequestConfirmation(
+            "Please approve or reject the tool call requestTimeOff() by "+
+            "responding with a FunctionResponse with an expected "+
+            "ToolConfirmation payload.",
+            map[string]any{"approved_days": 0},
+        )
+        return map[string]any{"status": "Manager approval is required."}, nil
+    }
+
+    payload := confirmation.Payload.(map[string]any)
+    // Values in map[string]any from JSON are float64 by default in Go
+    approvedDays := int(payload["approved_days"].(float64))
+    approvedDays = min(approvedDays, args.Days)
+
+    if approvedDays == 0 {
+        return map[string]any{"status": "The time off request is rejected.", "approved_days": 0}, nil
+    }
+
+    return map[string]any{
+        "status": "ok",
+        "approved_days": approvedDays,
+    }, nil
+}

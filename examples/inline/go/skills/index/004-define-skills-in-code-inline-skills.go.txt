@@ -1,0 +1,55 @@
+import (
+    "context"
+    "io"
+    "slices"
+    "strings"
+
+    "google.golang.org/adk/v2/tool/skilltoolset/skill"
+)
+
+// Example implementation of a static in-memory skill.Source:
+type StaticSource struct{}
+
+func (s *StaticSource) ListFrontmatters(ctx context.Context) ([]*skill.Frontmatter, error) {
+    return []*skill.Frontmatter{
+        {Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."},
+    }, nil
+}
+
+func (s *StaticSource) LoadFrontmatter(ctx context.Context, name string) (*skill.Frontmatter, error) {
+    if name != "greeting-skill" {
+        return nil, skill.ErrSkillNotFound
+    }
+    return &skill.Frontmatter{Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."}, nil
+}
+
+func (s *StaticSource) LoadInstructions(ctx context.Context, name string) (string, error) {
+    if name != "greeting-skill" {
+        return "", skill.ErrSkillNotFound
+    }
+    return "Step 1: Read the 'references/hello_world.txt' file to understand how to greet the user. Step 2: Return a greeting based on the reference.", nil
+}
+
+func (s *StaticSource) ListResources(ctx context.Context, name, subpath string) ([]string, error) {
+    if name != "greeting-skill" {
+        return nil, skill.ErrSkillNotFound
+    }
+    if !slices.Contains([]string{"", ".", "references", "references/"}, subpath) {
+        return nil, skill.ErrResourceNotFound
+    }
+    return []string{"references/hello_world.txt", "references/example.md"}, nil
+}
+
+func (s *StaticSource) LoadResource(ctx context.Context, name, resourcePath string) (io.ReadCloser, error) {
+    if name != "greeting-skill" {
+        return nil, skill.ErrSkillNotFound
+    }
+    switch resourcePath {
+    case "references/hello_world.txt":
+        return io.NopCloser(strings.NewReader("Hello! So glad to have you here!")), nil
+    case "references/example.md":
+        return io.NopCloser(strings.NewReader("This is an example reference.")), nil
+    default:
+        return nil, skill.ErrResourceNotFound
+    }
+}

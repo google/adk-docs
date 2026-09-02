@@ -88,33 +88,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     connect to a long-running remote server.
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_mcp_agent",
-        instruction="Use the search-records tool to answer questions.",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="rvl",
-                        args=[
-                            "mcp",
-                            "--config",
-                            "/path/to/mcp_config.yaml",
-                            "--read-only",
-                        ],
-                    ),
-                    timeout=30,
-                ),
-                tool_filter=["search-records"],
-            ),
-        ],
-    )
+    --8<-- "examples/inline/python/integrations/redis/001-use-with-agent.py"
     ```
 
     !!! note
@@ -133,48 +107,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     cross-session search.
 
     ```python
-    from google.adk.agents import Agent
-    from google.adk.runners import Runner
-
-    from adk_redis import (
-        RedisLongTermMemoryService,
-        RedisLongTermMemoryServiceConfig,
-        RedisSessionMemoryService,
-        RedisSessionMemoryServiceConfig,
-    )
-
-    # Managed Redis Agent Memory (the default backend).
-    session_service = RedisSessionMemoryService(
-        config=RedisSessionMemoryServiceConfig(
-            backend="redis-agent-memory",
-            api_base_url="https://your-endpoint.redis.io",
-            api_key="...",
-            store_id="...",
-            default_namespace="my_app",
-        ),
-    )
-    memory_service = RedisLongTermMemoryService(
-        config=RedisLongTermMemoryServiceConfig(
-            backend="redis-agent-memory",
-            api_base_url="https://your-endpoint.redis.io",
-            api_key="...",
-            store_id="...",
-            default_namespace="my_app",
-        ),
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_memory_agent",
-        instruction="Use long-term memory to personalize responses.",
-    )
-
-    runner = Runner(
-        app_name="redis_memory_app",
-        agent=root_agent,
-        session_service=session_service,
-        memory_service=memory_service,
-    )
+    --8<-- "examples/inline/python/integrations/redis/002-use-with-agent.py"
     ```
 
     !!! note "Self-hosted backend"
@@ -193,37 +126,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     backend via the same `backend` field.
 
     ```python
-    from google.adk.agents import Agent
-
-    from adk_redis import (
-        CreateMemoryTool,
-        DeleteMemoryTool,
-        MemoryPromptTool,
-        MemoryToolConfig,
-        SearchMemoryTool,
-        UpdateMemoryTool,
-    )
-
-    config = MemoryToolConfig(
-        backend="redis-agent-memory",
-        api_base_url="https://your-endpoint.redis.io",
-        api_key="...",
-        store_id="...",
-        default_namespace="my_app",
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_memory_tools_agent",
-        instruction="Search memory before answering. Store important facts.",
-        tools=[
-            SearchMemoryTool(config=config),
-            CreateMemoryTool(config=config),
-            UpdateMemoryTool(config=config),
-            DeleteMemoryTool(config=config),
-            MemoryPromptTool(config=config),
-        ],
-    )
+    --8<-- "examples/inline/python/integrations/redis/003-use-with-agent.py"
     ```
 
 === "Sessions + Memory MCP server"
@@ -234,31 +137,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     long-term memory operations without using the REST-based services.
 
     ```python
-    import os
-
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-
-    MEMORY_MCP_URL = os.getenv("MEMORY_MCP_URL", "http://localhost:9000")
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="memory_mcp_agent",
-        instruction="Use memory tools to personalize responses.",
-        tools=[
-            McpToolset(
-                connection_params=SseConnectionParams(
-                    url=f"{MEMORY_MCP_URL.rstrip('/')}/sse",
-                ),
-                tool_filter=[
-                    "search_long_term_memory",
-                    "create_long_term_memories",
-                    "memory_prompt",
-                ],
-            ),
-        ],
-    )
+    --8<-- "examples/inline/python/integrations/redis/004-use-with-agent.py"
     ```
 
     !!! note
@@ -275,30 +154,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     index and pass it directly to your agent.
 
     ```python
-    from google.adk.agents import Agent
-    from redisvl.index import SearchIndex
-    from redisvl.utils.vectorize import HFTextVectorizer
-
-    from adk_redis import RedisVectorQueryConfig, RedisVectorSearchTool
-
-    vectorizer = HFTextVectorizer(model="redis/langcache-embed-v2")
-    index = SearchIndex.from_existing("products", redis_url="redis://localhost:6379")
-
-    search_tool = RedisVectorSearchTool(
-        index=index,
-        vectorizer=vectorizer,
-        config=RedisVectorQueryConfig(num_results=5),
-        return_fields=["title", "price", "category"],
-        name="search_products",
-        description="Semantic search over the product catalog.",
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_search_agent",
-        instruction="Help users find products using semantic search.",
-        tools=[search_tool],
-    )
+    --8<-- "examples/inline/python/integrations/redis/005-use-with-agent.py"
     ```
 
 ## Semantic caching
@@ -313,37 +169,7 @@ vectorizer) or managed via [Redis LangCache](https://redis.io/langcache).
     instance for self-hosted semantic caching.
 
     ```python
-    from google.adk.agents import Agent
-    from redisvl.utils.vectorize import HFTextVectorizer
-
-    from adk_redis import (
-        LLMResponseCache,
-        RedisVLCacheProvider,
-        RedisVLCacheProviderConfig,
-        create_llm_cache_callbacks,
-    )
-
-    provider = RedisVLCacheProvider(
-        config=RedisVLCacheProviderConfig(
-            redis_url="redis://localhost:6379",
-            ttl=3600,
-            distance_threshold=0.1,
-        ),
-        vectorizer=HFTextVectorizer(
-            model="redis/langcache-embed-v2",
-        ),
-    )
-
-    llm_cache = LLMResponseCache(provider=provider)
-    before_model_cb, after_model_cb = create_llm_cache_callbacks(llm_cache)
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="cached_agent",
-        instruction="You are a helpful assistant with semantic caching enabled.",
-        before_model_callback=before_model_cb,
-        after_model_callback=after_model_cb,
-    )
+    --8<-- "examples/inline/python/integrations/redis/006-semantic-caching.py"
     ```
 
 === "Semantic cache (LangCache)"
@@ -353,39 +179,7 @@ vectorizer) or managed via [Redis LangCache](https://redis.io/langcache).
     embeddings are handled server-side.
 
     ```python
-    import os
-
-    from google.adk.agents import Agent
-
-    from adk_redis import (
-        LLMResponseCache,
-        LangCacheProvider,
-        LangCacheProviderConfig,
-        create_llm_cache_callbacks,
-    )
-
-    provider = LangCacheProvider(
-        config=LangCacheProviderConfig(
-            cache_id=os.environ["LANGCACHE_CACHE_ID"],
-            api_key=os.environ["LANGCACHE_API_KEY"],
-            server_url=os.getenv(
-                "LANGCACHE_SERVER_URL",
-                "https://aws-us-east-1.langcache.redis.io",
-            ),
-            ttl=3600,
-        ),
-    )
-
-    llm_cache = LLMResponseCache(provider=provider)
-    before_model_cb, after_model_cb = create_llm_cache_callbacks(llm_cache)
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="cached_agent",
-        instruction="You are a helpful assistant with semantic caching enabled.",
-        before_model_callback=before_model_cb,
-        after_model_callback=after_model_cb,
-    )
+    --8<-- "examples/inline/python/integrations/redis/007-semantic-caching.py"
     ```
 
 ## Available tools

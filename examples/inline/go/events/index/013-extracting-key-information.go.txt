@@ -1,0 +1,20 @@
+import (
+    "fmt"
+    "google.golang.org/adk/v2/session"
+    "google.golang.org/genai"
+)
+
+func handleFunctionCalls(event *session.Event) {
+    if event.LLMResponse == nil || event.LLMResponse.Content == nil {
+        return
+    }
+    calls := event.Content.FunctionCalls()
+    if len(calls) > 0 {
+        for _, call := range calls {
+            toolName := call.Name
+            arguments := call.Args
+            fmt.Printf("  Tool: %s, Args: %v\n", toolName, arguments)
+            // Application might dispatch execution based on this
+        }
+    }
+}

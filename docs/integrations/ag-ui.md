@@ -72,14 +72,7 @@ Chat is a familiar interface for exposing your agent, and AG-UI handles
 streaming messages between your users and agents:
 
 ```tsx title="src/app/page.tsx"
-<CopilotSidebar
-  clickOutsideToClose={false}
-  defaultOpen={true}
-  labels={{
-    title: "Popup Assistant",
-    initial: "👋 Hi, there! You're chatting with an agent. This agent comes with a few tools to get you started..."
-  }}
-/>
+--8<-- "examples/inline/typescript/integrations/ag-ui/001-chat.tsx"
 ```
 
 Learn more about the chat UI
@@ -91,17 +84,7 @@ AG-UI lets you share tool information with a Generative UI so that it can be
 displayed to users:
 
 ```tsx title="src/app/page.tsx"
-useRenderToolCall(
-  {
-    name: "get_weather",
-    description: "Get the weather for a given location.",
-    parameters: [{ name: "location", type: "string", required: true }],
-    render: ({ args }) => {
-      return <WeatherCard location={args.location} themeColor={themeColor} />;
-    },
-  },
-  [themeColor],
-);
+--8<-- "examples/inline/typescript/integrations/ag-ui/002-generative-ui.tsx"
 ```
 
 Learn more about Generative UI
@@ -115,14 +98,7 @@ both ways so agents are automatically aware of changes made by your user or
 other parts of your application:
 
 ```tsx title="src/app/page.tsx"
-const { state, setState } = useCoAgent<AgentState>({
-  name: "my_agent",
-  initialState: {
-    proverbs: [
-      "A journey of a thousand miles begins with a single step.",
-    ],
-  },
-})
+--8<-- "examples/inline/typescript/integrations/ag-ui/003-shared-state.tsx"
 ```
 
 Learn more about shared state

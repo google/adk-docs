@@ -149,18 +149,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
 
     ```py
-    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
-
-    connector_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        connection="test-connection", #TODO: replace with connection name
-        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-        actions=["action1"], #TODO: replace with actions
-        service_account_json='{...}', # optional. Stringified json for service account key
-        tool_name_prefix="tool_prefix2",
-        tool_instructions="..."
-    )
+    --8<-- "examples/inline/python/integrations/application-integration/001-create-an-application-integration-toolse.py"
     ```
 
     **Note:**
@@ -172,72 +161,20 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     `ApplicationIntegrationToolset` supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
 
     ```py
-    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
-    from google.adk.tools.openapi_tool.auth.auth_helpers import dict_to_auth_scheme
-    from google.adk.auth import AuthCredential
-    from google.adk.auth import AuthCredentialTypes
-    from google.adk.auth import OAuth2Auth
-
-    oauth2_data_google_cloud = {
-      "type": "oauth2",
-      "flows": {
-          "authorizationCode": {
-              "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
-              "tokenUrl": "https://oauth2.googleapis.com/token",
-              "scopes": {
-                  "https://www.googleapis.com/auth/cloud-platform": (
-                      "View and manage your data across Google Cloud Platform"
-                      " services"
-                  ),
-                  "https://www.googleapis.com/auth/calendar.readonly": "View your calendars"
-              },
-          }
-      },
-    }
-
-    oauth_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
-
-    auth_credential = AuthCredential(
-      auth_type=AuthCredentialTypes.OAUTH2,
-      oauth2=OAuth2Auth(
-          client_id="...", #TODO: replace with client_id
-          client_secret="...", #TODO: replace with client_secret
-      ),
-    )
-
-    connector_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        connection="test-connection", #TODO: replace with connection name
-        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-        actions=["GET_calendars/%7BcalendarId%7D/events"], #TODO: replace with actions. this one is for list events
-        service_account_json='{...}', # optional. Stringified json for service account key
-        tool_name_prefix="tool_prefix2",
-        tool_instructions="...",
-        auth_scheme=oauth_scheme,
-        auth_credential=auth_credential
-    )
+    --8<-- "examples/inline/python/integrations/application-integration/002-create-an-application-integration-toolse.py"
     ```
 
 
 2. Update the `agent.py` file and add tool to your agent:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
-    from .tools import connector_tool
-
-    root_agent = LlmAgent(
-        model='gemini-flash-latest',
-        name='connector_agent',
-        instruction="Help user, leverage the tools you have access to",
-        tools=[connector_tool],
-    )
+    --8<-- "examples/inline/python/integrations/application-integration/003-create-an-application-integration-toolse.py"
     ```
 
 3. Configure  `__init__.py` to expose your agent:
 
     ```py
-    from . import agent
+    --8<-- "examples/inline/python/integrations/application-integration/004-create-an-application-integration-toolse.py"
     ```
 
 4. Start the Google ADK Web UI and use your agent:
@@ -265,13 +202,7 @@ workflow as a tool for your agent or create a new one.
     To create a tool with `ApplicationIntegrationToolset` in the `tools.py` file, use the following code:
 
       ```py
-          integration_tool = ApplicationIntegrationToolset(
-              project="test-project", # TODO: replace with GCP project of the connection
-              location="us-central1", #TODO: replace with location of the connection
-              integration="test-integration", #TODO: replace with integration name
-              triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
-              service_account_json='{...}', #optional. Stringified json for service account key
-          )
+      --8<-- "examples/inline/python/integrations/application-integration/005-1-create-a-tool.py"
       ```
 
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct
@@ -286,40 +217,7 @@ workflow as a tool for your agent or create a new one.
     To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, use the following code:
 
       ```java
-          import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
-          import com.google.common.collect.ImmutableList;
-          import com.google.common.collect.ImmutableMap;
-
-          public class Tools {
-              private static ApplicationIntegrationToolset integrationTool;
-              private static ApplicationIntegrationToolset connectionsTool;
-
-              static {
-                  integrationTool = new ApplicationIntegrationToolset(
-                          "test-project",
-                          "us-central1",
-                          "test-integration",
-                          ImmutableList.of("api_trigger/test-api"),
-                          null,
-                          null,
-                          null,
-                          "{...}",
-                          "tool_prefix1",
-                          "...");
-
-                  connectionsTool = new ApplicationIntegrationToolset(
-                          "test-project",
-                          "us-central1",
-                          null,
-                          null,
-                          "test-connection",
-                          ImmutableMap.of("Issue", ImmutableList.of("GET")),
-                          ImmutableList.of("ExecuteCustomQuery"),
-                          "{...}",
-                          "tool_prefix",
-                          "...");
-              }
-          }
+      --8<-- "examples/inline/java/integrations/application-integration/006-1-create-a-tool.java"
       ```
 
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
@@ -331,15 +229,7 @@ workflow as a tool for your agent or create a new one.
     To update the `agent.py` file and add the tool to your agent, use the following code:
 
       ```py
-          from google.adk.agents.llm_agent import LlmAgent
-          from .tools import integration_tool, connector_tool
-
-          root_agent = LlmAgent(
-              model='gemini-flash-latest',
-              name='integration_agent',
-              instruction="Help user, leverage the tools you have access to",
-              tools=[integration_tool],
-          )
+      --8<-- "examples/inline/python/integrations/application-integration/007-2-add-the-tool-to-your-agent.py"
       ```
 
 === "Java"

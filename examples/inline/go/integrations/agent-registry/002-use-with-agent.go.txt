@@ -1,0 +1,95 @@
+package main
+
+import (
+	"cmp"
+	"context"
+	"fmt"
+	"log"
+	"os"
+
+	"google.golang.org/genai"
+
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/agentregistry"
+	"google.golang.org/adk/v2/cmd/launcher"
+	"google.golang.org/adk/v2/cmd/launcher/full"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/tool"
+)
+
+func main() {
+	ctx := context.Background()
+
+	// 1. Initialization
+	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	if projectID == "" {
+		log.Fatal("GOOGLE_CLOUD_PROJECT environment variable not set.")
+	}
+	location := cmp.Or(os.Getenv("GOOGLE_CLOUD_LOCATION"), "global")
+
+	registry, err := agentregistry.New(ctx, agentregistry.Config{
+		ProjectID: projectID,
+		Location:  location,
+	})
+	if err != nil {
+		log.Fatalf("Failed to create the registry client: %v", err)
+	}
+
+	// 2. Listing Resources. The All* iterators fetch pages on demand and
+	// report a failed page fetch as a single (nil, error).
+	fmt.Println("Listing Agents...")
+	for a, err := range registry.AllAgents(ctx) {
+		if err != nil {
+			log.Fatalf("Failed to list agents: %v", err)
+		}
+		fmt.Printf("  - %s (%s)\n", a.Name, a.DisplayName)
+	}
+
+	fmt.Println("Listing MCP Servers...")
+	for s, err := range registry.AllMCPServers(ctx) {
+		if err != nil {
+			log.Fatalf("Failed to list MCP servers: %v", err)
+		}
+		fmt.Printf("  - %s (%s)\n", s.Name, s.DisplayName)
+	}
+
+	// 3. Using a Remote A2A Agent
+	// Replace with the full resource name of your registered agent
+	agentName := fmt.Sprintf("projects/%s/locations/%s/agents/YOUR_AGENT_ID", projectID, location)
+	myRemoteAgent, err := registry.RemoteAgent(ctx, agentName)
+	if err != nil {
+		log.Fatalf("Failed to resolve the remote agent: %v", err)
+	}
+
+	// 4. Using an MCP Toolset
+	// Replace with the full resource name of your registered MCP server
+	mcpServerName := fmt.Sprintf("projects/%s/locations/%s/mcpServers/YOUR_MCP_SERVER_ID", projectID, location)
+	myMCPToolset, err := registry.MCPToolset(ctx, mcpServerName)
+	if err != nil {
+		log.Fatalf("Failed to connect to the MCP server: %v", err)
+	}
+
+	// 5. Example Agent Composition
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("Failed to create the model: %v", err)
+	}
+
+	rootAgent, err := llmagent.New(llmagent.Config{
+		Name:        "demo_agent",
+		Model:       model,
+		Instruction: "You can leverage registered tools and sub-agents.",
+		Toolsets:    []tool.Toolset{myMCPToolset},
+		SubAgents:   []agent.Agent{myRemoteAgent},
+	})
+	if err != nil {
+		log.Fatalf("Failed to create the agent: %v", err)
+	}
+
+	config := &launcher.Config{AgentLoader: agent.NewSingleLoader(rootAgent)}
+	l := full.NewLauncher()
+	if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
+		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+	}
+}

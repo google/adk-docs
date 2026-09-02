@@ -50,35 +50,7 @@ language.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        NOTION_TOKEN = "YOUR_NOTION_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="notion_agent",
-            instruction="Help users get information from Notion",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params = StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@notionhq/notion-mcp-server",
-                            ],
-                            env={
-                                "NOTION_TOKEN": NOTION_TOKEN,
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/notion/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -86,29 +58,7 @@ language.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const NOTION_TOKEN = "YOUR_NOTION_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "notion_agent",
-            instruction: "Help users get information from Notion",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: ["-y", "@notionhq/notion-mcp-server"],
-                        env: {
-                            NOTION_TOKEN: NOTION_TOKEN,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/notion/002-use-with-agent.ts"
         ```
 
 ## Available tools

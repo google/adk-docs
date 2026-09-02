@@ -56,46 +56,13 @@ sample code:
 === "Python"
 
     ```python title="agent.py"
-    from google.adk.agents.llm_agent import Agent
-    from google.adk.apps import App
-
-    root_agent = Agent(
-        model='gemini-flash-latest',
-        name='greeter_agent',
-        description='An agent that provides a friendly greeting.',
-        instruction='Reply with Hello, World!',
-    )
-
-    app = App(
-        name="agents",
-        root_agent=root_agent,
-        # Optionally include App-level features:
-        # plugins, context_cache_config, events_compaction_config,
-        # resumability_config
-    )
+    --8<-- "examples/inline/python/apps/index/001-define-app-with-root-agent.py"
     ```
 
 === "Java"
 
     ```java title="AgentConfiguration.java"
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.apps.App;
-
-    LlmAgent rootAgent = LlmAgent.builder()
-        .model("gemini-flash-latest")
-        .name("greeter_agent")
-        .description("An agent that provides a friendly greeting.")
-        .instruction("Reply with Hello, World!")
-        .build();
-
-    App app = App.builder()
-        .name("agents")
-        .rootAgent(rootAgent)
-        // Optionally include App-level features:
-        // .plugins(plugins)
-        // .contextCacheConfig(contextCacheConfig)
-        // .eventsCompactionConfig(eventsCompactionConfig)
-        .build();
+    --8<-- "examples/inline/java/apps/index/002-define-app-with-root-agent.java"
     ```
 
 !!! tip "Recommended: Use `app` variable name"
@@ -111,49 +78,13 @@ You can use the ***Runner*** class to run your agent workflow using the
 === "Python"
 
     ```python title="main.py"
-    import asyncio
-    from dotenv import load_dotenv
-    from google.adk.runners import InMemoryRunner
-    from agent import app # import code from agent.py
-
-    load_dotenv() # load API keys and settings
-    # Set a Runner using the imported application object
-    runner = InMemoryRunner(app=app)
-
-    async def main():
-        try:  # run_debug() requires ADK Python 1.18 or higher:
-            response = await runner.run_debug("Hello there!")
-
-        except Exception as e:
-            print(f"An error occurred during agent execution: {e}")
-
-    if __name__ == "__main__":
-        asyncio.run(main())
-
+    --8<-- "examples/inline/python/apps/index/003-run-your-app-agent.py"
     ```
 
 === "Java"
 
     ```java title="AppMain.java"
-    import com.google.adk.agents.Content;
-    import com.google.adk.runner.Runner;
-
-    public class AppMain {
-
-      public static void main(String[] args) throws Exception {
-        // Set a Runner using the application object
-
-        App app = ...;
-
-        Runner runner = Runner.builder()
-            .app(app) // Use the 'app' object defined previously
-            .build();
-
-        runner.runAsync("user", "session-1", Content.fromParts(Part.fromText("Hello there!")))
-            .filter(event -> event.finalResponse() && event.content().isPresent())
-            .blockingSubscribe(event -> System.out.println("Response: " + event.stringifyContent()));
-      }
-    }
+    --8<-- "examples/inline/java/apps/index/004-run-your-app-agent.java"
     ```
 
 !!! note "Version requirement for `Runner.run_debug()` "

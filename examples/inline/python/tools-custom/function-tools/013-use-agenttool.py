@@ -1,0 +1,1 @@
+tools=[AgentTool(agent=agent_b)]

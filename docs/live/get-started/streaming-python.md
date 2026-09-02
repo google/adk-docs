@@ -50,23 +50,7 @@ Copy-paste the following code block into the `agent.py` file.
 For `model`, please double-check the model ID as described earlier in the [Models section](#supported-models).
 
 ```py
-from google.adk.agents import Agent
-from google.adk.tools import google_search  # Import the tool
-
-root_agent = Agent(
-   # A unique name for the agent.
-   name="basic_search_agent",
-   # The Large Language Model (LLM) that agent will use.
-   # Please fill in the latest model id that supports live from
-   # https://adk.dev/live/get-started/streaming-python/#supported-models
-   model="...",
-   # A short description of the agent's purpose.
-   description="Agent to answer questions using Google Search.",
-   # Instructions to set the agent's behavior.
-   instruction="You are an expert researcher. You always stick to the facts.",
-   # Add google_search tool to perform grounding with Google search.
-   tools=[google_search]
-)
+--8<-- "examples/inline/python/live/get-started/streaming-python/001-agent-py.py"
 ```
 
 `agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
@@ -78,7 +62,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 Copy-paste the following code block to `__init__.py` file.
 
 ```py title="__init__.py"
-from . import agent
+--8<-- "examples/inline/python/live/get-started/streaming-python/002-add-googlesearch-tool-to-perform-groundi.py"
 ```
 
 ## 3\. Set up the platform { #set-up-the-platform }

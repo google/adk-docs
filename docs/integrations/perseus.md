@@ -56,42 +56,13 @@ agent. `source` is a path to a `.perseus` file or an inline string starting with
 ### Runner-wide (plugin)
 
 ```python
-from adk_perseus_context import PerseusContextPlugin
-from google.adk.agents import Agent
-from google.adk.apps import App
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-
-agent = Agent(
-    name="assistant",
-    model="gemini-flash-latest",
-    instruction="Help the user.",
-)
-
-app = App(
-    name="perseus_app",
-    root_agent=agent,
-    plugins=[PerseusContextPlugin("context.perseus")],
-)
-
-runner = Runner(
-    app=app,
-    session_service=InMemorySessionService(),
-)
+--8<-- "examples/inline/python/integrations/perseus/001-runner-wide-plugin.py"
 ```
 
 ### Single agent (callback)
 
 ```python
-from adk_perseus_context import perseus_before_model_callback
-from google.adk.agents import Agent
-
-agent = Agent(
-    name="assistant",
-    model="gemini-flash-latest",
-    instruction="Help the user.",
-    before_model_callback=perseus_before_model_callback("context.perseus"),
-)
+--8<-- "examples/inline/python/integrations/perseus/002-single-agent-callback.py"
 ```
 
 Either way, the compiled context is appended to the request's system instruction
@@ -106,14 +77,7 @@ user or task targets a different workspace or directive set. Create the session
 inside an async function:
 
 ```python
-session = await runner.session_service.create_session(
-    app_name="perseus_app",
-    user_id="user",
-    state={
-        "_perseus_source": "@perseus\n@file AGENTS.md\n@memory deployment",
-        "_perseus_workspace": "/path/to/project",
-    },
-)
+--8<-- "examples/inline/python/integrations/perseus/003-per-session-context.py"
 ```
 
 ## Use as an MCP server (optional)
@@ -122,25 +86,7 @@ Perseus also ships an MCP server that exposes its directives as tools, so you
 can consume it through ADK's `McpToolset` instead of (or alongside) the plugin:
 
 ```python
-from google.adk.agents import Agent
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
-from mcp import StdioServerParameters
-
-perseus_tools = McpToolset(
-    connection_params=StdioConnectionParams(
-        server_params=StdioServerParameters(
-            command="perseus",
-            args=["mcp", "serve", "--workspace", "."],
-        )
-    )
-)
-
-agent = Agent(
-    name="assistant",
-    model="gemini-flash-latest",
-    instruction="Use Perseus tools to read workspace context.",
-    tools=[perseus_tools],
-)
+--8<-- "examples/inline/python/integrations/perseus/004-use-as-an-mcp-server-optional.py"
 ```
 
 ## Plugin reference

@@ -65,24 +65,13 @@ Freeplay will automatically capture OTel logs from your ADK application when
 you initialize observability:
 
 ```python
-from freeplay_python_adk.client import FreeplayADK
-FreeplayADK.initialize_observability()
+--8<-- "examples/inline/python/integrations/freeplay/001-use-freeplay-adk-library.py"
 ```
 
 You'll also want to pass in the Freeplay plugin to your App:
 
 ```python
-from app.agent import root_agent
-from freeplay_python_adk.freeplay_observability_plugin import FreeplayObservabilityPlugin
-from google.adk.apps import App
-
-app = App(
-    name="app",
-    root_agent=root_agent,
-    plugins=[FreeplayObservabilityPlugin()],
-)
-
-__all__ = ["app"]
+--8<-- "examples/inline/python/integrations/freeplay/002-use-freeplay-adk-library.py"
 ```
 
 You can now use ADK as you normally would, and you will see logs flowing to
@@ -132,7 +121,7 @@ Adding the following to the bottom of your system message will create a variable
 for the ongoing agent context to be passed through:
 
 ```python
-{{agent_context}}
+--8<-- "examples/inline/python/integrations/freeplay/003-agent-context-variable.py"
 ```
 
 ### History Block
@@ -145,17 +134,7 @@ messages are passed through when present.
 Now in your code you can use the ```FreeplayLLMAgent```:
 
 ```python
-from freeplay_python_adk.client import FreeplayADK
-from freeplay_python_adk.freeplay_llm_agent import (
-    FreeplayLLMAgent,
-)
-
-FreeplayADK.initialize_observability()
-
-root_agent = FreeplayLLMAgent(
-    name="social_product_researcher",
-    tools=[tavily_search],
-)
+--8<-- "examples/inline/python/integrations/freeplay/004-history-block.py"
 ```
 
 When the ```social_product_researcher``` is invoked, the prompt will be

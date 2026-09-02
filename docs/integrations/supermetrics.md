@@ -49,26 +49,7 @@ accounts using natural language.
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
-
-        SUPERMETRICS_API_KEY = "YOUR_SUPERMETRICS_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="supermetrics_agent",
-            instruction="Help users query and analyze their marketing data from Supermetrics",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.supermetrics.com/mcp",
-                        headers={
-                            "Authorization": f"Bearer {SUPERMETRICS_API_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/supermetrics/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -76,30 +57,7 @@ accounts using natural language.
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const SUPERMETRICS_API_KEY = "YOUR_SUPERMETRICS_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "supermetrics_agent",
-            instruction: "Help users query and analyze their marketing data from Supermetrics",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.supermetrics.com/mcp",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${SUPERMETRICS_API_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/supermetrics/002-use-with-agent.ts"
         ```
 
 !!! note "Query workflow"

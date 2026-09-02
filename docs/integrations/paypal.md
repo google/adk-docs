@@ -46,67 +46,13 @@ workflows and business insights.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
-        PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="paypal_agent",
-            instruction="Help users manage their PayPal account",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@paypal/mcp",
-                                "--tools=all",
-                                # (Optional) Specify which tools to enable
-                                # "--tools=subscriptionPlans.list,subscriptionPlans.show",
-                            ],
-                            env={
-                                "PAYPAL_ACCESS_TOKEN": PAYPAL_ACCESS_TOKEN,
-                                "PAYPAL_ENVIRONMENT": PAYPAL_ENVIRONMENT,
-                            }
-                        ),
-                        timeout=300,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/paypal/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-
-        PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
-        PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="paypal_agent",
-            instruction="Help users manage their PayPal account",
-            tools=[
-                McpToolset(
-                    connection_params=SseConnectionParams(
-                        url=PAYPAL_MCP_ENDPOINT,
-                        headers={
-                            "Authorization": f"Bearer {PAYPAL_ACCESS_TOKEN}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/paypal/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -114,37 +60,7 @@ workflows and business insights.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const PAYPAL_ENVIRONMENT = "SANDBOX"; // Options: "SANDBOX" or "PRODUCTION"
-        const PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "paypal_agent",
-            instruction: "Help users manage their PayPal account",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "@paypal/mcp",
-                            "--tools=all",
-                            // (Optional) Specify which tools to enable
-                            // "--tools=subscriptionPlans.list,subscriptionPlans.show",
-                        ],
-                        env: {
-                            PAYPAL_ACCESS_TOKEN: PAYPAL_ACCESS_TOKEN,
-                            PAYPAL_ENVIRONMENT: PAYPAL_ENVIRONMENT,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/paypal/003-use-with-agent.ts"
         ```
 
 !!! note

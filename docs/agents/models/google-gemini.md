@@ -21,73 +21,31 @@ in your agents:
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
-
-    # --- Example using a stable Gemini Flash model ---
-    agent_gemini_flash = LlmAgent(
-        # Use the latest stable Flash model identifier
-        model="gemini-flash-latest",
-        name="gemini_flash_agent",
-        instruction="You are a fast and helpful Gemini assistant.",
-        # ... other agent parameters
-    )
+    --8<-- "examples/inline/python/agents/models/google-gemini/001-get-started.py"
     ```
 
 === "TypeScript"
 
     ```typescript
-    import {LlmAgent} from '@google/adk';
-
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
-    export const rootAgent = new LlmAgent({
-      name: 'hello_time_agent',
-      model: 'gemini-flash-latest',
-      description: 'Gemini flash agent',
-      instruction: `You are a fast and helpful Gemini assistant.`,
-    });
+    --8<-- "examples/inline/typescript/agents/models/google-gemini/002-get-started.ts"
     ```
 
 === "Go"
 
     ```go
-    import (
-    	"google.golang.org/adk/v2/agent/llmagent"
-    	"google.golang.org/adk/v2/model/gemini"
-    	"google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
+    --8<-- "examples/inline/go/agents/models/google-gemini/003-get-started.go.txt"
     ```
 
 === "Java"
 
     ```java
-    // --- Example #1: using a stable Gemini Flash model with ENV variables---
-    LlmAgent agentGeminiFlash =
-        LlmAgent.builder()
-            // Use the latest stable Flash model identifier
-            .model("gemini-flash-latest") // Set ENV variables to use this model
-            .name("gemini_flash_agent")
-            .instruction("You are a fast and helpful Gemini assistant.")
-            // ... other agent parameters
-            .build();
+    --8<-- "examples/inline/java/agents/models/google-gemini/004-get-started.java"
     ```
 
 === "Kotlin"
 
     ```kotlin
-    import com.google.adk.kt.agents.Instruction
-    import com.google.adk.kt.agents.LlmAgent
-    import com.google.adk.kt.models.Gemini
-
-    // --- Example using a stable Gemini Flash model ---
-    val agentGeminiFlash = LlmAgent(
-        // Use the latest stable Flash model identifier
-        name = "gemini_flash_agent",
-        model = Gemini(name = "gemini-flash-latest"),
-        instruction = Instruction("You are a fast and helpful Gemini assistant."),
-        // ... other agent parameters
-    )
+    --8<-- "examples/inline/kotlin/agents/models/google-gemini/005-get-started.kt"
     ```
 
 ??? note "Note: Gemini model selector `gemini-flash-latest`"
@@ -157,21 +115,7 @@ snippet:
 === "Python"
 
     ```python
-    from google.adk.agents.llm_agent import Agent
-    from google.adk.models.google_llm import Gemini
-    from google.adk.tools.google_search_tool import GoogleSearchTool
-
-    root_agent = Agent(
-        model=Gemini(
-            model="gemini-flash-latest",
-            use_interactions_api=True,  # Enable Interactions API
-        ),
-        name="interactions_test_agent",
-        tools=[
-            GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
-            get_current_weather,  # Custom function tool
-        ],
-    )
+    --8<-- "examples/inline/python/agents/models/google-gemini/006-gemini-interactions-api-interactions-api.py"
     ```
 
 For a complete code sample, see the
@@ -189,8 +133,7 @@ parameter:
 === "Python"
 
     ```python
-    # Use bypass_multi_tools_limit=True to convert google_search to a function tool
-    GoogleSearchTool(bypass_multi_tools_limit=True)
+    --8<-- "examples/inline/python/agents/models/google-gemini/007-known-limitations.py"
     ```
 
 In this example, this option converts the built-in `google_search` to a function
@@ -219,48 +162,13 @@ To mitigate this, you can do one of the following:
     === "Python"
 
         ```python
-        from google.genai import types
-
-        # ...
-
-        root_agent = Agent(
-            model='gemini-flash-latest',
-            # ...
-            generate_content_config=types.GenerateContentConfig(
-                # ...
-                http_options=types.HttpOptions(
-                    # ...
-                    retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
-                    # ...
-                ),
-                # ...
-            ),
-        )
+        --8<-- "examples/inline/python/agents/models/google-gemini/008-error-code-429-resourceexhausted.py"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.agents.LlmAgent;
-        import com.google.genai.types.GenerateContentConfig;
-        import com.google.genai.types.HttpOptions;
-        import com.google.genai.types.HttpRetryOptions;
-
-        // ...
-
-        LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-flash-latest")
-            // ...
-            .generateContentConfig(GenerateContentConfig.builder()
-                // ...
-                .httpOptions(HttpOptions.builder()
-                    // ...
-                    .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
-                    // ...
-                    .build())
-                // ...
-                .build())
-            .build();
+        --8<-- "examples/inline/java/agents/models/google-gemini/009-error-code-429-resourceexhausted.java"
         ```
 
     **Option 2:** Retry options on this model adapter.
@@ -271,38 +179,13 @@ To mitigate this, you can do one of the following:
     === "Python"
 
         ```python
-        from google.genai import types
-
-        # ...
-
-        agent = Agent(
-            model=Gemini(
-            retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
-            )
-        )
+        --8<-- "examples/inline/python/agents/models/google-gemini/010-error-code-429-resourceexhausted.py"
         ```
 
     === "Java"
 
         ```java
-        import com.google.adk.agents.LlmAgent;
-        import com.google.adk.models.Gemini;
-        import com.google.genai.Client;
-        import com.google.genai.types.HttpOptions;
-        import com.google.genai.types.HttpRetryOptions;
-
-        // ...
-
-        LlmAgent agent = LlmAgent.builder()
-            .model(Gemini.builder()
-                .modelName("gemini-flash-latest")
-                .apiClient(Client.builder()
-                    .httpOptions(HttpOptions.builder()
-                        .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
-                        .build())
-                    .build())
-                .build())
-            .build();
+        --8<-- "examples/inline/java/agents/models/google-gemini/011-error-code-429-resourceexhausted.java"
         ```
 
     === "Kotlin"
@@ -310,24 +193,5 @@ To mitigate this, you can do one of the following:
         In Kotlin, you can achieve this by creating the `Client` instance yourself and passing it to the `Gemini` constructor.
 
         ```kotlin
-        import com.google.adk.kt.agents.LlmAgent
-        import com.google.adk.kt.models.Gemini
-        import com.google.genai.Client
-        import com.google.genai.types.HttpOptions
-        import com.google.genai.types.HttpRetryOptions
-
-        val client = Client.builder()
-            .apiKey("YOUR_API_KEY")
-            .httpOptions(HttpOptions.builder()
-                .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
-                .build())
-            .build()
-
-        val model = Gemini(client = client, name = "gemini-flash-latest")
-
-        val agent = LlmAgent(
-            name = "my_agent",
-            model = model
-            // ...
-        )
+        --8<-- "examples/inline/kotlin/agents/models/google-gemini/012-error-code-429-resourceexhausted.kt"
         ```

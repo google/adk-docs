@@ -84,151 +84,13 @@ dynamically fetch remote agents or toolsets using the Agent Registry client.
 === "Python"
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
-    from google.adk.integrations.agent_registry import AgentRegistry
-    import os
-
-    # 1. Initialization
-    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
-    location = os.environ.get("GOOGLE_CLOUD_LOCATION", "global")
-
-    if not project_id:
-        raise ValueError("GOOGLE_CLOUD_PROJECT environment variable not set.")
-
-    registry = AgentRegistry(
-        project_id=project_id,
-        location=location,
-    )
-
-    # 2. Listing Resources
-    print("Listing Agents...")
-    agents_response = registry.list_agents()
-    for agent in agents_response.get("agents", []):
-        print(f"  - {agent.get('name')} ({agent.get('displayName')})")
-
-    print("Listing MCP Servers...")
-    mcp_servers_response = registry.list_mcp_servers()
-    for server in mcp_servers_response.get("mcpServers", []):
-        print(f"  - {server.get('name')} ({server.get('displayName')})")
-
-    # 3. Using a Remote A2A Agent
-    # Replace with the full resource name of your registered agent
-    agent_name = f"projects/{project_id}/locations/{location}/agents/YOUR_AGENT_ID"
-    my_remote_agent = registry.get_remote_a2a_agent(agent_name=agent_name)
-
-    # 4. Using an MCP Toolset
-    # Replace with the full resource name of your registered MCP server
-    mcp_server_name = f"projects/{project_id}/locations/{location}/mcpServers/YOUR_MCP_SERVER_ID"
-    my_mcp_toolset = registry.get_mcp_toolset(mcp_server_name=mcp_server_name)
-
-    # 5. Example Agent Composition
-    main_agent = LlmAgent(
-        model="gemini-flash-latest", # Or your preferred model
-        name="demo_agent",
-        instruction="You can leverage registered tools and sub-agents.",
-        tools=[my_mcp_toolset],
-        sub_agents=[my_remote_agent],
-    )
+    --8<-- "examples/inline/python/integrations/agent-registry/001-use-with-agent.py"
     ```
 
 === "Go"
 
     ```go
-    package main
-
-    import (
-    	"cmp"
-    	"context"
-    	"fmt"
-    	"log"
-    	"os"
-
-    	"google.golang.org/genai"
-
-    	"google.golang.org/adk/v2/agent"
-    	"google.golang.org/adk/v2/agent/llmagent"
-    	"google.golang.org/adk/v2/agentregistry"
-    	"google.golang.org/adk/v2/cmd/launcher"
-    	"google.golang.org/adk/v2/cmd/launcher/full"
-    	"google.golang.org/adk/v2/model/gemini"
-    	"google.golang.org/adk/v2/tool"
-    )
-
-    func main() {
-    	ctx := context.Background()
-
-    	// 1. Initialization
-    	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
-    	if projectID == "" {
-    		log.Fatal("GOOGLE_CLOUD_PROJECT environment variable not set.")
-    	}
-    	location := cmp.Or(os.Getenv("GOOGLE_CLOUD_LOCATION"), "global")
-
-    	registry, err := agentregistry.New(ctx, agentregistry.Config{
-    		ProjectID: projectID,
-    		Location:  location,
-    	})
-    	if err != nil {
-    		log.Fatalf("Failed to create the registry client: %v", err)
-    	}
-
-    	// 2. Listing Resources. The All* iterators fetch pages on demand and
-    	// report a failed page fetch as a single (nil, error).
-    	fmt.Println("Listing Agents...")
-    	for a, err := range registry.AllAgents(ctx) {
-    		if err != nil {
-    			log.Fatalf("Failed to list agents: %v", err)
-    		}
-    		fmt.Printf("  - %s (%s)\n", a.Name, a.DisplayName)
-    	}
-
-    	fmt.Println("Listing MCP Servers...")
-    	for s, err := range registry.AllMCPServers(ctx) {
-    		if err != nil {
-    			log.Fatalf("Failed to list MCP servers: %v", err)
-    		}
-    		fmt.Printf("  - %s (%s)\n", s.Name, s.DisplayName)
-    	}
-
-    	// 3. Using a Remote A2A Agent
-    	// Replace with the full resource name of your registered agent
-    	agentName := fmt.Sprintf("projects/%s/locations/%s/agents/YOUR_AGENT_ID", projectID, location)
-    	myRemoteAgent, err := registry.RemoteAgent(ctx, agentName)
-    	if err != nil {
-    		log.Fatalf("Failed to resolve the remote agent: %v", err)
-    	}
-
-    	// 4. Using an MCP Toolset
-    	// Replace with the full resource name of your registered MCP server
-    	mcpServerName := fmt.Sprintf("projects/%s/locations/%s/mcpServers/YOUR_MCP_SERVER_ID", projectID, location)
-    	myMCPToolset, err := registry.MCPToolset(ctx, mcpServerName)
-    	if err != nil {
-    		log.Fatalf("Failed to connect to the MCP server: %v", err)
-    	}
-
-    	// 5. Example Agent Composition
-    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
-    	if err != nil {
-    		log.Fatalf("Failed to create the model: %v", err)
-    	}
-
-    	rootAgent, err := llmagent.New(llmagent.Config{
-    		Name:        "demo_agent",
-    		Model:       model,
-    		Instruction: "You can leverage registered tools and sub-agents.",
-    		Toolsets:    []tool.Toolset{myMCPToolset},
-    		SubAgents:   []agent.Agent{myRemoteAgent},
-    	})
-    	if err != nil {
-    		log.Fatalf("Failed to create the agent: %v", err)
-    	}
-
-    	config := &launcher.Config{AgentLoader: agent.NewSingleLoader(rootAgent)}
-    	l := full.NewLauncher()
-    	if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
-    		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-    	}
-    }
+    --8<-- "examples/inline/go/integrations/agent-registry/002-use-with-agent.go.txt"
     ```
 
 ## Authentication for Google MCP Servers and Remote A2A Agents
@@ -245,24 +107,7 @@ remote agent.
     the `get_remote_a2a_agent` method.
 
     ```python
-    import httpx
-    import google.auth
-    from google.auth.transport.requests import Request
-
-    class GoogleAuth(httpx.Auth):
-        def __init__(self):
-            self.creds, _ = google.auth.default()
-        def auth_flow(self, request):
-            if not self.creds.valid:
-                self.creds.refresh(Request())
-            request.headers["Authorization"] = f"Bearer {self.creds.token}"
-            yield request
-
-    httpx_client = httpx.AsyncClient(auth=GoogleAuth(), timeout=httpx.Timeout(60.0))
-    remote_agent = registry.get_remote_a2a_agent(
-        f"projects/{project_id}/locations/{location}/agents/YOUR_AGENT_ID",
-        httpx_client=httpx_client,
-    )
+    --8<-- "examples/inline/python/integrations/agent-registry/003-remote-a2a-agents.py"
     ```
 
 === "Go"
@@ -271,20 +116,7 @@ remote agent.
     headers with `WithA2AHeaders`.
 
     ```go
-    import (
-    	"golang.org/x/oauth2/google"
-
-    	"google.golang.org/adk/v2/agentregistry"
-    )
-
-    httpClient, err := google.DefaultClient(ctx, "https://www.googleapis.com/auth/cloud-platform")
-    if err != nil {
-    	log.Fatalf("Failed to load Application Default Credentials: %v", err)
-    }
-
-    remoteAgent, err := registry.RemoteAgent(ctx, agentName,
-    	agentregistry.WithA2AHTTPClient(httpClient),
-    )
+    --8<-- "examples/inline/go/integrations/agent-registry/004-remote-a2a-agents.go.txt"
     ```
 
     Set any timeout on the client's `Transport` rather than with
@@ -302,21 +134,7 @@ For Google MCP servers, authentication headers are automatically passed in.
     constructor.
 
     ```python
-    import google.auth
-    from google.auth.transport.requests import Request
-    from google.adk.integrations.agent_registry import AgentRegistry
-
-    def google_auth_header_provider(context):
-        creds, _ = google.auth.default()
-        if not creds.valid:
-            creds.refresh(Request())
-        return {"Authorization": f"Bearer {creds.token}"}
-
-    registry = AgentRegistry(
-        project_id=project_id,
-        location=location,
-        header_provider=google_auth_header_provider
-    )
+    --8<-- "examples/inline/python/integrations/agent-registry/005-google-mcp-servers.py"
     ```
 
 === "Go"
@@ -326,10 +144,7 @@ For Google MCP servers, authentication headers are automatically passed in.
     pass `WithMCPHTTPClient` and `WithMCPHeaders`.
 
     ```go
-    toolset, err := registry.MCPToolset(ctx, mcpServerName,
-    	agentregistry.WithMCPHTTPClient(httpClient),
-    	agentregistry.WithMCPHeaders(map[string]string{"X-Tenant-Id": "acme"}),
-    )
+    --8<-- "examples/inline/go/integrations/agent-registry/006-google-mcp-servers.go.txt"
     ```
 
     Headers set this way are applied to every request the toolset sends to the

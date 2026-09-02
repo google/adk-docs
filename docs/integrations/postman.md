@@ -43,67 +43,13 @@ natural language interactions.
     === "Local MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from mcp import StdioServerParameters
-
-        POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="postman_agent",
-            instruction="Help users manage their Postman workspaces and collections",
-            tools=[
-                McpToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params=StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "@postman/postman-mcp-server",
-                                # "--full",  # Use all 100+ tools
-                                # "--code",  # Use code generation tools
-                                # "--region", "eu",  # Use EU region
-                            ],
-                            env={
-                                "POSTMAN_API_KEY": POSTMAN_API_KEY,
-                            },
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/postman/001-use-with-agent.py"
         ```
 
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="postman_agent",
-            instruction="Help users manage their Postman workspaces and collections",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://mcp.postman.com/mcp",
-                        # (Optional) Use "/minimal" for essential tools only
-                        # (Optional) Use "/code" for code generation tools
-                        # (Optional) Use "https://mcp.eu.postman.com" for EU region
-                        headers={
-                            "Authorization": f"Bearer {POSTMAN_API_KEY}",
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/postman/002-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -111,67 +57,13 @@ natural language interactions.
     === "Local MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "postman_agent",
-            instruction: "Help users manage their Postman workspaces and collections",
-            tools: [
-                new MCPToolset({
-                    type: "StdioConnectionParams",
-                    serverParams: {
-                        command: "npx",
-                        args: [
-                            "-y",
-                            "@postman/postman-mcp-server",
-                            // "--full",  // Use all 100+ tools
-                            // "--code",  // Use code generation tools
-                            // "--region", "eu",  // Use EU region
-                        ],
-                        env: {
-                            POSTMAN_API_KEY: POSTMAN_API_KEY,
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/postman/003-use-with-agent.ts"
         ```
 
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "postman_agent",
-            instruction: "Help users manage their Postman workspaces and collections",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://mcp.postman.com/mcp",
-                    // (Optional) Use "/minimal" for essential tools only
-                    // (Optional) Use "/code" for code generation tools
-                    // (Optional) Use "https://mcp.eu.postman.com" for EU region
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${POSTMAN_API_KEY}`,
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/postman/004-use-with-agent.ts"
         ```
 
 ## Configuration

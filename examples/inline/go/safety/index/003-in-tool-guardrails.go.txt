@@ -1,0 +1,19 @@
+// Conceptual example: Setting policy data intended for tool context
+// In a real ADK app, this might be set using the session state service.
+// `ctx` is an `agent.Context` available in callbacks or custom agents.
+
+policy := map[string]any{
+	"select_only": true,
+	"tables":      []string{"mytable1", "mytable2"},
+}
+
+// Conceptual: Storing policy where the tool can access it via ToolContext later.
+// This specific line might look different in practice.
+// For example, storing in session state:
+if err := ctx.Session().State().Set("query_tool_policy", policy); err != nil {
+    // Handle error, e.g., log it.
+}
+
+// Or maybe passing during tool init:
+// queryTool := NewQueryTool(policy)
+// For this example, we'll assume it gets stored somewhere accessible.

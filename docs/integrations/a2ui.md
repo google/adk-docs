@@ -36,16 +36,7 @@ The `A2uiSchemaManager` loads component catalogs and generates system prompts
 that teach the LLM how to produce valid A2UI JSON.
 
 ```python
-from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.basic_catalog.provider import BasicCatalog
-
-schema_manager = A2uiSchemaManager(
-    catalogs=[
-        BasicCatalog.get_config(
-            examples_path="examples",
-        ),
-    ],
-)
+--8<-- "examples/inline/python/integrations/a2ui/001-1-set-up-the-schema-manager.py"
 ```
 
 !!! note
@@ -68,14 +59,7 @@ the A2UI JSON schema and few-shot examples, so the LLM knows exactly how to
 format its output.
 
 ```python
-instruction = schema_manager.generate_system_prompt(
-    role_description="You are a helpful assistant that presents information with rich UI.",
-    workflow_description="Analyze the user's request and return structured UI when appropriate.",
-    ui_description="Use cards for summaries, tables for comparisons, and forms for user input.",
-    include_schema=True,
-    include_examples=True,
-    allowed_components=["Heading", "Text", "Card", "Button", "Table"],
-)
+--8<-- "examples/inline/python/integrations/a2ui/002-2-generate-the-system-prompt.py"
 ```
 
 ### 3. Create your ADK agent
@@ -83,14 +67,7 @@ instruction = schema_manager.generate_system_prompt(
 Use the generated instruction as the agent's system prompt:
 
 ```python
-from google.adk.agents.llm_agent import LlmAgent
-
-agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="ui_agent",
-    description="An agent that generates rich UI responses.",
-    instruction=instruction,
-)
+--8<-- "examples/inline/python/integrations/a2ui/003-3-create-your-adk-agent.py"
 ```
 
 ### 4. Validate and stream A2UI output
@@ -99,34 +76,14 @@ Always validate the LLM's JSON output before sending it to the client. The SDK
 provides parsing, fixing, and validation utilities:
 
 ```python
-from a2ui.core.parser.parser import parse_response
-from a2ui.a2a import parse_response_to_parts
-
-# Get the active catalog's validator
-selected_catalog = schema_manager.get_selected_catalog()
-
-# Option A: Manual parse + validate
-response_parts = parse_response(llm_output_text)
-for part in response_parts:
-    if part.a2ui_json:
-        selected_catalog.validator.validate(part.a2ui_json)
-
-# Option B: One-liner that returns A2A Parts
-parts = parse_response_to_parts(
-    llm_output_text,
-    validator=selected_catalog.validator,
-    fallback_text="Here's what I found.",
-)
+--8<-- "examples/inline/python/integrations/a2ui/004-4-validate-and-stream-a2ui-output.py"
 ```
 
 A2UI payloads are wrapped in A2A `DataPart` with the MIME type
 `application/json+a2ui` so renderers can identify them:
 
 ```python
-from a2ui.a2a import create_a2ui_part
-
-part = create_a2ui_part({"type": "Card", "props": {"title": "Hello"}})
-# → DataPart(data={...}, metadata={"mimeType": "application/json+a2ui"})
+--8<-- "examples/inline/python/integrations/a2ui/005-option-b-one-liner-that-returns-a2a-part.py"
 ```
 
 ## Advanced patterns
@@ -138,32 +95,7 @@ for data queries, forms for configuration), resolve the catalog at runtime and
 store it in session state:
 
 ```python
-async def _prepare_session(self, context, run_request, runner):
-    session = await super()._prepare_session(context, run_request, runner)
-
-    # Determine client capabilities from request metadata
-    capabilities = context.message.metadata.get("a2ui_client_capabilities")
-
-    # Select the right catalog
-    a2ui_catalog = self.schema_manager.get_selected_catalog(
-        client_ui_capabilities=capabilities
-    )
-    examples = self.schema_manager.load_examples(a2ui_catalog, validate=True)
-
-    # Store in session state for tool access
-    await runner.session_service.append_event(
-        session,
-        Event(
-            actions=EventActions(
-                state_delta={
-                    "system:a2ui_enabled": True,
-                    "system:a2ui_catalog": a2ui_catalog,
-                    "system:a2ui_examples": examples,
-                }
-            ),
-        ),
-    )
-    return session
+--8<-- "examples/inline/python/integrations/a2ui/006-dynamic-catalogs.py"
 ```
 
 ### Custom catalogs
@@ -171,18 +103,7 @@ async def _prepare_session(self, context, run_request, runner):
 You can define your own component catalogs for domain-specific UI:
 
 ```python
-from a2ui.core.schema.manager import CatalogConfig
-
-schema_manager = A2uiSchemaManager(
-    catalogs=[
-        BasicCatalog.get_config(),
-        CatalogConfig.from_path(
-            name="my_dashboard_catalog",
-            catalog_path="catalogs/dashboard.json",
-            examples_path="catalogs/dashboard_examples",
-        ),
-    ],
-)
+--8<-- "examples/inline/python/integrations/a2ui/007-custom-catalogs.py"
 ```
 
 ### Multi-agent orchestration
@@ -191,27 +112,7 @@ Orchestrator agents can aggregate A2UI capabilities from sub-agents and
 advertise them in the agent card:
 
 ```python
-from a2ui.a2a import get_a2ui_agent_extension
-
-# Collect catalog IDs from sub-agents
-supported_catalog_ids = set()
-for subagent in subagents:
-    for extension in subagent_card.capabilities.extensions:
-        if extension.uri == "https://a2ui.org/a2a-extension/a2ui/v0.9":
-            supported_catalog_ids.update(
-                extension.params.get("supportedCatalogIds") or []
-            )
-
-# Advertise in the orchestrator's AgentCard
-agent_card = AgentCard(
-    capabilities=AgentCapabilities(
-        extensions=[
-            get_a2ui_agent_extension(
-                supported_catalog_ids=list(supported_catalog_ids),
-            )
-        ]
-    )
-)
+--8<-- "examples/inline/python/integrations/a2ui/008-multi-agent-orchestration.py"
 ```
 
 ## Samples

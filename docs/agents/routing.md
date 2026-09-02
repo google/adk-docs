@@ -37,11 +37,7 @@ async:
 === "TypeScript"
 
     ```typescript
-    type AgentRouter = (
-      agents: Readonly<Record<string, BaseAgent>>,
-      context: InvocationContext,
-      errorContext?: { failedKeys: ReadonlySet<string>; lastError: unknown },
-    ) => Promise<string | undefined> | string | undefined;
+    --8<-- "examples/inline/typescript/agents/routing/001-how-routing-works.ts"
     ```
 
 **The `agents` parameter** accepts either a `Record<string, BaseAgent>` with

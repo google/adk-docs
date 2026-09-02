@@ -36,15 +36,7 @@ The `BigQueryToolset` supports several authentication mechanisms through `BigQue
 You should use this approach for local development and running on Google Cloud services, such as Cloud Run and GKE.
 
 ```python
-import google.auth
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# Load Application Default Credentials
-credentials, project_id = google.auth.default()
-
-# Configure the toolset
-credentials_config = BigQueryCredentialsConfig(credentials=credentials)
-bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/bigquery/001-application-default-credentials.py"
 ```
 
 ### Service Account
@@ -52,15 +44,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 You can explicitly provide a service account file or info.
 
 ```python
-from google.oauth2 import service_account
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# Load Service Account credentials
-credentials = service_account.Credentials.from_service_account_file('path/to/key.json')
-
-# Configure the toolset
-credentials_config = BigQueryCredentialsConfig(credentials=credentials)
-bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/bigquery/002-service-account.py"
 ```
 
 ### External Access Token
@@ -68,15 +52,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 For applications that need to act on behalf of an end-user, you can pass user credentials directly instantiated from an access token, such as from an OAuth2 flow or an external IDP.
 
 ```python
-from google.oauth2.credentials import Credentials
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# Assume 'user_token' is obtained via an external OAuth flow
-credentials = Credentials(token=user_token)
-
-# Configure the toolset
-credentials_config = BigQueryCredentialsConfig(credentials=credentials)
-bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/bigquery/003-external-access-token.py"
 ```
 
 ### External Auth Providers
@@ -84,13 +60,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 If you are integrating with an external authentication provider where the token is managed by the platform, such as Gemini Enterprise, use `external_access_token_key`.
 
 ```python
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# The key used to look up the access token in the session state
-credentials_config = BigQueryCredentialsConfig(
-    external_access_token_key="YOUR_AUTH_ID"
-)
-bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/bigquery/004-external-auth-providers.py"
 ```
 
 ### Interactive Auth (ADK Web)
@@ -98,14 +68,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 When using the `adk web` interface for interactive sessions, you can provide OAuth 2.0 client credentials to trigger a login flow. This mechanism works for both local development and when your ADK agent is deployed to environments like Cloud Run.
 
 ```python
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# Provide OAuth 2.0 Client ID and Secret
-credentials_config = BigQueryCredentialsConfig(
-    client_id="YOUR_CLIENT_ID",
-    client_secret="YOUR_CLIENT_SECRET"
-)
-bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+--8<-- "examples/inline/python/integrations/bigquery/005-interactive-auth-adk-web.py"
 ```
 
 ## Sample Code

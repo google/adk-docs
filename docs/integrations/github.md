@@ -39,29 +39,7 @@ automate workflows using natural language.
     === "Remote MCP Server"
 
         ```python
-        from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-        GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
-
-        root_agent = Agent(
-            model="gemini-flash-latest",
-            name="github_agent",
-            instruction="Help users get information from GitHub",
-            tools=[
-                McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
-                        url="https://api.githubcopilot.com/mcp/",
-                        headers={
-                            "Authorization": f"Bearer {GITHUB_TOKEN}",
-                            "X-MCP-Toolsets": "all",
-                            "X-MCP-Readonly": "true"
-                        },
-                    ),
-                )
-            ],
-        )
+        --8<-- "examples/inline/python/integrations/github/001-use-with-agent.py"
         ```
 
 === "TypeScript"
@@ -69,32 +47,7 @@ automate workflows using natural language.
     === "Remote MCP Server"
 
         ```typescript
-        import { LlmAgent, MCPToolset } from "@google/adk";
-
-        const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN";
-
-        const rootAgent = new LlmAgent({
-            model: "gemini-flash-latest",
-            name: "github_agent",
-            instruction: "Help users get information from GitHub",
-            tools: [
-                new MCPToolset({
-                    type: "StreamableHTTPConnectionParams",
-                    url: "https://api.githubcopilot.com/mcp/",
-                    transportOptions: {
-                        requestInit: {
-                            headers: {
-                                Authorization: `Bearer ${GITHUB_TOKEN}`,
-                                "X-MCP-Toolsets": "all",
-                                "X-MCP-Readonly": "true",
-                            },
-                        },
-                    },
-                }),
-            ],
-        });
-
-        export { rootAgent };
+        --8<-- "examples/inline/typescript/integrations/github/002-use-with-agent.ts"
         ```
 
 ## Available tools

@@ -1,0 +1,21 @@
+// Conceptual Structure of an Event (Go - See session/session.go)
+// Simplified view based on the session.Event struct
+type Event struct {
+    // --- Fields from embedded model.LLMResponse ---
+    model.LLMResponse
+
+    // --- ADK specific additions ---
+    Author       string         // 'user' or agent name
+    InvocationID string         // ID for the whole interaction run
+    ID           string         // Unique ID for this specific event
+    Timestamp    time.Time      // Creation time
+    Actions      EventActions   // Important for side-effects & control
+    Branch       string         // Hierarchy path
+    // ... other fields
+}
+
+// model.LLMResponse contains the Content field
+type LLMResponse struct {
+    Content *genai.Content
+    // ... other fields
+}

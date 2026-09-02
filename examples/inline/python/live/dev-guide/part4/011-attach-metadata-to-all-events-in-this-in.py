@@ -1,0 +1,1 @@
+custom_metadata: Optional[dict[str, Any]] = None

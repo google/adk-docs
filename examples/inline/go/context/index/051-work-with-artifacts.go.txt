@@ -1,0 +1,3 @@
+import "google.golang.org/adk/v2/tool"
+
+--8<-- "examples/go/snippets/context/main.go:artifacts_list"
