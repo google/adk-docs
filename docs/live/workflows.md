@@ -1,4 +1,4 @@
-# Workflows
+# Graph workflows for live agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>

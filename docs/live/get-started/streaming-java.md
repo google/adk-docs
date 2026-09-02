@@ -1,4 +1,4 @@
-# Build a streaming agent with Java
+# Build live streaming agent with Java
 
 Build a Java agent that holds a low-latency, two-way voice conversation with ADK Streaming.
 
@@ -12,7 +12,7 @@ live audio and talk to it.
 
 * In this getting started guide, you will be programming in Java. Check if **Java** is installed on your machine. Ideally, you should be using Java 17 or more (you can check that by typing **java \-version**)
 
-* You’ll also be using the **Maven** build tool for Java, so install [Maven](https://maven.apache.org/install.html) before going further (Cloud Top and Cloud Shell already have it; your laptop may not).
+* You need the **Maven** build tool for Java, so install [Maven](https://maven.apache.org/install.html) before going further (Cloud Top and Cloud Shell already have it; your local development environment may not).
 
 ### **Prepare the project structure**
 

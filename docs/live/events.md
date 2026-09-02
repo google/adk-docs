@@ -1,4 +1,4 @@
-# Events
+# Events for live agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -15,9 +15,9 @@ A live session fills in fields a request/response agent never touches — audio 
 transcriptions, interruption flags — and delivers them continuously instead of once. For the
 loop that yields them, see [Sessions](sessions.md).
 
-## What a live event carries
+## Live agent event data
 
-[`Event`](../api-reference/python/google-adk.html#google.adk.events.Event) is a Pydantic
+An [`Event`](../api-reference/python/google-adk.html#google.adk.events.Event) is a Pydantic
 model that extends `LlmResponse`. Live sessions use these fields:
 
 | Field | What it holds |
@@ -50,6 +50,8 @@ events = [e for e in stream if e.author == "billing_agent"]
 ```
 
 ## Event types
+
+During a live session, an agent delivers its continuous output through several distinct event types, which can include partial text, audio, speech transcriptions, tool calls, and token usage metadata. The following sections describe these event types.
 
 ### Text
 

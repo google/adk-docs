@@ -295,7 +295,7 @@ The `--user_simulation_config_file` expects a JSON file matching the `Conversati
 *   **`environment_context`** (optional): Context describing the backend data or state accessible to the agent's tools. This helps the generator create queries that are grounded in realistic data (e.g., valid device IDs).
 *   **`model_name`** (required): The Gemini model used for generation (e.g., `gemini-flash-latest`).
 
-## Audio user simulation (live agents)
+## Audio user simulation for live agents
 
 The user simulator is independent of whether the agent under test is a live
 (voice) agent, so the same `ConversationScenario` (or a fixed conversation) can

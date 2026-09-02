@@ -266,7 +266,7 @@ response modalities.
 
 ## Configure live agents
 
-Live (`run_live()`) sessions add a set of real-time parameters —
+Live (`run_live()`) agent sessions add a set of real-time parameters, including
 `realtime_input_config`, `session_resumption`, `save_live_blob`,
 `tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more. These
 are documented in one place, with per-model support and examples, in the live docs:
@@ -278,7 +278,7 @@ are documented in one place, with per-model support and examples, in the live do
 - **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)** —
   native-audio conversational features and the models that support them.
 
-`tool_thread_pool_config` is the exception: it is a runtime concern rather than a
+The `tool_thread_pool_config` setting is an exception: it is a runtime concern rather than a
 Live API one, so it stays here. It runs tool executions in a background thread
 pool so the event loop keeps responding to user interruptions.
 

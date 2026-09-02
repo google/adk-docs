@@ -1,4 +1,4 @@
-# Configuration
+# Configuration for live agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
@@ -39,9 +39,8 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 | **translation_config** | TranslationConfig | Real-time speech-to-speech translation (translation models only) | [Details](#other-live-related-fields) |
 | **avatar_config** | AvatarConfig | Render the agent as an animated avatar | [Details](#other-live-related-fields) |
 
-!!! note "Reference"
 
-    [`RunConfig`](../api-reference/python/google-adk.html#google.adk.agents.RunConfig) in the Python API reference
+For more details on configuration options, see [`RunConfig`](../api-reference/python/google-adk.html#google.adk.agents.RunConfig) in the Python API reference.
 
 **Import Paths:**
 
@@ -62,12 +61,11 @@ run_config = RunConfig(
 
 The `RunConfig` class itself and `StreamingMode` enum are imported from `google.adk.agents.run_config`.
 
-## Response Modalities
+## Response modes
 
-`response_modalities` controls the output format, and a session gets exactly one. **For live
+The `response_modalities` setting controls the output format, and a session gets exactly one. **For live
 agents the value is always `["AUDIO"]`**, because every
 [Live model](models.md#live-models) ADK supports accepts no other modality.
-
 ADK fills this in for you when you leave it unset, so most live applications never touch the
 field.
 
@@ -227,6 +225,12 @@ run_config = RunConfig(
 The live-specific consequence is scope: one `run_live()` call is one invocation, so the
 metadata is stamped on every event for the entire streaming session rather than a single
 turn. Read it back with `event.custom_metadata`.
+
+!!! warning "Do not put sensitive data in `custom_metadata`"
+
+    Every event carrying this metadata is persisted to the session service. Keep PII,
+    credentials, and other sensitive values out of it, and encrypt them if you have no
+    alternative.
 
 ### Other live-related fields
 

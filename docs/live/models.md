@@ -1,4 +1,4 @@
-# Supported models
+# Supported models for live agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -40,12 +40,13 @@ Switch with the `GOOGLE_GENAI_USE_ENTERPRISE` environment variable (`FALSE` for 
 `TRUE` for Agent Platform); no code changes. See the
 [quickstarts](get-started/streaming-python.md) for setup.
 
-!!! note "Agent Platform: the `global` location is not supported"
+!!! note "Agent Platform: confirm location support"
 
-    Live models are not available at `GOOGLE_CLOUD_LOCATION=global` on Agent Platform.
-    Use a regional endpoint (for example `us-central1`, `us-east1`, or `asia-northeast1`).
-    See [Agent Platform locations](https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations)
-    for the current list.
+    Live model availability varies by location on Agent Platform. Check your
+    `GOOGLE_CLOUD_LOCATION` against the endpoint-locations table in
+    [Agent Platform locations](https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations)
+    before deploying; a regional endpoint such as `us-central1`, `us-east1`, or
+    `asia-northeast1` is the safe default.
 
 These models produce audio directly, with natural prosody, and detect the conversation
 language on their own. What you configure on top — voices, transcription, turn detection —
@@ -72,24 +73,27 @@ before you rely on a limit in production.
 
 | Limit | AI Studio | Agent Platform |
 |---|---|---|
-| Session duration, audio-only | 15 min | 10 min |
-| Session duration, audio + video | 2 min | 10 min |
-| Concurrent sessions | 50 (Tier 1), 1,000 (Tier 2+) | Up to 1,000 per project |
-| New-connection rate | [Tier-based](https://ai.google.dev/gemini-api/docs/quota) | 10 per minute |
+| Session duration, audio-only | 15 min | 15 min |
+| Session duration, audio + video | 2 min | 2 min |
+| Connection lifetime | ~10 min | ~10 min |
+| Concurrent sessions | See [rate limits](https://ai.google.dev/gemini-api/docs/rate-limits) | Up to 1,000 per project on pay-as-you-go; no limit with Provisioned Throughput |
 
-Enabling [context window compression](sessions.md#context-window-compression) removes the
-session-duration limits on both backends. On Agent Platform, request concurrent-session
+Agent Platform additionally caps a conversation session at 10 minutes by default, separately
+from the audio-only limit above.
+
+Enabling [context window compression](sessions.md#context-window-compression) lets a session
+be extended past the duration limits. On Agent Platform, request concurrent-session
 increases from the [Cloud Console Quotas page](https://console.cloud.google.com/iam-admin/quotas)
 under **"Bidi generate content concurrent requests"**. Verify the current numbers against the
 [AI Studio](https://ai.google.dev/gemini-api/docs/live-api/capabilities),
-[Gemini API quotas](https://ai.google.dev/gemini-api/docs/quota), and
-[Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
+[Gemini API rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), and
+[Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api/start-manage-session)
 documentation.
 
 ## How to handle model names
 
 Read the model name from an environment variable rather than hard-coding it. The same model
-has a different ID on AI Studio and Agent Platform, so an env var is what lets one codebase
+has a different ID on AI Studio and Agent Platform, so an `.env` var is what lets one codebase
 target both backends, and it insulates you from model deprecations.
 
 **Recommended Pattern:**

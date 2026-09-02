@@ -1,4 +1,4 @@
-# Get started
+# Get started with live agents
 
 The quickstarts run your agent in `adk web`, which ships a browser client that already
 captures the microphone, plays the agent's replies, and renders the transcript. You write the

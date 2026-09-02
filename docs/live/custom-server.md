@@ -1,10 +1,10 @@
-# Build a custom server
+# Custom server for live agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-`adk web` runs a live agent during development. It ships a browser client that captures the
+The `adk web` tool runs a live agent for development purposes. It ships a browser client that captures the
 microphone and camera, plays model audio, and renders transcripts, so you can talk to your
 agent with no code of your own. Shipping to production means replacing that: running your own
 server that bridges clients to `run_live()`, with the runner and session service initialized
