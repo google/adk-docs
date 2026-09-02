@@ -321,7 +321,8 @@ Use these parameters to control runtime guardrails and debugging:
 
 - `max_llm_calls`: Caps the total number of LLM calls per run (default: 500).
   Set to 0 or negative for unlimited calls, though this is not recommended for
-  production. Values at or above `sys.maxsize` raises an error.
+  production. Passing your language's largest integer raises an error:
+  `sys.maxsize` in Python, `Int.MAX_VALUE` in Kotlin.
 - `save_input_blobs_as_artifacts`: When `True`, saves input blobs (e.g.,
   uploaded files) as run artifacts for debugging and auditing. Deprecated in
   Python in favor of `SaveFilesAsArtifactsPlugin`.
