@@ -278,7 +278,7 @@ upper left corner and type a request.
     ADK Web is ***not meant for use in production deployments***. You should
     use ADK Web for development and debugging purposes only.
 
-!!! note "The server binds loopback"
+!!! note "ADK Web server loopback binding"
 
     The ADK web server listens on `127.0.0.1:8080`, because its endpoints are
     unauthenticated. To reach it from another machine — a container, a virtual
