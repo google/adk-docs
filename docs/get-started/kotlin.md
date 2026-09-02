@@ -280,7 +280,7 @@ upper left corner and type a request.
 
 !!! note "The server binds loopback"
 
-    `AdkDevServer` listens on `127.0.0.1:8080`, because its endpoints are
+    The ADK web server listens on `127.0.0.1:8080`, because its endpoints are
     unauthenticated. To reach it from another machine — a container, a virtual
     machine, or a remote development box — widen that with the config's `host`
     parameter, `AdkServerConfig.inMemory(...).copy(host = ...)`, and put your
