@@ -187,7 +187,7 @@ knowing exactly what `adk web` does and where it stops.
 does not ship the browser client unless you pass `--with_ui`. You can therefore develop
 against `adk web` and point a custom client at either.
 
-### The wire protocol
+### Wire protocol and data format
 
 The `/run_live` endpoint speaks **JSON text frames only**. Your client sends serialized
 [`LiveRequest`](sessions.md#liverequestqueue) objects and receives serialized
