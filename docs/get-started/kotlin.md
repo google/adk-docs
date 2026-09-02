@@ -276,32 +276,8 @@ upper left corner and type a request.
 !!! warning "Caution: ADK Web for development only"
 
     ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
-
-!!! note "ADK Web server loopback binding"
-
-    The ADK web server listens on `127.0.0.1:8080`, because its endpoints are
-    unauthenticated. To reach it from another machine — a container, a virtual
-    machine, or a remote development box — widen that with the config's `host`
-    parameter, `AdkServerConfig.inMemory(...).copy(host = ...)`, and put your
-    own authentication in front of it. Bind the narrowest interface that works.
-
-### Serve without the development UI
-
-For a deployment rather than local testing, use `AdkApiServer`. It takes the same
-`AdkServerConfig` and serves the agent runtime contract — app discovery, sessions,
-artifacts and the run endpoints — leaving the development UI unmounted:
-
-```kotlin title="my_agent/src/main/kotlin/com/example/agent/ApiMain.kt"
-package com.example.agent
-
-import com.google.adk.kt.webserver.AdkApiServer
-import com.google.adk.kt.webserver.AdkServerConfig
-
-fun main() {
-    AdkApiServer(AdkServerConfig.inMemory(HelloTimeAgent.rootAgent)).start(wait = true)
-}
-```
+    use ADK Web for development and debugging purposes only. For more
+    information, see ADK [Web Interface](/runtime/web-interface/).
 
 ## Next: Build your agent
 
