@@ -260,14 +260,11 @@ The Agent Development Kit (ADK) enriches traces with telemetry attributes to hel
 
 To prevent exposing sensitive data and Personally Identifiable Information (PII) in production:
 
-- **Deployment default:** When deploying with `adk deploy agent_engine --otel_to_cloud`, ADK automatically sets `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS='false'` (unless already defined in `.env`). For other targets like Cloud Run or GKE, set this variable explicitly.
-- **Redacted payloads:** When content capture in spans is disabled (`'false'` or `'0'`), payload attributes (`gcp.vertex.agent.llm_request`, `gcp.vertex.agent.llm_response`, `gcp.vertex.agent.tool_call_args`, `gcp.vertex.agent.tool_response`, and `gcp.vertex.agent.data`) are replaced with placeholder values (such as `"{}"` or `"N/A"`) in Cloud Trace.
+- **Deployment default:** When deploying with `adk deploy agent_engine --otel_to_cloud`, ADK automatically sets `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS='false'` unless it is already defined in `.env` settings. For other targets like Cloud Run or GKE, set this variable explicitly.
+- **Redacted payloads:** When `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS` is `'false'` or `'0'`, payload attributes (`gcp.vertex.agent.llm_request`, `gcp.vertex.agent.llm_response`, `gcp.vertex.agent.tool_call_args`, `gcp.vertex.agent.tool_response`, and `gcp.vertex.agent.data`) are replaced with placeholder values, such as `"{}"` or `"N/A"`.
 - **Enabling capture:** To capture full payloads for local testing or debugging, explicitly set `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS='true'` in your `.env` file or environment variables.
 - **OpenTelemetry message capturing:** Set `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT='true'` (or `'1'`) to enable logging of prompt and response content in OpenTelemetry events.
 
-!!! note
-    * **Agent orchestration layer (`ADK`):** Use `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS` to control payload redaction in ADK-specific agent attributes (such as `gcp.vertex.agent.llm_request` and `gcp.vertex.agent.tool_call_args`).
-    * **Model telemetry layer (`OTEL`):** Use `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` to capture raw prompt and response payloads in underlying OpenTelemetry GenAI spans or log records.
 
 ## Resources
 
