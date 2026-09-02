@@ -441,7 +441,7 @@ workflows offer much more flexibility to define the routing logic you need.
 
         check_resp = await ctx.run_node(compile_lint_check, code)
 
-      return code
+      yield Event(output=code)
     ```
 
 === "TypeScript"
