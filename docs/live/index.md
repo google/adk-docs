@@ -29,7 +29,7 @@ your agent code stays the same as the platform evolves.
   </div>
 </div>
 
-## Start here
+## Build live agents
 
 <div class="grid cards" markdown>
 

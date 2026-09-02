@@ -53,6 +53,8 @@ events = [e for e in stream if e.author == "billing_agent"]
 
 During a live session, an agent delivers its continuous output through several distinct event types, which can include partial text, audio, speech transcriptions, tool calls, and token usage metadata. The following sections describe these event types.
 
+During a live session, an agent delivers its continuous output through several distinct event types, which can include partial text, audio, speech transcriptions, tool calls, and token usage metadata. The following sections describe these event types.
+
 ### Text
 
 Text arrives on `event.content.parts[].text`. In a live session this is thought summaries
@@ -125,8 +127,7 @@ cost and quota tracking.
 ## Streaming flags
 
 Three flags drive a live UI: `partial`, `turn_complete`, and `interrupted`.
-
-`partial` distinguishes an incremental chunk from the merged result:
+The `partial` flag distinguishes an incremental chunk from the merged result:
 
 - `partial=True`: only the new text since the last event.
 - `partial=False`: the full merged text for this segment.
@@ -142,7 +143,7 @@ Event 3: partial=False, text="Hello world", turn_complete=False
 Event 4: partial=False, text="",            turn_complete=True
 ```
 
-`partial=False` can occur several times per turn (once per sentence, for example), and
+A `partial=False` condition can occur several times per turn (once per sentence, for example), and
 `turn_complete=True` arrives once, in its own event, after the last segment.
 
 `turn_complete` and `interrupted` tell your UI what state to enter:
