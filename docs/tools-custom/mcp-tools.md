@@ -1,4 +1,4 @@
-# Model Context Protocol Tools
+# Model Context Protocol tools
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
@@ -34,7 +34,7 @@ sequenceDiagram
 
 Before you begin, ensure you have the following set up:
 
-- **ADK Installed**: Complete standard ADK setup in your project environment.
+- **ADK Installed**: Complete standard ADK setup in your project environment with the MCP extra: `pip install "google-adk[mcp]"`.
 - **Runtime Requirements**: Python 3.10+ or Java 17+.
 - **Node.js & `npx`** *(Python/TS only)*: Required to run npm-packaged community MCP servers.
 - **Verify installations**: Confirm `adk` and `npx` are in your PATH in the activated virtual environment:
@@ -61,11 +61,20 @@ Before you begin, ensure you have the following set up:
 
 ---
 
+## Understand uses and integrations
+
+There are three main integration patterns. The direct integration is covered in this page and
+the other implementations are covered in their specific pages.
+
+1. **Direct MCP Tool Integration**: When an ADK agent acts as an MCP client using `McpToolset`.
+2. **Agent-Exposed MCP Server**: When you build an MCP server that wraps ADK Tools using `to_mcp_server`.
+3. **Specialized Sub-Agent Delegation**: When an agent delegates to a sub-agent using `AgentTool`.
+
 ## MCP Implementation options
 
  When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents. The following table works as a comparative guide to help you construct those agents.
 
-| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](/docs/tools-custom/agent-as-mcp-server.md) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](/docs/tools-custom/agent-managed-mcp.md) |
+| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](agent-as-mcp-server.md) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](agent-managed-mcp.md) |
 | :--- | :--- | :--- | :--- |
 | **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. |
 | **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Isolated**: The external caller only receives the final aggregated response text/blocks. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. |
@@ -76,18 +85,8 @@ Before you begin, ensure you have the following set up:
 !!! note "State restoration"
 
     While ADK agents preserve session state during lifecycle events, they do not automatically re-establish active MCP connections upon restoration. Agents re-initialize connections as needed.
-
-## Understand uses and integrations
-
-There are three main integration patterns. The direct integration is covered in this page and
-the other implementations are covered in their specific pages.
-
-1. **Direct MCP Tool Integration**: When an ADK agent acts as an MCP client using `McpToolset`.
-2. **Agent-Exposed MCP Server**: When you build an MCP server that wraps ADK Tools using `to_mcp_server`.
-3. **Specialized Sub-Agent Delegation**: When an agent delegates to a sub-agent using `AgentTool`.
    
-
-### Direct MCP Tool Integration (McpToolset)
+### Direct MCP Tool integration (McpToolset)
 
 The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
@@ -190,13 +189,68 @@ This example sets up an ADK agent that connects to a local MCP file system serve
                         .instruction("Help users access their file systems.")
                         .tools(toolset)
                         .build();
-                
+
                 System.out.println("Agent initialized: " + agent.name());
             }
         }
     }
     ```
 
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+        "context"
+        "fmt"
+        "os/exec"
+
+        "[github.com/modelcontextprotocol/go-sdk/mcp](https://github.com/modelcontextprotocol/go-sdk/mcp)"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/model/gemini"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/mcptoolset"
+    )
+
+    func createFilesystemAgent(ctx context.Context) (agent.Agent, error) {
+        // 1. Initialize MCP Toolset with CommandTransport and AllowedToolsPredicate
+        mcpTools, err := mcptoolset.New(mcptoolset.Config{
+            Transport: &mcp.CommandTransport{
+                Command: exec.Command("npx", "-y", "@modelcontextprotocol/server-filesystem", "./accessible_files"),
+            },
+            ToolFilter: tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}),
+        })
+        if err != nil {
+            return nil, fmt.Errorf("failed to create mcp toolset: %w", err)
+        }
+
+        // 2. Initialize Gemini model.LLM instance
+        llm, err := gemini.NewModel(ctx, "gemini-2.0-flash", nil)
+        if err != nil {
+            return nil, fmt.Errorf("failed to create gemini model: %w", err)
+        }
+
+        // 3. Create the LLM agent returning agent.Agent
+        return llmagent.New(llmagent.Config{
+            Name:        "filesystem_assistant",
+            Model:       llm,
+            Instruction: "Help users manage local files.",
+            Toolsets:    []tool.Toolset{mcpTools},
+        })
+    }
+
+    func main() {
+        ctx := context.Background()
+        ag, err := createFilesystemAgent(ctx)
+        if err != nil {
+            panic(err)
+        }
+        fmt.Printf("Successfully created agent: %s\n", ag.Name())
+    }
+    ```
+    
 ---
 
 #### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
@@ -253,27 +307,31 @@ Unlike the previous local process example, this pattern connects your agent to a
 
     ```typescript
     import { LlmAgent, MCPToolset } from "@google/adk";
-    
+
     export const rootAgent = new LlmAgent({
         model: "gemini-flash-latest",
         name: "travel_planner",
         instruction: "Plan travel routes and search locations using Google Maps.",
         tools: [
             new MCPToolset({
-                type: "SseConnectionParams",
+                type: "StreamableHTTPConnectionParams",
                 url: "https://mapstools.googleapis.com/mcp",
-                headers: {
-                    "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json, text/event-stream",
+                transportOptions: {
+                    requestInit: {
+                        headers: {
+                            "X-Goog-Api-Key": process.env.GOOGLE_MAPS_API_KEY!,
+                            "Content-Type": "application/json",
+                            "Accept": "application/json, text/event-stream",
+                        },
+                    },
                 },
                 timeout: 5,
-                sseReadTimeout: 300
+                sseReadTimeout: 300,
             }),
         ],
     });
-    ```
-    
+     ``` 
+     
 ---
 
 ## Remote MCP Authentication and resource access
@@ -319,7 +377,7 @@ import { MCPToolset } from "@google/adk";
 
 // Configure Bearer Token Authentication via headers
 const toolset = new MCPToolset({
-    type: "SseConnectionParams",
+    type: "StreamableHTTPConnectionParams",
     url: "https://mcp-server.example.com/sse",
     headers: {
         "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
@@ -340,8 +398,9 @@ In addition to executable **Tools**, MCP servers can expose **Resources** data f
 
 * **`list_resources()`**: Returns a list of all available data resources exposed by the MCP server.
 * **`read_resource(name)`**: Retrieves the raw content blocks, text or binary data, for a specific resource by its name or URI.
+* **`use_mcp_resources=True` (Configuration)**: When initializing `McpToolset`, setting this flag automatically equips the LLM agent with the `LoadMcpResourceTool`. This allows the agent to dynamically discover and read resources on its own without requiring manual programmatic fetching.
 
-### Try it out
+#### Try it out
 
 === "Python"
 
