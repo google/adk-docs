@@ -1,7 +1,7 @@
 # Advanced MCP configurations and production guide
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 This guide covers advanced integration patterns for the Model Context Protocol (MCP) in ADK. It provides production patterns for dynamic per-user authentication, human-in-the-loop approvals, long-running progress tracking, custom runtime execution, and enterprise cloud deployments.
@@ -18,7 +18,6 @@ Use the matrix below to select the right configuration mechanism for your produc
 | **Require approval before dangerous tool calls** | Tool Confirmation | `require_confirmation=...` | Database mutations, destructive shell/file ops |
 | **Stream real-time progress for long operations** | Progress Callback & Factory | `progress_callback=...` | Heavy SQL queries, web scraping, data indexing |
 | **Run agents in FastAPI / backend services without `adk web`** | Programmatic Runner Lifecycle | `Runner` + `await toolset.close()` | Custom microservices, CLI tools, worker queues |
-| **Deploy containerized MCP agents to Cloud Run or GKE** | Stateless Streamable HTTP / Sidecar | `StreamableHTTPConnectionParams` | Horizontally scalable serverless or cluster pods |
 | **Resolve tool naming collisions across servers** | Tool Namespacing & Filtering | `tool_name_prefix`, `tool_filter` | Aggregating multiple MCP servers (DB + GitHub) |
 | **Handle server-requested sampling or auth challenges** | Bi-directional Protocol Callbacks | `sampling_callback`, `elicitation_callback` | Server-initiated LLM generation & auth prompts |
 | **Inspect raw STDERR diagnostic streams** | Diagnostic Stream Logging | `errlog=sys.stderr` | Troubleshooting MCP subprocess crashes |
@@ -30,12 +29,10 @@ Use the matrix below to select the right configuration mechanism for your produc
 
 In multi-tenant or user-facing systems, hardcoding credentials into connection parameters is insecure. `McpToolset` supports `header_provider`, an asynchronous or synchronous callable that receives the active `ReadonlyContext` to dynamically construct authentication headers on every tool invocation.
 
-=== "Python"
-
 ```python
-from google.adk.agents import LlmAgent, ReadonlyContext
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
+from google.adk.agents import LlmAgent
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 
 async def extract_per_user_headers(context: ReadonlyContext) -> dict[str, str]:
     """Dynamically extracts session state or per-user token on every turn."""
@@ -43,23 +40,16 @@ async def extract_per_user_headers(context: ReadonlyContext) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {user_token}",
         "X-User-ID": context.user_id,
-        "X-Session-ID": context.session_id,
+        "X-Session-ID": context.session.id,  # Fixed: access session.id
     }
 
 toolset = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
-        url="https://mcp-server.example.com/mcp",
+        url="[https://mcp-server.example.com/mcp](https://mcp-server.example.com/mcp)",
         timeout=5,
         sse_read_timeout=300,
     ),
     header_provider=extract_per_user_headers,
-)
-
-root_agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="enterprise_assistant",
-    instruction="Execute authorized MCP tools on behalf of authenticated users.",
-    tools=[toolset],
 )
 ```
 
@@ -68,8 +58,6 @@ root_agent = LlmAgent(
 ## Human-in-the-loop and tool confirmations (`require_confirmation`)
 
 MCP servers can expose high-impact capabilities, for example: database schema modifications or record deletions. You can enforce confirmation globally across all tools in the toolset or conditionally via a predicate function that inspects tool arguments.
-
-=== "Python"
 
 ```python
 from typing import Any
@@ -219,94 +207,6 @@ if __name__ == "__main__":
 
 ---
 
-## Enterprise Cloud deployment architectures
-
-### Architecture 1: Cloud run remote service (Streamable HTTP)
-
-Deploy MCP servers as independently scalable Cloud Run services and connect your ADK agent using `StreamableHTTPConnectionParams`.
-
-=== "Python"
-
-```python
-# agent.py
-import os
-from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
-
-root_agent = LlmAgent(
-    model="gemini-flash-latest",
-    name="cloud_run_agent",
-    instruction="Execute cloud-hosted tools.",
-    tools=[
-        McpToolset(
-            connection_params=StreamableHTTPConnectionParams(
-                url=os.getenv("REMOTE_MCP_URL", "https://mcp-service-xyz.run.app/mcp"),
-                headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
-                timeout=5,
-                sse_read_timeout=300,
-            )
-        )
-    ],
-)
-```
-
-Deploying to Cloud Run:
-```bash
-uv run adk deploy cloud_run \
-  --project=<gcp-project-id> \
-  --region=<gcp-region> \
-  --service_name="mcp-agent-service" \
-  ./path/to/agent_directory
-```
-
----
-
-### Architecture 2: GKE sidecar pattern
-
-In Kubernetes/GKE environments, run the MCP server as a companion sidecar container in the same Pod for high-throughput, low-latency `localhost` communication.
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: adk-agent-with-mcp
-spec:
-  replicas: 3
-  template:
-    spec:
-      containers:
-      # Primary ADK Agent Container
-      - name: adk-agent
-        image: gcr.io/my-project/adk-agent:latest
-        ports:
-        - containerPort: 8080
-        env:
-        - name: MCP_SERVER_URL
-          value: "http://127.0.0.1:8081/mcp"
-      # MCP Server Sidecar
-      - name: mcp-server
-        image: gcr.io/my-project/mcp-server:latest
-        ports:
-        - containerPort: 8081
-```
-
----
-
-### Architecture 3: Agent Platform runtime
-
-Deploying to Agent Platform Runtime:
-
-```bash
-uv run adk deploy agent_engine \
-  --project=<gcp-project-id> \
-  --region=<gcp-region> \
-  --display_name="Production MCP Agent" \
-  ./path/to/agent_directory
-```
-
----
-
 ## Name collisions and tool namespacing (`tool_name_prefix`)
 
 When you connect to multiple MCP servers, tool names such as `query` or `search` can conflict. Use `tool_name_prefix` to automatically namespace discovered tools:
@@ -386,7 +286,7 @@ with open("mcp_server_errors.log", "a") as error_file:
     )
 ```
 
-## UI Rendering 
+## Render interactive UI widgets
 
 Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
 
@@ -404,11 +304,12 @@ sequenceDiagram
     UI-->>UI: Renders interactive widget in chat interface
 ```
 
-### How It Works
+### How it works
 
-1. **Tool Registration**: The MCP tool declares a UI resource link in its schema definition metadata during `tools/list`: `_meta.ui.resourceUri = "ui://widgets/weather-card"`.
-2. **ADK Detection**: ADK reads the schema definition to detect `_meta.ui.resourceUri` and knows this tool supports an interactive UI.
+1. **Tool Registration**: The MCP tool declares a UI resource link in its schema definition metadata during `tools/list`: `meta.ui.resourceUri = "ui://widgets/weather-card"`.
+2. **ADK Detection**: ADK reads the schema definition to detect `meta.ui.resourceUri` and knows this tool supports an interactive UI.
 3. **Client Display**: Upon tool execution, ADK signals the web UI (`adk web` or custom frontend) to fetch the UI resource and render an interactive widget instead of plain text.
+
 
 ```python
 from mcp import types as mcp_types
@@ -454,6 +355,6 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
 
 ## Next Steps
 
-* Return to the [Model Context Protocol Overview](./mcp-tools.md) for basic setup, Resources, and Experimental UI Widgets.
+* Return to the [Model Context Protocol Overview](./mcp-tools.md) for basic setup.
 * Explore [Custom Function Tools](./function-tools.md) for in-process Python tools.
 * Read the [ADK Deployment Guide](../deploy/index.md) for full cloud configuration options.
