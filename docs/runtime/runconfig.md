@@ -97,8 +97,8 @@ whether the context window is compressed:
 
 ## Text response options { #enable-streaming }
 
-You can control how an agent responds in text mode — word-by-word as it is
-generated, or as one full response — with the ***Streaming Mode*** parameter, as
+You can control how an agent responds in text mode, word-by-word as it is
+generated, or as one full response, with the ***Streaming Mode*** parameter, as
 described below:
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
