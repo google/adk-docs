@@ -294,3 +294,69 @@ The `--user_simulation_config_file` expects a JSON file matching the `Conversati
 *   **`generation_instruction`** (optional): A natural language prompt guiding the specific types of scenarios or goals you want to test.
 *   **`environment_context`** (optional): Context describing the backend data or state accessible to the agent's tools. This helps the generator create queries that are grounded in realistic data (e.g., valid device IDs).
 *   **`model_name`** (required): The Gemini model used for generation (e.g., `gemini-flash-latest`).
+
+## Audio user simulation for live agents
+
+The user simulator is independent of whether the agent under test is a live
+(voice) agent, so the same `ConversationScenario` (or a fixed conversation) can
+drive both text and live evals. For live agents, the simulated user's turns can
+be synthesized to **audio** and streamed to the agent.
+
+This is configured with the `llm_audio` user simulator in your eval config
+(`test_config.json`). It wraps the standard text simulator and converts each
+generated user turn to audio using a text-to-speech model. By default it uses
+Google Cloud Text-to-Speech (`cloud_tts`); a Gemini TTS model name may be used
+instead.
+
+```json
+{
+  "criteria": {
+    "tool_trajectory_avg_score": 1.0,
+    "response_match_score": 0.5
+  },
+  "live_model_config": {
+    "timeout_seconds": 300
+  },
+  "user_simulator_config": {
+    "type": "llm_audio",
+    "model": "gemini-2.5-flash",
+    "audio_model": "cloud_tts",
+    "audio_model_configuration": {
+      "speech_config": {
+        "voice_config": {
+          "prebuilt_voice_config": { "voice_name": "en-US-Studio-O" }
+        },
+        "language_code": "en-US"
+      }
+    },
+    "include_text_with_audio": true
+  }
+}
+```
+
+Key fields:
+
+*   `type`: `"llm_audio"` selects the audio user simulator.
+*   `audio_model`: `"cloud_tts"` for Google Cloud Text-to-Speech, or a Gemini
+    TTS model name (e.g. `"gemini-2.5-flash-preview-tts"`).
+*   `audio_model_configuration.speech_config`: Selects the voice and language.
+*   `include_text_with_audio`: Whether the user turn also carries the text part
+    alongside the generated audio.
+
+!!! note "Live models require live inference"
+
+    Evaluating a live agent requires live (bidirectional streaming) inference,
+    which is **not** the default. Enable it by adding a `live_model_config`
+    block to your config file. Live API models (e.g. `gemini-*-live-*`) are not
+    served over the unary `generateContent` endpoint that non-live eval uses, so
+    running them without live mode fails.
+
+    `use_live` is an internal field set from `live_model_config`; putting it in
+    a config file has no effect.
+
+    Using `cloud_tts` requires the `google-cloud-texttospeech` package (included
+    in the `google-adk[eval]` extra) and access to the Cloud Text-to-Speech API.
+
+See the sample at
+[`contributing/samples/live/live_non_blocking_tool_agent`](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_non_blocking_tool_agent)
+for a complete, runnable live eval configuration.
