@@ -167,7 +167,7 @@ When adding an authenticated tool to your agent, you need to provide its require
 
 You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
 
-#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
+#### Use OpenAPI-based toolsets
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -281,7 +281,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-#### Use Google API toolsets (e.g., `CalendarToolset`)
+#### Use Google API toolsets
 
 These toolsets often have dedicated configuration methods.
 
