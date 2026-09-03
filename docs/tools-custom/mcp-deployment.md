@@ -4,10 +4,12 @@ When deploying ADK agents that use MCP tools to production environments like Clo
 
 ## Critical Deployment Requirement: Synchronous Agent Definition
 
-**⚠️ Important:** When deploying agents with MCP tools, the agent and its McpToolset must be defined **synchronously** in your `agent.py` file. While `adk web` allows for asynchronous agent creation, deployment environments require synchronous instantiation.
+!!! warning
+
+    When deploying agents with MCP tools, the agent and its McpToolset must be defined **synchronously** in your `agent.py` file. While `adk web` allows for asynchronous agent creation, deployment environments require synchronous instantiation.
 
 ```python
-# ✅ CORRECT: Synchronous agent definition for deployment
+# CORRECT: Synchronous agent definition for deployment
 import os
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.tools.mcp_tool import McpToolset
@@ -41,7 +43,7 @@ root_agent = LlmAgent(
 ```
 
 ```python
-# ❌ WRONG: Asynchronous patterns don't work in deployment
+# WRONG: Asynchronous patterns don't work in deployment
 async def get_agent():  # This won't work for deployment
     toolset = await create_mcp_toolset_async()
     return LlmAgent(tools=[toolset])
@@ -291,130 +293,45 @@ spec:
         - containerPort: 8081
 ```
 
-## Connection Management Considerations
+## Connection management considerations
 
-### Stdio Connections
-- **Pros:** Simple setup, process isolation, works well in containers
-- **Cons:** Process overhead, not suitable for high-scale deployments
-- **Best for:** Development, single-tenant deployments, simple MCP servers
+Choose your connection type based on your scaling and infrastructure needs. 
 
-### SSE/HTTP Connections
-- **Pros:** Network-based, scalable, can handle multiple clients
-- **Cons:** Requires network infrastructure, authentication complexity
-- **Best for:** Production deployments, multi-tenant systems, external MCP services
+### Stdio connections
+*   **Pros:** Simple setup, process isolation, and works well in containers.
+*   **Cons:** Process overhead; not suitable for high-scale deployments.
+*   **Best for:** Development, single-tenant deployments, and simple MCP servers.
 
-## Production Deployment Checklist
+### SSE/HTTP connections
+*   **Pros:** Network-based, scalable, and handles multiple clients.
+*   **Cons:** Requires network infrastructure and authentication complexity.
+*   **Best for:** Production deployments, multi-tenant systems, external MCP services, and high-volume traffic.
 
-When deploying agents with MCP tools to production:
+## Production deployment guidelines
 
-**✅ Connection Lifecycle**
-- Ensure proper cleanup of MCP connections using exit_stack patterns
-- Configure appropriate timeouts for connection establishment and requests
-- Implement retry logic for transient connection failures
+Follow these core guidelines when deploying agents with MCP tools to production environments.
 
-**✅ Resource Management**
-- Monitor memory usage for stdio MCP servers (each spawns a process)
-- Configure appropriate CPU/memory limits for MCP server processes
-- Consider connection pooling for remote MCP servers
+### Connection lifecycle
+*   Clean up MCP connections properly using standard exit stack patterns.
+*   Configure appropriate timeouts for connection establishment and requests.
+*   Implement retry logic to handle transient connection failures gracefully.
 
-**✅ Security**
-- Use authentication headers for remote MCP connections
-- Restrict network access between ADK agents and MCP servers
-- **Filter MCP tools using `tool_filter` to limit exposed functionality**
-- Validate MCP tool inputs to prevent injection attacks
-- Use restrictive file paths for filesystem MCP servers (e.g., `os.path.dirname(os.path.abspath(__file__))`)
-- Consider read-only tool filters for production environments
+### Resource management
+*   Monitor memory usage closely for stdio MCP servers, as each connection spawns a new process.
+*   Configure appropriate CPU and memory limits for MCP server processes.
+*   Implement connection pooling for remote MCP servers to optimize resource consumption.
 
-**✅ Monitoring & Observability**
-- Log MCP connection establishment and teardown events
-- Monitor MCP tool execution times and success rates
-- Set up alerts for MCP connection failures
+### Security
+!!! important "Security Best Practices"
+    *   Use strict authentication headers for all remote MCP connections.
+    *   Restrict network access tightly between ADK agents and MCP servers.
+    *   Filter MCP tools using `tool_filter` to strictly limit exposed functionality.
+    *   Validate all MCP tool inputs to prevent prompt or command injection attacks.
+    *   Use restrictive, absolute file paths for filesystem MCP servers (for example, `os.path.dirname(os.path.abspath(__file__))`).
+    *   Apply read-only tool filters in production environments whenever possible.
 
-**✅ Scalability**
-- For high-volume deployments, prefer remote MCP servers over stdio
-- Configure session affinity if using stateful MCP servers
-- Consider MCP server connection limits and implement circuit breakers
+### Monitoring and observability
+*   Log all MCP connection establishment and teardown events.
+*   Monitor MCP tool execution times and overall success rates.
+*   Set up automated alerts for recurring MCP connection failures.
 
-## Environment-Specific Configurations
-
-### Cloud Run
-```python
-# Cloud Run environment variables for MCP configuration
-import os
-
-# Detect Cloud Run environment
-if os.getenv('K_SERVICE'):
-    # Use remote MCP servers in Cloud Run
-    mcp_connection = SseConnectionParams(
-        url=os.getenv('MCP_SERVER_URL'),
-        headers={'Authorization': f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"}
-    )
-else:
-    # Use stdio for local development
-    mcp_connection = StdioConnectionParams(
-        server_params=StdioServerParameters(
-            command='npx',
-            args=["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
-        )
-    )
-
-McpToolset(connection_params=mcp_connection)
-```
-
-### GKE
-```python
-# GKE-specific MCP configuration
-# Use service discovery for MCP servers within the cluster
-McpToolset(
-    connection_params=SseConnectionParams(
-        url="http://mcp-service.default.svc.cluster.local:8080/sse"
-    ),
-)
-```
-
-### Agent Runtime
-```python
-# Agent Runtime managed deployment
-# Prefer lightweight, self-contained MCP servers or external services
-McpToolset(
-    connection_params=SseConnectionParams(
-        url="https://your-managed-mcp-service.googleapis.com/sse",
-        headers={'Authorization': 'Bearer $(gcloud auth print-access-token)'}
-    ),
-)
-```
-
-## Troubleshooting Deployment Issues
-
-**Common MCP Deployment Problems:**
-
-1. **Stdio Process Startup Failures**
-   ```python
-   # Debug stdio connection issues
-   McpToolset(
-       connection_params=StdioConnectionParams(
-           server_params=StdioServerParameters(
-               command='npx',
-               args=["-y", "@modelcontextprotocol/server-filesystem", "/app/data"],
-               # Add environment debugging
-               env={'DEBUG': '1'}
-           ),
-       ),
-   )
-   ```
-
-2. **Network Connectivity Issues**
-   ```python
-   # Test remote MCP connectivity
-   import aiohttp
-
-   async def test_mcp_connection():
-       async with aiohttp.ClientSession() as session:
-           async with session.get('https://your-mcp-server.com/health') as resp:
-               print(f"MCP Server Health: {resp.status}")
-   ```
-
-3. **Resource Exhaustion**
-   - Monitor container memory usage when using stdio MCP servers
-   - Set appropriate limits in Kubernetes deployments
-   - Use remote MCP servers for resource-intensive operations
