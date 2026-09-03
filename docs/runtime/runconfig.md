@@ -281,11 +281,11 @@ Live agent (`run_live()`) sessions add a set of real-time parameters, including
 `tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more.
 For more information, see the live agent docs:
 
-- **[Live agent configuration](../live/configuration.md)** — the full `RunConfig`
+- **[Live agent configuration](../live/configuration.md)**: `RunConfig`
   reference for live agents.
-- **[Sessions](../live/sessions.md#session-resumption)** — session resumption
-  and reconnection.
-- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)** —
+- **[Sessions](../live/sessions.md#session-resumption)**: resume and reconnect
+   sessions.
+- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)**:
   native-audio conversational features and the models that support them.
 
 The `tool_thread_pool_config` setting is an exception: it is a runtime concern rather than a
