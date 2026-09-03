@@ -82,7 +82,9 @@ live_request_queue = LiveRequestQueue()
 
 `user_id` and `session_id` are arbitrary strings you define; ADK generates a UUID if you
 pass `session_id=None`. The session must exist before you call `run_live()` with the same
-identifiers, or `run_live()` raises `ValueError: Session not found`.
+identifiers, or `run_live()` raises `SessionNotFoundError`, a subclass of `ValueError`.
+Construct the runner with `Runner(..., auto_create_session=True)` to have ADK create a
+missing session instead of raising.
 
 !!! warning "One queue per session"
 
@@ -101,7 +103,10 @@ class LiveRequest(BaseModel):
     blob: Optional[Blob] = None                  # Audio/video bytes
     activity_start: Optional[ActivityStart] = None  # Manual turn start
     activity_end: Optional[ActivityEnd] = None      # Manual turn end
+    audio_stream_end: bool = False               # No more audio is coming
     close: bool = False                          # Graceful termination
+    partial: bool = False                        # Content does not end the turn
+    state_delta: Optional[dict[str, Any]] = None # Session state to apply
 ```
 
 `content` and `blob` are mutually exclusive. Use the convenience methods rather than building
@@ -178,7 +183,7 @@ event types it yields and how to handle them, see [Events](events.md).
 | Manual close | `live_request_queue.close()` | Yes |
 | Workflow complete | Last agent in a live workflow calls `task_completed()` | Yes |
 | Session timeout | Live API duration limit reached (without compression) | Connection closed |
-| Early exit | `end_invocation` set by a tool or callback | Yes |
+| Early exit | `end_invocation` set on the invocation context, for example by a `before_agent_callback` that returns content | Yes |
 | Error | Connection failure or unhandled exception | No |
 
 Always call `close()` when the session ends, even on error. Skipping it leaves the Live API
