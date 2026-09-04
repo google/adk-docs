@@ -1,0 +1,181 @@
+# Build live streaming agent with Python
+
+With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
+
+**Note:** This guide assumes you have experience using a terminal in Windows, Mac, and Linux environments.
+
+## Supported models for voice/video streaming
+
+Voice and video streaming requires a Gemini model that supports the Live API. You can find the **model ID(s)** that support it in the documentation:
+
+- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+- [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
+
+## 1. Setup Environment & Install ADK
+
+Create & Activate Virtual Environment (Recommended):
+
+```bash
+# Create
+python3 -m venv .venv
+# Activate (each new terminal)
+# macOS/Linux: source .venv/bin/activate
+# Windows CMD: .venv\Scripts\activate.bat
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+```
+
+Install ADK:
+
+```bash
+pip install google-adk
+```
+
+## 2. Project Structure
+
+Create the following folder structure with empty files:
+
+```console
+adk-streaming/  # Project folder
+└── app/ # the web app folder
+    ├── .env # Gemini API key
+    └── google_search_agent/ # Agent folder
+        ├── __init__.py # Python package
+        └── agent.py # Agent definition
+```
+
+### agent.py
+
+Copy-paste the following code block into the `agent.py` file.
+
+For `model`, please double-check the model ID as described earlier in the [Models section](#supported-models).
+
+```py
+from google.adk.agents import Agent
+from google.adk.tools import google_search  # Import the tool
+
+root_agent = Agent(
+   # A unique name for the agent.
+   name="basic_search_agent",
+   # The Large Language Model (LLM) that agent will use.
+   # Please fill in the latest model id that supports live from
+   # https://adk.dev/live/get-started/streaming-python/#supported-models
+   model="...",
+   # A short description of the agent's purpose.
+   description="Agent to answer questions using Google Search.",
+   # Instructions to set the agent's behavior.
+   instruction="You are an expert researcher. You always stick to the facts.",
+   # Add google_search tool to perform grounding with Google search.
+   tools=[google_search]
+)
+```
+
+`agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
+
+Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities. The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
+
+Copy-paste the following code block to `__init__.py` file.
+
+__init__.py
+
+```py
+from . import agent
+```
+
+## 3. Set up the platform
+
+To run the agent, choose a platform from either Google AI Studio or Google Cloud Agent Platform:
+
+1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
+
+1. Open the **`.env`** file located inside (`app/`) and copy-paste the following code.
+
+   .env
+
+   ```text
+   GOOGLE_GENAI_USE_ENTERPRISE=FALSE
+   GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+   ```
+
+1. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+
+1. You need an existing [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a project.
+
+   - Set up a [Google Cloud project](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
+   - Set up the [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
+   - Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
+   - [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+
+1. Open the **`.env`** file located inside (`app/`). Copy-paste the following code and update the project ID and location.
+
+   .env
+
+   ```text
+   GOOGLE_GENAI_USE_ENTERPRISE=TRUE
+   GOOGLE_CLOUD_PROJECT=PASTE_YOUR_ACTUAL_PROJECT_ID
+   GOOGLE_CLOUD_LOCATION=us-central1
+   ```
+
+For more information on connecting to Google Cloud from ADK agents, see [Connect to Google Cloud and Agent Platform](https://adk.dev/get-started/google-cloud/index.md).
+
+## 4. Try the agent with `adk web`
+
+Now it's ready to try the agent. Run the following command to launch the **dev UI**. First, make sure to set the current directory to `app`:
+
+```shell
+cd app
+```
+
+Also, set `SSL_CERT_FILE` variable with the following command. This is required for the voice and video tests later.
+
+```bash
+export SSL_CERT_FILE=$(python3 -m certifi)
+```
+
+```powershell
+$env:SSL_CERT_FILE = (python3 -m certifi)
+```
+
+Then, run the dev UI:
+
+```shell
+adk web
+```
+
+Note for Windows users
+
+When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+
+Caution: ADK Web for development only
+
+ADK Web is ***not meant for use in production deployments***. You should use ADK Web for development and debugging purposes only.
+
+Open the URL provided (usually `http://localhost:8000` or `http://127.0.0.1:8000`) **directly in your browser**. This connection stays entirely on your local machine. Select `google_search_agent`.
+
+### Try with voice and video
+
+To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the the following questions in voice. The agent will use the google_search tool to get the latest information to answer those questions. You will hear the answer in voice in real-time.
+
+- What is the weather in New York?
+- What is the time in New York?
+- What is the weather in Paris?
+- What is the time in Paris?
+
+To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+
+#### Caveat
+
+- You can not use text chat with the native-audio models. You will see errors when entering text messages on `adk web`.
+
+### Stop the tool
+
+Stop `adk web` by pressing `Ctrl-C` on the console.
+
+### Note on ADK Streaming
+
+Model callbacks (`before_model_callback` and `after_model_callback`) are not invoked on the streaming path; ADK only runs them on the `run_async` path. Agent callbacks (`before_agent_callback`, `after_agent_callback`) and tool callbacks (`before_tool_callback`, `after_tool_callback`) do run while streaming, as do `LongRunningFunctionTool` and `ExampleTool`. Of the workflow agents, only `SequentialAgent` supports streaming: `LoopAgent` and `ParallelAgent` raise `NotImplementedError`.
+
+Congratulations! You've successfully created and interacted with your first Streaming agent using ADK!
+
+## Next steps: build custom streaming app
+
+[Build a custom server](https://adk.dev/live/custom-server/index.md) walks through the server and client code for a custom asynchronous web app built with ADK, enabling real-time, bidirectional audio and text communication. From there, [Sessions and the streaming loop](https://adk.dev/live/sessions/index.md) covers the application lifecycle in depth, and [Events](https://adk.dev/live/events/index.md) covers everything `run_live()` hands back to you.
