@@ -1376,10 +1376,12 @@ Access relevant information from the past or external sources.
     async function findRelatedInfo(context: Context, topic: string): Promise<Record<string, string>> {
       try {
         const searchResults = await context.searchMemory(`Information about ${topic}`);
-        if (searchResults.results?.length) {
-          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
-          // Process searchResults.results
-          const topResultText = searchResults.results[0].text;
+        if (searchResults.memories.length) {
+          console.log(`Found ${searchResults.memories.length} memory results for '${topic}'`);
+          // Each entry is a MemoryEntry: its text lives on `content.parts`.
+          const topResultText = searchResults.memories[0].content.parts
+            ?.map((part) => part.text ?? '')
+            .join('') ?? '';
           return { memory_snippet: topResultText };
         } else {
           return { message: 'No relevant memories found.' };
