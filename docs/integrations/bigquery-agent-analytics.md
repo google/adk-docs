@@ -219,7 +219,7 @@ apply to Python and Java.
     core, so add the integrations artifact:
 
     ```kotlin title="build.gradle.kts"
-    implementation("com.google.adk:google-adk-kotlin-integrations:0.8.0")
+    implementation("com.google.adk:google-adk-kotlin-integrations:0.9.0")
     ```
 
     ```kotlin title="BigQueryAnalyticsExample.kt"
