@@ -140,6 +140,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     - Interact with the Agent: select `filesystem_assistant` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
     ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
+    ```
 
 === "TypeScript"
 
