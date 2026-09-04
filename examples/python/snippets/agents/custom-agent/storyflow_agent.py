@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 import logging
 from typing import AsyncGenerator
 from typing_extensions import override
@@ -273,7 +274,10 @@ async def call_agent_async(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("a lonely robot finding a friend in a junkyard")
+async def main():
+    await call_agent_async("a lonely robot finding a friend in a junkyard")
+
+# Note: In Colab, you can directly 'await call_agent_async(...)' at the top level.
+if __name__ == "__main__":
+    asyncio.run(main())
 # --8<-- [end:story_flow_agent]
