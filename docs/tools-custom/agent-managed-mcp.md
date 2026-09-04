@@ -35,7 +35,7 @@ database_sub_agent = LlmAgent(
 database_tool = AgentTool(agent=database_sub_agent)
 
 
-# Step 4: Provide the AgentTool to your primary root agent
+# Step 3: Provide the AgentTool to your primary root agent
 root_agent = LlmAgent(
     name="primary_orchestrator",
     model="gemini-pro-latest",
