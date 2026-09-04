@@ -56,15 +56,14 @@ Next, create your Agent Runtime instance using the Agent Platform SDK.
 1. Import Agent Platform SDK.
 
     ```py
-    import vertexai
-    from vertexai import agent_engines
+    import agentplatform
     ```
 
 2. Initialize the Agent Platform Client with your API key and create an agent engine instance.
 
     ```py
     # Create Agent Runtime with Gen AI SDK
-    client = vertexai.Client(
+    client = agentplatform.Client(
       api_key="YOUR_API_KEY",
     )
 
