@@ -19,7 +19,6 @@ from google.adk.tools.retrieval.vertex_ai_rag_retrieval import VertexAiRagRetrie
 from vertexai.preview import rag
 
 from dotenv import load_dotenv
-from .prompts import return_instructions_root
 
 load_dotenv()
 
@@ -43,7 +42,11 @@ ask_vertex_retrieval = VertexAiRagRetrieval(
 root_agent = Agent(
     model="gemini-2.0-flash-001",
     name="ask_rag_agent",
-    instruction=return_instructions_root(),
+    instruction=(
+        "You are an expert RAG documentation assistant. Use the "
+        "retrieve_rag_documentation tool to fetch relevant documentation and "
+        "reference materials, then answer the user's question based on them."
+    ),
     tools=[
         ask_vertex_retrieval,
     ],
