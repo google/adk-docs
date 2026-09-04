@@ -1,36 +1,35 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>com.google.adk.kt.litertlm</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../styles/style.css" rel="Stylesheet">
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
 <!-- Google Analytics tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
 <script>
@@ -41,33 +40,65 @@
 </script>
 </head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../index.html">
-                            google-adk-kotlin
-                    </a>            </div>
-            <div class="library-version">0.5.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">0.9.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-litertlm/commonJvmAndroidMain">commonJvmAndroid</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filter=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
+                                <span class="checkbox--icon"></span>
+                                commonJvmAndroid
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" data-page-type="package" id="content" pageids="google-adk-kotlin-litertlm::com.google.adk.kt.litertlm////PointingToDeclaration//-1031826481">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageids="google-adk-kotlin-litertlm::com.google.adk.kt.litertlm////PointingToDeclaration//-760930025">
   <div class="breadcrumbs"><a href="../index.html">google-adk-kotlin-litertlm</a><span class="delimiter">/</span><span class="current">com.google.adk.kt.litertlm</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
@@ -76,78 +107,78 @@
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
-        <div class="table"><a data-name="1015705219%2FClasslikes%2F-1031826481" anchor-label="DefaultLiteRtLmConversation" id="1015705219%2FClasslikes%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="1015705219%2FClasslikes%2F-760930025" anchor-label="DefaultLiteRtLmConversation" id="1015705219%2FClasslikes%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-default-lite-rt-lm-conversation/index.html"><span>Default</span><wbr><span>Lite</span><wbr><span>Rt</span><wbr><span>Lm</span><wbr><span><span>Conversation</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1015705219%2FClasslikes%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1015705219%2FClasslikes%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-default-lite-rt-lm-conversation/index.html">DefaultLiteRtLmConversation</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delegate<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></span></span><span class="token punctuation">)</span> : <a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a></div><div class="brief "><p class="paragraph">Default implementation of <a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a> delegating to the native Conversation.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-default-lite-rt-lm-conversation/index.html">DefaultLiteRtLmConversation</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delegate<span class="token operator">: </span>ERROR CLASS: Symbol not found for Conversation</span></span><span class="token punctuation">)</span> : <a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a></div><div class="brief "><p class="paragraph">Default implementation of <a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a> delegating to the native Conversation.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1828647268%2FClasslikes%2F-1031826481" anchor-label="DefaultLiteRtLmEngine" id="1828647268%2FClasslikes%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+<a data-name="1828647268%2FClasslikes%2F-760930025" anchor-label="DefaultLiteRtLmEngine" id="1828647268%2FClasslikes%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-default-lite-rt-lm-engine/index.html"><span>Default</span><wbr><span>Lite</span><wbr><span>Rt</span><wbr><span>Lm</span><wbr><span><span>Engine</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1828647268%2FClasslikes%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1828647268%2FClasslikes%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-default-lite-rt-lm-engine/index.html">DefaultLiteRtLmEngine</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delegate<span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></span></span><span class="token punctuation">)</span> : <a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a></div><div class="brief "><p class="paragraph">Default implementation of <a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a> delegating to the native Engine.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-default-lite-rt-lm-engine/index.html">DefaultLiteRtLmEngine</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delegate<span class="token operator">: </span>ERROR CLASS: Symbol not found for Engine</span></span><span class="token punctuation">)</span> : <a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a></div><div class="brief "><p class="paragraph">Default implementation of <a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a> delegating to the native Engine.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1113782442%2FClasslikes%2F-1031826481" anchor-label="LiteRtLmConversation" id="-1113782442%2FClasslikes%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+<a data-name="-1113782442%2FClasslikes%2F-760930025" anchor-label="LiteRtLmConversation" id="-1113782442%2FClasslikes%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-lite-rt-lm-conversation/index.html"><span>Lite</span><wbr><span>Rt</span><wbr><span>Lm</span><wbr><span><span>Conversation</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1113782442%2FClasslikes%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1113782442%2FClasslikes%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a></div><div class="brief "><p class="paragraph">Interface wrapping the LiteRT-LM Conversation to enable mockability.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-lite-rt-lm-conversation/index.html">LiteRtLmConversation</a> : <a href="https://developer.android.com/reference/kotlin/java/lang/AutoCloseable.html">AutoCloseable</a></div><div class="brief "><p class="paragraph">Interface wrapping the LiteRT-LM Conversation to enable mockability.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-220371849%2FClasslikes%2F-1031826481" anchor-label="LiteRtLmEngine" id="-220371849%2FClasslikes%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+<a data-name="-220371849%2FClasslikes%2F-760930025" anchor-label="LiteRtLmEngine" id="-220371849%2FClasslikes%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-lite-rt-lm-engine/index.html"><span>Lite</span><wbr><span>Rt</span><wbr><span>Lm</span><wbr><span><span>Engine</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-220371849%2FClasslikes%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-220371849%2FClasslikes%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a></div><div class="brief "><p class="paragraph">Interface wrapping the LiteRT-LM Engine to enable mockability.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-lite-rt-lm-engine/index.html">LiteRtLmEngine</a> : <a href="https://developer.android.com/reference/kotlin/java/lang/AutoCloseable.html">AutoCloseable</a></div><div class="brief "><p class="paragraph">Interface wrapping the LiteRT-LM Engine to enable mockability.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1528186848%2FClasslikes%2F-1031826481" anchor-label="LiteRtLmModel" id="1528186848%2FClasslikes%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+<a data-name="1528186848%2FClasslikes%2F-760930025" anchor-label="LiteRtLmModel" id="1528186848%2FClasslikes%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-lite-rt-lm-model/index.html"><span>Lite</span><wbr><span>Rt</span><wbr><span>Lm</span><wbr><span><span>Model</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1528186848%2FClasslikes%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1528186848%2FClasslikes%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-lite-rt-lm-model/index.html">LiteRtLmModel</a></div><div class="brief "><p class="paragraph">A Model implementation that uses the LiteRT-LM runtime to generate content.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-lite-rt-lm-model/index.html">LiteRtLmModel</a> : <span data-unresolved-link="/<ERROR CLASS> ERROR CLASS: Symbol not found for Model///PointingToDeclaration/">&lt;ERROR CLASS&gt; ERROR CLASS: Symbol not found for Model</span>, <a href="https://developer.android.com/reference/kotlin/java/lang/AutoCloseable.html">AutoCloseable</a></div><div class="brief "><p class="paragraph">A Model implementation that uses the LiteRT-LM runtime to generate content.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -155,18 +186,18 @@
         </div>
       </div>
       <div data-togglable="EXTENSION_FUNCTION">
-        <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-696075433%2FFunctions%2F-1031826481" anchor-label="toLlmResponse" id="-696075433%2FFunctions%2F-1031826481" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"></a>
-          <div class="table-row" data-filterable-current=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1152933723%2FFunctions%2F-760930025" anchor-label="toLlmResponse" id="1152933723%2FFunctions%2F-760930025" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-litertlm/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-litertlm/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="to-llm-response.html"><span>to</span><wbr><span>Llm</span><wbr><span><span>Response</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-696075433%2FFunctions%2F-1031826481"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1152933723%2FFunctions%2F-760930025"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm:dokkaHtmlPartial/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">fun </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span><span class="token punctuation">.</span><a href="to-llm-response.html"><span class="token function">toLlmResponse</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">partial<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="/<Error class: unknown class>///PointingToDeclaration/">&lt;Error class: unknown class&gt;</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-litertlm/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">fun </span>ERROR CLASS: Symbol not found for LiteRtLmMessage<span class="token punctuation">.</span><a href="to-llm-response.html"><span class="token function">toLlmResponse</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">partial<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span>ERROR CLASS: Symbol not found for LlmResponse</div></div></div>
                 </div>
               </div>
             </div>
@@ -176,12 +207,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
