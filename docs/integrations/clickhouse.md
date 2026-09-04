@@ -1,8 +1,7 @@
 ---
 catalog_title: ClickHouse Cloud
-catalog_description: Query data, explore schemas, and monitor services, backups, ClickPipes, and billing in ClickHouse Cloud
-catalog_icon: /integrations/assets/clickhouse.png
-catalog_tags: ["database", "analytics", "mcp"]
+catalog_description: Query data, explore schemas, monitor services and costs
+catalog_tags: ["data", "mcp"]
 ---
 
 # ClickHouse Cloud MCP tool for ADK
@@ -15,8 +14,8 @@ The [ClickHouse Cloud remote MCP
 server](https://clickhouse.com/docs/cloud/features/ai-ml/remote-mcp) connects
 ADK agents directly to your ClickHouse Cloud services. Your agent can list
 databases and tables, inspect schemas, run read-only SQL queries, and get
-visibility into services, backups, ClickPipes, and billing, with 13 tools
-available.
+visibility into services, backups, ClickPipes, billing, and access many additional 
+tools.
 
 The server is fully hosted and requires no local installation, Docker
 containers, or API key configuration. Authentication uses OAuth 2.0, and access
@@ -46,7 +45,7 @@ permission to access.
   used to run [mcp-clickhouse](https://github.com/ClickHouse/mcp-clickhouse)),
   plus a ClickHouse user with the minimum privileges the agent needs
 - **Remote MCP server** (ClickHouse Cloud only): the remote MCP server enabled
-  for the service — in the ClickHouse Cloud console, open your service, click
+  for the service. In the ClickHouse Cloud console, open your service, click
   **Connect**, select **Connect with MCP**, and toggle it on
 
 ## Use with agent
@@ -57,18 +56,23 @@ permission to access.
 
         ```python
         from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-        clickhouse_tools = MCPToolset(
-            connection_params=StdioServerParameters(
-                command="uvx",
-                args=["mcp-clickhouse"],
-                env={
-                    "CLICKHOUSE_HOST": "<your-instance>.clickhouse.cloud",
-                    "CLICKHOUSE_USER": "<clickhouse-user>",
-                    "CLICKHOUSE_PASSWORD": "<clickhouse-password>",
-                    "CLICKHOUSE_PORT": "8443",
-                },
+        clickhouse_tools = McpToolset(
+            connection_params=StdioConnectionParams(
+                server_params=StdioServerParameters(
+                    command="uvx",
+                    args=["mcp-clickhouse"],
+                    env={
+                        "CLICKHOUSE_HOST": "<your-instance>.clickhouse.cloud",
+                        "CLICKHOUSE_USER": "<clickhouse-user>",
+                        "CLICKHOUSE_PASSWORD": "<clickhouse-password>",
+                        "CLICKHOUSE_PORT": "8443",
+                    },
+                ),
+                timeout=60,
             )
         )
 
@@ -84,7 +88,7 @@ permission to access.
 
         Replace `CLICKHOUSE_HOST` with your instance hostname (works with
         ClickHouse Cloud or self-hosted). Use a dedicated database user with
-        only the privileges the agent needs — avoid `default` or administrative
+        only the privileges the agent needs. Avoid `default` or administrative
         users. Queries run read-only by default.
 
     === "Remote MCP Server"
@@ -137,7 +141,7 @@ permission to access.
     your ClickHouse Cloud credentials. Access is scoped to the organizations
     and services your user has permission to access. The local MCP server
     authenticates with the database credentials in its environment variables
-    instead — no OAuth flow.
+    instead, no OAuth flow.
 
 ## Safety
 
@@ -162,7 +166,7 @@ Tool | Description
 
 ### Remote MCP server (ClickHouse Cloud)
 
-The remote server exposes 13 read-only tools in the categories below.
+The remote server exposes read-only tools in the categories below.
 
 ### Query and schema exploration
 
@@ -215,7 +219,7 @@ Tool | Description
 | **Transport**      | Local stdio via `uvx`                                                       | Streamable HTTP (`https://mcp.clickhouse.cloud/mcp`)                                       |
 | **Works with**     | Any ClickHouse instance (self-hosted or Cloud)                              | ClickHouse Cloud services only                                                             |
 | **Authentication** | Environment variables (database user)                                       | OAuth 2.0 with Cloud credentials                                                           |
-| **Tools**          | 3 tools: querying and schema exploration                                    | 13 tools: querying, schema exploration, service management, backups, ClickPipes, billing |
+| **Tools**          | 3 tools: querying and schema exploration                                    | tools: querying, schema exploration, service management, backups, ClickPipes, billing |
 
 ## Additional resources
 
