@@ -226,10 +226,10 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     	"fmt"
     	"strings"
 
-    	"google.golang.org/adk/v2/tool"
+    	"google.golang.org/adk/v2/agent"
     )
 
-    func query(ctx tool.Context, args QueryArgs) (map[string]any, error) {
+    func query(ctx agent.Context, args QueryArgs) (map[string]any, error) {
     	// Assume 'policy' is retrieved from context, e.g., via session state:
     	policyAny, err := ctx.Session().State().Get("query_tool_policy")
     	if err != nil {
@@ -288,8 +288,10 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
       public Object query(String query, ToolContext toolContext) {
 
         // Assume 'policy' is retrieved from context, e.g., via session state:
+        @SuppressWarnings("unchecked")
         Map<String, Object> queryToolPolicy =
-            toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
+            (Map<String, Object>)
+                toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
         List<String> actualTables = explainQuery(query);
 
         // --- Placeholder Policy Enforcement ---
@@ -335,6 +337,7 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
     from google.genai import types
 
     agent = Agent(
+        name="safety_agent",
         # ...
         generate_content_config=types.GenerateContentConfig(
             safety_settings=[
@@ -488,13 +491,14 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     import (
     	"fmt"
 
+    	"google.golang.org/adk/v2/agent"
     	"google.golang.org/adk/v2/agent/llmagent"
     	"google.golang.org/adk/v2/tool"
     )
 
     // Hypothetical callback function
     func validateToolParams(
-    	ctx tool.Context,
+    	ctx agent.Context,
     	t tool.Tool,
     	args map[string]any,
     ) (map[string]any, error) {

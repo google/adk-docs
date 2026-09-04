@@ -172,6 +172,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/adk/v2/session"
         )
@@ -239,7 +241,11 @@ Here are the primary context flavors you will encounter:
     === "Go"
 
         ```go
-        import "google.golang.org/adk/v2/agent"
+        import (
+        	"fmt"
+
+        	"google.golang.org/adk/v2/agent"
+        )
 
         --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
@@ -314,6 +320,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/adk/v2/model"
         )
@@ -532,9 +540,10 @@ You'll frequently need to read information stored within the context.
     === "Java"
 
         ```java
-        // Example: In a Tool function
+        import com.google.adk.agents.CallbackContext;
         import com.google.adk.tools.ToolContext;
 
+        // Example: In a Tool function
         public void myTool(ToolContext toolContext) {
             String userPref = (String) toolContext.state().getOrDefault("user_display_preference", "default_mode");
             String apiEndpoint = (String) toolContext.state().get("app:api_endpoint"); // Read app-level state
@@ -547,8 +556,6 @@ You'll frequently need to read information stored within the context.
         }
 
         // Example: In a Callback function
-        import com.google.adk.agents.CallbackContext;
-
         public void myCallback(CallbackContext callbackContext) {
             String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Read temporary state
 
@@ -656,6 +663,8 @@ You'll frequently need to read information stored within the context.
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/genai"
         )
@@ -847,12 +856,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
                from google.adk.agents.context import Context # Or ToolContext
                from google.genai import types
 
-               def save_document_reference(context: Context, file_path: str) -> None:
+               async def save_document_reference(context: Context, file_path: str) -> None:
                    # Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
                    try:
                        # Create a Part containing the path/URI text
-                       artifact_part = types.Part.from_text(file_path)
-                       version = context.save_artifact("document_to_summarize.txt", artifact_part)
+                       artifact_part = types.Part.from_text(text=file_path)
+                       version = await context.save_artifact("document_to_summarize.txt", artifact_part)
                        print(f"Saved document reference '{file_path}' as artifact version {version}")
                        # Store the filename in state if needed by other tools
                        context.state["temp:doc_artifact_name"] = "document_to_summarize.txt"
@@ -940,14 +949,14 @@ Use artifacts to handle files or large data blobs associated with the session. C
             # Assume a 'summarize_text' function exists
             # from my_summarizer_lib import summarize_text
 
-            def summarize_document_tool(tool_context: ToolContext) -> dict:
+            async def summarize_document_tool(tool_context: ToolContext) -> dict:
                 artifact_name = tool_context.state.get("temp:doc_artifact_name")
                 if not artifact_name:
                     return {"error": "Document artifact name not found in state."}
 
                 try:
                     # 1. Load the artifact part containing the path/URI
-                    artifact_part = tool_context.load_artifact(artifact_name)
+                    artifact_part = await tool_context.load_artifact(artifact_name)
                     if not artifact_part or not artifact_part.text:
                         return {"error": f"Could not load artifact or artifact has no text path: {artifact_name}"}
 
@@ -1105,9 +1114,9 @@ Use artifacts to handle files or large data blobs associated with the session. C
         # Example: In a tool function
         from google.adk.tools import ToolContext
 
-        def check_available_docs(tool_context: ToolContext) -> dict:
+        async def check_available_docs(tool_context: ToolContext) -> dict:
             try:
-                artifact_keys = tool_context.list_artifacts()
+                artifact_keys = await tool_context.list_artifacts()
                 print(f"Available artifacts: {artifact_keys}")
                 return {"available_docs": artifact_keys}
             except ValueError as e:
@@ -1351,13 +1360,17 @@ Access relevant information from the past or external sources.
     # Example: Tool using memory search
     from google.adk.tools import ToolContext
 
-    def find_related_info(tool_context: ToolContext, topic: str) -> dict:
+    async def find_related_info(tool_context: ToolContext, topic: str) -> dict:
         try:
-            search_results = tool_context.search_memory(f"Information about {topic}")
-            if search_results.results:
-                print(f"Found {len(search_results.results)} memory results for '{topic}'")
-                # Process search_results.results (which are SearchMemoryResponseEntry)
-                top_result_text = search_results.results[0].text
+            search_results = await tool_context.search_memory(f"Information about {topic}")
+            if search_results.memories:
+                print(f"Found {len(search_results.memories)} memory results for '{topic}'")
+                # Process search_results.memories (which are MemoryEntry objects)
+                top_entry = search_results.memories[0]
+                top_result_text = next(
+                    (part.text for part in (top_entry.content.parts or []) if part.text),
+                    "",
+                )
                 return {"memory_snippet": top_result_text}
             else:
                 return {"message": "No relevant memories found."}
@@ -1376,10 +1389,11 @@ Access relevant information from the past or external sources.
     async function findRelatedInfo(context: Context, topic: string): Promise<Record<string, string>> {
       try {
         const searchResults = await context.searchMemory(`Information about ${topic}`);
-        if (searchResults.results?.length) {
-          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
-          // Process searchResults.results
-          const topResultText = searchResults.results[0].text;
+        if (searchResults.memories.length) {
+          console.log(`Found ${searchResults.memories.length} memory results for '${topic}'`);
+          // Process searchResults.memories
+          const topResultText =
+              searchResults.memories[0].content.parts?.[0]?.text ?? '';
           return { memory_snippet: topResultText };
         } else {
           return { message: 'No relevant memories found.' };
@@ -1403,10 +1417,11 @@ Access relevant information from the past or external sources.
       public Single<Map<String, String>> findRelatedInfo(ToolContext context, String topic) {
         return context.searchMemory("Information about " + topic)
             .map(searchResults -> {
-              if (searchResults != null && searchResults.results() != null && !searchResults.results().isEmpty()) {
-                System.out.println("Found " + searchResults.results().size() + " memory results for '" + topic + "'");
-                // Process searchResults.results
-                String topResultText = searchResults.results().get(0).text();
+              if (searchResults != null && !searchResults.memories().isEmpty()) {
+                System.out.println("Found " + searchResults.memories().size() + " memory results for '" + topic + "'");
+                // Process searchResults.memories
+                String topResultText =
+                    searchResults.memories().get(0).content().text();
                 return Map.of("memory_snippet", topResultText);
               } else {
                 return Map.of("message", "No relevant memories found.");
@@ -1432,6 +1447,7 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
     from google.adk.agents import BaseAgent
     from google.adk.agents.invocation_context import InvocationContext
     from google.adk.events import Event
+    from google.genai import types
     from typing import AsyncGenerator
 
     class MyControllingAgent(BaseAgent):
@@ -1445,7 +1461,14 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
             if ctx.session.state.get("critical_error_flag"):
                 print("Critical error detected, ending invocation.")
                 ctx.end_invocation = True # Signal framework to stop processing
-                yield Event(author=self.name, invocation_id=ctx.invocation_id, content="Stopping due to critical error.")
+                yield Event(
+                author=self.name,
+                invocation_id=ctx.invocation_id,
+                content=types.Content(
+                    role="model",
+                    parts=[types.Part(text="Stopping due to critical error.")],
+                ),
+            )
                 return # Stop this agent's execution
 
             # ... Normal agent processing ...

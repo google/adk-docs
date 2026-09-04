@@ -167,7 +167,7 @@ When adding an authenticated tool to your agent, you need to provide its require
 
 You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
 
-#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
+#### Use OpenAPI-based toolsets
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -281,7 +281,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-#### Use Google API toolsets (e.g., `calendar_tool_set`)
+#### Use Google API toolsets
 
 These toolsets often have dedicated configuration methods.
 
@@ -289,17 +289,19 @@ Tip: For how to create a Google OAuth Client ID & Secret, see this guide: [Get y
 
 ```py
 # Example: Configuring Google Calendar Tools
-from google.adk.tools.google_api_tool import calendar_tool_set
+from google.adk.tools.google_api_tool import CalendarToolset
 
 client_id = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
 client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
 
+calendar_toolset = CalendarToolset()
+
 # Use the specific configure method for this toolset type
-calendar_tool_set.configure_auth(
-    client_id=oauth_client_id, client_secret=oauth_client_secret
+calendar_toolset.configure_auth(
+    client_id=client_id, client_secret=client_secret
 )
 
-# agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
+# agent = LlmAgent(..., tools=[calendar_toolset])
 ```
 
 #### Use ID token
@@ -378,21 +380,17 @@ The use of this configuration parameter is mutually exclusive, and cannot
 include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
 configuration block.
 
-Follow this example to configure the key:
+Set the key on the credentials configuration of the toolset you are using. The
+following example uses BigQuery:
 
 ```python
-from google.adk.auth.auth_credential import AuthCredential
-from google.adk.auth.auth_credential import AuthCredentialTypes
+from google.adk.integrations.bigquery import BigQueryCredentialsConfig
 
-# Configure the tool to look for "my_frontend_token" in the session state
-credentials_config = AuthCredential(
-    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
-    google_credentials_config={
-        # Do not hardcode authentication keys in production code
-        "external_access_token_key": "get_my_frontend_token" 
-    }
+# Configure the toolset to look for "my_frontend_token" in the session state
+credentials_config = BigQueryCredentialsConfig(
+    # Do not hardcode authentication keys in production code
+    external_access_token_key="my_frontend_token"
 )
-
 ```
 
 #### Authentication request flow

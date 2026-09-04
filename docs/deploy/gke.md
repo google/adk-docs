@@ -288,7 +288,7 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
             Country string `json:"country" jsonschema:"The country to look up."`
         }
 
-        func getCapitalCity(_ tool.Context, args getCapitalCityArgs) (string, error) {
+        func getCapitalCity(_ agent.Context, args getCapitalCityArgs) (string, error) {
             capitals := map[string]string{
                 "france":  "Paris",
                 "japan":   "Tokyo",

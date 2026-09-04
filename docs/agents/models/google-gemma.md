@@ -61,7 +61,7 @@ Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
         .instruction("""
             You are a helpful assistant that can provide current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 
@@ -210,7 +210,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
         .instruction("""
             You are a helpful assistant that can provide the current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 

@@ -716,6 +716,7 @@ reasoning and planning before execution. There are two main planners:
     from google.genai import types
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
@@ -737,6 +738,7 @@ reasoning and planning before execution. There are two main planners:
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here
