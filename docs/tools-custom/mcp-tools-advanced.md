@@ -45,7 +45,7 @@ async def extract_per_user_headers(context: ReadonlyContext) -> dict[str, str]:
 
 toolset = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
-        url="[https://mcp-server.example.com/mcp](https://mcp-server.example.com/mcp)",
+        url="https://mcp-server.example.com/mcp",
         timeout=5,
         sse_read_timeout=300,
     ),
@@ -66,11 +66,10 @@ from google.adk.tools.mcp_tool import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
-def should_require_approval(args: dict[str, Any]) -> bool:
-    """Require user approval for destructive SQL statements."""
-    query = str(args.get("query", "")).lower()
+def should_require_approval(query: str = "", **kwargs) -> bool:
+    query_str = str(query).lower()
     destructive_keywords = ["drop", "delete", "truncate", "alter", "update"]
-    return any(keyword in query for keyword in destructive_keywords)
+    return any(keyword in query_str for keyword in destructive_keywords)
 
 toolset = McpToolset(
     connection_params=StdioConnectionParams(
@@ -279,16 +278,18 @@ By default, MCP subprocess errors are logged to standard error. You can redirect
 import sys
 from google.adk.tools.mcp_tool import McpToolset
 
-with open("mcp_server_errors.log", "a") as error_file:
-    toolset = McpToolset(
-        connection_params=...,
-        errlog=error_file,  # Redirect subprocess STDERR to a log file
-    )
+error_file = open("mcp_server_errors.log", "a")
+try:
+    toolset = McpToolset(connection_params=..., errlog=error_file)
+    # Run agent...
+finally:
+    await toolset.close()
+    error_file.close()
 ```
 
 ## Render interactive UI widgets
 
-Standard MCP tools return plain text or JSON output. **Experimental UI Rendering** enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
+Standard MCP tools return plain text or JSON output. This feature enables MCP tools to return rich, interactive visual widgets, such as maps, charts, or forms, directly inside the chat interface.
 
 ```mermaid
 sequenceDiagram
