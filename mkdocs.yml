@@ -384,7 +384,13 @@ nav:
         - Overview: tools-custom/function-tools.md
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
-      - MCP tools: tools-custom/mcp-tools.md
+      - MCP tools: 
+        - tools-custom/mcp-tools-index.md
+        - Overview: tools-custom/mcp-tools.md
+        - Advanced configuration: tools-custom/mcp-tools-advanced.md
+        - Deployment: tools-custom/mcp-deployment.md
+        - Agent as MCP server: tools-custom/agent-as-mcp-server.md
+        - Sub-agent delegation: tools-custom/agent-managed-mcp.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
