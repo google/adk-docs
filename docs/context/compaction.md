@@ -12,8 +12,14 @@ increasing processing time and slowing down responses. ADK Context
 Compaction feature is designed to reduce the size of context as an agent
 is running by summarizing older session history—including instructions, inputs, and model responses. By maintaining a compact context window, this process **optimizes latency and reduces costs** while ensuring the agent retains access to essential recent interactions.
 
-Compaction is integrated directly into SingleFlow via the `CompactionRequestProcessor`, 
-allowing automatic event compaction based on the rules you set in the `EventsCompactionConfig`.
+Compaction runs automatically based on the rules you set in the
+`EventsCompactionConfig`. Token-based compaction runs before a model call, and is
+integrated into SingleFlow via the `CompactionRequestProcessor`. Sliding-window
+compaction runs in the `Runner` after each invocation completes.
+
+!!! example "Experimental"
+    The `EventsCompactionConfig` class is experimental and its API or behavior
+    may change in future releases. Constructing one emits a warning.
 
 ## Choose your strategy
 
@@ -68,13 +74,14 @@ The Context Compaction feature uses a *sliding window* approach for collecting
 and summarizing agent workflow event data within a
 [Session](/sessions/session/). When you configure this feature in your
 agent, it summarizes data from older events once it reaches a threshold of a
-specific number of workflow events, or invocations, with the current Session.
+specific number of new invocations within the current Session.
 
 ```python
-# (Optional) Event-based, sliding window as supplementary setting
+# (Optional) Invocation-based, sliding window as supplementary setting
 compaction_config = EventsCompactionConfig(
-    compaction_interval=10,   # Number of turns between standard compactions
-    overlap_size=2,           # Number of events to retain as overlapping context
+    compaction_interval=10,   # Number of new invocations between standard compactions
+    overlap_size=2,           # Number of prior invocations to retain as overlapping context
+)
 ```
 
 ## Configure context compaction
@@ -159,12 +166,14 @@ in the following sample code:
     ```
 
 Once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval.
+background each time the session reaches the interval. Pass the configured `App`
+to the runner, as in `Runner(app=app, session_service=...)`; creating the `App`
+alone does not enable compaction.
 
 ## Example of context compaction
 
 If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
-compressed upon completion of events 3, 6, 9, and so on. The overlap setting
+compressed upon completion of invocations 3, 6, 9, and so on. The overlap setting
 increases size of the second summary compression, and each summary afterwards,
 as shown in Figure 1.
 
@@ -174,11 +183,11 @@ and overlap of 1.
 
 With this example configuration, the context compression tasks happen as follows:
 
-1.  **Event 3 completes**: All 3 events are compressed into a summary
-1.  **Event 6 completes**: Events 3 to 6 are compressed, including the overlap
-    of 1 prior event
-1.  **Event 9 completes**: Events 6 to 9 are compressed, including the overlap
-    of 1 prior event
+1.  **Invocation 3 completes**: All 3 invocations are compressed into a summary
+1.  **Invocation 6 completes**: Invocations 3 to 6 are compressed, including the
+    overlap of 1 prior invocation
+1.  **Invocation 9 completes**: Invocations 6 to 9 are compressed, including the
+    overlap of 1 prior invocation
 
 ## Configuration settings
 
@@ -186,10 +195,11 @@ The configuration settings for this feature control how frequently event data is
 and how much data is retained as the agent workflow runs. Optionally, you can configure
 a compactor object
 
-*   **`compaction_interval`**: Set the number of completed events that triggers compaction
-    of the prior event data.
-*   **`overlap_size`**: Set how many of the previously compacted events are included in a
-    newly compacted context set.
+*   **`compaction_interval`**: Set the number of completed new user-initiated
+    invocations that triggers compaction of the prior event data. Must be greater
+    than `0`, and must be set together with `overlap_size`.
+*   **`overlap_size`**: Set how many of the previously compacted invocations are
+    included in a newly compacted context set.
 *   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see
     [Define a Summarizer](#define-summarizer).
