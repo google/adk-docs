@@ -347,6 +347,9 @@ nav:
           - Visual Builder: visual-builder/index.md
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
+      - Frontend:
+          - Overview: runtime/frontend/index.md
+          - AG-UI: runtime/frontend/ag-ui/index.md
       - Ambient Agents: runtime/ambient-agents.md
       - Resume Agents: runtime/resume.md
       - Cancel Agent Runs: runtime/cancel.md
