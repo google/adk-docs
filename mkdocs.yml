@@ -255,7 +255,6 @@ plugins:
         - integrations/*.md
         Run Agents:
         - runtime/*.md
-        - runtime/*/*.md
         - visual-builder/*.md
         - deploy/*.md
         - observability/*.md
