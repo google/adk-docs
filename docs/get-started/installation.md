@@ -51,7 +51,7 @@ across supported languages. For a guided introduction, start with the
     **Install ADK and ADK DevTools**
 
     ```bash
-    npm install @google/adk @google/adk-devtools
+    npm install @google/adk zod @google/adk-devtools
     ```
 
 === "Go"
