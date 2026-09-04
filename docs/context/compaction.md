@@ -80,10 +80,11 @@ compaction_config = EventsCompactionConfig(
 ## Configure context compaction
 
 Add context compaction to your agent workflow by adding an Events Compaction
-Configuration setting to the App object (Python/Java/Kotlin) or by configuring `contextCompactors`
-on the `LlmAgent` (TypeScript). As part of the
-configuration, you must specify a compaction interval and overlap size (Python/Java)
-or a token threshold and event retention size (TypeScript/Kotlin), as shown
+Configuration setting to the App object (Python/Java/Kotlin), by configuring `contextCompactors`
+on the `LlmAgent` (TypeScript), or by setting `Compaction` on the runner
+configuration (Go). As part of the
+configuration, you must specify a compaction interval and overlap size (Python/Java/Go)
+or a token threshold and event retention size (TypeScript/Kotlin/Go), as shown
 in the following sample code:
 
 === "Python"
@@ -158,6 +159,26 @@ in the following sample code:
         )
     ```
 
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/v2/runner"
+    	"google.golang.org/adk/v2/session/compaction"
+    )
+
+    // Compaction is set on the runner rather than on an App object.
+    r, err := runner.New(runner.Config{
+    	AppName:        "my-agent",
+    	Agent:          rootAgent,
+    	SessionService: sessionService,
+    	Compaction: &compaction.Config{
+    		CompactionInterval: 3, // Trigger compaction every 3 new invocations.
+    		OverlapSize:        1, // Include last invocation from the previous window.
+    	},
+    })
+    ```
+
 Once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
@@ -196,7 +217,8 @@ a compactor object
 
 ### Define a Summarizer {#define-summarizer}
 You can customize the process of context compression by defining a summarizer.
-The `LlmEventSummarizer` (Python, Java and Kotlin) or `LlmSummarizer` (TypeScript)
+The `LlmEventSummarizer` (Python, Java and Kotlin), `LlmSummarizer` (TypeScript)
+or `LLMSummarizer` (Go)
 class allows you to specify a particular model for summarization.
 The following code example demonstrates how to define and configure a custom summarizer:
 
@@ -306,9 +328,41 @@ The following code example demonstrates how to define and configure a custom sum
         )
     ```
 
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/v2/model/gemini"
+    	"google.golang.org/adk/v2/runner"
+    	"google.golang.org/adk/v2/session/compaction"
+    )
+
+    // Define the AI model to be used for summarization:
+    summarizationLLM, err := gemini.NewModel(ctx, "gemini-flash-latest", nil)
+
+    // Create the summarizer with the custom model:
+    mySummarizer, err := compaction.NewLLMSummarizer(compaction.LLMSummarizerConfig{
+    	Model: summarizationLLM,
+    })
+
+    // Configure the runner with the custom summarizer and compaction settings:
+    r, err := runner.New(runner.Config{
+    	AppName:        "my-agent",
+    	Agent:          rootAgent,
+    	SessionService: sessionService,
+    	Compaction: &compaction.Config{
+    		CompactionInterval: 3,
+    		OverlapSize:        1,
+    		Summarizer:         mySummarizer,
+    	},
+    })
+    ```
+
 You can further refine the compactor by modifying its summarizer. In Python, Java
 and Kotlin, customize the prompt template on `LlmEventSummarizer` — the property is
 `prompt_template` in Python, and `promptTemplate` in Java and Kotlin. In TypeScript,
-customize the `prompt` on `LlmSummarizer`. For more details, see the
+customize the `prompt` on `LlmSummarizer`. In Go, set `PromptTemplate` on
+`LLMSummarizerConfig`; it must contain the `{conversation_history}` placeholder.
+For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
