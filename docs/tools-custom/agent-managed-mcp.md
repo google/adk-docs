@@ -28,16 +28,12 @@ mcp_connection = StdioConnectionParams(
 database_sub_agent = LlmAgent(
     name="database_sub_agent",
     model="gemini-flash-latest",
-    instruction="You are a SQL expert. Use your tools to query the database. Iterate if you get syntax errors, and return a clean summary.",
-    # We filter tools to keep the sub-agent focused and secure
-    tools=[McpToolset(connection_params=mcp_connection, tool_filter=['query_db', 'list_tables'])] 
+    description="Delegates tasks to a database specialist...",
+    instruction="You are a SQL expert...",
+    tools=[McpToolset(connection_params=mcp_connection, tool_filter=['query_db', 'list_tables'])]
 )
+database_tool = AgentTool(agent=database_sub_agent)
 
-# Step 3: Wrap that Sub-Agent in an AgentTool
-database_tool = AgentTool(
-    agent=database_sub_agent,
-    description="Delegates tasks to a database specialist. Use this whenever you need to fetch or analyze data from the SQL database."
-)
 
 # Step 4: Provide the AgentTool to your primary root agent
 root_agent = LlmAgent(
@@ -55,7 +51,7 @@ which connects to the underlying MCP server (via `list_tools`), converts the
 external MCP tool definitions into ADK-compatible `BaseTool` instances, and 
 proxies all execution calls (`call_tool`) asynchronously.
 
-## Tool sccoping and cognitive filtering (`tool_filter`)
+## Tool scoping and cognitive filtering (`tool_filter`)
 When assigning an `McpToolset` to a specialized sub-agent, you can restrict the 
 exact tools made available to that agent using the `tool_filter` parameter:
 * **Cognitive Focus:** Exposes only the specific actions relevant to the sub-agent's 
