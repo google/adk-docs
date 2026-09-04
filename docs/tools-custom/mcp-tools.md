@@ -355,42 +355,42 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
 
 === "Python"
 
-```python
-import os
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-
-# Configure Bearer Token Authentication via headers
-toolset = McpToolset(
-    connection_params=SseConnectionParams(
-        url="https://mcp-server.example.com/sse",
-        headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
-        timeout=5,
+    ```python
+    import os
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+    
+    # Configure Bearer Token Authentication via headers
+    toolset = McpToolset(
+        connection_params=SseConnectionParams(
+            url="https://mcp-server.example.com/sse",
+            headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
+            timeout=5,
+        )
     )
-)
-```
+    ```
 
 === "TypeScript"
 
-```typescript
-import { MCPToolset } from "@google/adk";
-
-// Configure Bearer Token Authentication via headers
-const toolset = new MCPToolset({
-    type: "StreamableHTTPConnectionParams",
-    url: "https://mcp-server.example.com/sse",
-    transportOptions: {
-        requestInit: {
-            headers: {
-                "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
+    ```typescript
+    import { MCPToolset } from "@google/adk";
+    
+    // Configure Bearer Token Authentication via headers
+    const toolset = new MCPToolset({
+        type: "StreamableHTTPConnectionParams",
+        url: "https://mcp-server.example.com/sse",
+        transportOptions: {
+            requestInit: {
+                headers: {
+                    "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
+                },
             },
         },
-    },
-    timeout: 5,
-});
-
-```
-
+        timeout: 5,
+    });
+    
+    ```
+    
 ---
 
 ## Accessing MCP Resources
@@ -409,36 +409,36 @@ In addition to executable **Tools**, MCP servers can expose **Resources** data f
 
 === "Python"
 
-  ```python
-    import asyncio
-
-    async def fetch_mcp_data(toolset):
-        # 1. Discover available resources on the server
-        resources = await toolset.list_resources()
-        print("Available Resources:", resources)
-
-        # 2. Read content from a specific resource
-        if resources:
-            resource_name = resources[0]
-            content_blocks = await toolset.read_resource(name=resource_name)
-            print(f"Content of {resource_name}:", content_blocks)
-  ```
+    ```python
+      import asyncio
+  
+      async def fetch_mcp_data(toolset):
+          # 1. Discover available resources on the server
+          resources = await toolset.list_resources()
+          print("Available Resources:", resources)
+  
+          # 2. Read content from a specific resource
+          if resources:
+              resource_name = resources[0]
+              content_blocks = await toolset.read_resource(name=resource_name)
+              print(f"Content of {resource_name}:", content_blocks)
+    ```
 
 === "TypeScript"
 
-  ```typescript
-    async function fetchMcpData(toolset: any) {
-        // 1. Discover available resources
-        const resources = await toolset.listResources();
-        console.log("Available Resources:", resources);
-
-        // 2. Read a specific resource
-        if (resources.length > 0) {
-            const content = await toolset.readResource(resources[0]);
-            console.log(`Content of ${resources[0]}:`, content);
-        }
-    }
-  ```
+    ```typescript
+      async function fetchMcpData(toolset: any) {
+          // 1. Discover available resources
+          const resources = await toolset.listResources();
+          console.log("Available Resources:", resources);
+  
+          // 2. Read a specific resource
+          if (resources.length > 0) {
+              const content = await toolset.readResource(resources[0]);
+              console.log(`Content of ${resources[0]}:`, content);
+          }
+      }
+    ```
 
 ---
 
