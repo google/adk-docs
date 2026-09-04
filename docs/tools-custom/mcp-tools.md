@@ -362,11 +362,11 @@ from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
 # Configure Bearer Token Authentication via headers
 toolset = McpToolset(
-    connection_params=SseConnectionParams(url="https://mcp-server.example.com/sse", timeout=5),
-    auth_scheme=BearerAuthScheme(),
-    auth_credential=AuthCredential(oauth_token=os.getenv("MCP_AUTH_TOKEN")),
-)
-
+    connection_params=SseConnectionParams(
+        url="https://mcp-server.example.com/sse",
+        headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
+        timeout=5,
+    )
 )
 ```
 
