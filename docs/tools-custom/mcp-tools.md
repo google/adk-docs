@@ -1,7 +1,7 @@
 # Model Context Protocol tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The **Model Context Protocol (MCP)** is an open standard for connecting generative AI models to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
@@ -206,7 +206,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         "fmt"
         "os/exec"
 
-        "[github.com/modelcontextprotocol/go-sdk/mcp](https://github.com/modelcontextprotocol/go-sdk/mcp)"
+        "github.com/modelcontextprotocol/go-sdk/mcp"
         "google.golang.org/adk/v2/agent"
         "google.golang.org/adk/v2/agent/llmagent"
         "google.golang.org/adk/v2/model/gemini"
@@ -362,11 +362,11 @@ from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
 # Configure Bearer Token Authentication via headers
 toolset = McpToolset(
-    connection_params=SseConnectionParams(
-        url="https://mcp-server.example.com/sse",
-        headers={"Authorization": f"Bearer {os.getenv('MCP_AUTH_TOKEN')}"},
-        timeout=5,
-    )
+    connection_params=SseConnectionParams(url="https://mcp-server.example.com/sse", timeout=5),
+    auth_scheme=BearerAuthScheme(),
+    auth_credential=AuthCredential(oauth_token=os.getenv("MCP_AUTH_TOKEN")),
+)
+
 )
 ```
 
@@ -379,11 +379,16 @@ import { MCPToolset } from "@google/adk";
 const toolset = new MCPToolset({
     type: "StreamableHTTPConnectionParams",
     url: "https://mcp-server.example.com/sse",
-    headers: {
-        "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
+    transportOptions: {
+        requestInit: {
+            headers: {
+                "Authorization": `Bearer ${process.env.MCP_AUTH_TOKEN}`,
+            },
+        },
     },
     timeout: 5,
 });
+
 ```
 
 ---
@@ -483,4 +488,4 @@ else:
 
 ## Further resources
 
-Once you understand the basics, explore [Advanced use cases](/mcp-tools-advanced) for complex implementations and custom integrations.
+Once you understand the basics, explore [Advanced use cases](./mcp-tools-advanced.md) for complex implementations and custom integrations.
