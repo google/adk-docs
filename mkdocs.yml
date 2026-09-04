@@ -418,10 +418,12 @@ nav:
       - Introduction to A2A: a2a/intro.md
       - A2A Quickstart (Exposing):
         - Python: a2a/quickstart-exposing.md
+        - TypeScript: a2a/quickstart-exposing-typescript.md
         - Go: a2a/quickstart-exposing-go.md
         - Java: a2a/quickstart-exposing-java.md
       - A2A Quickstart (Consuming):
         - Python: a2a/quickstart-consuming.md
+        - TypeScript: a2a/quickstart-consuming-typescript.md
         - Go: a2a/quickstart-consuming-go.md
         - Java: a2a/quickstart-consuming-java.md
         - Kotlin: a2a/quickstart-consuming-kotlin.md
