@@ -71,10 +71,13 @@ agent, it summarizes data from older events once it reaches a threshold of a
 specific number of workflow events, or invocations, with the current Session.
 
 ```python
+from google.adk.apps.app import EventsCompactionConfig
+
 # (Optional) Event-based, sliding window as supplementary setting
 compaction_config = EventsCompactionConfig(
     compaction_interval=10,   # Number of turns between standard compactions
     overlap_size=2,           # Number of events to retain as overlapping context
+)
 ```
 
 ## Configure context compaction
