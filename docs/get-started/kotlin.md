@@ -108,8 +108,8 @@ An ADK Kotlin agent project requires the following dependencies in your
 
 ```kotlin title="my_agent/build.gradle.kts (partial)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
 }
 ```
 
@@ -129,9 +129,9 @@ dependencies {
     }
 
     dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
-        implementation("com.google.adk:google-adk-kotlin-webserver:1.0.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
+        implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
+        implementation("com.google.adk:google-adk-kotlin-webserver:0.9.0")
+        ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
     }
 
     kotlin {
@@ -201,7 +201,7 @@ fun main() {
 ## Run your agent
 
 You can run your ADK agent using the interactive command-line REPL
-or the ADK web user interface provided by `AdkWebServer`. Both options
+or the ADK web user interface provided by `AdkDevServer`. Both options
 allow you to test and interact with your agent.
 
 ### Run with command-line interface
@@ -235,9 +235,9 @@ to your `build.gradle.kts`:
 
 ```kotlin title="my_agent/build.gradle.kts (add to dependencies)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:1.0.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:0.9.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
 }
 ```
 
@@ -246,26 +246,15 @@ Then create a `WebMain.kt` file alongside your `Main.kt`:
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/WebMain.kt"
 package com.example.agent
 
-import com.google.adk.kt.artifacts.InMemoryArtifactService
-import com.google.adk.kt.sessions.InMemorySessionService
-import com.google.adk.kt.webserver.AdkWebServer
-import com.google.adk.kt.webserver.loaders.SingleAgentLoader
-import com.google.adk.kt.webserver.telemetry.ApiServerSpanExporter
+import com.google.adk.kt.webserver.AdkServerConfig
+import com.google.adk.kt.webserver.dev.AdkDevServer
 
 fun main() {
-    val agent = HelloTimeAgent.rootAgent
-    val sessionService = InMemorySessionService()
-    val artifactService = InMemoryArtifactService()
+    // inMemory() supplies the agent loader and the session and artifact
+    // services, keeping their state in the process.
+    val server = AdkDevServer(AdkServerConfig.inMemory(HelloTimeAgent.rootAgent))
 
-    val server = AdkWebServer(
-        port = 8080,
-        sessionService = sessionService,
-        artifactService = artifactService,
-        agentLoader = SingleAgentLoader(agent),
-        apiServerSpanExporter = ApiServerSpanExporter(),
-    )
-
-    println("Starting ADK web server on http://localhost:8080...")
+    println("Starting ADK dev server on http://localhost:8080")
     server.start(wait = true)
 }
 ```
@@ -287,7 +276,8 @@ upper left corner and type a request.
 !!! warning "Caution: ADK Web for development only"
 
     ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    use ADK Web for development and debugging purposes only. For more
+    information, see ADK [Web Interface](/runtime/web-interface/).
 
 ## Next: Build your agent
 
