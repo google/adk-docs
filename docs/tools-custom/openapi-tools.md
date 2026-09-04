@@ -32,13 +32,8 @@ The process involves these main steps when you use `OpenAPIToolset`:
     * **API Details**: Stores the required HTTP method, path, server base URL, parameters (path, query, header, cookie), and request body schema internally.
 
 4. **`RestApiTool` Functionality**: Each generated `RestApiTool`:
-    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on
-   the operation's parameters and request body. This schema tells the LLM how
-   to call the tool (what arguments are expected).
-    * **Execution**: When the LLM calls the tool, the tool constructs the HTTP
-  request, including the URL, headers, query parameters, and body, using the
-  LLM's arguments and the OpenAPI specification. The tool handles
-  authentication if configured, and executes the API call asynchronously using the `httpx` library.
+    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on the operation's parameters and request body. This schema tells the LLM how to call the tool (what arguments are expected).
+    * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `httpx` library. By default, `RestApiTool` executes HTTP requests with no timeout (`timeout=None`), which means the agent will wait indefinitely for a response. This accommodates long-running services, but you should be aware of the potential for the agent to hang if the external service is unresponsive.
     * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
 
 5. **Authentication**: You can configure global authentication (like API keys or
