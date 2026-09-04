@@ -298,6 +298,7 @@ nav:
       - Agents CLI: get-started/agents-cli.md
       - Installation: get-started/installation.md
       - Google Cloud: get-started/google-cloud.md
+      - Migrate to ADK: get-started/migrate.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
