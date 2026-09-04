@@ -30,7 +30,7 @@ and read/write objects.
 - **Enable the Google Cloud Storage API** in the target Google Cloud project.
 - **IAM Permissions**: The authenticated principal (Application Default
   Credentials, service account, or user) must have the correct permissions,
-  including `roles/storage.objectAdmin` and `roles/storage.admin`, to perform GCS
+  including `roles/storage.admin`, to perform GCS
   bucket and object operations.
 - A Google Cloud Project ID configured.
 
@@ -175,7 +175,6 @@ The GCS integration split the capabilities into two main toolsets:
 
 Tool | Description
 ---- | -----------
-`gcs_get_bucket` | Get metadata information about a GCS bucket.
 `gcs_list_objects` | List object names in a GCS bucket. Supports optional prefix filtering and pagination.
 `gcs_get_object_metadata` | Get metadata properties of a specific GCS object (blob).
 `gcs_create_object` | Create a new object (blob) in a bucket from in-memory string data or a local file upload. Requires `Capabilities.READ_WRITE`.
@@ -187,6 +186,7 @@ Tool | Description
 Tool | Description
 ---- | -----------
 `gcs_list_buckets` | List GCS bucket names in a Google Cloud project.
+`gcs_get_bucket` | Get metadata information about a GCS bucket.
 `gcs_create_bucket` | Create a new GCS bucket in a specific location. Requires `Capabilities.READ_WRITE`.
 `gcs_update_bucket` | Update properties of a GCS bucket, such as versioning or uniform bucket-level access. Requires `Capabilities.READ_WRITE`.
 `gcs_delete_bucket` | Delete a GCS bucket (bucket must be empty first). Requires `Capabilities.READ_WRITE`.
