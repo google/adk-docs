@@ -1,0 +1,63 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Code samples
+
+# Checks that the Python samples on the docs pages parse, and that the names
+# they import from google.adk still exist. No sample is executed; the samples
+# build agents and call live endpoints.
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**/*.md'
+      - 'examples/python/**'
+      - 'tools/code_samples/**'
+      - '.github/workflows/code-samples.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**/*.md'
+      - 'examples/python/**'
+      - 'tools/code_samples/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+
+      - name: Install the ADK the samples are written against
+        run: |
+          python -m pip install --upgrade pip
+          # The extras matter: without them the optional integrations resolve
+          # as missing and every sample importing one looks broken.
+          pip install 'google-adk[all]' pytest
+
+      - name: Test the checker
+        run: python -m pytest tools/code_samples/check_test.py -q
+
+      - name: Check the code samples
+        run: python tools/code_samples/check.py
