@@ -73,7 +73,7 @@ with the GKE Code Executor tool:
 [deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/integrations/gke_agent_sandbox/deployment_rbac.yaml)
 sample.
     - **Sandbox Mode:** Permissions to create, get, watch, and delete **SandboxClaim** and **Sandbox** resources within the namespace where the Agent Sandbox is deployed.
-- Install the client library with the appropriate extras: `pip install google-adk[gke]`
+- Install the client library with the appropriate extras: `pip install google-adk[extensions]`
 
 ## Configuration parameters
 
@@ -101,8 +101,9 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
-    from google.adk.code_executors import CodeExecutionInput
+    from google.adk.code_executors.code_execution_utils import CodeExecutionInput
     from google.adk.agents.invocation_context import InvocationContext
+    from google.adk.sessions import InMemorySessionService, Session
 
     # Initialize the executor for Sandbox Mode
     # Namespace should have RBAC for SandboxClaims and Sandbox
@@ -114,7 +115,12 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     )
 
     # Example direct execution:
-    ctx = InvocationContext()
+    # InvocationContext requires session_service, invocation_id and session.
+    ctx = InvocationContext(
+        session_service=InMemorySessionService(),
+        invocation_id="demo-invocation",
+        session=Session(id="demo-session", app_name="demo", user_id="demo-user"),
+    )
     result = gke_sandbox_executor.execute_code(ctx, CodeExecutionInput(code="print('Hello from Sandbox Mode')"))
     print(result.stdout)
 
@@ -132,8 +138,9 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
-    from google.adk.code_executors import CodeExecutionInput
+    from google.adk.code_executors.code_execution_utils import CodeExecutionInput
     from google.adk.agents.invocation_context import InvocationContext
+    from google.adk.sessions import InMemorySessionService, Session
 
     # Initialize the executor for Job Mode
     # Namespace should have RBAC for Jobs, ConfigMaps, Pods, Logs
@@ -146,7 +153,12 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     )
 
     # Example direct execution:
-    ctx = InvocationContext()
+    # InvocationContext requires session_service, invocation_id and session.
+    ctx = InvocationContext(
+        session_service=InMemorySessionService(),
+        invocation_id="demo-invocation",
+        session=Session(id="demo-session", app_name="demo", user_id="demo-user"),
+    )
     result = gke_executor.execute_code(ctx, CodeExecutionInput(code="print('Hello from Job Mode')"))
     print(result.stdout)
 
