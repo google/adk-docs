@@ -6,6 +6,7 @@ ADK constructs. There are two primary ways to achieve this:
 
 * **Expose an entire Agent:** Wraps the full multi-turn agent reasoning and 
   internal tool execution into a server using a simple one-line conversion.
+
 * **Expose individual Tools:** Involves manually building a lightweight MCP 
   server to wrap specific, standalone ADK tools (like a `FunctionTool`) without 
   the agent's reasoning loop.
