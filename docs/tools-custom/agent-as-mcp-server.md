@@ -3,6 +3,7 @@
 You can make your ADK capabilities accessible to external MCP clients (such as 
 Claude Desktop, IDEs, or custom hosts) by building an MCP server that exposes 
 ADK constructs. There are two primary ways to achieve this:
+
 * **Expose an entire Agent:** Wraps the full multi-turn agent reasoning and 
   internal tool execution into a server using a simple one-line conversion.
 * **Expose individual Tools:** Involves manually building a lightweight MCP 
@@ -47,6 +48,7 @@ pip install mcp
 ```
 
 **Implementation Steps:**
+
 1. **Initialize the Tool:** Instantiate the ADK tool you want to expose, such as:
    `FunctionTool(load_web_page)`.
 2. **List Tools Handler:** Implement the MCP server's `@app.list_tools()` 
