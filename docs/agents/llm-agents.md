@@ -26,8 +26,8 @@ First, you need to establish what the agent *is* and what it's *for*.
   `name` is crucial for internal operations, especially in multi-agent systems
   where agents need to refer to or delegate tasks to each other. Choose a
   descriptive name that reflects the agent's function (e.g.,
-  `customer_support_router`, `billing_inquiry_agent`). Avoid reserved names like
-  `user`.
+  `customer_support_router`, `billing_inquiry_agent`). In Python, the name must
+  be a valid Python identifier, and ADK rejects the reserved name `user`.
 
 - **`description` (Optional, Recommended for Multi-Agent):** Provide a concise
   summary of the agent's capabilities. This description is primarily used by
@@ -35,11 +35,15 @@ First, you need to establish what the agent *is* and what it's *for*.
   Make it specific enough to differentiate it from peers (e.g., "Handles
   inquiries about current billing statements," not just "Billing agent").
 
-- **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-flash-latest"`.
-  The choice of model impacts the agent's capabilities, cost, and performance.
-  See the [Models](/agents/models/) page for available options and
-  considerations.
+- **`model` (Optional in Python):** Specify the underlying LLM that will power
+  this agent's reasoning. This is either a string identifier like
+  `"gemini-flash-latest"` or a `BaseLlm` instance. If you omit `model`, the
+  agent inherits the model of its nearest `LlmAgent` ancestor, skipping over any
+  `SequentialAgent`, `ParallelAgent`, or custom `BaseAgent` parent. If no
+  ancestor sets a model, the agent falls back to the built-in default model
+  described in [Configure a default model](#configure-a-default-model). The
+  choice of model impacts the agent's capabilities, cost, and performance. See
+  the [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
@@ -123,7 +127,9 @@ tells the agent:
 - The instruction is a string template, you can use the `{var}` syntax to insert
   dynamic values into the instruction.
 - `{var}` is used to insert the value of the state variable named var.
-- `{artifact.var}` is used to insert the text content of the artifact named var.
+- `{artifact.var}` is used to insert the artifact named var. The artifact is
+  loaded as a `google.genai.types.Part` and inserted as `str(part)`, which
+  renders every field of the part, not just its text content.
 - If the state variable or artifact does not exist, the agent will raise an
   error. If you want to ignore the error, you can append a `?` to the variable
   name as in `{var?}`.
@@ -141,7 +147,7 @@ tells the agent:
     1. Identify the country name from the user's query.
     2. Use the `get_capital_city` tool to find the capital.
     3. Respond clearly to the user, stating the capital city.
-    Example Query: "What's the capital of {country}?"
+    Example Query: "What's the capital of France?"
     Example Response: "The capital of France is Paris."
     """,
         # tools will be added next
@@ -161,7 +167,7 @@ tells the agent:
             1. Identify the country name from the user's query.
             2. Use the \`getCapitalCity\` tool to find the capital.
             3. Respond clearly to the user, stating the capital city.
-            Example Query: "What's the capital of {country}?"
+            Example Query: "What's the capital of France?"
             Example Response: "The capital of France is Paris."
             `,
         // tools will be added next
@@ -190,7 +196,7 @@ tells the agent:
                 1. Identify the country name from the user's query.
                 2. Use the `get_capital_city` tool to find the capital.
                 3. Respond clearly to the user, stating the capital city.
-                Example Query: "What's the capital of {country}?"
+                Example Query: "What's the capital of France?"
                 Example Response: "The capital of France is Paris."
                 """)
             // tools will be added next
@@ -223,9 +229,11 @@ calculations, fetch real-time data, or execute specific actions.
       In Kotlin, you can use the `@Tool` annotation to automatically generate a
       `FunctionTool` at compile-time.
     - An instance of a class inheriting from `BaseTool`.
-    - An instance of another agent (`AgentTool`, enabling agent-to-agent
+    - An `AgentTool` wrapping another agent, enabling agent-to-agent
       delegation - see [Custom agent
-      workflows](/agents/custom-agents/#delegation)).
+      workflows](/agents/custom-agents/#delegation). In Python, wrap the agent
+      as `AgentTool(agent=...)`, or add it to `sub_agents` to delegate without
+      a tool.
 
 The LLM uses the function/tool names, descriptions (from docstrings or the
 `description` field), and parameter schemas to decide which tool to call based
@@ -354,7 +362,11 @@ You can adjust how the underlying AI model generates responses using
 - **`generate_content_config` (Optional):** Pass an instance of
   [`google.genai.types.GenerateContentConfig`](https://googleapis.github.io/python-genai/genai.html#genai.types.GenerateContentConfig)
   to control parameters like `temperature` (randomness), `max_output_tokens`
-  (response length), `top_p`, `top_k`, and safety settings.
+  (response length), `top_p`, `top_k`, and safety settings. In Python, ADK
+  raises a `ValueError` if `generate_content_config` sets `tools`,
+  `system_instruction`, `response_schema`, or `http_options.base_url`. Set the
+  first three through the agent's `tools`, `instruction`, and `output_schema`
+  fields instead, and set the base URL on the model or its client.
 
 === "Python"
 
@@ -462,30 +474,35 @@ provides mechanisms to define expected input and desired output formats using
 schema definitions.
 
 - **`input_schema` (Optional):** Define a schema representing the expected input
-  structure. If set, the user message content passed to this agent *must* be a
-  JSON string conforming to this schema. Your instructions should guide the user
-  or preceding agent accordingly.
+  structure when this agent is invoked *as a tool*. In Python, `AgentTool`
+  validates the calling agent's arguments against the schema and passes the
+  result as this agent's input. The schema does not apply to user messages sent
+  directly to the agent.
 
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
 
-!!! warning "Warning: Using `output_schema` with `tools`"
+!!! note "Using `output_schema` with `tools`"
 
-    Using `output_schema` with `tools` in the same LLM request is only supported
-    by specific models, including [Gemini
-    3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
-    For other models, ADK falls back to a [`set_model_response` function
-    tool](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)
-    to collect the structured output, which may not work reliably. In such
-    cases, consider using sub-agents that handle output formatting separately.
+    In Python, ADK supports `output_schema` and `tools` on the same agent: the
+    tools stay available during the agent's thought loop, and the schema is
+    enforced only on the final response. Some models accept both in a single
+    request, such as a `LiteLlm` model, or Gemini 2.0 and higher on Vertex AI,
+    and ADK passes them through directly. Otherwise ADK adds an internal
+    `set_model_response` tool and instructs the model to return its final answer
+    through that tool. See
+    [`_output_schema_processor.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py).
 
-- **`output_key` (Optional):** Provide a string key. If set, the text content of
-  the agent's *final* response will be automatically saved to the session's
-  state dictionary under this key. This is useful for passing results between
-  agents or steps in a workflow.
+- **`output_key` (Optional):** Provide a string key. If set, the agent's *final*
+  response will be automatically saved to the session's state dictionary under
+  this key. This is useful for passing results between agents or steps in a
+  workflow.
     - In Python, this might look like: `session.state[output_key] =
-      agent_response_text`
+      agent_response_text`. If `output_schema` is also set, ADK parses the
+      response against the schema first and stores the parsed value rather than
+      the response text. A `BaseModel` schema is stored as a `dict`, and a
+      `list[BaseModel]` schema is stored as a `list[dict]`.
     - In Java: `session.state().put(outputKey, agentResponseText)`
     - In Golang, within a callback handler: `ctx.State().Set(output_key,
       agentResponseText)`
@@ -526,7 +543,7 @@ schema definitions.
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
         output_schema=CapitalOutput, # Enforce JSON output
         output_key="found_capital"  # Store result in state['found_capital']
-        # Cannot use tools=[get_capital_city] effectively here
+        # tools=[...] may be combined with output_schema; see the note above
     )
     ```
 
@@ -716,6 +733,7 @@ reasoning and planning before execution. There are two main planners:
     from google.genai import types
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
@@ -737,6 +755,7 @@ reasoning and planning before execution. There are two main planners:
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here
@@ -862,7 +881,9 @@ agent = LlmAgent(
 
 # Session and Runner
 session_service = InMemorySessionService()
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+session = asyncio.run(
+    session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+)
 runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
 
 # Agent Interaction
@@ -872,7 +893,7 @@ def call_agent(query):
 
     for event in events:
         print(f"\nDEBUG EVENT: {event}\n")
-        if event.is_final_response() and event.content:
+        if event.is_final_response() and event.content and event.content.parts:
             final_answer = event.content.parts[0].text.strip()
             print("\n🟢 FINAL ANSWER\n", final_answer, "\n")
 
