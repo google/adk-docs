@@ -142,6 +142,10 @@ The `SpannerVectorStoreSettings` class used above defines how
   as `COSINE` or `EUCLIDEAN`.
 - **`additional_filter`**: An optional SQL filter string to apply during the
   search, for example: "inventoryCount > 0".
+- **`query_result_mode`**: Determines the format in 
+  which the `execute_sql` tool returns database query results. Setting this 
+  parameter to `QueryResultMode.DICT_LIST` configures the tool to return the 
+  results as a list of dictionaries.
 
 ## Spanner Admin Toolset
 
