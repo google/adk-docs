@@ -177,6 +177,16 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
         <p>An auto-generated Japanese podcast about ADK, created by an ADK agent that covers commit logs, release notes, and blog posts.</p>
       </div>
     </a>
+  <a href="https://mauripsale.github.io/doc-adk-training/" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-adk-zero-to-hero.jpg" alt="ADK: From Zero to Hero">
+    </div>
+    <div class="card-content">
+      <div class="type">Online Course</div>
+      <h3>🎓 ADK: From Zero to Hero</h3>
+      <p>A 40-module, hands-on ADK 2.0 curriculum (Python) built around real challenge labs — theory, a lab you actually have to solve, then a hidden solution. From your first agent to distributed, enterprise-grade multi-agent systems with full observability.</p>
+    </div>
+  </a>
 </div>
 
 ## Agent Tutorials and Demos
