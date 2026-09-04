@@ -14,10 +14,27 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.5.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:0.5.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.5.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:0.9.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    // The Vertex AI session and memory services expose Ktor's HttpClient as a
+    // defaulted constructor parameter, so any snippet naming them needs Ktor on
+    // the COMPILE classpath, not just at runtime. Version matches what
+    // adk-kotlin 0.9.0 already resolves to.
+    implementation("io.ktor:ktor-client-core:2.3.13")
+    implementation("io.ktor:ktor-client-java:2.3.13")
+    // A2A. The a2a artifact publishes the A2A SDK as runtime-only, but A2AAgent's
+    // httpClient parameter defaults to JdkA2AHttpClient(), so the client artifact
+    // is needed on the COMPILE classpath too. Version matches adk-kotlin 0.9.0's
+    // own catalog; the spec and jsonrpc transport arrive transitively.
+    implementation("com.google.adk:google-adk-kotlin-a2a:0.9.0")
+    implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.0.0.Final")
+    // BigQueryAgentAnalyticsPlugin lives in the integrations module. Unlike the
+    // a2a artifact above, this one publishes google-cloud-bigquery and
+    // google-auth on jvmApiElements, so the BigQuery types its constructor
+    // defaults name arrive on the compile classpath with no second line.
+    implementation("com.google.adk:google-adk-kotlin-integrations:0.9.0")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
     implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.56.0")

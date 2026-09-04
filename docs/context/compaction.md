@@ -1,7 +1,7 @@
 # Compress agent context for performance
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-typescript">TypeScript v0.6.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-typescript">TypeScript v0.6.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 As an ADK agent runs it collects *context* information, including user
@@ -80,10 +80,10 @@ compaction_config = EventsCompactionConfig(
 ## Configure context compaction
 
 Add context compaction to your agent workflow by adding an Events Compaction
-Configuration setting to the App object (Python/Java) or by configuring `contextCompactors`
+Configuration setting to the App object (Python/Java/Kotlin) or by configuring `contextCompactors`
 on the `LlmAgent` (TypeScript). As part of the
 configuration, you must specify a compaction interval and overlap size (Python/Java)
-or a token threshold and event retention size (TypeScript), as shown
+or a token threshold and event retention size (TypeScript/Kotlin), as shown
 in the following sample code:
 
 === "Python"
@@ -138,6 +138,26 @@ in the following sample code:
     });
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.summarizer.EventsCompactionConfig
+
+    // tokenThreshold and eventRetentionSize must be set together; either alone throws.
+    // Kotlin also accepts the compactionInterval/overlapSize pair used in the other tabs.
+    val app =
+        App(
+            appName = "my-agent",
+            rootAgent = rootAgent,
+            eventsCompactionConfig =
+                EventsCompactionConfig(
+                    tokenThreshold = 1000, // Compact when the last prompt exceeds 1000 tokens.
+                    eventRetentionSize = 1, // Keep at least 1 raw event.
+                ),
+        )
+    ```
+
 Once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
@@ -176,8 +196,8 @@ a compactor object
 
 ### Define a Summarizer {#define-summarizer}
 You can customize the process of context compression by defining a summarizer.
-The `LlmEventSummarizer` (Python/Java) or `LlmSummarizer` (TypeScript) class allows
-you to specify a particular model for summarization.
+The `LlmEventSummarizer` (Python, Java and Kotlin) or `LlmSummarizer` (TypeScript)
+class allows you to specify a particular model for summarization.
 The following code example demonstrates how to define and configure a custom summarizer:
 
 === "Python"
@@ -258,8 +278,37 @@ The following code example demonstrates how to define and configure a custom sum
     });
     ```
 
-You can further refine the compactor by modifying its summarizer. In Python and Java,
-customize the `prompt_template` on `LlmEventSummarizer`. In TypeScript, customize
-the `prompt` on `LlmSummarizer`. For more details, see the
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.summarizer.EventsCompactionConfig
+    import com.google.adk.kt.summarizer.LlmEventSummarizer
+
+    // Define the AI model to be used for summarization:
+    val summarizationLlm = Gemini(name = "gemini-flash-latest")
+
+    // Create the summarizer with the custom model:
+    val mySummarizer = LlmEventSummarizer(model = summarizationLlm)
+
+    // Configure the App with the custom summarizer and compaction settings:
+    val app =
+        App(
+            appName = "my-agent",
+            rootAgent = rootAgent,
+            eventsCompactionConfig =
+                EventsCompactionConfig(
+                    compactionInterval = 3,
+                    overlapSize = 1,
+                    summarizer = mySummarizer,
+                ),
+        )
+    ```
+
+You can further refine the compactor by modifying its summarizer. In Python, Java
+and Kotlin, customize the prompt template on `LlmEventSummarizer` — the property is
+`prompt_template` in Python, and `promptTemplate` in Java and Kotlin. In TypeScript,
+customize the `prompt` on `LlmSummarizer`. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).

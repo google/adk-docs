@@ -2,6 +2,7 @@ package com.google.adk.kt.examples.agents.llmagent
 
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
+import com.google.adk.kt.agents.LlmAgent.IncludeContents
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
 import com.google.adk.kt.models.Gemini
@@ -9,7 +10,12 @@ import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.GenerateContentConfig
+import com.google.adk.kt.types.HarmBlockThreshold
+import com.google.adk.kt.types.HarmCategory
 import com.google.adk.kt.types.Part
+import com.google.adk.kt.types.SafetySetting
+import com.google.adk.kt.types.Schema
+import com.google.adk.kt.types.Type
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 
@@ -75,11 +81,69 @@ fun main() =
                 model = Gemini(name = "gemini-flash-latest"),
                 generateContentConfig =
                     GenerateContentConfig(
+                        // More deterministic output
                         temperature = 0.2f,
                         maxOutputTokens = 250,
+                        safetySettings =
+                            listOf(
+                                SafetySetting(
+                                    category = HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                                    threshold = HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                                ),
+                            ),
                     ),
             )
         // --8<-- [end:gen_config]
+
+        // --8<-- [start:schema_example]
+        val capitalOutput =
+            Schema(
+                type = Type.OBJECT,
+                description = "Schema for capital city information.",
+                properties =
+                    mapOf(
+                        "capital" to
+                            Schema(
+                                type = Type.STRING,
+                                description = "The capital city of the country.",
+                                // Constraint fields, added in adk-kotlin 0.8.0.
+                                minLength = 2,
+                                maxLength = 60,
+                            ),
+                        "countryCode" to
+                            Schema(
+                                type = Type.STRING,
+                                description = "ISO 3166-1 alpha-2 code for the country.",
+                                pattern = "^[A-Z]{2}$",
+                            ),
+                    ),
+                required = listOf("capital", "countryCode"),
+            )
+
+        val structuredCapitalAgent =
+            LlmAgent(
+                name = "structured_capital_agent",
+                model = Gemini(name = "gemini-flash-latest"),
+                instruction =
+                    Instruction(
+                        "You are a Capital Information Agent. Given a country, respond ONLY " +
+                            "with a JSON object holding the capital city and the country's " +
+                            "ISO 3166-1 alpha-2 code.",
+                    ),
+                outputSchema = capitalOutput,
+                outputKey = "found_capital",
+            )
+        // --8<-- [end:schema_example]
+
+        // --8<-- [start:include_contents]
+        val statelessAgent =
+            LlmAgent(
+                name = "capital_agent",
+                model = Gemini(name = "gemini-flash-latest"),
+                // ... other params
+                includeContents = IncludeContents.NONE,
+            )
+        // --8<-- [end:include_contents]
 
         // --8<-- [start:full_example]
         val finalAgent =

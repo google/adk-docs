@@ -1,7 +1,7 @@
 # Safety and Security for AI Agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin</span>
 </div>
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
@@ -368,6 +368,31 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
     })
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.types.GenerateContentConfig
+    import com.google.adk.kt.types.HarmBlockThreshold
+    import com.google.adk.kt.types.HarmCategory
+    import com.google.adk.kt.types.SafetySetting
+
+    val agent =
+        LlmAgent(
+            // ...
+            generateContentConfig =
+                GenerateContentConfig(
+                    safetySettings =
+                        listOf(
+                            SafetySetting(
+                                category = HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                                threshold = HarmBlockThreshold.OFF,
+                            ),
+                        ),
+                ),
+        )
+    ```
+
 * **System instructions for safety**: [System instructions](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/safety-system-instructions) for Gemini models on Agent Platform provide direct guidance to the model on how to behave and what type of content to generate. By providing specific instructions, you can proactively steer the model away from generating undesirable content to meet your organization’s unique needs. You can craft system instructions to define content safety guidelines, such as prohibited and sensitive topics, and disclaimer language, as well as brand safety guidelines to ensure the model's outputs align with your brand's voice, tone, values, and target audience.
 
 While these measures are robust against content safety, you need additional checks to reduce agent misalignment, unsafe actions, and brand safety risks.
@@ -383,7 +408,6 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     ```py
     # Hypothetical callback function
     def validate_tool_params(
-        callback_context: CallbackContext, # Correct context type
         tool: BaseTool,
         args: Dict[str, Any],
         tool_context: ToolContext
@@ -392,7 +416,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
       print(f"Callback triggered for tool: {tool.name}, args: {args}")
 
       # Example validation: Check if a required user ID from state matches an arg
-      expected_user_id = callback_context.state.get("session_user_id")
+      expected_user_id = tool_context.state.get("session_user_id")
       actual_user_id_in_args = args.get("user_id_param") # Assuming tool takes 'user_id_param'
 
       if actual_user_id_in_args != expected_user_id:

@@ -60,7 +60,7 @@ class ExternalApprovalTool : BaseTool(
 
     override suspend fun run(
         context: ToolContext,
-        args: Map<String, Any>,
+        args: Map<String, Any?>,
     ): Any {
         // Simulate calling external system (e.g., UI, ticketing system)
         // In a real app, this might poll for a result or wait for a webhook.
