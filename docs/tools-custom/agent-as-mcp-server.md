@@ -49,11 +49,11 @@ pip install mcp
 **Implementation Steps:**
 1. **Initialize the Tool:** Instantiate the ADK tool you want to expose, such as:
    `FunctionTool(load_web_page)`.
-3. **List Tools Handler:** Implement the MCP server's `@app.list_tools()` 
+2. **List Tools Handler:** Implement the MCP server's `@app.list_tools()` 
    handler to advertise the tool. You use the `adk_to_mcp_tool_type` utility 
    from `google.adk.tools.mcp_tool.conversion_utils` to convert the ADK tool 
    definition into the MCP schema format.
-4. **Call Tool Handler:** Implement the `@app.call_tool()` handler to receive 
+3. **Call Tool Handler:** Implement the `@app.call_tool()` handler to receive 
    client requests. This handler must identify if the request matches your 
    wrapped tool, execute the ADK tool's `.run_async()` method (passing 
    `tool_context=None`), and format the response into an MCP-compliant 
