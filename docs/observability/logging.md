@@ -329,7 +329,7 @@ While plugins help inspect individual agent runs during local development, progr
 
 === "Kotlin"
 
-    ADK Kotlin does not provide a built-in GCP exporter wrapper. Because it uses the standard `GlobalOpenTelemetry` instance on the JVM, you can export to Google Cloud by configuring your `OpenTelemetrySdk` with the [Google Cloud OpenTelemetry Java exporters](https://github.com/GoogleCloudPlatform/opentelemetry-operations-java) or an OTLP exporter targeting the Google Cloud Telemetry endpoint before starting your agent.
+    ADK Kotlin does not provide a built-in GCP exporter wrapper. Because it uses the standard `GlobalOpenTelemetry` instance on the JVM, you can export to Google Cloud by configuring your `OpenTelemetrySdk` with a standard OTLP exporter targeting the Google Cloud Telemetry endpoint before starting your agent.
 
 === "Go"
 
