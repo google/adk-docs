@@ -132,15 +132,19 @@ The `partial` flag distinguishes an incremental chunk from the merged result:
 - `partial=True`: only the new text since the last event.
 - `partial=False`: the full merged text for this segment.
 
-ADK accumulates the chunks for you (`StreamingResponseAggregator`), so a `partial=False`
-event already holds the sum of the preceding `partial=True` chunks. If you do not need a
-live typing effect, ignore the partials and act only on `partial=False`.
+ADK accumulates the chunks for you inside the live connection
+([`GeminiLlmConnection.receive()`](https://github.com/google/adk-python/blob/main/src/google/adk/models/gemini_llm_connection.py)),
+so a `partial=False` event already holds the sum of the preceding `partial=True` chunks. If
+you do not need a live typing effect, ignore the partials and act only on `partial=False`.
+
+Each of these flags is `Optional[bool]` and defaults to `None`, so test whether the flag is
+truthy rather than comparing it to `False`:
 
 ```text
-Event 1: partial=True,  text="Hello",       turn_complete=False
-Event 2: partial=True,  text=" world",      turn_complete=False
-Event 3: partial=False, text="Hello world", turn_complete=False
-Event 4: partial=False, text="",            turn_complete=True
+Event 1: partial=True,  text="Hello",       turn_complete=None
+Event 2: partial=True,  text=" world",      turn_complete=None
+Event 3: partial=False, text="Hello world", turn_complete=None
+Event 4: partial=None,  content=None,       turn_complete=True
 ```
 
 A `partial=False` condition can occur several times per turn (once per sentence, for example), and
