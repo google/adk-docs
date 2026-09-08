@@ -1,36 +1,35 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>google-adk-kotlin-core</title>
-<link href="../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
-<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../scripts/sourceset_dependencies.js" async></script>
 <link href="../styles/style.css" rel="Stylesheet">
 <link href="../styles/main.css" rel="Stylesheet">
 <link href="../styles/prism.css" rel="Stylesheet">
 <link href="../styles/logo-styles.css" rel="Stylesheet">
-<link href="../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../scripts/clipboard.js" async></script>
+<link href="../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../scripts/main.js" defer></script>
 <script type="text/javascript" src="../scripts/prism.js" async></script>
-<script type="text/javascript" src="../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<script type="text/javascript" src="../ui-kit/ui-kit.min.js" defer></script>
 <!-- Google Analytics tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
 <script>
@@ -41,127 +40,180 @@
 </script>
 </head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../index.html">
-                            google-adk-kotlin
-                    </a>            </div>
-            <div class="library-version">0.5.0
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">0.9.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/androidMain">android</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/jvmMain">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/androidMain" data-filter=":google-adk-kotlin-core/androidMain">
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonJvmAndroidMain" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">
+                                <span class="checkbox--icon"></span>
+                                commonJvmAndroid
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonMain" data-filter=":google-adk-kotlin-core/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/jvmMain" data-filter=":google-adk-kotlin-core/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain">android</button>
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain">commonJvmAndroid</button>
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">common</button>
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
-<div class="main-content" id="content" pageids="google-adk-kotlin-core::////PointingToDeclaration//1325555938">
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" id="content" pageids="google-adk-kotlin-core::////PointingToDeclaration//180397416">
   <div class="breadcrumbs"></div>
   <div class="cover ">
     <h1 class="cover"><span><span>google-adk-kotlin-core</span></span></h1>
   </div>
   <h2 class="">Packages</h2>
-  <div class="table"><a data-name="-2104375751%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt" id="-2104375751%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+  <div class="table"><a data-name="-2104375751%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt" id="-2104375751%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt/index.html">com.google.adk.kt</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2104375751%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2104375751%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="-1448911769%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.agents" id="-1448911769%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-1448911769%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.agents" id="-1448911769%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.agents/index.html">com.google.adk.kt.agents</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1448911769%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1448911769%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="393590383%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.annotations" id="393590383%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="393590383%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.annotations" id="393590383%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.annotations/index.html">com.google.adk.kt.annotations</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="393590383%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="393590383%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="256632203%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.apps" id="256632203%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="256632203%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.apps" id="256632203%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.apps/index.html">com.google.adk.kt.apps</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="256632203%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="256632203%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="903337004%2FPackages%2F1325555938" anchor-label="com.google.adk.kt.artifacts" id="903337004%2FPackages%2F1325555938" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+<a data-name="903337004%2FPackages%2F180397416" anchor-label="com.google.adk.kt.artifacts" id="903337004%2FPackages%2F180397416" data-filterable-set=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.artifacts/index.html">com.google.adk.kt.artifacts</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="903337004%2FPackages%2F1325555938"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="903337004%2FPackages%2F180397416"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag jvm-like">android</div>
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
               <div class="platform-tag jvm-like">jvm</div>
             </div>
           </div>
@@ -169,91 +221,109 @@
         <div></div>
       </div>
     </div>
-<a data-name="-750532135%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.callbacks" id="-750532135%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-750532135%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.callbacks" id="-750532135%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.callbacks/index.html">com.google.adk.kt.callbacks</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-750532135%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-750532135%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="-558873184%2FPackages%2F1585794604" anchor-label="com.google.adk.kt.collections" id="-558873184%2FPackages%2F1585794604" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-558873184%2FPackages%2F2075370796" anchor-label="com.google.adk.kt.collections" id="-558873184%2FPackages%2F2075370796" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.collections/index.html">com.google.adk.kt.collections</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-558873184%2FPackages%2F1585794604"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-558873184%2FPackages%2F2075370796"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="67639218%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.events" id="67639218%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="67639218%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.events" id="67639218%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.events/index.html">com.google.adk.kt.events</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="67639218%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="67639218%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="450509315%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.ids" id="450509315%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="450509315%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.ids" id="450509315%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.ids/index.html">com.google.adk.kt.ids</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="450509315%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="450509315%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="-430964886%2FPackages%2F9944586" anchor-label="com.google.adk.kt.logging" id="-430964886%2FPackages%2F9944586" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain,:google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+<a data-name="1535837768%2FPackages%2F419297065" anchor-label="com.google.adk.kt.interop" id="1535837768%2FPackages%2F419297065" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.interop/index.html">com.google.adk.kt.interop</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1535837768%2FPackages%2F419297065"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-430964886%2FPackages%2F-1922820388" anchor-label="com.google.adk.kt.logging" id="-430964886%2FPackages%2F-1922820388" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.logging/index.html">com.google.adk.kt.logging</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-430964886%2FPackages%2F9944586"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-430964886%2FPackages%2F-1922820388"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
               <div class="platform-tag jvm-like">jvm</div>
             </div>
           </div>
@@ -261,145 +331,148 @@
         <div></div>
       </div>
     </div>
-<a data-name="-2029100646%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.memory" id="-2029100646%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-2029100646%2FPackages%2F-1922820388" anchor-label="com.google.adk.kt.memory" id="-2029100646%2FPackages%2F-1922820388" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.memory/index.html">com.google.adk.kt.memory</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2029100646%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2029100646%2FPackages%2F-1922820388"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">jvm</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="-1205293629%2FPackages%2F1585794604" anchor-label="com.google.adk.kt.models" id="-1205293629%2FPackages%2F1585794604" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="1961023093%2FPackages%2F1313178877" anchor-label="com.google.adk.kt.memory.appsearch" id="1961023093%2FPackages%2F1313178877" data-filterable-set=":google-adk-kotlin-core/androidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/androidMain" data-filterable-set=":google-adk-kotlin-core/androidMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.memory.appsearch/index.html">com.google.adk.kt.memory.appsearch</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1961023093%2FPackages%2F1313178877"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">android</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1205293629%2FPackages%2F2075370796" anchor-label="com.google.adk.kt.models" id="-1205293629%2FPackages%2F2075370796" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.models/index.html">com.google.adk.kt.models</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1205293629%2FPackages%2F1585794604"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1205293629%2FPackages%2F2075370796"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="-56556244%2FPackages%2F-596198887" anchor-label="com.google.adk.kt.models.mlkit" id="-56556244%2FPackages%2F-596198887" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain">
-      <div>
-        <div class="main-subrow ">
-          <div class=""><span class="inline-flex">
-              <div><a href="com.google.adk.kt.models.mlkit/index.html">com.google.adk.kt.models.mlkit</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-56556244%2FPackages%2F-596198887"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div class="pull-right">
-            <div class="platform-tags no-gutters">
-              <div class="platform-tag jvm-like">android</div>
-            </div>
-          </div>
-        </div>
-        <div></div>
-      </div>
-    </div>
-<a data-name="430304363%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.plugins" id="430304363%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="430304363%2FPackages%2F2075370796" anchor-label="com.google.adk.kt.plugins" id="430304363%2FPackages%2F2075370796" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.plugins/index.html">com.google.adk.kt.plugins</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="430304363%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="430304363%2FPackages%2F2075370796"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="1869047374%2FPackages%2F1585794604" anchor-label="com.google.adk.kt.runners" id="1869047374%2FPackages%2F1585794604" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="1869047374%2FPackages%2F2075370796" anchor-label="com.google.adk.kt.runners" id="1869047374%2FPackages%2F2075370796" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.runners/index.html">com.google.adk.kt.runners</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1869047374%2FPackages%2F1585794604"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1869047374%2FPackages%2F2075370796"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="1020414459%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.serialization" id="1020414459%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="1020414459%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.serialization" id="1020414459%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.serialization/index.html">com.google.adk.kt.serialization</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1020414459%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1020414459%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="2018314358%2FPackages%2F1585794604" anchor-label="com.google.adk.kt.sessions" id="2018314358%2FPackages%2F1585794604" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="2018314358%2FPackages%2F2036149625" anchor-label="com.google.adk.kt.sessions" id="2018314358%2FPackages%2F2036149625" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/jvmMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.sessions/index.html">com.google.adk.kt.sessions</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2018314358%2FPackages%2F1585794604"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2018314358%2FPackages%2F2036149625"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">jvm</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="399611543%2FPackages%2F-596198887" anchor-label="com.google.adk.kt.sessions.room" id="399611543%2FPackages%2F-596198887" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain">
+<a data-name="399611543%2FPackages%2F1313178877" anchor-label="com.google.adk.kt.sessions.room" id="399611543%2FPackages%2F1313178877" data-filterable-set=":google-adk-kotlin-core/androidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/androidMain" data-filterable-set=":google-adk-kotlin-core/androidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.sessions.room/index.html">com.google.adk.kt.sessions.room</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="399611543%2FPackages%2F-596198887"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="399611543%2FPackages%2F1313178877"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag jvm-like">android</div>
             </div>
@@ -408,91 +481,91 @@
         <div></div>
       </div>
     </div>
-<a data-name="-1170889317%2FPackages%2F-19005319" anchor-label="com.google.adk.kt.skills" id="-1170889317%2FPackages%2F-19005319" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-1170889317%2FPackages%2F1799963229" anchor-label="com.google.adk.kt.skills" id="-1170889317%2FPackages%2F1799963229" data-filterable-set=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/androidMain,:google-adk-kotlin-core/commonJvmAndroidMain,:google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.skills/index.html">com.google.adk.kt.skills</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1170889317%2FPackages%2F-19005319"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1170889317%2FPackages%2F1799963229"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag jvm-like">android</div>
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="977800298%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.summarizer" id="977800298%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="977800298%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.summarizer" id="977800298%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.summarizer/index.html">com.google.adk.kt.summarizer</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="977800298%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="977800298%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="2004149508%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.telemetry" id="2004149508%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="2004149508%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.telemetry" id="2004149508%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.telemetry/index.html">com.google.adk.kt.telemetry</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2004149508%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2004149508%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="1589412134%2FPackages%2F1585794604" anchor-label="com.google.adk.kt.tools" id="1589412134%2FPackages%2F1585794604" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonJvmAndroidMain,:google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="1589412134%2FPackages%2F2075370796" anchor-label="com.google.adk.kt.tools" id="1589412134%2FPackages%2F2075370796" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonMain,:google-adk-kotlin-core/commonJvmAndroidMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.tools/index.html">com.google.adk.kt.tools</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589412134%2FPackages%2F1585794604"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589412134%2FPackages%2F2075370796"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-              <div class="platform-tag common-like">commonJvmAndroid</div>
+              <div class="platform-tag jvm-like">common</div>
+              <div class="platform-tag jvm-like">commonJvmAndroid</div>
             </div>
           </div>
         </div>
         <div></div>
       </div>
     </div>
-<a data-name="614403794%2FPackages%2F-1959370187" anchor-label="com.google.adk.kt.tools.mcp" id="614403794%2FPackages%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+<a data-name="614403794%2FPackages%2F165695769" anchor-label="com.google.adk.kt.tools.mcp" id="614403794%2FPackages%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.tools.mcp/index.html">com.google.adk.kt.tools.mcp</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="614403794%2FPackages%2F-1959370187"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="614403794%2FPackages%2F165695769"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
               <div class="platform-tag jvm-like">jvm</div>
             </div>
@@ -501,36 +574,18 @@
         <div></div>
       </div>
     </div>
-<a data-name="-116136380%2FPackages%2F-1644122207" anchor-label="com.google.adk.kt.types" id="-116136380%2FPackages%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+<a data-name="-116136380%2FPackages%2F-1855338903" anchor-label="com.google.adk.kt.types" id="-116136380%2FPackages%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
       <div>
         <div class="main-subrow ">
           <div class=""><span class="inline-flex">
               <div><a href="com.google.adk.kt.types/index.html">com.google.adk.kt.types</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-116136380%2FPackages%2F-1644122207"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-116136380%2FPackages%2F-1855338903"></span>
                 <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
               </span></span></div>
-          <div class="pull-right">
+          <div class="pull-right platform-tags--wrapper">
             <div class="platform-tags no-gutters">
-              <div class="platform-tag common-like">common</div>
-            </div>
-          </div>
-        </div>
-        <div></div>
-      </div>
-    </div>
-<a data-name="1352855845%2FPackages%2F-596198887" anchor-label="com.google.adk.kt.utils.mlkit" id="1352855845%2FPackages%2F-596198887" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain"></a>
-    <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/androidMain">
-      <div>
-        <div class="main-subrow ">
-          <div class=""><span class="inline-flex">
-              <div><a href="com.google.adk.kt.utils.mlkit/index.html">com.google.adk.kt.utils.mlkit</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1352855845%2FPackages%2F-596198887"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div class="pull-right">
-            <div class="platform-tags no-gutters">
-              <div class="platform-tag jvm-like">android</div>
+              <div class="platform-tag jvm-like">common</div>
             </div>
           </div>
         </div>
@@ -539,12 +594,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
