@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
@@ -101,6 +101,20 @@ function, and the final agent reports the information.
     )
     ```
 
+=== "TypeScript"
+
+    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array. Each row
+    lists the nodes to run in order. The `node()` function wraps a function,
+    an agent, a tool, or another `Workflow` as a graph node, and sets the
+    node's name and its `inputSchema` and `outputSchema` contracts. Schemas
+    are Zod objects or a genai `Schema`. Each node's return value is passed
+    to the next node as its input, so you do not need to write to session
+    state.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/index/get_started.ts:get-started"
+    ```
+
 === "Go"
 
     In ADK Go v2.0.0, sequential workflows use the graph engine:
@@ -192,6 +206,19 @@ translated into a graph-based agent:
            )
        ],
     )
+    ```
+
+=== "TypeScript"
+
+    In ADK TypeScript v2.0.0, a router node returns an event carrying a
+    `route` value, created with `createEvent({route})`. A second edge row
+    maps each route value to the node that handles it. Setting `route` to an
+    array dispatches to every matching branch, which lets the classifier in
+    this example return more than one category. The `DEFAULT_ROUTE` setting
+    catches any value that no branch matched.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/graphs/index/process_pipeline.ts:process-pipeline"
     ```
 
 === "Go"

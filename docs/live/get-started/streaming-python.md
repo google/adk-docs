@@ -1,4 +1,4 @@
-# Build a streaming agent with Python
+# Build live streaming agent with Python
 
 With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
 
@@ -6,10 +6,10 @@ With this quickstart, you'll learn to create a simple agent and use ADK Streamin
 
 ## Supported models for voice/video streaming {#supported-models}
 
-In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+Voice and video streaming requires a Gemini model that supports the Live API. You can find the **model ID(s)** that support it in the documentation:
 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
 ## 1. Setup Environment & Install ADK { #setup-environment-install-adk }
 
@@ -101,9 +101,9 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
        [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
        project.
         * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+          [Google Cloud project](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
         * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+          [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start)
         * Authenticate to Google Cloud, from the terminal by running
           `gcloud auth login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
@@ -117,7 +117,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         ```
 
 For more information on connecting to Google Cloud from ADK agents, see
-[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+[Connect to Google Cloud and Agent Platform](../../get-started/google-cloud.md).
 
 ## 4. Try the agent with `adk web` { #try-the-agent-with-adk-web }
 
@@ -187,4 +187,8 @@ Congratulations\! You've successfully created and interacted with your first Str
 
 ## Next steps: build custom streaming app
 
-The [Gemini Live API Toolkit development guide series](../dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+[Build a custom server](../custom-server.md) walks through the server and client code for
+a custom asynchronous web app built with ADK, enabling real-time, bidirectional audio and
+text communication. From there, [Sessions and the streaming loop](../sessions.md) covers
+the application lifecycle in depth, and [Events](../events.md) covers everything
+`run_live()` hands back to you.
