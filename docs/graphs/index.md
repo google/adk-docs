@@ -212,6 +212,10 @@ that can include agents, Tools, your code, and even additional workflow agents.
 For information about building advanced pipelines, see
 [Build graph routes for workflow agents](/graphs/routes/).
 
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules or identity across all agents in your workflow using  `GlobalInstructionPlugin` registered on your `App` or `Runner` object. Do not use the `global_instruction` parameter on `Agent` which is deprecated since ADK Python v1.16.0.
+
 ## Known limitations {#known-limitations}
 
 There are some known limitations with graph-based workflows. They
