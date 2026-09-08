@@ -21,7 +21,7 @@ prosody, and it is what a standard Gemini model cannot do over a bidirectional c
 
 Gemini 2.5 Flash Live is one model with a different ID on each backend; the features are the
 same either way. `gemini-live-2.5-flash-native-audio` is ADK's `LlmAgent.DEFAULT_LIVE_MODEL`,
-the only Live model that is GA, and the model used in this section's examples.
+the only Live model that is publicly available, and the model used in this section's examples.
 
 Gemini 3.1 Flash Live is the newer model and is lower latency, but it is AI Studio only and
 it drops features that 2.5 has — see [Per-model feature support](#per-model-feature-support)
