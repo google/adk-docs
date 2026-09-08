@@ -184,7 +184,7 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
     <div class="card-content">
       <div class="type">Online Course</div>
       <h3>🎓 ADK: From Zero to Hero</h3>
-      <p>A 40-module, hands-on ADK 2.0 curriculum (Python) built around real challenge labs — theory, a lab you actually have to solve, then a hidden solution. From your first agent to distributed, enterprise-grade multi-agent systems with full observability.</p>
+      <p>A 40+ module, hands-on ADK 2.0 curriculum (Python) built around real challenge labs — theory, a lab you actually have to solve, then a hidden solution. From your first agent to distributed, enterprise-grade multi-agent systems with full observability.</p>
     </div>
   </a>
 </div>
