@@ -21,7 +21,7 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 
 | Parameter | Type | Purpose | Reference |
 |-----------|------|---------|-----------|
-| **response_modalities** | list[str] | Output format. Live agents must use `AUDIO` — Live models do not accept `TEXT` | [Details](#response-modalities) |
+| **response_modalities** | list[str] | Output format. Live agents must use `AUDIO` — Live models do not accept `TEXT` | [Details](#response-modes) |
 | **streaming_mode** | StreamingMode | Chunked or single-shot delivery on the `run_async()` path; not read by `run_live()` | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | [Details](sessions.md#session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | [Details](sessions.md#context-window-compression) |
@@ -422,7 +422,7 @@ run_config = RunConfig(
 Both behaviors are probabilistic and make responses less predictable, so leave them off for
 formal or high-precision contexts and while debugging.
 
-These settings apply to `gemini-live-2.5-flash-native-audio`. Some Live models build the
-behavior in and ignore both settings, so you do not need to set them. See
-[Supported models](models.md#live-models).
+Both settings are model-dependent: Gemini 2.5 Flash Live supports them, Gemini 3.1 Flash
+Live does not, and leaving them set is the most common failure when moving to 3.1. See
+[Per-model feature support](models.md#per-model-feature-support).
 
