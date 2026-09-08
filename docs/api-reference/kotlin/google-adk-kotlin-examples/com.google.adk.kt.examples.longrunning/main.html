@@ -1,0 +1,126 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>main</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">1.0.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-examples/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-examples/main" data-filter=":google-adk-kotlin-examples/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="member" id="content" pageids="google-adk-kotlin-examples::com.google.adk.kt.examples.longrunning//main/#/PointingToDeclaration//954168348">
+  <div class="breadcrumbs"><a href="../index.html">google-adk-kotlin-examples</a><span class="delimiter">/</span><a href="index.html">com.google.adk.kt.examples.longrunning</a><span class="delimiter">/</span><span class="current">main</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>main</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-examples/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="main.html"><span class="token function">main</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Runnable demo of a single <a href="../com.google.adk.kt.examples.telemetry/-telemetry-demo-agent/-telemetry-magic-tool/index.html#-2088626273%2FProperties%2F954168348">BaseTool.isLongRunning</a> tool that decides <i>per call</i> whether to answer now (return a value) or defer for external input (return <code class="lang-kotlin">Unit</code>).</p><p class="paragraph"><span data-unresolved-link="com.google.adk.kt.examples.longrunning/NavigateToTool///PointingToDeclaration/">NavigateToTool</span> returns a real value for a cached favorite -- so the agent replies in one turn -- and returns <code class="lang-kotlin">Unit</code> ("no response yet") for an unknown place, so the turn ends awaiting the device's result and a later <code class="lang-kotlin">runAsync</code> delivers it as a <code class="lang-kotlin">FunctionResponse</code>. This demo uses a non-resumable app.</p><hr><div class="symbol monospace"><span class="token keyword">fun </span><a href="main.html"><span class="token function">main</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Runnable end-to-end demo of a long-running, client-side tool in a <strong>non-resumable</strong> app (the default <a href="../../google-adk-kotlin-core/com.google.adk.kt.runners/-in-memory-runner/index.html">InMemoryRunner</a> configuration).</p><p class="paragraph">Flow:</p><ol><li><p class="paragraph">The user asks the agent to change destination; the model calls <span data-unresolved-link="com.google.adk.kt.examples.longrunning/ChangeDestinationTool///PointingToDeclaration/">ChangeDestinationTool</span>.</p></li><li><p class="paragraph">The tool is long-running and returns a placeholder, so the agent dispatches the action and the     turn ends. Because the app is not resumable, the framework re-invokes the model on the     placeholder within the same turn, producing an interim reply (watch the model-invocation count     and the extra <code class="lang-kotlin">text</code> event in turn 1).</p></li><li><p class="paragraph">The device reports the real result; a fresh <code class="lang-kotlin">runAsync</code> (a new invocation) delivers it as a     <code class="lang-kotlin">FunctionResponse</code> and the model produces the final answer. The tool is not re-run.</p></li></ol><p class="paragraph">Compare with ResumableLongRunningToolDemoAgent, which pauses immediately instead.</p><hr><div class="symbol monospace"><span class="token keyword">fun </span><a href="main.html"><span class="token function">main</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Runnable end-to-end demo of a long-running, client-side tool in a <strong>resumable</strong> app (<a href="../../google-adk-kotlin-core/com.google.adk.kt.agents/-resumability-config/index.html">ResumabilityConfig</a> with <code class="lang-kotlin">isResumable = true</code>).</p><ol><li><p class="paragraph">The model calls <span data-unresolved-link="com.google.adk.kt.examples.longrunning/ChangeDestinationTool///PointingToDeclaration/">ChangeDestinationTool</span>, which dispatches the action and returns <code class="lang-kotlin">Unit</code> ("no     response yet"), so no function-response event is emitted.</p></li><li><p class="paragraph">The invocation pauses on the long-running function call -- the model is <strong>not</strong> re-invoked     (one model call in turn 1) and the <code class="lang-kotlin">endOfAgent</code> marker is suppressed so the invocation stays     live.</p></li><li><p class="paragraph">The device's real result resumes the paused invocation: a <code class="lang-kotlin">FunctionResponse</code> carrying the call     id is injected (its invocation id is passed too). Because the framework recomputes     pause/resume purely from the stored session events, this resume can happen in a different     process/server as long as the session is persisted.</p></li></ol><p class="paragraph">A long-running tool that instead returns a value answers the call and lets the model continue in the same turn, in a resumable app too; see LongRunningToolDemoAgent for the non-resumable value case.</p><hr><div class="symbol monospace"><span class="token keyword">fun </span><a href="main.html"><span class="token function">main</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Runnable demo of a long-running tool that returns a <strong>value</strong> in a <strong>resumable</strong> app (<a href="../../google-adk-kotlin-core/com.google.adk.kt.agents/-resumability-config/index.html">ResumabilityConfig</a> with <code class="lang-kotlin">isResumable = true</code>).</p><p class="paragraph">This is the counterpart of ResumableLongRunningToolDemoAgent (which defers with <code class="lang-kotlin">Unit</code>): here <span data-unresolved-link="com.google.adk.kt.examples.longrunning/ChangeDestinationTool///PointingToDeclaration/">ChangeDestinationTool</span> answers the dispatch with a placeholder value, so the call is resolved and the model is re-invoked to summarize it in the <strong>same turn</strong> (two model calls) instead of pausing. The <code class="lang-kotlin">endOfAgent</code> marker is still suppressed, so the invocation stays live and the device's real result can be delivered later by a resume.</p></div></div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

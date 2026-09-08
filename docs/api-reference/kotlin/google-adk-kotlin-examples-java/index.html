@@ -1,0 +1,505 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>google-adk-kotlin-examples-java</title>
+<link href="../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../scripts/sourceset_dependencies.js" async></script>
+<link href="../styles/style.css" rel="Stylesheet">
+<link href="../styles/main.css" rel="Stylesheet">
+<link href="../styles/prism.css" rel="Stylesheet">
+<link href="../styles/logo-styles.css" rel="Stylesheet">
+<link href="../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../scripts/main.js" defer></script>
+<script type="text/javascript" src="../scripts/prism.js" async></script>
+<script type="text/javascript" src="../ui-kit/ui-kit.min.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">1.0.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-examples-java/javaMain">java</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-examples-java/javaMain" data-filter=":google-adk-kotlin-examples-java/javaMain">
+                                <span class="checkbox--icon"></span>
+                                java
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" id="content" pageids="google-adk-kotlin-examples-java::////PointingToDeclaration//1421432122">
+  <div class="breadcrumbs"></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>google-adk-kotlin-examples-java</span></span></h1>
+  </div>
+  <h2 class="">Packages</h2>
+  <div class="table"><a data-name="2016007458%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples" id="2016007458%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples/index.html">com.google.adk.kt.examples</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2016007458%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-74913212%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.a2a" id="-74913212%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.a2a/index.html">com.google.adk.kt.examples.a2a</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-74913212%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="324867029%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.artifacts" id="324867029%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.artifacts/index.html">com.google.adk.kt.examples.artifacts</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="324867029%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1108575667%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.caching" id="1108575667%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.caching/index.html">com.google.adk.kt.examples.caching</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1108575667%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1329002110%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.callbacks" id="-1329002110%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.callbacks/index.html">com.google.adk.kt.examples.callbacks</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1329002110%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1816752021%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.compaction" id="1816752021%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.compaction/index.html">com.google.adk.kt.examples.compaction</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1816752021%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="474084742%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.hello" id="474084742%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.hello/index.html">com.google.adk.kt.examples.hello</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="474084742%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1606146633%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.hitl" id="1606146633%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.hitl/index.html">com.google.adk.kt.examples.hitl</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1606146633%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-377611215%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.interop" id="-377611215%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.interop/index.html">com.google.adk.kt.examples.interop</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-377611215%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-221537535%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.litertlm" id="-221537535%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.litertlm/index.html">com.google.adk.kt.examples.litertlm</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-221537535%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1837832265%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.longrunning" id="-1837832265%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.longrunning/index.html">com.google.adk.kt.examples.longrunning</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1837832265%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1594492110%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.mcp" id="1594492110%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.mcp/index.html">com.google.adk.kt.examples.mcp</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1594492110%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1927047825%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.memory" id="1927047825%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.memory/index.html">com.google.adk.kt.examples.memory</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1927047825%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1483144620%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.plugins" id="-1483144620%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.plugins/index.html">com.google.adk.kt.examples.plugins</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1483144620%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-55071149%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.server" id="-55071149%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.server/index.html">com.google.adk.kt.examples.server</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-55071149%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1464029267%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.sessions" id="-1464029267%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.sessions/index.html">com.google.adk.kt.examples.sessions</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1464029267%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1509708142%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.skills" id="-1509708142%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.skills/index.html">com.google.adk.kt.examples.skills</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1509708142%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1550898067%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.structural" id="-1550898067%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.structural/index.html">com.google.adk.kt.examples.structural</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1550898067%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1425679533%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.telemetry" id="1425679533%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.telemetry/index.html">com.google.adk.kt.examples.telemetry</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1425679533%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="2132671823%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.tools" id="2132671823%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.tools/index.html">com.google.adk.kt.examples.tools</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2132671823%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="807793019%2FPackages%2F1421432122" anchor-label="com.google.adk.kt.examples.transfer" id="807793019%2FPackages%2F1421432122" data-filterable-set=":google-adk-kotlin-examples-java/javaMain"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":google-adk-kotlin-examples-java/javaMain" data-filterable-set=":google-adk-kotlin-examples-java/javaMain">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="com.google.adk.kt.examples.transfer/index.html">com.google.adk.kt.examples.transfer</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="807793019%2FPackages%2F1421432122"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">java</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

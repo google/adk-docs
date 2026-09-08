@@ -76,16 +76,25 @@ echo "Cloning adk-kotlin v${VERSION}..."
 git clone --depth 1 --branch "v${VERSION}" https://github.com/google/adk-kotlin adk-kotlin
 cd adk-kotlin
 
-# Build Dokka HTML docs (multi-module generates a unified site with module index)
+# Aggregate every subproject into the root project's Dokka publication. adk-kotlin
+# runs Dokka in V2 mode and does not configure aggregation itself, so the root
+# task would otherwise emit a site with no modules in it.
+cat >> build.gradle.kts <<'EOF'
+
+// Appended by adk-docs tooling: aggregate every subproject into one Dokka site.
+dependencies { subprojects.forEach { dokka(it) } }
+EOF
+
+# Build Dokka HTML docs (unified site with a module index)
 echo "Building Kotlin API docs with Dokka..."
-./gradlew clean dokkaHtmlMultiModule
+./gradlew clean dokkaGenerateHtml
 
 popd > /dev/null || exit 1
 
 # Copy to output directory
 echo "Copying to $TARGET_DIR..."
 rm -rf "$TARGET_DIR"/*
-cp -r "$WORK_DIR/adk-kotlin/build/dokka/htmlMultiModule"/* "$TARGET_DIR/"
+cp -r "$WORK_DIR/adk-kotlin/build/dokka/html"/* "$TARGET_DIR/"
 
 # Add Google Analytics tag to generated HTML files
 echo "Adding Google Analytics tag..."
