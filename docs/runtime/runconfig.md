@@ -95,18 +95,22 @@ whether the context window is compressed:
     )
     ```
 
-## Enable streaming
+## Text response options { #enable-streaming }
 
-To control how the agent delivers responses, set the `streaming_mode` parameter:
+You can control how an agent responds in text mode, word-by-word as it is
+generated, or as one full response, with the ***Streaming Mode*** parameter, as
+described below:
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
   per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
 - **`StreamingMode.SSE`**: Server-Sent Events streaming. The runner yields
   partial events as the LLM generates, enabling typewriter-style UIs and
   real-time chat displays.
-- **`StreamingMode.BIDI`**: Reserved for bidirectional streaming, but **not
-  used** in the standard `run_async()` path. For bidirectional streaming, use
-  `runner.run_live()` instead.
+
+There is another setting for the ***Streaming Mode*** parameter which enables
+bidirectional streaming of data, including voice input and output. This feature
+requires additional configuration beyond simple agents. For more information
+about this feature, see [Live and Voice Agents](../live/index.md).
 
 Set `support_cfc=True` alongside `StreamingMode.SSE` to enable Compositional
 Function Calling (CFC), which allows the model to dynamically compose and
@@ -135,7 +139,6 @@ execute function calls. CFC uses the Live API under the hood.
 
     const config: RunConfig = {
         streamingMode: StreamingMode.SSE,
-        supportCfc: true,
         maxLlmCalls: 150,
     };
     ```
@@ -266,22 +269,28 @@ response modalities.
 
 ## Configure live agents
 
-Live (`run_live()`) agent sessions add a set of real-time parameters, including
-`realtime_input_config`, `session_resumption`, `save_live_blob`,
-`tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more. These
-are documented in one place, with per-model support and examples, in the live docs:
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-java">Java</span>
+</div>
 
-- **[Live agent configuration](../live/configuration.md)** — the full `RunConfig`
+ADK agents can support [Live and Voice Agents](../live/index.md) to create
+interactive agent experiences. You configure agents that support this
+functionality using the `runner.run_live()` method.
+Live agent (`run_live()`) sessions add a set of real-time parameters, including
+`realtime_input_config`, `session_resumption`, `save_live_blob`,
+`tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more.
+For more information, see the live agent docs:
+
+- **[Live agent configuration](../live/configuration.md)**: `RunConfig`
   reference for live agents.
-- **[Sessions](../live/sessions.md#session-resumption)** — session resumption
-  and reconnection.
-- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)** —
+- **[Sessions](../live/sessions.md#session-resumption)**: resume and reconnect
+   sessions.
+- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)**:
   native-audio conversational features and the models that support them.
 
 The `tool_thread_pool_config` setting is an exception: it is a runtime concern rather than a
 Live API one, so it stays here. It runs tool executions in a background thread
 pool so the event loop keeps responding to user interruptions.
-
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.
 
@@ -313,6 +322,20 @@ Not all parameters are available in every language. See the
             proactiveAudio: true,
         },
     };
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.genai.types.AvatarConfig;
+
+    RunConfig config = RunConfig.builder()
+        .avatarConfig(
+            AvatarConfig.builder()
+                .avatarName("PREBUILT_AVATAR_ID")
+                .build())
+        .build();
     ```
 
 ## Configure runtime limits and debugging
