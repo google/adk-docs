@@ -656,8 +656,8 @@ your project requirements before committing to a full implementation.
 
     ```typescript
     // Conceptual Code: Iterative Code Refinement
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEvent, createEventActions } from '@google/genai';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, createEvent, createEventActions } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
