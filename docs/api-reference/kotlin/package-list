@@ -41,8 +41,6 @@ com.google.adk.kt.testing
 module:google-adk-kotlin-webserver
 com.google.adk.kt.webserver
 com.google.adk.kt.webserver.dev
-com.google.adk.kt.webserver.dev.routes
 com.google.adk.kt.webserver.loaders
 com.google.adk.kt.webserver.models
-com.google.adk.kt.webserver.routes
 com.google.adk.kt.webserver.telemetry
