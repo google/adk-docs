@@ -123,7 +123,7 @@ need to install an Oruk server or SDK locally.
 
 ## Available tools
 
-Tool | Description
+Tool <img width="200px"/> | Description
 ---- | -----------
 `oruk_analyze_speech` | Return a transcript, emotion scores, speaking-style scores, and segments.
 `oruk_transcribe_audio` | Return an English transcript with segments and word timings.
