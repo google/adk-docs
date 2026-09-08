@@ -44,7 +44,7 @@ eval cannot catch.
 Your eval cases stay as they are. The same conversation scenario or fixed conversation drives
 a text run or a voice run, so you can reuse a suite you already have. For the full schema,
 personas, and how to write scenarios, see
-[Audio user simulation](../evaluate/user-sim.md#audio-user-simulation-live-agents).
+[Audio user simulation](../evaluate/user-sim.md#audio-user-simulation-for-live-agents).
 
 ## Score with rubrics
 
