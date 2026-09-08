@@ -177,12 +177,10 @@ prime_agent = RemoteA2aAgent(
 !!! note "Using the new A2A integration"
     The `use_legacy` parameter defaults to `True`, so the sample above uses the legacy path. Set `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
 
-Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in `root_agent`. To apply a shared identity or global rules across the entire agent hierarchy, configure the [`GlobalInstructionPlugin`](/plugins/#prebuilt-plugins) in your `App`:
+Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
 from google.adk.agents.llm_agent import Agent
-from google.adk.apps import App
-from google.adk.plugins.global_instruction_plugin import GlobalInstructionPlugin
 from google.genai import types
 
 root_agent = Agent(
@@ -197,6 +195,9 @@ root_agent = Agent(
       3. If the user asks to roll a die and then check if the result is prime, call roll_agent first, then pass the result to prime_agent.
       Always clarify the results before proceeding.>
     """,
+    global_instruction=(
+        "You are DicePrimeBot, ready to roll dice and check prime numbers."
+    ),
     sub_agents=[roll_agent, prime_agent],
     tools=[example_tool],
     generate_content_config=types.GenerateContentConfig(
@@ -208,22 +209,7 @@ root_agent = Agent(
         ]
     ),
 )
-
-app = App(
-    name="a2a_basic",
-    root_agent=root_agent,
-    plugins=[
-        GlobalInstructionPlugin(
-            global_instruction=(
-                "You are DicePrimeBot, ready to roll dice and check prime numbers."
-            )
-        )
-    ],
-)
 ```
-
-!!! note "Global instructions via Plugins"
-    The `global_instruction` parameter on `Agent` is deprecated. Use `GlobalInstructionPlugin` registered on your `App` or `Runner` to apply consistent rules or identity across all agents in your workflow.
 
 ### Advanced Configuration: Custom Converters and Interceptors
 
