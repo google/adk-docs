@@ -18,7 +18,7 @@ Agents CLI installs ADK development skills into coding agents such as Antigravit
 * Convert tools, agent definitions, and session handling incrementally.
 * Generate evaluation datasets to verify behavior before and after migration.
 
-For more information on using the CLI, see the [Agents CLI](https://google.github.io/agents-cli/) documentation.
+For more information on using Agents CLI, see the [Agents CLI](https://google.github.io/agents-cli/) documentation.
 
 ## Prerequisites
 
@@ -54,20 +54,17 @@ Follow this process to migrate an existing agent to ADK:
 
 Open your terminal or IDE in the root directory of your existing agent project, and start your coding agent. Confirm that the agent detects the ADK skills installed by Agents CLI.
 
-### Brainstorm the migration plan
+### Brainstorm a migration plan
 
-Ask your coding agent to inspect your current codebase and brainstorm the target ADK architecture. Because the agent has ADK skills loaded, it understands ADK state management, graph workflows, and orchestration patterns.
+Ask your coding agent to inspect your current codebase and brainstorm the target ADK architecture. Since the agent has ADK Skills loaded through Agents CLI, it understands ADK state management, graph workflows, and orchestration patterns. Use a prompt in your coding agent similar to the following:
 
-Use a prompt like this:
-
-```text
 I want to migrate this existing agent codebase to Google Agent Development Kit (ADK).
 Please inspect our current files, state schema, tools, and control flow.
 Propose 2-3 target ADK architecture options with trade-offs, and recommend the cleanest approach.
 Include an evaluation plan to verify behavior using agents-cli eval.
 ```
 
-Your coding agent will analyze:
+Your coding agent analyzes the following items:
 
 * **Execution flow:** Single tool-calling loop, deterministic graph workflow, dynamic router, or multi-agent team.
 * **Tools:** Functions, parameter signatures, docstrings, and external API calls.
@@ -114,13 +111,13 @@ def calculate_discount(amount: float, rate: float = 0.1) -> float:
 
 root_agent = Agent(
     name="customer_support_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="Assist customers with account inquiries and discounts using your tools.",
     tools=[lookup_customer, calculate_discount],
 )
 ```
 
-### Verify and grade with agents-cli
+### Verify and evaluate
 
 Run the evaluation suite to compare the migrated agent against your baseline test cases:
 
