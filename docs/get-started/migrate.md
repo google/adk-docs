@@ -47,8 +47,8 @@ Follow this process to migrate an existing agent to ADK:
 1. [Open your coding agent in the existing project](#open-your-coding-agent-in-the-existing-project)
 2. [Brainstorm the migration plan](#brainstorm-the-migration-plan)
 3. [Map agent patterns to ADK](#map-agent-patterns-to-adk)
-4. [Convert code with evaluation in the loop](#convert-code-with-evaluation-in-the-loop)
-5. [Verify and grade with agents-cli](#verify-and-grade-with-agents-cli)
+4. [Convert code with evaluation](#convert-code-with-evaluation)
+5. [Verify and evaluate](#verify-and-evaluate)
 
 ### Open your coding agent in the existing project
 
@@ -90,7 +90,7 @@ ADK replaces custom dispatch loops and state handlers with declarative classes a
 | Multi-agent handoffs | `Agent(sub_agents=[...])` | Hierarchical delegation where a coordinator agent delegates to specialized sub-agents. |
 | Remote agent communication | A2A Protocol | Inter-agent communication over HTTP using the Agent-to-Agent standard. |
 
-### Convert code with evaluation in the loop
+### Convert code with evaluation
 
 A reliable migration is test-driven. Your coding agent can set up evaluation datasets and test suites alongside the new ADK code to verify that the migrated agent produces the same outcomes as your original implementation.
 
