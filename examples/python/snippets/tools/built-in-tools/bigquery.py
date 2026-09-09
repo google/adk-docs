@@ -83,7 +83,7 @@ def call_agent(query):
 
     print("USER:", query)
     for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("AGENT:", final_response)
 
