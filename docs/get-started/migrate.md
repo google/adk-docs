@@ -58,6 +58,7 @@ Open your terminal or IDE in the root directory of your existing agent project, 
 
 Ask your coding agent to inspect your current codebase and brainstorm the target ADK architecture. Since the agent has ADK Skills loaded through Agents CLI, it understands ADK state management, graph workflows, and orchestration patterns. Use a prompt in your coding agent similar to the following:
 
+```text title="Code agent prompt"
 I want to migrate this existing agent codebase to Google Agent Development Kit (ADK).
 Please inspect our current files, state schema, tools, and control flow.
 Propose 2-3 target ADK architecture options with trade-offs, and recommend the cleanest approach.
