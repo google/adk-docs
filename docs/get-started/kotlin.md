@@ -108,8 +108,8 @@ An ADK Kotlin agent project requires the following dependencies in your
 
 ```kotlin title="my_agent/build.gradle.kts (partial)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
+    implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
 }
 ```
 
@@ -129,9 +129,9 @@ dependencies {
     }
 
     dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
-        implementation("com.google.adk:google-adk-kotlin-webserver:0.9.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
+        implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
+        implementation("com.google.adk:google-adk-kotlin-webserver:1.0.0")
+        ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
     }
 
     kotlin {
@@ -235,9 +235,9 @@ to your `build.gradle.kts`:
 
 ```kotlin title="my_agent/build.gradle.kts (add to dependencies)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.9.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:0.9.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.9.0")
+    implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:1.0.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:1.0.0")
 }
 ```
 

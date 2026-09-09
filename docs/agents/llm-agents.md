@@ -497,7 +497,7 @@ schema definitions.
 
     Java and Kotlin check the response against the *structure* of the schema —
     `type`, `required`, `nullable`, `anyOf` and `items` (see
-    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
+    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
     Constraint fields such as `pattern`, `minLength` and `minimum` are sent to
     the model as part of the schema, but ADK does not re-check them, so the
     model decides whether to honor them. Python validates against a Pydantic
@@ -509,7 +509,7 @@ schema definitions.
 
     If the response fails validation, ADK logs the error and stores the raw
     response string under `output_key` instead of the parsed object (see
-    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
+    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
 === "Python"
 
