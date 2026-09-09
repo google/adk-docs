@@ -186,7 +186,7 @@ specify it in your `EvalConfig` JSON file.
 
 ### Example `EvalConfig`
 
-Assuming your `check_final_response_match` function is defined in
+Assuming your `check_final_response_exact_match` function is defined in
 `my_agent.metrics.py`, your `EvalConfig` might look like this:
 
 ```json
@@ -212,7 +212,8 @@ Assuming your `check_final_response_match` function is defined in
 With this configuration, when you run
 `adk eval --config_file_path=<path_to_this_config>`, ADK will execute
 `check_final_response_exact_match` for each eval case, and check if the returned
-score is >= 0.8 to mark the `response_match` criterion as passed or failed.
+score is >= 0.8 to mark the `my_check_final_response_exact_match` criterion as
+passed or failed.
 
 ### Providing Metric Information
 

@@ -114,9 +114,12 @@ markdown_extensions:
       permalink: true
 
 
+# Hooks
+hooks:
+  - hooks/pagefind.py
+
 # Plugins
 plugins:
-  - search
   - macros:
       module_name: scripts/integrations
       # Set custom delimiters for J2 templates to avoid conflicts with Markdown
@@ -220,6 +223,24 @@ plugins:
         'workflows/human-input.md': graphs/human-input.md
         'workflows/data-handling.md': graphs/data-handling.md
         'workflows/dynamic.md': graphs/dynamic.md
+        'streaming/index.md': 'live/index.md'
+        'streaming/streaming-tools.md': 'live/tools.md'
+        'streaming/configuration.md': 'live/configuration.md'
+        'streaming/dev-guide/part1.md': 'live/index.md'
+        'streaming/dev-guide/part2.md': 'live/sessions.md'
+        'streaming/dev-guide/part3.md': 'live/events.md'
+        'streaming/dev-guide/part4.md': 'live/configuration.md'
+        'streaming/dev-guide/part5.md': 'live/audio-video.md'
+        'live/streaming-tools.md': 'live/tools.md'
+        'live/voice.md': 'live/configuration.md'
+        'live/dev-guide/part1.md': 'live/index.md'
+        'live/dev-guide/part2.md': 'live/sessions.md'
+        'live/dev-guide/part3.md': 'live/events.md'
+        'live/dev-guide/part4.md': 'live/configuration.md'
+        'live/dev-guide/part5.md': 'live/audio-video.md'
+        'get-started/streaming/index.md': 'live/get-started/index.md'
+        'get-started/streaming/quickstart-streaming.md': 'live/get-started/streaming-python.md'
+        'get-started/streaming/quickstart-streaming-java.md': 'live/get-started/streaming-java.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -253,7 +274,7 @@ plugins:
         - plugins/*.md
         - mcp/*.md
         - a2a/*.md
-        - streaming/*.md
+        - live/*.md
         - grounding/*.md
         Reference:
         - release-notes.md
@@ -274,16 +295,13 @@ nav:
       - Go: get-started/go.md
       - Java: get-started/java.md
       - Kotlin: get-started/kotlin.md
+      - Agents CLI: get-started/agents-cli.md
       - Installation: get-started/installation.md
       - Google Cloud: get-started/google-cloud.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
       - Agent team: tutorials/agent-team.md
-      - Streaming agent:
-        - get-started/streaming/index.md
-        - Python: get-started/streaming/quickstart-streaming.md
-        - Java: get-started/streaming/quickstart-streaming-java.md
       - Code with AI: tutorials/coding-with-ai.md
       - Agent Config: agents/config.md
     - Agents:
@@ -406,17 +424,28 @@ nav:
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
         - Java: a2a/quickstart-consuming-java.md
+        - Kotlin: a2a/quickstart-consuming-kotlin.md
       - A2A Extension: a2a/a2a-extension.md
-    - Gemini Live API Toolkit:
-      - streaming/index.md
-      - Gemini Live API Toolkit development guide series:
-        - Part 1. Intro to streaming: streaming/dev-guide/part1.md
-        - Part 2. Sending messages: streaming/dev-guide/part2.md
-        - Part 3. Event handling: streaming/dev-guide/part3.md
-        - Part 4. Run configuration: streaming/dev-guide/part4.md
-        - Part 5. Audio, Images, and Video: streaming/dev-guide/part5.md
-      - Streaming Tools: streaming/streaming-tools.md
-      - Configuring streaming behavior: streaming/configuration.md
+    - Live and Voice Agents:
+      - live/index.md
+      - Get started:
+        - live/get-started/index.md
+        - Python: live/get-started/streaming-python.md
+        - Java: live/get-started/streaming-java.md
+      # Revamp IA also plans Building/Prompting and Production/{Guardrails,
+      # Observability}, plus an Architectures section once cascade lands. Left
+      # unfilled here rather than shipping stub pages.
+      - Building:
+        - Workflows: live/workflows.md
+        - Tools: live/tools.md
+        - Sessions: live/sessions.md
+        - Events: live/events.md
+        - Audio and video: live/audio-video.md
+        - Configuration: live/configuration.md
+      - Production:
+        - Evaluation: live/evaluation.md
+        - Build a custom server: live/custom-server.md
+      - Supported models: live/models.md
     - Grounding:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md
@@ -429,7 +458,7 @@ nav:
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
-      - Typescript ADK: api-reference/typescript/index.html
+      - TypeScript ADK: api-reference/typescript/index.html
       - Go ADK:
         - Go v2.x: https://pkg.go.dev/google.golang.org/adk/v2" target="_blank
         - Go v1.x: https://pkg.go.dev/google.golang.org/adk" target="_blank
