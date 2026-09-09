@@ -154,10 +154,10 @@ public class YourAgentApplication {
         return LlmAgent.builder()
             .name("hello-time-agent")
             .description("Tells the current time in a specified city")
-            .instruction(\"""
+            .instruction("""
                 You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.
-                \""")
+                """)
             .model("gemini-flash-latest")
             .tools(FunctionTool.create(YourAgentApplication.class, "getCurrentTime"))
             .build();
