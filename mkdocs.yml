@@ -386,7 +386,7 @@ nav:
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
       - MCP tools: 
-        - Overview: tools-custom/mcp-tools/index.md
+        - tools-custom/mcp-tools/index.md
         - Advanced configuration: tools-custom/mcp-tools/advanced.md
         - Deployment: tools-custom/mcp-tools/deployment.md
         - Agent as MCP server: tools-custom/mcp-tools/agent-as-server.md
