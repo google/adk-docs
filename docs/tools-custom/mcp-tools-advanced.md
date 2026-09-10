@@ -1,4 +1,4 @@
-# Advanced MCP configurations and production guide
+# Advanced MCP configuration
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -6,9 +6,7 @@
 
 This guide covers advanced integration patterns for the Model Context Protocol (MCP) in ADK. It provides production patterns for dynamic per-user authentication, human-in-the-loop approvals, long-running progress tracking, custom runtime execution, and enterprise cloud deployments.
 
----
-
-## Select a configuration pattern for your use case
+## Advanced configuration patterns
 
 Use the matrix below to select the right configuration mechanism for your production workload:
 
