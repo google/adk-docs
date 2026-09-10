@@ -1,11 +1,11 @@
 ---
-catalog_title: Agentegrity by Cogensec
+catalog_title: Agentegrity
 catalog_description: Evaluate agent integrity and collect tamper-evident security evidence
 catalog_icon: /integrations/assets/agentegrity.png
 catalog_tags: ["observability", "evaluation"]
 ---
 
-# Agentegrity by Cogensec: observability for ADK
+# Agentegrity observability for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
