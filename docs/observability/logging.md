@@ -35,8 +35,7 @@ for
 GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
 
 By default prompt content is elided in logs for security. You can enable prompt
-logging using environment variables or programmatic configuration (see Setup
-section below).
+logging using environment variables or programmatic configuration (see [Capture prompt content](#capture-prompt-content) below).
 
 ### Log levels (Python)
 
@@ -55,15 +54,13 @@ using the standard logger:
     Only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs
     can be very verbose and may contain sensitive information.
 
-## Logging setup
-
-### Logging in ADK Web
+## Logging in ADK Web
 
 When running agents using the ADK's `adk web`, `adk api_server`, `adk deploy
 cloud_run` and `adk deploy gke` commands, you can control the log verbosity or
 destination.
 
-#### Logging level
+### Logging level
 
 To start the web server with `DEBUG` level logging, run:
 
@@ -74,7 +71,7 @@ adk web --log_level DEBUG path/to/your/agents_dir
 The available log levels for the `--log_level` option are: `DEBUG`, `INFO`
 (default), `WARNING`, `ERROR`, `CRITICAL`.
 
-#### Capture prompt content
+### Capture prompt content
 
 By default a prompt content is elided in logs for security. You can enable
 prompt logging using the environment variable:
@@ -96,7 +93,7 @@ and `SPAN_AND_EVENT` also require
     debugging but may capture sensitive data or PII. In production, set this to
     false or ensure you have appropriate data handling policies in place.
 
-#### OTLP export
+### OTLP export
 
 To export logs to an OTLP-compatible backend, set the standard OTel environment
 variables:
@@ -112,7 +109,7 @@ adk web path/to/your/agents_dir
     in addition to logs.
 
 
-#### GCP export setup
+### GCP export setup
 
 You can enable GCP export using the `--otel_to_cloud` flag:
 
@@ -120,70 +117,7 @@ You can enable GCP export using the `--otel_to_cloud` flag:
 adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
-### Activity logging with plugins
-
-ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and session state) without modifying your agent logic.
-
-#### Console logging with `LoggingPlugin`
-
-To print structured activity logs to the console during execution, attach `LoggingPlugin` to your `App`:
-
-=== "Python"
-
-    ```python
-    from google.adk.apps import App
-    from google.adk.plugins import LoggingPlugin
-
-    app = App(
-        name="my_app",
-        root_agent=root_agent,
-        plugins=[LoggingPlugin()],
-    )
-    ```
-
-=== "Kotlin"
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
-    ```
-
-#### Full debug capture to a file with `DebugLoggingPlugin`
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span><span class="lst-kotlin">Kotlin v0.6.0</span>
-</div>
-
-To record complete interaction data as human-readable YAML appended to `adk_debug.yaml` rather than truncated console output, use `DebugLoggingPlugin`:
-
-=== "Python"
-
-    ```python
-    from google.adk.apps import App
-    from google.adk.plugins import DebugLoggingPlugin
-
-    app = App(
-        name="my_app",
-        root_agent=root_agent,
-        plugins=[
-            DebugLoggingPlugin(
-                output_path="adk_debug.yaml",
-                include_session_state=True,
-                include_system_instruction=True,
-            ),
-        ],
-    )
-    ```
-
-=== "Kotlin"
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
-    ```
-
-!!! warning
-    The output file holds raw prompts, tool arguments, and session state. Although credentials and `temp:`-scoped state keys are automatically redacted in Python, treat the output file as sensitive.
-
-### Programmatic setup
+## Programmatic setup
 
 While plugins help inspect individual agent runs during local development, programmatic setup configures the underlying logging framework and OpenTelemetry exporters for system-level diagnostics and production observability:
 
@@ -191,7 +125,7 @@ While plugins help inspect individual agent runs during local development, progr
 - **Kotlin:** Uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
 - **Go:** Uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry configuration and the standard `log` package for general events (written to `stderr` by default).
 
-#### Logging level
+### Logging level
 
 === "Python"
 
@@ -215,7 +149,7 @@ While plugins help inspect individual agent runs during local development, progr
 
     General events (such as server startup or HTTP requests) are logged using the standard Go `log` package and written to `stderr` by default.
 
-#### Capture prompt content
+### Capture prompt content
 
 === "Python"
 
@@ -275,7 +209,7 @@ While plugins help inspect individual agent runs during local development, progr
     }
     ```
 
-#### OTLP export
+### OTLP export
 
 === "Python"
 
@@ -307,7 +241,7 @@ While plugins help inspect individual agent runs during local development, progr
     `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will
     automatically use these settings when initialized.
 
-#### GCP export setup
+### GCP export setup
 
 === "Python"
 
@@ -361,6 +295,93 @@ While plugins help inspect individual agent runs during local development, progr
     ```bash
     go run main.go web -otel_to_cloud
     ```
+
+## Activity logging with plugins
+
+ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and session state) without modifying your agent logic.
+
+### Console logging with `LoggingPlugin`
+
+To print structured activity logs to the console during execution, attach `LoggingPlugin` to your `App` (or configure `loggingplugin` in Go):
+
+=== "Python"
+
+    ```python
+    from google.adk.apps import App
+    from google.adk.plugins import LoggingPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[LoggingPlugin()],
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/cmd/launcher"
+    	"google.golang.org/adk/v2/plugin"
+    	"google.golang.org/adk/v2/plugin/loggingplugin"
+    	"google.golang.org/adk/v2/runner"
+    )
+
+    logPlugin, err := loggingplugin.New("logging_plugin")
+    if err != nil {
+    	// handle error
+    }
+
+    config := &launcher.Config{
+    	AgentLoader: agent.NewSingleLoader(rootAgent),
+    	PluginConfig: runner.PluginConfig{
+    		Plugins: []*plugin.Plugin{logPlugin},
+    	},
+    }
+    ```
+
+### Full debug capture to a file with `DebugLoggingPlugin`
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+</div>
+
+To record complete interaction data as human-readable YAML appended to `adk_debug.yaml` rather than truncated console output, use `DebugLoggingPlugin`:
+
+=== "Python"
+
+    ```python
+    from google.adk.apps import App
+    from google.adk.plugins import DebugLoggingPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[
+            DebugLoggingPlugin(
+                output_path="adk_debug.yaml",
+                include_session_state=True,
+                include_system_instruction=True,
+            ),
+        ],
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
+    ```
+
+!!! warning
+    The output file holds raw prompts, tool arguments, and session state. Although credentials and `temp:`-scoped state keys are automatically redacted in Python, treat the output file as sensitive.
 
 ## Understanding log output
 
