@@ -241,6 +241,7 @@ plugins:
         'get-started/streaming/index.md': 'live/get-started/index.md'
         'get-started/streaming/quickstart-streaming.md': 'live/get-started/streaming-python.md'
         'get-started/streaming/quickstart-streaming-java.md': 'live/get-started/streaming-java.md'
+        'mcp/index.md': 'tools-custom/mcp-tools.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -385,12 +386,11 @@ nav:
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
       - MCP tools: 
-        - tools-custom/mcp-tools-index.md
-        - Overview: tools-custom/mcp-tools.md
-        - Advanced configuration: tools-custom/mcp-tools-advanced.md
-        - Deployment: tools-custom/mcp-deployment.md
-        - Agent as MCP server: tools-custom/agent-as-mcp-server.md
-        - Sub-agent delegation: tools-custom/agent-managed-mcp.md
+        - Overview: tools-custom/mcp-tools/index.md
+        - Advanced configuration: tools-custom/mcp-tools/advanced.md
+        - Deployment: tools-custom/mcp-tools/deployment.md
+        - Agent as MCP server: tools-custom/mcp-tools/agent-as-server.md
+        - Sub-agent delegation: tools-custom/mcp-tools/agent-managed.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
@@ -417,8 +417,6 @@ nav:
       - Memory: sessions/memory.md
       - Context compression: context/compaction.md
       - Model context caching: context/caching.md
-    - MCP:
-      - mcp/index.md
     - A2A Protocol:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
