@@ -1,8 +1,8 @@
-# Agent-Exposed MCP Server (`to_mcp_server`)
+# Configure ADK agents as MCP servers
 
-You can make your ADK capabilities accessible to external MCP clients (such as 
-Claude Desktop, IDEs, or custom hosts) by building an MCP server that exposes 
-ADK constructs. There are two primary ways to achieve this:
+You can make your ADK agent's capabilities accessible to external MCP clients, such as 
+Antigravity, Claude Code, or custom agents, by hosting your ADK agent's capabilities within an MCP server.
+There are two primary ways to achieve this:
 
 * **Expose an entire Agent:** Wraps the full multi-turn agent reasoning and 
   internal tool execution into a server using a simple one-line conversion.
@@ -11,7 +11,7 @@ ADK constructs. There are two primary ways to achieve this:
   server to wrap specific, standalone ADK tools (like a `FunctionTool`) without 
   the agent's reasoning loop.
 
-## Expose an Entire ADK Agent
+## Get started
 The most powerful approach is to expose an entire `LlmAgent`. By using the 
 `to_mcp_server()` utility, you can convert your agent into a standard FastMCP 
 server. This allows external clients to interact with the agent's full cognitive 
