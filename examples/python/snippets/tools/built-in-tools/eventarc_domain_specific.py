@@ -101,7 +101,7 @@ complete_outreach_dynamic_tool = eventarc_toolset.create_publish_tool(
 
 
 # Example C: Runtime Lambda Binding
-# Evaluates attribute values dynamically at execution time from runtime context.
+# Evaluates attribute values dynamically at execution time from event payload, runtime context, or both.
 def resolve_source_from_context(context: Any) -> str:
   """Extracts the source URI dynamically from runtime tool execution context."""
   return f"//my-agent/session/{getattr(context, 'session_id', 'default')}"
