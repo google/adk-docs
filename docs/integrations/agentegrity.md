@@ -1,18 +1,19 @@
 ---
-catalog_title: Agentegrity
+catalog_title: Agentegrity by Cogensec
 catalog_description: Evaluate agent integrity and collect tamper-evident security evidence
 catalog_icon: /integrations/assets/agentegrity.png
 catalog_tags: ["observability", "evaluation"]
 ---
 
-# Agentegrity observability for ADK
+# Agentegrity by Cogensec: observability for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 [Agentegrity](https://github.com/Cogensec/agentegrity) is an open-source agent
-integrity evaluation framework from Cogensec. Its Python adapter attaches
+integrity evaluation framework owned and maintained by
+[Cogensec](https://github.com/Cogensec). Its Python adapter attaches
 callbacks to ADK agents to evaluate observed inputs and tool activity and
 record security evidence without replacing the ADK runner.
 
