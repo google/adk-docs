@@ -148,7 +148,9 @@ plugins:
         'tools/function-tools.md': 'tools-custom/function-tools.md'
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
-        'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+        'tools/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
+        'tools-custom/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
+        'mcp/index.md': 'tools-custom/mcp-tools/index.md'
         'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
         'tools/google-cloud-tools.md': 'integrations/index.md'
         'tools/built-in-tools.md': 'integrations/index.md'
@@ -241,7 +243,6 @@ plugins:
         'get-started/streaming/index.md': 'live/get-started/index.md'
         'get-started/streaming/quickstart-streaming.md': 'live/get-started/streaming-python.md'
         'get-started/streaming/quickstart-streaming-java.md': 'live/get-started/streaming-java.md'
-        'mcp/index.md': 'tools-custom/mcp-tools.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -387,10 +388,10 @@ nav:
         - Action confirmations: tools-custom/confirmation.md
       - MCP tools: 
         - tools-custom/mcp-tools/index.md
-        - Advanced configuration: tools-custom/mcp-tools/advanced.md
+        - Advanced configuration: tools-custom/mcp-tools/mcp-tools-advanced.md
         - Deployment: tools-custom/mcp-tools/deployment.md
-        - Agent as MCP server: tools-custom/mcp-tools/agent-as-server.md
-        - Sub-agent delegation: tools-custom/mcp-tools/agent-managed.md
+        - Agent as MCP server: tools-custom/mcp-tools/agent-as-mcp-server.md
+        - Sub-agent delegation: tools-custom/mcp-tools/agent-managed-mcp.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
