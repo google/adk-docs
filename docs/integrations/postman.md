@@ -217,7 +217,17 @@ natural language interactions.
         	// args = append(args, "--region", "eu")  // Use EU region
 
         	server := exec.CommandContext(ctx, "npx", args...)
-        	server.Env = append(os.Environ(), "POSTMAN_API_KEY="+postmanAPIKey)
+        	// Forward only what npx needs, plus the Postman key. The parent environment
+        	// may hold unrelated secrets, such as the GOOGLE_API_KEY read above.
+        	server.Env = []string{"POSTMAN_API_KEY=" + postmanAPIKey}
+        	for _, k := range []string{
+        		"PATH", "HOME", // POSIX
+        		"APPDATA", "LOCALAPPDATA", "TEMP", "USERPROFILE", // Windows
+        	} {
+        		if v, ok := os.LookupEnv(k); ok {
+        			server.Env = append(server.Env, k+"="+v)
+        		}
+        	}
 
         	postman, err := mcptoolset.New(mcptoolset.Config{
         		Transport: &mcp.CommandTransport{Command: server},
