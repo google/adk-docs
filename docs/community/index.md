@@ -62,6 +62,16 @@ for updates on the next call. Recent recordings are below, or browse the full
 playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=-L8ys-nKCWc" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/-L8ys-nKCWc/maxresdefault.jpg" alt="ADK Community Call July 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 July 2026 Recording</h3>
+      <p>Discussions include the ADK Go 2.0 release, the Agents CLI reaching GA with automated evaluations, using ADK to automate PR and issue triage, the new Managed Agents and Antigravity integration, and a community spotlight on CopilotKit with the AG-UI and A2UI protocols.</p>
+    </div>
+  </a>
   <a href="https://www.youtube.com/watch?v=XAvXSACGdEQ" class="resource-card">
     <div class="card-image-wrapper">
       <img src="https://img.youtube.com/vi/XAvXSACGdEQ/maxresdefault.jpg" alt="ADK Community Call June 2026">
@@ -82,17 +92,6 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
       <p>Discussions include the ADK Python 2.0 GA release, initial release of ADK for Kotlin and Android, demos of Agents CLI and Skills for dynamic capability loading, and a community spotlight on Beever Atlas.</p>
     </div>
   </a>
-  <a href="https://www.youtube.com/watch?v=bPngDY7EuOQ" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/bPngDY7EuOQ/maxresdefault.jpg" alt="ADK Community Call Mar 2026">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Mar 2026 Recording</h3>
-      <p>Discussions include the ADK 2.0 alpha release, Workflows for graph-based agent composition, Agent Modes for structured multi-agent coordination, and a community spotlight on Restate durable agents.</p>
-    </div>
-  </a>
-
 </div>
 
 ## Courses & Deep Dives
@@ -178,6 +177,16 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
         <p>An auto-generated Japanese podcast about ADK, created by an ADK agent that covers commit logs, release notes, and blog posts.</p>
       </div>
     </a>
+  <a href="https://mauripsale.github.io/doc-adk-training/" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-adk-zero-to-hero.jpg" alt="ADK: From Zero to Hero">
+    </div>
+    <div class="card-content">
+      <div class="type">Online Course</div>
+      <h3>🎓 ADK: From Zero to Hero</h3>
+      <p>A 40+ module, hands-on ADK 2.0 curriculum (Python) built around real challenge labs — theory, a lab you actually have to solve, then a hidden solution. From your first agent to distributed, enterprise-grade multi-agent systems with full observability.</p>
+    </div>
+  </a>
 </div>
 
 ## Agent Tutorials and Demos
