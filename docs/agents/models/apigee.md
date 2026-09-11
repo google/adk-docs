@@ -43,6 +43,8 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
         proxy_url=f"https://{APIGEE_PROXY_URL}",
         # Pass necessary authentication/authorization headers (like an API key)
         custom_headers={"foo": "bar"}
+        # Optional: Pass google-auth credentials if the proxy requires additional OAuth scopes
+        # credentials=my_credentials
     )
 
     # Pass the configured model wrapper to your LlmAgent
