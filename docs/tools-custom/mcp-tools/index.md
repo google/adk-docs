@@ -139,7 +139,6 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     
     - Interact with the Agent: select `filesystem_assistant` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
-    ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
     ```
 
 === "TypeScript"
@@ -251,7 +250,8 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         fmt.Printf("Successfully created agent: %s\n", ag.Name())
     }
     ```
-    
+![MCP with ADK Web - FileSystem Example](../../assets/adk-tool-mcp-filesystem-adk-web-demo.png)    
+
 ---
 
 #### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
@@ -302,8 +302,6 @@ Unlike the previous local process example, this pattern connects your agent to a
        - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
        
-     ![MCP with ADK Web - Google Maps Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
-
 === "TypeScript"
 
     ```typescript
@@ -332,6 +330,8 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     });
      ``` 
+     
+![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
      
 ---
 
@@ -373,7 +373,7 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
 
     ```typescript
     import { MCPToolset } from "@google/adk";
-    
+
     // Configure Bearer Token Authentication via headers
     const toolset = new MCPToolset({
         type: "StreamableHTTPConnectionParams",
@@ -387,7 +387,6 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
         },
         timeout: 5,
     });
-    
     ```
     
 ---
