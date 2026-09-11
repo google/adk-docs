@@ -176,8 +176,8 @@ The input file should contain initial state and queries:
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--session_service_uri` | Custom session storage URI | SQLite under `.adk/session.db` |
-| `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
+| `--session_service_uri` | Custom session storage URI | Per-agent SQLite at `<agents_dir>/<agent>/.adk/session.db` |
+| `--artifact_service_uri` | Custom artifact storage URI | Per-agent directory at `<agents_dir>/<agent>/.adk/artifacts` |
 | `--memory_service_uri` | Custom memory service URI | In-memory |
 
 ### Example with storage options
@@ -190,6 +190,13 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
 
 === "Python"
 
+    To send a single message and exit instead of starting an interactive
+    session, pass the query as an argument:
+
+    ```shell
+    adk run path/to/my_agent "hello"
+    ```
+
     | Option | Description |
     |--------|-------------|
     | `--save_session` | Save the session to a JSON file on exit |
@@ -199,6 +206,12 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
     | `--session_service_uri` | Custom session storage URI |
     | `--artifact_service_uri` | Custom artifact storage URI |
     | `--memory_service_uri` | Custom memory service URI |
+    | `--use_local_storage/--no_use_local_storage` | Use the local `.adk` folder when no service URI is set |
+    | `--state` | Initial state for the run as a JSON string |
+    | `--timeout` | Timeout for a single turn or query, such as `30s` or `5m` |
+    | `--in_memory` | Do not persist session data |
+    | `--jsonl` | Output structured JSONL instead of human-readable text |
+    | `--default_llm_model` | Default model when the agent does not set one |
 
 === "Go"
 
@@ -229,3 +242,36 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
     ```shell
     go run agent.go -streaming_mode sse
     ```
+
+## Usage telemetry
+
+The ADK CLI collects anonymous usage telemetry to understand feature adoption, guide development priorities, and improve tool performance. Data collection is OFF by default until you explicitly choose to enable it.
+
+Your telemetry preference is stored locally on your machine in `~/.adk/config.json`. You can manage telemetry data collection at any time through the terminal:
+
+- **Enable**: `adk telemetry enable`
+- **Disable**: `adk telemetry disable`
+- **Check status**: `adk telemetry status`
+
+You can also manually deactivate telemetry data collection at any time by opening `~/.adk/config.json` and setting the `telemetry` attribute to `false`:
+
+```json
+{
+  "telemetry": false
+}
+```
+
+**What data is collected**
+
+- **Environment Properties**: Operating system information, runtime language and version, and installed ADK CLI version.
+- **Command Execution Events**: Generic command and subcommand names, flags passed, execution duration, exit codes, and exception types if an error occurs. We also log a sequence number and an ephemeral session ID that is discarded after command execution.
+
+**What data is not collected**
+
+The CLI does not collect sensitive, private, or personal data, specifically:
+
+- Arguments or parameter values passed to commands or flags, such as agent names, prompt strings, file paths.
+- User credentials, usernames, API keys, OAuth tokens, or secrets.
+- Google Cloud Project IDs or Cloud Account details.
+- Source code files, file contents, or directory paths.
+- Personally Identifiable Information (PII).

@@ -107,7 +107,7 @@ you only need to follow a subset of these steps.
         model='gemini-flash-latest',
         name='enterprise_assistant',
         instruction='Help user, leverage the tools you have access to',
-        tools=sample_toolset.get_tools(),
+        tools=[sample_toolset],
     )
     ```
 

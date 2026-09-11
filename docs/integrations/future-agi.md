@@ -111,7 +111,7 @@ async def main():
             parts=[types.Part(text="What is the weather in New York?")],
         ),
     ):
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             print(event.content.parts[0].text.strip())
 
 
