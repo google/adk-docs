@@ -352,7 +352,7 @@ ADK automatically constructs the required `Authorization` HTTP headers and manag
 
 When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
 
-*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md)*
+*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./tools-custom/authentication/)*
 
 === "Python"
 
