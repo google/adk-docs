@@ -15,12 +15,12 @@
 import asyncio
 
 from google.adk.agents import Agent
+from google.adk.integrations.bigquery import BigQueryCredentialsConfig
+from google.adk.integrations.bigquery import BigQueryToolset
+from google.adk.integrations.bigquery.config import BigQueryToolConfig
+from google.adk.integrations.bigquery.config import WriteMode
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from google.adk.tools.bigquery import BigQueryCredentialsConfig
-from google.adk.tools.bigquery import BigQueryToolset
-from google.adk.tools.bigquery.config import BigQueryToolConfig
-from google.adk.tools.bigquery.config import WriteMode
 from google.genai import types
 import google.auth
 
@@ -62,37 +62,49 @@ bigquery_agent = Agent(
 )
 
 # Session and Runner
-session_service = InMemorySessionService()
-session = asyncio.run(
-    session_service.create_session(
+async def setup_session_and_runner():
+    session_service = InMemorySessionService()
+    await session_service.create_session(
         app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
     )
-)
-runner = Runner(
-    agent=bigquery_agent, app_name=APP_NAME, session_service=session_service
-)
+    return Runner(
+        agent=bigquery_agent, app_name=APP_NAME, session_service=session_service
+    )
 
 
 # Agent Interaction
-def call_agent(query):
+async def call_agent_async(runner, query):
     """
     Helper function to call the agent with a query.
     """
     content = types.Content(role="user", parts=[types.Part(text=query)])
-    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
+    events = runner.run_async(
+        user_id=USER_ID, session_id=SESSION_ID, new_message=content
+    )
 
     print("USER:", query)
-    for event in events:
+    async for event in events:
         if event.is_final_response():
             final_response = event.content.parts[0].text
             print("AGENT:", final_response)
 
 
-call_agent("Are there any ml datasets in bigquery-public-data project?")
-call_agent("Tell me more about ml_datasets.")
-call_agent("Which all tables does it have?")
-call_agent("Tell me more about the census_adult_income table.")
-call_agent("How many rows are there per income bracket?")
-call_agent(
-    "What is the statistical correlation between education_num, age, and the income_bracket?"
-)
+async def main():
+    runner = await setup_session_and_runner()
+    await call_agent_async(
+        runner, "Are there any ml datasets in bigquery-public-data project?"
+    )
+    await call_agent_async(runner, "Tell me more about ml_datasets.")
+    await call_agent_async(runner, "Which all tables does it have?")
+    await call_agent_async(runner, "Tell me more about the census_adult_income table.")
+    await call_agent_async(runner, "How many rows are there per income bracket?")
+    await call_agent_async(
+        runner,
+        "What is the statistical correlation between education_num, age, and the"
+        " income_bracket?",
+    )
+
+
+# Note: In Colab or another notebook, an event loop is already running, so call
+# `await main()` directly instead of `asyncio.run(main())`.
+asyncio.run(main())
