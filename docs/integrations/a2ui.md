@@ -32,16 +32,19 @@ pip install a2ui-agent-sdk
 
 ### 1. Set up the Schema Manager
 
-The `A2uiSchemaManager` loads component catalogs and generates system prompts
-that teach the LLM how to produce valid A2UI JSON.
+The `DirectJsonFormat` schema manager loads component catalogs and generates
+system prompts that teach the LLM how to produce valid A2UI JSON.
 
 ```python
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.inference_formats.direct_json import DirectJsonFormat
 from a2ui.basic_catalog.provider import BasicCatalog
 
-schema_manager = A2uiSchemaManager(
+schema_manager = DirectJsonFormat(
+    version=VERSION_0_9,
     catalogs=[
         BasicCatalog.get_config(
+            version=VERSION_0_9,
             examples_path="examples",
         ),
     ],
@@ -99,8 +102,8 @@ Always validate the LLM's JSON output before sending it to the client. The SDK
 provides parsing, fixing, and validation utilities:
 
 ```python
-from a2ui.core.parser.parser import parse_response
-from a2ui.a2a import parse_response_to_parts
+from a2ui.parser.parser import parse_response
+from a2ui.a2a.parts import parse_response_to_parts
 
 # Get the active catalog's validator
 selected_catalog = schema_manager.get_selected_catalog()
@@ -123,7 +126,7 @@ A2UI payloads are wrapped in A2A `DataPart` with the MIME type
 `application/json+a2ui` so renderers can identify them:
 
 ```python
-from a2ui.a2a import create_a2ui_part
+from a2ui.a2a.parts import create_a2ui_part
 
 part = create_a2ui_part({"type": "Card", "props": {"title": "Hello"}})
 # → DataPart(data={...}, metadata={"mimeType": "application/json+a2ui"})
@@ -171,11 +174,15 @@ async def _prepare_session(self, context, run_request, runner):
 You can define your own component catalogs for domain-specific UI:
 
 ```python
-from a2ui.core.schema.manager import CatalogConfig
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.schema.catalog import CatalogConfig
+from a2ui.inference_formats.direct_json import DirectJsonFormat
+from a2ui.basic_catalog.provider import BasicCatalog
 
-schema_manager = A2uiSchemaManager(
+schema_manager = DirectJsonFormat(
+    version=VERSION_0_9,
     catalogs=[
-        BasicCatalog.get_config(),
+        BasicCatalog.get_config(version=VERSION_0_9),
         CatalogConfig.from_path(
             name="my_dashboard_catalog",
             catalog_path="catalogs/dashboard.json",
@@ -191,7 +198,8 @@ Orchestrator agents can aggregate A2UI capabilities from sub-agents and
 advertise them in the agent card:
 
 ```python
-from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.schema.constants import VERSION_0_9
+from a2ui.a2a.extension import get_a2ui_agent_extension
 
 # Collect catalog IDs from sub-agents
 supported_catalog_ids = set()
@@ -207,6 +215,7 @@ agent_card = AgentCard(
     capabilities=AgentCapabilities(
         extensions=[
             get_a2ui_agent_extension(
+                version=VERSION_0_9,
                 supported_catalog_ids=list(supported_catalog_ids),
             )
         ]
