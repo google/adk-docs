@@ -1,5 +1,5 @@
 # Get started
-
+add all api kes in my ai studio google, + google cloud to secrets ai key agents, worker, app duilder, chat ai 
 Agent Development Kit (ADK) is designed to empower developers to quickly build,
 manage, evaluate and deploy AI-powered agents. These quick start guides get you
 set up and running a simple agent in less than 20 minutes.
