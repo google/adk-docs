@@ -35,8 +35,7 @@ for
 GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
 
 By default prompt content is elided in logs for security. You can enable prompt
-logging using environment variables or programmatic configuration (see Setup
-section below).
+logging using environment variables or programmatic configuration (see [Capture prompt content](#capture-prompt-content) below).
 
 ### Log levels (Python)
 
@@ -55,15 +54,13 @@ using the standard logger:
     Only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs
     can be very verbose and may contain sensitive information.
 
-## Logging setup
-
-### Logging in ADK Web
+## Logging in ADK Web
 
 When running agents using the ADK's `adk web`, `adk api_server`, `adk deploy
 cloud_run` and `adk deploy gke` commands, you can control the log verbosity or
 destination.
 
-#### Logging level
+### Logging level
 
 To start the web server with `DEBUG` level logging, run:
 
@@ -74,7 +71,7 @@ adk web --log_level DEBUG path/to/your/agents_dir
 The available log levels for the `--log_level` option are: `DEBUG`, `INFO`
 (default), `WARNING`, `ERROR`, `CRITICAL`.
 
-#### Capture prompt content
+### Capture prompt content
 
 By default a prompt content is elided in logs for security. You can enable
 prompt logging using the environment variable:
@@ -96,7 +93,7 @@ and `SPAN_AND_EVENT` also require
     debugging but may capture sensitive data or PII. In production, set this to
     false or ensure you have appropriate data handling policies in place.
 
-#### OTLP export
+### OTLP export
 
 To export logs to an OTLP-compatible backend, set the standard OTel environment
 variables:
@@ -112,7 +109,7 @@ adk web path/to/your/agents_dir
     in addition to logs.
 
 
-#### GCP export setup
+### GCP export setup
 
 You can enable GCP export using the `--otel_to_cloud` flag:
 
@@ -120,188 +117,271 @@ You can enable GCP export using the `--otel_to_cloud` flag:
 adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
-### Python programmatic setup
+## Programmatic setup
 
-In Python, ADK uses the standard `logging` module and OpenTelemetry for
-structured GenAI logs.
+While plugins help inspect individual agent runs during local development, programmatic setup configures the underlying logging framework and OpenTelemetry exporters for system-level diagnostics and production observability:
 
-#### Logging level
+- **Python:** Uses the standard `logging` module and OpenTelemetry for structured GenAI logs.
+- **Kotlin:** Uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
+- **Go:** Uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry configuration and the standard `log` package for general events (written to `stderr` by default).
 
-To enable detailed logging, including `DEBUG` level messages, add the following
-to the top of your script:
+### Logging level
 
-```python
-import logging
+=== "Python"
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
-)
-```
+    To enable detailed logging, including `DEBUG` level messages, add the following
+    to the top of your script:
 
-#### Capture prompt content
+    ```python
+    import logging
 
-You can enable full prompt logging programmatically by setting an environment
-variable:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+    )
+    ```
 
-```python
-import os
+=== "Kotlin"
 
-os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
-```
+    ADK uses standard JVM logging facilities (defaulting to Flogger). Configure your JVM logger backend (e.g., `java.util.logging` or SLF4J) to adjust log verbosity.
 
-To scope content capture to a single run instead of the whole process, set
-`RunConfig.telemetry` rather than the environment variable:
+=== "Go"
 
-```python
-from google.adk.agents.run_config import RunConfig
-from google.adk.telemetry import ContentCapturingMode, TelemetryConfig
+    General events (such as server startup or HTTP requests) are logged using the standard Go `log` package and written to `stderr` by default.
 
-run_config = RunConfig(
-    telemetry=TelemetryConfig(
-        capture_message_content=ContentCapturingMode.SPAN_AND_EVENT,
-    ),
-)
-```
+### Capture prompt content
 
-#### OTLP export
+=== "Python"
 
-To export logs to an OpenTelemetry Collector (or an OTLP-compatible backend)
-programmatically:
+    You can enable full prompt logging programmatically by setting an environment
+    variable:
 
-```python
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
+    ```python
+    import os
 
-os.environ["OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"] = "http://your-collector:4318/v1/logs"
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers()
-```
+    os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
+    ```
 
-#### GCP export setup
+    To scope content capture to a single run instead of the whole process, set
+    `RunConfig.telemetry` rather than the environment variable:
 
-To export logs to Google Cloud Logging programmatically, use the OpenTelemetry
-Google Cloud exporter. Here is an example in Python:
+    ```python
+    from google.adk.agents.run_config import RunConfig
+    from google.adk.telemetry import ContentCapturingMode, TelemetryConfig
 
-```python
-from google.adk.telemetry.google_cloud import get_gcp_exporters
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
+    run_config = RunConfig(
+        telemetry=TelemetryConfig(
+            capture_message_content=ContentCapturingMode.SPAN_AND_EVENT,
+        ),
+    )
+    ```
 
-gcp_exporters = get_gcp_exporters(
-  enable_cloud_logging = True,
-)
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers([gcp_exporters])
-```
+=== "Kotlin"
 
-### Kotlin programmatic setup
+    You can enable full prompt logging by configuring the global `TelemetryConfig`:
 
-In Kotlin, ADK uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:capture_content"
+    ```
 
-#### Capture prompt content
+=== "Go"
 
-You can enable full prompt logging by configuring the global `TelemetryConfig`:
+    You can enable full prompt logging programmatically when initializing telemetry:
 
-```kotlin
---8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:capture_content"
-```
+    ```go
+    package main
 
-#### Activity logging with Plugins
+    import (
+    	"context"
+    	"google.golang.org/adk/v2/telemetry"
+    )
 
-To get detailed logs of agent activity (user messages, model requests/responses, tool calls) in the console, use the `LoggingPlugin`:
+    func main() {
+    	ctx := context.Background()
+    	tp, err := telemetry.New(ctx,
+    		telemetry.WithGenAICaptureMessageContent(true),
+    	)
+    	if err != nil {
+    		// handle error
+    	}
+    	defer tp.Shutdown(ctx)
+    	tp.SetGlobalOtelProviders()
+    }
+    ```
 
-```kotlin
---8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
-```
+### OTLP export
 
-#### Full debug capture to a file
+=== "Python"
+
+    To export logs to an OpenTelemetry Collector (or an OTLP-compatible backend)
+    programmatically:
+
+    ```python
+    from google.adk.telemetry.setup import maybe_set_otel_providers
+    import os
+
+    os.environ["OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"] = "http://your-collector:4318/v1/logs"
+    os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+    os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+    maybe_set_otel_providers()
+    ```
+
+=== "Kotlin"
+
+    ADK automatically uses the `GlobalOpenTelemetry` instance on the JVM. Configure your OpenTelemetry SDK exporter before starting the agent:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
+    ```
+
+=== "Go"
+
+    To export logs to an OTLP-compatible backend, configure the standard
+    OpenTelemetry environment variables (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT` or
+    `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will
+    automatically use these settings when initialized.
+
+### GCP export setup
+
+=== "Python"
+
+    To export logs to Google Cloud Logging programmatically, use the OpenTelemetry
+    Google Cloud exporter. Here is an example in Python:
+
+    ```python
+    from google.adk.telemetry.google_cloud import get_gcp_exporters
+    from google.adk.telemetry.setup import maybe_set_otel_providers
+    import os
+
+    gcp_exporters = get_gcp_exporters(
+      enable_cloud_logging = True,
+    )
+    os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+    os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+    maybe_set_otel_providers([gcp_exporters])
+    ```
+
+=== "Kotlin"
+
+    ADK Kotlin does not provide a built-in GCP exporter wrapper. Because it uses the standard `GlobalOpenTelemetry` instance on the JVM, you can export to Google Cloud by configuring your `OpenTelemetrySdk` with a standard OTLP exporter targeting the Google Cloud Telemetry endpoint before starting your agent.
+
+=== "Go"
+
+    To export logs to Google Cloud Logging, use the `WithOtelToCloud` option:
+
+    ```go
+    package main
+
+    import (
+    	"context"
+    	"google.golang.org/adk/v2/telemetry"
+    )
+
+    func main() {
+    	ctx := context.Background()
+    	tp, err := telemetry.New(ctx,
+    		telemetry.WithOtelToCloud(true),
+    	)
+    	if err != nil {
+    		// handle error
+    	}
+    	defer tp.Shutdown(ctx)
+    	tp.SetGlobalOtelProviders()
+    }
+    ```
+
+    If using the Go launcher, you can also enable GCP export via the CLI flag:
+
+    ```bash
+    go run main.go web -otel_to_cloud
+    ```
+
+## Activity logging with plugins
+
+ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and session state) without modifying your agent logic.
+
+### Console logging with `LoggingPlugin`
+
+To print structured activity logs to the console during execution, attach `LoggingPlugin` to your `App` (or configure `loggingplugin` in Go):
+
+=== "Python"
+
+    ```python
+    from google.adk.apps import App
+    from google.adk.plugins import LoggingPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[LoggingPlugin()],
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/cmd/launcher"
+    	"google.golang.org/adk/v2/plugin"
+    	"google.golang.org/adk/v2/plugin/loggingplugin"
+    	"google.golang.org/adk/v2/runner"
+    )
+
+    logPlugin, err := loggingplugin.New("logging_plugin")
+    if err != nil {
+    	// handle error
+    }
+
+    config := &launcher.Config{
+    	AgentLoader: agent.NewSingleLoader(rootAgent),
+    	PluginConfig: runner.PluginConfig{
+    		Plugins: []*plugin.Plugin{logPlugin},
+    	},
+    }
+    ```
+
+### Full debug capture to a file with `DebugLoggingPlugin`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.6.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span><span class="lst-kotlin">Kotlin v0.6.0</span>
 </div>
 
-To record the same activity in full, as YAML appended to `adk_debug.yaml` rather than truncated console output, use the `DebugLoggingPlugin`:
+To record complete interaction data as human-readable YAML appended to `adk_debug.yaml` rather than truncated console output, use `DebugLoggingPlugin`:
 
-```kotlin
---8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
-```
+=== "Python"
+
+    ```python
+    from google.adk.apps import App
+    from google.adk.plugins import DebugLoggingPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[
+            DebugLoggingPlugin(
+                output_path="adk_debug.yaml",
+                include_session_state=True,
+                include_system_instruction=True,
+            ),
+        ],
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:debug_logging_plugin"
+    ```
 
 !!! warning
-    The output file holds raw prompts, tool arguments and session state. Treat it as sensitive.
-
-### Go programmatic setup
-
-In Go, ADK uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry
-configuration and the standard `log` package for general events.
-
-#### Capture prompt content
-
-You can enable full prompt logging programmatically when initializing telemetry:
-
-```go
-package main
-
-import (
-	"context"
-	"google.golang.org/adk/v2/telemetry"
-)
-
-func main() {
-	ctx := context.Background()
-	tp, err := telemetry.New(ctx,
-		telemetry.WithGenAICaptureMessageContent(true),
-	)
-	if err != nil {
-		// handle error
-	}
-	defer tp.Shutdown(ctx)
-	tp.SetGlobalOtelProviders()
-}
-```
-
-#### OTLP export
-
-To export logs to an OTLP-compatible backend, configure the standard
-OpenTelemetry environment variables (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT` or
-`OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will
-automatically use these settings when initialized.
-
-#### GCP export setup
-
-To export logs to Google Cloud Logging, use the `WithOtelToCloud` option:
-
-```go
-package main
-
-import (
-	"context"
-	"google.golang.org/adk/v2/telemetry"
-)
-
-func main() {
-	ctx := context.Background()
-	tp, err := telemetry.New(ctx,
-		telemetry.WithOtelToCloud(true),
-	)
-	if err != nil {
-		// handle error
-	}
-	defer tp.Shutdown(ctx)
-	tp.SetGlobalOtelProviders()
-}
-```
-
-If using the Go launcher, you can also enable GCP export via the CLI flag:
-
-```bash
-go run main.go web -otel_to_cloud
-```
-
-General events (like server startup or HTTP requests) are logged using the
-standard Go `log` package. These logs are written to `stderr` by default.
+    The output file holds raw prompts, tool arguments, and session state. Although credentials and `temp:`-scoped state keys are automatically redacted in Python, treat the output file as sensitive.
 
 ## Understanding log output
 
