@@ -352,8 +352,6 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
 
 ---
 
-## Next Steps
+## More information
 
-* Return to the [Model Context Protocol Overview](./mcp-tools.md) for basic setup.
-* Explore [Custom Function Tools](./function-tools.md) for in-process Python tools.
-* Read the [ADK Deployment Guide](../deploy/index.md) for full cloud configuration options.
+* Return to the [Model Context Protocol Overview](./index.md) for basic setup.
