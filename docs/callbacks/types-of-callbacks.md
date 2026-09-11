@@ -13,25 +13,38 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 !!! Note
     The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.
 
-??? warning "Python: Use the documented callback parameter names"
+??? note "Python: Canonical callback parameter names"
 
-    In Python, callback function parameter names must match the documented
-    names exactly because ADK passes callback arguments by keyword. For example,
-    use `callback_context` for agent and model callbacks, and `tool_context` for
-    tool callbacks. Renaming these parameters to aliases such as `ctx` will cause
-    runtime `TypeError` failures.
+    For agent-defined callbacks in Python, ADK first tries to bind arguments by
+    keyword. If keyword binding fails, it tries positional binding in the
+    canonical order shown in the table below.
+
+    Canonical parameter names are recommended and are required for keyword-only
+    parameters. Callbacks that accept positional arguments may use different
+    parameter names, provided they accept the arguments in canonical order.
 
     ```python
-    # Correct
+    # Recommended: canonical parameter name; keyword binding succeeds.
     def before_agent_callback(callback_context):
-        ...
+        return None
 
-    # Incorrect
-    def before_agent_callback(ctx):
-        ...
+    # Supported: positional fallback supplies the callback context to ctx.
+    def before_agent_alias(ctx):
+        return None
+
+    # Supported: a keyword-only parameter with the canonical name.
+    def before_agent_keyword_only(*, callback_context):
+        return None
+
+    # Unsupported: neither keyword nor positional binding can supply ctx.
+    def before_agent_keyword_only_alias(*, ctx):
+        return None
     ```
 
-    | Callback | Required parameter names |
+    The last signature raises `TypeError` when ADK invokes it. Positional
+    fallback does not make renamed keyword-only parameters valid.
+
+    | Callback | Canonical parameter names |
     |---|---|
     | `before_agent_callback` | `callback_context` |
     | `after_agent_callback` | `callback_context` |
@@ -49,18 +62,29 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 ??? note "Python: `async` callbacks and lists of callbacks"
 
     In Python, a callback may be a plain `def` or an `async def`. ADK awaits
-    the result either way.
+    the result if it is awaitable.
 
     Every callback field also accepts a list of functions instead of a single
     function. ADK invokes them in the order listed and stops at the first one
     that returns a result: that value becomes the callback result, and the
     remaining callbacks are skipped. What counts as a result differs by family.
-    The six `before_`/`after_` agent, model and tool hooks stop only on a
-    *truthy* value, so a callback returning `None`, or another falsy value such
-    as an empty `dict`, lets the next one run. `on_model_error_callback` and
-    `on_tool_error_callback` stop on any value that is not `None`, so an empty
-    `dict` from an `on_tool_error_callback` ends the chain, suppresses the
-    exception, and becomes the tool result.
+
+    | Agent-defined callbacks | Response type (or `None`) | Stop the list when |
+    |---|---|---|
+    | `before_agent_callback`, `after_agent_callback` | `types.Content` | The response is truthy |
+    | `before_model_callback`, `after_model_callback` | `LlmResponse` | The response is truthy |
+    | `before_tool_callback`, `after_tool_callback` | `dict` | The response is not `None` |
+    | `on_model_error_callback` | `LlmResponse` | The response is not `None` |
+    | `on_tool_error_callback` | `dict` | The response is not `None` |
+
+    Return `None` to let the next callback run. An empty `dict` (`{}`) is a valid
+    tool response: it stops a before-tool chain and skips the tool call, stops
+    an after-tool chain and replaces the tool result, or stops a tool-error
+    chain and handles the exception. Model callbacks, including
+    `on_model_error_callback`, return `LlmResponse`, not a `dict`.
+
+    These stopping rules describe agent-defined callback lists. Plugin callback
+    ordering and overrides follow the [plugin callback rules](../plugins/index.md).
 
     Assign the list to the callback field on the agent:
 
@@ -112,7 +136,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 * **What it Shows:** This example demonstrates the `before_agent_callback`. This callback runs *right before* the agent's main processing logic starts for a given request.
 * **How it Works:** The callback function (`check_if_agent_should_run`) looks at a flag (`skip_llm_agent`) in the session's state.
     * If the flag is `True`, the callback returns a `types.Content` object. This tells the ADK framework to **skip** the agent's main execution entirely and use the callback's returned content as the final response.
-    * If the flag is `False` (or not set), the callback returns `None` or an empty object. This tells the ADK framework to **proceed** with the agent's normal execution (calling the LLM in this case).
+    * If the flag is `False` (or not set), the callback returns `None` in Python (or an empty optional in Java). This tells the ADK framework to **proceed** with the agent's normal execution (calling the LLM in this case).
 * **Expected Outcome:** You'll see two scenarios:
     1. In the session *with* the `skip_llm_agent: True` state, the agent's LLM call is bypassed, and the output comes directly from the callback ("Agent... skipped...").
     2. In the session *without* that state flag, the callback allows the agent to run, and you see the actual response from the LLM (e.g., "Hello!").
@@ -162,7 +186,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 * **What it Shows:** This example demonstrates the `after_agent_callback`. This callback runs *right after* the agent's main processing logic has finished and produced its result, but *before* that result is finalized and returned.
 * **How it Works:** The callback function (`modify_output_after_agent`) checks a flag (`add_concluding_note`) in the session's state.
     * If the flag is `True`, the callback returns a *new* `types.Content` object. This tells the ADK framework to **append** the agent's original output with the content returned by the callback.
-    * If the flag is `False` (or not set), the callback returns `None` or an empty object. This tells the ADK framework to **use** the original output generated by the agent.
+    * If the flag is `False` (or not set), the callback returns `None` in Python (or an empty optional in Java). This tells the ADK framework to **use** the original output generated by the agent.
 *   **Expected Outcome:** You'll see two scenarios:
     1. In the session *without* the `add_concluding_note: True` state, the callback allows the agent's original output ("Processing complete!") to be used.
     2. In the session *with* that state flag, the callback intercepts the agent's original output and appends it with its own message ("Concluding note added...").
@@ -267,9 +291,8 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
     ADK compares the returned value against `None`, so an empty `dict` counts
     as an override: the tool is skipped and `{}` becomes the tool result.
     Return `None`, not `{}`, when you want the tool to execute. With a list of
-    callbacks this applies to the last value produced, because an empty `dict`
-    does not stop the chain and is discarded if a later callback returns
-    something else.
+    callbacks, the first non-`None` response, including an empty `dict`, stops
+    the chain. Later callbacks do not run and cannot replace that response.
 
 ??? "Code"
     === "Python"
@@ -318,6 +341,8 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 
     ADK also compares the returned value against `None`, so returning `{}`
     replaces the tool response with `{}`. Return `None` to keep the original.
+    With a list of callbacks, an empty `dict` stops the chain; later callbacks
+    do not run.
 
 ??? "Code"
     === "Python"
