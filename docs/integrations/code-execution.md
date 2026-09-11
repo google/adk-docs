@@ -11,9 +11,11 @@ catalog_tags: ["code", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `built_in_code_execution` tool enables the agent to execute code,
+The `BuiltInCodeExecutor` code executor enables the agent to execute code,
 specifically when using Gemini 2 and higher models. This allows the model to
 perform tasks like calculations, data manipulation, or running small scripts.
+Set the executor on the agent's `code_executor` field rather than in its
+`tools` list.
 
 !!! warning "Warning: Single tool per agent limitation"
 

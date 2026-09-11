@@ -34,6 +34,15 @@ The `SpannerToolset` provides the following tools:
 - **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
 - **`similarity_search`**: Similarity search in Spanner using a text query.
 
+## Installation
+
+The Spanner tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
 ## Use with agent
 
 ```py
@@ -54,6 +63,7 @@ The following example configures a Spanner table as a vector store and wires the
 `vector_store_similarity_search` tool into a RAG agent:
 
 ```py
+import google.auth
 from google.adk.agents import LlmAgent
 from google.adk.tools.spanner import SpannerCredentialsConfig, SpannerToolset
 from google.adk.tools.spanner.settings import (
@@ -84,8 +94,10 @@ my_tool_settings = SpannerToolSettings(
     vector_store_settings=my_vector_store_settings,
 )
 
-# 2. Initialize the Spanner toolset
-credentials_config = SpannerCredentialsConfig()
+# 2. Initialize the Spanner toolset. SpannerCredentialsConfig requires
+# credentials, an external access token key, or a client ID and secret.
+credentials, _ = google.auth.default()
+credentials_config = SpannerCredentialsConfig(credentials=credentials)
 my_spanner_toolset = SpannerToolset(
     credentials_config=credentials_config,
     spanner_tool_settings=my_tool_settings,
