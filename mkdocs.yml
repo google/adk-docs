@@ -148,7 +148,6 @@ plugins:
         'tools/function-tools.md': 'tools-custom/function-tools.md'
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
-        'tools/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
         'tools-custom/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
         'mcp/index.md': 'tools-custom/mcp-tools/index.md'
         'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
