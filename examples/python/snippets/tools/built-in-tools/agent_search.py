@@ -54,8 +54,12 @@ runner_vsearch = Runner(
     app_name=APP_NAME_VSEARCH,
     session_service=session_service_vsearch,
 )
-session_vsearch = session_service_vsearch.create_session(
-    app_name=APP_NAME_VSEARCH, user_id=USER_ID_VSEARCH, session_id=SESSION_ID_VSEARCH
+session_vsearch = asyncio.run(
+    session_service_vsearch.create_session(
+        app_name=APP_NAME_VSEARCH,
+        user_id=USER_ID_VSEARCH,
+        session_id=SESSION_ID_VSEARCH,
+    )
 )
 
 
