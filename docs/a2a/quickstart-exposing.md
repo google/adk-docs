@@ -272,6 +272,32 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
     export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
     ```
 
+### Manage the application lifecycle
+
+Use the `lifespan` argument of the `to_a2a` function to manage the application's lifecycle. Pass an asynchronous context manager to perform setup and teardown tasks, such as initiate a database connection on startup and closing it on shutdown.
+
+The context manager receives the `Starlette` app instance. Use `app.state` to store resources that your application needs to access globally.
+
+```python
+from contextlib import asynccontextmanager
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from starlette.applications import Starlette
+
+
+@asynccontextmanager
+async def lifespan(app: Starlette):
+  # Initialize resources on application startup
+  app.state.db = await init_db()
+
+  yield
+
+  # Clean up resources on application shutdown
+  await app.state.db.close()
+
+
+a2a_app = to_a2a(agent, lifespan=lifespan)
+```
+
 ## Agent Executor V2
 
 The new version of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) is typically enabled when a client sends the required [A2A extension](a2a-extension.md).
