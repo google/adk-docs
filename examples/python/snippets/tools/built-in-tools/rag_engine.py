@@ -40,7 +40,7 @@ ask_vertex_retrieval = VertexAiRagRetrieval(
 )
 
 root_agent = Agent(
-    model="gemini-2.0-flash-001",
+    model="gemini-flash-latest",
     name="ask_rag_agent",
     instruction=(
         "You are an expert RAG documentation assistant. Use the "
