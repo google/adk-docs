@@ -6,13 +6,13 @@ hide:
 # Welcome to ADK 2.0
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 ADK 2.0 introduces powerful tools for building sophisticated AI agents, and
 helps you structure agents to execute challenging tasks with more control,
-predictability, and reliability. ADK 2.0 is available for Python and Go and
-includes the following key features:
+predictability, and reliability. ADK 2.0 is available for Python, TypeScript,
+and Go, and includes the following key features:
 
 -   [**Graph-based workflows**](/graphs/): Build deterministic agent
     workflows with more control over how tasks are routed and executed.
@@ -35,6 +35,11 @@ to build agents with ADK 2.0!
 !!! tip "ADK Go v2.0.0 GA release"
 
     ADK Go 2.0 is released for general availability as of June 30, 2026.
+
+!!! tip "ADK TypeScript v2.0.0 GA release"
+
+    ADK TypeScript 2.0 is released for general availability as of
+    August 21, 2026.
 
 ## ADK Python 1.x compatibility
 
@@ -184,6 +189,114 @@ To install the latest version of ADK 1.x, follow these steps:
         source .venv/bin/activate
         ```
 
+## ADK TypeScript 1.x compatibility
+
+ADK TypeScript 2.0 is designed to be compatible with agents developed with ADK
+TypeScript 1.x releases. However, there are a few breaking changes you should be
+aware of before upgrading an ADK TypeScript 1.x project to ADK TypeScript 2.0.
+
+!!! warning "Breaking changes: ADK TypeScript 1.x to 2.0 incompatibilities"
+
+    There are several known incompatibilities and breaking changes introduced
+    with ADK TypeScript v2.0.0. Before upgrading, review these changes and take
+    mitigation steps, if necessary.
+
+The ADK TypeScript 2.0 release introduces the Workflow Runtime, transitioning
+ADK TypeScript from a hierarchical agent executor to a graph-based execution
+engine. In this new architecture, your Agents, Tools, and Functions are
+evaluated as individual *nodes* within a workflow graph. If you are upgrading
+from ADK TypeScript 1.x, review the following breaking changes and migration
+steps.
+
+### Event Schema & Custom Session Storage
+
+ADK TypeScript 2.0 adds four optional fields to the core ***Event*** interface
+to support graph routing, workflow output, and multi-agent isolation:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `output` | `unknown` | The structured output produced by the emitting node. |
+| `route` | `Route` | The route keys emitted by a routing node, used to select the matching outgoing edges. |
+| `nodeInfo` | `NodeInfo` | Workflow-node metadata identifying which node emitted the event. |
+| `isolationScope` | `string` | Restricts which agent contexts see this event in LLM prompt history. |
+
+All four fields are optional, and each serializes under the name shown above.
+
+*   **Custom session storage:** If you have implemented a custom session
+    service, such as one storing sessions in your own SQL or NoSQL database
+    with a rigid schema, your underlying database schema must be updated to
+    accommodate the four new fields. Inserting a 2.0 ***Event*** into a rigid
+    1.x database table causes insertion or deserialization failures. *However,
+    if your custom session service stores events as serialized JSON, you do not
+    need to update your schema.*
+
+**Migration action:** Update your database schemas and downstream client
+validators to expect and store the four new fields on all Event payloads.
+
+### Agent Execution: BaseAgent extends BaseNode
+
+In ADK TypeScript 1.x, `BaseAgent` was a standalone class. In ADK TypeScript
+2.0, `BaseAgent` extends `BaseNode` so that every agent can run as a node in a
+workflow graph. Subclasses now inherit the `rerunOnResume`, `waitForOutput`,
+`retryConfig`, `timeout`, `inputSchema`, `outputSchema`, and `stateSchema`
+members.
+
+*   **Member name collisions:** A subclass that declares its own field using one
+    of these names now collides with the inherited member and fails to compile.
+*   **`description` default value:** The `description` member is now typed
+    `string` and defaults to an empty string. In ADK TypeScript 1.x it was
+    `undefined` when unset, so a check such as
+    `agent.description === undefined` no longer matches.
+
+**Migration action:** Rename any subclass field that collides with an inherited
+member. Replace checks for an `undefined` description with a check for an empty
+string.
+
+### Context: `InvocationContext.agent` is optional
+
+A workflow node can run without an enclosing agent, so the `agent` property of
+`InvocationContext` changed from `BaseAgent` to `BaseAgent | undefined`. Code
+that reads this property without handling `undefined` no longer compiles under
+`strict` mode.
+
+```typescript
+// Before (ADK TypeScript 1.x)
+const name = ctx.agent.name;
+
+// After (ADK TypeScript 2.0), inside an agent's own execution
+const name = requireAgent(ctx).name;
+
+// After (ADK TypeScript 2.0), outside an agent's own execution
+const name = ctx.agent?.name;
+```
+
+**Migration action:** Inside an agent's own execution, call `requireAgent(ctx)`,
+which returns the agent or throws an error that explains the invocation is
+running a node directly. Everywhere else, handle the `undefined` case.
+
+### Deprecated: SequentialAgent, ParallelAgent, and LoopAgent
+
+Constructing a `SequentialAgent`, `ParallelAgent`, or `LoopAgent` now logs a
+deprecation warning once per class, per process. These classes are otherwise
+unchanged and continue to work in ADK TypeScript 2.0.
+
+**Migration action:** No immediate action is required. To stop the warning and
+gain more control over routing, express the same sequence, fan-out, or loop as
+a [graph workflow](/graphs/).
+
+If you encounter additional ADK TypeScript 1.x to ADK 2.0 incompatibilities,
+report them through the
+[issue tracker](https://github.com/google/adk-js/issues/new?template=bug_report.md&labels=v2).
+
+### Installing ADK TypeScript 1.x {#install-ts}
+
+If you want to continue using ADK TypeScript 1.x and are not yet ready to
+upgrade to ADK TypeScript 2.0, pin your dependency to the 1.x release line:
+
+```shell
+npm install @google/adk@^1.6.0
+```
+
 ## ADK Go 1.x compatibility
 
 ADK Go 2.0 is designed to be compatible with agents developed with ADK Go 1.x
@@ -312,9 +425,13 @@ Check out these ADK 2.0 code samples for testing and inspiration:
     -   [**Workflow samples**](https://github.com/google/adk-python/tree/main/contributing/samples/workflows)
     -   [**Collaborative task samples**](https://github.com/google/adk-python/tree/main/contributing/samples/multi_agent)
 
+=== "TypeScript"
+
+    -   [**Workflow samples**](https://github.com/google/adk-js/tree/main/samples/workflows)
+
 === "Go"
 
     -   [**All workflow agents samples**](https://github.com/google/adk-go/tree/main/examples/workflow)
     -   [**Collaborative task sample**](https://github.com/google/adk-go/tree/main/examples/multiagent/collaboration)
 
-Thanks for checking out ADK 2.0! We look forward to your feedback — let us know on [ADK Go](https://github.com/google/adk-go/issues/new) or [ADK Python](https://github.com/google/adk-python/issues/new).
+Thanks for checking out ADK 2.0! We look forward to your feedback — let us know on [ADK Go](https://github.com/google/adk-go/issues/new), [ADK TypeScript](https://github.com/google/adk-js/issues/new) or [ADK Python](https://github.com/google/adk-python/issues/new).

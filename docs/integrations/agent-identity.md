@@ -84,7 +84,8 @@ for a complete example.
 
 ```python
 from google.adk.integrations.agent_identity import GcpAuthProviderScheme
-from google.adk.tools.mcp import McpToolset
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool import StreamableHTTPConnectionParams
 
 auth_scheme = GcpAuthProviderScheme(
     name="projects/PROJECT_ID/locations/LOCATION/connectors/AUTH_PROVIDER_NAME",
