@@ -8,131 +8,194 @@ catalog_tags: ["observability"]
 # W&B Weave observability for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-[W&B Weave](https://weave-docs.wandb.ai/) provides a powerful platform for logging and visualizing model calls. By integrating Google ADK with Weave, you can track and analyze your agent's performance and behavior using OpenTelemetry (OTEL) traces.
+[W&B Weave](https://docs.wandb.ai/weave) traces ADK agent invocations,
+sub-agent handoffs, model calls, and tool calls. Weave groups the resulting
+traces by agent and conversation in the **Agents** view so you can inspect an
+agent's behavior, latency, token usage, and cost.
 
 ## Prerequisites
 
-1. Sign up for an account at [WandB](https://wandb.ai).
+- A [W&B account](https://wandb.ai) and
+  [API key](https://wandb.ai/authorize)
+- A [Google API key](https://aistudio.google.com/apikey) for Gemini
 
-2. Obtain your API key from [WandB Authorize](https://wandb.ai/authorize).
-
-3. Configure your environment with the required API keys:
-
-   ```bash
-   export WANDB_API_KEY=<your-wandb-api-key>
-   export GOOGLE_API_KEY=<your-google-api-key>
-   ```
-
-## Install Dependencies
-
-Ensure you have the necessary packages installed:
+Set the credentials in your environment:
 
 ```bash
-pip install google-adk opentelemetry-sdk opentelemetry-exporter-otlp-proto-http
+export WANDB_API_KEY=<your-wandb-api-key>
+export GOOGLE_API_KEY=<your-google-api-key>
+export GEMINI_API_KEY=<your-google-api-key>
 ```
 
-## Sending Traces to Weave
+Python ADK reads `GOOGLE_API_KEY`. The TypeScript example below reads
+`GEMINI_API_KEY`.
 
-This example demonstrates how to configure OpenTelemetry to send Google ADK traces to Weave.
+## Install dependencies
 
-```python
-# math_agent/agent.py
+=== "Python"
 
-import base64
-import os
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk import trace as trace_sdk
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from opentelemetry import trace
+    ```bash
+    pip install weave google-adk
+    ```
 
-from google.adk.agents import LlmAgent
-from google.adk.tools import FunctionTool
+=== "TypeScript"
 
-from dotenv import load_dotenv
+    ```bash
+    npm install weave @google/adk zod
+    ```
 
-load_dotenv()
+## Trace an ADK agent
 
-# Configure Weave endpoint and authentication
-WANDB_BASE_URL = "https://trace.wandb.ai"
-PROJECT_ID = "your-entity/your-project"  # e.g., "teamid/projectid"
-OTEL_EXPORTER_OTLP_ENDPOINT = f"{WANDB_BASE_URL}/otel/v1/traces"
+Initialize Weave with your W&B team and project, then create and run your ADK
+agent normally.
 
-# Set up authentication
-WANDB_API_KEY = os.getenv("WANDB_API_KEY")
-AUTH = base64.b64encode(f"api:{WANDB_API_KEY}".encode()).decode()
+=== "Python"
 
-OTEL_EXPORTER_OTLP_HEADERS = {
-    "Authorization": f"Basic {AUTH}",
-    "project_id": PROJECT_ID,
-}
+    The Python SDK detects ADK when `weave.init()` runs and patches it for
+    tracing. Import ADK before initializing Weave, as shown here.
 
-# Create the OTLP span exporter with endpoint and headers
-exporter = OTLPSpanExporter(
-    endpoint=OTEL_EXPORTER_OTLP_ENDPOINT,
-    headers=OTEL_EXPORTER_OTLP_HEADERS,
-)
+    ```python
+    import asyncio
 
-# Create a tracer provider and add the exporter
-tracer_provider = trace_sdk.TracerProvider()
-tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
+    import weave
+    from google.adk.agents import Agent
+    from google.adk.runners import InMemoryRunner
+    from google.genai import types
 
-# Set the global tracer provider BEFORE importing/using ADK
-trace.set_tracer_provider(tracer_provider)
 
-# Define a simple tool for demonstration
-def calculator(a: float, b: float) -> str:
-    """Add two numbers and return the result.
+    weave.init("<your-team>/<your-project>")
 
-    Args:
-        a: First number
-        b: Second number
 
-    Returns:
-        The sum of a and b
-    """
-    return str(a + b)
+    def add(a: float, b: float) -> dict[str, float]:
+        """Add two numbers."""
+        return {"total": a + b}
 
-calculator_tool = FunctionTool(func=calculator)
 
-# Create an LLM agent
-root_agent = LlmAgent(
-    name="MathAgent",
-    model="gemini-flash-latest",
-    instruction=(
-        "You are a helpful assistant that can do math. "
-        "When asked a math problem, use the calculator tool to solve it."
-    ),
-    tools=[calculator_tool],
-)
-```
+    root_agent = Agent(
+        name="calculator_agent",
+        model="gemini-2.5-flash",
+        instruction="Use the add tool to answer arithmetic questions.",
+        tools=[add],
+    )
 
-## View Traces in Weave dashboard
 
-Once the agent runs, all its traces are logged to the corresponding project on [the Weave dashboard](https://wandb.ai/home).
+    async def main() -> None:
+        runner = InMemoryRunner(
+            agent=root_agent,
+            app_name="weave-adk-example",
+        )
+        session = await runner.session_service.create_session(
+            app_name="weave-adk-example",
+            user_id="example-user",
+        )
+
+        async for event in runner.run_async(
+            user_id="example-user",
+            session_id=session.id,
+            new_message=types.Content(
+                role="user",
+                parts=[types.Part(text="What is 17 plus 25?")],
+            ),
+        ):
+            if event.is_final_response() and event.content:
+                print(event.content.parts[0].text)
+
+
+    asyncio.run(main())
+    ```
+
+=== "TypeScript"
+
+    Register `WeaveAdkPlugin` on the runner. Explicit registration works in
+    ESM, CommonJS, and bundled applications without a module-loader hook.
+
+    ```typescript
+    import {
+      FunctionTool,
+      Gemini,
+      InMemoryRunner,
+      LlmAgent,
+    } from "@google/adk";
+    import { flushOTel, init, WeaveAdkPlugin } from "weave";
+    import { z } from "zod";
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("Set GEMINI_API_KEY before running this example.");
+    }
+
+    const addTool = new FunctionTool({
+      name: "add",
+      description: "Add two numbers.",
+      parameters: z.object({
+        a: z.number(),
+        b: z.number(),
+      }),
+      execute: async ({ a, b }) => ({ total: a + b }),
+    });
+
+    async function main() {
+      await init("<your-team>/<your-project>");
+
+      const agent = new LlmAgent({
+        name: "calculator_agent",
+        description: "Answers arithmetic questions.",
+        instruction: "Use the add tool to answer arithmetic questions.",
+        model: new Gemini({ model: "gemini-2.5-flash", apiKey }),
+        tools: [addTool],
+      });
+
+      const appName = "weave-adk-example";
+      const userId = "example-user";
+      const runner = new InMemoryRunner({
+        agent,
+        appName,
+        plugins: [new WeaveAdkPlugin()],
+      });
+      const session = await runner.sessionService.createSession({
+        appName,
+        userId,
+      });
+
+      for await (const event of runner.runAsync({
+        userId,
+        sessionId: session.id,
+        newMessage: {
+          role: "user",
+          parts: [{ text: "What is 17 plus 25?" }],
+        },
+      })) {
+        const text = event.content?.parts
+          ?.map((part) => part.text)
+          .filter(Boolean)
+          .join("");
+        if (text) console.log(text);
+      }
+
+      await flushOTel();
+    }
+
+    main().catch(console.error);
+    ```
+
+After the run completes, open your W&B project and select **Weave** >
+**Agents**. The trace shows the agent invocation with its model and tool calls,
+including their inputs, outputs, timing, token usage, and cost when available.
 
 ![Traces in Weave](https://wandb.github.io/weave-public-assets/google-adk/traces-overview.png)
 
-You can view a timeline of calls that your ADK agent made during execution -
+## Data and privacy
 
-![Timeline view](https://wandb.github.io/weave-public-assets/google-adk/adk-weave-timeline.gif)
+Weave sends trace data to the W&B service configured by your SDK. Depending on
+the agent, this data can include prompts, model responses, tool inputs and
+outputs, and application metadata. Review your security, privacy, and retention
+requirements before tracing sensitive workloads.
 
+## Additional resources
 
-## Notes
-
-- **Environment Variables**: Ensure your environment variables are correctly set for both WandB and Google API keys.
-- **Project Configuration**: Replace `<your-entity>/<your-project>` with your actual WandB entity and project name.
-- **Entity Name**: You can find your entity name by visiting your [WandB dashboard](https://wandb.ai/home) and checking the **Teams** field in the left sidebar.
-- **Tracer Provider**: It's critical to set the global tracer provider before using any ADK components to ensure proper tracing.
-
-By following these steps, you can effectively integrate Google ADK with Weave, enabling comprehensive logging and visualization of your AI agents' model calls, tool invocations, and reasoning processes.
-
-## Resources
-
-- **[Send OpenTelemetry Traces to Weave](https://weave-docs.wandb.ai/guides/tracking/otel)** - Comprehensive guide on configuring OTEL with Weave, including authentication and advanced configuration options.
-
-- **[Navigate the Trace View](https://weave-docs.wandb.ai/guides/tracking/trace-tree)** - Learn how to effectively analyze and debug your traces in the Weave UI, including understanding trace hierarchies and span details.
-
-- **[Weave Integrations](https://weave-docs.wandb.ai/guides/integrations/)** - Explore other framework integrations and see how Weave can work with your entire AI stack.
+- [Google ADK integration guide](https://docs.wandb.ai/weave/guides/integrations/agents/google-adk)
+- [W&B Weave documentation](https://docs.wandb.ai/weave)
+- [Navigate the trace view](https://docs.wandb.ai/weave/guides/tracking/trace-tree)
