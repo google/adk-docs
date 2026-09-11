@@ -1,7 +1,7 @@
 # Use the API Server
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
@@ -94,6 +94,46 @@ Use the following command to run your agent in an ADK API server:
 
     In Java, both the Dev UI and the API server are bundled together.
 
+=== "Kotlin"
+
+    In Kotlin there is no standalone `adk` CLI. Construct an `AdkApiServer` in
+    your own `main`:
+
+    ```kotlin title="ApiMain.kt"
+    import com.google.adk.kt.webserver.AdkApiServer
+    import com.google.adk.kt.webserver.AdkServerConfig
+
+    fun main() =
+        AdkApiServer(AdkServerConfig.inMemory(rootAgent)).start(wait = true)
+    ```
+
+    `AdkServerConfig.inMemory()` supplies a single-agent loader with in-memory
+    session and artifact services; build `AdkServerConfig` directly to serve
+    several agents or to persist state.
+
+    Then run that class like any other JVM entry point. With the Gradle
+    `application` plugin, point `mainClass` at it — a top-level `main` in
+    `ApiMain.kt` compiles to `ApiMainKt`, not `ApiMain`:
+
+    ```kotlin title="build.gradle.kts"
+    application {
+        mainClass.set("com.example.agent.ApiMainKt")
+    }
+    ```
+
+    ```console
+    gradle run
+    ```
+
+    See the [Kotlin quickstart](../get-started/kotlin.md) for full project
+    setup, including how to select between several entry points.
+
+    !!! note "Kotlin defaults to port 8080 and loopback"
+
+        Adjust the `curl` examples below accordingly, or set `port` on
+        `AdkServerConfig`. The server binds `127.0.0.1`, so a container must
+        set `host` too, or nothing outside it can connect.
+
 This command will launch a local web server, where you can run cURL commands or
 send API requests to test your agent. By default, the server runs on
 `http://localhost:8000`.
@@ -178,6 +218,20 @@ The output should appear similar to:
     2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
     ```
+
+=== "Kotlin"
+
+    ```shell
+    12:07:20.157 [main] INFO com.google.adk.kt.webserver.AdkApiServer -- AdkApiServer starting on 127.0.0.1:8080
+    12:07:20.343 [main] INFO ktor.application -- Application started in 0.257 seconds.
+    12:07:20.596 [DefaultDispatcher-worker-1] INFO ktor.application -- Responding at http://127.0.0.1:8080
+    ```
+
+    !!! note "Kotlin: default port"
+
+        The Kotlin API server defaults to port **8080** (not 8000), so adjust
+        the example `curl` commands below. Unlike Go it adds no path prefix, so
+        the paths themselves are unchanged: `http://localhost:8080/list-apps`.
 
 Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
 
