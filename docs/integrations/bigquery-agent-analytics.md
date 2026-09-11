@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
 </div>
 
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
@@ -76,6 +76,21 @@ a sanitized `error_message`. Workflow nodes can emit `NODE_OUTPUT` and
     For information on costs, see the [BigQuery
     documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
 
+??? note "Kotlin support"
+
+    The **Kotlin** plugin logs invocation lifecycle events. It writes an
+    `INVOCATION_STARTING` row when an invocation begins and an
+    `INVOCATION_COMPLETED` row when it ends, and creates the partitioned,
+    clustered events table on first use if it does not already exist.
+
+    Rows are inserted one at a time through `tabledata.insertAll`, synchronously
+    on the invocation path, rather than through the Storage Write API used by
+    Python and Java.
+
+    The following are not implemented in Kotlin: LLM, tool, agent, state, HITL
+    and A2A events; the ADK 2.0 workflow events; automatic view creation; Auto
+    Schema Upgrade; tool provenance; GCS offloading; and drop statistics.
+
 ## Use cases
 
 - **Agent workflow debugging and analysis:** Capture a wide range of *plugin
@@ -104,8 +119,18 @@ a sanitized `error_message`. Workflow nodes can emit `NODE_OUTPUT` and
 
 The following table lists all event types the plugin logs. For detailed payload
 examples, see [Event types and payloads](#event-types). The **View** column
-shows the BigQuery view optionally created when
-[`create_views`](#configuration-options) is enabled (the default).
+shows the optional BigQuery view. Python creates views by default; Java creates
+them only when `createViews(true)` is configured.
+
+In **Kotlin**, the plugin logs `INVOCATION_STARTING` and `INVOCATION_COMPLETED`
+only and creates no views, so the other rows and the entire **View** column
+apply to Python and Java.
+
+The table is the union of the Python and Java event sets. `INVOCATION_ERROR`,
+`AGENT_ERROR`, `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
+`EVENT_COMPACTION`, `NODE_OUTPUT`, and `NODE_ERROR` are Python-only. Java emits
+`TOOL_PAUSED`, but none of the other workflow-specific events. The remaining
+rows apply to both languages.
 
 | Event Type | Captured When | Key Payload Fields | View |
 | --- | --- | --- | --- |
@@ -209,7 +234,7 @@ The `pyarrow` dependency is no longer included in the general `gcp` extra. If
             BigQueryLoggerConfig.builder()
                 .projectId("your-gcp-project-id")
                 .datasetId("your-big-query-dataset-id")
-                .tableName("agent_events") // Optional, defaults to "events" in Java
+                .tableName("agent_events") // Optional; default in v1.8.0+
                 .build());
 
         InMemoryRunner runner = new InMemoryRunner(
@@ -228,6 +253,33 @@ The `pyarrow` dependency is no longer included in the general `gcp` extra. If
       }
     }
     ```
+
+=== "Kotlin"
+
+    Add the plugin to your agent's `App` object. For prerequisites, see
+    [Prerequisites](#prerequisites). The plugin is JVM-only and ships outside
+    core, so add the integrations artifact:
+
+    ```kotlin title="build.gradle.kts"
+    implementation("com.google.adk:google-adk-kotlin-integrations:1.0.0")
+    ```
+
+    ```kotlin title="BigQueryAnalyticsExample.kt"
+    --8<-- "examples/kotlin/snippets/integrations/BigQueryAnalyticsExample.kt:quickstart"
+    ```
+
+    The plugin creates the events table on first use, so the credentials in
+    scope need permission to create a table in the dataset, not only to insert
+    rows. Set `location` to your dataset's location; it defaults to `"US"`. For
+    the full set of options, see [Configuration
+    options](#configuration-options).
+
+    Logging never fails the turn: if the table cannot be created or a row cannot
+    be inserted, the plugin logs the error and the invocation continues. When
+    rows are missing, enable logging for
+    `com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin` —
+    logs are emitted under that class name, not under the plugin's ADK name
+    (`bigquery_agent_analytics`).
 
 
 ### Run and test agent
@@ -754,8 +806,8 @@ account) under which the agent is running needs these Google Cloud roles:
     | --- | --- | --- | --- |
     | `enabled(boolean)` | `boolean` | `true` | Temporarily disable logging |
     | `projectId(String)` | `String` | *(required)* | Select the Google Cloud project |
-    | `datasetId(String)` | `String` | `"agent_analytics"` | Select the BigQuery dataset |
-    | `tableName(String)` | `String` | `"events"` | Use a custom table name (Note: defaults to `"events"`, unlike Python's `"agent_events"`) |
+    | `datasetId(String)` | `String` | *(required)* | Select the BigQuery dataset |
+    | `tableName(String)` | `String` | `"agent_events"` | Use a custom table name |
     | `location(String)` | `String` | `"us"` | Match the BigQuery dataset location |
     | `clusteringFields(List<String>)` | `List<String>` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
     | `gcsBucketName(String)` | `String` | `""` | Offload large text and multimodal content to GCS |
@@ -776,6 +828,10 @@ account) under which the agent is running needs these Google Cloud roles:
     | `createViews(boolean)` | `boolean` | `false` | Create per-event-type BigQuery views (Note: defaults to `false`, unlike Python's `true`) |
     | `viewPrefix(String)` | `String` | `"v"` | Avoid view-name collisions |
     | `credentials(Credentials)` | `Credentials` | `null` | Use explicit service-account credentials |
+
+    In Java v1.8.0 and later, `datasetId` is required and `tableName` defaults
+    to `"agent_events"`. Java v1.7.0 and earlier defaulted these values to
+    `"agent_analytics"` and `"events"`, respectively.
 
     The following code sample shows how to define a configuration for the BigQuery
     Agent Analytics plugin in Java:
@@ -807,6 +863,44 @@ account) under which the agent is running needs these Google Cloud roles:
     BigQueryAgentAnalyticsPlugin plugin = new BigQueryAgentAnalyticsPlugin(config);
     ```
 
+=== "Kotlin"
+
+    In Kotlin, all configuration is managed via the `BigQueryLoggerConfig` data
+    class, which the plugin takes as its only required argument.
+
+    #### BigQueryLoggerConfig properties
+
+    | Option | Type | Default | Use when |
+    | --- | --- | --- | --- |
+    | `projectId` | `String` | *(required)* | Select the Google Cloud project |
+    | `datasetId` | `String` | *(required)* | Select the BigQuery dataset |
+    | `enabled` | `Boolean` | `true` | Temporarily disable logging |
+    | `location` | `String` | `"US"` | Match the BigQuery dataset location (for example, `"EU"` or `"us-central1"`) |
+    | `tableName` | `String` | `"agent_events"` | Use a custom table name |
+    | `credentials` | `Credentials?` | `null` | Use explicit service-account credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
+
+    The following code sample shows how to define a configuration for the
+    BigQuery Agent Analytics plugin in Kotlin:
+
+    ```kotlin
+    import com.google.adk.kt.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin
+    import com.google.adk.kt.plugins.agentanalytics.BigQueryLoggerConfig
+
+    val config =
+        BigQueryLoggerConfig(
+            projectId = "my-project",
+            datasetId = "my_dataset",
+            location = "EU",
+            tableName = "agent_events",
+        )
+
+    val plugin = BigQueryAgentAnalyticsPlugin(config = config)
+    ```
+
+    The options listed under the **Python** and **Java** tabs, such as batching,
+    content formatting, event allowlists, GCS offloading, and view creation, do
+    not exist in Kotlin.
+
 
 ## Schema and production setup
 
@@ -831,14 +925,22 @@ provides a comprehensive reference with example values.
 | **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
-| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. It can be populated on a final `LLM_RESPONSE` whose `status` remains `OK`. | `Error 404: Dataset not found` |
+| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. In Python, it can be populated on a final `LLM_RESPONSE` whose `status` remains `OK`. | `Error 404: Dataset not found` |
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` when content or metadata is truncated or replaced by a safety boundary, including the configured `max_content_length`, sanitizer depth or node budgets, and diagnostic-text sanitization. Ordinary structured sensitive-key redaction does not set it by itself. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
 
-The `event_id` column is part of schema version 2. With
+In Python, the `event_id` column is part of schema version 2. With
 `auto_schema_upgrade=True` (the default), the plugin adds it to an existing
 table automatically. If you manage the table schema yourself, add the column
 before using ADK Python v2.7.0 or later.
+
+The Java schema does not include `event_id`. A table created from the manual
+DDL below remains compatible with Java because the column is nullable.
+
+In **Kotlin**, the plugin creates the table with these same columns but
+populates only `timestamp`, `event_type`, `agent`, `session_id`,
+`invocation_id`, `user_id`, and `content`. The remaining columns are always
+null.
 
 The plugin automatically creates the table if it does not exist. For production,
 you can optionally create the table manually using the DDL below.
@@ -886,14 +988,14 @@ you can optionally create the table manually using the DDL below.
 ### Automatically Created Views
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
-When `create_views=True` (the default), the plugin
-automatically generates views for each event type that unnest common JSON
-structures into flat, typed columns. This significantly simplifies SQL,
-eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions
-explicitly.
+In Python, `create_views=True` (the default) automatically generates views for
+each event type. In Java, set `createViews(true)`; its default is `false`.
+Kotlin does not create views. The views unnest common JSON structures into
+flat, typed columns, which avoids repetitive `JSON_VALUE` and `JSON_QUERY`
+expressions.
 
 View names follow the convention `{view_prefix}_{event_type_lowercase}` (for
 example, with the default prefix `"v"`, `LLM_REQUEST` becomes `v_llm_request`).
@@ -921,12 +1023,12 @@ plugin_staging = BigQueryAgentAnalyticsPlugin(
 You can also call the public async method `await plugin.create_analytics_views()`
 to manually refresh views, for example after a schema upgrade.
 
-Every view includes these **common columns**: `timestamp`, `event_id`,
+Every Python view includes these **common columns**: `timestamp`, `event_id`,
 `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`,
 `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`.
+Java views include the same common columns except `event_id`.
 
-The following table lists all auto-created views and their event-specific
-columns:
+The following table lists the Python views and their event-specific columns:
 
 | View Name | Event-Specific Columns |
 | --- | --- |
@@ -965,6 +1067,17 @@ support](#adk-2-events). In **Java** (v1.7.0+), only
 and `v_event_compaction` are Python-only (the Java plugin does not emit those
 events). The `v_node_output` and `v_node_error` views are available in Python
 v2.7.0 and later.
+
+The other Java view differences are:
+
+- Java does not create `v_agent_error`, `v_invocation_error`, `v_node_output`,
+  or `v_node_error` because it does not emit those events.
+- Java's `v_llm_response` ends at `usage_metadata`; it does not expose
+  `usage_thinking_tokens`, `usage_tool_use_tokens`, `cache_metadata`,
+  `cache_type`, or `finish_reason`.
+- Java's `v_agent_response` exposes `text_summary` instead of `response_text`.
+- Java's `v_a2a_interaction` omits `a2a_response`; the response remains
+  available in `response_content`.
 
 ## Event types and payloads {#event-types}
 
@@ -1048,14 +1161,14 @@ Captures the model's output and token usage statistics.
 }
 ```
 
-The plugin adds `finish_reason` only to final, non-partial responses. The
-`v_llm_response` view exposes it as a `STRING`, along with the final response's
-`cache_type`. When the model supplies termination diagnostics, the plugin
+The Python plugin adds `finish_reason` only to final, non-partial responses.
+Its `v_llm_response` view exposes it as a `STRING`, along with the final
+response's `cache_type`. When the model supplies termination diagnostics, it
 stores a sanitized value in the common `error_message` column even though the
 row's `status` remains `OK`.
 
-Model finish and block reasons remain classified as `LLM_RESPONSE`. The plugin
-uses `LLM_ERROR` only when a model call raises an exception.
+In Python, model finish and block reasons remain classified as `LLM_RESPONSE`.
+The plugin uses `LLM_ERROR` only when a model call raises an exception.
 
 **3. LLM_ERROR**
 
@@ -1088,7 +1201,7 @@ a `tool_origin` field that classifies the tool's provenance:
 | `SUB_AGENT` | `AgentTool` instances (sub-agents) |
 | `A2A` | Remote Agent2Agent instances (`RemoteA2aAgent`) |
 | `TRANSFER_AGENT` | `TransferToAgentTool` instances (generic agent transfer) |
-| `TRANSFER_A2A` | `TransferToAgentTool` instances that transfer to a `RemoteA2aAgent` (classified at call-level) |
+| `TRANSFER_A2A` | Python only: `TransferToAgentTool` instances that transfer to a `RemoteA2aAgent` (classified at call-level) |
 | `UNKNOWN` | Unclassified tools |
 
 **4. TOOL_STARTING**
@@ -1191,10 +1304,14 @@ updated by tools).
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
 | `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
 
-The `AGENT_ERROR` and `INVOCATION_ERROR` rows have `status="ERROR"`, a
-sanitized `error_message`, and a sanitized traceback in `content`. The agent
+In Python, the `AGENT_ERROR` and `INVOCATION_ERROR` rows have `status="ERROR"`,
+a sanitized `error_message`, and a sanitized traceback in `content`. The agent
 error view also exposes the elapsed `total_ms`. These events represent
 unhandled exceptions that escape agent or runner execution.
+
+In **Kotlin**, the two invocation events carry a summary message instead of an
+empty object: `{"message": "Invocation started"}` and
+`{"message": "Invocation completed"}`.
 
 **AGENT_RESPONSE**
 
@@ -1214,11 +1331,15 @@ Logged when the agent yields a final response to the user. The response text is 
 }
 ```
 
-If `final_response_tool_names` contains the name of a successfully completed
-tool, the plugin also emits `AGENT_RESPONSE` with that tool's call arguments as
-the response payload and `source_tool` in `attributes`. This supports agents
-that deliver their final answer through a dedicated tool instead of a visible
-text event.
+The example shows the Python payload. Java stores the visible content summary
+as `{"text_summary": "Here are the available flights..."}` and exposes that
+field as `text_summary` in `v_agent_response`.
+
+In Python, if `final_response_tool_names` contains the name of a successfully
+completed tool, the plugin also emits `AGENT_RESPONSE` with that tool's call
+arguments as the response payload and `source_tool` in `attributes`. This
+supports agents that deliver their final answer through a dedicated tool
+instead of a visible text event.
 
 ### Human-in-the-Loop (HITL) Events {#hitl-events}
 
@@ -1279,10 +1400,11 @@ Logged when an A2A remote agent call completes.
 }
 ```
 
-The base row stores the response payload directly in `content` and keeps the
-namespaced A2A metadata in `attributes.a2a_metadata`. The
-`v_a2a_interaction` view exposes these as `response_content`, `a2a_task_id`,
-`a2a_context_id`, `a2a_request`, and `a2a_response`.
+The example shows the Python payload. Both implementations store the response
+directly in `content`. Python also keeps the namespaced response in
+`attributes.a2a_metadata`; Java omits that duplicate. The Python
+`v_a2a_interaction` view exposes `response_content`, `a2a_task_id`,
+`a2a_context_id`, `a2a_request`, and `a2a_response`. Java omits the last column.
 
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
@@ -2540,11 +2662,11 @@ Write health problems. In Java, the comparable write-error bucket is
 
 ### Multiprocessing and fork safety
 
-The plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before loading
-the gRPC C-core library and registers an `os.register_at_fork` handler that
-resets inherited runtime state (gRPC channels, write streams, event loops) in
-child processes. This means the plugin can survive `os.fork()` without leaking
-file descriptors or sending data on a parent's connection.
+The Python plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before
+loading the gRPC C-core library and registers an `os.register_at_fork` handler
+that resets inherited runtime state (gRPC channels, write streams, event loops)
+in child processes. This means the plugin can survive `os.fork()` without
+leaking file descriptors or sending data on a parent's connection.
 
 However, **`spawn` is the recommended multiprocessing start method** for
 production deployments. `fork` copies the parent's address space, including any
