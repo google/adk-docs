@@ -40,6 +40,6 @@ ADK supports multiple grounding approaches:
 
     A production-ready fullstack research agent that transforms topics into comprehensive reports with citations. Features a two-phase workflow with human-in-the-loop plan approval, iterative search refinement, and multi-agent architecture for planning, researching, critiquing, and composing.
 
-    - [Deep Search Agent](https://github.com/google/adk-samples/tree/main/python/agents/deep-search)
+    - [Deep Search Agent](https://github.com/google/adk-samples/tree/main/core/python/deep-search)
 
 </div>
