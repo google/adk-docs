@@ -26,6 +26,17 @@ They are packaged in the toolset `BigtableToolset`.
 !!! example "Experimental"
     This feature is experimental and may be updated in future releases.
 
+## Installation
+
+The Bigtable tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
+## Use with agent
+
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
 ```
