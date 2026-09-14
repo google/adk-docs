@@ -111,6 +111,7 @@ phone.
 ```python
 from google.adk.integrations.livekit import LiveKitRunner
 from livekit.agents import AgentServer
+from livekit.agents import cli
 from livekit.agents import JobContext
 
 server = AgentServer()
@@ -124,6 +125,10 @@ async def entrypoint(ctx: JobContext) -> None:
   await LiveKitRunner(
       runner=runner, room=ctx.room, user_id="live-user", session_id=ctx.room.name
   ).start()
+
+
+if __name__ == "__main__":
+  cli.run_app(server)
 ```
 
 ## Deploy the worker
@@ -142,10 +147,15 @@ Run, or GKE from the `deployment_target` in your `pyproject.toml`. See
 [Deploy with Agents CLI](../deploy/agent-runtime/agents-cli.md), or deploy by hand to
 [Cloud Run](../deploy/cloud-run.md) or [GKE](../deploy/gke.md).
 
-Two settings matter for voice. A call can last far longer than a web request, so confirm the
-request timeout on your service covers your longest call. Each dispatched job also runs in
-its own process, so use a durable [session service](../sessions/index.md);
-`InMemoryRunner` persists nothing between calls.
+Two things matter when deploying to Cloud Run. The worker serves a health endpoint on a
+fixed port rather than on `$PORT`, so deploy with `--port=8081`, or set the port in code
+with `AgentServer(port=int(os.environ["PORT"]))`. The startup probe never succeeds
+otherwise. Voice also needs the worker responsive between calls, so set
+`--no-cpu-throttling` and `--min-instances=1`; a throttled or scaled-to-zero worker stops
+accepting dispatch.
+
+Each dispatched job runs in its own process whatever the target, so use a durable
+[session service](../sessions/index.md); `InMemoryRunner` persists nothing between calls.
 
 ## Additional resources
 
