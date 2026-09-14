@@ -147,14 +147,20 @@ Run, or GKE from the `deployment_target` in your `pyproject.toml`. See
 [Deploy with Agents CLI](../deploy/agent-runtime/agents-cli.md), or deploy by hand to
 [Cloud Run](../deploy/cloud-run.md) or [GKE](../deploy/gke.md).
 
-Two things matter when deploying to Cloud Run. The worker serves a health endpoint on a
-fixed port rather than on `$PORT`, so deploy with `--port=8081`, or set the port in code
-with `AgentServer(port=int(os.environ["PORT"]))`. The startup probe never succeeds
-otherwise. Voice also needs the worker responsive between calls, so set
-`--no-cpu-throttling` and `--min-instances=1`; a throttled or scaled-to-zero worker stops
-accepting dispatch.
+Cloud Run probes `$PORT`, while the worker serves its health endpoint on a fixed port, so
+make the two match. Read the port from the environment when you create the server:
 
-Each dispatched job runs in its own process whatever the target, so use a durable
+```python
+import os
+
+server = AgentServer(port=int(os.environ["PORT"]))
+```
+
+Deploying with `--port=8081` does the same job, since that is the port the worker uses in
+production. The worker also sits idle between calls, so run with `--no-cpu-throttling` and
+`--min-instances=1` to keep it accepting dispatch.
+
+Each dispatched job runs in its own process, so use a durable
 [session service](../sessions/index.md); `InMemoryRunner` persists nothing between calls.
 
 ## Additional resources
