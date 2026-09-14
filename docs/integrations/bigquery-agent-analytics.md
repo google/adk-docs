@@ -2221,10 +2221,16 @@ If events are not appearing in your BigQuery table after deployment:
 
     The BigQuery Agent Analytics plugin captures detailed event payloads,
     including tool arguments, LLM prompts, and authentication-related events
-    (such as HITL credential requests). Built-in redaction covers common key
-    names and credential patterns, but it is not a general data-loss prevention
-    system. A secret under an application-specific key or in unrelated
-    free-form text can still be written to BigQuery.
+    (such as HITL credential requests). Built-in redaction matches key names
+    exactly after lowercasing and hyphen normalization, so camelCase variants
+    such as `clientSecret` or `accessToken` are **not** matched. ADK serializes
+    `adk_request_credential` arguments with camelCase aliases, so an
+    `AuthenticatedFunctionTool` OAuth2 flow can still write `client_secret` and
+    `access_token` values into the `content` column
+    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845),
+    still open). Redaction is not a general data-loss prevention system: a
+    secret under an application-specific key or in free-form text can also be
+    written to BigQuery.
 
 The plugin includes **built-in redaction** that automatically protects common
 secrets. For additional control, you can layer custom redaction on top.
@@ -2249,6 +2255,14 @@ Any key prefixed with **`temp:`** is also replaced with `[REDACTED]`, including
 in session state and `state_delta`. A `secret:` prefix is not treated as a
 special prefix; use the `temp:` scope or a custom formatter for
 application-specific secret scopes.
+
+!!! warning "Correction to earlier guidance"
+
+    An earlier version of this page stated that a `secret:` state prefix was
+    automatically redacted. That was incorrect: ADK defines only the `app:`,
+    `user:`, and `temp:` state scopes, and the plugin redacts only `temp:`. If
+    you relied on that guidance, audit your existing `agent_events` tables for
+    values logged under non-`temp:` keys.
 
 The plugin also sanitizes credential patterns in `error_message`, agent and run
 tracebacks, and external URIs. This includes authorization headers, bearer and
@@ -2713,14 +2727,15 @@ The [BigQuery Agent Analytics dashboard setup
 page](https://googlecloudplatform.github.io/BigQuery-Agent-Analytics-SDK/) is
 the fastest path to a dashboard. Enter the fully qualified ID of your event
 table (`project.dataset.table`) and it builds a Looker Studio link that creates
-your own private copy of a published template: 37 charts across 8 report pages,
-querying the base table directly with no generated views and no data pipelines.
-The page is static and has no backend, so the values you enter are only used to
-construct the link in your browser.
+your own private copy of a published template, querying the base table directly
+with no generated views and no data pipelines. The setup page states that it has
+no backend and builds the link client-side; review its source before entering a
+table ID.
 
-The copy is created with **Owner's credentials**. Before sharing it, switch the
-data source to **Viewer's credentials** so that each viewer queries BigQuery
-with their own access, and verify with a viewer-only account.
+The copy is created with **Owner's credentials**. Keep the report private until
+you switch the data source to **Viewer's credentials**, so that each viewer
+queries BigQuery with their own access, and verify the switch with a
+viewer-only account before sharing.
 
 #### Looker Block
 
