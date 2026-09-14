@@ -159,18 +159,19 @@ parameters or enforce business logic. The `after_tool_callback` hook redacts sen
 results before they return to the model:
 
 ```python
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
-from google.adk.agents.callback_context import CallbackContext
+from google.adk.tools import BaseTool
+from google.adk.tools import ToolContext
 
 
 def validate_refund(
-    callback_context: CallbackContext,
-    tool_name: str,
-    tool_args: Dict[str, Any],
-) -> Optional[Dict[str, Any]]:
+    tool: BaseTool,
+    args: dict[str, Any],
+    tool_context: ToolContext,
+) -> Optional[dict[str, Any]]:
   """Prevents unauthorized refunds above a threshold."""
-  if tool_name == 'issue_refund' and tool_args.get('amount', 0) > 100:
+  if tool.name == 'issue_refund' and args.get('amount', 0) > 100:
     return {'error': 'Refund exceeds automatic approval limit.'}
   return None
 ```
