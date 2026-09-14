@@ -1,3 +1,4 @@
+<img width="800" height="600" alt="7123" src="https://github.com/user-attachments/assets/245baed3-bd81-47eb-b5e0-99fbd5894f23" />
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
