@@ -36,8 +36,8 @@ GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen
 
 By default prompt content is elided in logs for security. You can enable prompt
 logging using environment variables or programmatic configuration. See
-[Capture prompt content](#capture-prompt-content) for `adk web`, and
-[Capture prompt content programmatically](#capture-prompt-content-programmatically)
+[Capture prompt content](#capture-prompt-content-in-adk-web) for `adk web`, and
+[Capture prompt content programmatically](#capture-prompt-content)
 for setup in code.
 
 ### Log levels (Python)
@@ -128,11 +128,11 @@ production observability. ADK uses the following logging facilities:
 
 - **Python:** ADK uses the standard `logging` module and OpenTelemetry for
   structured GenAI logs.
-- **Kotlin:** ADK uses standard JVM logging facilities, defaulting to Flogger,
-  and OpenTelemetry for structured GenAI logs.
 - **Go:** ADK uses the `google.golang.org/adk/v2/telemetry` package for
   OpenTelemetry configuration, and the standard `log` package for general
   events, which it writes to `stderr` by default.
+- **Kotlin:** ADK uses standard JVM logging facilities, defaulting to Flogger,
+  and OpenTelemetry for structured GenAI logs.
 
 ### Logging level
 
