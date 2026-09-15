@@ -232,7 +232,10 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 === "Kotlin"
 
-    ADK automatically uses the `GlobalOpenTelemetry` instance on the JVM. Configure your OpenTelemetry SDK exporter before starting the agent. The example below wires up a **trace** pipeline only; to export log records, also register an `SdkLoggerProvider` with a log-record exporter.
+    ADK Kotlin's OpenTelemetry integration emits **traces only** — it registers no
+    `LoggerProvider`, so there is no OTLP log export. Application logs go to your JVM
+    logging backend. To export ADK traces, configure the OpenTelemetry SDK before
+    starting the agent:
 
     ```kotlin
     --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
