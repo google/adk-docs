@@ -1,7 +1,7 @@
 ---
 catalog_title: Files Retrieval Tool
 catalog_description: Index and search local documents using vector similarity search
-catalog_icon: /integrations/assets/fileretrieval.png
+catalog_icon: /integrations/assets/filesretrieval.png
 catalog_tags: ["google", "data"]
 ---
 
@@ -11,12 +11,17 @@ catalog_tags: ["google", "data"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-The `FilesRetrieval` tool enables ADK agents to index and query local documents using retrieval-augmented generation (RAG). Backed by LlamaIndex's `VectorStoreIndex` and Google's `gemini-embedding-2-preview` embedding model, this integration allows agents to retrieve relevant excerpts from local text files, markdown documents, and source files to answer questions accurately with project-specific context.
+The `FilesRetrieval` tool lets your ADK agent index and query local documents
+using retrieval-augmented generation (RAG). It builds a LlamaIndex
+`VectorStoreIndex` over a directory you specify, using Google's
+`gemini-embedding-2-preview` embedding model. Your agent can then retrieve
+relevant excerpts from local text files, Markdown documents, and source files
+to ground its answers in project-specific context.
 
 ## Use cases
 
-- **Codebase and Documentation Search**: Retrieve relevant functions, architecture diagrams, and documentation notes from a local repository to answer technical questions.
-- **Local Knowledge Base Grounding**: Provide agents with access to internal markdown files, technical specifications, and guides without uploading data to external third-party services.
+- **Codebase and Documentation Search**: Retrieve relevant functions, design notes and documentation from a local repository to answer technical questions.
+- **Local Knowledge Base Grounding**: Index internal markdown files, technical specifications, and guides straight from your own filesystem, without first loading them into a hosted document store. Document content is sent to the configured embedding model for indexing, so review the data handling terms for Google AI Studio or Agent Platform before indexing sensitive material.
 - **Context-Augmented Assistance**: Retrieve relevant domain-specific data from reports, logs, or text files to ground agent responses in verified source material.
 
 ## Prerequisites
@@ -33,29 +38,22 @@ To use `FilesRetrieval`, configure credentials for either Google AI Studio or Ag
 
 === "Agent Platform"
 
-    Configure the Agent Platform access with Google Cloud credentials:
+    Configure Agent Platform access with your Google Cloud credentials:
 
     ```bash
-    export GOOGLE_GENAI_USE_ENTERPRISE=1
+    export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
     export GOOGLE_CLOUD_PROJECT="your-project-id"
-    export GOOGLE_CLOUD_LOCATION="us-central1"
+    export GOOGLE_CLOUD_LOCATION="global"
     ```
 
 !!! note
-    The default `gemini-embedding-2-preview` model is currently hosted in the `us-central1` region.
-
-## Installation
-
-Install the ADK extensions package and the Google GenAI embedding provider for LlamaIndex:
-
-```bash
-pip install "google-adk[extensions]"
-pip install llama-index-embeddings-google-genai
-```
-
+    
+    ADK's default embedding model, `gemini-embedding-2-preview`, is a preview endpoint; on Agent Platform it is served from the `us-central1` region and may be removed in the future. For production, pass the GA model explicitly with `embedding_model=GoogleGenAIEmbedding(model_name="gemini-embedding-2", embed_batch_size=1)`.
+    
 ## Use with agent
 
-The following example demonstrates how to configure `FilesRetrieval` for a local data directory and attach it to an ADK agent:
+This example configures `FilesRetrieval` for a local data directory and
+attaches it to an ADK agent. Before running it, create a `data/` directory next to your agent module and add the `.txt` or `.md` files you want indexed: `FilesRetrieval` loads and embeds the entire directory when it is constructed, so the directory must already exist, and the content is re-indexed each time the agent module is imported.
 
 ```python
 import os
@@ -91,11 +89,11 @@ root_agent = Agent(
 
 ## Available tools
 
-When initialized, `FilesRetrieval` registers a function tool with the agent:
+`FilesRetrieval` is itself a tool. Once attached with `tools=[...]`, the agent sees one function, which takes a single `query` string parameter:
 
 Tool | Description
 ---- | -----------
-`search_documents` (configurable via `name`) | Performs semantic vector search over documents in the indexed directory and returns the most relevant content chunk for a given natural language query.
+`search_documents` | Performs semantic vector search over documents in the indexed directory and returns the most relevant content chunk for a given natural language query. Rename it with the `name` parameter.
 
 ## Configuration
 
@@ -106,7 +104,7 @@ Parameter | Type | Required | Default | Description
 `name` | `str` | **Yes** | — | Unique identifier for the tool, used by the model for function calling.
 `description` | `str` | **Yes** | — | Explanation of when and how the agent should invoke the retrieval tool.
 `input_dir` | `str` | **Yes** | — | Local filesystem directory path containing the documents to load and index.
-`embedding_model` | `Optional[BaseEmbedding]` | No | `None` (`gemini-embedding-2-preview`) | Custom LlamaIndex `BaseEmbedding` instance. When omitted, defaults to `GoogleGenAIEmbedding(model_name="gemini-embedding-2-preview", embed_batch_size=1)`.
+`embedding_model` | `Optional[BaseEmbedding]` | No | `None` | Custom LlamaIndex `BaseEmbedding` instance. When omitted, defaults to `GoogleGenAIEmbedding(model_name="gemini-embedding-2-preview", embed_batch_size=1)`.
 
 ### Custom embedding models
 
@@ -117,14 +115,19 @@ from google.adk.tools.retrieval.files_retrieval import FilesRetrieval
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 
 custom_embedding = GoogleGenAIEmbedding(
-    model_name="text-embedding-004",
-    embed_batch_size=10,
+    model_name="gemini-embedding-2",
+    embed_batch_size=1,
 )
 
 files_retrieval = FilesRetrieval(
     name="search_documents",
     description="Search local knowledge base files.",
-    input_dir="./data",
+    input_dir=os.path.join(os.path.dirname(__file__), "data"),
     embedding_model=custom_embedding,
 )
 ```
+
+## Additional resources
+
+- [Using VectorStoreIndex (LlamaIndex)](https://docs.llamaindex.ai/en/stable/module_guides/indexing/vector_store_index/)
+- [llama-index-embeddings-google-genai on PyPI](https://pypi.org/project/llama-index-embeddings-google-genai/)
