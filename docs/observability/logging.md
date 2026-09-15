@@ -126,7 +126,8 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 - **Python:** ADK uses the standard `logging` module and OpenTelemetry for
   structured GenAI logs.
-- **Kotlin:** Uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
+- **Kotlin:** ADK uses standard JVM logging facilities, defaulting to Flogger,
+  and OpenTelemetry for structured GenAI logs.
 - **Go:** Uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry configuration and the standard `log` package for general events (written to `stderr` by default).
 
 ### Logging level
