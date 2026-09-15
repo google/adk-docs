@@ -96,7 +96,7 @@ and `SPAN_AND_EVENT` also require
     debugging but may capture sensitive data or PII. In production, set this to
     false or ensure you have appropriate data handling policies in place.
 
-### OTLP export
+### OTLP export in ADK Web
 
 To export logs to an OTLP-compatible backend, set the standard OTel environment
 variables:
@@ -112,7 +112,7 @@ adk web path/to/your/agents_dir
     in addition to logs.
 
 
-### GCP export setup
+### GCP export setup in ADK Web
 
 You can enable GCP export using the `--otel_to_cloud` flag:
 
@@ -150,13 +150,13 @@ production observability. ADK uses the following logging facilities:
     )
     ```
 
-=== "Kotlin"
-
-    ADK uses standard JVM logging facilities (defaulting to Flogger). Configure your JVM logger backend (e.g., `java.util.logging` or SLF4J) to adjust log verbosity.
-
 === "Go"
 
     General events (such as server startup or HTTP requests) are logged using the standard Go `log` package and written to `stderr` by default.
+
+=== "Kotlin"
+
+    ADK uses standard JVM logging facilities (defaulting to Flogger). Configure your JVM logger backend (e.g., `java.util.logging` or SLF4J) to adjust log verbosity.
 
 ### Capture prompt content
 
@@ -183,14 +183,6 @@ production observability. ADK uses the following logging facilities:
             capture_message_content=ContentCapturingMode.SPAN_AND_EVENT,
         ),
     )
-    ```
-
-=== "Kotlin"
-
-    You can enable full prompt logging by configuring the global `TelemetryConfig`:
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:capture_content"
     ```
 
 === "Go"
@@ -222,6 +214,14 @@ production observability. ADK uses the following logging facilities:
     }
     ```
 
+=== "Kotlin"
+
+    You can enable full prompt logging by configuring the global `TelemetryConfig`:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:capture_content"
+    ```
+
 ### OTLP export
 
 === "Python"
@@ -239,28 +239,19 @@ production observability. ADK uses the following logging facilities:
     maybe_set_otel_providers()
     ```
 
-=== "Kotlin"
-
-    ADK Kotlin's OpenTelemetry integration emits **traces only** — it registers no
-    `LoggerProvider`, so there is no OTLP log export. Application logs go to your JVM
-    logging backend. To export ADK traces, configure the OpenTelemetry SDK before
-    starting the agent:
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
-    ```
-
-    !!! warning
-        This example sets `TelemetryConfig.captureMessageContent = true`, which records full
-        prompt and response content. Leave it disabled in production unless you have
-        appropriate data handling policies in place.
-
 === "Go"
 
     To export logs to an OTLP-compatible backend, configure the standard
     OpenTelemetry environment variables (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT` or
     `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will
     automatically use these settings when initialized.
+
+=== "Kotlin"
+
+    ADK Kotlin's OpenTelemetry integration emits **traces only** — it registers no
+    `LoggerProvider`, so there is no OTLP log export. Application logs go to your JVM
+    logging backend. To configure trace export, see the [Traces](traces.md)
+    documentation.
 
 ### GCP export setup
 
@@ -281,14 +272,6 @@ production observability. ADK uses the following logging facilities:
     os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
     maybe_set_otel_providers([gcp_exporters])
     ```
-
-=== "Kotlin"
-
-    ADK Kotlin emits no OpenTelemetry log records, so there is nothing for Cloud Logging
-    to receive; application logs go to your JVM logging backend. ADK Kotlin **traces** can
-    be sent to Google Cloud by pointing a standard OTLP exporter at `telemetry.googleapis.com`
-    — see [OTLP with Google Cloud](https://cloud.google.com/stackdriver/docs/otlp/overview)
-    for the required credentials, quota project and `roles/telemetry.writer` grant.
 
 === "Go"
 
@@ -321,6 +304,14 @@ production observability. ADK uses the following logging facilities:
     go run main.go web -otel_to_cloud
     ```
 
+=== "Kotlin"
+
+    ADK Kotlin emits no OpenTelemetry log records, so there is nothing for Cloud Logging
+    to receive; application logs go to your JVM logging backend. ADK Kotlin **traces** can
+    be sent to Google Cloud by pointing a standard OTLP exporter at `telemetry.googleapis.com`
+    — see [OTLP with Google Cloud](https://cloud.google.com/stackdriver/docs/otlp/overview)
+    for the required credentials, quota project and `roles/telemetry.writer` grant.
+
 ## Activity logging with plugins
 
 ADK provides built-in plugins that capture agent activity, including user
@@ -344,12 +335,6 @@ To print structured activity logs to the console during execution, attach
         root_agent=root_agent,
         plugins=[LoggingPlugin()],
     )
-    ```
-
-=== "Kotlin"
-
-    ```kotlin
-    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
     ```
 
 === "Go"
@@ -386,6 +371,12 @@ To print structured activity logs to the console during execution, attach
     		log.Fatalf("run failed: %v", err)
     	}
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
     ```
 
 ### Full debug capture to a file with `DebugLoggingPlugin`
