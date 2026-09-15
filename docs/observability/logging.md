@@ -119,7 +119,7 @@ adk web --otel_to_cloud path/to/your/agents_dir
 
 ## Programmatic setup
 
-While plugins help inspect individual agent runs during local development, programmatic setup configures the underlying logging framework and OpenTelemetry exporters for system-level diagnostics and production observability:
+While the [plugins](#activity-logging-with-plugins) described later on this page help inspect individual agent runs during local development, programmatic setup configures the underlying logging framework and OpenTelemetry exporters for system-level diagnostics and production observability:
 
 - **Python:** Uses the standard `logging` module and OpenTelemetry for structured GenAI logs.
 - **Kotlin:** Uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
