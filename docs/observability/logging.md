@@ -413,7 +413,9 @@ To record complete interaction data as human-readable YAML appended to `adk_debu
     ```
 
 !!! warning
-    The output file holds raw prompts, tool arguments, and session state. Although credentials and `temp:`-scoped state keys are automatically redacted in Python, treat the output file as sensitive.
+    The output file holds raw prompts, tool arguments, and session state.
+    Although ADK automatically redacts credentials and `temp:`-scoped state
+    keys in Python, treat the output file as sensitive.
 
 ## Understanding log output
 
