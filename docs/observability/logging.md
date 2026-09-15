@@ -323,7 +323,8 @@ ADK provides built-in plugins to capture agent activity (user messages, model re
 
 ### Console logging with `LoggingPlugin`
 
-To print structured activity logs to the console during execution, attach `LoggingPlugin` to your `App` (or configure `loggingplugin` in Go):
+To print structured activity logs to the console during execution, attach
+`LoggingPlugin` to your `App`:
 
 === "Python"
 
