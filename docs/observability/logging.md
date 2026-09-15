@@ -186,21 +186,25 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 === "Go"
 
-    You can enable full prompt logging programmatically when initializing telemetry:
+    You can enable full prompt logging when initializing telemetry by exporting `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true`:
 
     ```go
     package main
 
     import (
     	"context"
+    	"os"
+
     	"google.golang.org/adk/v2/telemetry"
     )
 
     func main() {
     	ctx := context.Background()
-    	tp, err := telemetry.New(ctx,
-    		telemetry.WithGenAICaptureMessageContent(true),
-    	)
+
+    	// Enable GenAI message content capture via the OpenTelemetry environment variable
+    	os.Setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+
+    	tp, err := telemetry.New(ctx)
     	if err != nil {
     		// handle error
     	}
