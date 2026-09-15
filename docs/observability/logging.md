@@ -228,7 +228,7 @@ While plugins help inspect individual agent runs during local development, progr
 
 === "Kotlin"
 
-    ADK automatically uses the `GlobalOpenTelemetry` instance on the JVM. Configure your OpenTelemetry SDK exporter before starting the agent:
+    ADK automatically uses the `GlobalOpenTelemetry` instance on the JVM. Configure your OpenTelemetry SDK exporter before starting the agent. The example below wires up a **trace** pipeline only; to export log records, also register an `SdkLoggerProvider` with a log-record exporter.
 
     ```kotlin
     --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
