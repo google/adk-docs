@@ -314,7 +314,7 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 ## Activity logging with plugins
 
-ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and session state) without modifying your agent logic.
+ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and — with `DebugLoggingPlugin` — session state) without modifying your agent logic.
 
 ### Console logging with `LoggingPlugin`
 
