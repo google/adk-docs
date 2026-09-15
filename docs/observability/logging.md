@@ -342,24 +342,36 @@ To print structured activity logs to the console during execution, attach `Loggi
 === "Go"
 
     ```go
+    package main
+
     import (
+    	"context"
+    	"log"
+    	"os"
+
     	"google.golang.org/adk/v2/agent"
     	"google.golang.org/adk/v2/cmd/launcher"
+    	"google.golang.org/adk/v2/cmd/launcher/full"
     	"google.golang.org/adk/v2/plugin"
     	"google.golang.org/adk/v2/plugin/loggingplugin"
     	"google.golang.org/adk/v2/runner"
     )
 
-    logPlugin, err := loggingplugin.New("logging_plugin")
-    if err != nil {
-    	// handle error
-    }
+    func main() {
+    	ctx := context.Background()
+    	logPlugin := loggingplugin.MustNew("logging_plugin")
 
-    config := &launcher.Config{
-    	AgentLoader: agent.NewSingleLoader(rootAgent),
-    	PluginConfig: runner.PluginConfig{
-    		Plugins: []*plugin.Plugin{logPlugin},
-    	},
+    	config := &launcher.Config{
+    		AgentLoader: agent.NewSingleLoader(rootAgent),
+    		PluginConfig: runner.PluginConfig{
+    			Plugins: []*plugin.Plugin{logPlugin},
+    		},
+    	}
+
+    	l := full.NewLauncher()
+    	if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
+    		log.Fatalf("run failed: %v", err)
+    	}
     }
     ```
 
