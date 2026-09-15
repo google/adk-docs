@@ -122,7 +122,9 @@ adk web --otel_to_cloud path/to/your/agents_dir
 
 ## Programmatic setup
 
-While the [plugins](#activity-logging-with-plugins) described later on this page help inspect individual agent runs during local development, programmatic setup configures the underlying logging framework and OpenTelemetry exporters for system-level diagnostics and production observability:
+Programmatic setup configures the underlying logging framework and
+OpenTelemetry exporters from your own code, for system-level diagnostics and
+production observability. ADK uses the following logging facilities:
 
 - **Python:** ADK uses the standard `logging` module and OpenTelemetry for
   structured GenAI logs.
@@ -321,7 +323,10 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 ## Activity logging with plugins
 
-ADK provides built-in plugins to capture agent activity (user messages, model requests/responses, tool calls, and — with `DebugLoggingPlugin` — session state) without modifying your agent logic.
+ADK provides built-in plugins that capture agent activity, including user
+messages, model requests and responses, tool calls, and (with
+`DebugLoggingPlugin`) session state. These plugins require no changes to your
+agent logic.
 
 ### Console logging with `LoggingPlugin`
 
