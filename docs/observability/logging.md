@@ -60,7 +60,7 @@ When running agents using the ADK's `adk web`, `adk api_server`, `adk deploy
 cloud_run` and `adk deploy gke` commands, you can control the log verbosity or
 destination.
 
-### Logging level
+### Logging level in ADK Web
 
 To start the web server with `DEBUG` level logging, run:
 
