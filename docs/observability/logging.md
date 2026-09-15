@@ -275,7 +275,11 @@ While the [plugins](#activity-logging-with-plugins) described later on this page
 
 === "Kotlin"
 
-    ADK Kotlin does not provide a built-in GCP exporter wrapper. Because it uses the standard `GlobalOpenTelemetry` instance on the JVM, you can export to Google Cloud by configuring your `OpenTelemetrySdk` with a standard OTLP exporter targeting the Google Cloud Telemetry endpoint before starting your agent.
+    ADK Kotlin emits no OpenTelemetry log records, so there is nothing for Cloud Logging
+    to receive; application logs go to your JVM logging backend. ADK Kotlin **traces** can
+    be sent to Google Cloud by pointing a standard OTLP exporter at `telemetry.googleapis.com`
+    — see [OTLP with Google Cloud](https://cloud.google.com/stackdriver/docs/otlp/overview)
+    for the required credentials, quota project and `roles/telemetry.writer` grant.
 
 === "Go"
 
