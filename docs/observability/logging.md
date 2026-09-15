@@ -35,7 +35,10 @@ for
 GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
 
 By default prompt content is elided in logs for security. You can enable prompt
-logging using environment variables or programmatic configuration (see [Capture prompt content](#capture-prompt-content) below).
+logging using environment variables or programmatic configuration. See
+[Capture prompt content](#capture-prompt-content) for `adk web`, and
+[Capture prompt content programmatically](#capture-prompt-content-programmatically)
+for setup in code.
 
 ### Log levels (Python)
 
