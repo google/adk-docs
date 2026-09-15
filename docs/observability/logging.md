@@ -71,7 +71,7 @@ adk web --log_level DEBUG path/to/your/agents_dir
 The available log levels for the `--log_level` option are: `DEBUG`, `INFO`
 (default), `WARNING`, `ERROR`, `CRITICAL`.
 
-### Capture prompt content
+### Capture prompt content in ADK Web
 
 By default a prompt content is elided in logs for security. You can enable
 prompt logging using the environment variable:
