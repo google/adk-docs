@@ -385,7 +385,9 @@ To print structured activity logs to the console during execution, attach `Loggi
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span><span class="lst-kotlin">Kotlin v0.6.0</span>
 </div>
 
-To record complete interaction data as human-readable YAML appended to `adk_debug.yaml` rather than truncated console output, use `DebugLoggingPlugin`:
+To record complete interaction data as human-readable YAML appended to
+`adk_debug.yaml` rather than truncated console output, use
+`DebugLoggingPlugin`:
 
 === "Python"
 
