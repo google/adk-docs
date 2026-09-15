@@ -234,6 +234,11 @@ While plugins help inspect individual agent runs during local development, progr
     --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
     ```
 
+    !!! warning
+        This example sets `TelemetryConfig.captureMessageContent = true`, which records full
+        prompt and response content. Leave it disabled in production unless you have
+        appropriate data handling policies in place.
+
 === "Go"
 
     To export logs to an OTLP-compatible backend, configure the standard
