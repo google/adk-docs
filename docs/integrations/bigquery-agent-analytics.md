@@ -2724,13 +2724,13 @@ ready-made Looker Block, or your own dashboard built from the example notebook.
 #### Looker Studio template
 
 The [BigQuery Agent Analytics dashboard setup
-page](https://googlecloudplatform.github.io/BigQuery-Agent-Analytics-SDK/) is
-the fastest path to a dashboard. Enter the fully qualified ID of your event
-table (`project.dataset.table`) and it builds a Looker Studio link that creates
-your own private copy of a published template, querying the base table directly
-with no generated views and no data pipelines. The setup page states that it has
-no backend and builds the link client-side; review its source before entering a
-table ID.
+page](https://googlecloudplatform.github.io/BigQuery-Agent-Analytics-SDK/) is a
+quick way to get started. Enter the fully qualified ID of your event table
+(`project.dataset.table`) and it builds a Looker Studio link that creates your
+own private copy of a published template with prebuilt report pages, querying
+the base table directly with no generated views and no data pipelines. The
+setup page states that it has no backend and builds the link client-side;
+review its source before entering a table ID.
 
 The copy is created with **Owner's credentials**. Keep the report private until
 you switch the data source to **Viewer's credentials**, so that each viewer
@@ -2778,4 +2778,4 @@ suggestions, or encounter any issues, please reach out to the team at
 - [Python plugin source](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/bigquery_agent_analytics_plugin.py)
 - [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
 - [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
-- [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
+- [BigQuery Agent Analytics SDK examples](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main/examples)
