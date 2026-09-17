@@ -305,7 +305,8 @@ Unlike the previous local process example, this pattern connects your agent to a
        - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
 
-![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+  ![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+    
        
 === "TypeScript"
 
