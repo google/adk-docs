@@ -291,6 +291,20 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     )
     ```
+    
+    **Step 2**: Set environment variable before running `adk web`, set you Google API key in your terminal
+      
+      ```bash
+      export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
+      ```
+      
+     **Step 3**: Run `adk web`: Navigate to the parent directory of `mcp_agent` and launch the web Interface.
+     
+     **Step 4**: Interact with the UI:
+       
+       - Select `travel_planner` from the drop-down.
+       - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
+
 
 === "TypeScript"
 
@@ -320,19 +334,6 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     });
      ``` 
-    
-    **Step 2**: Set environment variable before running `adk web`, set you Google API key in your terminal
-      
-      ```bash
-      export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
-      ```
-      
-     **Step 3**: Run `adk web`: Navigate to the parent directory of `mcp_agent` and launch the web Interface.
-     
-     **Step 4**: Interact with the UI:
-       
-       - Select `travel_planner` from the drop-down.
-       - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
 
   ![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
               
