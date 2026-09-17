@@ -305,12 +305,11 @@ Unlike the previous local process example, this pattern connects your agent to a
        - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
 
-
 === "TypeScript"
 
     ```typescript
     import { LlmAgent, MCPToolset } from "@google/adk";
-
+    
     export const rootAgent = new LlmAgent({
         model: "gemini-flash-latest",
         name: "travel_planner",
@@ -318,7 +317,7 @@ Unlike the previous local process example, this pattern connects your agent to a
         tools: [
             new MCPToolset({
                 type: "StreamableHTTPConnectionParams",
-                url: "https://mapstools.googleapis.com/mcp",
+                url: "[https://mapstools.googleapis.com/mcp](https://mapstools.googleapis.com/mcp)",
                 transportOptions: {
                     requestInit: {
                         headers: {
@@ -333,9 +332,10 @@ Unlike the previous local process example, this pattern connects your agent to a
             }),
         ],
     });
-     ``` 
+    ```
 
-  ![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+
               
 ---
 
