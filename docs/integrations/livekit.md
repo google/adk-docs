@@ -23,7 +23,7 @@ a phone, or a game client without any change to the agent.
 
 The agent joins a room as an ordinary participant, so any LiveKit client SDK can talk to it.
 The connector publishes captions and speaking state on the channels LiveKit's own
-components bind to, so most of a voice front end already exists:
+components bind to, so those components work against an ADK agent without extra wiring:
 
 | LiveKit resource | What an ADK agent gets |
 | :--- | :--- |
