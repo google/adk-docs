@@ -15,7 +15,7 @@ ADK provides the `LiveKitRunner` class to allow you to serve your live agents ov
 [LiveKit](https://livekit.io/), an open source platform for WebRTC and SIP telephony. This
 integration acts as a transport adapter that handles audio and video capture, playback,
 barge-in, captions, and call control, so your ADK agent can become reachable from a browser,
-a phone call, or a game client without any change to the agent.
+a phone, or a game client without any change to the agent.
 
 ## Use cases
 
