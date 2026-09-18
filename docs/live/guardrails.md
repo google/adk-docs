@@ -123,7 +123,7 @@ def block_input(
 ### Agent response validation
 
 The `after_model_callback` hook verifies model responses before or during delivery to the
-user. Validation can inspect incremental transcription chunks as speech streams to catch
+user. Validation can inspect the transcription as it accumulates during a spoken turn to catch
 violations early, or evaluate the full turn transcription.
 
 ```python
