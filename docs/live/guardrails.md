@@ -16,7 +16,7 @@ For general callback mechanics and plugin registration, see
 
 | Layer | What it does | Protection focus | Latency impact |
 | :--- | :--- | :--- | :--- |
-| System instructions | Shapes tone, conversational rules, and boundaries | Behavioral guidance | Zero added latency |
+| System instructions | Shapes tone, conversational rules, and boundaries | Behavioral guidance | No added application latency |
 | Safety settings | Enforces platform thresholds for content safety | Platform safety filters | Zero added latency |
 | Input validation | Catches prompt injection and disallowed topics | User input validation | Minimal (runs per turn) |
 | Response validation | Screens agent responses against business policies | Agent response validation | Dependent on check |
