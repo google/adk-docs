@@ -99,7 +99,7 @@ root_agent = Agent(
     model="gemini-live-2.5-flash-native-audio",
     name="support_agent",
     instruction="You help customers troubleshoot their home internet.",
-    tools=[check_line_status, LiveKitToolset()],
+    tools=[check_line_status, LiveKitToolset()],  # check_line_status is your own tool
 )
 runner = InMemoryRunner(agent=root_agent, app_name="support")
 ```
