@@ -31,7 +31,7 @@ another catches it.
 ## Instructions and safety settings
 
 Instructions and safety settings establish baseline behavior for the entire session. Both
-are configured on the agent when creating the session:
+settings belong on the agent, which you configure when you create the session:
 
 ```python
 from google.adk.agents import Agent
