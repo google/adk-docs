@@ -57,7 +57,7 @@ as one input instead of six interruptions.
 
 ### Games and immersive clients
 
-LiveKit's [Unity SDK](https://github.com/livekit/client-sdk-unity) adds realtime audio,
+LiveKit's [Unity SDK](https://github.com/livekit/client-sdk-unity) adds real-time audio,
 video, and data channels to a Unity app, backed by LiveKit Cloud or a server you host. Put an
 ADK agent in the room and a player can hold a conversation with a character that also acts
 on the world, such as a voice-driven NPC or an in-game assistant:
