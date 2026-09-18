@@ -164,7 +164,7 @@ Your server exposes a WebSocket; something has to talk to it. During development
 telephony or WebRTC bridge. Whatever you build inherits the same contract, so it is worth
 knowing exactly what `adk web` does and where it stops.
 
-If a WebRTC or telephony bridge is what you need, ADK ships one. The
+If you need a WebRTC or telephony bridge, ADK provides one. The
 [LiveKit runner](../integrations/livekit.md) serves a live agent into a LiveKit room,
 handling media capture, playback, barge-in, and SIP, so there is no custom server to write.
 
