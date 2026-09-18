@@ -81,7 +81,7 @@ validation using ADK model callbacks.
 
 ### User input validation
 
-The `before_model_callback` hook intercepts user input. Typed text is evaluated before
+The `before_model_callback` hook intercepts user input. The callback evaluates typed text before
 reaching the model, so blocking prevents the message from entering context while keeping
 the connection open. For spoken audio, the callback inspects the transcribed utterance as
 it arrives.
