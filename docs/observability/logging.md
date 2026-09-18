@@ -139,6 +139,20 @@ logging.basicConfig(
 )
 ```
 
+#### Console activity logging
+
+Add a `LoggingPlugin` to your runner's `plugins` list to print agent activity.
+By default, it truncates each text part and rendered system instruction to 200
+characters, and tool arguments and results to 300 characters. Set
+`max_content_length` and `max_args_length` to change these limits, or use `None`
+to disable truncation:
+
+```python
+from google.adk.plugins.logging_plugin import LoggingPlugin
+
+logging_plugin = LoggingPlugin(max_content_length=None, max_args_length=None)
+```
+
 #### Capture prompt content
 
 You can enable full prompt logging programmatically by setting an environment
