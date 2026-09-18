@@ -163,7 +163,8 @@ production. The worker also sits idle between calls, so run with `--no-cpu-throt
 `--min-instances=1` to keep it accepting dispatch.
 
 Each dispatched job runs in its own process, so use a durable
-[session service](../sessions/index.md); `InMemoryRunner` persists nothing between calls.
+[session service](../sessions/index.md). The `InMemoryRunner` class persists nothing
+between calls.
 
 ## Additional resources
 
