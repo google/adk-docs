@@ -106,7 +106,7 @@ root_agent = Agent(
 runner = InMemoryRunner(agent=root_agent, app_name="support")
 ```
 
-Handing that runner a connected room is the whole integration. In production you run a
+To connect the agent, pass the runner a connected room. In production you run a
 worker, which LiveKit dispatches once per call, and the same code serves a browser and a
 phone.
 
