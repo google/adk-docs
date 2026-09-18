@@ -172,7 +172,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model. In Python, `LlmAgent` also accepts an `on_model_error_callback`, which runs when the model call raises an exception. If it returns an `LlmResponse`, the exception is suppressed and that response is used instead.
 
-The model callbacks also run on a live bidirectional session, where they fire at different points and a block resets the connection. See [Guardrails for live agents](../live/guardrails.md).
+The model callbacks also run in a live bidirectional session, where the callbacks fire at different points in the turn and blocking has different effects than in a request-response flow. See [Guardrails for live agents](../live/guardrails.md).
 
 ### Before Model Callback
 
