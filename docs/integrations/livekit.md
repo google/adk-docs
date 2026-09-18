@@ -81,7 +81,7 @@ the conversation, the tool calls, and the session.
 - [ADK](https://adk.dev) >= 2.9.0 with the `livekit` extra.
 - Credentials for a [live model](../live/models.md).
 - A LiveKit server, self-hosted or on LiveKit Cloud. Both expose the same API, so the
-  choice is operational. For local development, run `livekit-server --dev`.
+  same worker code runs against either. For local development, run `livekit-server --dev`.
 - `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` set in the environment.
 
 ```bash
