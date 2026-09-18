@@ -191,7 +191,7 @@ callbacks or route the request to a human handoff.
   `RunConfig.output_audio_transcription` are enabled by default. Setting either to `None`
   disables the corresponding screening layer.
 - **Keep validators lightweight**: Callbacks in the live receive loop run inline with audio
-  processing. Fast local checks maintain real-time conversation rhythm. For heavier checks,
+  processing. Fast local checks keep the conversation responsive. For heavier checks,
   evaluate complete turn transcriptions or offload long-running analytics asynchronously.
 - **Apply policies across agents**: Registering plugins such as
   [Model Armor](../integrations/model-armor.md) on the `App` applies consistent security
