@@ -22,7 +22,7 @@ a phone call, or a game client without any change to the agent.
 ### Browser and mobile apps
 
 The agent joins a room as an ordinary participant, so any LiveKit client SDK can talk to it.
-The connector publishes captions, speaking state, and barge-in on the channels LiveKit's own
+The connector publishes captions and speaking state on the channels LiveKit's own
 components bind to, so most of a voice front end already exists:
 
 | Tier | What an ADK agent gets |
