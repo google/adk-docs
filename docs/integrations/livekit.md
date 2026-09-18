@@ -73,7 +73,7 @@ async def open_the_door(door_id: str, tool_context: ToolContext) -> str:
 ```
 
 Whatever the client returns becomes the tool result the model narrates, so the agent
-describes what actually happened. The Unity side is one registered RPC method, and ADK keeps
+describes what actually happened. On the Unity client, register one RPC method; ADK manages
 the conversation, the tool calls, and the session.
 
 ## Get started
