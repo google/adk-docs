@@ -121,7 +121,7 @@ server = AgentServer()
 async def entrypoint(ctx: JobContext) -> None:
   """Bridges one dispatched call into the ADK agent."""
   await ctx.connect()
-  # LiveKit has no ids of its own. The sample reads ADK's from job metadata.
+  # LiveKit has no ADK user or session ids. The sample reads them from job metadata.
   await LiveKitRunner(
       runner=runner, room=ctx.room, user_id="live-user", session_id=ctx.room.name
   ).start()
