@@ -46,7 +46,9 @@ from google.adk.tools.tool_context import ToolContext
 
 async def greet_by_account(tool_context: ToolContext) -> str:
   """Looks the caller up before greeting them."""
-  number = tool_context.state["livekit_caller_phone_number"]  # '+15105550100'
+  number = tool_context.state.get("livekit_caller_phone_number")  # '+15105550100'
+  if not number:
+    return "I could not see the number you are calling from."
   return await crm.lookup(number)  # your own customer lookup
 ```
 
