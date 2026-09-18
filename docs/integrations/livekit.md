@@ -19,6 +19,8 @@ a phone, or a game client without any change to the agent.
 
 ## Use cases
 
+You can use LiveKit in a variety of use cases, including browser apps, mobile apps, SIP phone calls, games and immersive clients.
+
 ### Browser and mobile apps
 
 The agent joins a room as an ordinary participant, so any LiveKit client SDK can talk to it.
