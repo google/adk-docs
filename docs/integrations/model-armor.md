@@ -16,7 +16,7 @@ is a Google Cloud service that inspects text for prompt injection and jailbreak 
 harmful content, and sensitive data. You define what to look for in a server-side policy
 called a template, and the service returns a verdict for each piece of text you send it. The
 `ModelArmorPlugin` class ships with ADK and calls that service from the model callbacks.
-It screens user input before the model sees it and model output before the user does,
+It screens user input before the model sees it and model output before or during delivery,
 replacing matched content with a safe message.
 
 ## Use cases
