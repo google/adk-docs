@@ -25,7 +25,7 @@ The agent joins a room as an ordinary participant, so any LiveKit client SDK can
 The connector publishes captions and speaking state on the channels LiveKit's own
 components bind to, so most of a voice front end already exists:
 
-| Tier | What an ADK agent gets |
+| LiveKit resource | What an ADK agent gets |
 | :--- | :--- |
 | [Client SDKs](https://docs.livekit.io/transport/) | Browser, Swift, Android, Flutter, React Native, Unity, C++, Rust, and ESP32 |
 | [UI components](https://github.com/orgs/livekit/repositories?q=components) | Prebuilt voice-assistant widgets for React, SwiftUI, Compose, and Flutter |
