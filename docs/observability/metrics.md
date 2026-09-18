@@ -80,7 +80,7 @@ The eight `invoke_workflow` rows need one more thing: telemetry schema v2, which
     folded into every workflow enclosing it, so summing an `invoke_workflow`
     metric across all datapoints double counts.
 
-`gen_ai.workflow.nested` is set only on nested workflows, so excluding it leaves the outermost workflow alone, and that datapoint covers the whole turn. The workflow metrics carry no agent dimension, since a value spanning a whole workflow cannot be attributed to a single agent. They carry two names instead: `gen_ai.workflow.name` joins to `gen_ai.invoke_workflow.duration`, while `adk.experimental.root_agent.name` identifies the app, and the two disagree when a turn enters at a sub-agent.
+The `gen_ai.workflow.nested` attribute is set only on nested workflows, so excluding it leaves the outermost workflow alone, and that datapoint covers the whole turn. The workflow metrics carry no agent dimension, since a value spanning a whole workflow cannot be attributed to a single agent. They carry two names instead: `gen_ai.workflow.name` joins to `gen_ai.invoke_workflow.duration`, while `adk.experimental.root_agent.name` identifies the app, and the two disagree when a turn enters at a sub-agent.
 
 ---
 
