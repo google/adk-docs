@@ -141,6 +141,10 @@ each mode:
 **Table 1.** Comparison of ADK Collaboration agent ***mode*** behavior and
 limitations.
 
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules or identity across all agents in your workflow using  `GlobalInstructionPlugin` registered on your `App` or `Runner` object. Do not use the `global_instruction` parameter on `Agent` which is deprecated since ADK Python v1.16.0.
+
 ## Operating considerations
 
 When using collaboration agent modes, there are a few control transfer and

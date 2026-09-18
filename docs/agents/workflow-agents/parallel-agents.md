@@ -82,3 +82,7 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
         ```java
          --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
         ```
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules or identity across all agents in your workflow using  `GlobalInstructionPlugin` registered on your `App` or `Runner` object. Do not use the `global_instruction` parameter on `Agent` which is deprecated since ADK Python v1.16.0.

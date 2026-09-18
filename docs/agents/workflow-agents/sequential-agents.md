@@ -82,3 +82,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules or identity across all agents in your workflow using  `GlobalInstructionPlugin` registered on your `App` or `Runner` object. Do not use the `global_instruction` parameter on `Agent` which is deprecated since ADK Python v1.16.0.
