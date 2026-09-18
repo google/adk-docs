@@ -35,9 +35,8 @@ The `SpannerToolset` provides the following tools:
 - **`query_result_mode`**: Determines the format in 
   which the `execute_sql` tool returns database query results. Setting this 
   parameter to `QueryResultMode.DICT_LIST` configures the tool to return the 
-  results as a list of dictionaries. The default, `QueryResultMode.DEFAULT`,
-  returns each row as a list of values. Import `QueryResultMode` from
-  `google.adk.tools.spanner.settings`. Available in Python v1.21.0 and later.   
+  results as a list of dictionaries. Import `QueryResultMode` from
+  `google.adk.tools.spanner.settings`.
 - **`similarity_search`**: Similarity search in Spanner using a text query.
 
 ## Use with agent
