@@ -7,7 +7,7 @@
 Guardrails govern how live voice agents behave in production, keeping conversations on-topic,
 compliant, and safe. In a live connection, audio streams continuously and the model begins
 speaking in real time. ADK provides multiple layers of protection that work together to
-secure conversations without degrading voice performance.
+secure conversations with limited impact on conversation latency.
 
 For general callback mechanics and plugin registration, see
 [Types of callbacks](../callbacks/types-of-callbacks.md) and [Plugins](../plugins/index.md).
