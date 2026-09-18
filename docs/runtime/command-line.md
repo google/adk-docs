@@ -1,7 +1,7 @@
 # Use the Command Line
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 ADK provides an interactive terminal interface for testing your agents. This is
@@ -63,6 +63,26 @@ Use the following command to run your agent in the ADK command line interface:
     mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
     ```
 
+=== "Kotlin"
+
+    In Kotlin there is no standalone `adk` CLI. `ReplRunner` provides the
+    interactive loop; call it from your own `main`:
+
+    ```kotlin title="Main.kt"
+    import com.google.adk.kt.runners.ReplRunner
+
+    fun main() = ReplRunner(rootAgent).start()
+    ```
+
+    Then run that class with the Gradle `application` plugin, pointing
+    `mainClass` at it — a top-level `main` in `Main.kt` compiles to `MainKt`:
+
+    ```console
+    gradle run
+    ```
+
+    See the [Kotlin quickstart](../get-started/kotlin.md) for full project setup.
+
 This starts an interactive session where you can type queries and see agent
 responses directly in your terminal.
 
@@ -104,6 +124,21 @@ responses directly in your terminal.
     [my_agent]: The weather in New York is sunny with a temperature of 25°C.
     [user]: exit
     ```
+
+=== "Kotlin"
+
+    ```shell
+    Agent my_agent is ready. Type 'exit' to quit.
+
+    You > What's the weather in New York?
+
+    my_agent > The weather in New York is sunny with a temperature of 25°C.
+
+    You > exit
+    Exiting agent.
+    ```
+
+    `quit` also exits, as does an empty line.
 
 ## Session options
 
