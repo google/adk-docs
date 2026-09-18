@@ -22,7 +22,7 @@ replacing matched content with a safe message.
 ## Use cases
 
 - **Prompt injection and jailbreak defense**: Screen every user turn against a prompt
-  template before the model acts on it, so the agent refuses a crafted message instead of
+  template before the model acts on it, so a detected attempt is blocked instead of the agent
   obeying it.
 - **Sensitive data and harmful content filtering**: Screen model output against a response
   template to catch answers that leak data or breach content policy before delivery.
