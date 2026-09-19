@@ -1,7 +1,7 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom
@@ -378,7 +378,7 @@ afterwards.
         {"result": "$123"}
         ```
 
-    === "Typescript"
+    === "TypeScript"
 
         This tool retrieves the mocked value of a stock price.
 
@@ -617,6 +617,11 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     with the response. For more details on using the Resume feature, see [Resume
     stopped agents](/runtime/resume/).
 
+    In **Kotlin**, the runner resolves the invocation from the function
+    response's own call ID, so you do not need to pass `invocationId` to
+    `runAsync`. A response whose ID matches no function call in the session
+    throws instead.
+
 ??? Tip "Applies to only Java ADK"
 
     When passing `ToolContext` with Function Tools, ensure that one of the
@@ -679,6 +684,12 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:call_reimbursement_tool"
+    ```
+
 ??? "Python complete example: File Processing Simulation"
 
     ```python
@@ -694,6 +705,15 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   incoming FunctionResponse stream (progress vs. completion) for user updates.
 - **Final return**: The function returns the final result dictionary, which is
   sent in the concluding FunctionResponse to indicate completion.
+- **Kotlin has no `LongRunningFunctionTool` class**: Annotate the function with
+  `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
+  subclass.
+- **Kotlin turn count**: The tool above returns a value rather than
+  `Unit`, so non-resumable apps send that placeholder to the model and call it a
+  second time, ending turn 1 in an interim reply. A resumable app pauses on the
+  function call with no second model call. Returning `Unit` suppresses the
+  placeholder response entirely, ending the turn on the function call in either
+  mode.
 
 ## Agent-as-a-Tool {#agent-tool}
 

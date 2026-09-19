@@ -61,6 +61,8 @@ To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
           "args": [
             "--from",
             "mcpdoc",
+            "--with",
+            "mcp<2",
             "mcpdoc",
             "--urls",
             "AgentDevelopmentKit:https://adk.dev/llms.txt",
@@ -78,7 +80,7 @@ To add the ADK docs MCP server to
 [Claude Code](https://code.claude.com/docs/en/overview):
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc --with "mcp<2" mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
 ```
 
 ### Cursor
@@ -98,6 +100,8 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
           "args": [
             "--from",
             "mcpdoc",
+            "--with",
+            "mcp<2",
             "mcpdoc",
             "--urls",
             "AgentDevelopmentKit:https://adk.dev/llms.txt",
@@ -108,6 +112,10 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
       }
     }
     ```
+
+!!! note "MCP version setting" 
+    The `mcp<2` constraint setting keeps `mcpdoc` compatible with the MCP 1.x 
+    FastMCP API it currently uses.
 
 ### Other Tools
 

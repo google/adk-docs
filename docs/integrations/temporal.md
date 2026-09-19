@@ -221,10 +221,12 @@ def toolset_factory(_):
 toolset_provider = TemporalMcpToolSetProvider("my-tools", toolset_factory)
 
 # Configure the client with the toolset provider
-client = await Client.connect(
-    "localhost:7233",
-    plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
-)
+async def main():
+    client = await Client.connect(
+        "localhost:7233",
+        plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
+    )
+    # ... start a worker or execute a workflow with this client
 
 # Reference the toolset by name when you declare your Agent (inside a @workflow.run).
 # not_in_workflow_toolset lets this agent also run locally with `adk web`.

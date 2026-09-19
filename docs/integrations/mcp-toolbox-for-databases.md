@@ -8,7 +8,7 @@ catalog_tags: ["mcp","data","google"]
 # MCP Toolbox for Databases tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">Typescript</span><span class="lst-go">Go</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span>
 </div>
 
 [MCP Toolbox for Databases](https://github.com/googleapis/mcp-toolbox) is an
@@ -165,7 +165,7 @@ documentation:
     )
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ADK relies on the `@toolbox-sdk/adk` TS package to use MCP Toolbox. Install the
     package before getting started:

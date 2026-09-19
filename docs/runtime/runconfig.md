@@ -80,6 +80,9 @@ whether the context window is compressed:
   input, useful when sessions approach model context limits.
 - `include_thoughts_from_other_agents`: Controls whether thought parts from
   other agents are included in the LLM context. Disabled by default.
+- `model_input_context`: A list of `types.Content` added to the LLM request for
+  this invocation only. The runner does not persist it to the session, so you
+  can supply per-turn context without changing the conversation history.
 
 === "Python"
 
@@ -92,18 +95,22 @@ whether the context window is compressed:
     )
     ```
 
-## Enable streaming
+## Text response options { #enable-streaming }
 
-To control how the agent delivers responses, set the `streaming_mode` parameter:
+You can control how an agent responds in text mode, word-by-word as it is
+generated, or as one full response, with the ***Streaming Mode*** parameter, as
+described below:
 
 - **`StreamingMode.NONE`** (default): The runner returns one complete response
   per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
 - **`StreamingMode.SSE`**: Server-Sent Events streaming. The runner yields
   partial events as the LLM generates, enabling typewriter-style UIs and
   real-time chat displays.
-- **`StreamingMode.BIDI`**: Reserved for bidirectional streaming, but **not
-  used** in the standard `run_async()` path. For bidirectional streaming, use
-  `runner.run_live()` instead.
+
+There is another setting for the ***Streaming Mode*** parameter which enables
+bidirectional streaming of data, including voice input and output. This feature
+requires additional configuration beyond simple agents. For more information
+about this feature, see [Live and Voice Agents](../live/index.md).
 
 Set `support_cfc=True` alongside `StreamingMode.SSE` to enable Compositional
 Function Calling (CFC), which allows the model to dynamically compose and
@@ -132,7 +139,6 @@ execute function calls. CFC uses the Live API under the hood.
 
     const config: RunConfig = {
         streamingMode: StreamingMode.SSE,
-        supportCfc: true,
         maxLlmCalls: 150,
     };
     ```
@@ -174,10 +180,19 @@ execute function calls. CFC uses the Live API under the hood.
 For voice-enabled agents, configure speech synthesis, audio transcription, and
 response modalities.
 
+!!! tip "Live agents"
+
+    This section covers the audio fields shared across languages. For the full live
+    (`run_live()`) configuration reference — transcription streaming, voice selection,
+    voice activity detection, and proactive/affective dialog — see
+    [Live agent configuration](../live/configuration.md).
+
 - `speech_config`: Sets the voice and language for speech output (e.g., the
   "Kore" voice with `en-US`).
-- `response_modalities`: Controls output formats. Set to `["AUDIO", "TEXT"]` for
-  agents that both speak and return text.
+- `response_modalities`: Controls the output format. A session accepts exactly one
+  modality — use `["AUDIO"]` for voice agents and `["TEXT"]` for text-only ones.
+  To get both speech and text, set `["AUDIO"]` and read the text from the output
+  audio transcription.
 - `output_audio_transcription` / `input_audio_transcription`: Enable
   transcription of audio output from the model and audio input from the user.
   Both default to `AudioTranscriptionConfig()` in Python.
@@ -197,7 +212,7 @@ response modalities.
                 )
             ),
         ),
-        response_modalities=["AUDIO", "TEXT"],
+        response_modalities=["AUDIO"],
         streaming_mode=StreamingMode.SSE,
         max_llm_calls=1000,
     )
@@ -218,7 +233,7 @@ response modalities.
                 }
             },
         },
-        responseModalities: [Modality.AUDIO, Modality.TEXT],
+        responseModalities: [Modality.AUDIO],
         streamingMode: StreamingMode.SSE,
         maxLlmCalls: 1000,
     };
@@ -239,7 +254,7 @@ response modalities.
         RunConfig.builder()
             .streamingMode(StreamingMode.SSE)
             .maxLlmCalls(1000)
-            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO), new Modality(Modality.Known.TEXT)))
+            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO)))
             .speechConfig(
                 SpeechConfig.builder()
                     .voiceConfig(
@@ -255,27 +270,27 @@ response modalities.
 ## Configure live agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-java">Java</span>
 </div>
 
-When using `runner.run_live()`, configure real-time behavior with these
-additional parameters:
+ADK agents can support [Live and Voice Agents](../live/index.md) to create
+interactive agent experiences. You configure agents that support this
+functionality using the `runner.run_live()` method.
+Live agent (`run_live()`) sessions add a set of real-time parameters, including
+`realtime_input_config`, `session_resumption`, `save_live_blob`,
+`tool_thread_pool_config`, `proactivity`, `enable_affective_dialog`, and more.
+For more information, see the live agent docs:
 
-- `realtime_input_config`: Configures how audio input is received from users.
-- `proactivity`: Allows the model to respond proactively and ignore irrelevant
-  input.
-- `enable_affective_dialog`: When `True`, the model detects user emotions and
-  adapts its tone accordingly.
-- `avatar_config`: Configures an avatar for live agents.
-- `session_resumption`: Enables transparent session resumption across
-  disconnects.
-- `save_live_blob`: When `True`, saves live audio and video data to the session
-  and artifact service.
-- `tool_thread_pool_config`: Runs tool executions in a background thread pool
-  to keep the event loop responsive to user interruptions.
-- `explicit_vad_signal`: Enables explicit voice activity detection (VAD)
-  signals from the model.
+- **[Live agent configuration](../live/configuration.md)**: `RunConfig`
+  reference for live agents.
+- **[Sessions](../live/sessions.md#session-resumption)**: resume and reconnect
+   sessions.
+- **[Configuration: proactivity and affective dialog](../live/configuration.md#proactivity-and-affective-dialog)**:
+  native-audio conversational features and the models that support them.
 
+The `tool_thread_pool_config` setting is an exception: it is a runtime concern rather than a
+Live API one, so it stays here. It runs tool executions in a background thread
+pool so the event loop keeps responding to user interruptions.
 Not all parameters are available in every language. See the
 [API reference](#api-reference) for language-specific details.
 
@@ -309,15 +324,31 @@ Not all parameters are available in every language. See the
     };
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.genai.types.AvatarConfig;
+
+    RunConfig config = RunConfig.builder()
+        .avatarConfig(
+            AvatarConfig.builder()
+                .avatarName("PREBUILT_AVATAR_ID")
+                .build())
+        .build();
+    ```
+
 ## Configure runtime limits and debugging
 
 Use these parameters to control runtime guardrails and debugging:
 
 - `max_llm_calls`: Caps the total number of LLM calls per run (default: 500).
   Set to 0 or negative for unlimited calls, though this is not recommended for
-  production. Values at or above `sys.maxsize` raise an error.
+  production. Passing your language's largest integer raises an error:
+  `sys.maxsize` in Python, `Int.MAX_VALUE` in Kotlin.
 - `save_input_blobs_as_artifacts`: When `True`, saves input blobs (e.g.,
-  uploaded files) as run artifacts for debugging and auditing.
+  uploaded files) as run artifacts for debugging and auditing. Deprecated in
+  Python in favor of `SaveFilesAsArtifactsPlugin`.
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
 

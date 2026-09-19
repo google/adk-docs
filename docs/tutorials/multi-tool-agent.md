@@ -1,7 +1,7 @@
 # Build a multi-tool agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 This quickstart guides you through installing Agent Development Kit (ADK),
@@ -444,7 +444,7 @@ including Gemini Enterprise Agent Platform, see the
             ```py
             root_agent = Agent(
                 name="weather_time_agent",
-                model="replace-me-with-model-id", #e.g. gemini-2.0-flash-live-001
+                model="replace-me-with-model-id", #e.g. gemini-live-2.5-flash-native-audio
                 ...
             ```
 
@@ -458,7 +458,7 @@ including Gemini Enterprise Agent Platform, see the
             piping text to the command like so:
 
             ```shell
-            echo "Please start by listing files" | adk run file_listing_agent
+            echo "Please start by listing files" | adk run multi_tool_agent
             ```
 
         Run the following command, to chat with your Weather agent.

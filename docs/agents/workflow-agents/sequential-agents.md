@@ -1,7 +1,7 @@
 # Sequential template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 The ***SequentialAgent*** class is a [template workflow](/agents/workflow-agents/)
@@ -68,7 +68,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py:init"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/agents/workflow-agents/sequential_agent_code_development_agent.ts:init"
         ```
