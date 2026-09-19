@@ -43,9 +43,6 @@ environment, see the
 You can configure your coding tool to search and read ADK documentation using an
 MCP server. Below are setup instructions for popular tools.
 
-The `mcp<2` constraint keeps `mcpdoc` compatible with the MCP 1.x `FastMCP`
-API it currently uses.
-
 ### Antigravity
 
 To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
@@ -115,9 +112,11 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
       }
     }
     ```
+
 !!! note "MCP version setting" 
-    The `mcp<2` constraint setting keeps `mcpdoc` compatible with the MCP 1.x `FastMCP`
-    API it currently uses.
+    The `mcp<2` constraint setting keeps `mcpdoc` compatible with the MCP 1.x 
+    FastMCP API it currently uses.
+
 ### Other Tools
 
 Any coding tool that supports MCP servers can use the same server configuration
