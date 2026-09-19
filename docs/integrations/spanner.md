@@ -32,6 +32,11 @@ The `SpannerToolset` provides the following tools:
 - **`get_table_schema`**: Fetches Spanner database table schema and metadata
   information.
 - **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
+- **`query_result_mode`**: Determines the format in 
+  which the `execute_sql` tool returns database query results. Setting this 
+  parameter to `QueryResultMode.DICT_LIST` configures the tool to return the 
+  results as a list of dictionaries. Import `QueryResultMode` from
+  `google.adk.tools.spanner.settings`.
 - **`similarity_search`**: Similarity search in Spanner using a text query.
 
 ## Use with agent
