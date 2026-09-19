@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
@@ -49,9 +49,10 @@ agent pattern.
 When your tool only requires a simple `yes` or `no` from the user, you can
 append a confirmation step. In Python, Go, and Java, you can enable this by
 wrapping the tool with the `FunctionTool` class and setting the
-`require_confirmation` parameter (or equivalent) to `True`. In TypeScript, you
-implement this logic manually within the `execute` function using the
-`ToolContext`.
+`require_confirmation` parameter (or equivalent) to `True`. In Kotlin, you set
+`requireConfirmation = true` on the tool function's `@Tool` annotation. In
+TypeScript, you implement this logic manually within the `execute` function
+using the `ToolContext`.
 
 The following examples show how to enable boolean confirmation:
 
@@ -93,7 +94,7 @@ The following examples show how to enable boolean confirmation:
         // Set RequireConfirmation to true to require user confirmation
         // for the tool call.
         RequireConfirmation: true,
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    }, func(ctx agent.Context, args ReimburseArgs) (ReimburseResult, error) {
         // actual implementation
         return ReimburseResult{Status: "ok"}, nil
     })
@@ -118,9 +119,15 @@ The following examples show how to enable boolean confirmation:
         .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/confirmation/ToolConfirmationExample.kt:boolean_confirmation"
+    ```
+
 ### Require confirmation function
 
-You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input. In TypeScript, this is handled by adding conditional logic to your `execute` function.
+You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input. In TypeScript, this is handled by adding conditional logic to your `execute` function. In Kotlin, the `@Tool` annotation's flag is a compile-time constant, so the conditional logic goes inside the tool function.
 
 === "Python"
 
@@ -158,7 +165,7 @@ You can modify the behavior of the confirmation requirement by using a function 
         RequireConfirmationProvider: func(args ReimburseArgs) bool {
             return args.Amount > 1000
         },
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    }, func(ctx agent.Context, args ReimburseArgs) (ReimburseResult, error) {
         // actual implementation
         return ReimburseResult{Status: "ok"}, nil
     })
@@ -197,6 +204,17 @@ You can modify the behavior of the confirmation requirement by using a function 
         // ...
         .build();
     ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/confirmation/dynamic/ReimbursementTools.kt:dynamic_confirmation"
+    ```
+
+    !!! note
+        The `@Tool` annotation's `requireConfirmation` flag is a compile-time
+        constant, so a threshold is evaluated inside the tool using the
+        `ToolContext`, as in ADK Java.
 
 ## Advanced confirmation {#advanced-confirmation}
 
@@ -269,7 +287,7 @@ time off requests for an employee:
 === "Go"
 
     ```go
-    func requestTimeOff(ctx tool.Context, args RequestTimeOffArgs) (map[string]any, error) {
+    func requestTimeOff(ctx agent.Context, args RequestTimeOffArgs) (map[string]any, error) {
         confirmation := ctx.ToolConfirmation()
         if confirmation == nil {
             ctx.RequestConfirmation(
@@ -331,6 +349,12 @@ time off requests for an employee:
             "approved_days", approvedDays
         );
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/confirmation/ToolConfirmationExample.kt:advanced_confirmation"
     ```
 
 ## Remote confirmation with REST API {#remote-response}
