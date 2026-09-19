@@ -34,8 +34,8 @@ replacing matched content with a safe message.
 
 - A Google Cloud project with the Model Armor API enabled, and at least one template
   created. See the [Model Armor documentation](https://cloud.google.com/security-command-center/docs/manage-model-armor-templates).
-- Application Default Credentials with access to Model Armor
-  (`gcloud auth application-default login`).
+- Application Default Credentials with access to Model Armor, set up with
+  `gcloud auth application-default login`.
 - [ADK](https://adk.dev) >= 2.8.0
 
 ## Installation
@@ -84,8 +84,8 @@ app = App(
 Template names must be full resource paths in the form
 `projects/{project}/locations/{location}/templates/{template}`. The plugin reads the
 location out of the path to pick a regional endpoint, so both templates must live in the
-same region. A short name or a mismatched pair raises `ValueError` when the plugin is
-constructed.
+same region. A short name or a mismatched pair raises `ValueError` when you construct the
+plugin.
 
 Each template is optional, and setting only one screens only that direction:
 
@@ -110,8 +110,8 @@ request as a `function_response` part, which the plugin skips.
 | `output_blocked_message` | See below | Replacement text shown when model output is blocked. |
 | `block_on_screening_failure` | `True` | Whether to block content that could not be screened. |
 
-Both messages default to `"I'm sorry, but I can't help with that request."`, and at least one
-template name must be set or the config raises a validation error.
+Both messages default to `"I'm sorry, but I can't help with that request."`, and you must set
+at least one template name or the config raises a validation error.
 
 Screening fails when the Model Armor call raises, or when the service returns anything other
 than a `SUCCESS` verdict. The default blocks unscreened content. Set

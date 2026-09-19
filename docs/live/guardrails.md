@@ -5,7 +5,7 @@
 </div>
 
 Guardrails govern how live voice agents behave in production, keeping conversations on-topic,
-compliant, and safe. In a live connection, audio streams continuously and the model begins
+on-policy, and safe. In a live connection, audio streams continuously and the model begins
 speaking in real time. ADK provides multiple layers of protection that work together to
 secure conversations with limited impact on conversation latency.
 
@@ -17,7 +17,7 @@ For general callback mechanics and plugin registration, see
 | Layer | What it does | Protection focus | Latency impact |
 | :--- | :--- | :--- | :--- |
 | System instructions | Shapes tone, conversational rules, and boundaries | Behavioral guidance | No added application latency |
-| Safety settings | Enforces platform thresholds for content safety | Platform safety filters | Zero added latency |
+| Safety settings | Enforces platform thresholds for content safety | Platform safety filters | No added application latency |
 | Input validation | Catches prompt injection and disallowed topics | User input validation | Minimal (runs per turn) |
 | Response validation | Screens agent responses against business policies | Agent response validation | Dependent on check |
 | Tool guardrails | Intercepts tool execution and validates parameters | Tool execution safety | Minimal (runs per tool call) |
@@ -84,7 +84,8 @@ validation using ADK model callbacks.
 The `before_model_callback` hook intercepts user input. The callback evaluates typed text before
 reaching the model, so blocking prevents the message from entering context while keeping
 the connection open. For spoken audio, the callback inspects the transcribed utterance as
-it arrives.
+a whole, only after the model has already received the audio; a block there restarts the
+live session to drop the reply already in flight.
 
 When a check identifies a policy violation, returning an `LlmResponse` replaces the user's
 turn with a safe fallback response:
