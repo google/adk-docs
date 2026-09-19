@@ -115,7 +115,9 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
       }
     }
     ```
-
+!!! note "MCP version setting" 
+    The `mcp<2` constraint setting keeps `mcpdoc` compatible with the MCP 1.x `FastMCP`
+    API it currently uses.
 ### Other Tools
 
 Any coding tool that supports MCP servers can use the same server configuration
