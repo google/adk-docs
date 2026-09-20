@@ -29,17 +29,10 @@ are paid when their content is used.
 
 ## Prerequisites
 
+- ADK installed with the `mcp` extra: `pip install "google-adk[mcp]"`. Without
+  the extra, ADK's MCP classes are not importable.
 - A [Redpine](https://app.redpine.ai) account
 - An API key, created in the Redpine dashboard under **API Keys**
-
-## Installation
-
-Install ADK with the `mcp` extra. The extra is required; without it, ADK's
-MCP classes are not importable:
-
-```bash
-pip install "google-adk[mcp]"
-```
 
 ## Use with agent
 
@@ -83,17 +76,21 @@ pip install "google-adk[mcp]"
 
 ## Available tools
 
-Tools are discovered when your agent connects, and the search tools you see
-depend on the collections your account can access. Use the
-[ADK Web UI](/runtime/web-interface/) to view them in the trace graph.
+Tool | Description
+---- | -----------
+`search-redpine-science` | Search the Redpine Science collection of open-access research
+`preview` | Run a search and return a teaser plus the cost to unlock the full results, free of charge
+`confirm` | Unlock the full results of a previous preview, charging the approved amount
+`get_balance` | Check the current credit balance and trial status
+`find-tools` | Discover the other tools this account can reach
+`inspect-tool` | Return the full argument schema for one of those tools
+`call-tool` | Execute a tool found through `find-tools` by name
+`request_journal` | Record a request for a journal or publisher that Redpine does not yet cover
 
-Category | Description
--------- | -----------
-Search | Search a collection your account can access
-Preview and unlock | Preview results and their price, then unlock selected ones
-Account | Check your credit balance
-Discovery | Find and inspect additional tools available to your account
-Requests | Ask for a journal or source that is not yet available
+The search tools an agent sees depend on the collections its account can
+access, so an account with access to more collections is offered more of them.
+Use the [ADK Web UI](/runtime/web-interface/) to view the tools in the trace
+graph.
 
 ## Additional resources
 
