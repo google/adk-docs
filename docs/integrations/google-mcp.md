@@ -62,9 +62,9 @@ To discover MCP servers at runtime instead of using fixed endpoint URLs, see
 ## Use with agent
 
 The example below connects an agent to the BigQuery and Cloud Logging MCP
-servers. The same helper works for any endpoint in the tables below. The header provider runs before each request, so the access token is
-refreshed when it expires (after about an hour) and long-running agents keep
-working.
+servers, and the same helper works for any endpoint in the tables below. The
+header provider runs before each request, so the access token is refreshed when
+it expires (after about an hour) and long-running agents keep working.
 
 === "Python"
 
@@ -85,7 +85,7 @@ working.
         )
 
 
-        def google_cloud_auth_headers(context):
+        def google_auth_headers(context):
             if not credentials.valid:
                 credentials.refresh(Request())
             return {
@@ -94,10 +94,10 @@ working.
             }
 
 
-        def google_cloud_mcp_toolset(url):
+        def google_mcp_toolset(url):
             return McpToolset(
                 connection_params=StreamableHTTPConnectionParams(url=url),
-                header_provider=google_cloud_auth_headers,
+                header_provider=google_auth_headers,
             )
 
 
@@ -110,8 +110,8 @@ working.
                 " for log questions."
             ),
             tools=[
-                google_cloud_mcp_toolset("https://bigquery.googleapis.com/mcp"),
-                google_cloud_mcp_toolset("https://logging.googleapis.com/mcp"),
+                google_mcp_toolset("https://bigquery.googleapis.com/mcp"),
+                google_mcp_toolset("https://logging.googleapis.com/mcp"),
             ],
         )
         ```
