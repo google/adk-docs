@@ -32,6 +32,15 @@ are paid when their content is used.
 - A [Redpine](https://app.redpine.ai) account
 - An API key, created in the Redpine dashboard under **API Keys**
 
+## Installation
+
+Install ADK with the `mcp` extra. The extra is required; without it, ADK's
+MCP classes are not importable:
+
+```bash
+pip install "google-adk[mcp]"
+```
+
 ## Use with agent
 
 === "Python"
