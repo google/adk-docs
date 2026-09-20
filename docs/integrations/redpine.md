@@ -30,9 +30,7 @@ are paid when their content is used.
 ## Prerequisites
 
 - A [Redpine](https://app.redpine.ai) account
-- An API key, created in the Redpine dashboard under **Settings > API Keys**.
-  A sandbox key (`sk_test_...`) returns sample results at no cost, so you can
-  build and test your agent before using a live key (`sk_live_...`).
+- An API key, created in the Redpine dashboard under **API Keys**
 
 ## Use with agent
 
@@ -70,9 +68,9 @@ are paid when their content is used.
 
 !!! note
 
-    Unlocking results spends credits from your Redpine balance. Previews of
-    supported searches are free and show the price first. With a sandbox key
-    nothing is charged.
+    Previewing results is free and shows the price first. Unlocking results
+    spends credits from your Redpine balance, so have your agent ask before
+    it spends.
 
 ## Available tools
 
