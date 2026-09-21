@@ -136,6 +136,8 @@ production observability. ADK uses the following logging facilities:
 
 ### Logging level
 
+You can set the logging level for your ADK agent using standard logging controls, as follows:
+
 === "Python"
 
     To enable detailed logging, including `DEBUG` level messages, add the following
