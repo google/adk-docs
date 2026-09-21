@@ -785,7 +785,7 @@ The artifact interaction methods are available directly on instances of `Callbac
             public void processLatestReportJava(String userId, String sessionId, String filename) {
                 // Load the latest version by passing Optional.empty() for the version
                 artifactService
-                        .loadArtifact(appName, userId, sessionId, filename, Optional.empty())
+                        .loadArtifact(appName, userId, sessionId, filename)
                         .subscribe(
                                 new MaybeObserver<Part>() {
                                     @Override
@@ -828,7 +828,7 @@ The artifact interaction methods are available directly on instances of `Callbac
 
                 // Example: Load a specific version (e.g., version 0)
                 /*
-                artifactService.loadArtifact(appName, userId, sessionId, filename, Optional.of(0))
+                artifactService.loadArtifact(appName, userId, sessionId, filename, 0)
                     .subscribe(part -> {
                         System.out.println("Loaded version 0 of Java artifact '" + filename + "'.");
                     }, throwable -> {
@@ -895,6 +895,22 @@ artifact in a later turn.
     your artifacts need human-readable summaries, subclass `LoadArtifactsTool`
     and customize its request instructions before loading the selected artifact
     contents.
+
+    **Parsing spreadsheet artifacts (Python only):**
+
+    By default, spreadsheet files (`.xlsx`, `.xls`) cannot be read inline by the
+    model. In Python, you can set `enable_spreadsheet_parsing=True` to parse
+    them into Markdown tables:
+
+    ```python
+    tools=[
+        LoadArtifactsTool(enable_spreadsheet_parsing=True),
+    ]
+    ```
+
+    - Each sheet is rendered as a separate Markdown table under a sheet heading.
+    - Table output is capped at the first 100 rows per sheet to avoid exceeding
+      context window limits.
 
 === "Go"
 

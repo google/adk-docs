@@ -94,7 +94,7 @@ The following examples show how to enable boolean confirmation:
         // Set RequireConfirmation to true to require user confirmation
         // for the tool call.
         RequireConfirmation: true,
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    }, func(ctx agent.Context, args ReimburseArgs) (ReimburseResult, error) {
         // actual implementation
         return ReimburseResult{Status: "ok"}, nil
     })
@@ -165,7 +165,7 @@ You can modify the behavior of the confirmation requirement by using a function 
         RequireConfirmationProvider: func(args ReimburseArgs) bool {
             return args.Amount > 1000
         },
-    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+    }, func(ctx agent.Context, args ReimburseArgs) (ReimburseResult, error) {
         // actual implementation
         return ReimburseResult{Status: "ok"}, nil
     })
@@ -287,7 +287,7 @@ time off requests for an employee:
 === "Go"
 
     ```go
-    func requestTimeOff(ctx tool.Context, args RequestTimeOffArgs) (map[string]any, error) {
+    func requestTimeOff(ctx agent.Context, args RequestTimeOffArgs) (map[string]any, error) {
         confirmation := ctx.ToolConfirmation()
         if confirmation == nil {
             ctx.RequestConfirmation(
