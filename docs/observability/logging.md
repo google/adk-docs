@@ -244,9 +244,9 @@ You can set the logging level for your ADK agent using standard logging controls
 === "Go"
 
     To export logs to an OTLP-compatible backend, configure the standard
-    OpenTelemetry environment variables (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT` or
-    `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will
-    automatically use these settings when initialized.
+    OpenTelemetry environment variables, such as `OTEL_EXPORTER_OTLP_ENDPOINT`
+    or `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`. The ADK telemetry package uses these
+    settings automatically when initialized.
 
 === "Kotlin"
 
