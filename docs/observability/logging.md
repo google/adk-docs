@@ -156,7 +156,7 @@ production observability. ADK uses the following logging facilities:
 
 === "Kotlin"
 
-    ADK uses standard JVM logging facilities (defaulting to Flogger). Configure your JVM logger backend (e.g., `java.util.logging` or SLF4J) to adjust log verbosity.
+    ADK uses standard JVM logging facilities (defaulting to Flogger). Configure your JVM logger backend, such as `java.util.logging` or SLF4J, to adjust log verbosity.
 
 ### Capture prompt content
 
