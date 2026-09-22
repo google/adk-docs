@@ -320,7 +320,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
         };
       }
       async *runLiveImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
-        this.runAsyncImpl(context);
+        // This agent doesn't have a live implementation.
       }
     }
 
