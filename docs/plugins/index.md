@@ -62,6 +62,8 @@ immediately:
     Tracks tool failures and intelligently retries tool requests.
 *   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
+*   [**Model Armor**](/integrations/model-armor/):
+    Screens user input and model output against Google Cloud Model Armor templates.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
 *   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
