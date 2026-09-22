@@ -52,7 +52,9 @@ To discover MCP servers at runtime instead of using fixed endpoint URLs, see
     ```
 
 - [Application Default Credentials](https://docs.cloud.google.com/docs/authentication/provide-credentials-adc).
-  For local development, run `gcloud auth application-default login`.
+  For local development, run `gcloud auth application-default login`. See
+  [Set up authentication for MCP servers](https://docs.cloud.google.com/mcp/set-up-authentication-mcp-servers)
+  for the other authentication methods these servers accept.
 - ADK installed with the MCP extra:
 
     ```bash
@@ -179,4 +181,5 @@ see the tools a server provides, use the tool reference linked from that page.
 - [Google Cloud MCP servers overview](https://docs.cloud.google.com/mcp/overview)
 - [Supported products](https://docs.cloud.google.com/mcp/supported-products)
 - [Configure MCP in an AI application](https://docs.cloud.google.com/mcp/configure-mcp-ai-application)
+- [Set up authentication for MCP servers](https://docs.cloud.google.com/mcp/set-up-authentication-mcp-servers)
 - [MCP tools in ADK](/tools-custom/mcp-tools/)
