@@ -83,4 +83,9 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
 
 !!! tip "Global instructions for all agents"
 
-    Apply consistent rules or identity across all agents in your workflow using  `GlobalInstructionPlugin` registered on your `App` or `Runner` object. Do not use the `global_instruction` parameter on `Agent` which is deprecated since ADK Python v1.16.0.
+    Apply consistent rules across your workflow using the `GlobalInstructionPlugin` 
+    on your `App` ([Python](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py), 
+    [TypeScript](https://github.com/google/adk-js/blob/main/core/src/plugins/global_instruction_plugin.ts), 
+    [Java](https://github.com/google/adk-java/blob/main/core/src/main/java/com/google/adk/plugins/GlobalInstructionPlugin.java)) 
+    or the `GlobalInstruction` parameter on your agent 
+    ([Go](https://github.com/google/adk-go/blob/main/agent/llmagent/llmagent.go)).
