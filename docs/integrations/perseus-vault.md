@@ -32,21 +32,8 @@ keyword matching with dense vector retrieval.
 ## Prerequisites
 
 - Python 3.10+
-- The `perseus-vault` binary (see [Installation](#installation))
+- The `perseus-vault` binary already installed. See [Perseus Computing Vault](https://perseus.observer/vault/) for availability and instructions.
 - `google-adk>=1.0.0`
-
-## Installation
-
-Install the Python package:
-
-```bash
-pip install adk-perseus-vault-memory
-```
-
-Then install the `perseus-vault` binary and place it on your `PATH`. The service
-looks for `perseus-vault` by default, or pass
-`vault_binary="/absolute/path/to/perseus-vault"` to
-`PerseusVaultMemoryService`.
 
 ## Use with agent
 
