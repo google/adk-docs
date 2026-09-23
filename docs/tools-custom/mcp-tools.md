@@ -48,6 +48,18 @@ Before you begin, ensure you have the following set up:
 
 * **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/index.md) in the quickstart.
 * **Install/update Python/Java:** MCP requires Python version of 3.9 or higher for Python or Java 17 or higher.
+* **Install the MCP client extra (Python only):** A plain `pip install google-adk` does **not** install the MCP client dependencies. Without them, `google.adk.tools.mcp_tool` silently omits its MCP classes, so imports like `from google.adk.tools.mcp_tool import McpToolset` fail with:
+  ```text
+  ImportError: cannot import name 'McpToolset' from 'google.adk.tools.mcp_tool'
+  ```
+  even though ADK itself installed without error. Install ADK with the `mcp` extra instead:
+  ```shell
+  pip install "google-adk[mcp]"
+  ```
+  If you already have `google-adk` installed without the extra, reinstall it:
+  ```shell
+  pip install "google-adk[mcp]" --upgrade
+  ```
 * **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
