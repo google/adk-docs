@@ -433,9 +433,9 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
-      # Revamp IA also plans Building/Prompting and Production/{Guardrails,
-      # Observability}, plus an Architectures section once cascade lands. Left
-      # unfilled here rather than shipping stub pages.
+      # Revamp IA also plans Building/Prompting and Production/Observability,
+      # plus an Architectures section once cascade lands. Left unfilled here
+      # rather than shipping stub pages.
       - Building:
         - Workflows: live/workflows.md
         - Tools: live/tools.md
@@ -444,6 +444,7 @@ nav:
         - Audio and video: live/audio-video.md
         - Configuration: live/configuration.md
       - Production:
+        - Guardrails: live/guardrails.md
         - Evaluation: live/evaluation.md
         - Build a custom server: live/custom-server.md
       - Supported models: live/models.md
