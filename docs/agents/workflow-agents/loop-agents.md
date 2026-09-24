@@ -80,3 +80,12 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/LoopAgentExample.java:init"
         ```
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules across your workflow using the `GlobalInstructionPlugin` 
+    on your `App` ([Python](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py), 
+    [TypeScript](https://github.com/google/adk-js/blob/main/core/src/plugins/global_instruction_plugin.ts), 
+    [Java](https://github.com/google/adk-java/blob/main/core/src/main/java/com/google/adk/plugins/GlobalInstructionPlugin.java)) 
+    or the `GlobalInstruction` parameter on your agent 
+    ([Go](https://github.com/google/adk-go/blob/main/agent/llmagent/llmagent.go)).
