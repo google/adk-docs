@@ -186,3 +186,18 @@ adk web
 
 3. Open the ADK Web UI and select the web_reader_mcp_client_agent.
 4. Test the connection with a prompt such as: *Load the content from "https://example.com"*.
+
+## MCP Servers for Google Cloud Genmedia
+
+[MCP Tools for Genmedia Services](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+is a set of open-source MCP servers that enable you to integrate Google Cloud
+generative media services—such as Imagen, Veo, Chirp 3 HD voices, and Lyria—into
+your AI applications.
+
+Agent Development Kit (ADK) and [Genkit](https://genkit.dev/) provide built-in
+support for these MCP tools, allowing your AI agents to effectively orchestrate
+generative media workflows. For implementation guidance, refer to the [ADK
+example
+agent](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)
+and the
+[Genkit example](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit).
