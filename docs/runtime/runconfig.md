@@ -354,6 +354,26 @@ Use these parameters to control runtime guardrails and debugging:
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
 
+### Set the default model-call limit in Python
+
+In Python, set the `ADK_MAX_LLM_CALLS` environment variable before creating a
+`RunConfig` to change its default call limit. An explicit `max_llm_calls`
+argument takes precedence over the environment variable.
+
+```python
+import os
+from google.adk.agents.run_config import RunConfig
+
+os.environ["ADK_MAX_LLM_CALLS"] = "20"
+default_config = RunConfig()  # Limits each run to 20 model calls.
+override_config = RunConfig(max_llm_calls=10)  # Uses 10 instead of 20.
+```
+
+If the environment variable is unset, empty, or cannot be parsed as an integer,
+the default remains 500. ADK logs a warning when parsing fails.
+Setting the limit to zero or a negative number disables the call limit, whether
+the value comes from the environment or an explicit argument.
+
 ## API reference
 
 For the complete list of fields, types, and defaults, see the API reference for
