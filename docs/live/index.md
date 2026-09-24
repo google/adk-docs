@@ -62,8 +62,10 @@ your agent code stays the same as the platform evolves.
 
     Take a live agent beyond `adk web`.
 
+    - [Guardrails](guardrails.md) — screen what the user says and what the agent says back
     - [Evaluation](evaluation.md) — score voice conversations before you ship
     - [Build a custom server](custom-server.md)
+    - [LiveKit](../integrations/livekit.md) — WebRTC and telephony without a custom server
     - [Supported models](models.md)
 
 </div>
