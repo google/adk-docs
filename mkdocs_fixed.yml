@@ -1,0 +1,138 @@
+# Project information
+site_name: Agent Development Kit
+site_url: https://google.github.io/adk-docs
+site_description: >-
+  Build powerful multi-agent systems with Agent Development Kit
+site_dir: site
+exclude_docs:
+  api-reference/java/legal/*
+
+# Repository
+repo_name: adk-docs
+repo_url: https://github.com/google/adk-docs
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
+
+# Custom CSS
+extra_css:
+  - stylesheets/custom.css
+  - stylesheets/language-tags.css
+
+extra:
+  first_repo_url: https://github.com/google/adk-python
+  first_repo_name: adk-python
+  first_repo_icon: fontawesome/brands/github
+  second_repo_url: https://github.com/google/adk-go
+  second_repo_name: adk-go
+  second_repo_icon: fontawesome/brands/github
+  third_repo_url: https://github.com/google/adk-java
+  third_repo_name: adk-java
+  third_repo_icon: fontawesome/brands/github
+  analytics:
+    provider: google
+    property: G-DKHZS27PHP
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize repeated visits and preferences,
+      as well as to measure the effectiveness of our documentation and
+      whether users find the information they need. With your consent,
+      you're helping us to make our documentation better.
+
+# Configuration
+theme:
+  name: material
+  font:
+    text: Google Sans
+    code: Roboto Mono
+  logo: assets/agent-development-kit.png
+  favicon: assets/agent-development-kit.png
+  icon:
+    repo: fontawesome/brands/github
+  custom_dir: overrides
+  palette:
+    - scheme: default
+      primary: white
+      accent: white
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: white
+      accent: white
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      dedent_subsections: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - toc:
+      permalink: true
+
+
+# Plugins
+plugins:
+  - search
+  - redirects:
+      redirect_maps:
+        'get-started/local-testing.md': 'runtime/api-server.md'
+        'get-started/tutorial.md': 'tutorials/index.md'
+        'guides/responsible-agents.md': 'safety/index.md'
+        'tools/third-party-tools.md': 'tools/third-party/index.md'
+        'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tutorials/ag-ui.md': 'tools/third-party/ag-ui.md'
+        'tools/third-party/langchain.md': 'tools/index.md'
+        'tools/third-party/crewai.md': 'tools/index.md'
+        'get-started/testing.md': 'runtime/api-server.md'
+        'tools/authentication.md': 'tools-custom/authentication.md'
+        'tools/function-tools.md': 'tools-custom/function-tools.md'
+        'tools/confirmation.md': 'tools-custom/confirmation.md'
+        'tools/performance.md': 'tools-custom/performance.md'
+        'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+
+# Navigation
+nav:
