@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADK REST API Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+  <!-- Google Analytics tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DKHZS27PHP');
+  </script>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: "./openapi.json",
+      dom_id: "#swagger-ui",
+      deepLinking: true,
+      presets: [SwaggerUIBundle.presets.apis],
+      layout: "BaseLayout"
+    });
+  </script>
+</body>
+</html>
