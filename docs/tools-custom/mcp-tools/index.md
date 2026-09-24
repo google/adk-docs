@@ -74,7 +74,7 @@ the other implementations are covered in their specific pages.
 
  When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents. The following table works as a comparative guide to help you construct those agents.
 
-| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](agent-as-mcp-server.md) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](agent-managed-mcp.md) |
+| Dimension | [**Direct MCP Tool Integration** (`McpToolset`)](#direct-mcp-tool-integration-mcptoolset) | [**Agent-Exposed MCP Server** (`to_mcp_server`)](agent-as-server.md) | [**Specialized Sub-Agent Delegation** (`AgentTool`)](agent-managed.md) |
 | :--- | :--- | :--- | :--- |
 | **Architecture** | External server process or remote service providing deterministic endpoints adapted into the primary `LlmAgent` tool list. | An autonomous ADK agent compiled into an MCP server, callable by external clients (Claude Code, IDEs, external hosts). | In-process, hierarchical agent encapsulation where a parent agent invokes a child `LlmAgent` as a callable tool. |
 | **Context Window Impact** | **High Context Bloat**: Every tool definition and raw output, for example: database rows or file blobs, enters the primary agent's history. | **Isolated**: The external caller only receives the final aggregated response text/blocks. | **Zero Context Bloat**: Intermediate exploratory reasoning, failed tool calls, and large raw outputs remain isolated in the sub-agent loop. |
@@ -139,7 +139,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     
     - Interact with the Agent: select `filesystem_assistant` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
-    ![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
+    ![MCP with ADK Web - FileSystem Example](../../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
     ```
 
 === "TypeScript"
@@ -302,7 +302,7 @@ Unlike the previous local process example, this pattern connects your agent to a
        - Select `travel_planner` from the drop-down.
        - Try prompts such as: *I will be in San Francisco tomorrow. What's the weather like* or *Find coffee shops near Golden Gate Park*
        
-     ![MCP with ADK Web - Google Maps Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
+     ![MCP with ADK Web - Google Maps Example](../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 === "TypeScript"
 
@@ -352,7 +352,7 @@ ADK automatically constructs the required `Authorization` HTTP headers and manag
 
 When an MCP server requires authentication, `McpToolset` handles credential injection and token management automatically. Use the native `auth_scheme` and `auth_credential` parameters rather than manually injecting HTTP headers.
 
-*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](./authentication.md)*
+*For general ADK authentication patterns, see our [Custom Tools Authentication Guide](../authentication.md)*
 
 === "Python"
 
@@ -489,4 +489,4 @@ else:
 
 ## Further resources
 
-Once you understand the basics, explore [Advanced use cases](./mcp-tools-advanced.md) for complex implementations and custom integrations.
+Once you understand the basics, explore [Advanced use cases](./advanced.md) for complex implementations and custom integrations.
