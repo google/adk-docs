@@ -12,12 +12,11 @@ catalog_tags: ["data"]
 </div>
 
 The [`adk-perseus-vault-memory`](https://github.com/Perseus-Computing-LLC/adk-mimir-memory)
-integration connects your ADK agent to
-[Perseus Vault](https://github.com/Perseus-Computing-LLC/perseus-vault), a
-persistent, cross-session memory backend. Backed by a single Rust binary with an
-embedded SQLite database, it requires **zero cloud dependencies**, and everything
-runs locally. Memory is encrypted at rest with AES-256-GCM, and search combines
-FTS5 keyword matching with dense vector retrieval.
+integration connects your ADK agent to Perseus Vault, a persistent,
+cross-session memory backend. Backed by a single Rust binary with an embedded
+SQLite database, it requires **zero cloud dependencies**, and everything runs
+locally. Memory is encrypted at rest with AES-256-GCM, and search combines FTS5
+keyword matching with dense vector retrieval.
 
 ## Use cases
 
@@ -33,23 +32,8 @@ FTS5 keyword matching with dense vector retrieval.
 ## Prerequisites
 
 - Python 3.10+
-- The `perseus-vault` binary (see [Installation](#installation))
+- The `perseus-vault` binary already installed. See [Perseus Computing Vault](https://perseus.observer/vault/) for availability and instructions.
 - `google-adk>=1.0.0`
-
-## Installation
-
-Install the Python package:
-
-```bash
-pip install adk-perseus-vault-memory
-```
-
-Then install the `perseus-vault` binary: download the build for your platform
-from the
-[releases page](https://github.com/Perseus-Computing-LLC/perseus-vault/releases)
-and place it on your `PATH`. The service looks for `perseus-vault` by default, or
-pass `vault_binary="/absolute/path/to/perseus-vault"` to
-`PerseusVaultMemoryService`.
 
 ## Use with agent
 
@@ -146,5 +130,4 @@ session = await runner.session_service.create_session(
 
 - [adk-perseus-vault-memory on GitHub](https://github.com/Perseus-Computing-LLC/adk-mimir-memory)
 - [adk-perseus-vault-memory on PyPI](https://pypi.org/project/adk-perseus-vault-memory/)
-- [Perseus Vault (backing service)](https://github.com/Perseus-Computing-LLC/perseus-vault)
 - [Perseus Context integration](/integrations/perseus/)
