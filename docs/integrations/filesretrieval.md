@@ -26,7 +26,13 @@ to ground its answers in project-specific context.
 
 ## Prerequisites
 
-To use `FilesRetrieval`, configure credentials for either Google AI Studio or Agent Platform:
+`FilesRetrieval` indexes documents with LlamaIndex, which ADK does not install by default. Install the extra that provides it:
+
+```bash
+pip install "google-adk[extensions]"
+```
+
+Then configure credentials for either Google AI Studio or Agent Platform:
 
 === "Google AI Studio"
 
@@ -43,12 +49,12 @@ To use `FilesRetrieval`, configure credentials for either Google AI Studio or Ag
     ```bash
     export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
     export GOOGLE_CLOUD_PROJECT="your-project-id"
-    export GOOGLE_CLOUD_LOCATION="global"
+    export GOOGLE_CLOUD_LOCATION="<global | us | eu>"
     ```
 
 !!! note
     
-    ADK's default embedding model, `gemini-embedding-2-preview`, is a preview endpoint; on Agent Platform it is served from the `us-central1` region and may be removed in the future. For production, pass the GA model explicitly with `embedding_model=GoogleGenAIEmbedding(model_name="gemini-embedding-2", embed_batch_size=1)`.
+    For production, pass the GA model explicitly with `embedding_model=GoogleGenAIEmbedding(model_name="gemini-embedding-2", embed_batch_size=1)`. For more information, see [Gemini Embedding](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2).
     
 ## Use with agent
 
