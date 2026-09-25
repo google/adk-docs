@@ -1435,10 +1435,12 @@ Access relevant information from the past or external sources.
 ### Render UI Widgets
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span>
 </div>
 
-You can send rich UI components to the client using `context.render_ui_widget()`. This is typically used to render interactive elements alongside agent responses.
+You can send rich UI components to the client using
+`context.render_ui_widget()`. This is typically used to render interactive
+elements alongside agent responses.
 
 === "Python"
 
