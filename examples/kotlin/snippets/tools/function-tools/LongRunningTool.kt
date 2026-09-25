@@ -4,7 +4,12 @@ import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.annotations.Param
 import com.google.adk.kt.annotations.Tool
+import com.google.adk.kt.events.Event
 import com.google.adk.kt.models.Gemini
+import com.google.adk.kt.runners.InMemoryRunner
+import com.google.adk.kt.types.Content
+import com.google.adk.kt.types.FunctionResponse
+import com.google.adk.kt.types.Part
 
 // --8<-- [start:long_running_tool]
 data class ReimbursementApproval(
@@ -47,3 +52,54 @@ fun main() {
         )
 }
 // --8<-- [end:long_running_tool]
+
+// --8<-- [start:call_reimbursement_tool]
+private fun printText(event: Event) {
+    val text = event.content?.parts?.mapNotNull { it.text }?.joinToString("").orEmpty()
+    if (text.isNotEmpty()) println("[${event.author}]: $text")
+}
+
+suspend fun callReimbursementAgent(
+    runner: InMemoryRunner,
+    userId: String,
+    sessionId: String,
+    query: String,
+) {
+    var pendingCallId: String? = null
+    var pendingResponse: FunctionResponse? = null
+
+    runner
+        .runAsync(
+            userId = userId,
+            sessionId = sessionId,
+            newMessage = Content(role = "user", parts = listOf(Part(text = query))),
+        ).collect { event ->
+            val callId = pendingCallId
+            if (callId == null) {
+                // A long-running call is the one whose id the event lists in longRunningToolIds.
+                pendingCallId =
+                    event
+                        .functionCalls()
+                        .firstOrNull { it.id != null && it.id in event.longRunningToolIds }
+                        ?.id
+            } else {
+                event
+                    .functionResponses()
+                    .firstOrNull { it.id == callId }
+                    ?.let { pendingResponse = it }
+            }
+            printText(event)
+        }
+
+    // The tool returned "pending" and the invocation paused. Resume it by sending the
+    // outcome back as a FunctionResponse carrying the same id.
+    val paused = pendingResponse ?: return
+    val updated = paused.copy(response = mapOf("status" to "approved"))
+    runner
+        .runAsync(
+            userId = userId,
+            sessionId = sessionId,
+            newMessage = Content(role = "user", parts = listOf(Part(functionResponse = updated))),
+        ).collect(::printText)
+}
+// --8<-- [end:call_reimbursement_tool]
