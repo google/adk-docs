@@ -353,17 +353,17 @@ Because the background data (like LLM requests and tool calls) is complex, you s
 
 1. Start your ADK web server with the recording plugin turned on:
 
-```shell
-adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPlugin /path/to/agents
-```
+    ```shell
+    adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPlugin /path/to/agents
+    ```
 
-   2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
+2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
 
-```shell
-adk conformance record tests/category/test_name none
-```
+    ```shell
+    adk conformance record tests/category/test_name none
+    ```
 
-   The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
+    The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
 
 This automatically runs the scenario, records all the interactions, and saves the generated-recordings.yaml and generated-session.yaml files exactly where they need to be.
 
@@ -613,6 +613,14 @@ Here are the details for each command line argument:
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
 
 ### Run conformance tests
+
+Replay tests need the ADK web server running with the replay plugin, which serves the recorded model and tool responses. If the server is still running with the recording plugin from [Automate the baseline](#automate-the-baseline), stop it and restart it with the replay plugin:
+
+```shell
+adk web --extra_plugins=google.adk.cli.plugins.replay_plugin.ReplayPlugin /path/to/agents
+```
+
+If the replay plugin is not loaded, each test fails with `Replay verification failed: AttributeError: 'NoneType' object has no attribute 'recordings'`.
 
 You can run all your tests at once, run specific ones, or create a summary report.
 
