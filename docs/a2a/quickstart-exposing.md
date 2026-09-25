@@ -274,7 +274,7 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 
 ### Manage the application lifecycle
 
-Use the `lifespan` argument of the `to_a2a` function to manage the application's lifecycle. Pass an asynchronous context manager to perform setup and teardown tasks, such as initiate a database connection on startup and closing it on shutdown.
+Use the `lifespan` argument of the `to_a2a` function to manage the application's lifecycle. Pass an asynchronous context manager to perform setup and teardown tasks, such as initiating a database connection on startup and closing it on shutdown.
 
 The context manager receives the `Starlette` app instance. Use `app.state` to store resources that your application needs to access globally.
 
