@@ -10,10 +10,10 @@ document-processing pipeline can wait for capacity. Deferred scheduling lets
 ADK agents queue those model calls to run on off-peak capacity instead
 of competing for interactive capacity.
 
-You can request deferred scheduling per run, using the `service_tier` setting of
-`RunConfig`. The setting is part of the run configuration rather than on the model or
-the agent, one agent definition can serve both interactive requests and batch
-workloads.
+You can request deferred scheduling per run, using the `service_tier` setting
+of `RunConfig`. The setting is part of the run configuration rather than the
+model or the agent, so one agent definition can serve both interactive requests
+and batch workloads.
 
 !!! note "Deferred capacity requires allowlisted access"
 
@@ -109,17 +109,17 @@ messages:
 ## How deferred scheduling works
 
 Standard model requests are synchronous. ADK sends the request and the model
-returns a response on the same connection. When you enable deferred scheduling, 
-set `ServiceTier.DEFERRED`, ADK marks the request for background execution and
-the backend queues it, returning an interaction ID immediately instead of a
-result.
+returns a response on the same connection. When you enable deferred scheduling
+by setting `ServiceTier.DEFERRED`, ADK marks the request for background
+execution and the backend queues it, returning an interaction ID immediately
+instead of a result.
 
-The agent then waits for that result, checking the queued work with
-exponential backoff and absorbing transient read failures until it reaches a
-final status. It converts that result to a normal response event and yields it.
-This loop is internal and does not show the interaction IDs and you do not need to 
-write any retrieval code. It does add a few seconds of polling delay on top of 
-the queue wait, so deferred scheduling should not be used for short, latency-sensitive
+ADK then waits for that result, checking the queued work with exponential
+backoff and absorbing transient read failures until it reaches a final status.
+It converts that result to a normal response event and yields it. This loop is
+internal: it does not surface interaction IDs, and you do not need to write any
+retrieval code. It does add a few seconds of polling delay on top of the queue
+wait, so deferred scheduling should not be used for short, latency-sensitive
 calls.
 
 The following properties of the wait affect how you design your agent:
@@ -154,8 +154,8 @@ The `ServiceTier` enum defines the following tiers:
 Leaving `service_tier` unset omits the field from the request entirely, which is
 equivalent to `ServiceTier.STANDARD`. The `ServiceTier` enum subclasses `str`,
 so you can pass a plain string such as `'deferred'` in place of an enum member.
-The string form also lets you use a tier the backend supports before ADK defines a
-constant for it.
+The string form also lets you use a tier the backend supports before ADK
+defines a constant for it.
 
 ## Advanced usage
 
@@ -206,9 +206,9 @@ backend load. To cap the total elapsed time, wrap the run in an
 
 !!! danger "Client deadlines do not cancel requests"
 
-    Timing out stops ADK from polling for the result, but does not stop the 
-    backend. The queued request runs to completion and consumes billed usage, 
-    and you cannot retrieve its output afterward. Treat a timed-out turn as 
+    Timing out stops ADK from polling for the result, but does not stop the
+    backend. The queued request runs to completion and consumes billed usage,
+    and you cannot retrieve its output afterward. Treat a timed-out turn as
     forfeited, and do not use a client deadline to limit usage.
 
 ### Request deferred scheduling over HTTP
