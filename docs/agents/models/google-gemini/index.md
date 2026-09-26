@@ -177,6 +177,10 @@ snippet:
 For a complete code sample, see the
 [Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api).
 
+Enabling the Interactions API also lets you choose a serving tier for each run.
+For details on queuing model calls to run on off-peak capacity, see
+[Deferred scheduling](deferred-schedule.md).
+
 ### Known limitations
 
 The Interactions API **does not** support mixing custom function calling tools with
