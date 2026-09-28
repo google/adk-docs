@@ -471,7 +471,6 @@ schema definitions.
   conforming to this schema.
   - In Python, supported schema types include:
     - A Pydantic model class, for example `MySchema`
-    - A list of Pydantic models, for example `list[MySchema]`
     - Lists of primitives, such as `list[str]`, `list[int]`, `list[bool]`, `list[float]`
     - `dict`
     - `google.genai.types.Schema`
