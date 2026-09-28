@@ -525,7 +525,9 @@ To keep side effects from repeating:
    caps the number of delivery attempts:
 
     ```bash
-    gcloud pubsub subscriptions update my-sub       --dead-letter-topic=my-dead-letter-topic       --max-delivery-attempts=5
+    gcloud pubsub subscriptions update my-sub \
+      --dead-letter-topic=my-dead-letter-topic \
+      --max-delivery-attempts=5
     ```
 
     Pub/Sub forwards messages to the dead-letter topic with its service agent,
@@ -535,9 +537,13 @@ To keep side effects from repeating:
     ```bash
     PUBSUB_SERVICE_AGENT="service-PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com"
 
-    gcloud pubsub topics add-iam-policy-binding my-dead-letter-topic       --member="serviceAccount:${PUBSUB_SERVICE_AGENT}"       --role="roles/pubsub.publisher"
+    gcloud pubsub topics add-iam-policy-binding my-dead-letter-topic \
+      --member="serviceAccount:${PUBSUB_SERVICE_AGENT}" \
+      --role="roles/pubsub.publisher"
 
-    gcloud pubsub subscriptions add-iam-policy-binding my-sub       --member="serviceAccount:${PUBSUB_SERVICE_AGENT}"       --role="roles/pubsub.subscriber"
+    gcloud pubsub subscriptions add-iam-policy-binding my-sub \
+      --member="serviceAccount:${PUBSUB_SERVICE_AGENT}" \
+      --role="roles/pubsub.subscriber"
     ```
 
 3. **Make tools with side effects idempotent.** Deduplicate at the service
@@ -553,7 +559,9 @@ the trigger. Apply the acknowledgement deadline and dead-letter settings to
 that subscription. To find its name:
 
 ```bash
-gcloud eventarc triggers describe my-trigger   --location=us-central1   --format="value(transport.pubsub.subscription)"
+gcloud eventarc triggers describe my-trigger \
+  --location=us-central1 \
+  --format="value(transport.pubsub.subscription)"
 ```
 
 ## Deploy
