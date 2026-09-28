@@ -564,6 +564,43 @@ gcloud eventarc triggers describe my-trigger \
   --format="value(transport.pubsub.subscription)"
 ```
 
+#### Deduplicate with the delivery ID
+
+=== "Python"
+
+    Trigger endpoints store the identity of each delivery in session state
+    under the `trigger_delivery` key. Its `id` stays the same across
+    redeliveries of one event, so a tool can use it as an idempotency key
+    even when the payload has no natural ID:
+
+    | Field | Pub/Sub | Eventarc |
+    | :---- | :------ | :------- |
+    | `source` | `"pubsub"` | `"eventarc"` |
+    | `id` | `message.messageId` | CloudEvents `id`, or the Pub/Sub `messageId` of a wrapped message |
+    | Other fields | `subscription`, `publish_time` | `event_source`, `type` |
+
+    `id` is unique only within its topic or event source, so build the
+    idempotency key from `subscription` and `id` for Pub/Sub, or from
+    `event_source` and `id` for Eventarc:
+
+    ```python
+    from google.adk.tools import ToolContext
+
+    def pay_invoice(invoice_id: str, amount: str, tool_context: ToolContext) -> dict:
+        """Pays an invoice. Safe to run again for a redelivered event."""
+        delivery = tool_context.state.get("trigger_delivery")
+        idempotency_key = None
+        if delivery and delivery["id"]:
+            scope = delivery.get("subscription") or delivery.get("event_source")
+            idempotency_key = f"{scope}:{delivery['id']}:{invoice_id}"
+        # payments_client is your payment provider's client. The provider
+        # charges once per idempotency key and returns the original result
+        # when it sees the same key again.
+        return payments_client.charge(
+            invoice_id, amount, idempotency_key=idempotency_key
+        )
+    ```
+
 ## Deploy
 
 The examples below use [Cloud Run](https://cloud.google.com/run) as the
