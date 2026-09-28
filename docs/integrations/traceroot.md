@@ -158,7 +158,9 @@ The [trace timeline](https://traceroot.ai/docs/tracing/timeline) shows how long
 each step took, helping you distinguish time spent in the model from time spent
 in tools. The [token and cost views](https://traceroot.ai/docs/tracing/cost-tracking)
 show usage per model call and across the trace, with costs calculated for
-supported models.
+supported models. The `gemini-flash-latest` alias in this example records token
+usage but is not priced. To track cost, use a model ID supported by TraceRoot's
+pricing table.
 
 ## Troubleshooting
 
