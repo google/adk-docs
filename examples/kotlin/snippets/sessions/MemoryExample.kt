@@ -21,7 +21,9 @@ import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.callbacks.AfterAgentCallback
 import com.google.adk.kt.callbacks.CallbackChoice
+import com.google.adk.kt.events.Event
 import com.google.adk.kt.memory.InMemoryMemoryService
+import com.google.adk.kt.memory.MemoryEntry
 import com.google.adk.kt.memory.VertexAiMemoryBankService
 import com.google.adk.kt.memory.VertexAiRagMemoryService
 import com.google.adk.kt.models.Gemini
@@ -259,6 +261,30 @@ fun agentWithCallback(model: Gemini) {
         )
 }
 // --8<-- [end:auto_save_callback]
+
+// --8<-- [start:callback_memory_writes]
+
+/**
+ * Saves a chosen set of events rather than the whole session, tagged so they can
+ * be filtered later. The events come from the caller: CallbackContext does not
+ * expose the session.
+ */
+suspend fun saveEventsToMemory(
+    context: CallbackContext,
+    events: List<Event>,
+) {
+    // appName, userId and sessionId are taken from the invocation. Throws
+    // IllegalStateException if the runner has no memory service configured.
+    context.addEventsToMemory(events, customMetadata = mapOf("source" to "turn_callback"))
+}
+
+/** Writes an explicit fact, instead of letting the service derive one from events. */
+suspend fun rememberPreferenceCallback(context: CallbackContext): CallbackChoice<Unit, Content> {
+    val preference = MemoryEntry(content = Content.fromText(Role.USER, "Prefers window seats."))
+    context.addMemory(listOf(preference))
+    return CallbackChoice.Continue(Unit)
+}
+// --8<-- [end:callback_memory_writes]
 
 // --8<-- [start:memory_bank]
 

@@ -119,7 +119,7 @@ agent using the ADK CLI.
     adk deploy agent_engine \
         --project=$GOOGLE_CLOUD_PROJECT \
         --region=$GOOGLE_CLOUD_LOCATION \
-        --trace_to_cloud \
+        --otel_to_cloud \
         $AGENT_PATH
     ```
 
@@ -241,13 +241,30 @@ process, similar to the trace view in the local ADK web UI.
 
 ### Captured attributes
 
-ADK automatically enriches traces with the following attributes to help you
-filter and analyze your agent's behavior:
+The Agent Development Kit (ADK) enriches traces with telemetry attributes to help you filter, monitor, and analyze agent behavior.
 
-- `gen_ai.agent.name`: The name of the agent being executed.
-- `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
-- `gcp.vertex.agent.event_id`: The ID of the specific event.
-- `gen_ai.conversation.id`: The session ID.
+| Attribute | Description |
+| :--- | :--- |
+| `gen_ai.agent.name` | The name of the agent being executed. |
+| `gcp.vertex.agent.invocation_id` | Unique ID of the invocation. |
+| `gcp.vertex.agent.event_id` | ID of the specific event. |
+| `gen_ai.conversation.id` | The session or conversation ID. |
+| `gcp.vertex.agent.session_id` | The session ID associated with the agent invocation context. |
+| `gcp.vertex.agent.llm_request` | Serialized LLM request containing prompt text and configuration. |
+| `gcp.vertex.agent.llm_response` | Serialized LLM response containing model output. |
+| `gcp.vertex.agent.tool_call_args` | Serialized arguments passed to tool calls. |
+| `gcp.vertex.agent.tool_response` | Serialized result returned by the tool. |
+| `gcp.vertex.agent.data` | Serialized data payloads sent to the agent. |
+
+### Data privacy and payload redaction
+
+To prevent exposing sensitive data and Personally Identifiable Information (PII) in production:
+
+- **Deployment default:** When deploying with `adk deploy agent_engine --otel_to_cloud`, ADK automatically sets `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS='false'` unless it is already defined in `.env` settings. For other targets like Cloud Run or GKE, set this variable explicitly.
+- **Redacted payloads:** When `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS` is `'false'` or `'0'`, payload attributes (`gcp.vertex.agent.llm_request`, `gcp.vertex.agent.llm_response`, `gcp.vertex.agent.tool_call_args`, `gcp.vertex.agent.tool_response`, and `gcp.vertex.agent.data`) are replaced with placeholder values, such as `"{}"` or `"N/A"`.
+- **Enabling capture:** To capture full payloads for local testing or debugging, explicitly set `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS='true'` in your `.env` file or environment variables.
+- **OpenTelemetry message capturing:** Set `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT='true'` (or `'1'`) to enable logging of prompt and response content in OpenTelemetry events.
+
 
 ## Resources
 

@@ -277,7 +277,7 @@ the storage backend that best suits your needs:
 ### `VertexAiSessionService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 * **How it works:** Uses Google Cloud Agent Platform infrastructure via API
@@ -356,6 +356,37 @@ the storage backend that best suits your needs:
         sessionService
             .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
             .blockingGet();
+    ```
+
+=== "Kotlin"
+
+    `VertexAiSessionService` is JVM-only in ADK Kotlin. It is not available on
+    Android; use it from a server-side agent.
+
+    ```kotlin
+    import com.google.adk.kt.sessions.SessionKey
+    import com.google.adk.kt.sessions.VertexAiSessionService
+    import kotlinx.coroutines.runBlocking
+
+    // The reasoning engine is pinned here, at construction. In the other tabs
+    // the engine is chosen per call, through `app_name`; in Kotlin `appName`
+    // is never parsed for it and is only a label on the session.
+    val sessionService =
+        VertexAiSessionService(
+            project = "your-gcp-project-id",
+            location = "us-central1",
+            // The bare numeric engine id. A full
+            // "projects/.../reasoningEngines/..." resource name is rejected;
+            // project and location are separate arguments.
+            reasoningEngineId = "1234567890",
+        )
+
+    // Session methods are suspend functions; `runBlocking` here is the
+    // counterpart of the Java tab's `.blockingGet()`.
+    val mySession = runBlocking {
+        // A null id lets the service assign one.
+        sessionService.createSession(SessionKey("example-app", "u_123", id = null))
+    }
     ```
 
 For more information on connecting to Google Cloud from ADK agents, see

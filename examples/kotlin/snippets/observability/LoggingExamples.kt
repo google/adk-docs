@@ -18,6 +18,7 @@ package com.google.adk.kt.examples.observability
 
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.apps.App
+import com.google.adk.kt.plugins.DebugLoggingPlugin
 import com.google.adk.kt.plugins.LoggingPlugin
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.telemetry.TelemetryConfig
@@ -36,4 +37,13 @@ suspend fun loggingExamples(agent: LlmAgent) {
             App(appName = agent.name, rootAgent = agent, plugins = listOf(LoggingPlugin())),
         )
     // --8<-- [end:logging_plugin]
+
+    // --8<-- [start:debug_logging_plugin]
+    // includeSystemInstruction = false logs has_system_instruction, not the instruction text
+    val debugPlugin = DebugLoggingPlugin(includeSystemInstruction = false)
+    val debugRunner =
+        InMemoryRunner(
+            App(appName = agent.name, rootAgent = agent, plugins = listOf(debugPlugin)),
+        )
+    // --8<-- [end:debug_logging_plugin]
 }
