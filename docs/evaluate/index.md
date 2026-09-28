@@ -404,6 +404,17 @@ Here is a summary of all the available criteria:
 *   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
     conversation.
 
+The following are *efficiency* criteria. They report a value but never pass or
+fail an eval case, and they are reported for every eval without being listed in
+`EvalConfig`:
+
+*   **tool_call_count_v1**: Number of tool calls made.
+*   **inference_call_count_v1**: Number of model calls made.
+*   **token_usage_v1**: Tokens consumed, with a per-type breakdown reported
+    alongside the total.
+*   **invocation_duration_v1**: Wall-clock seconds the turn took, measured
+    while the agent ran.
+
 !!! note
 
     Some criteria (such as response quality, safety, and multi-turn quality)
@@ -464,6 +475,12 @@ Choose criteria based on your evaluation goals:
 *   **Evaluate tool usage in multi-turn workflows:** Use
     `multi_turn_tool_use_quality_v1` to assess the quality, relevance, and
     correctness of tool or function calls made across multiple turns.
+*   **Track how expensive an agent is:** The efficiency criteria
+    (`tool_call_count_v1`, `inference_call_count_v1`, `token_usage_v1`,
+    `invocation_duration_v1`) are reported automatically, so you get this for
+    free. Compare them across runs to catch a change that keeps quality flat
+    but doubles token usage. They never fail an eval, so they are safe to
+    leave on in CI/CD.
 
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
