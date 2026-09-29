@@ -17,13 +17,10 @@ and batch workloads.
 
 !!! example "Preview: Deferred capacity requires allowlisted access"
 
-    Running requests on deferred capacity requires an allowlist for your Google
-    Cloud project, and the deferred tier is a
-    [Preview](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling)
-    capability subject to the Pre-GA Offerings Terms in the
-    [Service Specific Terms](https://docs.cloud.google.com/terms/service-terms#1);
-    it is available as is and might have limited support. Contact your Google
-    Cloud account team to request access before you use `ServiceTier.DEFERRED`.
+    This Google Cloud deferred capacity feature is a Preview capability, 
+    and running requests on deferred capacity requires an allowlist for 
+    your Google Cloud project. For more information, see 
+    [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling).
 
 ## Get started
 
