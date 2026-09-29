@@ -1,7 +1,7 @@
 # Deferred scheduling with Gemini models
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span><span class="lst-preview">Preview</span>
 </div>
 
 Agent workloads have different latency needs. An interactive assistant must
