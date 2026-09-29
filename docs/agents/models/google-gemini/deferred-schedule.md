@@ -15,7 +15,7 @@ of `RunConfig`. The setting is part of the run configuration rather than the
 model or the agent, so one agent definition can serve both interactive requests
 and batch workloads.
 
-!!! note "Deferred capacity requires allowlisted access"
+!!! experimental "Preview: Deferred capacity requires allowlisted access"
 
     Running requests on deferred capacity requires an allowlist for your Google
     Cloud project, and the deferred tier is a
