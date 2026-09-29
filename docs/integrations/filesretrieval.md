@@ -14,7 +14,7 @@ catalog_tags: ["google", "data"]
 The `FilesRetrieval` tool lets your ADK agent index and query local documents
 using retrieval-augmented generation (RAG). It builds a LlamaIndex
 `VectorStoreIndex` over a directory you specify, using Google's
-`gemini-embedding-2-preview` embedding model. Your agent can then retrieve
+Gemini embedding model. Your agent can then retrieve
 relevant excerpts from local text files, Markdown documents, and source files
 to ground its answers in project-specific context.
 
@@ -26,7 +26,7 @@ to ground its answers in project-specific context.
 
 ## Prerequisites
 
-`FilesRetrieval` indexes documents with LlamaIndex, which ADK does not install by default. Install the extra that provides it:
+The `FilesRetrieval` tool indexes documents with LlamaIndex, which ADK does not install by default. Install the extra that provides it:
 
 ```bash
 pip install "google-adk[extensions]"
@@ -54,7 +54,9 @@ Then configure credentials for either Google AI Studio or Agent Platform:
 
 !!! note
     
-    For production, pass the GA model explicitly with `embedding_model=GoogleGenAIEmbedding(model_name="gemini-embedding-2", embed_batch_size=1)`. For more information, see [Gemini Embedding](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2).
+    For production, pass the GA model explicitly with `embedding_model=GoogleGenAIEmbedding(model_name="gemini-embedding-2", embed_batch_size=1)`. For more information, see [Gemini Embedding](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/embedding-2). For more information on connecting your ADK agent to Google Cloud resources
+    and services, see the Google Cloud [Connection Guide](/get-started/google-cloud/). 
+    
     
 ## Use with agent
 
@@ -95,7 +97,7 @@ root_agent = Agent(
 
 ## Available tools
 
-`FilesRetrieval` is itself a tool. Once attached with `tools=[...]`, the agent sees one function, which takes a single `query` string parameter:
+The `FilesRetrieval` class is a tool. Once attached with `tools=[...]`, the agent sees one function, which takes a single `query` string parameter:
 
 Tool | Description
 ---- | -----------
