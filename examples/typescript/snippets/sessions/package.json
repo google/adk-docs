@@ -20,7 +20,7 @@
   "license": "Apache-2.0",
   "type": "commonjs",
   "dependencies": {
-    "@google/adk": "^0.6.1",
-    "@google/adk-devtools": "^0.6.1"
+    "@google/adk": "^1.5.0",
+    "@google/adk-devtools": "^1.5.0"
   }
 }
