@@ -17,7 +17,7 @@ and batch workloads.
 
 !!! example "Preview: Deferred capacity requires allowlisted access"
 
-    This Google Cloud deferred capacity feature is a Preview capability, 
+    This Google Cloud feature is a Preview capability, 
     and running requests on deferred capacity requires an allowlist for 
     your Google Cloud project. For more information, see 
     [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling).
