@@ -71,6 +71,8 @@ You should have a Google Cloud project. You need to know your:
   3. Service account, for example: "1234567890-compute@developer.gserviceaccount.com"
   4. GOOGLE_API_KEY
 
+You must also have the Google Cloud CLI (`gcloud`) installed.
+
 ## Secret
 
 Make sure you have created a secret which can be read by your service account.
