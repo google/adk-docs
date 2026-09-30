@@ -446,12 +446,9 @@ For more information on connecting to Google Cloud from ADK agents, see
 
         The Go session service does not create or update its tables. Call
         `database.AutoMigrate` each time your application starts, before it
-        serves traffic. It creates missing tables and columns and does not
-        drop existing ones, so a database keeps working after an ADK upgrade
-        adds a column. It can also change the type of an existing column to
-        match what ADK expects. If you manage the schema yourself instead of
-        running `AutoMigrate`, add the new columns before deploying the ADK
-        release that introduces them. Otherwise, writes to that table fail.
+        serves traffic. For what it changes and how to handle a schema you
+        manage yourself, see
+        [Schema updates in ADK Go](/sessions/session/migrate/#schema-updates-in-adk-go).
 
 #### Concurrency and locking
 
