@@ -15,9 +15,9 @@ server.
 
 The [Agents CLI](https://google.github.io/agents-cli/) tool set lets you plug
 ADK agent expertise into your favorite AI-coding environments including
-Antigravity, Gemini CLI, Claude Code, and Cursor. Install Agents CLI into your
-current AI-powered development environment to scaffold, build, test, evaluate,
-and deploy ADK agents. Enable your development environment with these
+Antigravity, Claude Code, Cursor, and other AI coding tools. Install Agents CLI
+into your current AI-powered development environment to scaffold, build, test,
+evaluate, and deploy ADK agents. Enable your development environment with these
 Agents CLI Skills:
 
 *   Development lifecycle and coding guidelines
@@ -43,15 +43,6 @@ environment, see the
 You can configure your coding tool to search and read ADK documentation using an
 MCP server. Below are setup instructions for popular tools.
 
-### Gemini CLI
-
-To add the ADK docs MCP server to [Gemini CLI](https://geminicli.com/), install
-the [ADK Docs Extension](https://github.com/derailed-dash/adk-docs-ext):
-
-```bash
-gemini extensions install https://github.com/derailed-dash/adk-docs-ext
-```
-
 ### Antigravity
 
 To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
@@ -70,6 +61,8 @@ To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
           "args": [
             "--from",
             "mcpdoc",
+            "--with",
+            "mcp<2",
             "mcpdoc",
             "--urls",
             "AgentDevelopmentKit:https://adk.dev/llms.txt",
@@ -87,7 +80,7 @@ To add the ADK docs MCP server to
 [Claude Code](https://code.claude.com/docs/en/overview):
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc --with "mcp<2" mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
 ```
 
 ### Cursor
@@ -107,6 +100,8 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
           "args": [
             "--from",
             "mcpdoc",
+            "--with",
+            "mcp<2",
             "mcpdoc",
             "--urls",
             "AgentDevelopmentKit:https://adk.dev/llms.txt",
@@ -117,6 +112,10 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
       }
     }
     ```
+
+!!! note "MCP version setting" 
+    The `mcp<2` constraint setting keeps `mcpdoc` compatible with the MCP 1.x 
+    FastMCP API it currently uses.
 
 ### Other Tools
 

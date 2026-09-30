@@ -47,7 +47,7 @@ With this approach, `Session` objects are handled as children of the
 variables are set correctly, as shown below:
 
 ```env title="agent/.env"
-GOOGLE_GENAI_USE_VERTEXAI=TRUE
+GOOGLE_GENAI_USE_ENTERPRISE=TRUE
 GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 ```
 
@@ -88,9 +88,9 @@ is compatible with Agent Platform Express Mode API Keys. You can instead initial
 the session object without any project or location.
 
 ```py
-# Requires: pip install google-adk[vertexai]
+# Requires: pip install google-adk[gcp]
 # Plus environment variable setup:
-# GOOGLE_GENAI_USE_VERTEXAI=TRUE
+# GOOGLE_GENAI_USE_ENTERPRISE=TRUE
 # GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 from google.adk.sessions import VertexAiSessionService
 
@@ -117,9 +117,9 @@ is compatible with Agent Platform express mode API Keys. You can instead initial
 the memory object without any project or location.
 
 ```py
-# Requires: pip install google-adk[vertexai]
+# Requires: pip install google-adk[gcp]
 # Plus environment variable setup:
-# GOOGLE_GENAI_USE_VERTEXAI=TRUE
+# GOOGLE_GENAI_USE_ENTERPRISE=TRUE
 # GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 from google.adk.memory import VertexAiMemoryBankService
 

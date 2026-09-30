@@ -16,8 +16,8 @@ This may seem like a lot of extra work to set up, but the investment of automati
 
 Before automating agent evaluations, define clear objectives and success criteria:
 
-* **Define Success:** What constitutes a successful outcome for your agent?  
-* **Identify Critical Tasks:** What are the essential tasks your agent must accomplish?  
+* **Define Success:** What constitutes a successful outcome for your agent?
+* **Identify Critical Tasks:** What are the essential tasks your agent must accomplish?
 * **Choose Relevant Metrics:** What metrics will you track to measure performance?
 
 These considerations will guide the creation of evaluation scenarios and enable effective monitoring of agent behavior in real-world deployments.
@@ -26,7 +26,7 @@ These considerations will guide the creation of evaluation scenarios and enable 
 
 To bridge the gap between a proof-of-concept and a production-ready AI agent, a robust and automated evaluation framework is essential. Unlike evaluating generative models, where the focus is primarily on the final output, agent evaluation requires a deeper understanding of the decision-making process. Agent evaluation can be broken down into two components:
 
-1. **Evaluate Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.  
+1. **Evaluate Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.
 2. **Evaluate the Final Response:** Assessing the quality, relevance, and correctness of the agent's final output.
 
 The trajectory is just a list of steps the agent took before it returned to the user. We can compare that against the list of steps we expect the agent to have taken.
@@ -70,7 +70,8 @@ You can give the file any name for example `evaluation.test.json`. The framework
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 Here is a test file with a few examples:
 
-!!! note 
+!!! note
+
     Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
@@ -130,7 +131,8 @@ Test files can be organized into folders. Optionally, a folder can also include 
 
 #### How to migrate test files not backed by the Pydantic schema?
 
-!!! note 
+!!! note
+
     If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
@@ -151,11 +153,8 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 
-!!! warning
-    This evalset evaluation method requires the use of a paid service,
-    [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
+!!! note
 
-!!! note 
     Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
@@ -295,6 +294,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 #### How to migrate eval set files not backed by the Pydantic schema?
 
 !!! note
+
     If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Based on who is maintaining the eval set data, there are two routes:
@@ -317,7 +317,7 @@ Before the `adk conformance` command can execute meaningful regression testing, 
 Follow this workflow to prepare your environment:
 ##### Create the Test Directory Hierarchy
 
- Conformance tests rely on a strict file layout to automatically discover and map test cases. 
+ Conformance tests rely on a strict file layout to automatically discover and map test cases.
  Initialize your testing directory using the following structure:
 
 ```
@@ -331,20 +331,23 @@ tests
 ```
 
 !!! note
+
     If your agent uses Server-Sent Events (SSE), the testing framework will additionally look for `generated-recordings-sse.yaml` and `generated-session-sse.yaml` within the same folder.
 
 ##### Define the test specification (spec.yaml)
 
 In your target test folder, create a `spec.yaml` file. This file outlines the initial conditions, configurations, and user prompts that the agent will execute during the baseline recording and subsequent conformance runs. Ensure your file matches the following basic schema, this is an example only:
 
-```
-# Example spec.yaml for a Weather Agent name: "current_weather_check" description:
-"Verifies the agent correctly identifies location and calls the weather tool."
-user_prompts: - "What's the temperature in San Francisco right now?" expected_tools:
- - "get_weather_api"
+```yaml
+# Example spec.yaml for a Weather Agent.
+# The test case name and category are inferred from the folder structure.
+description: "Verifies the agent correctly identifies location and calls the weather tool."
+agent: "weather_agent"
+user_messages:
+  - text: "What's the temperature in San Francisco right now?"
 ```
 
-#### Automate the baseline 
+#### Automate the baseline
 
 Because the background data (like LLM requests and tool calls) is complex, you shouldn't try to write or save the baseline files manually. Instead, let ADK generate them for you.
 
@@ -357,8 +360,10 @@ adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPl
    2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
 
 ```shell
-adk conformance create tests/category/test_name
+adk conformance record tests/category/test_name none
 ```
+
+   The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
 
 This automatically runs the scenario, records all the interactions, and saves the generated-recordings.yaml and generated-session.yaml files exactly where they need to be.
 
@@ -366,10 +371,10 @@ Once these baseline files are locked in, your setup is complete, and the directo
 
 #### How it works
 
-* **Replay Mode (Default):** The tool runs your agent and compares its live LLM requests, responses, and tool calls directly against your previously recorded interactions to catch unexpected deviations.  
+* **Replay Mode (Default):** The tool runs your agent and compares its live LLM requests, responses, and tool calls directly against your previously recorded interactions to catch unexpected deviations.
 * **Live Mode:** Runs evaluation-based verification against active environments *(Note: This mode is a work in progress)*.
 
-### Evaluation Criteria
+### Evaluation criteria
 
 ADK provides several built-in criteria for evaluating agent performance, ranging
 from tool trajectory matching to LLM-based response quality assessment. For a
@@ -386,6 +391,8 @@ Here is a summary of all the available criteria:
     quality based on custom rubrics.
 *   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
     custom rubrics.
+*   **rubric_based_multi_turn_trajectory_quality_v1**: LLM-judged multi-turn
+    trajectory quality based on custom rubrics.
 *   **hallucinations_v1**: LLM-judged groundedness of agent response against
     context.
 *   **safety_v1**: Safety/harmlessness of agent response.
@@ -397,9 +404,19 @@ Here is a summary of all the available criteria:
 *   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
     conversation.
 
+!!! note
+
+    Some criteria (such as response quality, safety, and multi-turn quality)
+    require the [Vertex Gen AI Evaluation Service
+    API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
+    To use them, authenticate by setting a `GOOGLE_API_KEY` environment
+    variable, or by using Google Cloud project credentials
+    (`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` with Application Default
+    Credentials).
+
 If no evaluation criteria are provided, the following default configuration is used:
 
-* `tool_trajectory_avg_score`: Defaults to 1.0, requiring a 100% match in the tool usage trajectory.  
+* `tool_trajectory_avg_score`: Defaults to 1.0, requiring a 100% match in the tool usage trajectory.
 * `response_match_score`: Defaults to 0.8, allowing for a small margin of error in the agent's natural language responses.
 
 Here is an example of a `test_config.json` file specifying custom evaluation criteria:
@@ -413,7 +430,7 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
 }
 ```
 
-#### Recommendations on Criteria
+#### Recommendations on criteria
 
 Choose criteria based on your evaluation goals:
 
@@ -451,9 +468,11 @@ Choose criteria based on your evaluation goals:
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
 [User Simulation](./user-sim.md).
-Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+The affected criteria include `tool_trajectory_avg_score`, `response_match_score`
+and `final_response_match_v2`. Support for user simulation is listed per
+criterion in the support column of [Evaluation Criteria](./criteria.md).
 
-### User Simulation
+### User simulation
 
 When evaluating conversational agents, it is not always practical to use a fixed
 set of user prompts, as the conversation can proceed in unexpected ways.
@@ -465,20 +484,20 @@ generated by an AI model.
 For details on how to set up an eval with user simulation, see
 [User Simulation](./user-sim.md).
 
-## How to run Evaluation with ADK
+## How to run evaluation with ADK
 
 As a developer, you can evaluate your agents using the ADK in the following ways:
 
-- **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
-- **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
+- **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.
+- **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.
 - **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
 - **Conformance Testing** (**`adk conformance`**):** Execute automated tests against your baseline files to detect unexpected deviations or regressions.
 
-### Run Evaluations via the Web UI
+### Run evaluations via the web UI
 
 The web UI provides an interactive way to evaluate agents, generate evaluation datasets, and inspect agent behavior in detail.
 
-#### Step 1: Create and Save a Test Case
+#### Step 1: Create and save a test case
 
 1. Start the web server by running: `adk web <path_to_your_agents_folder>`
 2. In the web interface, select an agent and interact with it to create a session.
@@ -486,7 +505,7 @@ The web UI provides an interactive way to evaluate agents, generate evaluation d
 4. Create a new eval set or select an existing one.
 5. Click **"Add current session"** to save the conversation as a new evaluation case.
 
-#### Step 2: View and Edit Your Test Case
+#### Step 2: View and edit your test case
 
 Once a case is saved, you can click its ID in the list to inspect it. To make changes, click the **Edit current eval case** icon (pencil). This interactive view allows you to:
 
@@ -496,7 +515,7 @@ Once a case is saved, you can click its ID in the list to inspect it. To make ch
 
 ![adk-eval-case.gif](../assets/adk-eval-case.gif)
 
-#### Step 3: Run the Evaluation with Custom Metrics
+#### Step 3: Run the evaluation with custom metrics
 
 1. Select one or more test cases from your evalset.
 2. Click **Run Evaluation**. An **EVALUATION METRIC** dialog will appear.
@@ -507,7 +526,7 @@ Once a case is saved, you can click its ID in the list to inspect it. To make ch
 
 ![adk-eval-config.gif](../assets/adk-eval-config.gif)
 
-#### Step 4: Analyze Results
+#### Step 4: Analyze results
 
 After the run completes, you can analyze the results:
 
@@ -533,17 +552,17 @@ Each trace row is interactive:
 
 Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
 
-### Run Tests Programmatically
+### Run tests programmatically
 
 You can also use **`pytest`** to run test files as part of your integration tests.
 
-#### Example Command
+#### Example command
 
 ```shell
 pytest tests/integration/
 ```
 
-#### Example Test Code
+#### Example test code
 
 Here is an example of a `pytest` test case that runs a single test file:
 
@@ -562,7 +581,7 @@ async def test_with_single_test_file():
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
-### Run Evaluations via the CLI
+### Run evaluations via the CLI
 
 You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
 
@@ -571,7 +590,7 @@ Here is the command:
 ```shell
 adk eval \
     <AGENT_MODULE_FILE_PATH> \
-    <EVAL_SET_FILE_PATH> \
+    <EVAL_SET_FILE_PATH_OR_ID>... \
     [--config_file_path=<PATH_TO_TEST_JSON_CONFIG_FILE>] \
     [--print_detailed_results]
 ```
@@ -586,18 +605,18 @@ adk eval \
 
 Here are the details for each command line argument:
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a module by the name "agent". "agent" module contains a `root_agent`.  
-* `EVAL_SET_FILE_PATH`: The path to evaluations file(s). You can specify one or more eval set file paths. For each file, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name, demarcated by a colon `:` .
-* For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`  
-  `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
-* `CONFIG_FILE_PATH`: The path to the config file.  
+* `AGENT_MODULE_FILE_PATH`: The path to the agent directory, not a file, whose `__init__.py` exposes a module by the name "agent". "agent" module contains a `root_agent`.
+* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK and created with `adk eval_set create`. You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
+* For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`
+  `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`
+* `CONFIG_FILE_PATH`: The path to the config file.
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
 
 ### Run conformance tests
 
 You can run all your tests at once, run specific ones, or create a summary report.
 
-#### Run All Tests
+#### Run all tests
 
 If you don't type a specific folder path, the tool automatically looks for a tests/ folder in your workspace and runs everything inside it:
 
@@ -605,7 +624,7 @@ If you don't type a specific folder path, the tool automatically looks for a tes
 adk conformance test
 ```
 
-#### Run Specific Test Groups or Individual Cases
+#### Run specific test groups or individual cases
 
 Pass one or more folder paths to narrow down which tests execute:
 
@@ -619,7 +638,7 @@ adk conformance test tests/core/description_001
 
 ```
 
-#### Generate Markdown Test Reports
+#### Generate Markdown test reports
 
 Add the `--generate_report` flag to produce a clean test summary report. You can optionally specify where to save it using the `--report_dir parameter`:
 
@@ -628,5 +647,5 @@ Add the `--generate_report` flag to produce a clean test summary report. You can
 adk conformance test --generate_report --report_dir=reports
 ```
 
-#### Automating with CI/CD  
+#### Automate with CI/CD
 Because adk conformance test is a command-line tool that fails if things don't match, it is highly useful for CI/CD pipelines. You can set it up to run automatically whenever someone opens a pull request, blocking any code from merging if it changes the agent's expected behavior.

@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -12,11 +12,13 @@ The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
 !!! example "Experimental"
+    
     The Skills feature is experimental. We welcome your feedback via the
     respective ADK GitHub repositories:
     [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
     [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
-    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills).
+    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills),
+    [ADK Kotlin](https://github.com/google/adk-kotlin/issues/new).
 
 ## Get started
 
@@ -72,10 +74,10 @@ You can define [skills in code](#inline-skills) or load
         "context"
         "os"
 
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/tool/skilltoolset/skill"
-        "google.golang.org/adk/tool/skilltoolset"
-        "google.golang.org/adk/tool"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset"
+        "google.golang.org/adk/v2/tool"
     )
 
     mySkillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
@@ -100,7 +102,20 @@ You can define [skills in code](#inline-skills) or load
     For a complete example, see the code sample in
     [skills](https://github.com/google/adk-go/tree/main/examples/skills).
 
-## Understand Skills
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:get_started"
+    ```
+
+    For a complete example, see the code sample in
+    [skills](https://github.com/google/adk-kotlin/tree/main/examples/src/main/kotlin/com/google/adk/kt/examples/skills).
+
+!!! note "Check your working directory"
+
+        Ensure that 'skills/' directory exist in your current working directory and contains the sub-directories for the Skills you want to use in your agent.
+
+## Skill structure
 
 The Skills feature allows you to create modular packages of Skill instructions
 and resources that agents can load on demand. This approach helps you organize
@@ -122,6 +137,33 @@ three levels:
     -   `assets/`: Resource materials such as database schemas, API
         documentation, templates, or examples.
     -   `scripts/`: Executable scripts supported by the agent runtime.
+
+### System instructions for using skills
+
+The `SkillToolset` provides a default system instruction to the agent that
+outlines how it should interact with skills. These instructions include the
+following key points:
+
+*   You must use the `load_skill` tool to read a skill's instructions before
+    using it.
+*   You must follow the instructions in the skill definition exactly.
+*   You must use the `load_skill_resource` tool to view files within a skill's
+    directory.
+*   You must use the `run_skill_script` to run scripts from a skill's `scripts/`
+    directory.
+
+### Skill validation
+
+The frontmatter of a skill's `SKILL.md` file is validated to ensure that it
+meets the following requirements:
+
+*   **name**:
+    *   Must be 64 characters or less.
+    *   Must be in lowercase, kebab-case (a-z, 0-9, and hyphens).
+    *   Must not have leading, trailing, or consecutive hyphens.
+*   **description**:
+    *   Must not be empty.
+    *   Must be 1024 characters or less.
 
 ### Skills directory structure
 
@@ -205,7 +247,7 @@ You can define Skills within the code of your agent, as shown below.
         "slices"
         "strings"
 
-        "google.golang.org/adk/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
     )
 
     // Example implementation of a static in-memory skill.Source:
@@ -256,6 +298,17 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+=== "Kotlin"
+
+    !!! note
+        ADK Kotlin does not currently provide a standard Source for inline skills.
+        To define skills directly in code, you must implement the `SkillSource`
+        interface yourself, as shown below.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:inline_skill"
+    ```
+
 !!! note
     The `Source` interface can be backed by any data store (such as a database)
     to support dynamic use cases like live updates and personalization.
@@ -287,11 +340,11 @@ You can define Skills within the code of your agent, as shown below.
     ```go
     import (
         "os"
-    
-        "google.golang.org/adk/tool/skilltoolset/skill"
-        "google.golang.org/adk/tool/skilltoolset"
+
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset"
     )
-    
+
     // ...
 
     source := skill.NewFileSystemSource(os.DirFS("./skills"))
@@ -301,7 +354,7 @@ You can define Skills within the code of your agent, as shown below.
     //   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
     //   source, _, err = skill.WithCompletePreloadSource(ctx, source)
     // For more information about these and other wrappers, see
-    // https://pkg.go.dev/google.golang.org/adk/tool/skilltoolset/skill#Source.
+    // https://pkg.go.dev/google.golang.org/adk/v2/tool/skilltoolset/skill#Source.
 
     skillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
         Source: source,
@@ -311,7 +364,18 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+=== "Kotlin"
 
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/skills/SkillsExample.kt:filesystem_skill"
+    ```
+
+## Skill processing and validation
+
+When you include skills in your agent, the agent uses a standardized process
+to interact with them. This process includes a system-level instruction for
+how to use skills, a defined format for how skills are represented, and a set
+of validation rules for skill definitions.
 
 ## Next steps
 
@@ -319,4 +383,5 @@ Check out these resources for building agents with Skills:
 
 - [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/skills_agent)
 - [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills)
+- [Skills in Kotlin - code sample](https://github.com/google/adk-kotlin/tree/main/examples/src/main/kotlin/com/google/adk/kt/examples/skills)
 - Agent Skills [specification documentation](https://agentskills.io/)

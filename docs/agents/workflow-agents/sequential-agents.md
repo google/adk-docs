@@ -1,7 +1,7 @@
 # Sequential template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 The ***SequentialAgent*** class is a [template workflow](/agents/workflow-agents/)
@@ -16,11 +16,11 @@ object you define.
 
 !!! note "Alternative: graph-based workflows"
 
-    Starting in ADK 2.0, templated workflows have been superseded
+    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
 
     by more flexible workflow structures, including
-    [graph-based workflows](/workflows/graphs/) and
-    [dynamic workflows](/workflows/dynamic/).
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
 
 ### Example scenario
 
@@ -68,7 +68,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py:init"
         ```
 
-    === "Typescript"
+    === "TypeScript"
         ```typescript
         --8<-- "examples/typescript/snippets/agents/workflow-agents/sequential_agent_code_development_agent.ts:init"
         ```

@@ -1,6 +1,6 @@
 ---
 catalog_title: Google Cloud Secret Manager
-catalog_description: Securely retrieve sensitive credentials (API keys, passwords, certificates) from Secret Manager at runtime without exposing them to the LLM.
+catalog_description: Retrieve secrets at runtime without exposing them to the LLM
 catalog_icon: /integrations/assets/secret_manager.png
 catalog_tags: ["google"]
 ---

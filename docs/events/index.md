@@ -8,7 +8,7 @@ Events are the fundamental units of information flow within the Agent Developmen
 
 ## What Events Are and Why They Matter
 
-An `Event` in ADK is an immutable record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
+An `Event` in ADK is a record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
 
 === "Python"
     Technically, it's an instance of the `google.adk.events.Event` class, which builds upon the basic `LlmResponse` structure by adding essential ADK-specific metadata and an `actions` payload.
@@ -69,7 +69,7 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     ```
 
 === "Go"
-    In Go, this is a struct of type `google.golang.org/adk/session.Event`.
+    In Go, this is a struct of type `google.golang.org/adk/v2/session.Event`.
 
     ```go
     // Conceptual Structure of an Event (Go - See session/session.go)
@@ -157,7 +157,7 @@ In essence, the entire process, from a user's query to the agent's final answer,
 As a developer, you'll primarily interact with the stream of events yielded by the `Runner`. Here's how to understand and extract information from them:
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `event.content()` in Python, `event.content().get().parts()` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language, for example the `event.content` attribute in Python and `event.content().get().parts()` in Java. Refer to the language-specific API documentation for details.
 
 ### Identifying Event Origin and Type
 
@@ -248,7 +248,7 @@ Quickly determine what an event represents by checking:
       // Pseudocode: Basic event identification (Go)
     import (
       "fmt"
-      "google.golang.org/adk/session"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
     )
 
@@ -414,7 +414,7 @@ Once you know the event type, access the relevant data:
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -487,7 +487,7 @@ Once you know the event type, access the relevant data:
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -517,7 +517,7 @@ Once you know the event type, access the relevant data:
         if (!responses.isEmpty()) {
             for (FunctionResponse response : responses) {
                 String toolName = response.name().get();
-                Map<String, String> result= response.response().get(); // Check before getting the response
+                Map<String, Object> result = response.response().get(); // Check before getting the response
                 System.out.println("  Tool Result: " + toolName + " -> " + result);
             }
         }
@@ -557,7 +557,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleStateChanges(event *session.Event) {
@@ -569,15 +569,15 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Java"
-        `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
+        `Map<String, Object> delta = event.actions().stateDelta();`
 
         ```java
-        import java.util.concurrent.ConcurrentMap;
+        import java.util.Map;
         import com.google.adk.events.EventActions;
 
         EventActions actions = event.actions(); // Assuming event.actions() is not null
         if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
-            ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
+            Map<String, Object> stateChanges = actions.stateDelta();
             System.out.println("  State changes: " + stateChanges);
             // Update local UI or application state if necessary
         }
@@ -605,12 +605,12 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Go"
-        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]artifact.Artifact`)
+        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]int64`)
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/artifact"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/artifact"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleArtifactChanges(event *session.Event) {
@@ -618,27 +618,26 @@ The `event.actions` object signals changes that occurred or should occur. Always
                 fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
                 // UI might refresh an artifact list
                 // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
-                for filename, art := range event.Actions.ArtifactDelta {
-                    fmt.Printf("    Filename: %s, Version: %d, MIMEType: %s\n", filename, art.Version, art.MIMEType)
+                for filename, version := range event.Actions.ArtifactDelta {
+                    fmt.Printf("    Filename: %s, Version: %d\n", filename, version)
                 }
             }
         }
         ```
 
     === "Java"
-        `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
+        `Map<String, Integer> artifactChanges = event.actions().artifactDelta();`
 
         ```java
-        import java.util.concurrent.ConcurrentMap;
-        import com.google.genai.types.Part;
+        import java.util.Map;
         import com.google.adk.events.EventActions;
 
         EventActions actions = event.actions(); // Assuming event.actions() is not null
         if (actions != null && actions.artifactDelta() != null && !actions.artifactDelta().isEmpty()) {
-            ConcurrentMap<String, Part> artifactChanges = actions.artifactDelta();
+            Map<String, Integer> artifactChanges = actions.artifactDelta();
             System.out.println("  Artifacts saved: " + artifactChanges);
             // UI might refresh an artifact list
-            // Iterate through artifactChanges.entrySet() to get filename and Part details
+            // Iterate through artifactChanges.entrySet() to get filename and version
         }
         ```
 
@@ -685,7 +684,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleControlFlow(event *session.Event) {
@@ -733,10 +732,10 @@ The `event.actions` object signals changes that occurred or should occur. Always
 
 Use the built-in helper method `event.is_final_response()` to identify events suitable for display as the agent's complete output for a turn.
 
-*   **Purpose:** Filters out intermediate steps (like tool calls, partial streaming text, internal state updates) from the final user-facing message(s).
+*   **Purpose:** Filters out intermediate steps, such as tool calls and partial streaming text, from the final user-facing message(s).
 *   **When `True`?**
-    1.  The event contains a tool result (`function_response`) and `skip_summarization` is `True`.
-    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty:
+    1.  The `skip_summarization` action is `True`. In Python this flag alone is enough, and the event does not need to carry a `function_response` tool result.
+    2.  The event's `long_running_tool_ids` is non-empty, meaning a tool marked as `is_long_running=True` was called. In Python this list alone is enough, and the event does not need to carry the `function_call` itself. In Java, check if the `longRunningToolIds` list is empty:
         *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
     3.  OR, **all** of the following are met:
         *   No function calls (`get_function_calls()` is empty).
@@ -827,7 +826,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         import (
             "fmt"
             "strings"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -955,7 +954,7 @@ Events are created at different points and processed systematically by the frame
     2.  **Runner Receives:** The main `Runner` executing the agent receives the event.
     3.  **SessionService Processing:** The `Runner` sends the event to the configured `SessionService`. This is a critical step:
         *   **Applies Deltas:** The service merges `event.actions.state_delta` into `session.state` and updates internal records based on `event.actions.artifact_delta`. (Note: The actual artifact *saving* usually happened earlier when `context.save_artifact` was called).
-        *   **Finalizes Metadata:** Assigns a unique `event.id` if not present, may update `event.timestamp`.
+        *   **Event Metadata:** In Python, the `Event` object already carries an `id` and a `timestamp` from the moment it is constructed, so the service does not assign them and records the event as it received it.
         *   **Persists to History:** Appends the processed event to the `session.events` list.
     4.  **External Yield:** The `Runner` yields (Python) or returns/emits (Java) the processed event outwards to the calling application (e.g., the code that invoked `runner.run_async`).
 
@@ -1018,7 +1017,7 @@ Here are concise examples of typical events you might see in the stream:
       // actions might have skip_summarization=True
     }
     ```
-*   **State/Artifact Update Only:** (`is_final_response() == False`)
+*   **State/Artifact Update Only:** (`is_final_response() == True`)
     ```json
     {
       "author": "InternalUpdater",
@@ -1039,7 +1038,7 @@ Here are concise examples of typical events you might see in the stream:
       "actions": {"transfer_to_agent": "BillingAgent"} // Added by framework
     }
     ```
-*   **Loop Escalation Signal:** (`is_final_response() == False`)
+*   **Loop Escalation Signal:** (`is_final_response() == True`)
     ```json
     {
       "author": "CheckerAgent",

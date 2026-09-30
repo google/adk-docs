@@ -14,9 +14,12 @@ catalog_tags: ["data","mcp"]
 The [adk-redis integration](https://github.com/redis-developer/adk-redis)
 connects your ADK agent to [Redis](https://redis.io/), giving it
 RedisVL-backed search tools
-over a Redis index, persistent sessions and long-term memory via
-[Redis Agent Memory Server](https://github.com/redis/agent-memory-server),
-and semantic caching for LLM responses and tool results. Redis runs as a
+over a Redis index, persistent sessions and long-term memory, and semantic
+caching for LLM responses and tool results. Sessions and memory run on either
+managed [Redis Agent Memory](https://redis.io/docs/latest/integrate/google-adk/redis-agent-memory/)
+(the default) or the self-hosted
+[Agent Memory Server](https://github.com/redis/agent-memory-server),
+selected per service with a `backend` field. Redis runs as a
 managed service or self-hosted (Redis 8.4+ with the RediSearch module).
 
 There are several ways to use this integration:
@@ -24,8 +27,9 @@ There are several ways to use this integration:
 | Approach | Description |
 |----------|-------------|
 | **RedisVL MCP** | Connect ADK's native `McpToolset` to a running [`rvl mcp`](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) server. Exposes `search-records` (vector / fulltext / hybrid) and `upsert-records` with schema-aware filter and return-field hints. |
-| **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
-| **Sessions + Memory MCP** | Connect ADK's native `McpToolset` to [Agent Memory Server](https://github.com/redis/agent-memory-server)'s MCP endpoint over SSE. Gives the agent direct tool access to `search_long_term_memory`, `create_long_term_memories`, and `memory_prompt`. |
+| **Session + Memory services** | `RedisSessionMemoryService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by managed Redis Agent Memory (default) or the self-hosted Agent Memory Server, selected with a `backend` field. |
+| **Memory tools** | Six `BaseTool` subclasses (`SearchMemoryTool`, `CreateMemoryTool`, `GetMemoryTool`, `UpdateMemoryTool`, `DeleteMemoryTool`, `MemoryPromptTool`) that let the LLM search, create, and manage long-term memories. Work against either backend. |
+| **Sessions + Memory MCP** | Connect ADK's native `McpToolset` to [Agent Memory Server](https://github.com/redis/agent-memory-server)'s MCP endpoint over SSE. Gives the agent direct tool access to `search_long_term_memory`, `create_long_term_memories`, and `memory_prompt`. Self-hosted backend only. |
 | **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
 
 ## Use cases
@@ -48,9 +52,13 @@ There are several ways to use this integration:
 - Python 3.10+
 - Redis 8.4+ (or [Redis Cloud](https://redis.io/cloud/)) with the
   RediSearch module enabled
-- For session and memory services:
-  [Redis Agent Memory Server](https://github.com/redis/agent-memory-server)
-  running locally or in your environment
+- For session and memory services, one memory backend:
+    - Managed
+      [Redis Agent Memory](https://redis.io/docs/latest/integrate/google-adk/redis-agent-memory/)
+      (default), which provides an API base URL, API key, and store ID, or
+    - Self-hosted
+      [Agent Memory Server](https://github.com/redis/agent-memory-server)
+      running locally or in your environment
 - For the LangCache cache provider: a
   [Redis LangCache](https://redis.io/langcache) cache and API key
 
@@ -116,10 +124,13 @@ pip install 'redisvl[mcp]>=0.18.2'
 
 === "Sessions + Memory"
 
-    Plug [Agent Memory Server](https://github.com/redis/agent-memory-server)
-    into any ADK `Runner` via the REST-based session and memory services.
-    Working memory handles per-session state with auto-summarization;
-    long-term memory provides cross-session hybrid search.
+    Plug the session and memory services into any ADK `Runner`. Both pick a
+    backend with the `backend` field: `"redis-agent-memory"` (default) for
+    managed [Redis Agent Memory](https://redis.io/docs/latest/integrate/google-adk/redis-agent-memory/),
+    or `"opensource-agent-memory"` for the self-hosted
+    [Agent Memory Server](https://github.com/redis/agent-memory-server).
+    Working memory handles per-session state; long-term memory provides
+    cross-session search.
 
     ```python
     from google.adk.agents import Agent
@@ -128,19 +139,27 @@ pip install 'redisvl[mcp]>=0.18.2'
     from adk_redis import (
         RedisLongTermMemoryService,
         RedisLongTermMemoryServiceConfig,
-        RedisWorkingMemorySessionService,
-        RedisWorkingMemorySessionServiceConfig,
+        RedisSessionMemoryService,
+        RedisSessionMemoryServiceConfig,
     )
 
-    session_service = RedisWorkingMemorySessionService(
-        config=RedisWorkingMemorySessionServiceConfig(
-            api_base_url="http://localhost:8000",
+    # Managed Redis Agent Memory (the default backend).
+    session_service = RedisSessionMemoryService(
+        config=RedisSessionMemoryServiceConfig(
+            backend="redis-agent-memory",
+            api_base_url="https://your-endpoint.redis.io",
+            api_key="...",
+            store_id="...",
+            default_namespace="my_app",
         ),
     )
     memory_service = RedisLongTermMemoryService(
         config=RedisLongTermMemoryServiceConfig(
-            api_base_url="http://localhost:8000",
-            recency_boost=True,
+            backend="redis-agent-memory",
+            api_base_url="https://your-endpoint.redis.io",
+            api_key="...",
+            store_id="...",
+            default_namespace="my_app",
         ),
     )
 
@@ -155,6 +174,55 @@ pip install 'redisvl[mcp]>=0.18.2'
         agent=root_agent,
         session_service=session_service,
         memory_service=memory_service,
+    )
+    ```
+
+    !!! note "Self-hosted backend"
+
+        To use the self-hosted Agent Memory Server, set
+        `backend="opensource-agent-memory"`, point `api_base_url` at the server
+        (for example `http://localhost:8000`), and omit `api_key` and `store_id`
+        unless your server requires them. Auto-summarization and recency-boosted
+        search (`recency_boost=True`) are available on the self-hosted backend.
+
+=== "Memory tools"
+
+    Give the LLM direct control over long-term memory with the `BaseTool`
+    subclasses. The agent decides when to search, create, update, or delete
+    memories. The tools share a `MemoryToolConfig` and work against either
+    backend via the same `backend` field.
+
+    ```python
+    from google.adk.agents import Agent
+
+    from adk_redis import (
+        CreateMemoryTool,
+        DeleteMemoryTool,
+        MemoryPromptTool,
+        MemoryToolConfig,
+        SearchMemoryTool,
+        UpdateMemoryTool,
+    )
+
+    config = MemoryToolConfig(
+        backend="redis-agent-memory",
+        api_base_url="https://your-endpoint.redis.io",
+        api_key="...",
+        store_id="...",
+        default_namespace="my_app",
+    )
+
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="redis_memory_tools_agent",
+        instruction="Search memory before answering. Store important facts.",
+        tools=[
+            SearchMemoryTool(config=config),
+            CreateMemoryTool(config=config),
+            UpdateMemoryTool(config=config),
+            DeleteMemoryTool(config=config),
+            MemoryPromptTool(config=config),
+        ],
     )
     ```
 
@@ -354,8 +422,8 @@ Tool | Description
 
 Service | Description
 ------- | -----------
-`RedisWorkingMemorySessionService` | `BaseSessionService` backed by Agent Memory Server working memory. Auto-summarizes when context window is exceeded.
-`RedisLongTermMemoryService` | `BaseMemoryService` backed by Agent Memory Server long-term memory with recency-boosted semantic search.
+`RedisSessionMemoryService` | `BaseSessionService` backed by managed Redis Agent Memory or the self-hosted Agent Memory Server working memory. The self-hosted backend auto-summarizes when the context window is exceeded.
+`RedisLongTermMemoryService` | `BaseMemoryService` backed by managed Redis Agent Memory or the self-hosted Agent Memory Server long-term memory. Recency-boosted semantic search is available on the self-hosted backend.
 
 ### Cache providers
 
@@ -371,6 +439,7 @@ Provider | Description
 - [adk-redis documentation](https://redis-developer.github.io/adk-redis/)
 - [ADK + Redis on redis.io](https://redis.io/docs/latest/integrate/google-adk/)
 - [Runnable examples](https://github.com/redis-developer/adk-redis/tree/main/examples)
-- [Redis Agent Memory Server](https://github.com/redis/agent-memory-server)
+- [Managed Redis Agent Memory](https://redis.io/docs/latest/integrate/google-adk/redis-agent-memory/)
+- [Agent Memory Server (self-hosted)](https://github.com/redis/agent-memory-server)
 - [RedisVL documentation](https://docs.redisvl.com)
 - [Redis LangCache](https://redis.io/langcache)

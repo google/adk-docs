@@ -87,9 +87,7 @@ agent sample project.
 
 ```python
 from google.adk import Agent
-from google.adk.models.google_llm import Gemini
 from google.adk.tools.computer_use.computer_use_toolset import ComputerUseToolset
-from typing_extensions import override
 
 from .playwright import PlaywrightComputer
 

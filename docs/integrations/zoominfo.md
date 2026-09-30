@@ -11,7 +11,7 @@ catalog_tags: ["mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [ZoomInfo MCP Server](https://docs.zoominfo.com/docs/zi-api-mcp-overview)
+The [ZoomInfo MCP Server](https://docs.zoominfo.com/docs/connect-to-zoominfo-mcp)
 connects your ADK agent to the [ZoomInfo](https://www.zoominfo.com/) B2B
 intelligence platform, giving it access to 100M+ company profiles, 300M+
 professional contacts, and go-to-market signals. This integration gives your
@@ -131,5 +131,6 @@ Tool | Description
 
 ## Additional resources
 
-- [ZoomInfo MCP Overview](https://docs.zoominfo.com/docs/zi-api-mcp-overview)
+- [Connect to ZoomInfo MCP](https://docs.zoominfo.com/docs/connect-to-zoominfo-mcp)
+- [Available MCP Tools](https://docs.zoominfo.com/docs/available-mcp-tools)
 - [ZoomInfo Developer Documentation](https://docs.zoominfo.com/)

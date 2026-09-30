@@ -97,7 +97,7 @@ async def main():
     session_service = runner.session_service
 
     # Create session 1: Agent will run (default empty state)
-    session_service.create_session(
+    await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
         session_id=session_id_run,
@@ -105,7 +105,7 @@ async def main():
     )
 
     # Create session 2: Agent will be skipped (state has skip_llm_agent=True)
-    session_service.create_session(
+    await session_service.create_session(
         app_name=app_name,
         user_id=user_id,
         session_id=session_id_skip,

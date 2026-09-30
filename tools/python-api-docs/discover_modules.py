@@ -25,7 +25,7 @@ Example:
     python3 discover_modules.py sphinx_project/source/google-adk.rst
 """
 
-import importlib
+import os
 import pkgutil
 import sys
 
@@ -50,12 +50,6 @@ DEPTH_2_PREFIXES = [
     "google.adk.tools.",
     "google.adk.integrations.",
     "google.adk.labs.",
-]
-
-# Namespace subpackages that lack __init__.py and need explicit walking.
-# pkgutil.walk_packages cannot discover these automatically (CPython #73444).
-NAMESPACE_SUBPACKAGES = [
-    "google.adk.integrations",
 ]
 
 # --- Discovery logic ---
@@ -90,18 +84,43 @@ def _collect_modules(path, prefix):
 
 
 def discover_modules():
-    """Walk google.adk and return a sorted list of modules to document."""
+    """Walk google.adk and return a sorted list of modules to document.
+
+    Note: pkgutil.walk_packages does not recurse into PEP 420 namespace
+    packages (subpackages without an __init__.py; CPython #73444). If a new
+    subpackage ships without an __init__.py, its submodules will silently be
+    missing here. The fix belongs upstream: ask ENG to add an __init__.py
+    rather than reintroducing a walk-around in this script.
+    """
     import google.adk
 
     modules = _collect_modules(google.adk.__path__, "google.adk.")
-
-    # Walk namespace subpackages that pkgutil.walk_packages misses
-    for ns in NAMESPACE_SUBPACKAGES:
-        mod = importlib.import_module(ns)
-        modules.extend(_collect_modules(mod.__path__, mod.__name__ + "."))
-
     modules.sort()
     return modules
+
+
+def warn_namespace_packages(pkg):
+    """Warn about subpackages lacking __init__.py (skipped by walk_packages).
+
+    These PEP 420 namespace packages are silently missed by discover_modules
+    (CPython #73444), so their submodules would be absent from the API docs.
+    Surface them here so the maintainer can ask ENG to add an __init__.py.
+    """
+    for base in pkg.__path__:
+        for entry in sorted(os.listdir(base)):
+            sub = os.path.join(base, entry)
+            if (
+                os.path.isdir(sub)
+                and not entry.startswith(("_", "."))
+                and not os.path.exists(os.path.join(sub, "__init__.py"))
+                and any(f.endswith(".py") for f in os.listdir(sub))
+            ):
+                print(
+                    f"WARNING: google.adk.{entry} has no __init__.py; its "
+                    f"submodules will be missing from the API docs. Ask ENG to "
+                    f"add an __init__.py (CPython #73444).",
+                    file=sys.stderr,
+                )
 
 
 def generate_rst(modules):
@@ -136,6 +155,10 @@ def main():
         sys.exit(1)
 
     output_path = sys.argv[1]
+
+    import google.adk
+
+    warn_namespace_packages(google.adk)
 
     modules = discover_modules()
 

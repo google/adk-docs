@@ -2,7 +2,7 @@
 catalog_title: Future AGI
 catalog_description: Trace, evaluate, and improve ADK agents with the traceAI OpenTelemetry integration
 catalog_icon: /integrations/assets/futureagi.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Future AGI observability for ADK
@@ -111,7 +111,7 @@ async def main():
             parts=[types.Part(text="What is the weather in New York?")],
         ),
     ):
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             print(event.content.parts[0].text.strip())
 
 

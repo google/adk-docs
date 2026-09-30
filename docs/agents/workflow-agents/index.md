@@ -1,7 +1,7 @@
 # Template agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 This section introduces *template workflows*, also known as *workflow agents*,
@@ -12,11 +12,11 @@ how and when other agents run, defining the control flow of a process.
 
 !!! note "Alternative: graph-based workflows"
 
-    Starting in ADK 2.0, template workflows have been superseded
+    Starting in ADK 2.0 for Python and Go, template workflows have been superseded
 
     by more flexible workflow structures, including
-    [graph-based workflows](/workflows/graphs/) and
-    [dynamic workflows](/workflows/dynamic/).
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
     These workflow architectures provide more control, flexibility
     and capability to evolve your agent workflows over time.
 

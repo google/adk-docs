@@ -1,8 +1,8 @@
 ---
 catalog_title: Google Cloud Storage
-catalog_description: Access and perform operations on Google Cloud Storage buckets and objects.
+catalog_description: Access and perform operations on Google Cloud Storage buckets and objects
 catalog_icon: /integrations/assets/gcs.png
-catalog_tags: ["storage", "google"]
+catalog_tags: ["data", "google"]
 ---
 
 # Google Cloud Storage (GCS)
@@ -30,7 +30,7 @@ and read/write objects.
 - **Enable the Google Cloud Storage API** in the target Google Cloud project.
 - **IAM Permissions**: The authenticated principal (Application Default
   Credentials, service account, or user) must have the correct permissions,
-  including `roles/storage.objectAdmin` and `roles/storage.admin`, to perform GCS
+  including `roles/storage.admin`, to perform GCS
   bucket and object operations.
 - A Google Cloud Project ID configured.
 
@@ -41,7 +41,7 @@ via `GCSCredentialsConfig`:
 
 ### Application Default Credentials
 
-Recommended for local development and deployment to Google Cloud, including 
+Recommended for local development and deployment to Google Cloud, including
 Agent Runtime, Cloud Run, and GKE.
 
 ```python
@@ -150,7 +150,7 @@ tool_settings = GCSToolSettings(capabilities=[Capabilities.READ_WRITE])
 
 # 4. Instantiate the GCS Toolset
 gcs_toolset = GCSToolset(
-    credentials_config=credentials_config, 
+    credentials_config=credentials_config,
     gcs_tool_settings=tool_settings
 )
 
@@ -160,7 +160,7 @@ agent = LlmAgent(
     name="gcs_agent",
     description="Agent for interacting with GCS buckets and objects.",
     instruction="""
-        You are a storage assistant agent. Use the GCS tools to answer questions, 
+        You are a storage assistant agent. Use the GCS tools to answer questions,
         list objects, upload files, or perform admin tasks as requested.
     """,
     tools=[gcs_toolset]
@@ -175,21 +175,26 @@ The GCS integration split the capabilities into two main toolsets:
 
 Tool | Description
 ---- | -----------
-`gcs_get_bucket` | Get metadata information about a GCS bucket.
 `gcs_list_objects` | List object names in a GCS bucket. Supports optional prefix filtering and pagination.
 `gcs_get_object_metadata` | Get metadata properties of a specific GCS object (blob).
-`gcs_create_object` | Create a new object (blob) in a bucket from in-memory string data or a local file upload.
+`gcs_create_object` | Create a new object (blob) in a bucket from in-memory string data or a local file upload. Requires `Capabilities.READ_WRITE`.
 `gcs_get_object_data` | Get content of a GCS object as a string, or download it directly to a local file.
-`gcs_delete_objects` | Delete multiple GCS objects (blobs) from a bucket.
+`gcs_delete_objects` | Delete multiple GCS objects (blobs) from a bucket. Requires `Capabilities.READ_WRITE`.
 
 ### GCS Admin Tools (`GCSAdminToolset`)
 
 Tool | Description
 ---- | -----------
 `gcs_list_buckets` | List GCS bucket names in a Google Cloud project.
-`gcs_create_bucket` | Create a new GCS bucket in a specific location.
-`gcs_update_bucket` | Update properties of a GCS bucket (e.g. versioning or uniform bucket-level access).
-`gcs_delete_bucket` | Delete a GCS bucket (bucket must be empty first).
+`gcs_get_bucket` | Get metadata information about a GCS bucket.
+`gcs_create_bucket` | Create a new GCS bucket in a specific location. Requires `Capabilities.READ_WRITE`.
+`gcs_update_bucket` | Update properties of a GCS bucket, such as versioning or uniform bucket-level access. Requires `Capabilities.READ_WRITE`.
+`gcs_delete_bucket` | Delete a GCS bucket (bucket must be empty first). Requires `Capabilities.READ_WRITE`.
+
+!!! note
+
+    The tool names listed here are the ones exposed to the model (prefixed with `gcs_`).
+    When using `tool_filter`, reference the unprefixed names such as `get_bucket`.
 
 ## Sample agents
 

@@ -54,6 +54,7 @@ Prefixes on state keys define their scope and persistence behavior, especially w
     * **Scope:** Tied to the `user_id`, shared across *all* sessions for that user (within the same `app_name`).
     * **Persistence:** Persistent with `Database` or `VertexAI`. (Stored by `InMemory` but lost on restart).
     * **Use Cases:** User preferences (e.g., `'user:theme'`), profile details (e.g., `'user:name'`).
+    * **Reading without a session:** In Python, `await session_service.get_user_state(app_name=..., user_id=...)` returns the user-scoped keys with the `user:` prefix stripped, so you can read them before a session exists. `VertexAiSessionService` is the exception: it always raises `NotImplementedError`, because the Agent Runtime API does not expose user state independently of a session. There, enumerate sessions with `list_sessions` and call `get_session` on each result instead.
     * **Example:** `session.state['user:preferred_language'] = 'fr'`
 
 * **`app:` Prefix (App State):**
@@ -340,8 +341,9 @@ This is the simplest method for saving an agent's final text response directly i
     print(f"Initial state: {session.state}")
 
     # --- Run the Agent ---
-    # Runner handles calling append_event, which uses the output_key
-    # to automatically create the state_delta.
+    # The agent uses the output_key to put its response into the event's
+    # state_delta; the Runner hands that event to append_event, which
+    # applies the delta to the session state.
     user_message = Content(parts=[Part(text="Hello")])
     for event in runner.run(user_id=user_id,
                             session_id=session_id,
@@ -350,7 +352,7 @@ This is the simplest method for saving an agent's final text response directly i
           print(f"Agent responded.") # Response text is also in event.content
 
     # --- Check Updated State ---
-    updated_session = await session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session_id)
+    updated_session = await session_service.get_session(app_name=app_name, user_id=user_id, session_id=session_id)
     print(f"State after agent run: {updated_session.state}")
     # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
@@ -418,7 +420,7 @@ This is the simplest method for saving an agent's final text response directly i
     --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
-Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
+Behind the scenes, the agent itself uses the `output_key` to write the response into the `state_delta` of the `EventActions` on the event it yields; the `Runner` then passes that event to the `SessionService`'s `append_event`, which applies the delta.
 
 **2\. The Standard Way: `EventActions.state_delta` (for Complex Updates)**
 
@@ -551,9 +553,9 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
-*(Note: In TypeScript, this is done via the unified `Context` type.)*
+*(Note: In Python and TypeScript, `CallbackContext` and `ToolContext` are unified into a single `Context` type, and in Python both names remain usable as aliases of it.)*
 
-Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
+Modifying state within agent callbacks such as `before_agent_callback` and `after_agent_callback`, or within tool functions, is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
 *   `callback_context.state['my_key'] = my_value`
 *   `tool_context.state['my_key'] = my_value`
@@ -568,7 +570,8 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```python
     # In an agent callback or tool function
-    from google.adk.agents import CallbackContext # or ToolContext
+    from google.adk.agents.callback_context import CallbackContext
+    # or, equivalently: from google.adk.tools.tool_context import ToolContext
 
     def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
                                      # ... other parameters ...
@@ -646,7 +649,7 @@ For more comprehensive details on context objects, refer to the [Context documen
 * Reads the `state_delta` from the event's `actions`.
 * Applies these changes to the state managed by the `SessionService`, correctly handling prefixes and persistence based on the service type.
 * Updates the session's `last_update_time`.
-* Ensures thread-safety for concurrent updates.
+* Serializes concurrent updates to the same session where the service supports it: `DatabaseSessionService` takes a per-session lock, while `InMemorySessionService` is not safe for multi-threaded use.
 
 ### ⚠️ A Warning About Direct State Modification
 

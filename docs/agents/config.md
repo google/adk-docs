@@ -88,7 +88,7 @@ To create an ADK project for use with Agent Config:
     1.  For Gemini model access through Google API, add a line to the
         file with your API key:
 
-            GOOGLE_GENAI_USE_VERTEXAI=0
+            GOOGLE_GENAI_USE_ENTERPRISE=0
             GOOGLE_API_KEY=<your-Google-Gemini-API-key>
 
         You can get an API key from the Google AI Studio
@@ -96,13 +96,14 @@ To create an ADK project for use with Agent Config:
 
     1.  For Gemini model access through Google Cloud, add these lines to the file:
 
-            GOOGLE_GENAI_USE_VERTEXAI=1
+            GOOGLE_GENAI_USE_ENTERPRISE=1
             GOOGLE_CLOUD_PROJECT=<your_gcp_project>
             GOOGLE_CLOUD_LOCATION=us-central1
 
-        For information on creating a Cloud Project, see the Google Cloud docs
-        for
+        For information on creating a Cloud Project, see the Google Cloud docs for
         [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+        For more information on connecting to Google Cloud from ADK agents, see
+        [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 1.  Using text editor, edit the Agent Config file
     `my_agent/root_agent.yaml`, as shown below:
@@ -301,9 +302,8 @@ limitations:
 
 ## Next steps
 
-For ideas on how and what to build with ADK Agent Configs, see the yaml-based
-agent definitions in the ADK
-[adk-samples](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
-repository. For detailed information on the syntax and settings supported by
+For ideas on what to build, see the
+[sample agent configs](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
+in the `adk-python` repository. For detailed information on the syntax and settings supported by
 the Agent Config format, see the
 [Agent Config syntax reference](/api-reference/agentconfig/).

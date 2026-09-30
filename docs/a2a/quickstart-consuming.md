@@ -6,6 +6,19 @@
 
 This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
+!!! note "A2A Python SDK version compatibility"
+
+    ADK's A2A integration works with both major versions of the A2A SDK
+    (`a2a-sdk` 0.3.x and 1.x.x). The installed A2A SDK version is detected
+    automatically, so no changes to your ADK application code are needed.
+
+    Although `a2a-sdk` 0.3.x is supported in compatibility mode, new
+    integrations should target 1.x.x. If your code references `a2a-sdk` types
+    directly (for example, custom executors or hand-constructed `AgentCard`
+    instances), see the [A2A SDK v1.0 migration
+    guide](https://github.com/a2aproject/a2a-python/tree/main/docs/migrations/v1_0)
+    when moving to 1.x.x.
+
 ## Overview
 
 This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
@@ -99,16 +112,16 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
-  
-### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
+
+### 3. Look out for the required agent card (`agent.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
+If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent.json`). The `adk api_server --a2a` command exposes over A2A only the agent folders that contain a file named exactly `agent.json`.
 
 In the sample, the `check_prime_agent` already has an agent card provided:
 
-```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
+```json title="a2a_basic/remote_a2a/check_prime_agent/agent.json"
 
 {
   "capabilities": {},
@@ -131,18 +144,18 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
 ??? note "More info on agent cards in ADK"
 
-    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial. 
+    In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial.
 
 ### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
 
   ```bash
   # In a separate terminal, run the adk web server
-  adk web contributing/samples/
+  adk web contributing/samples/a2a/
   ```
 
 #### How it works
 
-The main agent uses the `RemoteA2aAgent()` function to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent()` requires the `name`, `description`, and the URL of the `agent_card`.
+The main agent uses the `RemoteA2aAgent` class to consume the remote agent (`prime_agent` in our example). As you can see below, `RemoteA2aAgent` requires the `name` and an `agent_card`, which can be an `AgentCard` object, a URL (as in the example below), or a path to a local agent card file; the `description` field is optional and defaults to an empty string.
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
@@ -156,14 +169,13 @@ prime_agent = RemoteA2aAgent(
     agent_card=(
         f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
     ),
-    use_legacy=False,
 )
 
 <...code truncated>
 ```
 
 !!! note "Using the new A2A integration"
-    By setting `use_legacy=False`, the agent will use the new ADK-A2A integration, as it will send the [A2A extension](a2a-extension.md) to the remote agent.
+    The `use_legacy` parameter defaults to `True`, so the sample above uses the legacy path. Set `use_legacy=False` to use the new ADK-A2A integration, which sends the [A2A extension](a2a-extension.md) to the remote agent.
 
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
@@ -235,6 +247,7 @@ Through interceptors, you can also modify the `ParametersConfig` for the A2A req
 ```python
 <...code truncated...>
 
+from google.adk.a2a.agent import A2aRemoteAgentConfig
 from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 

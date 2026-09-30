@@ -1,7 +1,7 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
@@ -62,20 +62,29 @@ immediately:
     Tracks tool failures and intelligently retries tool requests.
 *   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
+*   [**Model Armor**](/integrations/model-armor/):
+    Screens user input and model output against Google Cloud Model Armor templates.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
 *   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
     Plugin that provides global instructions functionality at the App level.
 *   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
     Saves files included in user messages as Artifacts.
-*   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
+*   [**Auto Tracing**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/auto_tracing_plugin.py):
+    Wraps the functions in your agent's own packages in OpenTelemetry spans.
+*   [**Multimodal Tool Results**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/multimodal_tool_results_plugin.py):
+    Lets function tools return content parts directly to the model.
+*   [**Logging**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/logging_plugin.py):
     Log important information at each agent workflow callback point.
+
+Check out the [ADK Integrations](/integrations/) page for more native and 
+third party plugins for your agents.
 
 ## Define and register Plugins
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugins/plugin_basic)
 in the repository.
 
 ### Create Plugin class
@@ -92,31 +101,31 @@ methods, as shown in the following code example:
     from google.adk.plugins.base_plugin import BasePlugin
 
     class CountInvocationPlugin(BasePlugin):
-    """A custom plugin that counts agent and tool invocations."""
+        """A custom plugin that counts agent and tool invocations."""
 
-    def __init__(self) -> None:
-        """Initialize the plugin with counters."""
-        super().__init__(name="count_invocation")
-        self.agent_count: int = 0
-        self.tool_count: int = 0
-        self.llm_request_count: int = 0
+        def __init__(self) -> None:
+            """Initialize the plugin with counters."""
+            super().__init__(name="count_invocation")
+            self.agent_count: int = 0
+            self.tool_count: int = 0
+            self.llm_request_count: int = 0
 
-    async def before_agent_callback(
-        self, *, agent: BaseAgent, callback_context: CallbackContext
-    ) -> None:
-        """Count agent runs."""
-        self.agent_count += 1
-        print(f"[Plugin] Agent run count: {self.agent_count}")
+        async def before_agent_callback(
+            self, *, agent: BaseAgent, callback_context: CallbackContext
+        ) -> None:
+            """Count agent runs."""
+            self.agent_count += 1
+            print(f"[Plugin] Agent run count: {self.agent_count}")
 
-    async def before_model_callback(
-        self, *, callback_context: CallbackContext, llm_request: LlmRequest
-    ) -> None:
-        """Count LLM requests."""
-        self.llm_request_count += 1
-        print(f"[Plugin] LLM request count: {self.llm_request_count}")
+        async def before_model_callback(
+            self, *, callback_context: CallbackContext, llm_request: LlmRequest
+        ) -> None:
+            """Count LLM requests."""
+            self.llm_request_count += 1
+            print(f"[Plugin] LLM request count: {self.llm_request_count}")
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript title="count_plugin.ts"
     import { BaseAgent, BasePlugin, Context } from "@google/adk";
@@ -210,10 +219,10 @@ methods, as shown in the following code example:
     import (
     	"fmt"
 
-    	"google.golang.org/adk/agent"
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model"
-    	"google.golang.org/adk/plugin"
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model"
+    	"google.golang.org/adk/v2/plugin"
         "google.golang.org/genai"
     )
 
@@ -252,6 +261,12 @@ methods, as shown in the following code example:
     	fmt.Printf("[Plugin] LLM request count: %d\n", p.LlmRequestCount)
     	return nil, nil
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:create_plugin"
     ```
 
 This example code implements callbacks for `before_agent_callback` and
@@ -320,7 +335,7 @@ a simple ADK agent.
         asyncio.run(main())
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     import { InMemoryRunner, LlmAgent, FunctionTool } from "@google/adk";
@@ -474,14 +489,14 @@ a simple ADK agent.
     	"fmt"
     	"log"
 
-    	"google.golang.org/adk/agent"
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model/gemini"
-    	"google.golang.org/adk/plugin"
-    	"google.golang.org/adk/runner"
-    	"google.golang.org/adk/session"
-    	"google.golang.org/adk/tool"
-    	"google.golang.org/adk/tool/functiontool"
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model/gemini"
+    	"google.golang.org/adk/v2/plugin"
+    	"google.golang.org/adk/v2/runner"
+    	"google.golang.org/adk/v2/session"
+    	"google.golang.org/adk/v2/tool"
+    	"google.golang.org/adk/v2/tool/functiontool"
     	"google.golang.org/genai"
     )
 
@@ -493,7 +508,7 @@ a simple ADK agent.
     	Result string `json:"result"`
     }
 
-    func helloWorld(ctx tool.Context, args helloWorldArgs) (helloWorldResult, error) {
+    func helloWorld(ctx agent.Context, args helloWorldArgs) (helloWorldResult, error) {
     	output := fmt.Sprintf("Hello world: query is [%s]", args.Query)
     	fmt.Println(output)
     	return helloWorldResult{Result: output}, nil
@@ -570,6 +585,12 @@ a simple ADK agent.
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/plugins/CountInvocationPlugin.kt:register_plugin"
+    ```
+
 ### Run the agent with the Plugin
 
 Run the plugin as you typically would. The following shows how to run the
@@ -581,7 +602,7 @@ command line:
     python3 -m path.to.main.py
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```sh
     npx ts-node path.to.main.ts
@@ -758,7 +779,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onUserMessageCallback(
@@ -796,12 +817,12 @@ object takes the potentially modified user message and prepares for execution.
 The `before_run_callback` fires here, allowing for global setup before any agent
 logic begins.
 
--   **When It Runs:** Immediately after `runner.run()` is called, before
-    any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Return a `types.Content` object to **replace** the
-    user's original message.
+-   **When It Runs:** After the `on_user_message_callback`, when the `Runner`
+    prepares for execution and before any agent logic begins.
+-   **Purpose:** Global setup or initialization before the invocation runs.
+-   **Flow Control:** Return a `types.Content` object to **halt execution**:
+    the `Runner` exits early and ends the run with that content as the result.
+    Return `None` to proceed normally.
 
 The following code example shows the basic syntax of this callback:
 
@@ -813,7 +834,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[types.Content]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
@@ -906,7 +927,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[LlmResponse]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onModelErrorCallback(
@@ -987,7 +1008,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[dict]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onToolErrorCallback(
@@ -1014,7 +1035,7 @@ The following code example shows the basic syntax of this callback:
 === "Go"
 
     ```go
-    func (p *MyPlugin) OnToolErrorCallback(ctx tool.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
+    func (p *MyPlugin) OnToolErrorCallback(ctx agent.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
       // Your implementation here
       return nil, nil
     }
@@ -1044,7 +1065,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[Event]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async onEventCallback(
@@ -1098,7 +1119,7 @@ The following code example shows the basic syntax of this callback:
     ) -> Optional[None]:
     ```
 
-=== "Typescript"
+=== "TypeScript"
 
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {

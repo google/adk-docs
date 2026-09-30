@@ -2,7 +2,7 @@
 catalog_title: Galileo
 catalog_description: End-to-end tracing, evaluation, and monitoring for ADK agents
 catalog_icon: /integrations/assets/galileo.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Agent Observability and Evaluation with Galileo
@@ -15,12 +15,12 @@ trace ingestion from ADK for agent runs,
 tool calls, and model requests.
 
 For more information, see Galileo’s
-[Google ADK integration](https://v2docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference/google-adk)
+[Google ADK integration](https://docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference/google-adk)
 docs.
 
 ## Prerequisites
 
-- A [Galileo API key](https://v2docs.galileo.ai/references/faqs/find-keys#galileo-api-key)
+- A [Galileo API key](https://docs.galileo.ai/references/faqs/find-keys#galileo-api-key)
 - A Galileo Project and Log stream
 - A [Gemini API Key](https://aistudio.google.com/app/apikey)
 
@@ -38,7 +38,7 @@ Configure environment variables:
 
 ```env title="my_agent/.env"
 # Gemini environment variables
-GOOGLE_GENAI_USE_VERTEXAI=0
+GOOGLE_GENAI_USE_ENTERPRISE=0
 GOOGLE_API_KEY="YOUR_API_KEY"
 
 # Galileo environment variables
@@ -134,7 +134,7 @@ Select your Project and inspect the traces and spans in your Log Stream.
 
 ## Resources
 
-- [Galileo Google ADK Integration Documentation](https://v2docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference/google-adk):
+- [Galileo Google ADK Integration Documentation](https://docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference/google-adk):
 Official documentation for integrating a Google ADK project
 with Galileo using OpenTelemetry and OpenInference.
 - [Google ADK + OpenTelemetry Example Project](https://github.com/rungalileo/sdk-examples/tree/main/python/agent/google-adk):

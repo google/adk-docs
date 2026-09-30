@@ -8,7 +8,7 @@ catalog_tags: ["data", "google"]
 # Bigtable tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.12.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.12.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 These are a set of tools aimed to provide integration with Bigtable, namely:
@@ -22,6 +22,9 @@ These are a set of tools aimed to provide integration with Bigtable, namely:
 * **`execute_sql`**: Runs a SQL query in Bigtable table and fetch the result.
 
 They are packaged in the toolset `BigtableToolset`.
+
+!!! example "Experimental"
+    This feature is experimental and may be updated in future releases.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"

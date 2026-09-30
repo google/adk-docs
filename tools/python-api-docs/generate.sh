@@ -16,10 +16,15 @@
 set -e
 
 # Configuration
-# Python version for the build environment
+
+# Python version for the build environment. Must satisfy adk-python's
+# requires-python AND any python_version markers on the extras we install (some
+# optional deps are gated to a specific Python). If extras/modules go missing,
+# check python_version markers in adk-python/pyproject.toml.
 PYTHON_VERSION="3.11"
-# Extras from adk-python's pyproject.toml needed for autodoc to import all modules
-PIP_EXTRAS="all,docs,a2a,eval,extensions,slack,agent-identity,otel-gcp,toolbox,db,gcp,mcp,tools"
+
+# Optional-dependency groups to skip; all others are installed (derived below).
+PIP_EXTRAS_EXCLUDE="dev,test,benchmark,community"
 
 # Validate arguments
 VERSION="${1:-}"
@@ -65,7 +70,25 @@ source .venv/bin/activate
 echo "Cloning adk-python v${VERSION}..."
 git clone --depth 1 --branch "v${VERSION}" https://github.com/google/adk-python adk-python
 
-echo "Installing adk-python with extras..."
+# Derive extras from pyproject.toml (all groups except the denylist).
+echo "Deriving extras from adk-python/pyproject.toml..."
+PIP_EXTRAS=$(PIP_EXTRAS_EXCLUDE="$PIP_EXTRAS_EXCLUDE" python3 - "adk-python/pyproject.toml" <<'PY'
+import os
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as f:
+    data = tomllib.load(f)
+
+exclude = {g.strip() for g in os.environ["PIP_EXTRAS_EXCLUDE"].split(",") if g.strip()}
+groups = data.get("project", {}).get("optional-dependencies", {})
+extras = sorted(g for g in groups if g not in exclude)
+if not extras:
+    sys.exit("Error: no optional-dependency groups found in pyproject.toml")
+print(",".join(extras))
+PY
+)
+echo "Installing adk-python with extras: $PIP_EXTRAS"
 uv pip install sphinxcontrib-googleanalytics "./adk-python[$PIP_EXTRAS]"
 
 # Set up Sphinx project

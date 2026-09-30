@@ -17,7 +17,7 @@ package main
 import (
 	"fmt"
 
-	"google.golang.org/adk/tool"
+	"google.golang.org/adk/v2/agent"
 	"google.golang.org/genai"
 )
 
@@ -33,7 +33,7 @@ type processDocumentResult struct {
 	Message          string `json:"message,omitempty"`
 }
 
-func processDocument(ctx tool.Context, args processDocumentArgs) (*processDocumentResult, error) {
+func processDocument(ctx agent.Context, args processDocumentArgs) (*processDocumentResult, error) {
 	fmt.Printf("Tool: Attempting to load artifact: %s\n", args.DocumentName)
 
 	// List all artifacts

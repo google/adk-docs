@@ -20,22 +20,22 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/agent/workflowagents/loopagent"
-	"google.golang.org/adk/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
+	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 const (
 	appName    = "IterativeWritingPipeline"
 	userID     = "test_user_456"
-	modelName  = "gemini-2.5-flash"
+	modelName  = "gemini-flash-latest"
 	stateDoc   = "current_document"
 	stateCrit  = "criticism"
 	donePhrase = "No major issues found."
@@ -49,7 +49,7 @@ type ExitLoopArgs struct{}
 type ExitLoopResults struct{}
 
 // ExitLoop is a tool that signals the loop to terminate by setting Escalate to true.
-func ExitLoop(ctx tool.Context, input ExitLoopArgs) (ExitLoopResults, error) {
+func ExitLoop(ctx agent.Context, input ExitLoopArgs) (ExitLoopResults, error) {
 	fmt.Printf("[Tool Call] exitLoop triggered by %s \n", ctx.AgentName())
 	ctx.Actions().Escalate = true
 	return ExitLoopResults{}, nil

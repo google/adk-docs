@@ -166,8 +166,8 @@ Optimized root agent instructions:
 adk optimize [OPTIONS] AGENT_MODULE_FILE_PATH
 ```
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a
-module by the name `agent`.
+* `AGENT_MODULE_FILE_PATH`: The path to the agent directory, not a file, whose
+`__init__.py` exposes a module by the name `agent`.
 The `agent` module must contain a `root_agent`.
 For an example of a valid setup, examine the
 [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
@@ -237,12 +237,15 @@ additional metrics collected during optimization.
 Note: The `GEPARootAgentPromptOptimizer` does not improve any sub-agents, agent
 tools, skills, or any other aspect of the root agent.
 
+Note: The `GEPARootAgentPromptOptimizer` is experimental.
+It emits a warning when constructed, and its API may change or be removed
+without notice.
+
 You can configure the `GEPARootAgentPromptOptimizer` with a
 `GEPARootAgentPromptOptimizerConfig` that contains the following fields:
 
 * `optimizer_model` (optional): The model used to analyze evaluation results and
 optimize the agent.
-Defaults to `"gemini-flash-latest"`.
 * `model_configuration` (optional): The configuration for the optimizer model.
 Defaults to a config with a 10K token thinking budget.
 * `max_metric_calls` (optional): The maximum number of evaluations to run during
@@ -250,6 +253,46 @@ optimization.
 Defaults to 100.
 * `reflection_minibatch_size` (optional): The number of examples to use at a
 time to update the agent instructions.
+Defaults to 3.
+* `run_dir` (optional): The directory to save intermediate and final
+optimization results if desired.
+Facilitates warm starts.
+
+### `GEPARootAgentOptimizer` {#geparootagentoptimizer}
+
+The
+[`GEPARootAgentOptimizer`](https://github.com/google/adk-python/blob/main/src/google/adk/optimization/gepa_root_agent_optimizer.py)
+improves both the instructions of the root agent and the instructions of skills
+provided to it via a
+[`SkillToolset`](https://github.com/google/adk-python/blob/main/src/google/adk/tools/skill_toolset.py)
+using the [GEPA](https://gepa-ai.github.io/gepa/) optimizer.
+In many ways it can be considered to be an extension of the
+[`GEPARootAgentPromptOptimizer`](#geparootagentpromptoptimizer).
+It expects the sampler to provide eval results as an
+[`UnstructuredSamplingResult`](#sampler-results).
+Its output is a subclass of [`OptimizerResult`](#agent-optimizer-results) which
+specifies a list of [optimized agents with scores](#agent-optimizer-results) and
+additional metrics collected during optimization.
+
+Note: The `GEPARootAgentOptimizer` does not improve any sub-agents or agent
+tools.
+
+Note: The `GEPARootAgentOptimizer` is experimental.
+It emits a warning when constructed, and its API may change or be removed
+without notice.
+
+You can configure the `GEPARootAgentOptimizer` with a
+`GEPARootAgentOptimizerConfig` that contains the following fields:
+
+* `optimizer_model` (optional): The model used to analyze evaluation results and
+optimize the agent.
+* `model_configuration` (optional): The configuration for the optimizer model.
+Defaults to a config with a `ThinkingLevel` of `HIGH`.
+* `max_metric_calls` (optional): The maximum number of evaluations to run during
+optimization.
+Defaults to 100.
+* `reflection_minibatch_size` (optional): The number of examples to use at a
+time to update the instructions.
 Defaults to 3.
 * `run_dir` (optional): The directory to save intermediate and final
 optimization results if desired.
@@ -267,26 +310,29 @@ The optimizer automatically executes an asynchronous, four-stage feedback loop:
 
 1. **Execute:** The target agent processes a specific batch of evaluation tasks managed by an implementation of the `Sampler` class.  
 2. **Evaluate**: The Sampler scores the agent's outputs against your evaluation datasets and returns a structured `SamplingResult`.  
-3. **Critique**: An underlying optimization large language model (LLM) (defaulting to Gemini-2.5-flash) analyzes the historical evaluation scores alongside the current prompt to isolate specific behavioral weaknesses or gaps.  
+3. **Critique**: An underlying optimization large language model (LLM) analyzes the historical evaluation scores alongside the current prompt to isolate specific behavioral weaknesses or gaps.  
 4. **Rewrite**: The optimization model generates an updated variation of the system prompt tailored to address the discovered weaknesses. This new prompt is then fed directly into the next iteration.
 
 **Note:** The optimization loop does not mutate your initial agent instance in place. Upon completion, it returns an `OptimizerResult` containing the highest-scoring agent variation extracted during the process.
 
-### Configuration
+#### Configuration
 
 Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` instance to the optimizer.
 
 | Parameter | Type | Default | Description |
 | :---- | :---- | :---- | :---- |
-| `num_iterations` | int | *Required* | The total number of optimization rounds to execute. |
-| `batch_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+| `num_iterations` | int | `10` | The total number of optimization rounds to execute. |
+| `batch_size` | int | `5` | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+| `optimizer_model` | str | `"gemini-2.5-flash"` | The model used to critique the current prompt and generate the next one. |
+| `model_configuration` | GenerateContentConfig | thinking budget of 10K tokens | The configuration for the optimizer model. |
 
-### Implementation Example
+#### Implementation Example
 
 Once your configuration is defined, run the optimization with:
 
 ```python
-from google.adk.optimization import SimplePromptOptimizer, SimplePromptOptimizerConfig
+from google.adk.optimization.simple_prompt_optimizer import SimplePromptOptimizer
+from google.adk.optimization.simple_prompt_optimizer import SimplePromptOptimizerConfig
 
 # Define your Agent and Sampler first...
 

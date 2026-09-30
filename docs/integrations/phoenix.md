@@ -2,7 +2,7 @@
 catalog_title: Phoenix
 catalog_description: Open-source, self-hosted observability, tracing, and evaluation of LLM applications
 catalog_icon: /integrations/assets/phoenix.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Phoenix observability for ADK
@@ -11,7 +11,9 @@ catalog_tags: ["observability"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Phoenix](https://arize.com/docs/phoenix) is an open-source, self-hosted observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://phoenix.arize.com/).
+[Arize Phoenix](https://arize.com/phoenix/) is the open-source observability and evaluation platform from [Arize AI](https://arize.com/) for local development, OSS workflows, and self-hosted tracing. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://arize.com/phoenix/).
+
+For the full-featured production platform built for AI-native teams and enterprises, use the [Arize AX ADK integration](/integrations/arize-ax/), available as managed cloud or enterprise self-hosted deployment. Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) show how traces support evaluation workflows for agents and LLM applications.
 
 
 ## Overview
@@ -37,7 +39,7 @@ pip install openinference-instrumentation-google-adk google-adk arize-phoenix-ot
 
 These instructions show you how to use Phoenix Cloud. You can also [launch Phoenix](https://arize.com/docs/phoenix/integrations/llm-providers/google-gen-ai/google-adk-tracing) in a notebook, from your terminal, or self-host it using a container.
 
-1. Sign up for a [free Phoenix account](https://phoenix.arize.com/).
+1. Sign up for a [free Phoenix account](https://arize.com/phoenix/).
 2. From the Settings page of your new Phoenix Space, create your API key
 3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/[your-space-name]
 
@@ -70,6 +72,8 @@ tracer_provider = register(
 Now that you have tracing setup, all Google ADK SDK requests will be streamed to Phoenix for observability and evaluation.
 
 ```python
+import asyncio
+
 import nest_asyncio
 nest_asyncio.apply()
 
@@ -116,22 +120,26 @@ session_id = "test_session"
 runner = InMemoryRunner(agent=agent, app_name=app_name)
 session_service = runner.session_service
 
-await session_service.create_session(
-    app_name=app_name,
-    user_id=user_id,
-    session_id=session_id
-)
-
-# Run the agent (all interactions will be traced)
-async for event in runner.run_async(
-    user_id=user_id,
-    session_id=session_id,
-    new_message=types.Content(role="user", parts=[
-        types.Part(text="What is the weather in New York?")]
+async def main():
+    await session_service.create_session(
+        app_name=app_name,
+        user_id=user_id,
+        session_id=session_id
     )
-):
-    if event.is_final_response():
-        print(event.content.parts[0].text.strip())
+
+    # Run the agent (all interactions will be traced)
+    async for event in runner.run_async(
+        user_id=user_id,
+        session_id=session_id,
+        new_message=types.Content(role="user", parts=[
+            types.Part(text="What is the weather in New York?")]
+        )
+    ):
+        if event.is_final_response() and event.content and event.content.parts:
+            print(event.content.parts[0].text.strip())
+
+
+asyncio.run(main())
 ```
 
 ## Support and Resources

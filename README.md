@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
 [![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
-[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
+[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk/v2)
 [![Maven Central Java](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
 [![Maven Central Kotlin](https://img.shields.io/maven-central/v/com.google.adk/google-adk-kotlin-core)](https://search.maven.org/artifact/com.google.adk/google-adk-kotlin-core)
 
@@ -65,7 +65,7 @@ deploying agents:
 
 - **[Documentation](https://adk.dev)**
 
-## ✨ Vibe Coding
+## ✨ Coding with AI
 
 Accelerate your ADK agent development workflow with AI-assisted coding. ADK
 provides optimized documentation context compatible with AI code editors:
@@ -77,10 +77,9 @@ provides optimized documentation context compatible with AI code editors:
   comprehensive documentation reference, ideal for complex implementations or
   models with large context windows.
 
-You can also visit our
-**[Coding with AI](https://adk.dev/tutorials/coding-with-ai/)**
-guide for instructions on using these files with development tools like Gemini
-CLI and Antigravity.
+You can also visit our **[Coding with
+AI](https://adk.dev/tutorials/coding-with-ai/)** guide for instructions on using
+these files with AI coding tools via MCP servers.
 
 ## 🤝 Contributing
 
