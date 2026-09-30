@@ -422,6 +422,7 @@ For more information on connecting to Google Cloud from ADK agents, see
 
     ```go
     import (
+        "log"    
         "github.com/glebarez/sqlite"
         "gorm.io/gorm"
 
