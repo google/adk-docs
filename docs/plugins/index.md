@@ -62,14 +62,23 @@ immediately:
     Tracks tool failures and intelligently retries tool requests.
 *   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
+*   [**Model Armor**](/integrations/model-armor/):
+    Screens user input and model output against Google Cloud Model Armor templates.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
 *   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
     Plugin that provides global instructions functionality at the App level.
 *   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
     Saves files included in user messages as Artifacts.
-*   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
+*   [**Auto Tracing**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/auto_tracing_plugin.py):
+    Wraps the functions in your agent's own packages in OpenTelemetry spans.
+*   [**Multimodal Tool Results**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/multimodal_tool_results_plugin.py):
+    Lets function tools return content parts directly to the model.
+*   [**Logging**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/logging_plugin.py):
     Log important information at each agent workflow callback point.
+
+Check out the [ADK Integrations](/integrations/) page for more native and 
+third party plugins for your agents.
 
 ## Define and register Plugins
 
@@ -92,28 +101,28 @@ methods, as shown in the following code example:
     from google.adk.plugins.base_plugin import BasePlugin
 
     class CountInvocationPlugin(BasePlugin):
-    """A custom plugin that counts agent and tool invocations."""
+        """A custom plugin that counts agent and tool invocations."""
 
-    def __init__(self) -> None:
-        """Initialize the plugin with counters."""
-        super().__init__(name="count_invocation")
-        self.agent_count: int = 0
-        self.tool_count: int = 0
-        self.llm_request_count: int = 0
+        def __init__(self) -> None:
+            """Initialize the plugin with counters."""
+            super().__init__(name="count_invocation")
+            self.agent_count: int = 0
+            self.tool_count: int = 0
+            self.llm_request_count: int = 0
 
-    async def before_agent_callback(
-        self, *, agent: BaseAgent, callback_context: CallbackContext
-    ) -> None:
-        """Count agent runs."""
-        self.agent_count += 1
-        print(f"[Plugin] Agent run count: {self.agent_count}")
+        async def before_agent_callback(
+            self, *, agent: BaseAgent, callback_context: CallbackContext
+        ) -> None:
+            """Count agent runs."""
+            self.agent_count += 1
+            print(f"[Plugin] Agent run count: {self.agent_count}")
 
-    async def before_model_callback(
-        self, *, callback_context: CallbackContext, llm_request: LlmRequest
-    ) -> None:
-        """Count LLM requests."""
-        self.llm_request_count += 1
-        print(f"[Plugin] LLM request count: {self.llm_request_count}")
+        async def before_model_callback(
+            self, *, callback_context: CallbackContext, llm_request: LlmRequest
+        ) -> None:
+            """Count LLM requests."""
+            self.llm_request_count += 1
+            print(f"[Plugin] LLM request count: {self.llm_request_count}")
     ```
 
 === "TypeScript"
@@ -499,7 +508,7 @@ a simple ADK agent.
     	Result string `json:"result"`
     }
 
-    func helloWorld(ctx tool.Context, args helloWorldArgs) (helloWorldResult, error) {
+    func helloWorld(ctx agent.Context, args helloWorldArgs) (helloWorldResult, error) {
     	output := fmt.Sprintf("Hello world: query is [%s]", args.Query)
     	fmt.Println(output)
     	return helloWorldResult{Result: output}, nil
@@ -1026,7 +1035,7 @@ The following code example shows the basic syntax of this callback:
 === "Go"
 
     ```go
-    func (p *MyPlugin) OnToolErrorCallback(ctx tool.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
+    func (p *MyPlugin) OnToolErrorCallback(ctx agent.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
       // Your implementation here
       return nil, nil
     }
