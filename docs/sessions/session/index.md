@@ -435,8 +435,7 @@ For more information on connecting to Google Cloud from ADK agents, see
     if err != nil {
         log.Fatal(err)
     }
-    // Creates the tables and adds any columns a newer ADK release needs.
-    // Run it every time the application starts.
+    // Creates the session tables and adds any columns a newer ADK release needs.
     if err := database.AutoMigrate(sessionService); err != nil {
         log.Fatal(err)
     }
@@ -444,11 +443,11 @@ For more information on connecting to Google Cloud from ADK agents, see
 
     !!! warning "Run `AutoMigrate` on every startup"
 
-        The Go session service does not create or update its tables. Call
-        `database.AutoMigrate` each time your application starts, before it
-        serves traffic. For what it changes and how to handle a schema you
-        manage yourself, see
-        [Schema updates in ADK Go](/sessions/session/migrate/#schema-updates-in-adk-go).
+        The service does not create or update its tables by itself, so call
+        `AutoMigrate` before the application serves traffic.
+        [Schema updates in ADK Go](/sessions/session/migrate/#schema-updates-in-adk-go)
+        explains what it changes and what to do if you manage the schema
+        yourself.
 
 #### Concurrency and locking
 
