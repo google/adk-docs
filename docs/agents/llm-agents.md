@@ -469,6 +469,11 @@ schema definitions.
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
+  - In Python, supported schema types include:
+    - A Pydantic model class, for example `MySchema`
+    - Lists of primitives, such as `list[str]`, `list[int]`, `list[bool]`, `list[float]`
+    - `dict`
+    - `google.genai.types.Schema`
 
 !!! warning "Warning: Using `output_schema` with `tools`"
 
