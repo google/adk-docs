@@ -15,7 +15,7 @@ but the `v1` schema may be required in future releases.
 If you use ADK Go, see [Schema updates in ADK Go](#schema-updates-in-adk-go)
 instead. The migration command on this page does not apply to ADK Go databases.
 
-## Migrate session database
+## Migrate session database in ADK Python {#migrate-session-database}
 
 A migration script is provided to facilitate the migration process. The script
 reads data from your existing database, converts it to the new format, and
