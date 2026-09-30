@@ -481,7 +481,7 @@ schema definitions.
     by specific models, including [Gemini
     3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
     For other models, ADK falls back to a [`set_model_response` function
-    tool](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)
+    tool](https://github.com/google/adk-python/blob/main/src/google/adk/tools/set_model_response_tool.py)
     to collect the structured output, which may not work reliably. In such
     cases, consider using sub-agents that handle output formatting separately.
 
