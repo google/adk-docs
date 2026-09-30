@@ -77,6 +77,9 @@ immediately:
 *   [**Logging**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/logging_plugin.py):
     Log important information at each agent workflow callback point.
 
+Check out the [ADK Integrations](/integrations/) page for more native and 
+third party plugins for your agents.
+
 ## Define and register Plugins
 
 This section explains how to define Plugin classes and register them as part of
