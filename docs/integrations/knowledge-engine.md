@@ -8,7 +8,7 @@ catalog_tags: ["data","google"]
 # Knowledge Engine tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 The `vertex_ai_rag_retrieval` tool allows the agent to perform private data
@@ -29,4 +29,10 @@ for setting it up.
 
     ```py
     --8<-- "examples/python/snippets/tools/built-in-tools/rag_engine.py"
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/integrations/RagEngine.kt:full_code"
     ```

@@ -52,9 +52,9 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
 
 ## Setup
 
-1. **Install LiteLLM:**
+1. **Install LiteLLM:** ADK requires `litellm>=1.84`.
         ```shell
-        pip install litellm
+        pip install "litellm>=1.84"
         ```
 2. **Set Provider API Keys:** Configure API keys as environment variables for
    the specific providers you intend to use.

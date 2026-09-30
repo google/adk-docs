@@ -1,7 +1,7 @@
 # Grounding with Search for agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.2.0</span>
 </div>
 
 [Agent Search](/integrations/agent-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
@@ -14,12 +14,12 @@ Before creating a grounded agent, you must have an existing Agent Search Data St
 
 ## Authentication Setup
 
-**Note: Agent Search requires Google Cloud Platform (Agent Platform) authentication. Google AI Studio is not supported for this tool.**
+Agent Search requires your ADK agent to be connected to a Google Cloud project authentication. You can not use a Gemini API Key from Google AI Studio when using this tool. For more information on connecting your ADK agent to Google Cloud projects, see the [Connect to Google Cloud](/get-started/google-cloud/) guide.
 
 * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
 * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
 * For Python, open the **`.env`** file and specify your project ID and location.
-* For Java, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`).
+* For Java and Kotlin, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`), and set the variables below in that same environment rather than in a `.env` file.
 
 ```env title=".env"
 GOOGLE_GENAI_USE_ENTERPRISE=TRUE
@@ -70,6 +70,32 @@ To enable Grounding with Search, you include the search tool in your agent defin
         .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.VertexAiSearchTool
+
+    // Configuration
+    val DATASTORE_ID =
+        "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID"
+
+    val rootAgent =
+        LlmAgent(
+            name = "vertex_search_agent",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction =
+                Instruction(
+                    "Answer questions using Agent Search to find information from internal " +
+                        "documents. Always cite sources when available.",
+                ),
+            description = "Enterprise document search assistant with Agent Search capabilities",
+            tools = listOf(VertexAiSearchTool(dataStoreId = DATASTORE_ID)),
+        )
+    ```
+
 ## How Grounding with Search works
 
 Grounding with Search is the process that connects your agent to your organization's indexed documents and data, allowing it to generate accurate responses based on private enterprise content. When a user's prompt requires information from your internal knowledge base, the agent's underlying LLM intelligently decides to invoke the `VertexAiSearchTool` to find relevant facts from your indexed documents.
@@ -114,17 +140,19 @@ The following is an example of the content object returned by the model after a 
   "groundingMetadata": {
     "groundingChunks": [
       {
-        "document": {
+        "retrievedContext": {
           "title": "AI in Medical Scribing: Technical Challenges",
-          "uri": "projects/your-project/locations/global/dataStores/your-datastore-id/documents/doc-medical-scribe-ai-tech-challenges",
-          "id": "doc-medical-scribe-ai-tech-challenges"
+          "uri": "https://storage.googleapis.com/your-bucket/doc-medical-scribe-ai-tech-challenges.pdf",
+          "documentName": "projects/your-project/locations/global/collections/default_collection/dataStores/your-datastore-id/branches/0/documents/doc-medical-scribe-ai-tech-challenges",
+          "text": "Medical documentation requires extremely high levels of accuracy, as errors can lead to misdiagnoses..."
         }
       },
       {
-        "document": {
+        "retrievedContext": {
           "title": "Regulatory and Ethical Hurdles for AI in Healthcare",
-          "uri": "projects/your-project/locations/global/dataStores/your-datastore-id/documents/doc-ai-healthcare-ethics",
-          "id": "doc-ai-healthcare-ethics"
+          "uri": "https://storage.googleapis.com/your-bucket/doc-ai-healthcare-ethics.pdf",
+          "documentName": "projects/your-project/locations/global/collections/default_collection/dataStores/your-datastore-id/branches/0/documents/doc-ai-healthcare-ethics",
+          "text": "HIPAA compliance imposes strict requirements on how patient data may be stored and processed..."
         }
       }
     ],
@@ -151,7 +179,7 @@ The following is an example of the content object returned by the model after a 
 
 The metadata provides a link between the text generated by the model and the enterprise documents that support it. Here is a step-by-step breakdown:
 
-- **groundingChunks**: This is a list of the enterprise documents the model consulted. Each chunk contains the document `title`, `uri` (document path), and `id`.
+- **groundingChunks**: This is a list of the enterprise documents the model consulted. Each chunk retrieved from your datastore carries a `retrievedContext` object holding the document `title`, its `uri`, the `documentName` (the full Agent Search resource name of the document), and the `text` that was retrieved.
 - **groundingSupports**: This list connects specific sentences in the final answer back to the `groundingChunks`.
 - **segment**: This object identifies a specific portion of the final text answer, defined by its `startIndex`, `endIndex`, and the `text` itself.
 - **groundingChunkIndices**: This array contains the index numbers that correspond to the sources listed in the `groundingChunks`. For example, the text about "HIPAA compliance" is supported by information from `groundingChunks` at index 1 (the "Regulatory and Ethical Hurdles" document).
@@ -171,11 +199,11 @@ Since grounding metadata is provided, you can choose to implement citation displ
 
     ```python
     for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             print(event.content.parts[0].text)
 
             # Optional: Show source count
-            if event.grounding_metadata:
+            if event.grounding_metadata and event.grounding_metadata.grounding_chunks:
                 print(f"\nBased on {len(event.grounding_metadata.grounding_chunks)} documents")
     ```
 
@@ -189,6 +217,22 @@ Since grounding metadata is provided, you can choose to implement citation displ
             // Optional: Show source count
             if (event.groundingMetadata().isPresent()) {
                 System.out.println("\nBased on " + event.groundingMetadata().get().groundingChunks().size() + " documents");
+            }
+        }
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    events.collect { event ->
+        if (event.isFinalResponse) {
+            println(event.content?.parts?.firstOrNull()?.text)
+
+            // Optional: Show source count
+            val chunks = event.groundingMetadata?.groundingChunks
+            if (!chunks.isNullOrEmpty()) {
+                println("\nBased on ${chunks.size} documents")
             }
         }
     }

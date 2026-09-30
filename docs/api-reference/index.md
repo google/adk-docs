@@ -23,12 +23,12 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
 
 <!-- This comment forces a block separation -->
 
--   :fontawesome-brands-js:{ .lg .middle } **Typescript API Reference**
+-   :fontawesome-brands-js:{ .lg .middle } **TypeScript API Reference**
 
     ---
     Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
 
-    [:octicons-arrow-right-24: View Typescript API Docs](https://adk.dev/api-reference/typescript/) <br>
+    [:octicons-arrow-right-24: View TypeScript API Docs](https://adk.dev/api-reference/typescript/) <br>
 
 <!-- This comment forces a block separation -->
 

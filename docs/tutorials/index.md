@@ -36,7 +36,7 @@ applications with ADK. Explore our collection below and happy building:
 
     Create an agent for handling streamed content.
 
-    [:octicons-arrow-right-24: Build a streaming agent](../get-started/streaming/index.md)
+    [:octicons-arrow-right-24: Build a streaming agent](../live/get-started/index.md)
 
 -   :material-rocket-launch-outline: **Discover sample agents**
 

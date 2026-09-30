@@ -27,7 +27,13 @@ SNIPPETS_FILE="tools/kotlin-snippets/files_to_test.txt"
 echo "Checking for Kotlin files that are not registered in ${SNIPPETS_FILE}..."
 
 # Find all .kt files in the snippets directory, excluding test files if any.
-all_kotlin_files=$(find examples/kotlin -type f -name "*.kt" ! -name "*Test.kt" | sed 's|examples/kotlin/||' | sort)
+# Gradle/IDE output (build/, bin/) holds a compiled copy of nearly every
+# snippet plus generated KSP sources. A fresh CI checkout has none of it, but
+# locally it would make every generated file look like an unregistered
+# snippet, so prune those trees before comparing.
+all_kotlin_files=$(find examples/kotlin \
+  \( -type d \( -name build -o -name bin -o -name out -o -name .gradle \) -prune \) -o \
+  \( -type f -name "*.kt" ! -name "*Test.kt" -print \) | sed 's|examples/kotlin/||' | sort)
 
 # Extract all .kt file paths from the snippets file, ignoring comments.
 referenced_files=$(grep -v '^\s*#' "${SNIPPETS_FILE}" | grep -o '[a-zA-Z0-9/._-]*\.kt' | sort | uniq)

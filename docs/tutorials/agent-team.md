@@ -67,7 +67,7 @@ If you prefer a setup that handles the runner and session management automatical
 # Install ADK and LiteLLM for multi-model support
 
 !pip install google-adk -q
-!pip install litellm -q
+!pip install "litellm>=1.84" -q
 
 print("Installation complete.")
 ```
@@ -128,7 +128,7 @@ os.environ["GOOGLE_GENAI_USE_ENTERPRISE"] = "False"
 # --- Define Model Constants for easier use ---
 
 # More supported models can be referenced here: https://ai.google.dev/gemini-api/docs/models#model-variations
-MODEL_GEMINI_2_5_FLASH = "gemini-flash-latest"
+MODEL_GEMINI_FLASH = "gemini-flash-latest"
 
 # More supported models can be referenced here: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
 MODEL_GPT_4O = "openai/gpt-4.1" # You can also try: gpt-4.1-mini, gpt-4o etc.
@@ -209,7 +209,7 @@ Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the inter
 We configure it with several key parameters:
 
 * `name`: A unique identifier for this agent (e.g., "weather\_agent\_v1").
-* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_5_FLASH`). We'll start with a specific Gemini model.
+* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_FLASH`). We'll start with a specific Gemini model.
 * `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.
 * `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.
 * `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`).
@@ -222,7 +222,7 @@ We configure it with several key parameters:
 ```python
 # @title Define the Weather Agent
 # Use one of the model constants defined earlier
-AGENT_MODEL = MODEL_GEMINI_2_5_FLASH # Starting with Gemini
+AGENT_MODEL = MODEL_GEMINI_FLASH # Starting with Gemini
 
 weather_agent = Agent(
     name="weather_agent_v1",
@@ -274,7 +274,9 @@ print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_I
 
 # Uncomment the following lines if running as a standard Python script (.py file):
 
-# async def init_session(app_name:str,user_id:str,session_id:str) -> InMemorySessionService:
+# from google.adk.sessions import Session
+#
+# async def init_session(app_name:str,user_id:str,session_id:str) -> Session:
 #     session = await session_service.create_session(
 #         app_name=app_name,
 #         user_id=user_id,
@@ -698,14 +700,14 @@ Now, create the `Agent` instances for our specialists. Notice their highly focus
 # If you want to use models other than Gemini, Ensure LiteLlm is imported and API keys are set (from Step 0/2)
 # from google.adk.models.lite_llm import LiteLlm
 # MODEL_GPT_4O, MODEL_CLAUDE_SONNET etc. should be defined
-# Or else, continue to use: model = MODEL_GEMINI_2_5_FLASH
+# Or else, continue to use: model = MODEL_GEMINI_FLASH
 
 # --- Greeting Agent ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
         # Using a potentially different/cheaper model for a simple task
-        model = MODEL_GEMINI_2_5_FLASH,
+        model = MODEL_GEMINI_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting to the user. "
@@ -724,7 +726,7 @@ farewell_agent = None
 try:
     farewell_agent = Agent(
         # Can use the same or a different model
-        model = MODEL_GEMINI_2_5_FLASH,
+        model = MODEL_GEMINI_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message. "
@@ -763,7 +765,7 @@ runner_root = None # Initialize runner
 
 if greeting_agent and farewell_agent and 'get_weather' in globals():
     # Let's use a capable Gemini model for the root agent to handle orchestration
-    root_agent_model = MODEL_GEMINI_2_5_FLASH
+    root_agent_model = MODEL_GEMINI_FLASH
 
     weather_agent_team = Agent(
         name="weather_agent_v2", # Give it a new version name
@@ -927,7 +929,7 @@ So far, our agent team can handle different tasks through delegation, but each i
 
 **How Agents Interact with State:**
 
-1. **`ToolContext` (Primary Method):** Tools can accept a `ToolContext` object (automatically provided by ADK if declared as the last argument). This object gives direct access to the session state via `tool_context.state`, allowing tools to read preferences or save results *during* execution.
+1. **`ToolContext` (Primary Method):** Tools can accept a `ToolContext` object (automatically provided by ADK for any parameter annotated `ToolContext`, whatever its position). This object gives direct access to the session state via `tool_context.state`, allowing tools to read preferences or save results *during* execution.
 2. **`output_key` (Auto-Save Agent Response):** An `Agent` can be configured with an `output_key="your_key"`. ADK will then automatically save the agent's final textual response for a turn into `session.state["your_key"]`.
 
 **In this step, we will enhance our Weather Bot team by:**
@@ -991,7 +993,7 @@ else:
 Now, we create a new version of the weather tool. Its key feature is accepting `tool_context: ToolContext` which allows it to access `tool_context.state`. It will read the `user_preference_temperature_unit` and format the temperature accordingly.
 
 
-* **Key Concept: `ToolContext`** This object is the bridge allowing your tool logic to interact with the session's context, including reading and writing state variables. ADK injects it automatically if defined as the last parameter of your tool function.
+* **Key Concept: `ToolContext`** This object is the bridge allowing your tool logic to interact with the session's context, including reading and writing state variables. ADK finds the parameter by its `ToolContext` annotation and injects it automatically, so it can sit at any position in your tool function's signature. The annotated parameter is also hidden from the schema the LLM sees.
 
 
 * **Best Practice:** When reading from state, use `dictionary.get('key', default_value)` to handle cases where the key might not exist yet, ensuring your tool doesn't crash.
@@ -1068,13 +1070,13 @@ from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 # Ensure tools 'say_hello', 'say_goodbye' are defined (from Step 3)
-# Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_2_5_FLASH etc. are defined
+# Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_FLASH etc. are defined
 
 # --- Redefine Greeting Agent (from Step 3) ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1088,7 +1090,7 @@ except Exception as e:
 farewell_agent = None
 try:
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1105,7 +1107,7 @@ runner_root_stateful = None # Initialize runner
 # Check prerequisites before creating the root agent
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals():
 
-    root_agent_model = MODEL_GEMINI_2_5_FLASH # Choose orchestration model
+    root_agent_model = MODEL_GEMINI_FLASH # Choose orchestration model
 
     root_agent_stateful = Agent(
         name="weather_agent_v4_stateful", # New version name
@@ -1203,7 +1205,8 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
                               )
 
         # 4. Test basic delegation (should still work)
-        # This will update 'last_weather_report' again, overwriting the NY weather report
+        # The greeting is authored by the delegated sub-agent, not the root agent,
+        # so output_key does NOT fire: 'last_weather_report' keeps the NY report.
         print("\n--- Turn 3: Sending a greeting ---")
         await call_agent_async(query= "Hi!",
                                runner=runner_root_stateful,
@@ -1395,7 +1398,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1409,7 +1412,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1428,7 +1431,7 @@ runner_root_model_guardrail = None
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and 'block_keyword_guardrail' in globals():
 
     # Use a defined model constant
-    root_agent_model = MODEL_GEMINI_2_5_FLASH
+    root_agent_model = MODEL_GEMINI_FLASH
 
     root_agent_model_guardrail = Agent(
         name="weather_agent_v5_model_guardrail", # New version name for clarity
@@ -1687,7 +1690,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1701,7 +1704,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1721,7 +1724,7 @@ if ('greeting_agent' in globals() and greeting_agent and
     'block_keyword_guardrail' in globals() and
     'block_paris_tool_guardrail' in globals()):
 
-    root_agent_model = MODEL_GEMINI_2_5_FLASH
+    root_agent_model = MODEL_GEMINI_FLASH
 
     root_agent_tool_guardrail = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
@@ -1894,7 +1897,7 @@ Your Weather Bot team is a great starting point. Here are some ideas to further 
     *   Use `after_tool_callback` to process or log the results returned by a tool.
     *   Implement `before_agent_callback` or `after_agent_callback` for agent-level entry/exit logic.
 5.  **Error Handling:** Improve how the agent handles tool errors or unexpected API responses. Maybe add retry logic within a tool.
-6.  **Persistent Session Storage:** Explore alternatives to `InMemorySessionService` for storing session state persistently (e.g., using databases like Firestore or Cloud SQL – requires custom implementation or future ADK integrations).
+6.  **Persistent Session Storage:** Consider changing `InMemorySessionService` to one of ADK's persistent implementations, such as `DatabaseSessionService` which is SQLAlchemy-backed and installed with `pip install google-adk[db]`, or `VertexAiSessionService`. For more information, see the [Session](/sessions/session/) page.
 7.  **Streaming UI:** Integrate your agent team with a web framework (like FastAPI, as shown in the ADK Streaming Quickstart) to create a real-time chat interface.
 
 The Agent Development Kit provides a robust foundation for building sophisticated LLM-powered applications. By mastering the concepts covered in this tutorial – tools, state, delegation, and callbacks – you are well-equipped to tackle increasingly complex agentic systems.

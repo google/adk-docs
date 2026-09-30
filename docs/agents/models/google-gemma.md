@@ -7,13 +7,20 @@
 ADK agents can use the [Google Gemma](https://ai.google.dev/gemma/docs) family of generative AI models that offer a
 wide range of capabilities. ADK supports many Gemma features,
 including [Tool Calling](/tools-custom/)
-and [Structured Output](/agents/llm-agents/#structuring-data-input_schema-output_schema-output_key).
+and [Structured Output](/agents/llm-agents/#data-handling).
 
 You can use Gemma 4 through the [Gemini API](https://ai.google.dev/gemini-api/docs),
 or with one of many self-hosting options on Google Cloud:
 [Agent Platform](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
 [Google Kubernetes Engine](https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm),
 [Cloud Run](https://docs.cloud.google.com/run/docs/run-gemma-on-cloud-run).
+
+Gemma 3 needs a different model class than the Gemma 4 examples below. It has
+no native function calling or system instruction support, so ADK supplies
+workarounds in dedicated classes: use `Gemma(model="gemma-3-27b-it")` for the
+Gemini API and `Gemma3Ollama()` for Ollama, both from `google.adk.models`.
+`Gemma3Ollama` is only defined when [LiteLLM](/agents/models/litellm/) is
+installed (`litellm>=1.84`).
 
 ## Gemini API Example
 
@@ -54,7 +61,7 @@ Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
         .instruction("""
             You are a helpful assistant that can provide current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 
@@ -125,7 +132,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
             model=model_name_at_endpoint,
             api_base=api_base_url,
             # Pass authentication headers if needed
-            extra_headers=auth_headers
+            extra_headers=auth_headers,
             # Alternatively, if endpoint uses an API key:
             # api_key="YOUR_ENDPOINT_API_KEY",
             extra_body={
@@ -203,7 +210,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
         .instruction("""
             You are a helpful assistant that can provide the current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 
@@ -243,7 +250,7 @@ import os
 import dotenv
 from google.adk.agents import LlmAgent
 from google.adk.models import Gemini
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 dotenv.load_dotenv()
@@ -272,7 +279,7 @@ def get_maps_mcp_toolset():
         print("Warning: MAPS_API_KEY environment variable not found.")
         maps_api_key = "no_api_found"
 
-    tools = MCPToolset(
+    tools = McpToolset(
         connection_params=StreamableHTTPConnectionParams(
             url=MAPS_MCP_URL,
             headers={
