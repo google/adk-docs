@@ -75,7 +75,9 @@ whether the context window is compressed:
 
 - `get_session_config`: Limits which events are fetched when loading a session.
   Use `num_recent_events` or `after_timestamp` to avoid loading the full event
-  history on every invocation.
+  history on every invocation. These filters limit the loaded view without
+  deleting stored events. New events are appended to the stored history,
+  preserving older events excluded from the loaded view.
 - `context_window_compression`: Enables context window compression for LLM
   input, useful when sessions approach model context limits.
 - `include_thoughts_from_other_agents`: Controls whether thought parts from

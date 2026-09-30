@@ -226,10 +226,10 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     	"fmt"
     	"strings"
 
-    	"google.golang.org/adk/v2/tool"
+    	"google.golang.org/adk/v2/agent"
     )
 
-    func query(ctx tool.Context, args QueryArgs) (map[string]any, error) {
+    func query(ctx agent.Context, args QueryArgs) (map[string]any, error) {
     	// Assume 'policy' is retrieved from context, e.g., via session state:
     	policyAny, err := ctx.Session().State().Get("query_tool_policy")
     	if err != nil {
@@ -288,8 +288,10 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
       public Object query(String query, ToolContext toolContext) {
 
         // Assume 'policy' is retrieved from context, e.g., via session state:
+        @SuppressWarnings("unchecked")
         Map<String, Object> queryToolPolicy =
-            toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
+            (Map<String, Object>)
+                toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
         List<String> actualTables = explainQuery(query);
 
         // --- Placeholder Policy Enforcement ---
@@ -335,6 +337,7 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
     from google.genai import types
 
     agent = Agent(
+        name="safety_agent",
         # ...
         generate_content_config=types.GenerateContentConfig(
             safety_settings=[
@@ -488,13 +491,14 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     import (
     	"fmt"
 
+    	"google.golang.org/adk/v2/agent"
     	"google.golang.org/adk/v2/agent/llmagent"
     	"google.golang.org/adk/v2/tool"
     )
 
     // Hypothetical callback function
     func validateToolParams(
-    	ctx tool.Context,
+    	ctx agent.Context,
     	t tool.Tool,
     	args map[string]any,
     ) (map[string]any, error) {
@@ -574,7 +578,7 @@ Some examples include:
 
 * **Gemini as a Judge Plugin**: This plugin uses Gemini Flash Lite to evaluate user inputs, tool input and output, and agent's response for appropriateness, prompt injection, and jailbreak detection. The plugin configures Gemini to act as a safety filter to mitigate against content safety, brand safety, and agent misalignment. The plugin is configured to pass user input, tool input and output, and model output to Gemini Flash Lite, who decides if the input to the agent is safe or unsafe. If Gemini decides the input is unsafe, the agent returns a predetermined response: "Sorry I cannot help with that. Can I help you with something else?".
 
-* **Model Armor Plugin**: A plugin that queries the model armor API to check for potential content safety violations at specified points of agent execution. Similar to the _Gemini as a Judge_ plugin, if Model Armor finds matches of harmful content, it returns a predetermined response to the user.
+* **[Model Armor Plugin](../integrations/model-armor.md)**: A plugin that ships with ADK and queries the Model Armor API to check for potential content safety violations at specified points of agent execution. Similar to the _Gemini as a Judge_ plugin, if Model Armor finds matches of harmful content, it returns a predetermined response to the user.
 
 * **PII Redaction Plugin**: A specialized plugin with design for the [Before Tool Callback](/plugins/#tool-callbacks) and specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
 
