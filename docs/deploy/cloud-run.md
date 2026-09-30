@@ -71,7 +71,7 @@ You should have a Google Cloud project. You need to know your:
   3. Service account, for example: "1234567890-compute@developer.gserviceaccount.com"
   4. GOOGLE_API_KEY
 
-The Google Cloud CLI (`gcloud`) must be installed. If deploying via the ADK CLI, the `gcloud beta` components are required (install with `gcloud components install beta`).
+You must also have the Google Cloud CLI (`gcloud`) installed.
 
 ## Secret
 
