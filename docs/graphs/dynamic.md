@@ -128,6 +128,8 @@ run within a workflow.
     ***@node*** annotation:
 
     ```python
+    from typing import Any
+
     from google.adk.workflow import FunctionNode
 
     # base function
@@ -277,9 +279,9 @@ and write session state keys for data transfer.
     from google.adk.workflow import node
 
     @node(rerun_on_resume=True)
-    async def editorial_workflow(ctx: Context, user_request: str):
+    async def editorial_workflow(ctx: Context, node_input: str):
         # Agent Node generates output
-        raw_draft = await ctx.run_node(draft_agent, user_request)
+        raw_draft = await ctx.run_node(draft_agent, node_input)
 
         # Function Node formats text
         formatted_text = await ctx.run_node(format_function_node, raw_draft)
@@ -416,7 +418,7 @@ workflows offer much more flexibility to define the routing logic you need.
     )
 
     @node(name="lint_reviewer")
-    async def compile_lint_check(ctx: Context, code: str):
+    async def compile_lint_check(ctx: Context, node_input: str):
         # Simulate API call or lint check
         class Response:
             findings = ""
@@ -430,8 +432,8 @@ workflows offer much more flexibility to define the routing logic you need.
     )
 
     @node(rerun_on_resume=True) # workflow node
-    async def code_workflow(ctx: Context, user_request: str):
-      code = await ctx.run_node(coder_agent, user_request)
+    async def code_workflow(ctx: Context, node_input: str):
+      code = await ctx.run_node(coder_agent, node_input)
       check_resp = await ctx.run_node(compile_lint_check, code)
 
       while check_resp.findings:

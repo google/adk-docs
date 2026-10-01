@@ -380,6 +380,16 @@ accepted and produced by any agent node.
         departure_date: date  # date(2026, 3, 15)
         passengers: int = 1   # Number of passengers
 
+    class Flight(BaseModel):
+        carrier: str
+        price: float
+
+    def search_flights_api(
+        origin: str, destination: str, departure_date: date, passengers: int
+    ) -> list[dict]:
+        """Look up flights with your own flight-search provider."""
+        ...
+
     class FlightSearchOutput(BaseModel):
         flights: list[Flight]
         cheapest_price: float
