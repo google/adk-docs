@@ -581,7 +581,9 @@ gcloud eventarc triggers describe my-trigger \
 
     `id` is unique only within its topic or event source, so build the
     idempotency key from `subscription` and `id` for Pub/Sub, or from
-    `event_source` and `id` for Eventarc:
+    `event_source` and `id` for Eventarc. Prefer passing the key to the
+    provider as its idempotency key, as the following tool does. Only the
+    provider knows whether the effect happened:
 
     ```python
     from google.adk.tools import ToolContext
@@ -595,11 +597,20 @@ gcloud eventarc triggers describe my-trigger \
             idempotency_key = f"{scope}:{delivery['id']}:{invoice_id}"
         # payments_client is your payment provider's client. The provider
         # charges once per idempotency key and returns the original result
-        # when it sees the same key again.
+        # when it sees the same key again. If it answers that the key is still
+        # in use by another attempt (for example an HTTP 409), let the error
+        # propagate instead of returning it to the model: the run fails, so
+        # the message is nacked and redelivered.
         return payments_client.charge(
             invoice_id, amount, idempotency_key=idempotency_key
         )
     ```
+
+    If you deduplicate with your own store instead, reserve the key atomically
+    before the side effect, and plan for reconciling an ambiguous attempt, such
+    as a call that timed out after the provider committed. Checking the store,
+    acting, and then recording the key repeats the side effect in that case,
+    and when a redelivery overlaps a run that is still in progress.
 
 ## Deploy
 
