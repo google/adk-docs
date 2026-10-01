@@ -178,7 +178,7 @@ When adding an authenticated tool to your agent, you need to provide its require
 
 You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
 
-#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
+#### Use OpenAPI-based toolsets
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -397,7 +397,8 @@ The use of this configuration parameter is mutually exclusive, and cannot
 include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
 configuration block.
 
-Follow this example to configure the key:
+Set the key on the credentials configuration of the toolset you are using. The
+following example uses BigQuery:
 
 ```python
 from google.adk.integrations.bigquery import BigQueryCredentialsConfig
@@ -405,10 +406,10 @@ from google.adk.integrations.bigquery import BigQueryToolset
 
 # Configure the toolset to look for "my_frontend_token" in the session state
 credentials_config = BigQueryCredentialsConfig(
+    # Do not hardcode authentication keys in production code
     external_access_token_key="my_frontend_token"
 )
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
-
 ```
 
 #### Authentication request flow

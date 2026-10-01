@@ -649,6 +649,11 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     with the response. For more details on using the Resume feature, see [Resume
     stopped agents](/runtime/resume/).
 
+    In **Kotlin**, the runner resolves the invocation from the function
+    response's own call ID, so you do not need to pass `invocationId` to
+    `runAsync`. A response whose ID matches no function call in the session
+    throws instead.
+
 ??? Tip "Applies to only Java ADK"
 
     When passing `ToolContext` with Function Tools, ensure that one of the
@@ -734,6 +739,15 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
 - **Initial return**: Whatever the function returns is sent as the first
   FunctionResponse, and a function that returns nothing emits none. Every later
   progress or completion update is a FunctionResponse sent by the agent client.
+- **Kotlin has no `LongRunningFunctionTool` class**: Annotate the function with
+  `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
+  subclass.
+- **Kotlin turn count**: The tool above returns a value rather than
+  `Unit`, so non-resumable apps send that placeholder to the model and call it a
+  second time, ending turn 1 in an interim reply. A resumable app pauses on the
+  function call with no second model call. Returning `Unit` suppresses the
+  placeholder response entirely, ending the turn on the function call in either
+  mode.
 
 ## Agent-as-a-Tool {#agent-tool}
 
