@@ -122,10 +122,10 @@ You can define [skills in code](#inline-skills) or load
 
     The Python and TypeScript examples above resolve `skills/` relative to the
     directory holding the agent source file, so place `skills/` next to that
-    file. The Go example uses `os.DirFS("./skills")`, which resolves relative to
-    the current working directory instead. Either way, the `skills/` directory
-    must contain the sub-directories for the Skills you want to use in your
-    agent.
+    file. The Go and Kotlin examples pass a relative `skills` path, which
+    resolves relative to the current working directory instead. Either way,
+    the `skills/` directory must contain the sub-directories for the Skills you
+    want to use in your agent.
 
 ## Skill structure
 

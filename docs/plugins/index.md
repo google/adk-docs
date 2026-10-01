@@ -275,7 +275,7 @@ This example code implements callbacks for `before_agent_callback` and
 `before_model_callback` to count execution of these tasks during the lifecycle
 of the agent.
 
-### Register Plugin class
+### Register plugin class
 
 Integrate your Plugin class by registering it during your agent initialization
 as part of your `Runner` class, or in Python your `App` object, using the
@@ -287,7 +287,7 @@ defined in the previous section with a simple ADK agent.
 
     In Python, the `plugins` parameter of `Runner` and `InMemoryRunner` is
     deprecated and raises a `DeprecationWarning`. Set `plugins` on an
-    [`App`](/apps/) instead and pass that `App` to the runner as
+    [`App`](../apps/index.md) instead and pass that `App` to the runner as
     `InMemoryRunner(app=app)`. Passing both `plugins` and `app` raises a
     `ValueError`.
 
@@ -747,7 +747,7 @@ your Plugin class. Callbacks are available when a user message is received,
 before and after an `Runner`, `Agent`, `Model`, or `Tool` is called, for
 `Events`, and when a `Model`, or `Tool` error occurs. In Python, error
 callbacks also run when an `Agent` raises an exception and when the run itself
-fails. These callbacks include, and take precedence over, the any callbacks
+fails. These callbacks include, and take precedence over, any callbacks
 defined within your Agent, Model, and Tool classes.
 
 The following diagram illustrates callback points where you can attach and run
@@ -837,12 +837,8 @@ logic begins.
 -   **Purpose:** Global setup or initialization before the invocation runs.
 -   **Flow Control:** Return a `types.Content` object to **halt execution**:
     the `Runner` exits early and ends the run with that content as the result.
-    Return `None` to proceed normally. In Python, `run_async()` honors this
-    return value only when the root agent is a `BaseAgent` that is not an
-    `LlmAgent`. When the root agent is an `LlmAgent` or a `Workflow`, the
-    returned content is ignored and the run proceeds as if you had returned
-    `None`; use `before_agent_callback` or `before_model_callback` to
-    short-circuit those runs instead.
+    This applies to every root agent, including an `LlmAgent` or a `Workflow`.
+    Return `None` to proceed normally.
 
 The following code example shows the basic syntax of this callback:
 
