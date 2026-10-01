@@ -32,15 +32,19 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
+permissions:
+  contents: read
+
 jobs:
   get_sample_dirs:
     runs-on: ubuntu-latest
     outputs:
       sample_dirs: ${{ steps.get_dirs.outputs.sample_dirs }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Get Sample Directories
         id: get_dirs
@@ -61,12 +65,13 @@ jobs:
       - get_sample_dirs
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -78,6 +83,8 @@ jobs:
 
       - name: Run Black and Flake8 Linting in ${{ matrix.sample_dir }}
         run: |
-          cd ${{ matrix.sample_dir }}
+          cd ${MATRIX_SAMPLE_DIR}
           black .
           flake8 .
+        env:
+          MATRIX_SAMPLE_DIR: ${{ matrix.sample_dir }}

@@ -11,24 +11,17 @@ import com.google.adk.tools.FunctionTool;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
 import io.reactivex.rxjava3.core.Flowable;
-import java.util.HashMap;
 import java.util.Map;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+import java.math.BigDecimal;
 
 public class StockPriceAgent {
 
   private static final String APP_NAME = "stock_agent";
   private static final String USER_ID = "user1234";
 
-  // Mock data for various stocks functionality
-  // NOTE: This is a MOCK implementation. In a real Java application,
-  // you would use a financial data API or library.
-  private static final Map<String, Double> mockStockPrices = new HashMap<>();
-
-  static {
-    mockStockPrices.put("GOOG", 1.0);
-    mockStockPrices.put("AAPL", 1.0);
-    mockStockPrices.put("MSFT", 1.0);
-  }
+  // No longer using mock stock data - we fetch it live!
 
   @Schema(description = "Retrieves the current stock price for a given symbol.")
   public static Map<String, Object> getStockPrice(
@@ -37,10 +30,11 @@ public class StockPriceAgent {
       String symbol) {
 
     try {
-      if (mockStockPrices.containsKey(symbol.toUpperCase())) {
-        double currentPrice = mockStockPrices.get(symbol.toUpperCase());
-        System.out.println("Tool: Found price for " + symbol + ": " + currentPrice);
-        return Map.of("symbol", symbol, "price", currentPrice);
+      Stock stock = YahooFinance.get(symbol.toUpperCase());
+      if (stock != null && stock.getQuote().getPrice() != null) {
+        BigDecimal currentPrice = stock.getQuote().getPrice();
+        System.out.println("Tool: Found live price for " + symbol + ": " + currentPrice);
+        return Map.of("symbol", symbol, "price", currentPrice.doubleValue());
       } else {
         return Map.of("symbol", symbol, "error", "No data found for symbol");
       }

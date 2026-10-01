@@ -1,8 +1,8 @@
 ---
 catalog_title: Freeplay
 catalog_description: Use Freeplay to build, optimize, and evaluate AI agents with end-to-end observability
-catalog_icon: /adk-docs/integrations/assets/freeplay.png
-catalog_tags: ["observability"]
+catalog_icon: /integrations/assets/freeplay.png
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Freeplay observability for ADK
@@ -74,7 +74,7 @@ You'll also want to pass in the Freeplay plugin to your App:
 ```python
 from app.agent import root_agent
 from freeplay_python_adk.freeplay_observability_plugin import FreeplayObservabilityPlugin
-from google.adk.runners import App
+from google.adk.apps import App
 
 app = App(
     name="app",

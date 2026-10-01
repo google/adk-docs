@@ -12,13 +12,13 @@ from your local development machine to a scalable and reliable environment.
 Your ADK agent can be deployed to a range of different environments based
 on your needs for production readiness or custom flexibility:
 
-### Agent Engine in Vertex AI
+### Agent Runtime on Agent Platform
 
-[Agent Engine](agent-engine/index.md) is a fully managed auto-scaling service on Google Cloud
+[Agent Runtime](agent-runtime/index.md) is a fully managed auto-scaling service on Google Cloud
 specifically designed for deploying, managing, and scaling AI agents built with
 frameworks such as ADK.
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine/index.md).
+Learn more about [deploying your agent to Agent Runtime](agent-runtime/index.md).
 
 ### Cloud Run
 

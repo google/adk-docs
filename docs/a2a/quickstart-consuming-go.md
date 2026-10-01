@@ -8,7 +8,7 @@ This quickstart covers the most common starting point for any developer: **"Ther
 
 ## Overview
 
-This sample demonstrates the **Agent-to-Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
+This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
 
 ```text
 ┌─────────────────┐    ┌──────────────────┐    ┌────────────────────┐

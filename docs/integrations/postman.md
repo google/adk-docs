@@ -1,14 +1,14 @@
 ---
 catalog_title: Postman
 catalog_description: Manage API collections, workspaces, and generate client code
-catalog_icon: /adk-docs/integrations/assets/postman.png
+catalog_icon: /integrations/assets/postman.png
 catalog_tags: ["mcp"]
 ---
 
 # Postman MCP tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span>
 </div>
 
 The [Postman MCP Server](https://github.com/postmanlabs/postman-mcp-server)
@@ -51,7 +51,7 @@ natural language interactions.
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
@@ -82,17 +82,17 @@ natural language interactions.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.postman.com/mcp",
                         # (Optional) Use "/minimal" for essential tools only
                         # (Optional) Use "/code" for code generation tools
@@ -116,7 +116,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [
@@ -150,7 +150,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [
@@ -160,14 +160,162 @@ natural language interactions.
                     // (Optional) Use "/minimal" for essential tools only
                     // (Optional) Use "/code" for code generation tools
                     // (Optional) Use "https://mcp.eu.postman.com" for EU region
-                    header: {
-                        Authorization: `Bearer ${POSTMAN_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${POSTMAN_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],
         });
 
         export { rootAgent };
+        ```
+
+=== "Go"
+
+    === "Local MCP Server"
+
+        ```go
+        package main
+
+        import (
+        	"context"
+        	"log"
+        	"os"
+        	"os/exec"
+
+        	"github.com/modelcontextprotocol/go-sdk/mcp"
+        	"google.golang.org/genai"
+
+        	"google.golang.org/adk/v2/agent"
+        	"google.golang.org/adk/v2/agent/llmagent"
+        	"google.golang.org/adk/v2/cmd/launcher"
+        	"google.golang.org/adk/v2/cmd/launcher/full"
+        	"google.golang.org/adk/v2/model/gemini"
+        	"google.golang.org/adk/v2/tool"
+        	"google.golang.org/adk/v2/tool/mcptoolset"
+        )
+
+        const postmanAPIKey = "YOUR_POSTMAN_API_KEY"
+
+        func main() {
+        	ctx := context.Background()
+
+        	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
+        		APIKey: os.Getenv("GOOGLE_API_KEY"),
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the model: %v", err)
+        	}
+
+        	args := []string{"-y", "@postman/postman-mcp-server"}
+        	// args = append(args, "--full")          // Use all 100+ tools
+        	// args = append(args, "--code")          // Use code generation tools
+        	// args = append(args, "--region", "eu")  // Use EU region
+
+        	server := exec.CommandContext(ctx, "npx", args...)
+        	// Forward only what npx needs, plus the Postman key. The parent environment
+        	// may hold unrelated secrets, such as the GOOGLE_API_KEY read above.
+        	server.Env = []string{"POSTMAN_API_KEY=" + postmanAPIKey}
+        	for _, k := range []string{
+        		"PATH", "HOME", // POSIX
+        		"APPDATA", "LOCALAPPDATA", "TEMP", "USERPROFILE", // Windows
+        	} {
+        		if v, ok := os.LookupEnv(k); ok {
+        			server.Env = append(server.Env, k+"="+v)
+        		}
+        	}
+
+        	postman, err := mcptoolset.New(mcptoolset.Config{
+        		Transport: &mcp.CommandTransport{Command: server},
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the Postman tool set: %v", err)
+        	}
+
+        	rootAgent, err := llmagent.New(llmagent.Config{
+        		Model:       model,
+        		Name:        "postman_agent",
+        		Instruction: "Help users manage their Postman workspaces and collections",
+        		Toolsets:    []tool.Toolset{postman},
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the agent: %v", err)
+        	}
+
+        	l := full.NewLauncher()
+        	cfg := &launcher.Config{AgentLoader: agent.NewSingleLoader(rootAgent)}
+        	if err := l.Execute(ctx, cfg, os.Args[1:]); err != nil {
+        		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+        	}
+        }
+        ```
+
+    === "Remote MCP Server"
+
+        ```go
+        package main
+
+        import (
+        	"context"
+        	"log"
+        	"os"
+
+        	"google.golang.org/genai"
+
+        	"google.golang.org/adk/v2/agent"
+        	"google.golang.org/adk/v2/agent/llmagent"
+        	"google.golang.org/adk/v2/auth"
+        	"google.golang.org/adk/v2/cmd/launcher"
+        	"google.golang.org/adk/v2/cmd/launcher/full"
+        	"google.golang.org/adk/v2/model/gemini"
+        	"google.golang.org/adk/v2/tool"
+        	"google.golang.org/adk/v2/tool/mcptoolset"
+        )
+
+        const postmanAPIKey = "YOUR_POSTMAN_API_KEY"
+
+        func main() {
+        	ctx := context.Background()
+
+        	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
+        		APIKey: os.Getenv("GOOGLE_API_KEY"),
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the model: %v", err)
+        	}
+
+        	postman, err := mcptoolset.New(mcptoolset.Config{
+        		// (Optional) Use "/minimal" for essential tools only
+        		// (Optional) Use "/code" for code generation tools
+        		// (Optional) Use "https://mcp.eu.postman.com/mcp" for EU region
+        		Endpoint: "https://mcp.postman.com/mcp",
+        		// Auth sets "Authorization: Bearer <key>" on every request.
+        		Auth: auth.StaticToken(postmanAPIKey),
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the Postman tool set: %v", err)
+        	}
+
+        	rootAgent, err := llmagent.New(llmagent.Config{
+        		Model:       model,
+        		Name:        "postman_agent",
+        		Instruction: "Help users manage their Postman workspaces and collections",
+        		Toolsets:    []tool.Toolset{postman},
+        	})
+        	if err != nil {
+        		log.Fatalf("Failed to create the agent: %v", err)
+        	}
+
+        	l := full.NewLauncher()
+        	cfg := &launcher.Config{AgentLoader: agent.NewSingleLoader(rootAgent)}
+        	if err := l.Execute(ctx, cfg, os.Args[1:]); err != nil {
+        		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+        	}
+        }
         ```
 
 ## Configuration

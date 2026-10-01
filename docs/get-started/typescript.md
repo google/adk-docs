@@ -51,7 +51,7 @@ npm install -D @google/adk-devtools
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
+[Function Tool](/tools-custom/function-tools/), called `getCurrentTime`.
 Create an `agent.ts` file in your project directory and add the following code:
 
 ```typescript title="my-agent/agent.ts"
@@ -72,7 +72,7 @@ const getCurrentTime = new FunctionTool({
 
 export const rootAgent = new LlmAgent({
   name: 'hello_time_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-flash-latest',
   description: 'Tells the current time in a specified city.',
   instruction: `You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.`,
@@ -89,14 +89,28 @@ don't already have Gemini API key, create a key in Google AI Studio on the
 In a terminal window, write your API key into your `.env` file of your project
 to set environment variables:
 
-```bash title="Update: my-agent/.env"
-echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
-```
+=== "MacOS / Linux"
+
+    ```bash title="Update: my-agent/.env"
+    echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows PowerShell"
+
+    ```console title="Update: my-agent/.env"
+    echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows Command Prompt"
+
+    ```console title="Update: my-agent/.env"
+    echo GEMINI_API_KEY="YOUR_API_KEY" > .env
+    ```
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
     information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+    [Models & Authentication](/agents/models).
 
 ## Run your agent
 
@@ -114,7 +128,7 @@ using the following command:
 npx adk run agent.ts
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Run with web interface
 
@@ -125,10 +139,10 @@ npx adk web
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
+access the web interface at `http://localhost:8000`. Select your agent at the
 upper right corner and type a request.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Caution: ADK Web for development only"
 
@@ -140,4 +154,4 @@ upper right corner and type a request.
 Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Build your agent](/tutorials/)

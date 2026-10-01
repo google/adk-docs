@@ -5,7 +5,7 @@
 > generated and hosted on the ADK documentation site. Please use the links below
 > to access the source of truth.
 
-- [llms.txt](https://google.github.io/adk-docs/llms.txt)
-- [llms-full.txt](https://google.github.io/adk-docs/llms-full.txt)
-- [ADK Documentation](https://google.github.io/adk-docs/)
-- [ADK - Coding with AI](https://google.github.io/adk-docs/tutorials/coding-with-ai/)
+- [llms.txt](https://adk.dev/llms.txt)
+- [llms-full.txt](https://adk.dev/llms-full.txt)
+- [ADK Documentation](https://adk.dev/)
+- [ADK - Coding with AI](https://adk.dev/tutorials/coding-with-ai/)

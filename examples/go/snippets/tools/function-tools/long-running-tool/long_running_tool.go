@@ -20,13 +20,13 @@ import (
 	"log"
 	"sync/atomic"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -44,7 +44,7 @@ type CreateTicketResults struct {
 }
 
 // createTicketAsync simulates the *initiation* of a long-running ticket creation task.
-func createTicketAsync(ctx tool.Context, args CreateTicketArgs) (CreateTicketResults, error) {
+func createTicketAsync(ctx agent.Context, args CreateTicketArgs) (CreateTicketResults, error) {
 	log.Printf("TOOL_EXEC: 'create_ticket_long_running' called with urgency: %s (Call ID: %s)\n", args.Urgency, ctx.FunctionCallID())
 
 	// "Generate" a ticket ID and return it in the initial response.
@@ -71,7 +71,7 @@ func createTicketAgent(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("failed to create long running tool: %w", err)
 	}
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create model: %v", err)
 	}

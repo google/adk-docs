@@ -1,15 +1,15 @@
 ---
 catalog_title: Arize AX
 catalog_description: Production-grade observability, debugging, and improvement of LLM applications
-catalog_icon: /adk-docs/integrations/assets/arize.png
-catalog_tags: ["observability"]
+catalog_icon: /integrations/assets/arize.png
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Arize AX observability for ADK
 
-[Arize AX](https://arize.com/docs/ax) is a production-grade observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing, evaluation, and monitoring capabilities for your Google ADK applications. To get started, sign up for a [free account](https://app.arize.com/auth/join).
+[Arize AX](https://arize.com/products/ax/) is the full-featured AI observability and evaluation platform from [Arize AI](https://arize.com/) for production teams, AI-native companies, and enterprises. It is available as managed cloud or enterprise self-hosted deployment and provides comprehensive tracing, evaluation, and monitoring capabilities for Google ADK applications. To get started, sign up for a [free account](https://app.arize.com/auth/join).
 
-For an open-source, self-hosted alternative, check out [Phoenix](https://arize.com/docs/phoenix).
+For an open-source path for local development, experimentation, or single-container self-hosting, check out the [Arize Phoenix ADK integration](/integrations/phoenix/). Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) show how teams use traces to evaluate agent decisions, tool calls, and model behavior.
 
 ## Overview
 
@@ -98,7 +98,7 @@ def get_weather(city: str) -> dict:
 # Create an agent with tools
 agent = Agent(
     name="weather_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-flash-latest",
     description="Agent to answer questions using weather tools.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather]
@@ -133,6 +133,6 @@ async for event in runner.run_async(
 ![Agent Experiments](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-experiments.png)
 
 ## Support and Resources
-- [Arize AX Documentation](https://arize.com/docs/ax/integrations/frameworks-and-platforms/google-adk)
+- [Arize AX Documentation](https://arize.com/docs/ax/integrations/python-agent-frameworks/google-adk)
 - [Arize Community Slack](https://arize-ai.slack.com/join/shared_invite/zt-11t1vbu4x-xkBIHmOREQnYnYDH1GDfCg#/shared-invite/email)
 - [OpenInference Package](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk)

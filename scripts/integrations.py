@@ -75,29 +75,24 @@ def define_env(env):
                     frontmatter.get('description', ''))
                 icon = frontmatter.get('catalog_icon',
                     frontmatter.get('tool_icon',
-                    frontmatter.get('icon', '/adk-docs/integrations/assets/toolbox.svg'))) # Default icon
-                
+                    frontmatter.get('icon', '/integrations/assets/toolbox.svg'))) # Default icon
+
                 tags = frontmatter.get('catalog_tags', [])
                 if isinstance(tags, str):
                     tags = [tags]
-                
+
                 # Normalize tags to lowercase for consistent filtering
                 tags = [t.lower() for t in tags]
                 all_tags.update(tags)
 
-                # Calculate relative link
-                # mkdocs uses site_url structure. We want /adk-docs/...
-                # file_path is absolute. we want relative to docs_dir
+                # Calculate root-relative link from file path
                 rel_path = file_path.relative_to(docs_dir).with_suffix('')
-                # We need to handle index.html vs pretty urls.
-                # Assuming standard mkdocs behavior: tools/foo.md -> tools/foo/
-                link = f"/adk-docs/{rel_path}/"
+                link = f"/{rel_path}/"
 
-                # Ensure icon path is correct (if relative, make it absolute-ish for the site)
-                # If icon starts with assets/, prepend /adk-docs/
+                # Ensure icon path is root-relative
                 if not icon.startswith('/') and not icon.startswith('http'):
-                     icon = f"/adk-docs/{icon}"
-                
+                     icon = f"/{icon}"
+
                 cards_data.append({
                     'title': title,
                     'description': description,
@@ -117,7 +112,7 @@ def define_env(env):
 
         # Generate HTML
         html_parts = []
-        
+
         # Styles in docs/stylesheets/custom.css
 
         # Filter Buttons
@@ -134,15 +129,15 @@ def define_env(env):
         # Grid
         html_parts.append('<div class="tool-card-grid">')
         for card in cards_data:
-            tags_str = " ".join(card['tags'])
-            
+            tags_str = ",".join(card['tags'])
+
             # Escape content to prevent XSS
             safe_tags = html.escape(tags_str)
             safe_link = html.escape(card['link'])
             safe_icon = html.escape(card['icon'])
             safe_title = html.escape(card['title'])
             safe_desc = html.escape(card['description'])
-            
+
             card_html = f"""
 <a href="{safe_link}" class="tool-card" data-tags="{safe_tags}">
     <div class="tool-card-image-wrapper">
@@ -164,7 +159,7 @@ def define_env(env):
         function initCatalog() {{
             const filterContainer = document.getElementById('{catalog_id}-filters');
             if (!filterContainer) return;
-            
+
             const buttons = filterContainer.querySelectorAll('.catalog-filter-btn');
             const cards = document.querySelectorAll('.tool-card');
 
@@ -180,7 +175,7 @@ def define_env(env):
 
                 // Filter cards
                 cards.forEach(card => {{
-                    const cardTags = (card.getAttribute('data-tags') || '').split(' ');
+                    const cardTags = (card.getAttribute('data-tags') || '').split(',');
                     if (filterValue === 'all' || cardTags.includes(filterValue)) {{
                         card.style.display = 'flex'; // Restore flex display
                     }} else {{
@@ -194,7 +189,7 @@ def define_env(env):
                 btn.addEventListener('click', () => {{
                     const filter = btn.getAttribute('data-filter');
                     filterCards(filter);
-                    
+
                     // Optional: Update URL without reload
                     const url = new URL(window.location);
                     if (filter === 'all') {{

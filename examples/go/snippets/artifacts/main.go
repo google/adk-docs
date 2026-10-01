@@ -21,20 +21,20 @@ import (
 	"os"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/artifact"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/artifact"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
 	"google.golang.org/genai"
 )
 
 // This file contains snippets for the artifacts documentation.
 
 // BeforeModelCallback saves any images from the user input before calling the model.
-func BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func BeforeModelCallback(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] BeforeModelCallback triggered.")
 	// Get the artifact manager from the context.
 	artifacts := ctx.Artifacts()
@@ -132,7 +132,7 @@ func inMemoryServiceExample() {
 // --8<-- [start:loading-artifacts]
 // loadArtifactsCallback is a BeforeModel callback that loads a specific artifact
 // and adds its content to the LLM request.
-func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func loadArtifactsCallback(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] loadArtifactsCallback triggered.")
 	// In a real app, you would parse the user's request to find a filename.
 	// For this example, we'll hardcode a filename to demonstrate.
@@ -231,7 +231,7 @@ func namespacing() {
 
 // --8<-- [start:saving-artifacts]
 // saveReportCallback is a BeforeModel callback that saves a report from session state.
-func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func saveReportCallback(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	// Get the report data from the session state.
 	reportData, err := ctx.State().Get("report_bytes")
 	if err != nil {
@@ -272,7 +272,7 @@ func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mode
 // --8<-- [start:listing-artifacts]
 // listUserFilesCallback is a BeforeModel callback that lists available artifacts
 // and adds the list as context to the LLM request.
-func listUserFilesCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func listUserFilesCallback(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] listUserFilesCallback triggered.")
 	// List the available artifacts from the artifact service.
 	listResponse, err := ctx.Artifacts().List(ctx)

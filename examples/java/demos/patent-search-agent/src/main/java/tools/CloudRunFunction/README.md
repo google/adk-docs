@@ -38,7 +38,7 @@ Password : “alloydb”
 2. Once you have authenticated successfully into AlloyDB Studio, SQL commands are entered in the Editor.  You can add multiple Editor windows using the plus to the right of the last window.
 Enable Extensions
 
-For building this app, we will use the extensions pgvector and google_ml_integration. The pgvector extension allows you to store and search vector embeddings. The google_ml_integration extension provides functions you use to access Vertex AI prediction endpoints to get predictions in SQL. Enable these extensions by running the following DDLs:
+For building this app, we will use the extensions pgvector and google_ml_integration. The pgvector extension allows you to store and search vector embeddings. The google_ml_integration extension provides functions you use to access Agent Platform prediction endpoints to get predictions in SQL. Enable these extensions by running the following DDLs:
 
 CREATE EXTENSION IF NOT EXISTS google_ml_integration CASCADE;
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -61,9 +61,9 @@ Run the below statement to grant execute on the “embedding” function:
 
 GRANT EXECUTE ON FUNCTION embedding TO postgres;
 
-6. Grant Vertex AI User ROLE to the AlloyDB service account
+6. Grant Agent Platform User ROLE to the AlloyDB service account
 
-From Google Cloud IAM console, grant the AlloyDB service account (that looks like this: service-<<PROJECT_NUMBER>>@gcp-sa-alloydb.iam.gserviceaccount.com) access to the role “Vertex AI User”. PROJECT_NUMBER will have your project number.
+From Google Cloud IAM console, grant the AlloyDB service account (that looks like this: service-<<PROJECT_NUMBER>>@gcp-sa-alloydb.iam.gserviceaccount.com) access to the role “Agent Platform User”. PROJECT_NUMBER will have your project number.
 
 PROJECT_ID=$(gcloud config get-value project)
 

@@ -1,7 +1,7 @@
 ---
 catalog_title: GitHub
 catalog_description: Analyze code, manage issues and PRs, and automate workflows
-catalog_icon: /adk-docs/integrations/assets/github.png
+catalog_icon: /integrations/assets/github.png
 catalog_tags: ["code", "mcp"]
 ---
 
@@ -41,17 +41,17 @@ automate workflows using natural language.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="github_agent",
             instruction="Help users get information from GitHub",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://api.githubcopilot.com/mcp/",
                         headers={
                             "Authorization": f"Bearer {GITHUB_TOKEN}",
@@ -74,17 +74,21 @@ automate workflows using natural language.
         const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "github_agent",
             instruction: "Help users get information from GitHub",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://api.githubcopilot.com/mcp/",
-                    header: {
-                        Authorization: `Bearer ${GITHUB_TOKEN}`,
-                        "X-MCP-Toolsets": "all",
-                        "X-MCP-Readonly": "true",
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${GITHUB_TOKEN}`,
+                                "X-MCP-Toolsets": "all",
+                                "X-MCP-Readonly": "true",
+                            },
+                        },
                     },
                 }),
             ],

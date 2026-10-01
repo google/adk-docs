@@ -1,7 +1,7 @@
 ---
 catalog_title: GoodMem
 catalog_description: Add persistent semantic memory to agents across conversations
-catalog_icon: /adk-docs/integrations/assets/goodmem.svg
+catalog_icon: /integrations/assets/goodmem.svg
 catalog_tags: ["data"]
 ---
 
@@ -65,7 +65,7 @@ pip install goodmem-adk
 
     agent = LlmAgent(
         name="memory_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="You are a helpful assistant with persistent memory.",
     )
 
@@ -92,7 +92,7 @@ pip install goodmem-adk
 
     agent = LlmAgent(
         name="memory_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="You are a helpful assistant with persistent memory.",
         tools=[save_tool, fetch_tool],
     )

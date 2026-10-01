@@ -6,7 +6,7 @@
 
 [Ollama](https://ollama.com/) is a tool that allows you to host and run
 open-source models locally. ADK integrates with Ollama-hosted models through the
-[LiteLLM](/adk-docs/agents/models/litellm/) model connector library.
+[LiteLLM](/agents/models/litellm/) model connector library.
 
 ## Get started
 
