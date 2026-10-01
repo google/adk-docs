@@ -328,7 +328,9 @@ nav:
       - Workflow patterns: workflows/patterns.md
     - Models for Agents:
       - agents/models/index.md
-      - Gemini: agents/models/google-gemini.md
+      - Gemini:
+        - agents/models/google-gemini/index.md
+        - Deferred scheduling: agents/models/google-gemini/deferred-schedule.md
       - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
       - Agent Platform hosted: agents/models/agent-platform.md
