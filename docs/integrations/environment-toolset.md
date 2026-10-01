@@ -51,8 +51,8 @@ root_agent = Agent(
 )
 ```
 
-The ***EnvironmentToolset*** constructor also takes an optional
-**max_output_chars** parameter, which limits the number of characters returned
+The `EnvironmentToolset` constructor also takes an optional
+`max_output_chars` parameter, which limits the number of characters returned
 from file reads or command executions. Use it to prevent large file contents or
 command outputs from exceeding the agent's context window limit.
 

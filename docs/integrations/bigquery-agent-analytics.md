@@ -1276,8 +1276,9 @@ updated by tools).
 !!! note "Built-in redaction"
 
     State keys prefixed with `temp:` are automatically redacted to `[REDACTED]`
-    in the logged `state_delta`. See [Built-in
-    redaction](#built-in-redaction) for details.
+    in the logged `state_delta` (Python and Java). See [Built-in
+    redaction](#built-in-redaction) for details on redacted key names and state
+    scopes.
 
 ```json
 {
