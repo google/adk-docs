@@ -413,7 +413,6 @@ workflows offer much more flexibility to define the routing logic you need.
         name="generator_agent",
         model="gemini-flash-latest",
         instruction="Write python code for user request.",
-        output_schema=str,
     )
 
     @node(name="lint_reviewer")
@@ -428,7 +427,6 @@ workflows offer much more flexibility to define the routing logic you need.
         model="gemini-flash-latest",
         instruction="""Refactor current code {code}.
             Based on compile & lint review: {findings}""",
-        output_schema=str,
     )
 
     @node(rerun_on_resume=True) # workflow node
@@ -442,8 +440,6 @@ workflows offer much more flexibility to define the routing logic you need.
 
         check_resp = await ctx.run_node(compile_lint_check, code)
 
-      # A node that yields is an async generator, so emit the final output
-      # as an event instead of returning it.
       yield Event(output=code)
     ```
 
