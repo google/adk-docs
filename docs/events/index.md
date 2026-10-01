@@ -517,7 +517,7 @@ Once you know the event type, access the relevant data:
         if (!responses.isEmpty()) {
             for (FunctionResponse response : responses) {
                 String toolName = response.name().get();
-                Map<String, String> result= response.response().get(); // Check before getting the response
+                Map<String, Object> result = response.response().get(); // Check before getting the response
                 System.out.println("  Tool Result: " + toolName + " -> " + result);
             }
         }
@@ -569,15 +569,15 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Java"
-        `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
+        `Map<String, Object> delta = event.actions().stateDelta();`
 
         ```java
-        import java.util.concurrent.ConcurrentMap;
+        import java.util.Map;
         import com.google.adk.events.EventActions;
 
         EventActions actions = event.actions(); // Assuming event.actions() is not null
         if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
-            ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
+            Map<String, Object> stateChanges = actions.stateDelta();
             System.out.println("  State changes: " + stateChanges);
             // Update local UI or application state if necessary
         }
@@ -626,19 +626,18 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Java"
-        `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
+        `Map<String, Integer> artifactChanges = event.actions().artifactDelta();`
 
         ```java
-        import java.util.concurrent.ConcurrentMap;
-        import com.google.genai.types.Part;
+        import java.util.Map;
         import com.google.adk.events.EventActions;
 
         EventActions actions = event.actions(); // Assuming event.actions() is not null
         if (actions != null && actions.artifactDelta() != null && !actions.artifactDelta().isEmpty()) {
-            ConcurrentMap<String, Part> artifactChanges = actions.artifactDelta();
+            Map<String, Integer> artifactChanges = actions.artifactDelta();
             System.out.println("  Artifacts saved: " + artifactChanges);
             // UI might refresh an artifact list
-            // Iterate through artifactChanges.entrySet() to get filename and Part details
+            // Iterate through artifactChanges.entrySet() to get filename and version
         }
         ```
 
