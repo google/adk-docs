@@ -127,6 +127,33 @@ When you call `to_a2a()`, ADK automatically handles several setup steps to expos
 * **`push_config_store` (optional):** A custom store implementation for managing A2A push notifications. If not provided, the system defaults to an in-memory store (`InMemoryPushNotificationConfigStore`).
 * **`agent_card` (optional):** An `AgentCard` object or a path to a JSON file. If omitted, ADK automatically generates an agent card from your agent's code.
 * **`runner` (optional):** A pre-built `Runner`. If omitted, a default runner backed by in-memory services is created.
+* **`lifespan` (optional):** An async context manager for Starlette lifespan events, used to run startup and shutdown logic. See [Manage the application lifecycle](#manage-the-application-lifecycle).
+
+### Manage the application lifecycle
+
+Use the `lifespan` argument of the `to_a2a` function to manage the application's lifecycle. Pass an asynchronous context manager to perform setup and teardown tasks, such as initiating a database connection on startup and closing it on shutdown.
+
+The context manager receives the `Starlette` app instance. Use `app.state` to store resources that your application needs to access globally.
+
+```python
+from contextlib import asynccontextmanager
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from starlette.applications import Starlette
+
+
+@asynccontextmanager
+async def lifespan(app: Starlette):
+  # Initialize resources on application startup
+  app.state.db = await init_db()
+
+  yield
+
+  # Clean up resources on application shutdown
+  await app.state.db.close()
+
+
+a2a_app = to_a2a(agent, lifespan=lifespan)
+```
 
 ### Getting the Sample Code { #getting-the-sample-code }
 
@@ -263,6 +290,40 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 *   **`before_agent`**: Executed before the agent starts processing the request. It allows you to inspect or modify the incoming `RequestContext`.
 *   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
 *   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
+
+!!! tip "Suppress experimental warnings"
+
+    ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
+
+    ```bash
+    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
+    ```
+
+### Manage the application lifecycle
+
+Use the `lifespan` argument of the `to_a2a` function to manage the application's lifecycle. Pass an asynchronous context manager to perform setup and teardown tasks, such as initiating a database connection on startup and closing it on shutdown.
+
+The context manager receives the `Starlette` app instance. Use `app.state` to store resources that your application needs to access globally.
+
+```python
+from contextlib import asynccontextmanager
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from starlette.applications import Starlette
+
+
+@asynccontextmanager
+async def lifespan(app: Starlette):
+  # Initialize resources on application startup
+  app.state.db = await init_db()
+
+  yield
+
+  # Clean up resources on application shutdown
+  await app.state.db.close()
+
+
+a2a_app = to_a2a(agent, lifespan=lifespan)
+```
 
 ## Agent Executor V2
 

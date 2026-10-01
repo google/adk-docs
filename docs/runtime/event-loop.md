@@ -49,16 +49,16 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 
     ```py
     # Simplified view of Runner's main loop logic
-    def run(new_query, ...) -> Generator[Event]:
+    async def run_async(new_query, ...) -> AsyncGenerator[Event, None]:
         # 1. Append new_query to session event history (via SessionService)
-        session_service.append_event(session, Event(author='user', content=new_query))
+        await session_service.append_event(session, Event(author='user', content=new_query))
 
         # 2. Kick off event loop by calling the agent
         agent_event_generator = agent_to_run.run_async(context)
 
         async for event in agent_event_generator:
             # 3. Process the generated event and commit changes
-            session_service.append_event(session, event) # Commits state/artifact deltas etc.
+            await session_service.append_event(session, event) # Commits state/artifact deltas etc.
             # memory_service.update_memory(...) # If applicable
             # artifact_service might have already been called via context during agent run
 
@@ -393,7 +393,7 @@ Several components work together within the ADK Runtime to execute an agent invo
 1. ### `Runner`
 
       * **Role:** The main entry point and orchestrator for a single user query (`run_async`).
-      * **Function:** Manages the overall Event Loop, receives events yielded by the Execution Logic, coordinates with Services to process and commit event actions (state/artifact changes), and forwards processed events upstream (e.g., to the UI). It essentially drives the conversation turn by turn based on yielded events. (Defined in `google.adk.runners.runner`).
+      * **Function:** Manages the overall Event Loop, receives events yielded by the Execution Logic, coordinates with Services to process and commit event actions (state/artifact changes), and forwards processed events upstream (e.g., to the UI). It essentially drives the conversation turn by turn based on yielded events. (Defined in `google.adk.runners`).
 
 2. ### Execution Logic Components
 
@@ -713,7 +713,7 @@ This primarily relates to how responses from the LLM are handled, especially whe
 * **Synchronous Convenience (`run`):** A synchronous `Runner.run` method exists mainly for convenience (e.g., in simple scripts or testing environments). However, internally, `Runner.run` typically just calls `Runner.run_async` and manages the async event loop execution for you.
 * **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model; and in TypeScript, this means building using native `Promise`s and `AsyncGenerator`s.
 * **Sync Callbacks/Tools:** The ADK framework supports both asynchronous and synchronous functions for tools and callbacks.
-    * **Blocking I/O:** For long-running synchronous I/O operations, the framework attempts to prevent stalls. Python ADK may use asyncio.to_thread, while Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls. In TypeScript, the framework simply awaits the function; if a synchronous function performs blocking I/O, it will stall the event loop. Developers should use asynchronous I/O APIs (which return a Promise) whenever possible.
+    * **Blocking I/O:** For long-running synchronous I/O operations, the framework does not always prevent stalls. Python ADK calls a synchronous tool function inline on the asyncio event loop, so blocking input or output inside it stalls the loop; in live mode you can set `RunConfig.tool_thread_pool_config` to run tool executions in a background thread pool instead. Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls. In TypeScript, the framework simply awaits the function; if a synchronous function performs blocking I/O, it will stall the event loop. Developers should use asynchronous I/O APIs (which return a Promise) whenever possible.
     * **CPU-Bound Work:** Purely CPU-intensive synchronous tasks will still block their execution thread in both environments.
 
 Understanding these behaviors helps you write more robust ADK applications and debug issues related to state consistency, streaming updates, and asynchronous execution.

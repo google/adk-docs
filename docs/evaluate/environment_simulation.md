@@ -121,7 +121,8 @@ config = EnvironmentSimulationConfig(
 )
 
 app = App(
-    agent=my_agent,
+    name="my_app",
+    root_agent=my_agent,
     plugins=[EnvironmentSimulationFactory.create_plugin(config)],
 )
 ```

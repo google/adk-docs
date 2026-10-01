@@ -92,5 +92,6 @@ def call_agent(query: str):
 call_agent(
     "Publish an event of type 'com.example.user.signup' to bus"
     " 'projects/my-project/locations/us-central1/messageBuses/my-bus' with data"
-    " '{\"user\": \"alice\"}' and source '//my-service/auth'"
+    " '{\"user\": \"alice\"}', datacontenttype 'application/json', and source"
+    " '//my-service/auth'"
 )

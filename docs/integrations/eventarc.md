@@ -35,6 +35,12 @@ Before using the `EventarcToolset`, you need to complete the following setup ste
         --logging-config=DEBUG
     ```
 
+4.  **Install required dependencies**: Install the `gcp` extra package to include the required Google Cloud Eventarc client library:
+
+    ```bash
+    pip install "google-adk[gcp]"
+    ```
+
 ## Use with agent
 
 The following example shows how to configure and equip an agent with the `EventarcToolset` to publish CloudEvents:
@@ -57,7 +63,7 @@ Publishes a structured CloudEvent to a Google Cloud Eventarc Advanced Message Bu
 | `type`              | `str`              | The CloudEvents type identifier representing the occurrence (for example, `com.example.user.signup`).                                                    |
 | `source`            | `str`              | The CloudEvents source URI identifying the context in which an event happened (for example, `//my-service/auth`).                                        |
 | `data`              | `dict \| str \| Any` | (Optional) The event payload data to include in the CloudEvent.                                                                                          |
-| `datacontenttype`   | `str`              | (Optional) The media type of `data` (for example, `application/json`). Defaults to `application/json` when dictionary or JSON data is provided.             |
+| `datacontenttype`   | `str`              | (Optional) The media type of `data` (for example, `application/json`). Defaults to `application/json` when dictionary or list data is provided, and `text/plain` for string payloads. |
 | `subject`           | `str`              | (Optional) The subject of the event in the context of the event producer.                                                                                |
 | `id`                | `str`              | (Optional) A unique identifier for the event. If not provided, a UUID is automatically generated.                                                        |
 | `time`              | `str`              | (Optional) Timestamp of when the occurrence happened in RFC 3339 format. If not provided, the current UTC timestamp is used.                             |
@@ -97,10 +103,10 @@ The `CloudEventAttributesBinding` dataclass configures how individual CloudEvent
 | Binding Type       | Example                                     | Exposed to LLM | Description                                                                                                                                           |
 | ------------------ | ------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Static String**  | `type="vendor_outreach.completed"`          | No             | Enforces a fixed literal string. The attribute is hidden from the LLM signature and automatically applied on every call.                              |
-| **Runtime Lambda** | `source=lambda ctx: f"//agent/{ctx.id}"`    | No             | A callable (`Callable[[Any], str]`) evaluated dynamically at execution time using the tool runtime context. Hidden from the LLM signature.            |
+| **Runtime Lambda** | `source=lambda ctx: f"//agent/{ctx.session_id}"`    | No             | A callable (`Callable[[Any], str]`) evaluated dynamically at execution time using the event payload, runtime context, or both. Hidden from the LLM signature.            |
 | **`AgentProvided`**| `subject=AgentProvided("Customer ID")`      | Yes            | Instructs ADK to expose the attribute as an explicit parameter in the function signature so the LLM can provide it. Accepts a `description` string.     |
 | **`MISSING`**      | `time=MISSING`                              | No             | The default sentinel for optional attributes. Indicates default behavior applies (for example, automatically generating the current UTC timestamp for `time` or a UUID for `id`). |
-| **`OMIT`**         | `time=OMIT`                                 | No             | Explicitly excludes an optional attribute from the generated CloudEvent. Mandatory attributes (`type`, `source`, `bus`) cannot be set to `OMIT`.                                      |
+| **`OMIT`**         | `time=OMIT`                                 | No             | Explicitly excludes an optional attribute from the generated CloudEvent. Mandatory attributes (`type`, `source`, `bus`, `id`, `specversion`) cannot be set to `OMIT`.                                      |
 
 #### Example: Understanding `MISSING` versus `OMIT`
 

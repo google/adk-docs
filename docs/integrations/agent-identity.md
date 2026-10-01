@@ -37,10 +37,10 @@ approach allows for a secure and simplified agent development experience.
 - A [Google Cloud
   project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
 - One or more Agent Identity [auth
-  providers](https://cloud.google.com/iam/docs/manage-auth-providers) created in
-  your project
+  providers](https://cloud.google.com/iam/docs/manage-auth-providers-v2) created
+  in your project
 - The caller identity must have the
-  [`iamconnectors.user`](https://docs.cloud.google.com/iam/docs/roles-permissions/iamconnectors#iamconnectors.user)
+  [`agentidentity.user`](https://docs.cloud.google.com/iam/docs/roles-permissions/agentidentity#agentidentity.user)
   role or equivalent permissions
 - Authentication configured via [Application Default
   Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials)
@@ -84,10 +84,13 @@ for a complete example.
 
 ```python
 from google.adk.integrations.agent_identity import GcpAuthProviderScheme
-from google.adk.tools.mcp import McpToolset
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool import StreamableHTTPConnectionParams
 
 auth_scheme = GcpAuthProviderScheme(
-    name="projects/PROJECT_ID/locations/LOCATION/connectors/AUTH_PROVIDER_NAME",
+    # If using the legacy V1 API, the resource name uses 'connectors'
+    # instead of 'authProviders': projects/.../connectors/...
+    name="projects/PROJECT_ID/locations/LOCATION/authProviders/AUTH_PROVIDER_NAME",
     # continue_uri is only needed for 3-legged OAuth flows. This URI receives
     # the redirect after user consent and must be hosted by your application.
     continue_uri=CONTINUE_URI
@@ -111,15 +114,15 @@ toolset = McpToolset(
       callback defined earlier in the `GcpAuthProviderScheme`. The agent
       application service must implement this redirect. To finalize issuance,
       your handler must submit a POST request to the credentials endpoint:
-      `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`.
+      `https://agentidentitycredentials.googleapis.com/v1/{auth_provider_name}/credentials:finalize`.
     - After credentials are successfully finalized, the web application should
       resume the agent by sending a FunctionResponse. For a sample
       implementation, refer to the [sample
-      code](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation).
+      code](https://docs.cloud.google.com/iam/docs/auth-with-3lo-v2#resume-conversation).
       Unlike the native user consent flow, no authorization code is required to
       resume the agent.
     - For more details, refer to the [sample handler
-      implementation](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint).
+      implementation](https://docs.cloud.google.com/iam/docs/auth-with-3lo-v2#validation-endpoint).
 - **Resume the conversation**: Irrespective of the status of the consent flow
   (successful or unsuccessful), the agent app should resume the agent to
   complete the conversation turn. The ADK automatically determines whether
@@ -128,7 +131,7 @@ toolset = McpToolset(
 ## Resources
 
 - [Google Cloud Agent Identity Overview](https://docs.cloud.google.com/iam/docs/agent-identity-overview)
-- [2-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-2lo)
-- [3-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-3lo)
-- [API key auth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-api-key)
+- [2-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-2lo-v2)
+- [3-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-3lo-v2)
+- [API key auth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-api-key-v2)
 - [Sample agent code](https://github.com/google/adk-python/tree/main/src/google/adk/integrations/agent_identity)
