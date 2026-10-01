@@ -25,10 +25,10 @@ Criterion                                | Description                          
 
 ## Efficiency criteria
 
-The following four criteria measure how expensive an agent is to run --
-**efficiency criteria**. They differ from the rest in two ways. They are
-*informational*: they report a value but never pass or fail an eval case, and
-their status is always `INFORMATIONAL`. They are also *always on*: they are
+The following four criteria measure how expensive an agent is to run. They 
+differ from other criteria in a few ways. They are *informational* in that
+they report a value, but never pass or fail an eval case, and their status 
+is always `INFORMATIONAL`. They are also *always on*, in that they are
 reported for every eval without appearing in `EvalConfig`, and cannot be turned
 off. There is nothing to configure on them, and a threshold set on one is
 rejected rather than ignored, so a config never carries a dead setting.
