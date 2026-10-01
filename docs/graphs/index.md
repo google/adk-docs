@@ -67,7 +67,6 @@ function, and the final agent reports the information.
         model="gemini-flash-latest",
         instruction="""Return the name of a random city.
           Return only the name, nothing else.""",
-        output_schema=str,
     )
 
     class CityTime(BaseModel):
@@ -84,7 +83,6 @@ function, and the final agent reports the information.
         input_schema=CityTime,
         instruction="""Output following line:
         It is {CityTime.time_info} in {CityTime.city} right now.""",
-        output_schema=str,
     )
 
     def completed_message_function(node_input: str):
@@ -176,7 +174,6 @@ translated into a graph-based agent:
           or "LOGISTICS". If you think a message applies to more than one category,
           reply with a comma separated list of categories.
        """,
-        output_schema=str,
     )
 
     def router(node_input: str):

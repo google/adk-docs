@@ -75,7 +75,9 @@ whether the context window is compressed:
 
 - `get_session_config`: Limits which events are fetched when loading a session.
   Use `num_recent_events` or `after_timestamp` to avoid loading the full event
-  history on every invocation.
+  history on every invocation. These filters limit the loaded view without
+  deleting stored events. New events are appended to the stored history,
+  preserving older events excluded from the loaded view.
 - `context_window_compression`: Enables context window compression for LLM
   input, useful when sessions approach model context limits.
 - `include_thoughts_from_other_agents`: Controls whether thought parts from
@@ -351,6 +353,11 @@ Use these parameters to control runtime guardrails and debugging:
   Python in favor of `SaveFilesAsArtifactsPlugin`.
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
+- `service_tier`: Selects the serving capacity for the run's model calls. ADK
+  Python only, and applies only to Gemini models that use the Interactions API.
+  `ServiceTier.DEFERRED` queues each model call to run on off-peak capacity and
+  cannot be combined with `StreamingMode.SSE`. See
+  [Deferred scheduling](/agents/models/google-gemini/deferred-schedule/).
 
 ## API reference
 
