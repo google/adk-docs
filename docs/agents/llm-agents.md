@@ -482,17 +482,24 @@ schema definitions.
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
+  - In Python, supported schema types include:
+    - A Pydantic model class, for example `MySchema`
+    - Lists of primitives, such as `list[str]`, `list[int]`, `list[bool]`, `list[float]`
+    - `dict`
+    - `google.genai.types.Schema`
 
 !!! note "Using `output_schema` with `tools`"
 
     In Python, ADK supports `output_schema` and `tools` on the same agent: the
-    tools stay available during the agent's thought loop, and the schema is
-    enforced only on the final response. Some models accept both in a single
-    request, such as a `LiteLlm` model, or Gemini 2.0 and higher on Vertex AI,
-    and ADK passes them through directly. Otherwise ADK adds an internal
-    `set_model_response` tool and instructs the model to return its final answer
-    through that tool. See
-    [`_output_schema_processor.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py).
+    tools stay available while the agent works, and the schema applies only to
+    the final response. Some models accept both in one request, such as Gemini
+    models on Vertex AI and `LiteLlm` models whose provider supports response
+    schemas, and ADK passes them through directly. For other models, ADK adds a
+    [`set_model_response` function
+    tool](https://github.com/google/adk-python/blob/main/src/google/adk/tools/set_model_response_tool.py)
+    and instructs the model to return its final answer through that tool, which
+    may not work reliably. In such cases, consider using sub-agents that handle
+    output formatting separately.
 
 - **`output_key` (Optional):** Provide a string key. If set, the agent's *final*
   response will be automatically saved to the session's state dictionary under
@@ -514,7 +521,7 @@ schema definitions.
 
     Java and Kotlin check the response against the *structure* of the schema —
     `type`, `required`, `nullable`, `anyOf` and `items` (see
-    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
+    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
     Constraint fields such as `pattern`, `minLength` and `minimum` are sent to
     the model as part of the schema, but ADK does not re-check them, so the
     model decides whether to honor them. Python validates against a Pydantic
@@ -526,7 +533,7 @@ schema definitions.
 
     If the response fails validation, ADK logs the error and stores the raw
     response string under `output_key` instead of the parsed object (see
-    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
+    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
 === "Python"
 
