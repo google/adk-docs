@@ -1234,13 +1234,13 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     === "Go"
 
         ```go
-        # Full runnable code for the StoryFlowAgent example
+        // Full runnable code for the StoryFlowAgent example
         --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:full_code"
         ```
 
     === "Java"
 
         ```java
-        # Full runnable code for the StoryFlowAgent example
+        // Full runnable code for the StoryFlowAgent example
         --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:full_code"
         ```
