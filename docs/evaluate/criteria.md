@@ -23,6 +23,25 @@ Criterion                                | Description                          
 `multi_turn_trajectory_quality_v1`       | Evaluates the overall trajectory of the conversation      | No              | No               | Yes            | Yes
 `multi_turn_tool_use_quality_v1`         | Evaluates function calls made during a conversation       | No              | No               | Yes            | Yes
 
+## Efficiency criteria
+
+The following four criteria measure how expensive an agent is to run. They 
+differ from other criteria in a few ways. They are *informational* in that
+they report a value, but never pass or fail an eval case, and their status 
+is always `INFORMATIONAL`. They are also *always on*, in that they are
+reported for every eval without appearing in `EvalConfig`, and cannot be turned
+off. There is nothing to configure on them, and a threshold set on one is
+rejected rather than ignored, so a config never carries a dead setting.
+
+Criterion                 | What it reports                               | Unit
+:------------------------ | :-------------------------------------------- | :------
+`tool_call_count_v1`      | Number of tool calls the agent made           | count
+`inference_call_count_v1` | Number of model calls the agent made          | count
+`token_usage_v1`          | Tokens consumed by the model in an invocation | tokens
+`invocation_duration_v1`  | Wall-clock time an invocation took            | seconds
+
+The four are documented individually below, after the quality criteria.
+
 ## tool_trajectory_avg_score
 
 This criterion compares the sequence of tools called by the agent against a list
@@ -846,4 +865,149 @@ Example `EvalConfig` entry:
 
 The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
 excellent tool usage throughout the conversation, while scores closer to 0.0
-indicate poor
+indicate poor tool usage.
+
+## tool_call_count_v1
+
+This criterion reports the number of tool (function) calls the agent made.
+
+### When To Use This Criterion?
+
+You do not need to enable it. Use it to see whether a change made the agent
+call more tools than before -- for example after editing an instruction or
+swapping a model.
+
+### Details
+
+The count is derived per invocation from the agent's tool call trajectory. The
+value reported for the eval case is the average across its invocations, and
+the per-invocation counts are reported alongside it.
+
+### How To Use This Criterion?
+
+Nothing to configure. Supplying a threshold is an error rather than a no-op.
+
+### Output And How To Interpret
+
+A non-negative number; lower means fewer tool calls. It never passes or fails,
+so it does not affect the eval case's status.
+
+## inference_call_count_v1
+
+This criterion reports the number of inference (model) calls the agent made.
+
+### When To Use This Criterion?
+
+You do not need to enable it. Use it as a proxy for how many reasoning steps
+or retries a turn took; a jump usually means the agent is looping or
+re-planning. Read alongside `token_usage_v1` it separates the two ways a turn
+gets expensive: more calls, or a larger context per call.
+
+### Details
+
+Every model response recorded for an invocation counts as one call, including
+the one that produced the final response. The value reported for the eval
+case is the average across its invocations.
+
+An eval invocation spans a whole turn, and every sub-agent that runs during
+that turn shares its invocation id, so the count covers the whole turn rather
+than any one agent.
+
+### How To Use This Criterion?
+
+Nothing to configure. Supplying a threshold is an error rather than a no-op.
+
+### Output And How To Interpret
+
+A non-negative number; lower means fewer model calls. Reports no value (n/a)
+when the run did not capture model-call data.
+
+## token_usage_v1
+
+This criterion reports the tokens consumed by the model across an invocation.
+
+### When To Use This Criterion?
+
+You do not need to enable it. Use it to catch a change that leaves quality
+flat while moving token spend -- a longer instruction, a model swap, or a
+thinking budget change.
+
+### Details
+
+The token counts reported by each model call are summed per invocation, and
+the value reported for the eval case is the average across its invocations.
+
+The score is the total. Every token count is reported alongside it as a
+breakdown, and the counts nest, each containing the ones under it:
+
+```
+total_tokens
+  input_tokens
+    prompt_tokens
+      cached_tokens
+    tool_use_tokens
+  output_tokens
+    candidates_tokens
+    reasoning_tokens
+```
+
+The `total_tokens` value is derived from `input_tokens` plus `output_tokens` rather
+than taken from the backend's own reported total, so it always agrees with
+the breakdown.
+
+A count reads n/a, never 0, when the backend did not report it.
+
+### How To Use This Criterion?
+
+Nothing to configure. Supplying a threshold is an error rather than a no-op.
+To track one count in particular -- reasoning tokens, say -- read it from the
+breakdown in the CLI output or from `token_usage_details` in the result JSON.
+
+### Output And How To Interpret
+
+A non-negative number of tokens; lower means fewer tokens used. Reports no
+value (n/a) when the model backend does not report usage metadata -- Vertex AI
+and AI Studio Gemini report it; support varies across other backends.
+
+## invocation_duration_v1
+
+This criterion reports the wall-clock seconds an invocation took.
+
+### When To Use This Criterion?
+
+You do not need to enable it. Use it to see how long a turn takes end to end,
+keeping in mind that it is a single measurement and moves with model-server
+load -- compare distributions across runs rather than two individual numbers.
+
+### Details
+
+The duration is measured while the agent runs, from the user message going in
+to the last event coming out, so it includes the final model call, tool
+execution and post-processing. The user simulator's own turnaround is
+excluded: that is the eval harness's cost, not the agent's. Values are rounded
+to milliseconds. The value reported for the eval case is the average across
+its invocations.
+
+It is measured rather than derived from event timestamps, which cannot give
+the answer: an event is stamped when it is constructed, which for a model
+call is before the request is sent, so a span between such stamps omits the
+last call entirely.
+
+An eval invocation spans a whole turn, and every sub-agent that runs during
+that turn shares its invocation id, so the duration covers the whole turn
+rather than any one agent.
+
+### How To Use This Criterion?
+
+Nothing to configure. Supplying a threshold is an error rather than a no-op.
+
+### Output And How To Interpret
+
+A duration in seconds; lower is faster. Reports no value (n/a) when the eval
+did not perform the inference itself, for example when the invocations were
+read back from a stored session.
+
+To judge whether a change actually made the agent slower, read
+`inference_call_count_v1` and the token counts alongside it: those are
+deterministic for a given input and model, so a real change moves them,
+while wall-clock time moves on its own.
