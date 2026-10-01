@@ -172,6 +172,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/adk/v2/session"
         )
@@ -239,7 +241,11 @@ Here are the primary context flavors you will encounter:
     === "Go"
 
         ```go
-        import "google.golang.org/adk/v2/agent"
+        import (
+        	"fmt"
+
+        	"google.golang.org/adk/v2/agent"
+        )
 
         --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
@@ -313,6 +319,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/adk/v2/model"
         )
@@ -533,9 +541,10 @@ You'll frequently need to read information stored within the context.
     === "Java"
 
         ```java
-        // Example: In a Tool function
+        import com.google.adk.agents.CallbackContext;
         import com.google.adk.tools.ToolContext;
 
+        // Example: In a Tool function
         public void myTool(ToolContext toolContext) {
             String userPref = (String) toolContext.state().getOrDefault("user_display_preference", "default_mode");
             String apiEndpoint = (String) toolContext.state().get("app:api_endpoint"); // Read app-level state
@@ -548,8 +557,6 @@ You'll frequently need to read information stored within the context.
         }
 
         // Example: In a Callback function
-        import com.google.adk.agents.CallbackContext;
-
         public void myCallback(CallbackContext callbackContext) {
             String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Read temporary state
 
@@ -658,6 +665,8 @@ You'll frequently need to read information stored within the context.
 
         ```go
         import (
+        	"fmt"
+
         	"google.golang.org/adk/v2/agent"
         	"google.golang.org/genai"
         )
@@ -849,18 +858,15 @@ Use artifacts to handle files or large data blobs associated with the session. C
                from google.adk.agents import Context # Or ToolContext
                from google.genai import types
 
-               # As a tool, the context parameter is matched on its `Context`
-               # annotation, so any name works. Callbacks are passed the context by
-               # keyword, so there it must be named `callback_context`.
-               async def save_document_reference(callback_context: Context, file_path: str) -> None:
+               async def save_document_reference(context: Context, file_path: str) -> None:
                    # Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
                    try:
                        # Create a Part containing the path/URI text
                        artifact_part = types.Part.from_text(text=file_path)
-                       version = await callback_context.save_artifact("document_to_summarize.txt", artifact_part)
+                       version = await context.save_artifact("document_to_summarize.txt", artifact_part)
                        print(f"Saved document reference '{file_path}' as artifact version {version}")
                        # Store the filename in state if needed by other tools
-                       callback_context.state["temp:doc_artifact_name"] = "document_to_summarize.txt"
+                       context.state["temp:doc_artifact_name"] = "document_to_summarize.txt"
                    except ValueError as e:
                        print(f"Error saving artifact: {e}") # E.g., Artifact service not configured
                    except Exception as e:
@@ -1362,9 +1368,10 @@ Access relevant information from the past or external sources.
             if search_results.memories:
                 print(f"Found {len(search_results.memories)} memory results for '{topic}'")
                 # Process search_results.memories (which are MemoryEntry objects)
-                top_result = search_results.memories[0]
-                top_result_text = "".join(
-                    part.text for part in (top_result.content.parts or []) if part.text
+                top_entry = search_results.memories[0]
+                top_result_text = next(
+                    (part.text for part in (top_entry.content.parts or []) if part.text),
+                    "",
                 )
                 return {"memory_snippet": top_result_text}
             else:
@@ -1384,10 +1391,11 @@ Access relevant information from the past or external sources.
     async function findRelatedInfo(context: Context, topic: string): Promise<Record<string, string>> {
       try {
         const searchResults = await context.searchMemory(`Information about ${topic}`);
-        if (searchResults.results?.length) {
-          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
-          // Process searchResults.results
-          const topResultText = searchResults.results[0].text;
+        if (searchResults.memories.length) {
+          console.log(`Found ${searchResults.memories.length} memory results for '${topic}'`);
+          // Process searchResults.memories
+          const topResultText =
+              searchResults.memories[0].content.parts?.[0]?.text ?? '';
           return { memory_snippet: topResultText };
         } else {
           return { message: 'No relevant memories found.' };
@@ -1411,10 +1419,11 @@ Access relevant information from the past or external sources.
       public Single<Map<String, String>> findRelatedInfo(ToolContext context, String topic) {
         return context.searchMemory("Information about " + topic)
             .map(searchResults -> {
-              if (searchResults != null && searchResults.results() != null && !searchResults.results().isEmpty()) {
-                System.out.println("Found " + searchResults.results().size() + " memory results for '" + topic + "'");
-                // Process searchResults.results
-                String topResultText = searchResults.results().get(0).text();
+              if (searchResults != null && !searchResults.memories().isEmpty()) {
+                System.out.println("Found " + searchResults.memories().size() + " memory results for '" + topic + "'");
+                // Process searchResults.memories
+                String topResultText =
+                    searchResults.memories().get(0).content().text();
                 return Map.of("memory_snippet", topResultText);
               } else {
                 return Map.of("message", "No relevant memories found.");
