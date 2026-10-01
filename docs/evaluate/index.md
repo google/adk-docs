@@ -477,10 +477,10 @@ Choose criteria based on your evaluation goals:
     correctness of tool or function calls made across multiple turns.
 *   **Track how expensive an agent is:** The efficiency criteria
     (`tool_call_count_v1`, `inference_call_count_v1`, `token_usage_v1`,
-    `invocation_duration_v1`) are reported automatically, so you get this for
-    free. Compare them across runs to catch a change that keeps quality flat
-    but doubles token usage. They never fail an eval, so they are safe to
-    leave on in CI/CD.
+    `invocation_duration_v1`) are reported automatically, with no
+    configuration and no extra model calls. Compare them across runs to catch
+    a change that keeps quality flat but doubles token usage. They never fail
+    an eval, so they add no new failure mode to a CI/CD run.
 
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with

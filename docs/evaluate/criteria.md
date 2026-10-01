@@ -865,7 +865,7 @@ Example `EvalConfig` entry:
 
 The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
 excellent tool usage throughout the conversation, while scores closer to 0.0
-indicate poor
+indicate poor tool usage.
 
 ## tool_call_count_v1
 
@@ -965,9 +965,9 @@ breakdown in the CLI output or from `token_usage_details` in the result JSON.
 
 ### Output And How To Interpret
 
-A non-negative number of tokens; lower means a cheaper run. Reports no value
-(n/a) when the model backend does not report usage metadata -- Vertex AI and
-AI Studio Gemini do, some other backends do not.
+A non-negative number of tokens; lower means fewer tokens used. Reports no
+value (n/a) when the model backend does not report usage metadata -- Vertex AI
+and AI Studio Gemini report it; support varies across other backends.
 
 ## invocation_duration_v1
 
