@@ -951,7 +951,7 @@ total_tokens
     reasoning_tokens
 ```
 
-`total_tokens` is derived from `input_tokens` plus `output_tokens` rather
+The `total_tokens` value is derived from `input_tokens` plus `output_tokens` rather
 than taken from the backend's own reported total, so it always agrees with
 the breakdown.
 
