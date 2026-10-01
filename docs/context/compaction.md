@@ -13,13 +13,14 @@ Compaction feature is designed to reduce the size of context as an agent
 is running by summarizing older session history—including instructions, inputs, and model responses. By maintaining a compact context window, this process **optimizes latency and reduces costs** while ensuring the agent retains access to essential recent interactions.
 
 Compaction runs automatically based on the rules you set in the
-`EventsCompactionConfig`. Token-based compaction runs before a model call, and is
-integrated into SingleFlow via the `CompactionRequestProcessor`. Sliding-window
-compaction runs in the `Runner` after each invocation completes.
+`EventsCompactionConfig`. Token-based compaction is checked before a model call
+in SingleFlow via the `CompactionRequestProcessor`, and again in the `Runner`
+after each invocation. Sliding-window compaction runs in the `Runner` after each
+invocation completes.
 
 !!! example "Experimental"
     The `EventsCompactionConfig` class is experimental and its API or behavior
-    may change in future releases. Constructing one emits a warning.
+    may change in future releases. In Python, constructing one emits a warning.
 
 ## Choose your strategy
 
@@ -193,7 +194,7 @@ With this example configuration, the context compression tasks happen as follows
 
 The configuration settings for this feature control how frequently event data is compressed
 and how much data is retained as the agent workflow runs. Optionally, you can configure
-a compactor object
+a compactor object.
 
 *   **`compaction_interval`**: Set the number of completed new user-initiated
     invocations that triggers compaction of the prior event data. Must be greater

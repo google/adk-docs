@@ -17,7 +17,8 @@ explains how to configure and use this feature.
 
 !!! example "Experimental"
     The `ContextCacheConfig` class is experimental and its API or behavior may
-    change in future releases. Constructing one emits a warning.
+    change in future releases. In Python, constructing one emits a warning; in
+    Kotlin, it requires `@OptIn(ExperimentalContextCachingFeature::class)`.
 
 ## Configure context caching
 

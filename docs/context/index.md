@@ -120,7 +120,7 @@ Here are the primary context flavors you will encounter:
 
 - **`Context`**: Used in agent lifecycle and model callbacks. It provides a robust set of features for reading/writing session state, managing artifacts, and injecting data into the memory service.
 
-- **`ToolContext`**: Used in tool execution and tool-related callbacks. The tool-oriented members (`request_credential`, `request_confirmation`, `function_call_id`) work only while a tool call is in progress.
+- **`ToolContext`**: Used in tool execution and tool-related callbacks. The tool-oriented methods (`request_credential`, `request_confirmation`) work only while a tool call is in progress, and `function_call_id` is `None` outside one.
 
 !!! note
     **About compatibility**: In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type. In Python both names are aliases of `Context` itself, kept for backward compatibility. While you may encounter `CallbackContext` or `ToolContext` in existing codebases, **you should use the `Context` class** for all new development to take advantage of the full, unified feature set.
@@ -207,7 +207,7 @@ Here are the primary context flavors you will encounter:
 ### `ReadonlyContext`
 - **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
 - **Purpose:** Offers a safe, read-only view of fundamental contextual details.
-- **Key Contents:** `invocation_id`, `agent_name`, `user_id`, `user_content`, `session`, `run_config`, `get_credential(key)`, and a read-only *view* of the current `state`.
+- **Key Contents:** `invocation_id`, `agent_name`, `user_id`, `user_content`, `session`, `run_config`, `get_credential(key)` (Python), and a read-only *view* of the current `state`.
 
     === "Python"
 
@@ -283,7 +283,7 @@ Here are the primary context flavors you will encounter:
         from google.adk.models import LlmResponse
         from typing import Optional
 
-        # The framework passes model callbacks by keyword, so keep these parameter names.
+        # The framework passes model callbacks by keyword first, so use these canonical parameter names.
         def my_before_model_cb(callback_context: Context, llm_request: LlmRequest) -> Optional[LlmResponse]:
             # Read/Write state example
             call_count = callback_context.state.get("model_calls", 0)
@@ -353,10 +353,11 @@ Here are the primary context flavors you will encounter:
 - **Where Used:** Passed as `tool_context` to the functions backing `FunctionTool`s and to tool execution callbacks (`before_tool_callback`, `after_tool_callback`).
 - **Purpose:** Exposes the methods essential for tool execution, like handling authentication, searching memory, and listing artifacts. In Python these members are available on any `Context` object, because `CallbackContext` and `ToolContext` are aliases of it. The members marked tool-only below raise `ValueError` unless a tool call is in progress. `ReadonlyContext` and `InvocationContext` do not have them.
 - **Key Capabilities:**
-    - **Authentication Methods:** `request_credential(auth_config)` to trigger an auth flow (tool-only: requires `function_call_id`), and `get_auth_response(auth_config)` to retrieve credentials provided by the user/system.
+    - **Authentication Methods:** `request_credential(auth_config)` *(tool-only)* to trigger an auth flow, and `get_auth_response(auth_config)` to retrieve credentials provided by the user/system.
+    - **Tool Confirmation:** `request_confirmation(hint=..., payload=...)` *(tool-only)* to pause a tool call and ask the user to confirm before it proceeds.
     - **Artifact Listing:** `list_artifacts()` to discover available artifacts in the session (`async` in Python).
     - **Memory Search:** `search_memory(query)` to query the configured `memory_service` (`async` in Python).
-    - **`function_call_id` Property:** Identifies the specific function call from the LLM that triggered this tool execution, crucial for linking authentication requests or responses back correctly.
+    - **`function_call_id` Property:** Identifies the specific function call from the LLM that triggered this tool execution (`None` when no tool call is in progress), crucial for linking authentication requests or responses back correctly.
     - **`actions` Property:** Direct access to the `EventActions` object for this step, allowing the tool to signal state changes, auth requests, etc.
 
     === "Python"
@@ -486,7 +487,7 @@ You'll frequently need to read information stored within the context.
         # Example: In a Callback function
         from google.adk.agents import Context
 
-        # The framework passes callbacks by keyword, so keep this parameter name.
+        # The framework passes callbacks by keyword first, so use this canonical parameter name.
         def my_callback(callback_context: Context, **kwargs):
             last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
             if last_tool_result:
@@ -628,7 +629,7 @@ You'll frequently need to read information stored within the context.
         # Example: In a Callback
         from google.adk.agents import Context
 
-        # The framework passes callbacks by keyword, so keep this parameter name.
+        # The framework passes callbacks by keyword first, so use this canonical parameter name.
         def check_initial_intent(callback_context: Context, **kwargs):
             initial_text = "N/A"
             if callback_context.user_content and callback_context.user_content.parts:
@@ -873,7 +874,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
                        print(f"Unexpected error saving artifact reference: {e}")
 
                # Example usage:
-               # await save_document_reference(callback_context, "gs://my-bucket/docs/report.pdf")
+               # await save_document_reference(context, "gs://my-bucket/docs/report.pdf")
                ```
 
         === "TypeScript"
