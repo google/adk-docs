@@ -514,8 +514,8 @@ schema definitions.
     - In Golang, within a callback handler: `ctx.State().Set(output_key,
       agentResponseText)`
 
-    When `output_schema` is also set, the *parsed* response is stored instead of
-    the text: a `dict` in Python, and a `Map` in Java and Kotlin.
+    In Java and Kotlin, when `output_schema` is also set, the *parsed* response
+    is stored as a `Map` instead of the text.
 
 !!! note "Schema validation in Java and Kotlin"
 

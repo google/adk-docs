@@ -42,10 +42,11 @@ details on what you must install and configure before you can run agents with
 the Agent Config files.
 
 !!! note
-    The `model:` key of an Agent Config takes a Gemini model name. To use
-    another model, construct a `BaseLlm` instance in Python and reference it
-    from the `model_code:` key. For more information about additional;
-    functional restrictions, see [Known limitations](#known-limitations).
+    The `model:` key of an Agent Config takes a model name string, such as a
+    Gemini model name. To use a model that needs constructor arguments, such as
+    `LiteLlm`, construct a `BaseLlm` instance in Python and reference it from
+    the `model_code:` key. For more information about additional functional
+    restrictions, see [Known limitations](#known-limitations).
 
 To set up ADK for use with Agent Config:
 
@@ -148,10 +149,6 @@ For more information about the ADK command line options, see the
 ### Run programmatically
 
 You can also bypass the CLI and dynamically load and execute a configuration-based agent directly in your code. The utility loads the configuration and instantiates the proper agent class (such as `LlmAgent`) transparently as a `BaseAgent` subclass.
-
-!!! note
-    In Python, `config_agent_utils.from_config` is deprecated: calling it emits
-    a `DeprecationWarning`, and it will be removed in a future version.
 
 === "Python"
 
@@ -280,9 +277,9 @@ deployment guides.
 The Agent Config feature is experimental and includes the following
 limitations:
 
--   **Model support:** The `model:` key only accepts a Gemini model name. To use
-    another model, such as `LiteLlm`, construct it in Python and reference it
-    from the `model_code:` key, which takes a mapping whose `name:` sub-key is
+-   **Model support:** The `model:` key only accepts a model name string. To use
+    a model that needs constructor arguments, such as `LiteLlm`, construct it in
+    Python and reference it from the `model_code:` key, which takes a mapping whose `name:` sub-key is
     the fully qualified name of the `BaseLlm` instance:
 
         model_code:
