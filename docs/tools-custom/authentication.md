@@ -121,7 +121,9 @@ methods and managing credential data:
     in `google.adk.auth.credential_service.in_memory_credential_service` and
     `SessionStateCredentialService` in
     `google.adk.auth.credential_service.session_state_credential_service`.
-    This component is experimental and may change in future releases.
+    If you store credentials in session state, make sure your session storage
+    is encrypted at rest and not exposed to untrusted clients. This component
+    is experimental and may change in future releases.
 
 The general authentication flow involves providing these details when
 configuring a tool. ADK then attempts to automatically exchange the initial
@@ -373,14 +375,14 @@ sample_toolset = OpenAPIToolset(
   
 * `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, `https://my-service.run.app`. This is a security binding that ensures the token is valid only for that specific destination.
   
-* `scopes` (Required when requesting an Access Token with service_account_credential): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication. With `use_default_credential=True`, `scopes` defaults to the `cloud-platform` scope.
+* `scopes` (Required when requesting an Access Token with service_account_credential): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication. With `use_default_credential=True`, `scopes` defaults to the broad `cloud-platform` scope; for production deployments, set only the scopes your tool needs.
 
-!!! tip "Pair `use_id_token` with `audience`"
+!!! warning "Pair `use_id_token` with `audience`"
 
     Always use `use_id_token=True` and `audience` together. If you set
     `use_id_token=True` without an `audience`, ADK raises an error. If you set
-    `audience` on its own, ADK ignores it and requests an Access Token instead
-    of an ID token.
+    `audience` on its own, ADK silently ignores the `audience` security binding
+    and requests an Access Token instead of an ID token.
 
 #### Use external access tokens
 
@@ -659,7 +661,7 @@ Implement the following steps inside your function:
 
 **Step 1: Check for Cached & Valid Credentials:**
 
-Inside your tool function, first check if valid credentials, such as access or refresh tokens, are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.state.get(credential_name, None)`.
+Inside your tool function, first check if valid credentials, such as access or refresh tokens, are already stored from a previous run in this session. Store credentials for the current session in `tool_context.state`, a dictionary of state. Check for existing credentials with `tool_context.state.get(credential_name, None)`.
 
 ```py
 from google.oauth2.credentials import Credentials

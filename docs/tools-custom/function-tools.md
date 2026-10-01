@@ -737,8 +737,9 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   progress and completion FunctionResponses that the agent client sends
   afterwards, for user updates.
 - **Initial return**: Whatever the function returns is sent as the first
-  FunctionResponse, and a function that returns nothing emits none. Every later
-  progress or completion update is a FunctionResponse sent by the agent client.
+  FunctionResponse, and a function that returns nothing or an empty value emits
+  none. Every later progress or completion update is a FunctionResponse sent by
+  the agent client.
 - **Kotlin has no `LongRunningFunctionTool` class**: Annotate the function with
   `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
   subclass.
@@ -805,12 +806,12 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
     AgentTool(agent = agentB)
     ```
 
-!!! note "Python: prefer a `single_turn` sub-agent"
+!!! note "Python: consider a `single_turn` sub-agent"
 
-    ADK Python discourages direct use of `AgentTool`. To expose an agent as an
-    inline tool of a parent `LlmAgent`, set `mode="single_turn"` on the
-    sub-agent and attach it with `sub_agents=[...]`. ADK then exposes it as a
-    tool and runs it inline in the parent's session. See [Agent
+    For standard inline delegation in ADK Python, prefer setting
+    `mode="single_turn"` on a sub-agent and attaching it with
+    `sub_agents=[...]` rather than wrapping it in `AgentTool`. ADK exposes the
+    sub-agent as a tool and runs it inline in the parent's session. See [Agent
     collaboration](/workflows/collaboration/).
 
 ### Customize your agent tool
