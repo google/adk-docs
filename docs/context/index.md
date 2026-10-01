@@ -1438,9 +1438,8 @@ Access relevant information from the past or external sources.
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span>
 </div>
 
-You can send rich UI components to the client using
-`context.render_ui_widget()`. This is typically used to render interactive
-elements alongside agent responses.
+To send rich UI components (such as MCP App iframes) to the client alongside
+agent responses, use `context.render_ui_widget()`.
 
 === "Python"
 
@@ -1449,10 +1448,10 @@ elements alongside agent responses.
     from google.adk.tools import ToolContext
 
     def render_styled_widget(color: str, context: ToolContext) -> str:
-        """Renders a UI widget utilizing the user-specified color."""
+        """Render a UI widget utilizing the user-specified color."""
         
         widget = UiWidget(
-            id="status_dashboard",
+            id="my_status_dashboard",
             provider="mcp",
             payload={
                 "resource_uri": "ui://analytics/status",
