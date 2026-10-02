@@ -168,7 +168,7 @@ Agent to support a workflow Resume.
 
 The following example shows the required code modifications to the example
 StoryFlowAgent class shown in the
-[Custom Agents](/agents/custom-agents/#full-code-example)
+[Custom Agents](/agents/custom-agents/#storyflow-agent-code-listing)
 guide:
 
 ```python
