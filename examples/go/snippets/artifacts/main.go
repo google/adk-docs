@@ -209,7 +209,7 @@ func artifactData() {
 // namespacing demonstrates the difference between session and user-scoped artifacts.
 func namespacing() {
 	// --8<-- [start:namespacing]
-	// Note: Namespacing is only supported when using the GCS ArtifactService implementation.
+	// Both in-memory and GCS artifact services support session and user scopes.
 	// A session-scoped artifact is only available within the current session.
 	sessionReportFilename := "summary.txt"
 	// A user-scoped artifact is available across all sessions for the current user.
@@ -217,12 +217,12 @@ func namespacing() {
 
 	// When saving 'summary.txt' via ctx.Artifacts().Save,
 	// it's tied to the current app_name, user_id, and session_id.
-	// ctx.Artifacts().Save(sessionReportFilename, *artifact);
+	// ctx.Artifacts().Save(ctx, sessionReportFilename, genai.NewPartFromText("Report"))
 
 	// When saving 'user:settings.json' via ctx.Artifacts().Save,
-	// the ArtifactService implementation should recognize the "user:" prefix
-	// and scope it to app_name and user_id, making it accessible across sessions for that user.
-	// ctx.Artifacts().Save(userConfigFilename, *artifact);
+	// the ArtifactService implementation recognizes the "user:" prefix
+	// and scopes it to app_name and user_id, making it accessible across sessions for that user.
+	// ctx.Artifacts().Save(ctx, userConfigFilename, genai.NewPartFromText("{}"))
 	// --8<-- [end:namespacing]
 
 	log.Printf("Session filename: %s", sessionReportFilename)
