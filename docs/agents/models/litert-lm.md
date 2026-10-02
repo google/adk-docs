@@ -184,8 +184,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:1.0.0")
-    implementation("com.google.adk:google-adk-kotlin-litertlm:1.0.0")
+    implementation("com.google.adk:google-adk-kotlin-core:1.2.0")
+    implementation("com.google.adk:google-adk-kotlin-litertlm:1.2.0")
     implementation("com.google.ai.edge.litertlm:litertlm-jvm:0.13.1")
     // other dependencies...
 }
