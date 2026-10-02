@@ -47,10 +47,11 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.0.0
+        <div class="library-version" id="library-version">1.2.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonMain">common</button>
                 <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/jvmMain">jvm</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
@@ -60,6 +61,13 @@
                             <i class="ui-kit-icon ui-kit-icon_cross"></i>
                         </button>
                     </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonMain" data-filter=":google-adk-kotlin-core/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
                         <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
                                 <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/jvmMain" data-filter=":google-adk-kotlin-core/jvmMain">
@@ -107,7 +115,7 @@
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">McpTool</a> : <a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a></div><p class="paragraph">Turns an MCP Tool into an ADK <a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a>.</p><p class="paragraph">The tool holds no session of its own: it fetches the shared session from <a href="../../../google-adk-kotlin-core/com.google.adk.kt.tools.mcp/-mcp-tool/--root--.html">mcpSessionManager</a> on each call and, on failure, asks the manager to reinitialize it. Because the manager owns the session pool, a reinit is seen by every tool sharing the session and the toolset can close them all via <a href="../../../google-adk-kotlin-core/com.google.adk.kt.tools.mcp/-session-manager/close.html">SessionManager.close</a>.</p></div>    </div>
   </div>
   <div class="tabbedcontent">
-    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION,EXTENSION_PROPERTY,EXTENSION_FUNCTION">Members &amp; Extensions</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
         <h2 class="tableheader">Types</h2>
@@ -132,7 +140,24 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="tableheader">Properties</h2>
-        <div class="table"><a data-name="-1421961342%2FProperties%2F165695769" anchor-label="customMetadata" id="-1421961342%2FProperties%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
+        <div class="table"><a data-name="-12468075%2FProperties%2F165695769" anchor-label="annotations" id="-12468075%2FProperties%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="annotations.html"><span><span>annotations</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-12468075%2FProperties%2F165695769"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="annotations.html">annotations</a><span class="token operator">: </span><a href="../-mcp-tool-annotations/index.html">McpToolAnnotations</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The MCP tool annotations as an SDK-neutral value, exposed for framework interop.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1421961342%2FProperties%2F165695769" anchor-label="customMetadata" id="-1421961342%2FProperties%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -204,7 +229,24 @@
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="tableheader">Functions</h2>
-        <div class="table"><a data-name="-901526112%2FFunctions%2F165695769" anchor-label="close" id="-901526112%2FFunctions%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
+        <div class="table"><a data-name="1982735173%2FFunctions%2F-1855338903" anchor-label="asNode" id="1982735173%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../com.google.adk.kt.workflow/as-node.html"><span>as</span><wbr><span><span>Node</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1982735173%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.google.adk.kt.annotations/-experimental-workflow-api/index.html"><span class="token annotation builtin">ExperimentalWorkflowApi</span></a></div><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token punctuation">.</span><a href="../../com.google.adk.kt.workflow/as-node.html"><span class="token function">asNode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span>this.name<span class="token punctuation">, </span></span><span class="parameter ">config<span class="token operator">: </span><a href="../../com.google.adk.kt.workflow/-node-config/index.html">NodeConfig</a><span class="token operator"> = </span>NodeConfig()</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.workflow/-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Returns a workflow node that runs this tool as a fixed step: the predecessor's output becomes the tool's arguments, and the tool's result becomes the node's output.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-901526112%2FFunctions%2F165695769" anchor-label="close" id="-901526112%2FFunctions%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
