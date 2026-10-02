@@ -40,6 +40,8 @@ HTTP. You can also run the server locally with `npx`.
 
 ## Prerequisites
 
+- For Python, install ADK with the MCP extra:
+  `pip install "google-adk[mcp]"`
 - For the full tool set, create a
   [Firecrawl account](https://www.firecrawl.dev/signin) and generate an API
   key from the [Firecrawl dashboard](https://www.firecrawl.dev/app/api-keys)
@@ -204,11 +206,16 @@ Tool | Description
 
 Tool | Description
 ---- | -----------
-`firecrawl_parse` | Parse a PDF, Word, spreadsheet, or other document file into markdown or JSON (the hosted server first returns upload instructions for the file)
+`firecrawl_parse` | Parse a PDF, Word, spreadsheet, or other document file into markdown or JSON
 `firecrawl_developer_search` | Search public repositories, GitHub issues, merged pull requests, and code documentation for programming questions
 
-The server also exposes tools for monitoring pages for changes and for
-searching research papers. See the
+The hosted server can't read local files. For `firecrawl_parse`, it returns an
+upload command for the file instead, which the agent can't run with this
+toolset alone. To parse local files, use the Local MCP Server.
+
+The server also exposes tools for monitoring pages for changes, searching
+research papers, browsing data providers, checking credit usage, and sending
+feedback on results. See the
 [Firecrawl MCP tools reference](https://docs.firecrawl.dev/mcp-server/tools)
 for details on every tool.
 
