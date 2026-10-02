@@ -759,6 +759,15 @@ To use an agent as a tool, wrap the agent with the `AgentTool` class.
     agenttool.New(agent, &agenttool.Config{...})
     ```
 
+    !!! note "Artifact sharing (Go v2.5.0+)"
+
+        Configure an `ArtifactService` on the parent runner so the child can
+        list, load, and save artifacts in the parent's scope. Child saves
+        update the parent event's `Actions.ArtifactDelta`.
+        To return a file, save it as an artifact and return its filename as
+        text; its contents are not automatically passed to the parent model.
+        See the [Go example](/agents/custom-agents/#explicit-invocation-with-agenttool).
+
 === "Java"
 
     ```java
