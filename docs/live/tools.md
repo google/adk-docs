@@ -82,7 +82,7 @@ The agent stays free while the tool runs, answers whatever else the user brings 
 the result in when it is ready. A runnable example ships as the
 [`non_blocking_tool_agent` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/non_blocking_tool_agent).
 
-!!! note "Requires Python 2.4+"
+!!! note "Requires ADK Python 2.4+"
 
     `response_scheduling` was added in adk-python 2.4, and support is per model. See
     [Supported models](models.md#live-models).
