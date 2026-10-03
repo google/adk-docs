@@ -85,7 +85,8 @@ Add context compaction to your agent workflow by adding an Events Compaction
 Configuration setting to the App object (Python/Java/Kotlin), by configuring `contextCompactors`
 on the `LlmAgent` (TypeScript), or by setting `Compaction` on the runner
 configuration (Go). As part of the
-configuration, you must specify a compaction interval and overlap size (Python/Java/Go)
+configuration, you must specify a compaction interval and overlap size (Python/Java),
+a compaction interval and optionally an overlap size (Go),
 or a token threshold and event retention size (TypeScript/Kotlin/Go), as shown
 in the following sample code:
 
