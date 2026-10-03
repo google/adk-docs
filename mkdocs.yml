@@ -171,6 +171,7 @@ plugins:
         'tools/third-party/daytona.md': 'integrations/daytona.md'
         'tools/third-party/elevenlabs.md': 'integrations/elevenlabs.md'
         'tools/google-cloud/express-mode.md': 'integrations/express-mode.md'
+        'tools/third-party/firecrawl.md': 'integrations/firecrawl.md'
         'tools/third-party/github.md': 'integrations/github.md'
         'tools/third-party/gitlab.md': 'integrations/gitlab.md'
         'tools/google-cloud/gke-code-executor.md': 'integrations/gke-code-executor.md'
