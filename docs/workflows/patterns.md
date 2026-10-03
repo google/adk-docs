@@ -9,6 +9,15 @@ Agent Development Kit (ADK), including code examples. These patterns are useful
 across a broad set of applications and you should evaluate and test them against
 your project requirements before committing to a full implementation.
 
+!!! note "Python and TypeScript: template workflow agents are deprecated"
+
+    In Python and TypeScript, `SequentialAgent`, `ParallelAgent`, and
+    `LoopAgent` are deprecated: constructing one emits a deprecation
+    warning, and the classes are scheduled for removal in a future
+    release. The examples below still run. For new code, express these
+    patterns with a [graph-based workflow](/graphs/); note that a
+    `Workflow` cannot yet be used as an `LlmAgent` sub-agent.
+
 ## Coordinator and dispatcher
 
 * **Structure:** A central [`LlmAgent`](/agents/llm-agents/) (Coordinator) manages several specialized `sub_agents`.
@@ -793,7 +802,7 @@ your project requirements before committing to a full implementation.
     * **Interaction:** Can be implemented using a custom **Tool** that pauses execution and sends a request to an external system (e.g., a UI, ticketing system) waiting for human input. The tool then returns the human's response to the agent.
     * **Workflow:** Could use **LLM-Driven Delegation** (`transfer_to_agent`) targeting a conceptual "Human Agent" that triggers the external workflow, or use the custom tool within an `LlmAgent`.
     * **State/Callbacks:** State can hold task details for the human; callbacks can manage the interaction flow.
-    * **Note:** ADK doesn't have a built-in "Human Agent" type, so this requires custom integration.
+    * **Note:** ADK has no *Human Agent* agent type, but you do not have to build the pause yourself: yield a `RequestInput` event from a [graph workflow node](/graphs/human-input/), or enable [tool confirmation](/tools-custom/confirmation/#boolean-confirmation) on a `FunctionTool` for a yes/no approval. To supply a custom hint or collect structured data, use [advanced confirmation](/tools-custom/confirmation/#advanced-confirmation) inside the tool. See those pages for per-language support.
 
 === "Python"
 
