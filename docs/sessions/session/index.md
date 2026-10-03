@@ -220,7 +220,9 @@ Its core responsibilities include:
   session's history. This is also the mechanism through which session `state`
   gets updated (more in the `State` section).
 * **Listing Conversations:** Finding the active session threads for a particular
-  user and application.
+  user and application. In Python, the `list_sessions()` contract orders results
+  by `last_update_time`, oldest first. The last item in a nonempty
+  `response.sessions` list is the most recently active session.
 * **Cleaning Up:** Deleting `Session` objects and their associated data when
   conversations are finished or no longer needed.
 
