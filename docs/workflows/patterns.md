@@ -656,8 +656,8 @@ your project requirements before committing to a full implementation.
 
     ```typescript
     // Conceptual Code: Iterative Code Refinement
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEvent, createEventActions } from '@google/genai';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, createEvent, createEventActions } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
@@ -678,17 +678,14 @@ your project requirements before committing to a full implementation.
         async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             const status = ctx.session.state.quality_status;
             const shouldStop = status === 'pass';
-            if (shouldStop) {
-                yield createEvent({
-                    author: 'StopChecker',
-                    actions: createEventActions(),
-                });
-            }
+            yield createEvent({
+                author: 'StopChecker',
+                actions: createEventActions({ escalate: shouldStop }),
+            });
         }
 
         async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
-            // This agent doesn't have a live implementation
-            yield createEvent({ author: 'StopChecker' });
+            // This agent doesn't have a live implementation.
         }
     }
 
