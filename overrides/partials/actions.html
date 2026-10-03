@@ -5,15 +5,14 @@
       {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
   {% endif %}
+  {% set md_href = (page.url.rstrip('/') ~ ".md") | url %}
   {% if "content.action.view" in features %}
-    {% set view_url = page.url | url ~ "index.md" %}
-    <a href="{{ view_url }}" title="View this page as Markdown" class="md-content__button md-icon">
+    <a href="{{ md_href }}" title="View this page as Markdown" class="md-content__button md-icon">
       {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
       {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
   {% endif %}
-  {% set raw_url = page.url | url ~ "index.md" %}
-  <button id="copy-page-btn" class="md-content__button md-icon" title="Copy page as Markdown" data-url="{{ raw_url }}">
+  <button id="copy-page-btn" class="md-content__button md-icon" title="Copy page as Markdown" data-url="{{ md_href }}">
     {% include ".icons/material/content-copy.svg" %}
   </button>
 {% endif %}
