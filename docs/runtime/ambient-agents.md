@@ -440,7 +440,8 @@ service, not by ADK:
   [dead-letter queue (DLQ)](https://cloud.google.com/pubsub/docs/dead-letter-topics)
   if configured.
 - Each redelivery creates a new session. Trigger workloads are stateless
-  by design.
+  by design, so a redelivery runs your agent again from the start. See
+  [Redeliveries and side effects](#redeliveries-and-side-effects).
 
 ### Timeout considerations
 
@@ -455,7 +456,7 @@ The maximum processing time is governed by the upstream service:
 
 | Service | Max Timeout |
 | :------ | :---------- |
-| Pub/Sub push | 10 minutes (ack deadline) |
+| Pub/Sub push | 10 minutes (maximum ack deadline; a new subscription defaults to 10 seconds) |
 | Eventarc | 10 minutes ([Standard](https://cloud.google.com/eventarc/standard/docs/overview) uses Pub/Sub as transport; [Advanced](https://cloud.google.com/eventarc/advanced/docs/overview) delivers via pipeline) |
 
 Trigger endpoints are designed for agents that complete within 10 minutes.
@@ -480,6 +481,88 @@ event and discarded after processing.
 If you configure a persistent `SessionService` (for example, `DatabaseSessionService`),
 trigger sessions are stored automatically. This can be useful for auditing,
 debugging, and post-mortem analysis of event-driven workloads.
+
+### Redeliveries and side effects
+
+Pub/Sub and Eventarc deliver each event *at least once*. A redelivered event
+runs your agent again from the start, in a new session with fresh state. If a
+tool already caused an external side effect in an earlier attempt, such as
+charging a payment, sending an email, or creating a ticket, the side effect
+happens again.
+
+An event is redelivered when:
+
+- The endpoint returns `500`, for example because the model call after a tool
+  failed, or because a `429` error persisted through all automatic retries.
+- The request outlasts the subscription's acknowledgement deadline or the
+  hosting platform's request timeout. When the acknowledgement deadline
+  expires first, the first run keeps going, so both runs complete. This needs
+  no error at all.
+
+To keep side effects from repeating:
+
+1. **Set the acknowledgement deadline above your agent's longest run.** For a
+   Pub/Sub push subscription, the acknowledgement deadline is how long Pub/Sub
+   waits for a response before it sends the message again. It defaults to 10
+   seconds and can be raised to 600 seconds:
+
+    ```bash
+    gcloud pubsub subscriptions update my-sub --ack-deadline=600
+    ```
+
+    The deadline only helps if the request can stay open that long. On Cloud
+    Run, the request timeout defaults to 300 seconds, so a longer run is cut
+    off after 5 minutes and redelivered anyway. Raise it to match:
+
+    ```bash
+    gcloud run services update my-service --timeout=600
+    ```
+
+2. **Configure a dead-letter topic.** Without one, an event that fails after
+   its side effect has already happened is redelivered, and repeats the side
+   effect, until the message expires. A
+   [dead-letter topic](https://cloud.google.com/pubsub/docs/dead-letter-topics)
+   caps the number of delivery attempts:
+
+    ```bash
+    gcloud pubsub subscriptions update my-sub \
+      --dead-letter-topic=my-dead-letter-topic \
+      --max-delivery-attempts=5
+    ```
+
+    Pub/Sub forwards messages to the dead-letter topic with its service agent,
+    which needs the Publisher role on the dead-letter topic and the Subscriber
+    role on the subscription. Without both, no messages are forwarded:
+
+    ```bash
+    PUBSUB_SERVICE_AGENT="service-PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com"
+
+    gcloud pubsub topics add-iam-policy-binding my-dead-letter-topic \
+      --member="serviceAccount:${PUBSUB_SERVICE_AGENT}" \
+      --role="roles/pubsub.publisher"
+
+    gcloud pubsub subscriptions add-iam-policy-binding my-sub \
+      --member="serviceAccount:${PUBSUB_SERVICE_AGENT}" \
+      --role="roles/pubsub.subscriber"
+    ```
+
+3. **Make tools with side effects idempotent.** Deduplicate at the service
+   that performs the side effect, for example with a payment API's idempotency
+   key, or with an external store. Build the key from something that stays the
+   same across redeliveries, such as an order or invoice ID in the event
+   payload. Session state can't be used for this, because it starts empty on
+   every delivery.
+
+For [Eventarc Standard](https://cloud.google.com/eventarc/standard/docs/overview),
+events are delivered through a Pub/Sub subscription that Eventarc creates for
+the trigger. Apply the acknowledgement deadline and dead-letter settings to
+that subscription. To find its name:
+
+```bash
+gcloud eventarc triggers describe my-trigger \
+  --location=us-central1 \
+  --format="value(transport.pubsub.subscription)"
+```
 
 ## Deploy
 
