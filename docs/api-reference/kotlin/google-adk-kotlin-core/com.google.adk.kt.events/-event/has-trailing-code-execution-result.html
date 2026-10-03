@@ -47,7 +47,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.0.0
+        <div class="library-version" id="library-version">1.3.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -105,7 +105,7 @@
   </div>
   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-trailing-code-execution-result.html"><span class="token function">hasTrailingCodeExecutionResult</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><p class="paragraph">Returns true if the last part of this event is a code-execution result. Mirrors ADK Java's <code class="lang-kotlin">Event.hasTrailingCodeExecutionResult()</code>.</p><p class="paragraph">The Kotlin <code class="lang-kotlin">Part</code> type does not yet model <code class="lang-kotlin">codeExecutionResult</code> (see <code class="lang-kotlin">com.google.adk.kt.types.Part</code>). Until it does, this helper is always <code class="lang-kotlin">false</code>. The clause is still present in <a href="is-final-response.html">isFinalResponse</a> so that the call structure matches Java verbatim and so a future <code class="lang-kotlin">Part.codeExecutionResult</code> field is wired into the right gate by construction.</p></div>  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="has-trailing-code-execution-result.html"><span class="token function">hasTrailingCodeExecutionResult</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><p class="paragraph">Returns true if the last part of this event is a code-execution result. Mirrors ADK Java's <code class="lang-kotlin">Event.hasTrailingCodeExecutionResult()</code>, keeping such an event out of <a href="is-final-response.html">isFinalResponse</a> so the turn loop runs again to let the model act on the result.</p></div>  </div>
 </div>
     <div class="footer">
         <div class="footer--container">

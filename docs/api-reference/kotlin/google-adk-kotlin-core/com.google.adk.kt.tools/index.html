@@ -47,11 +47,13 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.0.0
+        <div class="library-version" id="library-version">1.3.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button>
                 <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonMain">common</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/jvmMain">jvm</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
                 <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
@@ -62,9 +64,23 @@
                     </div>
                         <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonJvmAndroidMain" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">
+                                <span class="checkbox--icon"></span>
+                                commonJvmAndroid
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
                                 <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonMain" data-filter=":google-adk-kotlin-core/commonMain">
                                 <span class="checkbox--icon"></span>
                                 common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/jvmMain" data-filter=":google-adk-kotlin-core/jvmMain">
+                                <span class="checkbox--icon"></span>
+                                jvm
                             </label>
                         </li>
                 </ul>
@@ -98,7 +114,7 @@
         </nav>
         <div id="resizer" class="resizer" data-item-type="BAR"></div>
         <div id="main" data-item-type="SECTION" role="main">
-<div class="main-content" data-page-type="package" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools////PointingToDeclaration//-1855338903">
+<div class="main-content" data-page-type="package" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools////PointingToDeclaration//2036149625">
   <div class="breadcrumbs"><a href="../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><span class="current">com.google.adk.kt.tools</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
@@ -121,6 +137,23 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-agent-tool/index.html">AgentTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>agent<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-base-agent/index.html">BaseAgent</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>skipSummarization<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>includePlugins<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>propagateGroundingMetadata<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">A tool that wraps a <a href="../com.google.adk.kt.agents/-base-agent/index.html">BaseAgent</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1738536129%2FClasslikes%2F-1855338903" anchor-label="BaseRetrievalTool" id="1738536129%2FClasslikes%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-base-retrieval-tool/index.html"><span>Base</span><wbr><span>Retrieval</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1738536129%2FClasslikes%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-base-retrieval-tool/index.html">BaseRetrievalTool</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">description<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">isLongRunning<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span> : <a href="-base-tool/index.html">BaseTool</a></div><div class="brief "><p class="paragraph">Base class for retrieval tools.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -341,7 +374,7 @@
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-skill-toolset/index.html">SkillToolset</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">source<span class="token operator">: </span><a href="../com.google.adk.kt.skills/-skill-source/index.html">SkillSource</a></span></span><span class="token punctuation">)</span> : <a href="-toolset/index.html">Toolset</a></div><div class="brief "><p class="paragraph">Toolset that manages and provides access to a collection of Skills.</p></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-skill-toolset/index.html">SkillToolset</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">source<span class="token operator">: </span><a href="../com.google.adk.kt.skills/-skill-source/index.html">SkillSource</a></span></span><span class="token punctuation">)</span> : <a href="-toolset/index.html">Toolset</a></div><div class="brief "><p class="paragraph">Toolset exposing the skills a <a href="../com.google.adk.kt.skills/-skill-source/index.html">SkillSource</a> provides.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -358,7 +391,7 @@
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tool-context/index.html">ToolContext</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>invocationContext<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-invocation-context/index.html">InvocationContext</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>actions<span class="token operator">: </span><a href="../com.google.adk.kt.events/-event-actions/index.html">EventActions</a><span class="token operator"> = </span>EventActions()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>functionCallId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>toolConfirmation<span class="token operator">: </span><a href="../com.google.adk.kt.events/-tool-confirmation/index.html">ToolConfirmation</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>eventId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="-readonly-tool-context/index.html">ReadonlyToolContext</a></div><div class="brief "><p class="paragraph">ToolContext provides a structured context for executing tools or functions.</p></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-tool-context/index.html">ToolContext</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">invocationContext<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-invocation-context/index.html">InvocationContext</a><span class="token punctuation">, </span></span><span class="parameter ">actions<span class="token operator">: </span><a href="../com.google.adk.kt.events/-event-actions/index.html">EventActions</a><span class="token operator"> = </span>EventActions()<span class="token punctuation">, </span></span><span class="parameter ">functionCallId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">toolConfirmation<span class="token operator">: </span><a href="../com.google.adk.kt.events/-tool-confirmation/index.html">ToolConfirmation</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">eventId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../com.google.adk.kt.agents/-context/index.html">Context</a></div><div class="brief "><p class="paragraph">Context passed to tool executions.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -431,6 +464,23 @@
               </div>
             </div>
           </div>
+<a data-name="93105325%2FClasslikes%2F165695769" anchor-label="VertexAiRagClientTool" id="93105325%2FClasslikes%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-vertex-ai-rag-client-tool/index.html"><span>Vertex</span><wbr><span>Ai</span><wbr><span>Rag</span><wbr><span>Client</span><wbr><span><span>Tool</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="93105325%2FClasslikes%2F165695769"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-vertex-ai-rag-client-tool/index.html">VertexAiRagClientTool</a> : <a href="-base-retrieval-tool/index.html">BaseRetrievalTool</a></div><div class="brief "><p class="paragraph">A client-side retrieval tool that fetches context from a Vertex AI RAG corpus.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-2082840450%2FClasslikes%2F-1855338903" anchor-label="VertexAiRagRetrieval" id="-2082840450%2FClasslikes%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
             <div class="main-subrow keyValue ">
@@ -482,6 +532,23 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="-tool-filter/index.html">ToolFilter</a><span class="token operator">?</span><span class="token punctuation">.</span><a href="is-tool-selected.html"><span class="token function">isToolSelected</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tool<span class="token operator">: </span><a href="-base-tool/index.html">BaseTool</a><span class="token punctuation">, </span></span><span class="parameter ">readonlyContext<span class="token operator">: </span><a href="../com.google.adk.kt.agents/-readonly-context/index.html">ReadonlyContext</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Returns whether <a href="is-tool-selected.html">tool</a> is selected by this filter under <a href="is-tool-selected.html">readonlyContext</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-462363870%2FFunctions%2F419297065" anchor-label="toJsonSchema" id="-462363870%2FFunctions%2F419297065" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-json-schema.html"><span>to</span><wbr><span>Json</span><wbr><span><span>Schema</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-462363870%2FFunctions%2F419297065"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../com.google.adk.kt.types/-schema/index.html">Schema</a><span class="token punctuation">.</span><a href="to-json-schema.html"><span class="token function">toJsonSchema</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/kotlinx.serialization/kotlinx-serialization-json/kotlinx.serialization.json/-json-object/index.html">JsonObject</a></div><div class="brief "><p class="paragraph">Renders this <a href="../com.google.adk.kt.types/-schema/index.html">Schema</a> as a JSON Schema <a href="https://kotlinlang.org/api/kotlinx.serialization/kotlinx-serialization-json/kotlinx.serialization.json/-json-object/index.html">JsonObject</a>, the same shape used in prompt tool descriptions. Exposed so an adapter can hand a tool's parameter schema to another framework rather than forking this conversion.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
