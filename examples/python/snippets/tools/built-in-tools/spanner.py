@@ -56,7 +56,9 @@ spanner_toolset = SpannerToolset(
 # Create a wrapped function tool for the agent on top of the built-in
 # `execute_sql` tool in the Spanner toolset.
 # For example, this customized tool can perform a dynamically-built query.
-def count_rows_tool(
+# `query_tool.execute_sql` is a coroutine function, so the wrapper must be
+# `async def` and `await` it; GoogleTool supports async tool functions.
+async def count_rows_tool(
     table_name: str,
     credentials: Credentials,  # GoogleTool handles `credentials`
     settings: SpannerToolSettings,  # GoogleTool handles `settings`
@@ -80,7 +82,7 @@ def count_rows_tool(
   SELECT count(*) FROM {table_name}
     """
 
-  return query_tool.execute_sql(
+  return await query_tool.execute_sql(
       project_id=PROJECT_ID,
       instance_id=INSTANCE_ID,
       database_id=DATABASE_ID,
@@ -141,7 +143,7 @@ def call_agent(query):
 
     print("USER:", query)
     for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("AGENT:", final_response)
 

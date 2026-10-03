@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
+
 from google.adk.agents import Agent
 from google.adk.tools import FunctionTool
 from google.adk.runners import Runner
@@ -35,20 +37,22 @@ def check_and_transfer(query: str, tool_context: ToolContext) -> str:
 
 escalation_tool = FunctionTool(func=check_and_transfer)
 
-main_agent = Agent(
-    model='gemini-2.0-flash',
-    name='main_agent',
-    instruction="""You are the first point of contact for customer support of an analytics tool. Answer general queries. If the user indicates urgency, use the 'escalation_tool' tool.""",
-    tools=[escalation_tool]
-)
-
 support_agent = Agent(
     model='gemini-2.0-flash',
     name='support_agent',
     instruction="""You are the dedicated support agent. Mentioned you are a support handler and please help the user with their urgent issue."""
 )
 
-main_agent.sub_agents = [support_agent]
+# Pass `sub_agents` to the constructor: that is what links `support_agent` back
+# to `main_agent` as its parent. Assigning `main_agent.sub_agents` afterwards
+# leaves `support_agent.parent_agent` unset, so transfers fail.
+main_agent = Agent(
+    model='gemini-2.0-flash',
+    name='main_agent',
+    instruction="""You are the first point of contact for customer support of an analytics tool. Answer general queries. If the user indicates urgency, use the 'escalation_tool' tool.""",
+    tools=[escalation_tool],
+    sub_agents=[support_agent]
+)
 
 # Session and Runner
 async def setup_session_and_runner():
@@ -64,10 +68,13 @@ async def call_agent_async(query):
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("this is urgent, i cant login")
+async def main():
+    await call_agent_async("this is urgent, i cant login")
+
+# Note: In Colab, you can directly 'await call_agent_async(...)' at the top level.
+if __name__ == "__main__":
+    asyncio.run(main())
