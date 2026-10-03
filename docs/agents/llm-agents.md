@@ -469,6 +469,11 @@ schema definitions.
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
+  - In Python, supported schema types include:
+    - A Pydantic model class, for example `MySchema`
+    - Lists of primitives, such as `list[str]`, `list[int]`, `list[bool]`, `list[float]`
+    - `dict`
+    - `google.genai.types.Schema`
 
 !!! warning "Warning: Using `output_schema` with `tools`"
 
@@ -476,7 +481,7 @@ schema definitions.
     by specific models, including [Gemini
     3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
     For other models, ADK falls back to a [`set_model_response` function
-    tool](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)
+    tool](https://github.com/google/adk-python/blob/main/src/google/adk/tools/set_model_response_tool.py)
     to collect the structured output, which may not work reliably. In such
     cases, consider using sub-agents that handle output formatting separately.
 
@@ -497,7 +502,7 @@ schema definitions.
 
     Java and Kotlin check the response against the *structure* of the schema —
     `type`, `required`, `nullable`, `anyOf` and `items` (see
-    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
+    [`SchemaUtils`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/SchemaUtils.kt)).
     Constraint fields such as `pattern`, `minLength` and `minimum` are sent to
     the model as part of the schema, but ADK does not re-check them, so the
     model decides whether to honor them. Python validates against a Pydantic
@@ -509,7 +514,7 @@ schema definitions.
 
     If the response fails validation, ADK logs the error and stores the raw
     response string under `output_key` instead of the parsed object (see
-    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v0.8.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
+    [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
 === "Python"
 
@@ -716,6 +721,7 @@ reasoning and planning before execution. There are two main planners:
     from google.genai import types
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
@@ -737,6 +743,7 @@ reasoning and planning before execution. There are two main planners:
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
+        name="my_agent",
         model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here

@@ -148,7 +148,7 @@ plugins:
         'tools/function-tools.md': 'tools-custom/function-tools.md'
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
-        'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+        'tools/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
         'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
         'tools/google-cloud-tools.md': 'integrations/index.md'
         'tools/built-in-tools.md': 'integrations/index.md'
@@ -298,6 +298,7 @@ nav:
       - Agents CLI: get-started/agents-cli.md
       - Installation: get-started/installation.md
       - Google Cloud: get-started/google-cloud.md
+      - Migrate to ADK: get-started/migrate.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
@@ -327,7 +328,9 @@ nav:
       - Workflow patterns: workflows/patterns.md
     - Models for Agents:
       - agents/models/index.md
-      - Gemini: agents/models/google-gemini.md
+      - Gemini:
+        - agents/models/google-gemini/index.md
+        - Deferred scheduling: agents/models/google-gemini/deferred-schedule.md
       - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
       - Agent Platform hosted: agents/models/agent-platform.md
@@ -384,7 +387,12 @@ nav:
         - Overview: tools-custom/function-tools.md
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
-      - MCP tools: tools-custom/mcp-tools.md
+      - MCP tools: 
+        - tools-custom/mcp-tools/index.md
+        - Advanced configuration: tools-custom/mcp-tools/advanced.md
+        - Deployment: tools-custom/mcp-tools/deployment.md
+        - Agent as MCP server: tools-custom/mcp-tools/agent-as-server.md
+        - Sub-agent delegation: tools-custom/mcp-tools/agent-managed.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
@@ -411,8 +419,6 @@ nav:
       - Memory: sessions/memory.md
       - Context compression: context/compaction.md
       - Model context caching: context/caching.md
-    - MCP:
-      - mcp/index.md
     - A2A Protocol:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
@@ -432,9 +438,9 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
-      # Revamp IA also plans Building/Prompting and Production/{Guardrails,
-      # Observability}, plus an Architectures section once cascade lands. Left
-      # unfilled here rather than shipping stub pages.
+      # Revamp IA also plans Building/Prompting and Production/Observability,
+      # plus an Architectures section once cascade lands. Left unfilled here
+      # rather than shipping stub pages.
       - Building:
         - Workflows: live/workflows.md
         - Tools: live/tools.md
@@ -443,6 +449,7 @@ nav:
         - Audio and video: live/audio-video.md
         - Configuration: live/configuration.md
       - Production:
+        - Guardrails: live/guardrails.md
         - Evaluation: live/evaluation.md
         - Build a custom server: live/custom-server.md
       - Supported models: live/models.md

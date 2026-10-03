@@ -13,12 +13,10 @@ catalog_tags: ["data", "mcp"]
 
 The [`adk-perseus-context`](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
 integration injects a deterministically compiled context into your ADK agent's
-system instruction. It is powered by
-[Perseus](https://github.com/Perseus-Computing-LLC/perseus), an open-source
-context compiler: Perseus resolves directives like `@file`, `@search`, and
-`@memory` into one byte-stable context string at inference time, with no
-retrieval index, no embeddings, and no extra LLM round-trip. Everything runs
-locally.
+system instruction. It is powered by Perseus, an open-source context compiler:
+Perseus resolves directives like `@file`, `@search`, and `@memory` into one
+byte-stable context string at inference time, with no retrieval index, no
+embeddings, and no extra LLM round-trip. Everything runs locally.
 
 Perseus is a context compiler, not a memory or RAG backend. For persistent
 cross-session memory, pair it with its companion, [Perseus Vault](/integrations/perseus-vault/).
@@ -163,5 +161,4 @@ agent = Agent(
 
 - [adk-perseus-context on GitHub](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
 - [adk-perseus-context on PyPI](https://pypi.org/project/adk-perseus-context/)
-- [Perseus (context engine)](https://github.com/Perseus-Computing-LLC/perseus)
 - [Perseus Vault Memory integration](/integrations/perseus-vault/)

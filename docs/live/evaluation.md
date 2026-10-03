@@ -44,7 +44,7 @@ eval cannot catch.
 Your eval cases stay as they are. The same conversation scenario or fixed conversation drives
 a text run or a voice run, so you can reuse a suite you already have. For the full schema,
 personas, and how to write scenarios, see
-[Audio user simulation](../evaluate/user-sim.md#audio-user-simulation-live-agents).
+[Audio user simulation](../evaluate/user-sim.md#audio-user-simulation-for-live-agents).
 
 ## Score with rubrics
 
@@ -117,6 +117,6 @@ instead of only reading what it said.
 
 ## Sample
 
-The [`live_workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_workflow)
+The [`workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/workflow)
 is a complete voice eval you can run: three live agents in a graph workflow, a tool call in
 the middle, and an eval set and `test_config.json` wired up with all three rubric criteria.

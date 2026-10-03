@@ -80,7 +80,7 @@ report_tool.response_scheduling = types.FunctionResponseScheduling.WHEN_IDLE
 
 The agent stays free while the tool runs, answers whatever else the user brings up, and folds
 the result in when it is ready. A runnable example ships as the
-[`live_non_blocking_tool_agent` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_non_blocking_tool_agent).
+[`non_blocking_tool_agent` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/non_blocking_tool_agent).
 
 !!! note "Requires Python 2.4+"
 
