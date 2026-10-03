@@ -30,6 +30,9 @@ across supported languages. For a guided introduction, start with the
     # Windows CMD:
     .venv\Scripts\activate.bat
 
+    # Windows Bash / Git Bash
+    source ./.venv/Scripts/activate
+
     # Windows PowerShell:
     .venv\Scripts\Activate.ps1
     ```
