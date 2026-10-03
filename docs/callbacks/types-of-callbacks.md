@@ -72,6 +72,16 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     )
     ```
 
+??? note "Python: State changes produce a separate event"
+
+    When a `before_agent_callback` or `after_agent_callback` changes
+    `callback_context.state`, ADK emits a separate event containing the
+    resulting `state_delta`, even if the callback returns `None`. The event is
+    persisted and appears in the event stream, but it has no `content` or
+    structured `output`, and `event.is_final_response()` returns `False`.
+    Consumers should continue reading until the actual agent response or the
+    event stream ends.
+
 ### Before Agent Callback
 
 **When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
