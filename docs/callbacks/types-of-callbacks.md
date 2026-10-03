@@ -121,7 +121,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ### After Agent Callback
 
-**When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content. In Python, setting `end_invocation` during the agent's run also skips it, but only on the `run_async` path; `run_live` does not re-check `end_invocation` after `_run_live_impl` finishes, so the callback still runs there.
+**When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content. In Python, setting `end_invocation` during the agent's run also skips it on both the `run_async` and `run_live` paths.
 
 **Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, or modifying final state.
 
