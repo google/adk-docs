@@ -50,7 +50,7 @@ method calls other sub-agents, manages state, and handles events.
 
 After reviewing existing ADK [agent workflow](/workflows/) approaches and architectures,
 you may want to consider building a custom workflow agent if those mechanisms cannot
-meet one or more of following requirements for your project:
+meet one or more of the following requirements for your project:
 
 * **Conditional Logic:** Executing different sub-agents or taking different paths based on runtime conditions or the results of previous steps.
 * **Complex State Management:** Implementing intricate logic for maintaining and updating state throughout the workflow beyond simple sequential passing.
