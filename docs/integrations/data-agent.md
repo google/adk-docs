@@ -42,6 +42,10 @@ Before using these tools, complete the following steps in Google Cloud:
 
 ## Authentication
 
+!!! example "Experimental"
+    `DataAgentCredentialsConfig` extends `BaseGoogleCredentialsConfig`, which is
+    experimental and may be updated in future releases.
+
 The `DataAgentToolset` requires a `DataAgentCredentialsConfig` and supports several authentication mechanisms. You must provide either `credentials`, `external_access_token_key`, or a `client_id` and `client_secret` pair. By default, `DataAgentCredentialsConfig` uses the `https://www.googleapis.com/auth/bigquery` OAuth scope, which you can override using `scopes` when configuring OAuth client credentials.
 
 ### Application Default Credentials
@@ -123,10 +127,10 @@ data_agent_toolset = DataAgentToolset(credentials_config=credentials_config)
 
 ## Configuration
 
-You can customize tool behavior using `DataAgentToolConfig`:
+You can customize tool behavior using [`DataAgentToolConfig`](../api-reference/python/google-adk.html#google.adk.tools.data_agent.DataAgentToolConfig):
 
 * **`max_query_result_rows`** (`int`, default: `50`): Maximum number of rows that `ask_data_agent` returns for each data result.
-* **`location`** (`str | None`, default: `None`): The default Google Cloud location (for example, `global`, `us`, or `eu`), used to select the API endpoint. The `list_accessible_data_agents` and `create_data_agent` tools use this value when their `location` argument is not set, and fall back to `global`. The `ask_data_agent` tool uses this value when set; otherwise it parses the location from the data agent's resource name. The `get_data_agent_info`, `update_data_agent`, and `delete_data_agent` tools use the location from the resource name.
+* **`location`** (`str | None`, default: `None`): The default Google Cloud location (for example, `global`, `us`, or `eu`), used to select the API endpoint. Tools that take a `location` argument use this value when the argument is not set, falling back to `global`. Other tools use the location from the data agent's resource name, except `ask_data_agent`, which uses this value if set.
 * **`api_endpoint`** (`str | None`, default: `None`): Optional custom API endpoint for Conversational Analytics API requests. If provided, this overrides the default or location-derived API endpoint.
 * **`enable_data_agent_modification`** (`bool`, default: `False`): When `True`, the toolset also includes `create_data_agent`, `update_data_agent`, and `delete_data_agent`. When `False`, the toolset is read-only.
 * **`data_agent_modification_timeout_seconds`** (`int`, default: `60`): Total timeout in seconds when polling long-running create, update, or delete operations. Must be greater than `0`.
