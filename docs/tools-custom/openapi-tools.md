@@ -103,6 +103,10 @@ To dynamically add custom headers to every API request, provide a callable to
 dictionary of headers, as shown in the following example:
 
 ```python
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+
 def my_header_provider(context: ReadonlyContext) -> dict[str, str]:
     return {"X-Request-ID": context.invocation_id}
 
