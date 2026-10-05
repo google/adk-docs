@@ -1,7 +1,7 @@
 # Resume stopped agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An ADK agent's execution can be interrupted by various factors including
@@ -78,7 +78,7 @@ curl -X POST http://localhost:8000/run_sse \
    "app_name": "my_resumable_agent",
    "user_id": "u_123",
    "session_id": "s_abc",
-   "invocation_id": "invocation-123",
+   "invocation_id": "invocation-123"
  }'
 ```
 
@@ -88,8 +88,9 @@ shown below:
 === "Python"
 
     ```python
-    runner.run_async(user_id='u_123', session_id='s_abc',
-        invocation_id='invocation-123')
+    async for event in runner.run_async(user_id='u_123', session_id='s_abc',
+        invocation_id='invocation-123'):
+      print(event)
 
     # When new_message is set to a function response,
     # we are trying to resume a long running function.
@@ -179,9 +180,10 @@ class WorkflowStep(int, Enum):
 
 # Extend BaseAgentState
 
-### class StoryFlowAgentState(BaseAgentState):
+class StoryFlowAgentState(BaseAgentState):
+  step: WorkflowStep
 
-###   step = WorkflowStep
+# In the StoryFlowAgent class, replace the existing run implementation with:
 
 @override
 async def _run_async_impl(
@@ -191,12 +193,13 @@ async def _run_async_impl(
     Implements the custom orchestration logic for the story workflow.
     Uses the instance attributes assigned by Pydantic (e.g., self.story_generator).
     """
-    agent_state = self._load_agent_state(ctx, WorkflowStep)
+    agent_state = self._load_agent_state(ctx, StoryFlowAgentState)
 
     if agent_state is None:
       # Record the start of the agent
       agent_state = StoryFlowAgentState(step=WorkflowStep.INITIAL_STORY_GENERATION)
-      yield self._create_agent_state_event(ctx, agent_state)
+      ctx.set_agent_state(self.name, agent_state=agent_state)
+      yield self._create_agent_state_event(ctx)
 
     next_step = agent_state.step
     logger.info(f"[{self.name}] Starting story generation workflow.")
@@ -214,7 +217,8 @@ async def _run_async_impl(
           return  # Stop processing if initial story failed
 
     agent_state = StoryFlowAgentState(step=WorkflowStep.CRITIC_REVISER_LOOP)
-    yield self._create_agent_state_event(ctx, agent_state)
+    ctx.set_agent_state(self.name, agent_state=agent_state)
+    yield self._create_agent_state_event(ctx)
 
     # Step 2. Critic-Reviser Loop
     if next_step <= WorkflowStep.CRITIC_REVISER_LOOP:
@@ -227,7 +231,8 @@ async def _run_async_impl(
           yield event
 
     agent_state = StoryFlowAgentState(step=WorkflowStep.POST_PROCESSING)
-    yield self._create_agent_state_event(ctx, agent_state)
+    ctx.set_agent_state(self.name, agent_state=agent_state)
+    yield self._create_agent_state_event(ctx)
 
     # Step 3. Sequential Post-Processing (Grammar and Tone Check)
     if next_step <= WorkflowStep.POST_PROCESSING:
@@ -240,7 +245,8 @@ async def _run_async_impl(
           yield event
 
     agent_state = StoryFlowAgentState(step=WorkflowStep.CONDITIONAL_REGENERATION)
-    yield self._create_agent_state_event(ctx, agent_state)
+    ctx.set_agent_state(self.name, agent_state=agent_state)
+    yield self._create_agent_state_event(ctx)
 
     # Step 4. Tone-Based Conditional Logic
     if next_step <= WorkflowStep.CONDITIONAL_REGENERATION:
@@ -257,5 +263,6 @@ async def _run_async_impl(
           logger.info(f"[{self.name}] Tone is not negative. Keeping current story.")
 
     logger.info(f"[{self.name}] Workflow finished.")
-    yield self._create_agent_state_event(ctx, end_of_agent=True)
+    ctx.set_agent_state(self.name, end_of_agent=True)
+    yield self._create_agent_state_event(ctx)
 ```
