@@ -93,6 +93,9 @@ This example demonstrates generating tools from a simple Pet Store OpenAPI spec 
 
 ## Advanced configuration
 
+!!! note
+    The parameters in this section require ADK Python v2.0.0 or higher.
+
 ### Custom headers with `header_provider`
 
 To dynamically add custom headers to every API request, provide a callable to
