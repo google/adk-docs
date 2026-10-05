@@ -754,7 +754,7 @@ except Exception as e:
 **Step 7: Return Tool Result**
 
 * After a successful API call, process the result into a dictionary format that is useful for the LLM.
-* **Crucially, include a**  along with the data.
+* **Crucially, include a**  `status` field along with the data.
 
 ```py
 # Inside your tool function, after successful API call

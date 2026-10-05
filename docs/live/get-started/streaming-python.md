@@ -162,7 +162,7 @@ entirely on your local machine. Select `google_search_agent`.
 
 ### Try with voice and video
 
-To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the the following questions in voice. The agent will use the google_search tool to get the latest information to answer those questions. You will hear the answer in voice in real-time.
+To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the following questions in voice. The agent will use the google_search tool to get the latest information to answer those questions. You will hear the answer in voice in real-time.
 
 * What is the weather in New York?
 * What is the time in New York?
