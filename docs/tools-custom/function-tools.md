@@ -275,9 +275,15 @@ LLM.
 
 ##### Configure JSON schema tool declarations
 
-ADK generates JSON schemas from your function signatures using Pydantic for model function declarations. This feature (`JSON_SCHEMA_FOR_FUNC_DECL`) is **enabled by default** in ADK. 
+!!! example "Experimental"
+    
+    JSON schema tool declarations (`JSON_SCHEMA_FOR_FUNC_DECL`) are an
+    experimental feature of ADK for Python. The feature is enabled by default,
+    but its behavior and API may change, and ADK emits an `[EXPERIMENTAL]`
+    warning while it is active. This feature is not available in ADK for
+    TypeScript, Go, Java, or Kotlin.
 
-You can explicitly control or override this behavior using environment variables or directly in Python.
+ADK for Python generates JSON schemas from your function signatures using Pydantic for model function declarations. This feature (`JSON_SCHEMA_FOR_FUNC_DECL`) is **enabled by default**.
 
 ###### Option 1: Configure via Command Line
 
@@ -301,7 +307,7 @@ Set the appropriate environment variable in your terminal before launching your 
     $env:ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL="1"
     ```
 
-To disable JSON schema generation and fall back to legacy manual type parsing:
+To disable JSON schema generation and fall back to the previous `Schema`-based declaration behavior:
 
 === "macOS/Linux"
 
@@ -331,8 +337,8 @@ from google.adk.features import FeatureName, override_feature_enabled
 from google.adk.agents import Agent
 from google.adk.tools import FunctionTool
 
-# Programmatically enable or disable the feature
-override_feature_enabled(FeatureName.JSON_SCHEMA_FOR_FUNC_DECL, True)
+# The feature is enabled by default, so pass False to fall back to the previous behavior:
+override_feature_enabled(FeatureName.JSON_SCHEMA_FOR_FUNC_DECL, False)
 
 def get_current_weather(location: str, unit: str = "celsius") -> str:
     """Get the current weather for a given location.
