@@ -404,16 +404,23 @@ handles the redirection flow, and retries the tool call once authorized.
 
 Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
 
-Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method. 
+Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
 
 If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework will step in and:
 
 1. **Pause execution:** It safely halts the current flow.
-2. **Request credentials:** It issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](https://adk.dev/tools-custom/authentication/#handle-the-interactive-oauthoidc-flow-client-side)).
+2. **Request credentials:** It issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
 
 This gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the heavy lifting, ensuring the necessary credentials are resolved before any tool in the toolset is touched.
 
 #### How to enable it
+
+!!! note
+
+    Toolset-level authentication requires `google-adk` 1.24.0 or later.
+    On earlier versions `get_auth_config()` is never called, so the toolset
+    silently falls back to per-tool authentication.
+
 To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
 
 ```python
@@ -422,11 +429,17 @@ from google.adk.tools.base_toolset import BaseToolset
 
 
 class MyAuthenticatedToolset(BaseToolset):
-  # ... your other toolset methods ...
+  async def get_tools(
+      self, readonly_context: Optional[ReadonlyContext] = None
+  ) -> list[BaseTool]:
+    # ADK resolves the credential from get_auth_config() before calling this,
+    # so the tools you return here can rely on it.
+    return []  # Replace with the tools in your toolset.
 
-  def get_auth_config(self) -> AuthConfig | None:
-    # Return the AuthConfig required for this entire toolset
-    return AuthConfig(...)
+    return AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    )
 ```
 
 #### Toolset authentication flow
@@ -436,23 +449,25 @@ class MyAuthenticatedToolset(BaseToolset):
 sequenceDiagram
     participant User as End User
     participant Agent as Agent & Client
-    participant Tool as BQ Tool
-    participant Google as Google Services
+    participant Toolset as Your Toolset
+    participant Provider as Auth Provider
 
     User->>Agent: User Query
-    Agent->>Tool: Execute Call
-    
-    Note over Tool: No active token
-    
-    Tool-->>Agent: Request Credentials
-    Agent->>User: Redirect to Auth URI
-    User->>Google: Authenticate & Approve
-    Google-->>Agent: Auth Code (Callback)
-    
-    Agent->>Tool: Resume with Credentials
-    Tool->>Google: Run API Call (BigQuery)
-    Google-->>Tool: Return Data
-    Tool-->>Agent: Output
+    Agent->>Toolset: get_auth_config()
+    Toolset-->>Agent: AuthConfig
+
+    Note over Agent: No credential in session
+
+    Agent->>User: adk_request_credential (Auth URI)
+    User->>Provider: Authenticate & Approve
+    Provider-->>Agent: Auth Code (Callback)
+
+    Note over Agent: Invocation resumes
+
+    Agent->>Toolset: get_tools() with credential
+    Toolset-->>Agent: Tools
+    Agent->>Toolset: Execute Tool Call
+    Toolset-->>Agent: Output
     Agent-->>User: Final Answer
 ```
 
