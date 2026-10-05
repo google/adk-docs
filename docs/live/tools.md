@@ -84,7 +84,7 @@ the result in when it is ready. A runnable example ships as the
 
 !!! note "Requires ADK Python 2.4+"
 
-    `response_scheduling` was added in adk-python 2.4, and support is per model. See
+    The `response_scheduling` feature was added in adk-python 2.4, and support is per model. See
     [Supported models](models.md#live-models).
 
 `response_scheduling` also controls *when* a finished result reaches the user:
