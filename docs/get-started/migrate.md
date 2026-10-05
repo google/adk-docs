@@ -45,7 +45,7 @@ agents-cli info
 Follow this process to migrate an existing agent to ADK:
 
 1. [Open your coding agent in the existing project](#open-your-coding-agent-in-the-existing-project)
-2. [Brainstorm the migration plan](#brainstorm-the-migration-plan)
+2. [Brainstorm a migration plan](#brainstorm-a-migration-plan)
 3. [Map agent patterns to ADK](#map-agent-patterns-to-adk)
 4. [Convert code with evaluation](#convert-code-with-evaluation)
 5. [Verify and evaluate](#verify-and-evaluate)

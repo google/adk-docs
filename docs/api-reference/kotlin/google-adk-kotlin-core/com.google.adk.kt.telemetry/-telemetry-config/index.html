@@ -47,7 +47,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.0.0
+        <div class="library-version" id="library-version">1.3.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -123,7 +123,7 @@
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">var </span><a href="capture-message-content.html">captureMessageContent</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether to capture raw prompts and payloads into spans. Seeded at startup from the <a href="../../../google-adk-kotlin-core/com.google.adk.kt.telemetry/index.html">ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS</a> env var (<code class="lang-kotlin">true</code>/<code class="lang-kotlin">1</code> enables it); defaults to <code class="lang-kotlin">false</code> when unset, diverging from Python/Java/JS (which default to <code class="lang-kotlin">true</code>) to avoid recording PII or large payloads. <code class="lang-kotlin">@Volatile</code> for cross-thread visibility.</p></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-volatile/index.html"><span class="token annotation builtin">Volatile</span></a></div></div><span class="token keyword">var </span><a href="capture-message-content.html">captureMessageContent</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether to capture raw prompts and payloads into spans. Seeded at startup from the <a href="../../../google-adk-kotlin-core/com.google.adk.kt.telemetry/index.html">ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS</a> env var (<code class="lang-kotlin">true</code>/<code class="lang-kotlin">1</code> enables it); defaults to <code class="lang-kotlin">false</code> when unset, diverging from Python/Java/JS (which default to <code class="lang-kotlin">true</code>) to avoid recording PII or large payloads. <code class="lang-kotlin">@Volatile</code> for cross-thread visibility.</p></div></div>                  </div>
                 </div>
               </div>
             </div>

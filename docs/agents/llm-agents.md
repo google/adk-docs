@@ -469,6 +469,11 @@ schema definitions.
 - **`output_schema` (Optional):** Define a schema representing the desired
   output structure. If set, the agent's final response *must* be a JSON string
   conforming to this schema.
+  - In Python, supported schema types include:
+    - A Pydantic model class, for example `MySchema`
+    - Lists of primitives, such as `list[str]`, `list[int]`, `list[bool]`, `list[float]`
+    - `dict`
+    - `google.genai.types.Schema`
 
 !!! warning "Warning: Using `output_schema` with `tools`"
 
@@ -476,7 +481,7 @@ schema definitions.
     by specific models, including [Gemini
     3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
     For other models, ADK falls back to a [`set_model_response` function
-    tool](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)
+    tool](https://github.com/google/adk-python/blob/main/src/google/adk/tools/set_model_response_tool.py)
     to collect the structured output, which may not work reliably. In such
     cases, consider using sub-agents that handle output formatting separately.
 
