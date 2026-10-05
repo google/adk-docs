@@ -251,7 +251,16 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         fmt.Printf("Successfully created agent: %s\n", ag.Name())
     }
     ```
-    
+
+    !!! note "MCP tool results in Go"
+
+        For successful calls, a non-nil `StructuredContent` becomes `output`;
+        accompanying content blocks are not merged. Otherwise, `output` is a
+        string containing text blocks and embedded resource text. Images, audio,
+        binary resources, and resource links are represented by metadata such as
+        MIME type, size, or URI. Image and audio bytes are not passed to the model
+        as inline media.
+
 ---
 
 #### Example: Remote HTTP / SSE Transport (Google Maps Grounding Lite)
