@@ -52,7 +52,7 @@ Consider a simplified code development pipeline:
 * **Code Reviewer Agent:**  An LLM Agent that reviews the generated code for errors, style issues, and adherence to best practices.  It receives the output of the Code Writer Agent.
 * **Code Refactorer Agent:** An LLM Agent that takes the reviewed code, and the reviewer's comments, and refactors it to improve quality and address issues.
 
-Using a `SequentialAgent` makes it simple to define this exection flow, as shown
+Using a `SequentialAgent` makes it simple to define this execution flow, as shown
 in the following code snippet:
 
 ```py
