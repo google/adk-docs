@@ -27,8 +27,8 @@ compile classpath as well, because `A2AAgent`'s `httpClient` parameter defaults
 to `JdkA2AHttpClient()`:
 
 ```kotlin title="build.gradle.kts"
-implementation("com.google.adk:google-adk-kotlin-a2a:0.8.0")
-implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.0.0.Final")
+implementation("com.google.adk:google-adk-kotlin-a2a:1.3.1")
+implementation("org.a2aproject.sdk:a2a-java-sdk-client:1.3.2.Final")
 ```
 
 ## Start a remote agent server
