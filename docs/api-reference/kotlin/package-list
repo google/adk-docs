@@ -28,10 +28,14 @@ com.google.adk.kt.skills
 com.google.adk.kt.summarizer
 com.google.adk.kt.telemetry
 com.google.adk.kt.tools
+com.google.adk.kt.tools.appfunctions
 com.google.adk.kt.tools.mcp
 com.google.adk.kt.types
+com.google.adk.kt.workflow
 module:google-adk-kotlin-integrations
 com.google.adk.kt.plugins.agentanalytics
+module:google-adk-kotlin-integrations-spring
+com.google.adk.kt.models.springai
 module:google-adk-kotlin-litertlm
 com.google.adk.kt.litertlm
 module:google-adk-kotlin-processor

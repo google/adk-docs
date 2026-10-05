@@ -99,6 +99,9 @@ cd adk-kotlin
 #                                                 would imply coverage that does not
 #                                                 exist; documenting them needs an
 #                                                 adk-kotlin-side Dokka source-set fix.
+#
+# -integrations-spring is a JVM-only module first published at 1.2.0, so it is
+# listed here and the Spring AI adapter appears in the reference.
 echo "Injecting Dokka aggregation for the published modules..."
 cat >> build.gradle.kts <<'AGGREGATED_MODULES'
 
@@ -107,6 +110,7 @@ dependencies {
   dokka(project(":google-adk-kotlin-core"))
   dokka(project(":google-adk-kotlin-a2a"))
   dokka(project(":google-adk-kotlin-integrations"))
+  dokka(project(":google-adk-kotlin-integrations-spring"))
   dokka(project(":google-adk-kotlin-litertlm"))
   dokka(project(":google-adk-kotlin-processor"))
   dokka(project(":google-adk-kotlin-webserver"))
