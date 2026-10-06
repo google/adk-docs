@@ -1,6 +1,6 @@
 ---
 catalog_title: Reflect and Retry Plugin
-catalog_description: Automatically retry tool calls that fail
+catalog_description: Automatically retry failed tool calls and model responses
 catalog_icon: /integrations/assets/adk.png
 catalog_tags: ["google", "resilience"]
 ---
@@ -22,6 +22,9 @@ agent workflows, including the following capabilities:
 *   **Configurable scope**: Tracks failures per-invocation (default) or globally.
 *   **Granular tracking**: Failure counts are tracked per-tool.
 *   **Custom error extraction**: Supports detecting errors in normal tool responses.
+
+To recover from model responses that ADK cannot act on, such as a malformed
+function call, see [Retry failed model responses](#retry-failed-model-responses).
 
 ## Add Reflect and Retry Plugin
 
@@ -109,6 +112,66 @@ class CustomRetryPlugin(ReflectAndRetryToolPlugin):
 
 # add this modified plugin to your App object:
 error_handling_plugin = CustomRetryPlugin(max_retries=5)
+```
+
+## Retry failed model responses
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.6.0</span>
+</div>
+
+A model can return a response that your agent cannot act on, such as a
+malformed function call. The `ReflectAndRetryModelPlugin` plugin detects these
+responses, sends the model guidance about the error, and retries the turn so the
+model can correct itself. Add it to the plugins setting of your App object:
+
+```python
+from google.adk.apps.app import App
+from google.adk.plugins import ReflectAndRetryModelPlugin
+app = App(
+    name="my_app",
+    root_agent=root_agent,
+    plugins=[
+        ReflectAndRetryModelPlugin(max_retries=3),
+    ],
+)
+```
+
+With this configuration, if the model returns a malformed function call, the
+plugin retries the turn up to 3 times. The plugin counts failures per model and
+resets the count after a successful response. On the fourth consecutive failure, the plugin
+raises a `RuntimeError`. The plugin requires an `LlmAgent` and a model that
+supports function calling, because it sends the guidance to the model as the
+result of a reserved tool call.
+
+The model plugin has the following configuration options:
+
+*   **`max_retries`**: (optional) Maximum number of consecutive failures the
+    plugin retries before giving up. A value of `0` disables retries. Default
+    value is 3.
+*   **`throw_exception_if_retry_exceeded`**: (optional) If set to `False`, the
+    plugin returns the last failed model response instead of raising a
+    `RuntimeError` once retries are exhausted. Default value is `True`.
+*   **`tracking_scope`**: (optional) A `TrackingScope` value, with the same
+    meaning as for the tool plugin. Default value is
+    `TrackingScope.INVOCATION`.
+*   **`on_model_errors`**: (optional) A list of `types.FinishReason` values
+    that the plugin treats as errors. Default value is
+    `[types.FinishReason.MALFORMED_FUNCTION_CALL]`.
+
+The plugin only retries a response that carries an error code and a finish
+reason from `on_model_errors`. The following example also retries responses
+that stop because of recitation:
+
+```python
+from google.genai import types
+from google.adk.plugins import ReflectAndRetryModelPlugin
+retry_plugin = ReflectAndRetryModelPlugin(
+    on_model_errors=[
+        types.FinishReason.MALFORMED_FUNCTION_CALL,
+        types.FinishReason.RECITATION,
+    ],
+)
 ```
 
 ## Next steps
