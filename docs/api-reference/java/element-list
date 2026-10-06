@@ -14,6 +14,7 @@ com.google.adk.a2a.common
 com.google.adk.a2a.converters
 com.google.adk.a2a.executor
 com.google.adk.agents
+com.google.adk.annotations
 com.google.adk.apps
 com.google.adk.artifacts
 com.google.adk.codeexecutors
