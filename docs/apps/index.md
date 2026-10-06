@@ -5,40 +5,36 @@
 </div>
 
 The ***App*** class is a top-level container for an entire Agent Development Kit
-(ADK) agent workflow. It is designed to manage the lifecycle, configuration, and
-state for a collection of agents grouped by a ***root agent***. The **App** class
+(ADK) agent workflow. It holds the ***root agent*** of the workflow together with
+the configuration that applies to every agent in it. The **App** class
 separates the concerns of an agent workflow's overall operational infrastructure
 from individual agents' task-oriented reasoning.
 
 Defining an ***App*** object in your ADK workflow is optional and changes how you
 organize your agent code and run your agents. From a practical perspective, you
-use the ***App*** class to configure the following features for your agent workflow:
-
-*   [**Context caching**](/context/caching/)
-*   [**Context compression**](/context/compaction/)
-*   [**Agent resume**](/runtime/resume/)
-*   [**Plugins**](/plugins/)
+use the ***App*** class to configure the application-wide features listed in
+[App fields](#app-fields).
 
 This guide explains how to use the App class for configuring and managing your
 ADK agent workflows.
 
-## Purpose of App Class
+## App fields
 
-The ***App*** class addresses several architectural issues that arise when
-building complex agentic systems:
+An ***App*** object has the following fields. Java uses the same fields in
+camelCase, such as `rootAgent`.
 
-*   **Centralized configuration:** Provides a single, centralized location for
-    managing shared resources like API keys and database clients, avoiding the
-    need to pass configuration down through every agent.
-*   **Lifecycle management:** The ***App*** class includes ***on startup*** and
-    ***on shutdown*** hooks, which allow for reliable management of persistent
-    resources such as database connection pools or in-memory caches that need to
-    exist across multiple invocations.
-*   **State scope:** It defines an explicit boundary for application-level
-     state with an `app:*` prefix making the scope and lifetime of this state
-    clear to developers.
-*   **Unit of deployment:** The ***App*** concept establishes a formal *deployable
-    unit*, simplifying versioning, testing, and serving of agentic applications.
+| Field | Description |
+|---|---|
+| `name` | Required. The application name, which the `Runner` stores sessions under by default. Start it with a letter and use only letters, digits, and underscores. You cannot use `user` as the name, because ADK reserves it for end-user input. |
+| `root_agent` | Required. The agent that handles each request. In ADK Python v2.0.0 and later, it can also be a [graph-based workflow](/graphs/). |
+| `plugins` | [Plugins](/plugins/) that apply to every agent in the app. |
+| `context_cache_config` | [Context caching](/context/caching/) settings for every LLM agent in the app. |
+| `events_compaction_config` | [Context compression](/context/compaction/) settings for the app's sessions. |
+| `resumability_config` | [Agent resume](/runtime/resume/) settings for every agent in the app. |
+
+You pass services, such as the session service, to the `Runner`, and you store
+application-wide state with the `app:` [state prefix](/sessions/state/), which
+works with or without an ***App*** object.
 
 ## Define an App object
 
@@ -67,7 +63,7 @@ sample code:
     )
 
     app = App(
-        name="agents",
+        name="my_agent",
         root_agent=root_agent,
         # Optionally include App-level features:
         # plugins, context_cache_config, events_compaction_config,
@@ -98,10 +94,18 @@ sample code:
         .build();
     ```
 
-!!! tip "Recommended: Use `app` variable name"
+!!! tip "Recommended: Use the `app` variable name and match the folder name"
 
     In your agent project code, set your ***App*** object to the variable name
     `app` so it is compatible with the ADK command line interface runner tools.
+    In Python, `adk run` and `adk web` load a module-level `app` variable first,
+    and use `root_agent` only when there is no `app`.
+
+    In Python, set the app `name` to the name of the folder that contains your
+    agent code, such as `my_agent` for `my_agent/agent.py`. The `adk web`
+    command stores sessions under the folder name. The `adk run` command stores
+    them under the app `name`, and logs an app name mismatch warning if the app
+    `name` differs from the folder name.
 
 ### Run your App agent
 
