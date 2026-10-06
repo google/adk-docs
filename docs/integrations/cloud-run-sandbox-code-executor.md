@@ -1,6 +1,6 @@
 ---
 catalog_title: Cloud Run Sandbox Code Executor
-catalog_description: Run AI-generated code inside secure Cloud Run nested sandboxes
+catalog_description: Run AI-generated code inside isolated Cloud Run nested sandboxes
 catalog_icon: /integrations/assets/cloud-run.png
 catalog_tags: ["code","google"]
 ---
@@ -8,12 +8,27 @@ catalog_tags: ["code","google"]
 # Google Cloud Run Sandbox Code Executor tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.5.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The Cloud Run Sandbox Code Executor (`CloudRunSandboxCodeExecutor`) provides a secure method for executing LLM-generated code by leveraging Google Cloud Run's nested sandboxing capabilities. 
+The Cloud Run Sandbox Code Executor (`CloudRunSandboxCodeExecutor`) runs LLM-generated code in an isolated Cloud Run sandbox, using Google Cloud Run's nested sandboxing capabilities.
 
-This executor is designed to run from **within** a Cloud Run container (such as a Cloud Run Service) where the sandbox launcher is enabled. It executes untrusted code locally inside an isolated guest sandbox using the container's own Python interpreter, preventing the code from accessing the parent container's environment or credentials.
+This executor is designed to run from **within** a Cloud Run container (such as
+a Cloud Run Service) where the sandbox launcher is enabled. It runs the code
+inside a guest sandbox using the container's own Python interpreter. By default,
+Cloud Run sandboxes have no access to the parent workload, its environment
+variables, its secrets, or the Google Cloud metadata server. For the full
+description of the isolation boundary, see
+[Code execution in Cloud Run](https://cloud.google.com/run/docs/code-execution).
+
+!!! example "Preview release"
+
+    Cloud Run sandboxes are a Preview release and are subject to the
+    "Pre-GA Offerings Terms" of the
+    [Service Specific Terms](https://cloud.google.com/terms/service-terms#1).
+    Pre-GA features are available "as is" and might have limited support. For
+    more information, see the
+    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 ## How it works
 
@@ -33,7 +48,7 @@ To successfully use the Cloud Run Sandbox Code Executor:
 - The Cloud Run resource must be created with the **Sandbox Launcher** enabled. You can do this by deploying with the `--sandbox-launcher` flag:
   ```bash
   gcloud beta run deploy my-agent-service \
-      --image=gcr.io/my-project/my-agent-image \
+      --image=us-central1-docker.pkg.dev/my-project/my-repo/my-agent-image:latest \
       --sandbox-launcher
   ```
 - The container image must include a Python 3 installation (e.g. `python:3.11-slim`), which will be used to run the guest code.
@@ -47,34 +62,25 @@ The `CloudRunSandboxCodeExecutor` can be configured with the following parameter
 | ------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sandbox_bin`       | `str`         | Path to the local guest sandbox binary in the container. Defaults to `"/usr/local/gcp/bin/sandbox"`.                                                 |
 | `allow_egress`      | `bool`        | Whether to allow outbound network connections (egress) from the sandbox. Defaults to `False`.                                                         |
-| `timeout_seconds`   | `int \| None` | Timeout in seconds for the code execution. Defaults to `None` (no timeout).                                                                           |
+| `timeout_seconds`   | `int \| None` | Wall-clock timeout in seconds for a single code execution. Defaults to `300`. Set to `None` to wait indefinitely.                                      |
 
-> [!NOTE]
-> Unlike other executors, `CloudRunSandboxCodeExecutor` does not support `stateful=True` or `optimize_data_file=True`. Every code block runs in a fresh ephemeral sandbox instance within the container.
+!!! note
+
+    Unlike other executors, `CloudRunSandboxCodeExecutor` does not support
+    `stateful=True` or `optimize_data_file=True`. Every code block runs in a
+    fresh ephemeral sandbox instance within the container.
 
 ## Usage Example
 
 ```python
 from google.adk.agents import LlmAgent
 from google.adk.integrations.cloud_run import CloudRunSandboxCodeExecutor
-from google.adk.code_executors import CodeExecutionInput
-from google.adk.agents.invocation_context import InvocationContext
 
-# Initialize the executor with egress allowed and a 60-second timeout
+# Outbound network access from the sandbox is blocked by default.
 cloud_run_executor = CloudRunSandboxCodeExecutor(
-    allow_egress=True,
     timeout_seconds=60,
 )
 
-# Example direct execution:
-ctx = InvocationContext()
-result = cloud_run_executor.execute_code(
-    ctx, 
-    CodeExecutionInput(code="import urllib.request; print(urllib.request.urlopen('https://example.com').read()[:100])")
-)
-print(result.stdout)
-
-# Example registering with an Agent:
 agent = LlmAgent(
     name="sandbox_coding_agent",
     model="gemini-flash-latest",
@@ -82,3 +88,21 @@ agent = LlmAgent(
     code_executor=cloud_run_executor,
 )
 ```
+
+### Allow outbound network access
+
+Set `allow_egress=True` only when the generated code must reach the network,
+for example to call an external API:
+
+```python
+cloud_run_executor = CloudRunSandboxCodeExecutor(
+    allow_egress=True,
+    timeout_seconds=60,
+)
+```
+
+!!! warning
+
+    Enabling egress removes the sandbox's default network isolation, so
+    model-generated code can make arbitrary outbound requests. Leave
+    `allow_egress` unset unless your agent requires network access.
