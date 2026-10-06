@@ -51,8 +51,8 @@ Use the following command to run your agent in the ADK command line interface:
     Run the agent in console mode with either of the following commands:
 
     ```shell
-    go run agent.go           # console is the default sublauncher
-    go run agent.go console   # or explicitly name the console subcommand
+    go run main.go           # console is the default sublauncher
+    go run main.go console   # or explicitly name the console subcommand
     ```
 
 === "Java"
@@ -234,13 +234,13 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
     For example, to force non-streaming output:
 
     ```shell
-    go run agent.go console -streaming_mode none
+    go run main.go console -streaming_mode none
     ```
 
     Or to force SSE streaming (token-by-token output):
 
     ```shell
-    go run agent.go -streaming_mode sse
+    go run main.go -streaming_mode sse
     ```
 
 ## Usage telemetry
