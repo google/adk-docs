@@ -70,8 +70,15 @@ immediately:
     Plugin that provides global instructions functionality at the App level.
 *   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
     Saves files included in user messages as Artifacts.
-*   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
+*   [**Auto Tracing**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/auto_tracing_plugin.py):
+    Wraps the functions in your agent's own packages in OpenTelemetry spans.
+*   [**Multimodal Tool Results**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/multimodal_tool_results_plugin.py):
+    Lets function tools return content parts directly to the model.
+*   [**Logging**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/logging_plugin.py):
     Log important information at each agent workflow callback point.
+
+Check out the [ADK Integrations](/integrations/) page for more native and 
+third party plugins for your agents.
 
 ## Define and register Plugins
 

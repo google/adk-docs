@@ -113,34 +113,10 @@ google.adk.integrations.agent\_identity module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.agent\_identity module
----------------------------------------------
-
-.. automodule:: google.adk.integrations.agent_identity
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 google.adk.integrations.agent\_registry module
 ---------------------------------------------
 
 .. automodule:: google.adk.integrations.agent_registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.agent\_registry module
----------------------------------------------
-
-.. automodule:: google.adk.integrations.agent_registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.api\_registry module
--------------------------------------------
-
-.. automodule:: google.adk.integrations.api_registry
     :members:
     :undoc-members:
     :show-inheritance:
@@ -161,34 +137,10 @@ google.adk.integrations.bigquery module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.bigquery module
----------------------------------------
-
-.. automodule:: google.adk.integrations.bigquery
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 google.adk.integrations.cloud\_run module
 ----------------------------------------
 
 .. automodule:: google.adk.integrations.cloud_run
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.cloud\_run module
-----------------------------------------
-
-.. automodule:: google.adk.integrations.cloud_run
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.crewai module
--------------------------------------
-
-.. automodule:: google.adk.integrations.crewai
     :members:
     :undoc-members:
     :show-inheritance:
@@ -209,90 +161,66 @@ google.adk.integrations.daytona module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.daytona module
+google.adk.integrations.e2b module
+----------------------------------
+
+.. automodule:: google.adk.integrations.e2b
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.eventarc module
+---------------------------------------
+
+.. automodule:: google.adk.integrations.eventarc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.firestore module
+----------------------------------------
+
+.. automodule:: google.adk.integrations.firestore
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.gcs module
+----------------------------------
+
+.. automodule:: google.adk.integrations.gcs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.langchain module
+----------------------------------------
+
+.. automodule:: google.adk.integrations.langchain
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.livekit module
 --------------------------------------
 
-.. automodule:: google.adk.integrations.daytona
+.. automodule:: google.adk.integrations.livekit
     :members:
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.e2b module
-----------------------------------
+google.adk.integrations.model\_armor module
+------------------------------------------
 
-.. automodule:: google.adk.integrations.e2b
+.. automodule:: google.adk.integrations.model_armor
     :members:
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.e2b module
-----------------------------------
+google.adk.integrations.mongodb module
+--------------------------------------
 
-.. automodule:: google.adk.integrations.e2b
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.eventarc module
----------------------------------------
-
-.. automodule:: google.adk.integrations.eventarc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.eventarc module
----------------------------------------
-
-.. automodule:: google.adk.integrations.eventarc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.firestore module
-----------------------------------------
-
-.. automodule:: google.adk.integrations.firestore
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.firestore module
-----------------------------------------
-
-.. automodule:: google.adk.integrations.firestore
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.gcs module
-----------------------------------
-
-.. automodule:: google.adk.integrations.gcs
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.gcs module
-----------------------------------
-
-.. automodule:: google.adk.integrations.gcs
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.langchain module
-----------------------------------------
-
-.. automodule:: google.adk.integrations.langchain
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.langchain module
-----------------------------------------
-
-.. automodule:: google.adk.integrations.langchain
+.. automodule:: google.adk.integrations.mongodb
     :members:
     :undoc-members:
     :show-inheritance:
@@ -305,10 +233,10 @@ google.adk.integrations.oci module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.oci module
-----------------------------------
+google.adk.integrations.openai module
+-------------------------------------
 
-.. automodule:: google.adk.integrations.oci
+.. automodule:: google.adk.integrations.openai
     :members:
     :undoc-members:
     :show-inheritance:
@@ -321,18 +249,10 @@ google.adk.integrations.parameter\_manager module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.parameter\_manager module
-------------------------------------------------
+google.adk.integrations.redis module
+------------------------------------
 
-.. automodule:: google.adk.integrations.parameter_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.secret\_manager module
----------------------------------------------
-
-.. automodule:: google.adk.integrations.secret_manager
+.. automodule:: google.adk.integrations.redis
     :members:
     :undoc-members:
     :show-inheritance:
@@ -353,34 +273,10 @@ google.adk.integrations.skill\_registry module
     :undoc-members:
     :show-inheritance:
 
-google.adk.integrations.skill\_registry module
----------------------------------------------
-
-.. automodule:: google.adk.integrations.skill_registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 google.adk.integrations.slack module
 ------------------------------------
 
 .. automodule:: google.adk.integrations.slack
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.slack module
-------------------------------------
-
-.. automodule:: google.adk.integrations.slack
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-google.adk.integrations.vmaas module
-------------------------------------
-
-.. automodule:: google.adk.integrations.vmaas
     :members:
     :undoc-members:
     :show-inheritance:
@@ -405,6 +301,14 @@ google.adk.labs.openai module
 -----------------------------
 
 .. automodule:: google.adk.labs.openai
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.live module
+----------------------
+
+.. automodule:: google.adk.live
     :members:
     :undoc-members:
     :show-inheritance:
@@ -773,6 +677,14 @@ google.adk.tools.mcp\_tool module
 --------------------------------
 
 .. automodule:: google.adk.tools.mcp_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.model\_consult module
+-------------------------------------
+
+.. automodule:: google.adk.tools.model_consult
     :members:
     :undoc-members:
     :show-inheritance:
