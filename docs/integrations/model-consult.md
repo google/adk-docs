@@ -200,5 +200,4 @@ The `ModelConsultTool` object configures advisor model selection, consultation b
 
 ## Additional resources
 
-* [Model Consult Unit Guide](/guides/tools/model_consult/model_consult_tool/index.md)
-* [ADK on GitHub](https://github.com/google/adk-python)
+* [Model Consult Unit Guide](https://github.com/google/adk-python/blob/main/docs/guides/tools/model_consult/model_consult_tool/index.md)
