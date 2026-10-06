@@ -39,7 +39,8 @@ Some typical applications of Plugins are as follows:
 An ADK Plugin extends the `BasePlugin` class and contains one or more
 `callback` methods, indicating where in the agent lifecycle the Plugin should be
 executed. You integrate Plugins into an agent by registering them in your
-agent's `Runner` class, or in Python your `App` object. For more information on how and where you can trigger
+agent's `Runner` class, or in Python in your `App` object. For more
+information on how and where you can trigger
 Plugins in your agent application, see
 [Plugin callback hooks](#plugin-callback-hooks).
 
@@ -83,8 +84,9 @@ immediately:
     Asks the model to try again when a response ends with an error, such as a
     malformed function call.
 *   [**Tool Call Integrity**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/_tool_call_integrity_plugin.py):
-    Signs each function call stored in the session and runs a tool only when
-    its call's signature verifies.
+    Signs each function call stored in the session with a secret key, and runs
+    a tool only when its call's signature verifies. Tools that run as workflow
+    nodes are not checked.
 
 Check out the [ADK Integrations](/integrations/) page for more native and 
 third party plugins for your agents.
@@ -616,7 +618,8 @@ passing its import path to `adk web` or `adk api_server` with the
 `--extra_plugins` option. ADK adds it after any Plugins your `App` registers.
 Pass a class only if its constructor accepts a `name` argument; otherwise,
 pass a Plugin instance defined at module level. Repeat the option to load more
-than one Plugin.
+than one Plugin. If ADK cannot load a Plugin, it logs an error and starts
+without it.
 
 ```shell
 adk web --extra_plugins=google.adk.plugins.LoggingPlugin /path/to/agents
@@ -711,7 +714,8 @@ Plugin:
     instance of the same class its own name.
 -   **Exceptions:** An exception raised in a Plugin callback reaches your code
     as a `RuntimeError`, with the original exception as its `__cause__`.
-    `on_agent_error_callback` and `on_run_error_callback` behave differently:
+    The `on_agent_error_callback` and `on_run_error_callback` hooks behave
+    differently:
     ADK runs them on every Plugin and logs an exception raised in them instead
     of raising it.
 
@@ -871,7 +875,8 @@ logic begins.
 -   **Purpose:** Global setup or initialization before the invocation runs.
 -   **Flow Control:** Return a `types.Content` object to **halt execution**:
     the `Runner` exits early and ends the run with that content as the result.
-    This applies to every root agent, including an `LlmAgent` or a `Workflow`.
+    In Python, this early exit applies to every root agent, including an
+    `LlmAgent` or a `Workflow`.
     Return `None` to proceed normally.
 
 The following code example shows the basic syntax of this callback:
