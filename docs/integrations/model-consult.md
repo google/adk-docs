@@ -1,7 +1,6 @@
 ---
 catalog_title: Model Consult
 catalog_description: Escalate hard reasoning from fast executors to stronger advisor models
-catalog_icon: /integrations/assets/model-consult.svg
 catalog_tags: ["resilience", "observability"]
 ---
 
