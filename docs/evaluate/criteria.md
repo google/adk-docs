@@ -48,7 +48,7 @@ This criterion compares the sequence of tools called by the agent against a list
 of expected calls and computes an average score based on one of the match types:
 `EXACT`, `IN_ORDER`, or `ANY_ORDER`.
 
-#### When To Use This Criterion?
+### When To Use This Criterion?
 
 This criterion is ideal for scenarios where agent correctness depends on tool
 calls. Depending on how strictly tool calls need to be followed, you can choose
@@ -78,7 +78,7 @@ between. This criteria is helpful for cases where multiple tool calls about the
 same concept occur, like your agent issues 5 search queries. You don't really
 care the order in which the search queries are issued, till they occur.
 
-#### Details
+### Details
 
 For each invocation that is being evaluated, this criterion compares the list of
 tool calls produced by the agent against the list of expected tool calls using
@@ -98,7 +98,7 @@ The comparison can be done using one of following match types:
     present in the actual list, in any order, and allows for other tool calls to
     appear in between.
 
-#### How To Use This Criterion?
+### How To Use This Criterion?
 
 By default, `tool_trajectory_avg_score` uses `EXACT` match type. You can specify
 just a threshold for this criterion in `EvalConfig` under the `criteria`
@@ -160,7 +160,7 @@ Example `EvalConfig` entry for `ANY_ORDER` match:
 }
 ```
 
-#### Output And How To Interpret
+### Output And How To Interpret
 
 The output is a score between 0.0 and 1.0, where 1.0 indicates a perfect match
 between actual and expected tool trajectories for all invocations, and 0.0
@@ -679,13 +679,13 @@ issues.
 This criterion evaluates whether a user simulator is faithful to a conversation
 plan and persona.
 
-#### When To Use This Criterion?
+### When To Use This Criterion?
 
 Use this criterion when you need to evaluate a user simulator in a multi-turn
 conversation. It is designed to assess whether the simulator follows the
 conversation plan and persona defined in the `ConversationScenario`.
 
-#### Details
+### Details
 
 This criterion determines whether the a user simulator follows a defined
 `ConversationScenario` in a multi-turn conversation.
@@ -696,7 +696,7 @@ LLM-as-a-judge to evaluate if the user response follows the `conversation_plan`
 and `user_persona` in the `ConversationScenario`. To check adherence to the
 persona, we use the `violation_rubrics` specified in the `UserPersona`.
 
-#### How To Use This Criterion?
+### How To Use This Criterion?
 
 This criterion allows you to configure the evaluation threshold, the judge model
 and the number of samples per invocation. The criterion also lets you specify a
@@ -720,7 +720,7 @@ Example `EvalConfig` entry:
 }
 ```
 
-#### Output And How To Interpret
+### Output And How To Interpret
 
 The criterion returns a score between 0.0 and 1.0, representing the fraction of
 turns in which the user simulator's response was judged to be valid according to
