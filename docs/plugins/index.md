@@ -777,6 +777,7 @@ The following code example shows the basic syntax of this callback:
         invocation_context: InvocationContext,
         user_message: types.Content,
     ) -> Optional[types.Content]:
+        ...
     ```
 
 === "TypeScript"
@@ -832,6 +833,7 @@ The following code example shows the basic syntax of this callback:
     async def before_run_callback(
         self, *, invocation_context: InvocationContext
     ) -> Optional[types.Content]:
+        ...
     ```
 
 === "TypeScript"
@@ -911,7 +913,7 @@ feature works as follows:
 
 **Note**: If the execution of the Model object returns a `LlmResponse`, the
 system resumes the execution flow, and `after_model_callback` will be triggered
-normally.****
+normally.
 
 The following code example shows the basic syntax of this callback:
 
@@ -925,6 +927,7 @@ The following code example shows the basic syntax of this callback:
         llm_request: LlmRequest,
         error: Exception,
     ) -> Optional[LlmResponse]:
+        ...
     ```
 
 === "TypeScript"
@@ -1006,6 +1009,7 @@ The following code example shows the basic syntax of this callback:
         tool_context: ToolContext,
         error: Exception,
     ) -> Optional[dict]:
+        ...
     ```
 
 === "TypeScript"
@@ -1063,6 +1067,7 @@ The following code example shows the basic syntax of this callback:
     async def on_event_callback(
         self, *, invocation_context: InvocationContext, event: Event
     ) -> Optional[Event]:
+        ...
     ```
 
 === "TypeScript"
@@ -1117,6 +1122,7 @@ The following code example shows the basic syntax of this callback:
     async def after_run_callback(
         self, *, invocation_context: InvocationContext
     ) -> Optional[None]:
+        ...
     ```
 
 === "TypeScript"
