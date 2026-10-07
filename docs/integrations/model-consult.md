@@ -10,7 +10,9 @@ catalog_tags: ["resilience", "observability"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.11.0</span>
 </div>
 
-Agents built on a single model face a tradeoff. A fast, low-cost model keeps routine steps quick and less resource intensive, but may be less well suited for thorough analysis and decisions on complex prompts. In contrast, a stronger model handles complex decisions well but increases the response time and resource costs for each agent step. Model Consult lets an agent use the benefits of both. The agent runs on a fast executor model, and when it reaches a decision it cannot resolve confidently, it calls the Model Consult tool to get guidance from a stronger advisor model. The agent then continues the task itself, using its own tools. The agent uses the stronger model only for the steps that need it, and if a consultation fails or the consultation budget is spent, the agent keeps working with the information it already has.
+Agents that use a single model face a tradeoff. A fast, low-cost model keeps routine steps quick and less resource intensive, but may be less well suited for thorough analysis and decisions on complex tasks. In contrast, a stronger model handles complex decisions well but increases the response time and resource costs for each agent step.
+
+Model Consult lets an agent use the benefits of both. The agent runs on a fast executor model, and when it reaches a decision it cannot resolve confidently, it calls the Model Consult tool to get guidance from a stronger advisor model. The agent then continues the task itself, using its own tools. The agent uses the stronger model only for the steps that need it, and if a consultation fails or the consultation budget is spent, the agent keeps working with the information it already has.
 
 ## Use cases
 
@@ -34,7 +36,7 @@ pip install "google-adk>=2.11.0"
 
 ## Use with agent
 
-Attach `ModelConsultTool` to an `Agent` alongside your domain tools (such as the example `lookup_order` function below). The tool automatically registers the `model_consult` function declaration and appends a default escalation policy to the executor's system instruction, giving the agent clear rules on when and how to consult the advisor.
+Attach `ModelConsultTool` to an `Agent` alongside your domain tools, such as the example `lookup_order` function below. The tool registers the `model_consult` function declaration and appends a default escalation policy to the executor's system instruction, giving the agent clear rules on when and how to consult the advisor.
 
 ```python
 from google.adk.agents import Agent
@@ -54,7 +56,7 @@ root_agent = Agent(
     tools=[
         lookup_order,
         ModelConsultTool(
-            model="gemini-3.1-pro-preview",  # Advisor model
+            model="gemini-pro-latest",  # Advisor model
             max_uses=2,
             session_max_uses=5,
             thinking_level="high",
@@ -70,7 +72,6 @@ In this example:
 * `ModelConsultTool` intercepts the call, verifies the max\_uses budget, and packages the current session events along with the `lookup_order` tool's description into a single advisor consultation.
 * The advisor model evaluates the context and returns structured text guidance, allowing the `support_executor` to resume control, execute any recommended tools, and finish the turn.
 
-To try the agent, save the code as `agent.py` in an agent directory such as `support_agent/`, add an `__init__.py` file that contains `from . import agent`, and run `adk web` from the parent directory. Ask a question that needs a judgment call, such as "Order ORD-42 is on hold. Can I release it?", and check the event log for a `model_consult` call.
 
 ## Available tools
 
@@ -98,7 +99,7 @@ The `status` field of the dictionary that `model_consult` returns has one of the
 | `error` | The advisor call times out, fails, or produces no visible text. | `error`, `message`, `advisor_model`, `consults` | Not consumed. |
 | `invalid_request` | `question` is empty or whitespace-only. | `message` | Not consumed. |
 
-A successful consultation returns the following dictionary structure:
+A successful consultation returns the following dictionary structure. The token counts and latency shown are illustrative, not representative measurements:
 
 ```json
 {
@@ -136,7 +137,7 @@ The executor decides when to call `model_consult`, so it makes better decisions 
 
 ### Customize when the executor consults the advisor
 
-`ModelConsultTool` adds an escalation policy to the executor's system instruction. By default, the policy tells the executor to call `model_consult` before it commits to a decision, when it is stuck, and before it declares a task done. These cover the planning, diagnosing, and reviewing triggers in the following table.
+An `ModelConsultTool` object adds an escalation policy to the executor's system instruction. By default, the policy tells the executor to call `model_consult` before it commits to a decision, when it is stuck, and before it declares a task done. These cover the planning, diagnosing, and reviewing triggers in the following table.
 
 To replace the default policy, pass your own text in `executor_instruction`. To remove the policy, pass an empty string (`""`).
 
@@ -165,11 +166,11 @@ The `ModelConsultTool` object configures advisor model selection, consultation b
 
 ### ModelConsultTool options
 
-`ModelConsultTool` accepts the following constructor arguments:
+The `ModelConsultTool` class accepts the following constructor arguments:
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
-| `model` | `str` \| `BaseLlm` | `'gemini-3.1-pro-preview'` | Advisor model name resolved through ADK's model registry, or a pre-configured `BaseLlm` instance. |
+| `model` | `str` \| `BaseLlm` | `'gemini-3.1-pro-preview'` | Advisor model name resolved through ADK's model registry, or a pre-configured `BaseLlm` instance. The default is a preview model and is subject to change. |
 | `max_uses` | `int` | `None` | Maximum successful consultations per user turn. `None` means no per-turn cap. |
 | `session_max_uses` | `int` | `None` | Maximum successful consultations across the entire session. `None` means no session-wide cap. |
 | `thinking_level` | `str` \| `types.ThinkingLevel` | `'high'` | Reasoning effort for the advisor model: `'minimal'`, `'low'`, `'medium'`, `'high'`, a `types.ThinkingLevel` enum value, or `'off'`, `'none'`, or `None` to leave thinking unset. |
@@ -194,7 +195,7 @@ The `ModelConsultTool` object configures advisor model selection, consultation b
 | `max_events` | `int` | `None` | Keeps at most this many of the most recent non-partial session events before character budgeting. `None` keeps all events. |
 | `max_chars` | `int` | `200000` | Character budget across all handed-over session turns. `None` disables the character budget. |
 | `max_part_chars` | `int` | `4000` | Per-part character cap on rendered tool calls, tool results, and code blocks, with plain text parts allowed eight times this cap. |
-| `include_media` | `bool` | `True` | Forwards inline media and file references when `True`, or replaces them with text placeholders when `False`. |
+| `include_media` | `bool` | `True` | Forwards inline media and file references to the advisor model when `True`, or replaces them with text placeholders when `False`. Set to `False` if session media should not be sent to the advisor model. |
 | `include_thoughts` | `bool` | `False` | Includes the executor's internal thought parts in the advisor handover when `True`. |
 
 ## Additional resources
