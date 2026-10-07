@@ -123,9 +123,7 @@ You can define [skills in code](#inline-skills) or load
     The Python and TypeScript examples above resolve `skills/` relative to the
     directory holding the agent source file, so place `skills/` next to that
     file. The Go and Kotlin examples pass a relative `skills` path, which
-    resolves relative to the current working directory instead. Either way,
-    the `skills/` directory must contain the sub-directories for the Skills you
-    want to use in your agent.
+    resolves relative to the current working directory instead.
 
 ## Skill structure
 
@@ -177,8 +175,9 @@ meets the following requirements:
     *   Must not be empty.
     *   Must be 1024 characters or less.
 
-When loading a Skill from the filesystem, the directory name must match the
-**name** in the frontmatter, or loading fails.
+!!! note "Directory must match the name"
+    
+    When loading a skill from the filesystem, the directory name must match the **name** in the front matter, or loading fails.
 
 ### Skills directory structure
 
