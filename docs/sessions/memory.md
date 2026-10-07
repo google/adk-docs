@@ -409,7 +409,7 @@ instantiating the `VertexAiMemoryBankService` and passing it to the `Runner`.
     )
 
     runner = adk.Runner(
-        ...
+        ...,
         memory_service=memory_service
     )
     ```
