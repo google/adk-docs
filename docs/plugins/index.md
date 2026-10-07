@@ -284,7 +284,7 @@ This example code implements callbacks for `before_agent_callback` and
 `before_model_callback` to count execution of these tasks during the lifecycle
 of the agent.
 
-### Register plugin class
+### Register Plugin class
 
 Integrate your Plugin class by registering it during your agent initialization
 as part of your `Runner` class, or in Python your `App` object, using the
@@ -292,7 +292,7 @@ as part of your `Runner` class, or in Python your `App` object, using the
 following code example shows how to register the `CountInvocationPlugin` plugin
 defined in the previous section with a simple ADK agent.
 
-!!! note "Python: prefer `App(plugins=...)` over `Runner(plugins=...)`"
+!!! note "Python: Use `App(plugins=...)` and not `Runner(plugins=...)`"
 
     In Python, the `plugins` parameter of `Runner` and `InMemoryRunner` is
     deprecated and raises a `DeprecationWarning`. Set `plugins` on an
@@ -618,8 +618,7 @@ passing its import path to `adk web` or `adk api_server` with the
 `--extra_plugins` option. ADK adds it after any Plugins your `App` registers.
 Pass a class only if its constructor accepts a `name` argument; otherwise,
 pass a Plugin instance defined at module level. Repeat the option to load more
-than one Plugin. If ADK cannot load a Plugin, it logs an error and starts
-without it.
+than one Plugin.
 
 ```shell
 adk web --extra_plugins=google.adk.plugins.LoggingPlugin /path/to/agents
