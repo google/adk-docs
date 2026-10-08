@@ -173,7 +173,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "API Key"
 
-      Create a tool requiring an API Key.
+      Create a tool requiring an API key for simple authentication that needs no token exchange:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
@@ -192,7 +192,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "OAuth2"
 
-      Create a tool requiring OAuth2.
+      Create a tool requiring the OAuth 2.0 authorization code flow for interactive authentication on behalf of a human user:
 
       ```py
       from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
@@ -230,9 +230,54 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+=== "Client Credentials Grant Type"
+
+      Create a tool requiring the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. This flow uses a `client_id` and `client_secret` to obtain an access token:
+
+      ```python
+      from fastapi.openapi.models import (
+          OAuth2,
+          OAuthFlowClientCredentials,
+          OAuthFlows,
+      )
+      from google.adk.auth import (
+          AuthCredential,
+          AuthCredentialTypes,
+          OAuth2Auth,
+      )
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import (
+          OpenAPIToolset,
+      )
+
+      # Define the OAuth2 scheme with the client credentials flow.
+      flows = OAuthFlows(
+          clientCredentials=OAuthFlowClientCredentials(
+              tokenUrl="https://example.com/token",
+              scopes={"read:weather": "Read weather data"},
+          )
+      )
+      auth_scheme = OAuth2(flows=flows)
+
+      # Define the AuthCredential with a client ID and client secret.
+      auth_credential = AuthCredential(
+          auth_type=AuthCredentialTypes.OAUTH2,
+          oauth2=OAuth2Auth(
+              client_id="YOUR_CLIENT_ID",
+              client_secret="YOUR_CLIENT_SECRET",
+          ),
+      )
+
+      weather_toolset = OpenAPIToolset(
+          spec_str="...",  # Pass your OpenAPI specification YAML string here.
+          spec_str_type="yaml",
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
+      )
+      ```
+
 === "Service Account"
 
-      Create a tool requiring Service Account.
+      Create a tool requiring a Service Account to authenticate as a non-human identity via a JSON key file exchange:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
@@ -251,9 +296,9 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-=== "OpenID connect"
+=== "OpenID Connect"
 
-      Create a tool requiring OpenID connect.
+      Create a tool requiring OpenID Connect to verify user identity via an authorization server:
 
       ```py
       from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
