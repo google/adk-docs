@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# ---8<--- [start:just_code]
 import asyncio
 
 from google.adk.agents import Agent
@@ -111,7 +112,7 @@ async def main():
     await call_agent_async(
         runner, "For those species, what is the distribution of legal status?"
     )
-
+# ---8<--- [end:just_code]
 
 # Note: In Colab or another notebook, an event loop is already running, so call
 # `await main()` directly instead of `asyncio.run(main())`.

@@ -12,9 +12,7 @@ catalog_tags: ["data", "google"]
 </div>
 
 These are a set of tools aimed to provide integration with data agents powered by the [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
-
 Data agents are AI-powered agents that help you analyze your data using natural language. When configuring a data agent, you can choose from supported data sources, including **BigQuery**, **Looker**, and **Looker Studio**.
-
 The `DataAgentToolset` includes the following read-only tools by default:
 
 * **`list_accessible_data_agents`**: Lists data agents you have permission to access in a specified Google Cloud project. Supports an optional `location` override as well as automatic or manual pagination (`page_size` and `page_token`).
@@ -34,7 +32,7 @@ These modification tools wait for the underlying long-running operation to compl
 Before using these tools, complete the following steps in Google Cloud:
 
 * Enable the Gemini Data Analytics API (`geminidataanalytics.googleapis.com`) in your Google Cloud project.
-* Ensure that the credentials used by the toolset have the required IAM permissions for data agents and their underlying data sources.
+* Ensure that the credentials used by the toolset have the required IAM permissions for data agents and their underlying data sources. For more information on connecting your agent to Google Cloud, see the [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/) guide.
 * The `get_data_agent_info` and `ask_data_agent` tools require an existing data agent. You can create one using `create_data_agent` (when `enable_data_agent_modification=True`) or by following one of these guides:
     * [Build a data agent using HTTP and Python](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-http)
     * [Build a data agent using the Python SDK](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-sdk)
@@ -164,7 +162,7 @@ data_agent_toolset = DataAgentToolset(
 The following sample code demonstrates how to use the `DataAgentToolset` in an ADK agent using Application Default Credentials (ADC).
 
 ```py
---8<-- "examples/python/snippets/tools/built-in-tools/data_agent.py"
+--8<-- "examples/python/snippets/tools/built-in-tools/data_agent.py:just_code"
 ```
 
 Note: If you want to query BigQuery tables and datasets directly as a tool, see [BigQuery tool for ADK](bigquery.md).
