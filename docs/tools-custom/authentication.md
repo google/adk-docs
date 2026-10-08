@@ -402,6 +402,10 @@ handles the redirection flow, and retries the tool call once authorized.
 
 ### Authenticate at a toolset level
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
+</div>
+
 Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
 Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
 If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework performs the following steps:
@@ -412,12 +416,6 @@ If your toolset returns an `AuthConfig` object and the session doesn't already h
 This approach gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the authentication procedure, ensuring the necessary credentials are resolved before your agent accesses tools in the toolset.
 
 #### How to enable it
-
-!!! note
-
-    Toolset-level authentication requires `google-adk` 1.24.0 or later.
-    On earlier versions `get_auth_config()` is never called, so the toolset
-    silently falls back to per-tool authentication.
 
 To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
 
@@ -438,35 +436,6 @@ class MyAuthenticatedToolset(BaseToolset):
         auth_scheme=auth_scheme,
         raw_auth_credential=auth_credential,
     )
-```
-
-#### Toolset authentication flow
-
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Google Sans, Roboto, sans-serif"}}}%%
-sequenceDiagram
-    participant User as End User
-    participant Agent as Agent & Client
-    participant Toolset as Your Toolset
-    participant Provider as Auth Provider
-
-    User->>Agent: User Query
-    Agent->>Toolset: get_auth_config()
-    Toolset-->>Agent: AuthConfig
-
-    Note over Agent: No credential in session
-
-    Agent->>User: adk_request_credential (Auth URI)
-    User->>Provider: Authenticate & Approve
-    Provider-->>Agent: Auth Code (Callback)
-
-    Note over Agent: Invocation resumes
-
-    Agent->>Toolset: get_tools() with credential
-    Toolset-->>Agent: Tools
-    Agent->>Toolset: Execute Tool Call
-    Toolset-->>Agent: Output
-    Agent-->>User: Final Answer
 ```
 
 ### Handle the interactive OAuth/OIDC flow (client-side)
