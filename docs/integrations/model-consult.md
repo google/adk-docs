@@ -90,9 +90,9 @@ When the executor calls `model_consult`, `ModelConsultTool` performs four steps 
 
 ### Inspecting tool calls
 
-By default, `adk run` in human-readable mode only prints final text responses (`[order_support_agent]: ...`) and hides intermediate tool calls. Users can inspect `model_consult` calls and verify the advisor's response in three ways:
+By default, `adk run` in human-readable mode only prints final text responses (`[support_executor]: ...`) and hides intermediate tool calls. Users can inspect `model_consult` calls and verify the advisor's response in three ways:
 
-1. **ADK Web UI (`adk web contributing/samples/tools`)**:
+1. **ADK Web UI** — from a clone of [`adk-python`](https://github.com/google/adk-python), run `adk web contributing/samples/tools`:
    In the chat pane, each consultation appears as a `model_consult` tool event. Click the `model_consult` event to open the **Events / Trace** inspector on the left:
    - **`functionCall`** shows the exact `question` (and optional `context`) the executor sent to the advisor.
    - **`functionResponse`** shows the structured dictionary returned by `ModelConsultTool`, including `"status"`, `"guidance"`, `"advisor_model"`, `"thinking_level"`, `"consults"`, `"usage"`, and `"latency_ms"`.
@@ -190,9 +190,9 @@ The following table lists common reasons to consult the advisor, with triggers t
 
 | Reason   | Why it helps                                                                                            | Example triggers                                                                                                                                                                                                                                                                                                   |
 | -------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Plan     | A wrong interpretation or approach early in a task affects every later step and wastes time and tokens. | \* Before the first response.<br>*After the executor gathers facts and before it starts the main work.*<br>When the request proposes a solution, to ask how to verify it.<br>*When several approaches or interpretations are possible and no evidence favors one.*<br>For request types that you know are difficult.           |
-| Diagnose | A failure or contradiction means that one of the executor's assumptions is wrong.                       | \* A tool call fails or returns an unexpected result, and the executor cannot explain why.<br>*The executor repeats the same tool call, or a close variation, without new information.*<br>The executor reverses its own work.<br>*Two sources or tool results disagree.*<br>The executor concludes that the request is wrong. |
-| Review   | Checking the result against the requirements finds errors and gaps before the user does.                | \* Before the final answer.<br>* After the executor completes a substantial part of a complex task.                                                                                                                                                                                                                   |
+| Plan     | A wrong interpretation or approach early in a task affects every later step and wastes time and tokens. | - Before the first response.<br>- After the executor gathers facts and before it starts the main work.<br>- When the request proposes a solution, to ask how to verify it.<br>- When several approaches or interpretations are possible and no evidence favors one.<br>- For request types that you know are difficult. |
+| Diagnose | A failure or contradiction means that one of the executor's assumptions is wrong.                       | - A tool call fails or returns an unexpected result, and the executor cannot explain why.<br>- The executor repeats the same tool call, or a close variation, without new information.<br>- The executor reverses its own work.<br>- Two sources or tool results disagree.<br>- The executor concludes that the request is wrong. |
+| Review   | Checking the result against the requirements finds errors and gaps before the user does.                | - Before the final answer.<br>- After the executor completes a substantial part of a complex task. |
 
 ## Configuration options
 
@@ -204,7 +204,7 @@ The `ModelConsultTool` class accepts the following constructor arguments:
 
 | Option                      | Type                          | Default               | Description                                                                                                                                      |
 | --------------------------- | ----------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `model`                     | `str` \| `BaseLlm`             | `'gemini-3.1-pro-preview'`                                                                                                                       | Advisor model name resolved through ADK's model registry, or a pre-configured `BaseLlm` instance. |
+| `model`                     | `str` \| `BaseLlm`             | `'gemini-3.1-pro-preview'`                                                                                                                       | Advisor model name resolved through ADK's model registry, or a pre-configured `BaseLlm` instance. The default is a preview model and is subject to change. |
 | `max_uses`                  | `int`                         | `None`                | Maximum successful consultations per user turn. `None` means no per-turn cap.                                                                    |
 | `session_max_uses`          | `int`                         | `None`                | Maximum successful consultations across the entire session. `None` means no session-wide cap.                                                    |
 | `thinking_level`            | `str` \| `types.ThinkingLevel` | `'high'`                                                                                                                                         | Reasoning effort for the advisor model: `'minimal'`, `'low'`, `'medium'`, `'high'`, a `types.ThinkingLevel` enum value, or `'off'`, `'none'`, or `None` to leave thinking unset. |
