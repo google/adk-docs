@@ -403,15 +403,13 @@ handles the redirection flow, and retries the tool call once authorized.
 ### Authenticate at a toolset level
 
 Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
-
 Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
+If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework performs the following steps:
 
-If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework will step in and:
+1. **Pause execution:** Safely halts the current flow.
+2. **Request credentials:** Issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
 
-1. **Pause execution:** It safely halts the current flow.
-2. **Request credentials:** It issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
-
-This gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the heavy lifting, ensuring the necessary credentials are resolved before any tool in the toolset is touched.
+This approach gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the authentication procedure, ensuring the necessary credentials are resolved before your agent accesses tools in the toolset.
 
 #### How to enable it
 
