@@ -19,7 +19,7 @@ holdings, congressional trades, short interest and daily prices. Results name
 the filing or source each figure comes from.
 
 The server is hosted at `https://mcp.equibles.com/mcp` over streamable HTTP, so
-no local install is required. The agent authenticates with an Equibles API key
+no local install is required. The agent authenticates with an API key from Equibles
 sent as a Bearer token.
 
 ## Use cases
@@ -44,7 +44,7 @@ sent as a Bearer token.
 - A working [ADK installation](/get-started/installation/) with MCP support:
   `pip install "google-adk[mcp]"` for Python, or
   `npm install @google/adk @modelcontextprotocol/sdk` for TypeScript
-- An Equibles API key: create an account at [equibles.com](https://equibles.com)
+- An API key from Equibles: create an account at [equibles.com](https://equibles.com)
   and generate a key from the dashboard, as described in
   [Authentication](https://equibles.com/docs/authentication). The key starts
   with `eq_` and is shown once.
