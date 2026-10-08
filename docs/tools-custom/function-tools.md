@@ -39,6 +39,8 @@ correctly.
 
 #### Parameters
 
+Parameters determine the data your tool expects to receive when called. You can configure them as either required or optional based on your tool's needs.
+
 ##### Required parameters
 
 === "Python"
