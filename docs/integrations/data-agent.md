@@ -42,11 +42,11 @@ Before using these tools, complete the following steps in Google Cloud:
 
 ## Authentication
 
-!!! example "Experimental"
-    `DataAgentCredentialsConfig` extends `BaseGoogleCredentialsConfig`, which is
-    experimental and may be updated in future releases.
-
 The `DataAgentToolset` requires a `DataAgentCredentialsConfig` and supports several authentication mechanisms. You must provide either `credentials`, `external_access_token_key`, or a `client_id` and `client_secret` pair. By default, `DataAgentCredentialsConfig` uses the `https://www.googleapis.com/auth/bigquery` OAuth scope, which you can override using `scopes` when configuring OAuth client credentials.
+
+!!! example "Experimental"
+    The `DataAgentCredentialsConfig` class extends `BaseGoogleCredentialsConfig`, which is
+    experimental and should not be used for production projects.
 
 ### Application Default Credentials
 
