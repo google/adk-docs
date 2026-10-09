@@ -387,7 +387,7 @@ For Google MCP servers, authentication headers are automatically passed in.
       "global", "us-central1".
     - `header_provider` (Callable, optional): A callable that takes a
       ReadonlyContext and returns a dictionary of custom headers to be included in
-      requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class)
+      requests made by the [McpToolset](/tools-custom/mcp-tools/#direct-mcp-tool-integration-mcptoolset)
       that `get_mcp_toolset` returns, to the target MCP server. These headers do
       not affect calls to the Agent Registry API itself, and they do not affect
       requests made by
