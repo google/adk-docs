@@ -353,17 +353,17 @@ Because the background data (like LLM requests and tool calls) is complex, you s
 
 1. Start your ADK web server with the recording plugin turned on:
 
-```shell
-adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPlugin /path/to/agents
-```
+    ```shell
+    adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPlugin /path/to/agents
+    ```
 
-   2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
+2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
 
-```shell
-adk conformance record tests/category/test_name none
-```
+    ```shell
+    adk conformance record tests/category/test_name none
+    ```
 
-   The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
+    The trailing streaming-mode argument is required. Use `none` to record `generated-recordings.yaml` and `generated-session.yaml`, or `sse` to record `generated-recordings-sse.yaml` and `generated-session-sse.yaml` instead. The `bidi` mode is not supported for recording.
 
 This automatically runs the scenario, records all the interactions, and saves the generated-recordings.yaml and generated-session.yaml files exactly where they need to be.
 
