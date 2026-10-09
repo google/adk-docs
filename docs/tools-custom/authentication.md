@@ -259,6 +259,8 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OAuth2(flows=flows)
 
       # Define the AuthCredential with a client ID and client secret.
+      # Do not hardcode secrets: load them from a .env file locally or from a
+      # secrets manager in production. See "Self-managed authentication" above.
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OAUTH2,
           oauth2=OAuth2Auth(
