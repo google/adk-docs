@@ -255,8 +255,12 @@ Agent Platform.
 </div>
 
 Newer Claude models support *adaptive* extended thinking, where the model chooses
-its reasoning depth itself rather than using a fixed token budget. On the native
-Claude path, a negative `thinking_budget` maps to adaptive thinking.
+its reasoning depth itself rather than using a fixed token budget, and returns
+its reasoning as summarized thoughts (ADK Python v2.9.1 and later). On the
+native Claude path, a negative `thinking_budget` maps to adaptive thinking.
+Adaptive thinking is required for Claude Opus 4.7 and later models, which reject
+the fixed-budget `"enabled"` thinking mode, and is recommended for Claude Opus
+4.6 and Sonnet 4.6, where `"enabled"` thinking is deprecated.
 
 The recommended way to control reasoning depth is the `effort` field on
 `AnthropicGenerateContentConfig`:
