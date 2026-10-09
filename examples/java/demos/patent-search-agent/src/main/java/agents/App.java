@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Optional;
 
-/** Patent Search agent that seraches contextually matching patents for user search request. */
+/** Patent Search agent that searches contextually matching patents for user search request. */
 public class App {
 
 
