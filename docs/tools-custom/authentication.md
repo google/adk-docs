@@ -118,6 +118,33 @@ credential, such as an access token, before the tool makes an API call. For
 flows requiring user interaction, including OAuth consent, ADK triggers a
 specific interactive process with your ***Agent Client*** application.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User as User / Developer
+    participant AC as Agent Client App
+    participant ADK as ADK
+    participant API as External API
+
+    Note over User, ADK: Configuration Phase
+    User->>ADK: Provide Initial Credentials (e.g. Access Token)
+
+    Note over ADK, API: Pre-Call Exchange
+    ADK->>ADK: Attempt automatic credential exchange
+
+    alt Automatic Success
+        ADK->>API: Authorized API Call
+        API-->>ADK: Success Response
+    else Interaction Required (OAuth Consent)
+        ADK->>AC: Trigger Interactive Process
+        AC->>User: Display Consent/Login UI
+        User->>AC: Grants Permission
+        AC-->>ADK: Return Validated Credential
+        ADK->>API: Authorized API Call
+        API-->>ADK: Success Response
+    end
+```
+
 ### Supported initial credential types
 
 *   **API\_KEY:** Provides simple key-value authentication, which usually
