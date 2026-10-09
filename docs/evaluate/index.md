@@ -59,7 +59,7 @@ This approach involves creating individual test files, each representing a singl
 -   `Expected Intermediate Agent Responses`: These are the natural language
     responses that the agent (or sub-agents) generates as it moves towards
     generating a final answer. These natural language responses are usually an
-    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
+    artifact of a multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
     interest to the end user, but for a developer/owner of the system, are of
     critical importance, as they give you the confidence that the agent went
     through the right path to generate final response.
@@ -623,7 +623,7 @@ adk eval \
 Here are the details for each command line argument:
 
 * `AGENT_MODULE_FILE_PATH`: The path to the agent directory, not a file, whose `__init__.py` exposes a module by the name "agent". "agent" module contains a `root_agent`.
-* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK and created with `adk eval_set create`. You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
+* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK and created with `adk eval_set create`. You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals run by default. If you want to run only specific evals from an eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
 * For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`
 * `CONFIG_FILE_PATH`: The path to the config file.

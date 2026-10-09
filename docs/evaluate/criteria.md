@@ -87,7 +87,7 @@ type, a score of 1.0 is awarded for that invocation, otherwise the score is 0.0.
 The final value is the average of these scores across all invocations in the
 eval case.
 
-The comparison can be done using one of following match types:
+The comparison can be done using one of the following match types:
 
 *   **`EXACT`**: Requires a perfect match between the actual and expected tool
     calls, with no extra or missing tool calls.
