@@ -27,6 +27,15 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 
 They are packaged in the toolset `BigQueryToolset`.
 
+## Installation
+
+The BigQuery tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
 ## Authentication
 
 The `BigQueryToolset` supports several authentication mechanisms through `BigQueryCredentialsConfig`.

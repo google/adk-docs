@@ -310,7 +310,7 @@ LIMIT 20;
         from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
         from google.adk.agents import Agent
         from google.adk.models.google_llm import Gemini
-        from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+        from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 
         # --- OpenTelemetry note (no setup required for BQAA) ---
@@ -1276,8 +1276,9 @@ updated by tools).
 !!! note "Built-in redaction"
 
     State keys prefixed with `temp:` are automatically redacted to `[REDACTED]`
-    in the logged `state_delta`. See [Built-in
-    redaction](#built-in-redaction) for details.
+    in the logged `state_delta` (Python and Java). See [Built-in
+    redaction](#built-in-redaction) for details on redacted key names and state
+    scopes.
 
 ```json
 {
@@ -2021,7 +2022,7 @@ from google.adk.plugins.bigquery_agent_analytics_plugin import (
     BigQueryAgentAnalyticsPlugin,
     BigQueryLoggerConfig,
 )
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
