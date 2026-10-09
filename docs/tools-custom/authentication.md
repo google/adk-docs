@@ -279,7 +279,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "Service Account"
 
-      Create a tool requiring a Service Account to authenticate as a non-human identity via a JSON key file exchange:
+      Create a tool requiring a Service Account to authenticate as a non-human identity, using a JSON key or Application Default Credentials:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
