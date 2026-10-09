@@ -177,7 +177,7 @@ To install the latest version of ADK 1.x, follow these steps:
         .venv\Scripts\activate.bat
         ```
 
-    === "Windows Powershell"
+    === "Windows PowerShell"
 
         ```console
         .venv\Scripts\Activate.ps1

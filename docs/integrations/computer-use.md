@@ -48,7 +48,7 @@ to be able to use the Computer Use Toolset.
         .venv\Scripts\activate.bat
         ```
 
-    === "Windows Powershell"
+    === "Windows PowerShell"
 
         ```console
         .venv\Scripts\Activate.ps1
