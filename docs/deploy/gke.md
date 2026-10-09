@@ -574,7 +574,7 @@ ADK provides a CLI command to streamline GKE deployment. This avoids the need
 to manually build images, write Kubernetes manifests, or push to Artifact
 Registry.
 
-#### Prerequisites
+### Prerequisites
 
 Before you begin, ensure you have the following set up:
 

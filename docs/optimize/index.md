@@ -11,7 +11,7 @@ simple agents based on ADK evaluation results using the default optimizer.
 For more complex use cases, you can develop samplers that use data from custom
 evals, or you can implement new optimization strategies.
 
-### Definitions
+## Definitions
 
 * **Sampler**: A sampler allows the agent optimizer to evaluate candidate
 optimized agents.
