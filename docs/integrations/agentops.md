@@ -140,7 +140,7 @@ By integrating AgentOps, ADK developers can significantly enhance their ability 
 
 ## Further Information
 
-To get started, [create an AgentOps account](http://app.agentops.ai). For feature requests or bug reports, please reach out to the AgentOps team on the [AgentOps Repo](https://github.com/AgentOps-AI/agentops).
+To get started, [create an AgentOps account](https://app.agentops.ai). For feature requests or bug reports, please reach out to the AgentOps team on the [AgentOps Repo](https://github.com/AgentOps-AI/agentops).
 
 ### Extra links
-🐦 [X](http://x.com/agentopsai)   •   📢 [Discord](https://discord.gg/UgJyyxx7uc)   •   🖇️ [AgentOps Dashboard](http://app.agentops.ai)   •   📙 [Documentation](http://docs.agentops.ai)
+🐦 [X](https://x.com/agentopsai)   •   📢 [Discord](https://discord.gg/UgJyyxx7uc)   •   🖇️ [AgentOps Dashboard](https://app.agentops.ai)   •   📙 [Documentation](https://docs.agentops.ai)
