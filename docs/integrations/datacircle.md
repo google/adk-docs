@@ -41,7 +41,7 @@ Datacircle API key, and each call is paid from that account's balance.
 ## Prerequisites
 
 - A Datacircle account. Sign up at [datacircle.dev](https://datacircle.dev)
-  with your work email: a $5 credit, that's 4,000 LinkedIn profiles at $1.25
+  with your work email: a $5 credit, that's 2,105 LinkedIn profiles at $2.375
   per 1,000.
 - Your API key, from your dashboard at datacircle.dev (see the
   [quickstart](https://docs.datacircle.dev/quickstart)).
