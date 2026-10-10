@@ -23,7 +23,7 @@ Datacircle API key, and each call is paid from that account's balance.
 
 ## Use cases
 
-- **Enrich a lead**: Give the agent a LinkedIn profile URL and get the
+- **Look up a profile**: Give the agent a LinkedIn profile URL and get the
   person's name, headline, location, current company and title, positions,
   education, and skills. Each request goes to the provider and gets the
   profile as it is today.
@@ -36,8 +36,9 @@ Datacircle API key, and each call is paid from that account's balance.
 - **Watch the spend**: Read the account's balance before or after a batch of
   lookups, so the agent can stop when the balance runs low.
 
-- **Get the data files**: List the files the account can download, including
-  the free 10M+ U.S. B2B leads flat file, and get a download link for one.
+- **Get the flat file**: Every morning, you get the flat file of your data
+  plus everyone else's. Add $50 to your account: you get $50 of API PLUS the
+  flat file. List the files and get a download link for one.
 
 ## Prerequisites
 
@@ -93,7 +94,6 @@ Tool | Description
 `get_balance` | Read the account's balance in USD (free)
 `list_files` | List the data files the account can download, and whether each is unlocked (free)
 `get_download_link` | Get a download link for one file from `list_files`, by its id (free)
-`get_invite_link` | Get the account's invite link and how many people signed up with it (free)
 `add_funds` | Start a Stripe Checkout that adds $5 to $10,000 to the balance; it returns a link for the user to open and pay, and nothing is charged until they do
 
 ## Additional resources
