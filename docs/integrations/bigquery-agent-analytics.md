@@ -138,7 +138,7 @@ rows apply to both languages.
 | `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
 | `INVOCATION_ERROR` | An invocation fails with an unhandled exception | error message, sanitized traceback | `v_invocation_error` |
-| `AGENT_STARTING` | Agent execution begins | instruction summary | `v_agent_starting` |
+| `AGENT_STARTING` | Agent execution begins | instruction text; in ADK Python releases after v2.11.0, also instruction source, static instruction, description, model, and sub-agent names | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
 | `AGENT_ERROR` | Agent execution fails with an unhandled exception | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
@@ -606,6 +606,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `config` | `Optional[BigQueryLoggerConfig]` | `None` | Pass a config object for detailed tuning |
     | `location` | `str` | `"US"` | Match the BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`) |
     | `credentials` | `Optional[google.auth.credentials.Credentials]` | `None` | Use explicit service-account, impersonated, or cross-project credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
+    | `credentials_identifier` | `Optional[str]` | `None` | Choose explicitly which plugin instances share a [background writer](#shared-background-writer). Use the same identifier only for instances with equivalent credentials and writer settings. Takes precedence over `config.credentials_identifier` without modifying `config` |
 
     ```python
     plugin = BigQueryAgentAnalyticsPlugin(
@@ -628,7 +629,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `clustering_fields` | `List[str]` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
     | `gcs_bucket_name` | `Optional[str]` | `None` | Offload large text and multimodal content to GCS |
     | `connection_id` | `Optional[str]` | `None` | Use BigQuery ObjectRef / object tables (e.g., `us.my-connection`) |
-    | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating |
+    | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating. Use `-1` for no limit; other values must be at least `1` |
     | `batch_size` | `int` | `1` | Tune write throughput vs. latency |
     | `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
     | `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
@@ -644,11 +645,16 @@ account) under which the agent is running needs these Google Cloud roles:
     | `create_views` | `bool` | `True` | Create per-event-type BigQuery views |
     | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
     | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
-    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*`: exact keys or `"prefix*"` patterns |
+    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*`: exact keys or `"prefix*"` patterns. In ADK Python releases after v2.11.0, final `LLM_RESPONSE` rows capture keys from `llm_response.custom_metadata` |
     | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time |
     | `final_response_tool_names` | `FrozenSet[str]` | `frozenset()` | Log call arguments from selected successful tools as `AGENT_RESPONSE` payloads |
     | `flush_on_run_end` | `bool` | `True` | Wait for queued rows to finish writing at the end of each run |
     | `exactly_once_delivery` | `bool` | `False` | Use committed streams and explicit offsets to prevent ambiguous-retry duplicates within a live processor |
+    | `use_dedicated_background_loop` | `Optional[bool]` | `None` | Choose where the batch writer runs: `None` uses the [shared background writer](#shared-background-writer) thread when `flush_on_run_end=False`, `True` always uses it, and `False` keeps the writer on the caller's event loop |
+    | `credentials_identifier` | `Optional[str]` | `None` | Choose explicitly which plugin instances share a background writer; the constructor argument takes precedence. Use the same identifier only for instances with equivalent credentials and writer settings |
+    | `debug_content_formatter_errors` | `bool` | `False` | Append a bounded traceback of an exception raised by `content_formatter` to the plugin's local Python log warning. The traceback can include unformatted content and is never written to BigQuery |
+    | `on_schema_error` | `Optional[Callable[[Exception], None]]` | `None` | In ADK Python releases after v2.11.0, run a synchronous callback with the exception each time the [table readiness check](#table-readiness-callbacks) fails to read, create, or upgrade the table. Values that aren't synchronous callables raise `ValueError` when the plugin is constructed |
+    | `on_schema_ready` | `Optional[Callable[[], None]]` | `None` | In ADK Python releases after v2.11.0, run a synchronous no-argument callback each time the [table readiness check](#table-readiness-callbacks) succeeds, including any requested views. Values that aren't synchronous callables raise `ValueError` when the plugin is constructed |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -717,9 +723,12 @@ account) under which the agent is running needs these Google Cloud roles:
       Cloud Trace correlation key, not a foreign key; when disabled (the
       default) no `attributes.otel` is written.
     - **`custom_metadata_allowlist`**: Leaving it unset preserves the previous
-      behavior, where only the built-in `a2a:*` capture runs. Captured values
-      pass the same safety pipeline as all other logged content (truncation,
-      sensitive-key redaction, circular-reference handling).
+      behavior, where only the built-in `a2a:*` capture runs. Keys are read from
+      `event.custom_metadata`. In ADK Python releases after v2.11.0, final
+      (non-partial) `LLM_RESPONSE` rows read them from
+      `llm_response.custom_metadata`. Captured values pass the same safety
+      pipeline as all other logged content (truncation, sensitive-key
+      redaction, circular-reference handling).
     - **`payload_column_denylist`**: Only `content`, `content_parts`,
       `attributes`, and `latency_ms` may be listed; identity and correlation
       columns are protected and raise `ValueError`. The projection is applied
@@ -748,13 +757,54 @@ account) under which the agent is running needs these Google Cloud roles:
     `after_run_callback` wait for the current event loop's write queue. Set it
     to `False` to remove that flush from the response path; the background
     writer will continue draining the queue, so rows may appear in BigQuery
-    shortly after the run returns.
+    shortly after the run returns. In Python v2.10.0 and later, this setting
+    also moves the writer to the [shared background
+    writer](#shared-background-writer).
 
     ```python
     config = BigQueryLoggerConfig(
         final_response_tool_names=frozenset({"submit_final_response"}),
         flush_on_run_end=False,
     )
+    ```
+
+    ### Shared background writer {#shared-background-writer}
+
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span>
+    </div>
+
+    When `flush_on_run_end=False`, the plugin runs its batch writer on a
+    dedicated, process-lifetime background event loop thread instead of the
+    caller's event loop. Set `use_dedicated_background_loop=True` to use that
+    thread even when `flush_on_run_end=True`, or `False` to keep the writer on
+    the caller's event loop.
+
+    Plugin instances in the same process that target the same table with
+    equivalent credentials share one background writer and BigQuery write
+    client, so short-lived plugin instances, such as one per request, don't
+    each open a new writer. Equivalence is derived from the credential identity
+    (for example, the service account email, scopes, and project). Set
+    `credentials_identifier` to choose explicitly which plugin instances share
+    a writer. Use the same identifier only for instances with equivalent
+    credentials and writer settings: the shared writer uses the credentials and
+    writer settings, such as `batch_size` and `retry_config`, of the instance
+    that creates it.
+
+    Calling `shutdown()` or `close()` with default arguments detaches the plugin
+    instance from the shared writer but leaves the writer running, so queued
+    rows continue to be written. At interpreter exit, the plugin makes a
+    best-effort attempt to drain active writers. To drain and stop the shared
+    writer explicitly, for example at the end of a standalone script or a test,
+    pass `close_background_transport=True` or call
+    `close_shared_background_transports()`:
+
+    ```python
+    # Drain and stop the shared writer for this plugin's table and credentials.
+    await plugin.close(close_background_transport=True)
+
+    # Or drain and stop every shared background writer in the process.
+    await BigQueryAgentAnalyticsPlugin.close_shared_background_transports(timeout=10.0)
     ```
 
     ### Delivery and deduplication {#delivery-and-deduplication}
@@ -795,6 +845,40 @@ account) under which the agent is running needs these Google Cloud roles:
     `offset_conflict` and other [drop
     reasons](#dropped-event-observability), and retain `event_id` as a consumer
     deduplication key.
+
+    ### Table readiness callbacks {#table-readiness-callbacks}
+
+    In ADK Python releases after v2.11.0, use `on_schema_error` and
+    `on_schema_ready` to observe the table readiness check that the plugin runs
+    during setup. The check reads, creates, or upgrades the BigQuery table and
+    creates any requested views.
+
+    - `on_schema_error` is called with the exception each time the check fails
+      to read, create, or upgrade the table. It fires at most once per check, so
+      it can be called repeatedly while setup retries. It isn't called when a
+      view can't be created or a label-only table refresh fails; the plugin logs
+      those failures and continues.
+    - `on_schema_ready` is called with no arguments each time the check
+      succeeds, which means that the table exists or was created or upgraded
+      and every requested view was created.
+
+    Both callbacks run on a worker thread, not the event loop, so keep them fast
+    and non-blocking. Exceptions that a callback raises are logged and
+    suppressed. Values that aren't synchronous callables raise `ValueError` when
+    the plugin is constructed.
+
+    After a successful check, later setups of the same plugin skip it, including
+    after `close()`, after a fork, and in copies pickled afterwards. Neither
+    callback fires again, and later table outages appear only as [dropped
+    rows](#dropped-event-observability) when rows are written. Later setups run
+    the check again only if the setup that was waiting for it was cancelled, or
+    after a `create_analytics_views()` call fails to create a view. A
+    `create_analytics_views()` call that creates every view makes later setups
+    skip the check, and its own view creation never invokes either callback.
+
+    If you serialize the plugin with the standard `pickle` module, the callbacks
+    must be picklable, for example module-level functions. Lambdas and closures
+    can't be pickled with `pickle`, and bound methods pickle their instance.
 
 === "Java"
 
@@ -925,8 +1009,8 @@ provides a comprehensive reference with example values.
 | **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
-| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. In Python, it can be populated on a final `LLM_RESPONSE` whose `status` remains `OK`. | `Error 404: Dataset not found` |
-| **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` when content or metadata is truncated or replaced by a safety boundary, including the configured `max_content_length`, sanitizer depth or node budgets, and diagnostic-text sanitization. Ordinary structured sensitive-key redaction does not set it by itself. | `false` |
+| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. In Python, it can be populated on rows whose `status` remains `OK`, such as a final `LLM_RESPONSE` or a row whose custom `content_formatter` failed (for example, `content_formatter raised ImportError`). | `Error 404: Dataset not found` |
+| **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` when content or metadata is truncated or replaced by a safety boundary, including the configured `max_content_length`, sanitizer depth or node budgets, and diagnostic-text sanitization. In ADK Python releases after v2.11.0, it is also set by credential-pattern redaction in the formatted parts of a model response and by `[FORMATTING FAILED]`, the placeholder written when the plugin's built-in formatting of response or compaction content fails (not to be confused with `[FORMATTER_FAILED]`, which marks a custom `content_formatter` failure). Ordinary structured sensitive-key redaction does not set it by itself. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
 
 In Python, the `event_id` column is part of schema version 2. With
@@ -978,7 +1062,7 @@ you can optionally create the table manually using the DDL below.
       attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
       latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
       status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
-      error_message STRING OPTIONS(description="Sanitized error or model termination diagnostic."),
+      error_message STRING OPTIONS(description="Diagnostic message for errors and model termination details; may be populated on rows whose status is 'OK', such as LLM_RESPONSE rows and rows whose content_formatter failed."),
       is_truncated BOOLEAN OPTIONS(description="Flag indicates if content was truncated.")
     )
     PARTITION BY DATE(timestamp)
@@ -1039,7 +1123,7 @@ The following table lists the Python views and their event-specific columns:
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
-| **`v_agent_starting`** | `agent_instruction` (STRING) |
+| **`v_agent_starting`** | `agent_instruction` (STRING); in ADK Python releases after v2.11.0, also `instruction_source` (STRING), `static_instruction` (STRING), `agent_description` (STRING), `model` (STRING), `sub_agents` (JSON) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
 | **`v_agent_error`** | `total_ms` (INT64), `error_traceback` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
@@ -1076,6 +1160,7 @@ The other Java view differences are:
   `usage_thinking_tokens`, `usage_tool_use_tokens`, `cache_metadata`,
   `cache_type`, or `finish_reason`.
 - Java's `v_agent_response` exposes `text_summary` instead of `response_text`.
+- Java's `v_agent_starting` exposes only `agent_instruction`.
 - Java's `v_a2a_interaction` omits `a2a_response`; the response remains
   available in `response_content`.
 
@@ -1117,7 +1202,16 @@ instructions.
   "attributes": {
     "root_agent_name": "my_bq_agent",
     "model": "gemini-flash-latest",
-    "tools": ["list_dataset_ids", "execute_sql"],
+    "tools": [
+      {
+        "name": "list_dataset_ids",
+        "description": "..."
+      },
+      {
+        "name": "execute_sql",
+        "description": "..."
+      }
+    ],
     "llm_config": {
       "temperature": 0.5,
       "top_p": 0.9
@@ -1127,7 +1221,11 @@ instructions.
 ```
 
 The automatically created `v_llm_request` view exposes the `tools` attribute as
-its `tools` (JSON) column.
+its `tools` (JSON) column. In Python, `tools` has one entry per tool with its
+`name` and, when available, its `description` and `parameters` (the tool's
+parameter schema). These entries pass through the same size limit and
+sensitive-key redaction as other attributes. Java records only the tool names,
+for example `["list_dataset_ids", "execute_sql"]`.
 
 **2. LLM_RESPONSE**
 
@@ -1169,6 +1267,19 @@ row's `status` remains `OK`.
 
 In Python, model finish and block reasons remain classified as `LLM_RESPONSE`.
 The plugin uses `LLM_ERROR` only when a model call raises an exception.
+
+In Python, `content.response` summarizes the response parts, separated by `|`,
+for example `text: '...'` for text, `call: <name>` for a function call,
+`resp: <name>` for a function response, and `other` for other part types. Text
+longer than `max_content_length` is cut, which sets `is_truncated`. In ADK
+Python releases after v2.11.0, the summary also shows executable code as
+`Executable code (<language>): <code>` and code execution results as
+`Code execution result (<outcome>): <output>`, redacts credential patterns in
+text, code, and output, and ends cut values with `...[TRUNCATED]`; redaction
+also sets `is_truncated`. In the same releases, when
+`custom_metadata_allowlist` is set, the final (non-partial) `LLM_RESPONSE` row
+captures allowlisted keys from `llm_response.custom_metadata` into
+`attributes.custom_metadata`.
 
 **3. LLM_ERROR**
 
@@ -1298,7 +1409,7 @@ updated by tools).
 | `INVOCATION_STARTING` | `{}` |
 | `INVOCATION_COMPLETED` | `{}` |
 | `INVOCATION_ERROR` | `{"error_traceback": "..."}` |
-| `AGENT_STARTING` | `"You are a helpful agent..."` |
+| `AGENT_STARTING` | `"You are a helpful agent..."`, or, in ADK Python releases after v2.11.0, `null` when the instruction is empty or a callable `InstructionProvider` |
 | `AGENT_COMPLETED` | `{}` |
 | `AGENT_ERROR` | `{"error_traceback": "..."}` |
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
@@ -1308,6 +1419,22 @@ In Python, the `AGENT_ERROR` and `INVOCATION_ERROR` rows have `status="ERROR"`,
 a sanitized `error_message`, and a sanitized traceback in `content`. The agent
 error view also exposes the elapsed `total_ms`. These events represent
 unhandled exceptions that escape agent or runner execution.
+
+In ADK Python releases after v2.11.0, `AGENT_STARTING` rows can also add these
+`attributes` keys, which the `v_agent_starting` view exposes as columns:
+
+- `instruction_source`: `"provider"` when the agent's instruction is a callable
+  `InstructionProvider`.
+- `static_instruction`: The text of the agent's static instruction.
+- `agent_description`: The agent's description.
+- `model`: The agent's model name. If an LLM agent leaves `model` unset, this
+  is the model inherited from the nearest ancestor agent that sets one.
+- `sub_agents`: The names of the agent's sub-agents.
+
+A key is omitted when it does not apply or its value is empty. In the same
+releases, the view's `agent_instruction` column is `NULL` when the row's
+content is the text representation of a Python callable, such as
+`<function ...>`, instead of instruction text.
 
 In **Kotlin**, the two invocation events carry a summary message instead of an
 empty object: `{"message": "Invocation started"}` and
@@ -2225,10 +2352,16 @@ If events are not appearing in your BigQuery table after deployment:
     exactly after lowercasing and hyphen normalization, so camelCase variants
     such as `clientSecret` or `accessToken` are **not** matched. ADK serializes
     `adk_request_credential` arguments with camelCase aliases, so an
-    `AuthenticatedFunctionTool` OAuth2 flow can still write `client_secret` and
+    `AuthenticatedFunctionTool` OAuth2 flow could write `client_secret` and
     `access_token` values into the `content` column
-    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845),
-    still open). Redaction is not a general data-loss prevention system: a
+    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845)).
+    ADK Python v2.9.0 and later remove the configured OAuth2 client secret from
+    the `adk_request_credential` request, and ADK Python releases after v2.11.0
+    also remove API keys, HTTP Basic passwords, HTTP bearer tokens, and
+    additional HTTP headers from it. Fields that ADK does not remove from that
+    request, such as OAuth2 access tokens, keep their camelCase names and are
+    not matched by built-in redaction; neither are camelCase keys in your own
+    tool arguments. Redaction is not a general data-loss prevention system: a
     secret under an application-specific key or in free-form text can also be
     written to BigQuery.
 
@@ -2278,6 +2411,24 @@ safely rewritten fail closed.
     on raw content. If it raises or returns an unsupported type, Python writes
     `[FORMATTER_FAILED]` instead of the original content and increments the
     `formatter_failed` incident counter.
+
+    A Python `content_formatter` can return `None`, a `str`, `dict`, or `list`
+    (or a subclass of one), or an exact `types.Content`, `types.Part`, or
+    `LlmRequest`. In ADK Python v2.11.0 and later, a formatter failure is also
+    recorded in the row's `error_message`, which names only the exception or
+    return-value class, for example `content_formatter raised ImportError`,
+    `content_formatter raised <subclass of ValueError>`, or
+    `content_formatter returned unsupported type tuple`. If the event already
+    has an `error_message`, such as a `TOOL_ERROR`, that message stays first,
+    followed by a semicolon and the formatter failure. The row's `status` is
+    unchanged, so an otherwise successful event keeps `status` `OK`, but queries
+    that treat any non-null `error_message` as an error still flag the row.
+
+    To debug a formatter that raises, set `debug_content_formatter_errors=True`
+    to append a bounded traceback to the plugin's Python log warning. The
+    traceback can include the unformatted content and reaches every configured
+    log handler, so enable it only where that content may be seen. It is never
+    written to BigQuery.
 
 !!! note "Built-in redaction in Java"
 
@@ -2528,12 +2679,27 @@ call) reconstructs cleanly from BigQuery.
 
     - **`await plugin.flush()`**: Wait for pending events associated with the
       current event loop to finish writing.
-    - **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin,
-      flushing pending events and releasing resources. The optional `timeout`
-      parameter overrides `shutdown_timeout` from the config.
-    - **`await plugin.close()`**: Run the plugin-manager lifecycle contract. It
-      delegates to `shutdown()` and is called automatically when a runner closes
+    - **`await plugin.shutdown(timeout=None, *, close_background_transport=False)`**:
+      Gracefully shut down the plugin, flushing pending events and releasing
+      resources. The optional `timeout` parameter overrides `shutdown_timeout`
+      from the config. If the plugin uses the [shared background
+      writer](#shared-background-writer), shutdown detaches the plugin from that
+      writer and leaves the writer running. Pass
+      `close_background_transport=True` to also drain and stop the shared writer
+      for this plugin's table and credentials.
+    - **`await plugin.close(timeout=None, *, close_background_transport=False)`**:
+      Run the plugin-manager lifecycle contract. It delegates to `shutdown()`
+      with the same arguments and is called automatically when a runner closes
       its plugins.
+    - **`await BigQueryAgentAnalyticsPlugin.close_shared_background_transports(timeout=10.0)`**
+      (Python v2.10.0+): Drain and stop every shared background writer in the
+      process, for example in a standalone script, a process shutdown handler,
+      or a test cleanup fixture. It raises an exception if a writer fails to
+      drain or doesn't finish within `timeout`: the writer's error or a
+      `TimeoutError` when one writer fails, or a `RuntimeError` when several
+      fail. The same operation is available as the module-level function
+      `close_shared_background_transports(timeout=10.0)` in
+      `google.adk.plugins.bigquery_agent_analytics_plugin`.
     - **`await plugin.create_analytics_views()`**: Manually (re-)create all
       per-event-type analytics views. Useful after a schema upgrade or when views
       need to be refreshed.
