@@ -400,6 +400,43 @@ handles the redirection flow, and retries the tool call once authorized.
 
 ![Authentication](../assets/auth_part1.svg)
 
+### Authenticate at a toolset level
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
+</div>
+
+Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
+Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
+If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework performs the following steps:
+
+1. **Pause execution:** Safely halts the current flow.
+2. **Request credentials:** Issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
+
+This approach gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the authentication procedure, ensuring the necessary credentials are resolved before your agent accesses tools in the toolset.
+
+#### How to enable it
+
+To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
+
+```python
+from google.adk.auth import AuthConfig
+from google.adk.tools.base_toolset import BaseToolset
+
+
+class MyAuthenticatedToolset(BaseToolset):
+  async def get_tools(
+      self, readonly_context: Optional[ReadonlyContext] = None
+  ) -> list[BaseTool]:
+    # ADK resolves the credential from get_auth_config() before calling this,
+    # so the tools you return here can rely on it.
+    return []  # Replace with the tools in your toolset.
+
+    return AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    )
+```
 
 ### Handle the interactive OAuth/OIDC flow (client-side)
 
