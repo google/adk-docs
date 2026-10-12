@@ -117,6 +117,6 @@ instead of only reading what it said.
 
 ## Sample
 
-The [`live_workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_workflow)
+The [`workflow` sample](https://github.com/google/adk-python/tree/main/contributing/samples/live/workflow)
 is a complete voice eval you can run: three live agents in a graph workflow, a tool call in
 the middle, and an eval set and `test_config.json` wired up with all three rubric criteria.
