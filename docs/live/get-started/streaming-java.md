@@ -84,7 +84,7 @@ public class ScienceTeacherAgent {
     return LlmAgent.builder()
         .name("science-app")
         .description("Science teacher agent")
-        .model("...") // Pleaase fill in the latest model id for live API
+        .model("...") // Please fill in the latest model id for live API
         .instruction("""
             You are a helpful science teacher that explains
             science concepts to kids and teenagers.
