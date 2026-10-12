@@ -139,11 +139,13 @@ Try: "Prepare a short release announcement. Ask me through Pushary which
 feature to highlight before drafting it."
 
 The question tools return an explicit answer state. Follow `handoffAction`
-when present, otherwise `nextAction`. If a live question times out, poll once
-with `wait_for_answer`. If it remains pending, cancel it before asking in the
-current client. Stop if cancellation returns `handoffAction: "stop"`; otherwise,
-if cancellation returns false, poll once for one second and honor any answer
-that arrived during cancellation. See the
+when present, otherwise `nextAction`. While a question is pending, keep polling
+with `wait_for_answer` and the same correlation ID. A poll ending does not
+expire or cancel the question. Cancel only when the returned handoff asks you
+to move to the current client, or when the answer is no longer needed. If
+cancellation returns `handoffAction: "stop"`, stop. Otherwise, if it returns
+`cancelled: false`, poll once for one second and honor any answer that arrived
+during cancellation. Never treat no answer as approval. See the
 [question lifecycle](https://pushary.com/docs/agents/human-in-the-loop).
 
 These tools collect feedback; registering them does not enforce approval on
