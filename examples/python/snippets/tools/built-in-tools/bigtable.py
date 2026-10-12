@@ -54,8 +54,8 @@ bigtable_toolset = BigtableToolset(
 # Create a wrapped function tool for the agent on top of the built-in
 # `execute_sql` tool in the bigtable toolset.
 # For example, this customized tool can perform a dynamically-built query.
-# `query_tool.execute_sql` is a coroutine function, so the wrapper must be
-# `async def` and `await` it; GoogleTool supports async tool functions.
+# The `query_tool.execute_sql` method is a coroutine function, so the wrapper
+# must use `async def` and `await` it; GoogleTool supports async tool functions.
 async def count_rows_tool(
     table_name: str,
     credentials: Credentials,  # GoogleTool handles `credentials`
