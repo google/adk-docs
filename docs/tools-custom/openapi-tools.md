@@ -106,9 +106,12 @@ dictionary of headers, as shown in the following example:
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
+openapi_spec = {...}  # Loaded from your OpenAPI file.
+
 
 def my_header_provider(context: ReadonlyContext) -> dict[str, str]:
     return {"X-Request-ID": context.invocation_id}
+
 
 toolset = OpenAPIToolset(
     spec_dict=openapi_spec,
@@ -124,6 +127,8 @@ verification for environments with custom CA certificates:
 
 ```python
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+openapi_spec = {...}  # Loaded from your OpenAPI file.
 
 toolset = OpenAPIToolset(
     spec_dict=openapi_spec,
@@ -145,6 +150,8 @@ name collisions when using multiple OpenAPI specs:
 
 ```python
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+openapi_spec = {...}  # Loaded from your OpenAPI file.
 
 toolset = OpenAPIToolset(
     spec_dict=openapi_spec,
