@@ -53,10 +53,10 @@ def simple_after_tool_modifier(
     print(f"[Callback] Args used: {args}")
     print(f"[Callback] Original tool_response: {tool_response}")
 
-    # `tool_response` is whatever the tool function returned, unchanged. ADK does
-    # not wrap it here: a non-dict return is only wrapped in {"result": ...} later,
-    # when the function-response event is built. This tool returns a dict with a
-    # "result" key of its own, so read that key.
+    # The `tool_response` argument contains the raw value returned by the tool function. 
+    # ADK wraps non-dict returns in {"result": ...} only when building the function
+    # response event. This tool returns a dict with its own "result" key
+    # so read that key directly.
     original_result_value = tool_response.get("result", "")
 
     # --- Modification Example ---
