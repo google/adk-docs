@@ -167,7 +167,7 @@ in the following sample code:
     ```
 
 Once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval. Pass the configured `App`
+background each time the session reaches the interval. In Python, pass the configured `App`
 to the runner, as in `Runner(app=app, session_service=...)`; creating the `App`
 alone does not enable compaction.
 
