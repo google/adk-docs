@@ -105,7 +105,6 @@ def get_function_call_auth_config(event: Event) -> AuthConfig:
 
   Raises:
     ValueError: If the 'authConfig' argument cannot be found in the event.
-                (Corrected typo from `contents` to `content` below)
   """
   # ADK serializes the function call arguments with `by_alias=True`, so the
   # argument key is the camelCase alias `authConfig`, not `auth_config`.
