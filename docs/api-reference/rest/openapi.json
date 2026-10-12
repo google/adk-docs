@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.6.0"
+    "version": "2.11.0"
   },
   "paths": {
     "/health": {
@@ -1753,7 +1753,7 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. The display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in `PromptMessage` for prompt management. It is used in the Gemini calls only when server-side tools (`code_execution`, `google_search`, and `url_context`) are enabled. This field is not supported in Gemini API."
+            "description": "Optional. The display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in `PromptMessage` for prompt management. It is used in the Gemini calls only when server-side tools (`code_execution`, `google_search`, and `url_context`) are enabled."
           },
           "mimeType": {
             "anyOf": [
@@ -1982,7 +1982,7 @@
               }
             ],
             "title": "Id",
-            "description": "Optional. The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id. This field is not supported in Vertex AI."
+            "description": "Optional. The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id."
           }
         },
         "additionalProperties": false,
@@ -2127,6 +2127,19 @@
             ],
             "title": "Events",
             "description": "A list of events to initialize the session with."
+          },
+          "options": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options",
+            "description": "Optional configuration options forwarded to the session service."
           }
         },
         "type": "object",
@@ -2276,6 +2289,16 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/TurnCompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "interactionStatus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InteractionStatus"
               },
               {
                 "type": "null"
@@ -2612,6 +2635,16 @@
               }
             ]
           },
+          "interactionStatus": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InteractionStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "finishReason": {
             "anyOf": [
               {
@@ -2832,8 +2865,7 @@
                 "items": {
                   "type": "string"
                 },
-                "type": "array",
-                "uniqueItems": true
+                "type": "array"
               },
               {
                 "type": "null"
@@ -2912,6 +2944,17 @@
               }
             ],
             "title": "Transfertoagent"
+          },
+          "transferReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transferreason"
           },
           "escalate": {
             "anyOf": [
@@ -3077,6 +3120,17 @@
               }
             ],
             "title": "Transfertoagent"
+          },
+          "transferReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transferreason"
           },
           "escalate": {
             "anyOf": [
@@ -3266,7 +3320,7 @@
               }
             ],
             "title": "Id",
-            "description": "Optional. Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`. This field is not supported in Vertex AI."
+            "description": "Optional. Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`."
           }
         },
         "additionalProperties": false,
@@ -3412,7 +3466,7 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. The display name of the file. Used to provide a label or filename to distinguish files. This field is only returned in `PromptMessage` for prompt management. It is used in the Gemini calls only when server side tools (`code_execution`, `google_search`, and `url_context`) are enabled. This field is not supported in Gemini API."
+            "description": "Optional. The display name of the file. Used to provide a label or filename to distinguish files. This field is only returned in `PromptMessage` for prompt management. It is used in the Gemini calls only when server side tools (`code_execution`, `google_search`, and `url_context`) are enabled."
           },
           "fileUri": {
             "anyOf": [
@@ -3536,10 +3590,12 @@
           "MALFORMED_FUNCTION_CALL",
           "IMAGE_SAFETY",
           "UNEXPECTED_TOOL_CALL",
+          "TOO_MANY_TOOL_CALLS",
           "IMAGE_PROHIBITED_CONTENT",
           "NO_IMAGE",
           "IMAGE_RECITATION",
-          "IMAGE_OTHER"
+          "IMAGE_OTHER",
+          "CONTINUATION"
         ],
         "title": "FinishReason",
         "description": "Output only. The reason why the model stopped generating tokens.\n\nIf empty, the model has not stopped generating the tokens."
@@ -4100,7 +4156,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Specifies the types of Google Maps grounding to enable. This field is not supported in Gemini API."
+            "description": "Optional. Specifies the types of Google Maps grounding to enable. Defaults to `places` when unset. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
@@ -5187,6 +5243,17 @@
         "title": "ImageSearch",
         "description": "Image search for grounding and related configurations."
       },
+      "InteractionStatus": {
+        "type": "string",
+        "enum": [
+          "INTERACTION_STATUS_UNSPECIFIED",
+          "IN_PROGRESS",
+          "REQUIRES_ACTION",
+          "IDLE"
+        ],
+        "title": "InteractionStatus",
+        "description": "The different activity states of the live session."
+      },
       "Interval": {
         "properties": {
           "endTime": {
@@ -5456,7 +5523,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "McpServer",
-        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 6. This data type is\nnot supported in Vertex AI."
+        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 7. This data type is\nnot supported in Vertex AI."
       },
       "MediaModality": {
         "type": "string",
@@ -5470,6 +5537,16 @@
         ],
         "title": "MediaModality",
         "description": "The modality that this token count applies to."
+      },
+      "MediaProcessing": {
+        "type": "string",
+        "enum": [
+          "MEDIA_PROCESSING_UNSPECIFIED",
+          "STATIC",
+          "AGENTIC"
+        ],
+        "title": "MediaProcessing",
+        "description": "How the model processes input media for understanding."
       },
       "ModalityTokenCount": {
         "properties": {
@@ -5723,6 +5800,28 @@
               }
             ],
             "description": "Output only. The transcription of the audio part."
+          },
+          "mediaProcessing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaProcessing"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How the model processes this part's media for understanding."
+          },
+          "speechMetadata": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SpeechMetadata"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Extra metadata associated with the part for speech synthesis, such\n      as speaker and style. Only valid when `Part.data` is set to `text`."
           }
         },
         "additionalProperties": false,
@@ -6296,6 +6395,20 @@
               }
             ],
             "title": "Custommetadata"
+          },
+          "serviceTier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ServiceTier"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Servicetier"
           }
         },
         "type": "object",
@@ -6303,7 +6416,8 @@
           "userId",
           "sessionId"
         ],
-        "title": "RunAgentRequest"
+        "title": "RunAgentRequest",
+        "description": "Request body for the /run and /run_sse endpoints."
       },
       "SafetyPolicy": {
         "type": "string",
@@ -6791,6 +6905,17 @@
         "title": "Segment",
         "description": "Segment of the content this support belongs to."
       },
+      "ServiceTier": {
+        "type": "string",
+        "enum": [
+          "flex",
+          "standard",
+          "priority",
+          "deferred"
+        ],
+        "title": "ServiceTier",
+        "description": "Serving tiers the interactions API offers for a model call.\n\nMirrors `google.genai.interactions.ServiceTier` rather than importing it.\nThat type is a `Literal` union with no members to reference, and the module\nit lives in is not otherwise loaded by an ordinary agent, so importing it\nhere would add its cost to every ADK start for the sake of an annotation.\n\nSubclasses `str`, so a member compares and serializes exactly like the\nstring it carries and can be sent to the API as-is. Fields typed with this\nenum also accept a plain string, so a tier the backend adds before ADK\nlearns about it still works.\n\nKept in its own module, like `StreamingMode`, because the config, the\nrequest and the interactions transport are all typed with it."
+      },
       "Session": {
         "properties": {
           "id": {
@@ -6855,6 +6980,38 @@
         ],
         "title": "Session",
         "description": "Represents a series of interactions between a user and agents."
+      },
+      "SpeechMetadata": {
+        "properties": {
+          "speaker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speaker",
+            "description": "The speaker for this part, which must match a `speaker` name in\n      `MultiSpeakerVoiceConfig.speaker_voice_configs`."
+          },
+          "style": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Style",
+            "description": "The style instruction for how the voice should be synthesized\n      (e.g. \"excited, fast-paced\")."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SpeechMetadata",
+        "description": "Extra metadata associated with the part for speech synthesis."
       },
       "StreamableHttpTransport": {
         "properties": {
@@ -7223,6 +7380,30 @@
             ],
             "title": "Customconfigs",
             "description": "Optional. Custom configs for ParallelAiSearch. This field can be used to pass any parameter from the Parallel.ai Search API. See the Parallel.ai documentation for the full list of available parameters and their usage: https://docs.parallel.ai/api-reference/search-beta/search Currently only `source_policy`, `excerpts`, `max_results`, `mode`, `fetch_policy` can be set via this field. For example: { \"source_policy\": { \"include_domains\": [\"google.com\", \"wikipedia.org\"], \"exclude_domains\": [\"example.com\"] }, \"fetch_policy\": { \"max_age_seconds\": 3600 } }"
+          },
+          "enableDataRetention": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabledataretention",
+            "description": "Optional. Deprecated: Use `enable_zero_data_retention` instead. Instructs Vertex Grounding to use Parallel's Zero Data Retention Marketplace product. If this value is \"false\" or omitted, the Parallel Web Search for Grounding standard subscription will be used. If this value is \"true\", the Parallel Web Search for Grounding - ZDR subscription will be used."
+          },
+          "enableZeroDataRetention": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enablezerodataretention",
+            "description": "Optional. Instructs Vertex Grounding to use Parallel's Zero Data Retention Marketplace product. If this value is \"false\" or omitted, the Parallel Web Search for Grounding standard subscription will be used. If this value is \"true\", the Parallel Web Search for Grounding - ZDR subscription will be used."
           }
         },
         "additionalProperties": false,
@@ -7282,7 +7463,8 @@
           "GOOGLE_SEARCH_IMAGE",
           "URL_CONTEXT",
           "GOOGLE_MAPS",
-          "FILE_SEARCH"
+          "FILE_SEARCH",
+          "MEDIA_PROCESSING"
         ],
         "title": "ToolType",
         "description": "The type of tool in the function call."
@@ -7294,6 +7476,7 @@
           "ON_DEMAND",
           "ON_DEMAND_PRIORITY",
           "ON_DEMAND_FLEX",
+          "ON_DEMAND_OFFPEAK",
           "PROVISIONED_THROUGHPUT"
         ],
         "title": "TrafficType",
