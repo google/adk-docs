@@ -203,6 +203,20 @@ and
 [Use an Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
 in the Agent Runtime documentation.
 
+!!! note "Class methods for Go agents"
+    An agent deployed with ADK Go supports the following class methods. Send the
+    `async_*` session methods to the `:query` URL and the streaming methods to
+    the `:streamQuery` URL.
+
+    | Class method | Input |
+    |---|---|
+    | `async_create_session` | `user_id`, optional `state` |
+    | `async_get_session` | `user_id`, `session_id` |
+    | `async_list_sessions` | `user_id` |
+    | `async_delete_session` | `user_id`, `session_id` |
+    | `async_stream_query` | `user_id`, `message`, optional `session_id` |
+    | `streaming_agent_run_with_events` | `request_json`, a JSON-encoded object with `user_id`, `message` as a Content object, and optional `session_id` |
+
 ## Test using Python
 
 You can use Python code for more sophisticated and repeatable testing of your

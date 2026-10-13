@@ -132,6 +132,27 @@ such as:
     ├── go.sum
     └── main.go
     ``` 
+
+    Agent Runtime starts your program with the `agentengine` subcommand, so
+    `main.go` must run your agent with the Agent Engine launcher from
+    `google.golang.org/adk/v2/cmd/launcher/agentengine` instead of
+    `full.NewLauncher()`. Pass it the Agent Runtime resource ID, which the
+    service provides in the `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
+
+    ```go
+    import "google.golang.org/adk/v2/cmd/launcher/agentengine"
+
+    // ...
+
+    l := agentengine.NewLauncher(os.Getenv("GOOGLE_CLOUD_AGENT_ENGINE_ID"))
+    if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
+        log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+    }
+    ```
+
+    For a complete example, see
+    [examples/agentengine](https://github.com/google/adk-go/tree/v2.5.0/examples/agentengine)
+    in the ADK Go repository.
     
 
 
@@ -190,7 +211,17 @@ For `region`, you can find a list of the supported regions on the
     -p, --project_name string       GCP Project Name
     -r, --region string             GCP Region
     -d, --source_dir string         Directory to archive, defaults to current working directory
+        --agent_engine_id string    ID of the Agent Engine instance to update if it exists
+        --mem_deploy                If set to true then memory bank will be deployed too
+        --mem_model string          Name of the model to be used for memory generation
+        --mem_ttl duration          Time-To-Live for memories (default 8760h0m0s)
     ```
+
+    Without `--agent_engine_id`, each deployment creates a new Agent Runtime
+    instance. To redeploy to an existing instance, pass its `RESOURCE_ID` with
+    `--agent_engine_id`. An update replaces only the agent code and class
+    methods. When you create a new instance, you can add `--mem_deploy` to
+    provision a Memory Bank with it.
 
 
 ### Deploy command output
