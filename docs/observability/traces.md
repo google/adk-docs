@@ -95,6 +95,8 @@ maybe_set_otel_providers([gcp_exporters])
 
 In Go, use the `google.golang.org/adk/v2/telemetry` package to create the OpenTelemetry providers, then register them globally so ADK uses them.
 
+If you run your agent with the ADK Go launcher, you don't need this setup: the launcher already calls `telemetry.New` and registers the providers globally, reading the same environment variables. Pass extra options through `launcher.Config.TelemetryOptions`, and use the `-otel_to_cloud` flag for Google Cloud export.
+
 #### OTLP export setup
 
 `telemetry.New` adds an OTLP HTTP span exporter when `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` or `OTEL_EXPORTER_OTLP_ENDPOINT` is set, and reads `OTEL_SERVICE_NAME` and `OTEL_RESOURCE_ATTRIBUTES` for the resource:

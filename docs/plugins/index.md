@@ -1219,19 +1219,21 @@ application shuts down. ADK Go doesn't currently enforce
 `runner.PluginConfig.CloseTimeout`, so bound any slow cleanup inside `CloseFunc`
 itself.
 
-```go
-p, err := plugin.New(plugin.Config{
-	Name: "my_plugin",
-	CloseFunc: func() error {
-		// Flush buffers and release clients here.
-		return nil
-	},
-})
-if err != nil {
-	log.Fatal(err)
-}
-defer p.Close()
-```
+=== "Go"
+
+    ```go
+    p, err := plugin.New(plugin.Config{
+    	Name: "my_plugin",
+    	CloseFunc: func() error {
+    		// Flush buffers and release clients here.
+    		return nil
+    	},
+    })
+    if err != nil {
+    	log.Fatal(err)
+    }
+    defer p.Close()
+    ```
 
 ## Next steps
 
