@@ -123,6 +123,44 @@ func newGraphHITLWorkflow() (agent.Agent, error) {
 
 // --8<-- [end:graph-hitl-get-started]
 
+// --8<-- [start:graph-hitl-handoff]
+// newGraphHITLHandoffWorkflow demonstrates the handoff HITL pattern, which
+// matches the Python example. step1Node emits a RequestInput event and pauses
+// the workflow. RerunOnResume is left unset, so step1Node does not run again
+// on resume. The human's reply becomes step1Node's output and flows to
+// step2Node as its input.
+func newGraphHITLHandoffWorkflow() (agent.Agent, error) {
+	step1Node := workflow.NewEmittingFunctionNode[any, string]("step1",
+		func(ctx agent.Context, _ any, emit func(*session.Event) error) (string, error) {
+			// An empty InterruptID is replaced with a generated UUID.
+			if err := emit(workflow.NewRequestInputEvent(ctx, session.RequestInput{
+				Message: "Enter a number:",
+			})); err != nil {
+				return "", err
+			}
+			return "", workflow.ErrNodeInterrupted
+		},
+		workflow.NodeConfig{},
+	)
+
+	// step2Node takes any, because a reply that parses as JSON, such as "42",
+	// arrives decoded (here as a float64).
+	step2Node := workflow.NewFunctionNode("step2",
+		func(_ agent.Context, input any) (string, error) {
+			return fmt.Sprintf("You entered: %v", input), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "root_agent",
+		Description: "Pauses for a number from the user, then hands it to step2.",
+		Edges:       workflow.Chain(workflow.Start, step1Node, step2Node),
+	})
+}
+
+// --8<-- [end:graph-hitl-handoff]
+
 // --8<-- [start:graph-hitl-with-payload]
 // ItineraryItem represents a single activity in a travel plan.
 type ItineraryItem struct {
@@ -314,6 +352,12 @@ func main() {
 		log.Fatalf("Failed to create graph HITL workflow: %v", err)
 	}
 	log.Printf("Created graph HITL workflow: %s", graphAgent.Name())
+
+	handoffAgent, err := newGraphHITLHandoffWorkflow()
+	if err != nil {
+		log.Fatalf("Failed to create graph HITL handoff workflow: %v", err)
+	}
+	log.Printf("Created graph HITL handoff workflow: %s", handoffAgent.Name())
 
 	itineraryAgent, err := newItineraryReviewWorkflow()
 	if err != nil {

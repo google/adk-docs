@@ -73,6 +73,15 @@ the input process more predictable and reliable.
     --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-get-started"
     ```
 
+    For the handoff pattern that the Python example uses, emit the request with
+    `workflow.NewRequestInputEvent`, return `workflow.ErrNodeInterrupted`, and
+    leave `RerunOnResume` unset. The node does not run again. The reply becomes
+    its output and is passed to the next node:
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-handoff"
+    ```
+
 ## Configuration options
 
 === "Python"
@@ -121,6 +130,9 @@ the input process more predictable and reliable.
     -   **`Payload`** (`any`): Optional structured data sent alongside the
         prompt so the client can render additional context. Equivalent to
         Python's `payload` parameter.
+    -   **`ResponseSchema`** (`*jsonschema.Schema`): Optional JSON schema the
+        reply must conform to. Equivalent to Python's `response_schema`
+        parameter.
 
     `workflow.NodeConfig.RerunOnResume` controls what happens on resume:
 
@@ -130,12 +142,12 @@ the input process more predictable and reliable.
     -   **`&false`** or **`nil`** (leaf default): the reply is routed to the
         node's successor as input, bypassing the interrupted node.
 
-    !!! note "Note: Structured response from the client"
+    !!! note "Note: Response validation"
 
-        ADK Go does not automatically parse or validate the structure of the
-        human's reply payload. If your workflow needs structured feedback,
-        include a UI or a downstream agent node to validate the response before
-        acting on it.
+        When `ResponseSchema` is set, ADK Go validates the reply against it on
+        resume. A reply that does not match fails with
+        `workflow.ErrInvalidResumeResponse`, and the node keeps waiting, so the
+        client can send a corrected reply.
 
 !!! note "Note: Response schema input limitations"
 
