@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512">
+  <!-- Pruned / inactive branches in Google Slate (#9aa0a6) -->
+  <path d="M168,256 L264,256 C296,256 304,128 352,128 L392,128" fill="none" stroke="#9aa0a6" stroke-width="28" stroke-linecap="round"/>
+  <path d="M168,256 L264,256 C296,256 304,384 352,384 L392,384" fill="none" stroke="#9aa0a6" stroke-width="28" stroke-linecap="round" stroke-dasharray="28 28"/>
+  <circle cx="416" cy="128" r="36" fill="none" stroke="#9aa0a6" stroke-width="28"/>
+  <circle cx="416" cy="384" r="36" fill="none" stroke="#9aa0a6" stroke-width="28"/>
+  <!-- Active session-locked route in Google Blue (#4285f4) -->
+  <path d="M152,256 L364,256" fill="none" stroke="#4285f4" stroke-width="32" stroke-linecap="round"/>
+  <path d="M340,208 L404,256 L340,304" fill="none" stroke="#4285f4" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="112" cy="256" r="48" fill="#4285f4"/>
+  <circle cx="428" cy="256" r="36" fill="#4285f4"/>
+</svg>
