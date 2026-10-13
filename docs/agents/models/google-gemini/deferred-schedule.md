@@ -7,8 +7,10 @@
 Agent workloads have different latency needs. An interactive assistant must
 answer immediately, but a summarization job, a bulk evaluation run, or a
 document-processing pipeline can wait for capacity. Deferred scheduling lets
-ADK agents queue those model calls to run on off-peak capacity instead
-of competing for interactive capacity.
+ADK agents queue the model calls for those workloads to run on off-peak
+capacity at a
+[discounted rate](https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing),
+instead of competing for interactive capacity.
 
 You can request deferred scheduling per run, using the `service_tier` setting
 of `RunConfig`. The setting is part of the run configuration rather than the
@@ -94,8 +96,8 @@ standard run.
 
     The `run_async()` method yields no events while the request sits in the
     queue. How long that takes depends on backend load, and ADK applies no
-    upper bound. In a web UI or a terminal, the delay looks like a hang. Show a
-    progress indicator, or set a
+    upper bound. In a web UI or a terminal, the application appears
+    unresponsive during the delay. Show a progress indicator, or set a
     [client deadline](#set-a-client-side-deadline).
 
 To confirm that the tier took effect, check your application logs for these
@@ -118,7 +120,8 @@ instead of a result.
 
 ADK then waits for that result, checking the queued work with exponential
 backoff and absorbing transient read failures until it reaches a final status.
-It converts that result to a normal response event and yields it. This loop is
+It converts that result to a normal response event and yields it. If 5
+consecutive reads fail, ADK raises the error from the last read. This loop is
 internal: it does not surface interaction IDs, and you do not need to write any
 retrieval code. It does add a few seconds of polling delay on top of the queue
 wait, so deferred scheduling should not be used for short, latency-sensitive
@@ -145,7 +148,7 @@ model call in a run:
 The `ServiceTier` enum defines the following tiers:
 
 *   `ServiceTier.DEFERRED`: Queues the call to run on off-peak capacity. The
-    call waits for room instead of failing when capacity is tight. No other
+    call waits for room instead of failing when capacity is limited. No other
     tier changes how ADK executes the request, and it cannot be combined with
     streaming.
 *   `ServiceTier.FLEX`: Best-effort capacity at a lower cost, with no latency
@@ -160,10 +163,6 @@ The string form also lets you use a tier the backend supports before ADK
 defines a constant for it.
 
 ## Advanced usage
-
-The following sections describe how to bound the wait time for a deferred run
-with a client-side deadline and how to request deferred scheduling when serving
-an agent over HTTP.
 
 ### Set a client-side deadline {#set-a-client-side-deadline}
 
@@ -190,20 +189,21 @@ backend load. To cap the total elapsed time, wrap the run in an
     )
     run_config = RunConfig(service_tier=ServiceTier.DEFERRED)
 
-    try:
-      async with asyncio.timeout(300):
-        async for event in runner.run_async(
-            user_id='user_123',
-            session_id=session.id,
-            new_message=message,
-            run_config=run_config,
-        ):
-          if event.content and event.content.parts:
-            for part in event.content.parts:
-              if part.text:
-                print(part.text)
-    except TimeoutError:
-      logger.error('Deferred run exceeded the 300 second client deadline.')
+    async def run_with_deadline(runner, session) -> None:
+      try:
+        async with asyncio.timeout(300):
+          async for event in runner.run_async(
+              user_id='user_123',
+              session_id=session.id,
+              new_message=message,
+              run_config=run_config,
+          ):
+            if event.content and event.content.parts:
+              for part in event.content.parts:
+                if part.text:
+                  print(part.text)
+      except TimeoutError:
+        logger.error('Deferred run exceeded the 300 second client deadline.')
     ```
 
 !!! danger "Client deadlines do not cancel requests"
@@ -270,9 +270,6 @@ The following limitations apply to deferred scheduling:
     the next run creates a new interaction.
 
 ## Troubleshooting
-
-The following sections describe some common issues when using deferred
-scheduling, and how to resolve them.
 
 ### ADK ignores the tier and the run still succeeds
 
