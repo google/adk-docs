@@ -124,13 +124,27 @@ The two APIs support the same features, with these differences:
 - Structured output via `OutputSchema` (JSON schema)
 - Reasoning models (e.g. o-series), including reasoning-token accounting
 - Token logprobs
+- Tool choice via `ToolConfig.FunctionCallingConfig`: the `AUTO`, `NONE`, and `ANY` modes, optionally limited to `AllowedFunctionNames`
+- Processing tier via `ServiceTier`: `flex` and `priority` select the OpenAI tiers of the same name, and `standard` selects the default tier
+- Request timeout via `HTTPOptions.Timeout`, which bounds the whole call, including retries and, when streaming, the full stream. `HTTPOptions.Headers` is ignored. To send extra headers to OpenAI, use `ClientConfig.Options`.
 
 ## Limitations
 
 - **Text only** — multimodal input (images, audio, files) is not supported.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
-- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports.
+- **Function tools don't use strict mode** — tools are sent with OpenAI strict schema validation off, so optional parameters stay optional, but tool-call arguments aren't guaranteed to match the declared schema. Tools built with `functiontool` validate arguments against their input schema. Other tools should validate their own input.
+- **Reasoning isn't carried across turns** — reasoning from earlier turns isn't sent back to the model on either API, so it informs only the turn that produced it. If a later turn needs a conclusion, have the model state it in its answer.
+- **Unsupported `GenerateContentConfig` fields return an error** rather than being silently ignored:
+    - `TopK`, `CandidateCount` above one, `Labels`, `SafetySettings`, and a `ResponseMIMEType` other than `text/plain` or `application/json` each return their own error, such as `openaimodel.ErrTopKNotSupported`.
+    - `CachedContent`, `ResponseModalities`, `MediaResolution`, `SpeechConfig`, `AudioTimestamp`, `ImageConfig`, `RoutingConfig`, `ModelSelectionConfig`, `ModelArmorConfig`, `EnableEnhancedCivicAnswers`, `AudioTranscriptionConfig`, and every `HTTPOptions` field except `Timeout` and `Headers` (`BaseURL`, `BaseURLResourceScope`, `APIVersion`, `ExtraBody`, `ExtrasRequestProvider`, and `RetryOptions`) return `openaimodel.ErrUnsupportedConfigField`, with the field name in the message. So do an unknown `ServiceTier` and a zero or negative `HTTPOptions.Timeout`.
+    - The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports.
+
+## Incomplete and failed responses
+
+On the Responses API, when a turn is cut short but still returns content, for example by a content filter, `FinishReason` is `SAFETY` or `OTHER`, and `CustomMetadata[openaimodel.FinishMessageKey]` (`"openai_finish_message"`) holds OpenAI's own reason, such as `content_filter`. A turn with no content reports `SAFETY` or `OTHER` in `ErrorCode` and OpenAI's reason in `ErrorMessage` instead. ADK's REST server doesn't include `CustomMetadata` in events, so ADK Web shows only the `FinishReason`. On the Chat Completions API, a content filter sets `FinishReason` to `SAFETY` with no further metadata.
+
+When the Responses API reports a response as failed, which arrives as HTTP 200, the model returns an error that wraps `openaimodel.ErrResponseFailed` and includes the response ID, error code, and message when OpenAI provides them. Check for it with `errors.Is`.
 
 ## Configuration options
 
