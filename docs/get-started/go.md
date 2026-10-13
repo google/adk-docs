@@ -3,7 +3,7 @@
 This guide shows you how to get up and running with Agent Development Kit
 for Go. Before you start, make sure you have the following installed:
 
-*   Go 1.25 or later
+*   Go 1.26.6 or later (required by ADK Go v2.3.0 and later)
 *   ADK Go v2.0.0 or later
 
 !!! tip "What's new in ADK Go 2.0"

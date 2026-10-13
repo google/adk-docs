@@ -56,7 +56,8 @@ across supported languages. For a guided introduction, start with the
 
 === "Go"
 
-    **Prerequisites:** Go 1.25 or later is required for ADK Go v2.0.0.
+    **Prerequisites:** Go 1.26.6 or later is required for ADK Go v2.3.0 and
+    later. ADK Go v2.0.0 requires Go 1.25 or later.
 
     **Create a new Go module**
 

@@ -361,7 +361,7 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
 
         ```dockerfile title="Dockerfile"
         # Stage 1: Build the Go binary
-        FROM golang:1.25 AS builder
+        FROM golang:1.26 AS builder
         WORKDIR /app
 
         COPY go.mod go.sum ./

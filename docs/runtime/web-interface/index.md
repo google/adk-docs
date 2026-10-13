@@ -201,7 +201,7 @@ browser to use the web interface:
     !!! note "Go flags differ from Python/TypeScript"
 
         The Go web launcher does not use the same flags as `adk web` in Python
-        or TypeScript. Options like `--host`, `--session_service_uri`,
+        or TypeScript. Options like `--session_service_uri`,
         `--artifact_service_uri`, and `--reload` are not available. Session and
         artifact services are configured in Go code when constructing the
         `launcher.Config`, not via command-line flags.
@@ -213,21 +213,35 @@ browser to use the web interface:
 
     | Flag | Description | Default |
     |------|-------------|---------|
+    | `-host` | Host binding address. Use `0.0.0.0` to listen on all interfaces, for example inside a container | `127.0.0.1` |
     | `-port` | Port for the HTTP server | `8080` |
     | `-write-timeout` | Timeout for writing HTTP responses | `15s` |
     | `-read-timeout` | Timeout for reading HTTP requests | `15s` |
     | `-idle-timeout` | Keep-alive idle connection timeout | `60s` |
     | `-shutdown-timeout` | Graceful shutdown wait time | `15s` |
     | `-otel_to_cloud` | Export OpenTelemetry data to GCP | `false` |
+    | `-h2c` | Serve cleartext HTTP/2 (h2c) with prior knowledge. Don't expose it to untrusted networks | `false` |
+    | `-max_request_body_size` | Maximum request body size in bytes. Larger requests are rejected with HTTP 400. When set, it overrides `MaxPayloadSize` in `launcher.Config` | 10 MiB |
 
     **`api` subcommand flags** (passed after `api`):
 
     | Flag | Description | Default |
     |------|-------------|---------|
-    | `-webui_address` | WebUI origin allowed for CORS | `localhost:8080` |
+    | `-webui_address` | WebUI origin as seen from the browser. It is the allowed CORS origin, and other cross-origin browser requests are refused with HTTP 403. `*` allows any origin and turns the check off | `localhost:8080` |
     | `-path_prefix` | URL path prefix for the REST API | `/api` |
     | `-sse-write-timeout` | Timeout for SSE (streaming) responses | `120s` |
     | `-trace_capacity` | Max in-memory traces to retain | `10000` |
+    | `-include_debug_api` | Serve the debug trace and agent graph endpoints. Don't enable it in production | `false` |
+
+    The web UI's Traces and agent structure panels stay empty unless you pass
+    `-include_debug_api` after `api`.
+
+    The `-host` and `-webui_address` values also protect the server against DNS
+    rebinding. When `-host` is a loopback address, requests whose `Host` header
+    is neither loopback nor the host in `-webui_address` are refused with HTTP
+    403. If you embed the REST API with `adkrest.NewServer` instead of the
+    launcher, set the `AllowedOrigins` and `BindHost` fields of
+    `adkrest.ServerConfig` to get the same checks.
 
     **`webui` subcommand flags** (passed after `webui`):
 

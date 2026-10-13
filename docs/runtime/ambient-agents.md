@@ -210,6 +210,12 @@ When a trigger endpoint receives an event, it:
     go run event_processing_agent.go web api pubsub
     ```
 
+    The Go server listens on port 8080 and serves trigger endpoints under the
+    `/api` path prefix, which you can change with the `pubsub` and `eventarc`
+    `-path_prefix` flag. The app name is the agent's name, `event_processor`.
+    In the following request, use
+    `http://localhost:8080/api/apps/event_processor/trigger/pubsub` as the URL.
+
 **2. Send a test event:**
 
 ```bash
@@ -383,7 +389,7 @@ during bursts of events.
 
     | Setting | Default | Flag |
     | :------ | :------ | :------------------- |
-    | Max concurrent invocations | 10 | `--trigger_max_concurrent_runs` |
+    | Max concurrent invocations | 100 | `--trigger_max_concurrent_runs` |
 
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
@@ -423,7 +429,7 @@ request is retried with exponential backoff and jitter.
     | :------ | :------ | :------------------- |
     | Max retry attempts | 3 | `--trigger_max_retries` |
     | Base backoff delay | 1.0s | `--trigger_base_delay` |
-    | Max backoff delay | 30.0s | `--trigger_max_delay` |
+    | Max backoff delay | 10.0s | `--trigger_max_delay` |
 
 If all retries are exhausted, the endpoint returns HTTP 500, signaling
 Pub/Sub or Eventarc to retry delivery at a higher level.
@@ -510,17 +516,24 @@ deploying ambient agents with trigger endpoints.
 
 === "Go"
 
-    Deploy your agent to Cloud Run with triggers enabled using the corresponding trigger flag (all the settings are prefixed with trigger type)
+    Deploy your agent to Cloud Run with the `adkgo` CLI, enabling triggers with the corresponding trigger flag (all the settings are prefixed with trigger type)
 
     ```bash
-    adk deploy cloud_run \
-      --project=$GOOGLE_CLOUD_PROJECT \
-      --region=$GOOGLE_CLOUD_LOCATION \
+    ./adkgo deploy cloudrun \
+      -p $GOOGLE_CLOUD_PROJECT \
+      -r $GOOGLE_CLOUD_LOCATION \
+      -s $SERVICE_NAME \
+      -e $AGENT_PATH \
       --pubsub \
       --pubsub_max_concurrent_runs=5 \
       --eventarc \
       --eventarc_max_concurrent_runs=5
     ```
+
+    In Go, trigger endpoints are served under the `/api` path prefix, so
+    point push subscriptions and Eventarc triggers at
+    `/api/apps/{app_name}/trigger/pubsub` and
+    `/api/apps/{app_name}/trigger/eventarc`.
 
 After deployment, connect the appropriate GCP infrastructure to your agent's
 trigger endpoint:
