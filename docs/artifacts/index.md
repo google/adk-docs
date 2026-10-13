@@ -342,7 +342,11 @@ Understanding artifacts involves grasping a few key components: the service that
 * **Retrieval:**
   * `load_artifact(..., version=None)` (default): Retrieves the *latest* available version of the artifact.
   * `load_artifact(..., version=N)`: Retrieves the specific version `N`.
-* **Listing Versions:** The `list_versions` method (on the service, not context) can be used to find all existing version numbers for an artifact.
+* **Listing Versions:** The `list_versions` method (on the service, not context)
+  can be used to find all existing version numbers for an artifact. In Go, call
+  `Versions` on the `artifact.Service` to list version numbers, and
+  `GetArtifactVersion` to get the `ArtifactVersion` metadata of one version, or
+  of the latest version when `Version` is 0.
 
 ### Namespacing (Session vs. User)
 

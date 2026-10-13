@@ -317,20 +317,21 @@ the storage backend that best suits your needs:
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/session"
+    import "google.golang.org/adk/v2/session/vertexai"
 
-    // 2. VertexAIService
     // Before running, ensure your environment is authenticated:
     // gcloud auth application-default login
-    // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-    // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
 
-    modelName := "gemini-flash-latest" // Replace with your desired model
-    vertexService, err := session.VertexAIService(ctx, modelName)
+    sessionService, err := vertexai.NewSessionService(ctx, vertexai.VertexAIServiceConfig{
+        ProjectID: "your-gcp-project-id",
+        Location:  "us-central1",
+        // The numeric reasoning engine ID. If you leave it empty, the service
+        // reads the engine from the app name of each call, which must then be
+        // the numeric ID or the full reasoning engine resource name.
+        ReasoningEngine: "1234567890",
+    })
     if err != nil {
-      log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-    } else {
-      fmt.Println("Successfully initialized VertexAIService.")
+        log.Fatal(err)
     }
     ```
 
@@ -403,7 +404,10 @@ For more information on connecting to Google Cloud from ADK agents, see
 * **Persistence:** Yes. Data survives application restarts.
 * **Requires:** A configured database. In Python, also the `db` extra,
   installed with `pip install google-adk[db]`. In Go, a
-  [GORM](https://gorm.io/) driver for your database.
+  [GORM](https://gorm.io/) driver for your database. Go also supports
+  Spanner. If your application already has a `*gorm.DB` connection, pass it to
+  `database.NewSessionServiceFromDB` (Go v2.4.0 and later) instead of opening
+  a new one.
 * **Best for:** Applications needing reliable, persistent storage that you
   manage yourself.
 
@@ -455,8 +459,8 @@ For more information on connecting to Google Cloud from ADK agents, see
 
 #### Concurrency and locking
 
-The `DatabaseSessionService` ensures data integrity during concurrent operations
-through a two-tiered locking architecture:
+In Python, the `DatabaseSessionService` ensures data integrity during concurrent
+operations through a two-tiered locking architecture:
 
 * **In-Process locking:** The service uses an internal, in-process lock to
   serialize `append_event` calls for the same session. This prevents race
@@ -467,12 +471,21 @@ through a two-tiered locking architecture:
   when multiple processes or replicas try to update the same session
   simultaneously.
 
+In Go, the session service uses neither lock. Each `AppendEvent` call runs in a
+single database transaction that reads the stored session and compares its last
+update time with that of the session you pass. If another write committed after
+you fetched the session, the call fails with a `stale session error`. The event
+is not saved to the database, but it has already been added to the session
+object you passed, so fetch the session again with `Get` before you retry. The
+check does not lock the row, so two writes that overlap in time can both pass
+it and both succeed.
+
 !!! warning "Async driver requirement"
 
-    `DatabaseSessionService` requires an async database driver. When using
-    SQLite, you must use `sqlite+aiosqlite` instead of `sqlite` in your
-    connection string. For other databases (PostgreSQL, MySQL), ensure you're
-    using an async-compatible driver, such as `asyncpg` for PostgreSQL,
+    In Python, `DatabaseSessionService` requires an async database driver.
+    When using SQLite, you must use `sqlite+aiosqlite` instead of `sqlite` in
+    your connection string. For other databases (PostgreSQL, MySQL), ensure
+    you're using an async-compatible driver, such as `asyncpg` for PostgreSQL,
     `aiomysql` for MySQL.
 
 !!! note "Session database schema change in ADK Python v1.22.0"
