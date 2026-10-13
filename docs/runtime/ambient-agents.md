@@ -211,9 +211,9 @@ When a trigger endpoint receives an event, it:
     ```
 
     The Go server listens on port 8080 and serves trigger endpoints under the
-    `/api` path prefix, which you can change with the `pubsub` and `eventarc`
-    `-path_prefix` flag. The app name is the agent's name, `event_processor`.
-    In the following request, use
+    `/api` path prefix. The `pubsub` and `eventarc` subcommands each have their
+    own `-path_prefix` flag to change it. The app name is the agent's name,
+    `event_processor`. In the following request, use
     `http://localhost:8080/api/apps/event_processor/trigger/pubsub` as the URL.
 
 **2. Send a test event:**
@@ -391,6 +391,12 @@ during bursts of events.
     | :------ | :------ | :------------------- |
     | Max concurrent invocations | 100 | `--trigger_max_concurrent_runs` |
 
+    !!! note "Pub/Sub triggers in ADK Go v2.3.0 to v2.5.0"
+
+        ADK Go v2.3.0 through v2.5.0 don't apply
+        `--trigger_max_concurrent_runs` to Pub/Sub triggers, so Pub/Sub events
+        run without a concurrency limit. Eventarc triggers apply the limit.
+
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
 multiple Cloud Run instances, each instance maintains its own independent
@@ -406,7 +412,7 @@ semaphore.
 === "Go"
 
     ```bash
-    go run event_processing_agent.go web api pubsub --trigger_max_concurrent_runs=5
+    go run event_processing_agent.go web api eventarc --trigger_max_concurrent_runs=5
     ```
 
 ### Automatic retry with backoff
@@ -516,16 +522,18 @@ deploying ambient agents with trigger endpoints.
 
 === "Go"
 
-    Deploy your agent to Cloud Run with the `adkgo` CLI, enabling triggers with the corresponding trigger flag (all the settings are prefixed with trigger type)
+    Deploy your agent to Cloud Run with the `adkgo` CLI. Enable each trigger
+    with its own flag. Trigger settings take the trigger type as a prefix, for
+    example `--eventarc_max_concurrent_runs`. Pass the path to your agent's
+    `main` Go file, not a directory, with `-e`:
 
     ```bash
     ./adkgo deploy cloudrun \
       -p $GOOGLE_CLOUD_PROJECT \
       -r $GOOGLE_CLOUD_LOCATION \
       -s $SERVICE_NAME \
-      -e $AGENT_PATH \
+      -e ./main.go \
       --pubsub \
-      --pubsub_max_concurrent_runs=5 \
       --eventarc \
       --eventarc_max_concurrent_runs=5
     ```

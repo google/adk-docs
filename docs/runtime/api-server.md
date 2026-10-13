@@ -396,9 +396,9 @@ Sessions store the state and event history for a specific user's interaction wit
 !!! note "Go: available in v2.4.0 and later"
 
     The Go ADK REST API server supports this endpoint in ADK Go v2.4.0 and
-    later. In Go, `stateDelta` can only change session-scoped keys. A key with
-    the `app:`, `user:`, or `temp:` prefix is rejected with HTTP 400 unless
-    its value is unchanged.
+    later. In Go, the `stateDelta` in this endpoint's request body can only
+    change session-scoped keys. The server rejects a key with the `app:`,
+    `user:`, or `temp:` prefix with HTTP 400 unless its value is unchanged.
 
 Updates an existing session.
 
