@@ -420,6 +420,45 @@ requirements:
     feature, see
     [Resume stopped agents](/runtime/resume/).
 
+If you call the ADK runner directly from Go, the `toolconfirmation` package
+provides the request name as `toolconfirmation.FunctionCallName`, and
+`toolconfirmation.OriginalCallFrom` returns the tool call that a confirmation
+request wraps:
+
+=== "Go"
+
+    ```go
+    // confirmationReply returns a message that approves the first confirmation
+    // request in event, or nil if event has none. Pass the message to the
+    // runner's Run method to continue the agent run.
+    func confirmationReply(event *session.Event) (*genai.Content, error) {
+        if event.Content == nil {
+            return nil, nil
+        }
+        for _, part := range event.Content.Parts {
+            fc := part.FunctionCall
+            if fc == nil || fc.Name != toolconfirmation.FunctionCallName {
+                continue
+            }
+            original, err := toolconfirmation.OriginalCallFrom(fc)
+            if err != nil {
+                return nil, err
+            }
+            fmt.Printf("Approving %s(%v)\n", original.Name, original.Args)
+
+            return &genai.Content{
+                Role: string(genai.RoleUser),
+                Parts: []*genai.Part{{FunctionResponse: &genai.FunctionResponse{
+                    ID:       fc.ID,
+                    Name:     toolconfirmation.FunctionCallName,
+                    Response: map[string]any{"confirmed": true},
+                }}},
+            }, nil
+        }
+        return nil, nil
+    }
+    ```
+
 ## Known limitations {#known-limitations}
 
 The tool confirmation feature has the following limitations:
