@@ -190,7 +190,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-=== "OAuth2"
+=== "OAuth2 (Authorization Code)"
 
       Create a tool requiring the OAuth 2.0 authorization code flow for interactive authentication on behalf of a human user:
 
@@ -230,9 +230,9 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-=== "Client Credentials Grant Type"
+=== "OAuth2 (Client Credentials)"
 
-      Create a tool requiring the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. This flow uses a `client_id` and `client_secret` to obtain an access token:
+      Create a tool that uses the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. Supply a `client_id` and `client_secret` to obtain an access token:
 
       ```python
       from fastapi.openapi.models import (
@@ -252,7 +252,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       # Define the OAuth2 scheme with the client credentials flow.
       flows = OAuthFlows(
           clientCredentials=OAuthFlowClientCredentials(
-              tokenUrl="https://example.com/token",
+              tokenUrl="https://example.com/token",  # Replace with your authorization server's token endpoint.
               scopes={"read:weather": "Read weather data"},
           )
       )
@@ -279,7 +279,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "Service Account"
 
-      Create a tool requiring a Service Account to authenticate as a non-human identity, using a JSON key or Application Default Credentials:
+      Create a tool that authenticates as a non-human identity using a Service Account JSON key or Application Default Credentials:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
