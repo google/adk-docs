@@ -80,7 +80,7 @@ The core of any custom agent is the method where you define its unique asynchron
 
 === "Go"
 
-    In Go, you implement the `Run` method as part of a struct that satisfies the `agent.Agent` interface. The actual logic is typically a method on your custom agent struct.
+    In Go, you create a custom agent by passing a `Run` function to `agent.New` in an `agent.Config`. You can't implement the `agent.Agent` interface directly, because it includes an unexported method. The actual logic is typically a method on your custom agent struct, which you pass as `Run`.
 
     *   **Signature:** `Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error]`
     *   **Iterator:** The `Run` method returns an iterator (`iter.Seq2`) that yields events and errors. This is the standard way to handle streaming results from an agent's execution.

@@ -209,6 +209,9 @@ tells the agent:
     agents in your system, use `GlobalInstructionPlugin` instead of 
     the deprecated `global_instruction` parameter.
 
+    Go has no `GlobalInstructionPlugin`. In Go, set `GlobalInstruction` or
+    `GlobalInstructionProvider` on `llmagent.Config`.
+
 ## Equip the agent with tools
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
@@ -516,6 +519,11 @@ schema definitions.
     response string under `output_key` instead of the parsed object (see
     [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
+!!! note "`OutputKey` in Go"
+
+    In Go, ADK writes `OutputKey` to the final event's state delta for you, so
+    you don't need to set it in a callback.
+
 === "Python"
 
     The input and output schema is typically a `Pydantic` BaseModel.
@@ -696,11 +704,20 @@ Control whether the agent receives the prior conversation history.
     a workflow node. For more information on composing agents in graph-based
     workflows, see [Graph-based agent workflows](/graphs/).
 
+    An agent that runs as a `ModeSingleTurn` node, such as a workflow node,
+    sees only the current turn, as if `IncludeContents` were
+    `IncludeContentsNone`. Since ADK Go v2.4.0, you can keep the conversation
+    history by setting `IncludeContents` to `llmagent.IncludeContentsDefault`
+    explicitly. Earlier versions ignore that setting for single-turn nodes.
+
 ### Configure a planner
 
 <div class="language-support-tag" title="">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
+
+Go has no planner. In Go, configure the model's thinking directly with
+`ThinkingConfig` in `llmagent.Config.GenerateContentConfig`.
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step
 reasoning and planning before execution. There are two main planners:
@@ -960,6 +977,7 @@ the following:
   v2.0.0, use `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
 - **Multi-agent systems:** Advanced strategies for agent interaction, including
   agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`),
-  and consistent identity and rules for every agent in your app (`GlobalInstructionPlugin`). See [Multi-agent
+  and consistent identity and rules for every agent in your app
+  (`GlobalInstructionPlugin`, or `GlobalInstruction` in Go). See [Multi-agent
   workflows](/workflows/) and [collaborative agent
   teams](/workflows/collaboration/).
