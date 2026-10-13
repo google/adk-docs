@@ -361,7 +361,7 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
 
         ```dockerfile title="Dockerfile"
         # Stage 1: Build the Go binary
-        FROM golang:1.25 AS builder
+        FROM golang:1.26 AS builder
         WORKDIR /app
 
         COPY go.mod go.sum ./
@@ -382,10 +382,10 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
         ```
 
         The `-host 0.0.0.0` flag makes the server listen on all network
-        interfaces so that the Kubernetes Service can reach it. Starting with ADK
-        Go v2.5.0, the web launcher listens only on `127.0.0.1` by default. Earlier
-        versions listen on all interfaces and don't accept the `-host` flag, so
-        remove it if you use one of them.
+        interfaces so that the Kubernetes Service can reach it. Starting with
+        ADK Go v2.5.0, the web launcher listens only on `127.0.0.1` by default.
+        ADK Go v2.0.0 through v2.4.0 listen on all interfaces and don't accept
+        the `-host` flag, so remove it if you use one of those versions.
 
 ### Build the container image
 

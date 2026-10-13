@@ -133,8 +133,10 @@ such as:
     └── main.go
     ``` 
 
-    Agent Runtime starts your program with the `agentengine` subcommand, so
-    `main.go` must run your agent with the Agent Engine launcher from
+    The container that `adkgo deploy agentengine` builds starts your program
+    with `web -host 0.0.0.0 -port 8080 agentengine`, where `agentengine` is a
+    `web` sublauncher keyword. Your `main.go` must therefore run your agent with
+    the Agent Engine launcher from
     `google.golang.org/adk/v2/cmd/launcher/agentengine` instead of
     `full.NewLauncher()`. Pass it the Agent Runtime resource ID, which the
     service provides in the `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
@@ -219,9 +221,8 @@ For `region`, you can find a list of the supported regions on the
 
     Without `--agent_engine_id`, each deployment creates a new Agent Runtime
     instance. To redeploy to an existing instance, pass its `RESOURCE_ID` with
-    `--agent_engine_id`. An update replaces only the agent code and class
-    methods. When you create a new instance, you can add `--mem_deploy` to
-    provision a Memory Bank with it.
+    `--agent_engine_id`. Add `--mem_deploy` to provision or update a Memory
+    Bank for the instance in the same step.
 
 
 ### Deploy command output
