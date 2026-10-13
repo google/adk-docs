@@ -1,7 +1,7 @@
 # Service registration
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
 </div>
 
 Extend the capabilities of ADK by registering custom services for sessions,
@@ -25,13 +25,13 @@ agent directory.
 services:
   - scheme: mysession
     type: session
-    class: example_package.example_module.MyCustomSessionService
+    class: my_custom_package.modules.MyCustomSessionService
   - scheme: mymemory
     type: memory
-    class: example_package.other_module.MyCustomMemoryService
+    class: my_custom_package.modules.MyCustomMemoryService
 ```
 
-The properties in the YAML file are:
+The `services.yaml` file supports the following properties:
 
 *   `scheme`: The URI scheme that triggers the custom service (for example,
     `mysession://`).
@@ -48,25 +48,39 @@ when you require more control over the service creation process.
 
 ```python
 from google.adk.cli.service_registry import get_service_registry
-from example_package.example_module import MyCustomSessionService
+from my_custom_package.modules import MyCustomSessionService
+from my_custom_package.storage import MyCustomArtifactService
+from my_custom_package.memory import MyCustomMemoryService
 
 def my_session_factory(uri: str, **kwargs):
     # Add your custom logic here.
     return MyCustomSessionService(uri=uri, **kwargs)
 
-get_service_registry().register_session_service("mysession", my_session_factory)
+def my_artifact_factory(uri: str, **kwargs):
+    """Factory function to instantiate a custom artifact service."""
+    return MyCustomArtifactService(uri=uri, **kwargs)
+
+def my_memory_factory(uri: str, **kwargs):
+    """Factory function to instantiate a custom memory service."""
+    return MyCustomMemoryService(uri=uri, **kwargs)
+
+# Retrieve the registry.
+registry = get_service_registry()
+
+# Register session, artifact, and memory services.
+registry.register_session_service("mysession", my_session_factory)
+registry.register_artifact_service("myartifact", my_artifact_factory)
+registry.register_memory_service("mymemory", my_memory_factory)
 ```
 
 The example script performs the following tasks:
 
 1.  Import `get_service_registry` to retrieve the service registry instance.
-2.  Define a factory function (`my_session_factory`) that takes a URI and
-    keyword arguments, and returns an instance of the custom service.
-3.  Use `register_session_service` to register the factory function with the
-    desired scheme (`mysession`).
-
-Use `register_artifact_service` and `register_memory_service` for artifact and
-memory services, respectively.
+2.  Define factory functions (such as `my_session_factory`) that take a URI and
+    keyword arguments, and return an instance of the custom service.
+3.  Use `register_session_service`, `register_artifact_service`, and
+    `register_memory_service` to register the factory functions with the
+    desired schemes (such as `mysession`).
 
 ## Load services
 
@@ -75,3 +89,4 @@ ADK automatically discovers and loads services from `services.yaml` (or
 are present, ADK loads `services.yaml` first, followed by `services.py`. If a
 service with the same scheme is defined in both files, the definition in
 `services.py` takes precedence.
+
