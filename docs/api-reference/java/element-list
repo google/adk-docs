@@ -1,5 +1,6 @@
 com.example
 com.example.a2a_basic
+com.example.contextcaching
 com.example.helloworld
 com.example.mcpfilesystem
 com.google.adk
@@ -33,6 +34,7 @@ com.google.adk.models.springai.properties
 com.google.adk.planner
 com.google.adk.planner.goap
 com.google.adk.planner.p2p
+com.google.adk.platform
 com.google.adk.plugins
 com.google.adk.plugins.agentanalytics
 com.google.adk.plugins.recordings
@@ -57,3 +59,4 @@ com.google.adk.web.controller
 com.google.adk.web.dto
 com.google.adk.web.service
 com.google.adk.web.websocket
+com.google.adk.workflow
