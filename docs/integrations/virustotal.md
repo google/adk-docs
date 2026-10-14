@@ -17,6 +17,9 @@ connects your ADK agent to VirusTotal intelligence through
 file hashes, URLs, domains, and IP addresses, including detections, analysis
 dates, and links to the underlying reports.
 
+VirusTotal is part of
+[Google Cloud](https://support.google.com/a/answer/11236991?hl=en).
+
 ## Use cases
 
 - **Investigate suspicious files**: Look up a file's hash and summarize its
@@ -30,15 +33,15 @@ dates, and links to the underlying reports.
 
 - Python 3.10 or later and a configured model provider. Follow the
   [Python quickstart](/get-started/python/) to set up Gemini access for ADK.
-- A free, revocable **VTAI Agent Token**. Reuse existing access or register using
+- A revocable **VTAI Agent Token**. Reuse existing access or register using
   the [VTAI access guide](https://github.com/VirusTotal/virustotal-mcp/blob/main/docs/access.md).
   Save the token outside your project, for example at
   `~/.config/vt-mcp/token`, readable only by your user. The access guide covers
   file permissions on Linux, macOS, and Windows.
 
 The VTAI credential is separate from your model-provider credential. A personal
-or premium VirusTotal API key is not required. Free VTAI access has usage limits;
-model-provider charges are separate.
+or premium VirusTotal API key is not required. Free VTAI access is subject to
+current usage limits; model-provider charges are separate.
 
 ## Use with agent
 
@@ -145,12 +148,14 @@ every URL it hosts.
 
 Report lookups retrieve existing intelligence. Starting a file or URL analysis,
 or requesting domain/IP reanalysis, uses separate tools and requires an
-authorized sharing workflow. Standard submissions may be shared with the
-VirusTotal security community and partners. Ask before submitting the user's
-own or sensitive content, preserve submission receipts, and recover an uncertain
+explicit user request and authorization to share the content. Standard
+submissions may be shared with the VirusTotal security community and partners.
+Preserve submission receipts, and recover an uncertain
 submission instead of sending it again. See the
 [analysis and recovery guide](https://github.com/VirusTotal/virustotal-mcp/blob/main/docs/analysis.md)
-before extending the tool filter.
+before extending the tool filter. For more information, see VirusTotal's
+[Terms of Service](https://docs.virustotal.com/docs/terms-of-service) and
+[Privacy Policy](https://docs.virustotal.com/docs/privacy-policy).
 
 VTAI applies the same rights and quotas across connections using an Agent Token.
 Each report lookup counts, including repeated queries, cache hits, and missing
