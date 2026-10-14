@@ -10,17 +10,17 @@ catalog_tags: ["observability", "evaluation", "resilience"]
 <div class="language-support-tag"><span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span></div>
 
 [Smart Router](https://github.com/statmike/adk-smart-router)
-(`adk-smart-router`) is a runner-level plugin that reduces input token costs for
-ADK agents with large tool catalogs (typically 25 to 100+ tools) while
-preserving Gemini implicit context caching. On the first turn of each session,
-the plugin selects a canonical menu of tools for the conversation and locks that
-menu for all subsequent turns in the session so the prompt prefix remains
-cache-eligible. It pairs directly with the
+(`adk-smart-router`) is a third-party, runner-level plugin designed to reduce
+input token costs for ADK agents with large tool catalogs (typically 25 to 100+
+tools) while keeping prompts eligible for Gemini implicit context caching
+(actual savings depend on your prompt size and tool catalog). On the first turn
+of each session, the plugin selects a canonical menu of tools for the
+conversation and locks that menu for all subsequent turns in the session so the
+prompt prefix remains cache-eligible. It pairs directly with the
 [BigQuery Agent Analytics plugin](/integrations/bigquery-agent-analytics/) for
-zero-cold-start training from existing `agent_events` tables, live holdout A/B
-evaluation, and automated BigQuery ML retraining, and includes a zero-shot
-semantic judge (`PrototypeJudge`) that works on day zero before any traffic is
-logged.
+training from existing `agent_events` tables, live holdout A/B evaluation, and
+automated BigQuery ML retraining, and includes a zero-shot semantic judge
+(`PrototypeJudge`) that can route before any traffic is logged.
 
 ## Use cases
 
@@ -44,6 +44,13 @@ logged.
 - **Principal-scoped tool result caching**: Cache deterministic read-only tool
   outputs in memory by `(principal, tool_name, canonical_args)` with automatic
   invalidation when mutating tools run.
+
+!!! note "Data handling"
+    Smart Router and the BigQuery Agent Analytics plugin store user prompts and
+    routing metadata in BigQuery, and Smart Router caches tool outputs in
+    process memory. Only mark tools as cacheable if their outputs are safe to
+    reuse for the same principal, and review your organization's data retention
+    and access policies before logging prompts to BigQuery.
 
 ## Pairing with BigQuery Agent Analytics
 
@@ -221,6 +228,9 @@ the turn-one prompt embedding is scored against your tool catalog:
   at training time and `PrototypeJudge` for newly deployed tools that are not
   yet in `metadata.json`, sharing a single turn-one prompt embedding across both
   judges.
+- **Live LLM (`judges=("llm_live",)`):** Uses a live Gemini model
+  (`llm_judge_model`) on turn one to score tool relevance directly for baseline
+  comparisons or low-volume evaluation.
 
 ## Available CLI commands
 
@@ -232,7 +242,7 @@ The `smart-router` CLI inspects agents offline and diagnoses live deployments:
 | `smart-router readiness --agent NAME --project ID` | Queries existing `BigQueryAgentAnalyticsPlugin` logs in `agent_events` to check whether an agent already has enough traffic and tool diversity to train a model. |
 | `smart-router doctor --app MODULE:ATTR` | Checks plugin registration order relative to `BigQueryAgentAnalyticsPlugin`, `custom_metadata_allowlist`, `ContextCacheConfig`, and active judge configuration. |
 | `smart-router check-arguments --app MODULE:ATTR --arguments FILE` | Audits held and supplied argument markings against logged first-turn user messages in BigQuery. |
-| `smart-router status --agent NAME` | Reports the active model artifact, 7-day billed-token delta against the unrouted holdout arm in `agent_events`, feature drift, and retrain ledger status. |
+| `smart-router status --agent NAME` | Reports the active model artifact, recent billed-token delta against the unrouted holdout arm in `agent_events`, feature drift, and retrain ledger status. |
 
 ## Configuration
 
@@ -244,7 +254,7 @@ through `load_config()` using environment variables:
 | `mode` | `SMART_ROUTER_MODE` | `"off"` | `"off"` (passthrough) or `"active"`. |
 | `route_fraction` | `SMART_ROUTER_ROUTE_FRACTION` | `0.0` | Fraction of non-holdout sessions routed (`0.0` to `1.0`). |
 | `holdout_fraction` | `SMART_ROUTER_HOLDOUT_FRACTION` | `0.05` | Permanent unrouted control arm used for A/B cost and quality comparison in BigQuery. |
-| `judges` | `SMART_ROUTER_JUDGES` | `("xgboost",)` | Comma-separated judge tuple: `"prototype"`, `"xgboost"`, or `"xgboost,prototype"`. |
+| `judges` | `SMART_ROUTER_JUDGES` | `("xgboost",)` | Comma-separated judge tuple supporting `"prototype"`, `"xgboost"`, and `"llm_live"` (for example, `"xgboost,prototype"`). |
 | `embedding_model` | `SMART_ROUTER_EMBEDDING_MODEL` | `"gemini-embedding-2"` | Gemini Enterprise embedding model ID (`SMART_ROUTER_EMBEDDING_DIMS` sets output dimension, default `768`). |
 | `llm_judge_model` | `SMART_ROUTER_LLM_JUDGE_MODEL` | `"gemini-2.5-flash-lite"` | Gemini model ID used when `"llm_live"` is included in `judges`. |
 | `bq_project` | `SMART_ROUTER_BQ_PROJECT` | `""` | Google Cloud project for Gemini Enterprise embeddings and BigQuery tables. |
@@ -258,4 +268,5 @@ through `load_config()` using environment variables:
 
 - [BigQuery Agent Analytics plugin](/integrations/bigquery-agent-analytics/)
 - [Smart Router GitHub](https://github.com/statmike/adk-smart-router)
+- [Smart Router Threat Model and Data Handling](https://github.com/statmike/adk-smart-router/blob/main/docs/threat-model.md)
 - [adk-smart-router on PyPI](https://pypi.org/project/adk-smart-router/)
