@@ -359,6 +359,36 @@ Use these parameters to control runtime guardrails and debugging:
   cannot be combined with `StreamingMode.SSE`. See
   [Deferred scheduling](/agents/models/google-gemini/deferred-schedule/).
 
+## Add labels to model requests
+
+In Python, `RunConfig.labels` accepts a `dict[str, str]` and defaults to `None`.
+Use it to label model requests for a single invocation, for example to attribute
+usage to a service. Invocation labels override matching keys in the agent's
+`generate_content_config.labels`.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents.run_config import RunConfig
+    from google.genai import types
+
+    config = RunConfig(labels={"service": "customer_support"})
+
+    async for event in runner.run_async(
+        user_id="user",
+        session_id="session",
+        new_message=types.Content(
+            role="user", parts=[types.Part(text="Hello")]
+        ),
+        run_config=config,
+    ):
+        print(event)
+    ```
+
+Label support and validation rules depend on the model backend. For Gemini,
+follow the label requirements in the
+[GenerateContent request reference](https://ai.google.dev/api/generate-content).
+
 ## API reference
 
 For the complete list of fields, types, and defaults, see the API reference for
