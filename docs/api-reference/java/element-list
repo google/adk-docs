@@ -1,11 +1,5 @@
 com.example
 com.example.a2a_basic
-com.example.adkdocs
-com.example.adkprtriaging
-com.example.adkspam
-com.example.adkstale
-com.example.adktriaging
-com.example.github
 com.example.helloworld
 com.example.mcpfilesystem
 com.google.adk
@@ -14,6 +8,7 @@ com.google.adk.a2a.common
 com.google.adk.a2a.converters
 com.google.adk.a2a.executor
 com.google.adk.agents
+com.google.adk.annotations
 com.google.adk.apps
 com.google.adk.artifacts
 com.google.adk.codeexecutors
