@@ -358,7 +358,8 @@ async def save_dictionary_artifact():
         artifact={"inlineData": {"data": b"hello", "mimeType": "text/plain"}},
     )
     artifact = await service.load_artifact(**scope, version=version)
-    print(artifact.inline_data.data)
+    if artifact is not None and artifact.inline_data is not None:
+        print(artifact.inline_data.data)
 
 asyncio.run(save_dictionary_artifact())
 ```
