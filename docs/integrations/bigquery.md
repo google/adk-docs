@@ -126,7 +126,7 @@ bigquery_toolset = BigQueryToolset(
 )
 ```
 
-Choose a location that matches your data. For supported locations, see the
+Choose a location that matches your BigQuery dataset. For supported locations, see the
 [BigQuery locations guide](https://cloud.google.com/bigquery/docs/locations).
 
 ## Sample Code
