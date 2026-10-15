@@ -47,11 +47,11 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.3.1
+        <div class="library-version" id="library-version">1.4.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
-                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button>
             <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
                 <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
                 <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
@@ -62,9 +62,9 @@
                     </div>
                         <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
                             <label class="checkbox">
-                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/jvmMain" data-filter=":google-adk-kotlin-core/jvmMain">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonJvmAndroidMain" data-filter=":google-adk-kotlin-core/commonJvmAndroidMain">
                                 <span class="checkbox--icon"></span>
-                                jvm
+                                commonJvmAndroid
                             </label>
                         </li>
                 </ul>
@@ -98,32 +98,32 @@
         </nav>
         <div id="resizer" class="resizer" data-item-type="BAR"></div>
         <div id="main" data-item-type="SECTION" role="main">
-<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools.mcp/McpToolException.McpToolLoadingException///PointingToDeclaration//165695769">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools.mcp/McpToolException.McpToolLoadingException///PointingToDeclaration//419297065">
   <div class="breadcrumbs"><a href="../../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../../index.html">com.google.adk.kt.tools.mcp</a><span class="delimiter">/</span><a href="../index.html">McpToolException</a><span class="delimiter">/</span><span class="current">McpToolLoadingException</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Mcp</span><wbr><span>Tool</span><wbr><span>Loading</span><wbr><span><span>Exception</span></span></h1>
     <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">McpToolLoadingException</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../index.html">McpToolException</a></div><p class="paragraph">Exception thrown when there's an error during MCP tools loading/initialization.</p></div>    </div>
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">McpToolLoadingException</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="../index.html">McpToolException</a></div><p class="paragraph">Exception thrown when MCP tool discovery or initialization fails.</p><p class="paragraph"><a href="../../../com.google.adk.kt.tools/-toolset/get-tools.html">com.google.adk.kt.tools.Toolset.getTools</a> also wraps an <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-illegal-argument-exception/index.html">IllegalArgumentException</a> thrown by a header provider or a <a href="../../../com.google.adk.kt.tools/-tool-filter/-predicate/index.html">com.google.adk.kt.tools.ToolFilter.Predicate</a> into this type.</p></div>    </div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="tableheader">Constructors</h2>
-        <div class="table"><a data-name="2124381543%2FConstructors%2F165695769" anchor-label="McpToolLoadingException" id="2124381543%2FConstructors%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
-          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
+        <div class="table"><a data-name="2124381543%2FConstructors%2F419297065" anchor-label="McpToolLoadingException" id="2124381543%2FConstructors%2F419297065" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-mcp-tool-loading-exception.html"><span>Mcp</span><wbr><span>Tool</span><wbr><span>Loading</span><wbr><span><span>Exception</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2124381543%2FConstructors%2F165695769"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2124381543%2FConstructors%2F419297065"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -132,36 +132,36 @@
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="tableheader">Properties</h2>
-        <div class="table"><a data-name="-654012527%2FProperties%2F165695769" anchor-label="cause" id="-654012527%2FProperties%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
-          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
+        <div class="table"><a data-name="-654012527%2FProperties%2F419297065" anchor-label="cause" id="-654012527%2FProperties%2F419297065" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-mcp-tool-execution-exception/index.html#-654012527%2FProperties%2F165695769"><span><span>cause</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-654012527%2FProperties%2F165695769"></span>
+                  <div><a href="../-mcp-tool-execution-exception/index.html#-654012527%2FProperties%2F419297065"><span><span>cause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-654012527%2FProperties%2F419297065"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../-mcp-tool-execution-exception/index.html#-654012527%2FProperties%2F165695769">cause</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../-mcp-tool-execution-exception/index.html#-654012527%2FProperties%2F419297065">cause</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span></div></div>                  </div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1824300659%2FProperties%2F165695769" anchor-label="message" id="1824300659%2FProperties%2F165695769" data-filterable-set=":google-adk-kotlin-core/jvmMain"></a>
-          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain">
+<a data-name="1824300659%2FProperties%2F419297065" anchor-label="message" id="1824300659%2FProperties%2F419297065" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-mcp-tool-execution-exception/index.html#1824300659%2FProperties%2F165695769"><span><span>message</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1824300659%2FProperties%2F165695769"></span>
+                  <div><a href="../-mcp-tool-execution-exception/index.html#1824300659%2FProperties%2F419297065"><span><span>message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1824300659%2FProperties%2F419297065"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/jvmMain" data-filterable-set=":google-adk-kotlin-core/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../-mcp-tool-execution-exception/index.html#1824300659%2FProperties%2F165695769">message</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div>                  </div>
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonJvmAndroidMain" data-filterable-set=":google-adk-kotlin-core/commonJvmAndroidMain" data-active="" data-toggle=":google-adk-kotlin-core/commonJvmAndroidMain">commonJvmAndroid</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonJvmAndroidMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../-mcp-tool-execution-exception/index.html#1824300659%2FProperties%2F419297065">message</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div>                  </div>
                 </div>
               </div>
             </div>
