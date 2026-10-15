@@ -1269,7 +1269,7 @@ instance pointing to the same directory can read previously saved artifacts.
 
 ```python
 import asyncio
-from google.adk.agents import Agent
+from google.adk.agents import LlmAgent
 from google.adk.artifacts import FileArtifactService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -1278,7 +1278,7 @@ from google.genai import types
 artifact_service = FileArtifactService(root_dir="./artifacts")
 runner = Runner(
     app_name="artifact_app",
-    agent=Agent(name="artifact_agent", model="gemini-2.5-flash"),
+    agent=LlmAgent(name="artifact_agent", model="gemini-2.5-flash"),
     session_service=InMemorySessionService(),
     artifact_service=artifact_service,
 )
