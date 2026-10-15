@@ -47,9 +47,9 @@ extra:
 # Configuration
 theme:
   name: material
-  font:
-    text: Google Sans
-    code: Roboto Mono
+  # Fonts are loaded explicitly in overrides/main.html so requests only include
+  # weights that are available in the public Google Fonts catalog.
+  font: false
   logo: assets/agent-development-kit.png
   favicon: assets/agent-development-kit.png
   icon:
