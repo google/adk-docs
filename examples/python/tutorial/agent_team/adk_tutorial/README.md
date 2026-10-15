@@ -11,7 +11,7 @@ This version allows you to run each step of the tutorial without manually settin
 *   **Python:** Version 3.9 - 3.12 (Check ADK documentation for the latest compatibility).
 *   **Git:** To clone this repository.
 *   **LLM API Keys:** You will need API keys for the services used in the tutorial steps (Google Gemini, potentially OpenAI and Anthropic).
-    *   Google AI Studio: [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
+    *   Gemini API: [Get an API key from Google AI Studio](https://aistudio.google.com/app/apikey)
     *   OpenAI Platform: [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
     *   Anthropic Console: [https://console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
 
@@ -54,7 +54,16 @@ This version allows you to run each step of the tutorial without manually settin
 
 ## Configuration: API Keys
 
-Before running any agent step, you **must** configure your API keys.
+The `.env` example below uses the Gemini API with a Google AI Studio key.
+Running the tutorial in Cloud Shell does not change which backend is selected.
+
+To use Gemini through Google Cloud Agent Platform, follow
+[Connect to Google Cloud and Agent Platform](https://adk.dev/get-started/google-cloud/)
+to configure `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`, `GOOGLE_CLOUD_PROJECT`,
+`GOOGLE_CLOUD_LOCATION`, and Application Default Credentials. Keep API keys for
+any OpenAI or Anthropic steps you run.
+
+For the Gemini API setup, configure the keys needed by the steps you want to run:
 
 1.  Navigate into the directory for the specific step you want to run (e.g., `step_1`, `step_2_anthropic`, `step_3`, etc.).
 2.  Each step directory contains a `.env` file. Open this file in a text editor.
@@ -62,14 +71,12 @@ Before running any agent step, you **must** configure your API keys.
 
     **Example `.env` content:**
     ```dotenv
-    # Set to False to use API keys directly (required for multi-model)
+    # Use the Gemini API with a Google AI Studio key.
     GOOGLE_GENAI_USE_ENTERPRISE=FALSE
 
-    # --- Replace with your actual keys ---
     GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_GOOGLE_API_KEY_HERE
     ANTHROPIC_API_KEY=PASTE_YOUR_ACTUAL_ANTHROPIC_API_KEY_HERE
     OPENAI_API_KEY=PASTE_YOUR_ACTUAL_OPENAI_API_KEY_HERE
-    # --- End of keys ---
     ```
 4.  **Save the `.env` file.**
 5.  **Repeat this process** for the `.env` file in *every* step directory you intend to run. The keys needed might vary slightly depending on the models used in that specific step.
