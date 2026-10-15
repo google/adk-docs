@@ -4,21 +4,23 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
 </div>
 
-Extend the capabilities of ADK by registering custom services for sessions,
-artifacts, and memory. Integrate your own backend systems or logic with the
-ADK runtime.
+Extend ADK runtime capabilities by registering custom services for sessions,
+artifacts, and memory. Registering custom services allows you to integrate your
+own backend systems and storage providers into your agents.
 
-Register custom services using two methods:
+You can register custom services using either of the following methods:
 
-*   **`services.yaml`**: A simple YAML file for basic service registration.
-*   **`services.py`**: A Python script for more complex registration logic.
+*   **`services.yaml`**: A YAML configuration file for services that instantiate
+    with simple constructors.
+*   **`services.py`**: A Python script for services that require custom
+    initialization or complex logic.
 
 ## Register services with `services.yaml`
 
-Register services that instantiate with a simple constructor (for example,
-`MyService(uri="...")`) using a `services.yaml` or `services.yml` file in the
-agent directory (for `adk run`) or the agents root directory (for `adk web`
-and `adk api_server`).
+Use a `services.yaml` or `services.yml` file to register services that
+instantiate with a simple constructor (for example, `MyService(uri="...")`).
+Place this file in the agent directory (for `adk run`) or the agents root
+directory (for `adk web` and `adk api_server`).
 
 **Example `services.yaml`:**
 
@@ -86,13 +88,24 @@ The example script performs the following tasks:
 
 ## Load services
 
-When you run your agent with the ADK command line tools (`adk run`, `adk web`,
-or `adk api_server`), ADK automatically discovers and loads services from
-`services.yaml` (or
-`services.yml`) and `services.py` files. `adk run` looks in the agent
-directory; `adk web` and `adk api_server` look in the agents root directory you
-pass to the command. If both files
-are present, ADK loads `services.yaml` first, followed by `services.py`. If a
-service with the same scheme is defined in both files, the definition in
-`services.py` takes precedence.
+When you run your agent with ADK command-line tools (`adk run`, `adk web`, or
+`adk api_server`), ADK automatically discovers and loads custom services from
+`services.yaml` (or `services.yml`) and `services.py`.
+
+### Discovery locations
+
+ADK locates configuration files based on the command you run:
+
+*   **`adk run`**: Discovers service files in the agent directory.
+*   **`adk web` and `adk api_server`**: Discover service files in the agents
+    root directory passed to the command.
+
+### Loading order and precedence
+
+When both `services.yaml` and `services.py` are present in the target directory:
+
+1.  **Loading order**: ADK loads `services.yaml` first, followed by
+    `services.py`.
+2.  **Precedence**: If a service with the same scheme is defined in both files,
+    the definition in `services.py` takes precedence.
 
