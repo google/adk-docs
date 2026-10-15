@@ -248,7 +248,7 @@ Typically, a custom agent orchestrates other agents (like `LlmAgent`, `LoopAgent
 
 * **Initialization:** You usually pass instances of these sub-agents into your custom agent's constructor and store them as instance fields/attributes (e.g., `this.story_generator = story_generator_instance` or `self.story_generator = story_generator_instance`). This makes them accessible within the custom agent's core asynchronous execution logic (such as: `_run_async_impl` method).
 * **Sub Agents List:** When initializing the `BaseAgent` using it's `super()` constructor, you should pass a `sub agents` list. This list tells the ADK framework about the agents that are part of this custom agent's immediate hierarchy. It's important for framework features like lifecycle management, introspection, and potentially future routing capabilities, even if your core execution logic (`_run_async_impl`) calls the agents directly via `self.xxx_agent`. Include the agents that your custom logic directly invokes at the top level.
-* **Sub-agent names (Python):** Use a different `name` for each agent in `sub_agents`.
+* **Sub-agent Names (Python):** Use a different `name` for each agent in `sub_agents`.
   ADK logs a warning if sibling agents share a name, but still creates the parent
   agent.
 * **State:** As mentioned, `ctx.session.state` is the standard way sub-agents (especially `LlmAgent`s using `output key`) communicate results back to the orchestrator and how the orchestrator passes necessary inputs down.
