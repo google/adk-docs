@@ -332,7 +332,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 For providers that publish discovery metadata, the experimental `ExtendedOAuth2`
 scheme can fill in missing OAuth2 endpoints using an `issuer_url`. Specify the
-flow and scopes, and leave the endpoint fields empty:
+flow and scopes, and set the endpoint fields to empty strings:
 
 ```python
 from fastapi.openapi.models import OAuthFlowAuthorizationCode, OAuthFlows
