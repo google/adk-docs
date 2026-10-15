@@ -598,6 +598,47 @@ For example, you can automate this step with a callback:
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
     ```
 
+### Save the current session from a tool
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+A Python tool can call `ToolContext.add_session_to_memory()` when the user asks
+the agent to remember the conversation. Configure a memory service on the
+`Runner`; the call raises `ValueError` if no memory service is available.
+
+```python
+from google.adk.agents import Agent
+from google.adk.memory import InMemoryMemoryService
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.adk.tools import ToolContext
+
+async def remember_conversation(tool_context: ToolContext) -> dict:
+    """Ask the memory service to process the current conversation."""
+    await tool_context.add_session_to_memory()
+    return {"status": "submitted"}
+
+agent = Agent(
+    model="gemini-2.5-flash",
+    name="memory_agent",
+    instruction="Use remember_conversation when the user asks you to remember this conversation.",
+    tools=[remember_conversation],
+)
+runner = Runner(
+    app_name="memory_app",
+    agent=agent,
+    session_service=InMemorySessionService(),
+    memory_service=InMemoryMemoryService(),
+)
+```
+
+The service receives the session events available when the tool runs. The tool's
+own result and the model's later reply are not included in that call. To save
+after the agent finishes, use the callback shown above instead. When memories
+become searchable depends on the memory service.
+
 ### Write specific events or facts from a callback
 
 <div class="language-support-tag">
