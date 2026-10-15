@@ -329,6 +329,44 @@ Understanding artifacts involves grasping a few key components: the service that
     --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:artifact_data"
     ```
 
+#### Dictionary input in Python
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+The built-in Python artifact services also accept a dictionary representation
+of a `Part` in `save_artifact`. Both snake_case keys (`inline_data`, `mime_type`)
+and camelCase aliases (`inlineData`, `mimeType`) are accepted. The service
+validates the dictionary as a `Part`, so invalid field types raise a Pydantic
+`ValidationError`. Loading the artifact returns a `Part`.
+
+```python
+import asyncio
+from google.adk.artifacts import InMemoryArtifactService
+
+async def save_dictionary_artifact():
+    service = InMemoryArtifactService()
+    scope = {
+        "app_name": "artifact_app",
+        "user_id": "user123",
+        "session_id": "session123",
+        "filename": "note.txt",
+    }
+    version = await service.save_artifact(
+        **scope,
+        artifact={"inlineData": {"data": b"hello", "mimeType": "text/plain"}},
+    )
+    artifact = await service.load_artifact(**scope, version=version)
+    print(artifact.inline_data.data)
+
+asyncio.run(save_dictionary_artifact())
+```
+
+This example calls the service directly. When calling `save_artifact` through
+`ToolContext` or `CallbackContext`, pass a `types.Part` as shown in the context
+examples below.
+
 ### Filename
 
 * **Identifier:** A simple string used to name and retrieve an artifact within its specific namespace.
