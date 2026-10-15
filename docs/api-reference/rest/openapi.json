@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.11.0"
+    "version": "2.12.0"
   },
   "paths": {
     "/health": {
@@ -2043,7 +2043,7 @@
               }
             ],
             "title": "Disabledsafetypolicies",
-            "description": "Optional. Disabled safety policies for computer use. This field is not supported in Vertex AI."
+            "description": "Optional. Disabled safety policies for computer use."
           }
         },
         "additionalProperties": false,
@@ -7546,6 +7546,30 @@
             ],
             "title": "Words",
             "description": "Detailed word-level transcriptions and timing details.\n      "
+          },
+          "startOffset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startoffset",
+            "description": "Start offset in time of the transcription relative to the start of the audio.\n      "
+          },
+          "endOffset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endoffset",
+            "description": "End offset in time of the transcription relative to the start of the audio.\n      "
           }
         },
         "additionalProperties": false,
