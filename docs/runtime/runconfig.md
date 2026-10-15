@@ -361,6 +361,10 @@ Use these parameters to control runtime guardrails and debugging:
 
 ## Add labels to model requests
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 In Python, `RunConfig.labels` accepts a `dict[str, str]` and defaults to `None`.
 Use it to label model requests for a single invocation, for example to attribute
 usage to a service. Invocation labels override matching keys in the agent's
