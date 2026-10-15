@@ -696,6 +696,53 @@ Control whether the agent receives the prior conversation history.
     a workflow node. For more information on composing agents in graph-based
     workflows, see [Graph-based agent workflows](/graphs/).
 
+### Share final answers between sibling branches (Python)
+
+!!! note "Unreleased feature"
+
+    This option is proposed in
+    [google/adk-python#7551](https://github.com/google/adk-python/pull/7551).
+    It requires that implementation and is not available in released ADK Python
+    versions yet.
+
+A custom dispatcher can keep specialist agents in one session while assigning
+each specialist a separate execution branch. Branch isolation hides a sibling
+agent's conversation history, including its final answers. For example, a local
+guide might see the user's question about arrival time without seeing the
+booking agent's answer, making a follow-up about "that evening" ambiguous.
+
+To include final text from sibling branches, opt in on the **receiving** agent:
+
+```python
+from google.adk.agents import LlmAgent
+
+local_guide = LlmAgent(
+    name="local_guide",
+    model="gemini-2.5-flash",
+    include_sibling_final_responses=True,
+)
+```
+
+The option defaults to `False`. When enabled for ordinary, unscoped chat history,
+it adds final text from direct sibling branches with the same parent, in its
+original position in the conversation. The text is quoted as context and
+attributed to the agent that produced it, for example `[bookings] said: You land
+on Tuesday at 14:05.` It is not presented as the receiving agent's own answer.
+
+The shared view excludes thought text and thought signatures. Partial responses,
+tool calls and results (including results with `skip_summarization`), mixed media
+events, and tool sub-branch progress are not imported. Original session events
+are preserved; only the model request receives the filtered text view.
+
+This option does not import sibling answers into `task` or `single_turn` agents,
+cross isolation scopes, or override `include_contents='none'`. It does not add
+history to requests that resume a server-side interaction. Existing visibility
+of user, same-branch, root, and ancestor events is unchanged.
+
+Enable the option only for receivers that should read sibling final answers.
+It does not redact sensitive information that a producing agent includes in its
+final text.
+
 ### Configure a planner
 
 <div class="language-support-tag" title="">
