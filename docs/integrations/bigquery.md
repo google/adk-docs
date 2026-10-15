@@ -118,8 +118,8 @@ The following sample code demonstrates how to use the `BigQueryToolset` in an AD
 
 ## Validate SQL without executing it
 
-The `execute_sql` tool accepts a `dry_run` argument, which defaults to `False`.
-Set it to `True` to validate a query and return BigQuery's query metadata in
+The `execute_sql` tool accepts a `dry_run` argument, which defaults to `false`.
+Set it to `true` to validate a query and return BigQuery's query metadata in
 `dry_run_info` instead of executing the query and returning rows. For example,
 an agent can call `execute_sql` with these arguments:
 
@@ -132,7 +132,7 @@ an agent can call `execute_sql` with these arguments:
 ```
 
 `dry_run` is a tool argument, not a `BigQueryToolConfig` setting. The configured
-write restrictions still apply: in read-only mode, a dry run only accepts
+write restrictions still apply: when `write_mode` is `BLOCKED`, a dry run only accepts
 `SELECT` statements.
 
 ## Sample Agent
