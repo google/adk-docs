@@ -505,10 +505,10 @@ For details on how to set up an eval with user simulation, see
 
 As a developer, you can evaluate your agents using the ADK in the following ways:
 
-- **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.
-- **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.
-- **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
-- **Conformance Testing** (**`adk conformance`**):** Execute automated tests against your baseline files to detect unexpected deviations or regressions.
+- **Web-based UI** (`adk web`): Evaluate agents interactively through a web-based interface.
+- **Programmatically** (`pytest`): Integrate evaluation into your testing pipeline using `pytest` and test files.
+- **Command Line Interface** (`adk eval`): Run evaluations on an existing evaluation set file directly from the command line.
+- **Conformance Testing** (`adk conformance`): Execute automated tests against your baseline files to detect unexpected deviations or regressions.
 
 ### Run evaluations via the web UI
 
