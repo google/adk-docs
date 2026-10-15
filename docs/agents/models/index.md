@@ -36,3 +36,34 @@ ADK provides several mechanisms for model integration:
 3. **[Model routing](/agents/models/routing/):** For dynamically selecting
    between multiple models at runtime using a router function, with automatic
    failover on error.
+
+## Register model factories in Go
+
+In Go, `llmagent.Config.Model` takes a `model.LLM` instance. You can construct
+the provider's model directly, or use `model.NewLLM` after explicitly
+registering a factory. Importing a provider package does not register it.
+
+Register each pattern once during initialization. For example:
+
+```go
+import (
+	"context"
+
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+)
+
+func init() {
+	model.Register("^gemini-.*$", func(ctx context.Context, name string) (model.LLM, error) {
+		return gemini.NewModel(ctx, name, nil)
+	})
+}
+
+func newRegisteredModel(ctx context.Context) (model.LLM, error) {
+	return model.NewLLM(ctx, "gemini-2.5-flash")
+}
+```
+
+`NewLLM` requires exactly one matching pattern. It returns an error when no
+factory matches or when several patterns match, so keep patterns distinct.
+`Register` panics for an invalid regular expression or a duplicate pattern.

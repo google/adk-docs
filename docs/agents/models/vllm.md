@@ -1,13 +1,26 @@
 # vLLM model host for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go</span>
 </div>
 
 Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
 models efficiently and serve them as an OpenAI-compatible API endpoint. You can
 use vLLM models through the [LiteLLM](/agents/models/litellm/) library
 for Python.
+
+## Use with Go
+
+In Go, use the native `openaimodel` connector and set `ClientConfig.API` to
+`openaimodel.APIChatCompletions`. Point `BaseURL` at your vLLM server's
+OpenAI-compatible endpoint, including `/v1`. See
+[Chat Completions API](/agents/models/openai/#chat-completions-api) for the Go
+configuration and supported features.
+
+Set `APIKey` explicitly for your endpoint. Leaving it empty can inherit
+`OPENAI_API_KEY` and send that key to the vLLM server. For a server without
+authentication, use a nonempty placeholder. The setup and examples below use
+Python's LiteLLM connector.
 
 ## Setup
 
