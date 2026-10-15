@@ -57,11 +57,12 @@ This version allows you to run each step of the tutorial without manually settin
 The `.env` example below uses the Gemini API with a Google AI Studio key.
 Running the tutorial in Cloud Shell does not change which backend is selected.
 
-To use Gemini through Google Cloud Agent Platform, follow
+To use Gemini through Google Cloud Agent Platform, update each step's `.env`
+file with `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`, `GOOGLE_CLOUD_PROJECT`, and
+`GOOGLE_CLOUD_LOCATION`. Follow
 [Connect to Google Cloud and Agent Platform](https://adk.dev/get-started/google-cloud/)
-to configure `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`, `GOOGLE_CLOUD_PROJECT`,
-`GOOGLE_CLOUD_LOCATION`, and Application Default Credentials. Keep API keys for
-any OpenAI or Anthropic steps you run.
+to set up Application Default Credentials. Keep API keys for any OpenAI or
+Anthropic steps you run.
 
 For the Gemini API setup, configure the keys needed by the steps you want to run:
 
