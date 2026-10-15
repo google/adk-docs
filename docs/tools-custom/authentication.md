@@ -231,10 +231,10 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-      Set `OAuth2Auth.prompt` to control the prompt parameter in the authorization
-      URL. The example requests account selection. Supported values depend on
+      Set `OAuth2Auth.prompt` to control the `prompt` parameter in the authorization
+      URL. The example above requests account selection. Supported values depend on
       your OAuth provider. The field defaults to `None`; when it is `None` or an
-      empty string, ADK sends `prompt=consent` instead.
+      empty string, ADK sends `prompt=consent`.
 
 === "OAuth2 (Client Credentials)"
 
