@@ -209,6 +209,43 @@ tells the agent:
     agents in your system, use `GlobalInstructionPlugin` instead of 
     the deprecated `global_instruction` parameter.
 
+### Separate static and dynamic instructions in Python
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Use `static_instruction` for content that stays the same between requests.
+It accepts `google.genai.types.ContentUnion`, including a string, `Content`,
+`Part`, an image, a file reference, or a list of parts. The model and backend
+still determine which non-text inputs are supported.
+
+Static content is passed literally: placeholders such as `{destination}` are
+not replaced with session state. Keep values that change in `instruction`.
+For example, with `destination` set in the session state:
+
+```python
+from google.adk.agents import LlmAgent
+from google.genai import types
+
+agent = LlmAgent(
+    name="trip_assistant",
+    model="gemini-2.5-flash",
+    static_instruction=types.Part(text="You help users plan trips."),
+    instruction="Plan a trip to {destination}.",
+)
+```
+
+With a nonempty `static_instruction`, ADK places static text in the system
+instructions and the rendered dynamic `instruction` in the request's user
+content, labeled as an instruction. When `static_instruction` is omitted or
+empty, `instruction` goes into the system instructions instead.
+
+This separation can help keep a stable prompt prefix, but setting
+`static_instruction` alone does not enable explicit caching. See
+[Model context caching](/context/caching/) for cache configuration. The Live
+API uses a separate mechanism and does not support `static_instruction`.
+
 ## Equip the agent with tools
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
