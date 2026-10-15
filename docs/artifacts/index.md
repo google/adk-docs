@@ -163,7 +163,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List versions`: Lists all available version numbers for a specific artifact filename.
     * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
-* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Python and Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
 === "Python"
 
@@ -1257,6 +1257,60 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         ```kotlin
         --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:gcs_service"
         ```
+### FileArtifactService
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Python's `FileArtifactService` stores artifacts under a local `root_dir`. Pass
+the service to the `Runner` to use it from tools and callbacks. A new service
+instance pointing to the same directory can read previously saved artifacts.
+
+```python
+import asyncio
+from google.adk.agents import Agent
+from google.adk.artifacts import FileArtifactService
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
+
+artifact_service = FileArtifactService(root_dir="./artifacts")
+runner = Runner(
+    app_name="artifact_app",
+    agent=Agent(name="artifact_agent", model="gemini-2.5-flash"),
+    session_service=InMemorySessionService(),
+    artifact_service=artifact_service,
+)
+
+async def save_and_reload_report():
+    scope = {
+        "app_name": runner.app_name,
+        "user_id": "user123",
+        "session_id": "session123",
+        "filename": "report.txt",
+    }
+    version = await artifact_service.save_artifact(
+        **scope,
+        artifact=types.Part.from_bytes(data=b"Report content", mime_type="text/plain"),
+    )
+    reopened_service = FileArtifactService(root_dir="./artifacts")
+    artifact = await reopened_service.load_artifact(**scope, version=version)
+    if artifact is not None:
+        print(artifact.inline_data.data)
+
+asyncio.run(save_and_reload_report())
+```
+
+Each save creates a version. Omit `version` when loading to get the latest
+available version, or pass a saved version number as above. A missing artifact
+or version returns `None`.
+
+The directory must remain available to the application. In a container, use a
+persistent volume if artifacts need to survive container replacement. This
+service persists artifacts; the `InMemorySessionService` in the example still
+keeps sessions only in memory.
+
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
 ## Best Practices
