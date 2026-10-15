@@ -479,17 +479,26 @@ from google.adk.tools.base_toolset import BaseToolset
 
 
 class MyAuthenticatedToolset(BaseToolset):
+  def __init__(self, auth_config: AuthConfig):
+    super().__init__()
+    self._auth_config = auth_config
+
   def get_auth_config(self) -> AuthConfig:
-    return AuthConfig(
-        auth_scheme=auth_scheme,
-        raw_auth_credential=auth_credential,
-    )
+    return self._auth_config
 
   async def get_tools(
       self, readonly_context: Optional[ReadonlyContext] = None
   ) -> list[BaseTool]:
     # ADK resolves credentials before listing tools.
     return []  # Replace with the tools in your toolset.
+
+
+toolset = MyAuthenticatedToolset(
+    AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    )
+)
 ```
 
 ### Handle the interactive OAuth/OIDC flow (client-side)
