@@ -76,10 +76,10 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 **When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
 
-**Purpose:** Prepare or validate session state through `callback_context.state`,
+**Purpose:** Prepare or validate session state through the callback context,
 log the start of the agent's run, or return content to skip the agent's core
-logic. Changes made through `callback_context.state` are tracked in the
-callback's event actions.
+logic. In Python, changes made through `callback_context.state` are tracked in
+`callback_context.actions.state_delta`.
 
 
 ??? "Code"
