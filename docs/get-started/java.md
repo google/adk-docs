@@ -3,7 +3,7 @@
 This guide shows you how to get up and running with Agent Development Kit
 for Java. Before you start, make sure you have the following installed:
 
-*   Java 17 or later
+*   Java 18 or later
 *   Maven 3.9 or later
 
 ## Create an agent project
