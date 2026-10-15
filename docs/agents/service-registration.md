@@ -84,7 +84,9 @@ The example script performs the following tasks:
 
 ## Load services
 
-ADK automatically discovers and loads services from `services.yaml` (or
+When you run your agent with the ADK command line tools (`adk run`, `adk web`,
+or `adk api_server`), ADK automatically discovers and loads services from
+`services.yaml` (or
 `services.yml`) and `services.py` files in the agent directory. If both files
 are present, ADK loads `services.yaml` first, followed by `services.py`. If a
 service with the same scheme is defined in both files, the definition in
