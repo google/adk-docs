@@ -116,6 +116,25 @@ The following sample code demonstrates how to use the `BigQueryToolset` in an AD
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
+## Validate SQL without executing it
+
+The `execute_sql` tool accepts a `dry_run` argument, which defaults to `False`.
+Set it to `True` to validate a query and return BigQuery's query metadata in
+`dry_run_info` instead of executing the query and returning rows. For example,
+an agent can call `execute_sql` with these arguments:
+
+```json
+{
+  "project_id": "my-project",
+  "query": "SELECT COUNT(*) FROM `my-project.my_dataset.my_table`",
+  "dry_run": true
+}
+```
+
+`dry_run` is a tool argument, not a `BigQueryToolConfig` setting. The configured
+write restrictions still apply: in read-only mode, a dry run only accepts
+`SELECT` statements.
+
 ## Sample Agent
 
 For a complete, ready-to-run sample of a BigQuery-powered agent with detailed authentication examples, see the [BigQuery Sample Agent](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/bigquery) on GitHub.
