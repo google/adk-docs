@@ -17,7 +17,8 @@ Register custom services using two methods:
 
 Register services that instantiate with a simple constructor (for example,
 `MyService(uri="...")`) using a `services.yaml` or `services.yml` file in the
-agent directory.
+agent directory (for `adk run`) or the agents root directory (for `adk web`
+and `adk api_server`).
 
 **Example `services.yaml`:**
 
