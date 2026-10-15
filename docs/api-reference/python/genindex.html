@@ -13,7 +13,7 @@
     </script>
     <link rel="index" title="Index" href="#"><link rel="search" title="Search" href="search.html">
 
-    <!-- Generated with Sphinx 8.3.0 and Furo 2025.12.19 --><title>Index - Agent Development Kit (Python) 2.11.0 documentation</title>
+    <!-- Generated with Sphinx 8.3.0 and Furo 2025.12.19 --><title>Index - Agent Development Kit (Python) 2.12.0 documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
@@ -184,7 +184,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Agent Development Kit (Python) 2.11.0 documentation</div></a>
+      <a href="index.html"><div class="brand">Agent Development Kit (Python) 2.12.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -205,7 +205,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">Agent Development Kit (Python) 2.11.0 documentation</span>
+  <span class="sidebar-brand-text">Agent Development Kit (Python) 2.12.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -236,6 +236,7 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.crewai">google.adk.integrations.crewai module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.daytona">google.adk.integrations.daytona module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.e2b">google.adk.integrations.e2b module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-integrations-eleven-labs-module">google.adk.integrations.eleven_labs module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.eventarc">google.adk.integrations.eventarc module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.firestore">google.adk.integrations.firestore module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.gcs">google.adk.integrations.gcs module</a></li>
@@ -384,6 +385,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.abort">abort() (google.adk.agents.InvocationContext method)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.access_token">access_token (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.Context.actions">actions (google.adk.agents.Context property)</a>
 
         <ul>
@@ -409,6 +412,8 @@
         <li><a href="google-adk.html#google.adk.agents.Context.add_events_to_memory">add_events_to_memory() (google.adk.agents.Context method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreMemoryService.add_events_to_memory">(google.adk.integrations.firestore.FirestoreMemoryService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.memory.BaseMemoryService.add_events_to_memory">(google.adk.memory.BaseMemoryService method)</a>
 </li>
         </ul></li>
@@ -421,6 +426,8 @@
         <li><a href="google-adk.html#google.adk.agents.Context.add_session_to_memory">add_session_to_memory() (google.adk.agents.Context method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreMemoryService.add_session_to_memory">(google.adk.integrations.firestore.FirestoreMemoryService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.memory.BaseMemoryService.add_session_to_memory">(google.adk.memory.BaseMemoryService method)</a>
 </li>
         </ul></li>
@@ -454,8 +461,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.after_tool_callback">after_tool_callback (google.adk.agents.LlmAgent attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.plugins.BasePlugin.after_tool_callback">after_tool_callback() (google.adk.plugins.BasePlugin method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.model_armor.ModelArmorPlugin.after_tool_callback">after_tool_callback() (google.adk.integrations.model_armor.ModelArmorPlugin method)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.plugins.BasePlugin.after_tool_callback">(google.adk.plugins.BasePlugin method)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgentConfig.after_tool_callbacks">after_tool_callbacks (google.adk.agents.LlmAgentConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.agent">agent (google.adk.agents.InvocationContext attribute)</a>
@@ -510,8 +521,6 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.agent_simulator.AgentSimulatorFactory">AgentSimulatorFactory (in module google.adk.tools.agent_simulator)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.tools.AgentTool">AgentTool (class in google.adk.tools)</a>
 
         <ul>
@@ -528,9 +537,15 @@
           <li><a href="google-adk.html#google.adk.tools.RemoteMcpServer.allowed_tools">(google.adk.tools.RemoteMcpServer attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.ManagedAgent.api_client">api_client (google.adk.agents.ManagedAgent property)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.data_agent.DataAgentToolConfig.api_endpoint">api_endpoint (google.adk.tools.data_agent.DataAgentToolConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.api_key">api_key (google.adk.auth.AuthCredential attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes.API_KEY">API_KEY (google.adk.auth.AuthCredentialTypes attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.openai.OpenAILlm.api_key">api_key (google.adk.integrations.openai.OpenAILlm attribute)</a>, <a href="google-adk.html#id110">[1]</a>
 
@@ -570,9 +585,11 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.sessions.State.APP_PREFIX">APP_PREFIX (google.adk.sessions.State attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.append_event">append_event() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.append_event">append_event() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.append_event">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.append_event">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.append_event">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -602,6 +619,8 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.Context.attempt_count">attempt_count (google.adk.agents.Context property)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.audience">audience (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.LiveRequest.audio_stream_end">audio_stream_end (google.adk.agents.LiveRequest attribute)</a>
 
         <ul>
@@ -611,6 +630,8 @@
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.audio_timestamp">audio_timestamp (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.audio_transcription_config">audio_transcription_config (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.auth_code">auth_code (google.adk.auth.OAuth2Auth attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.AuthToolArguments.auth_config">auth_config (google.adk.tools.AuthToolArguments attribute)</a>
 
@@ -624,15 +645,33 @@
           <li><a href="google-adk.html#google.adk.tools.McpToolset.auth_credential">(google.adk.tools.McpToolset property)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.McpToolset.auth_scheme">auth_scheme (google.adk.tools.mcp_tool.McpToolset property)</a>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.auth_response_uri">auth_response_uri (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthConfig.auth_scheme">auth_scheme (google.adk.auth.AuthConfig attribute)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.McpToolset.auth_scheme">(google.adk.tools.mcp_tool.McpToolset property)</a>
+</li>
           <li><a href="google-adk.html#google.adk.tools.McpToolset.auth_scheme">(google.adk.tools.McpToolset property)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.auth_type">auth_type (google.adk.auth.AuthCredential attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.auth_uri">auth_uri (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes">AuthCredentialTypes (class in google.adk.auth)</a>
+</li>
         <li><a href="google-adk.html#google.adk.tools.authenticated_function_tool.AuthenticatedFunctionTool">AuthenticatedFunctionTool (class in google.adk.tools.authenticated_function_tool)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler">AuthHandler (class in google.adk.auth)</a>
+</li>
         <li><a href="google-adk.html#google.adk.events.Event.author">author (google.adk.events.Event attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.authorization_endpoint">authorization_endpoint (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthSchemeType">AuthSchemeType (in module google.adk.auth)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.automatic_continuation">automatic_continuation (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.automatic_function_calling">automatic_function_calling (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 </li>
@@ -669,6 +708,8 @@
         <li><a href="google-adk.html#google.adk.artifacts.BaseArtifactService">BaseArtifactService (class in google.adk.artifacts)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.base_authenticated_tool.BaseAuthenticatedTool">BaseAuthenticatedTool (class in google.adk.tools.base_authenticated_tool)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.BaseAuthProvider">BaseAuthProvider (class in google.adk.auth)</a>
 </li>
         <li><a href="google-adk.html#google.adk.environment.BaseEnvironment">BaseEnvironment (class in google.adk.environment)</a>
 </li>
@@ -739,6 +780,8 @@
         <li><a href="google-adk.html#google.adk.agents.LiveRequest.blob">blob (google.adk.agents.LiveRequest attribute)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.live.AudioChunk.blob">(google.adk.live.AudioChunk attribute)</a>
+</li>
           <li><a href="google-adk.html#google.adk.live.LiveRequest.blob">(google.adk.live.LiveRequest attribute)</a>
 </li>
         </ul></li>
@@ -822,8 +865,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.canonical_tools_cache">canonical_tools_cache (google.adk.agents.InvocationContext attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.models.BaseLlm.capabilities">capabilities (google.adk.models.BaseLlm property)</a>
+        <li><a href="google-adk.html#google.adk.live.CascadeLive.capabilities">capabilities (google.adk.live.CascadeLive property)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.models.BaseLlm.capabilities">(google.adk.models.BaseLlm property)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.telemetry.TelemetryConfig.capture_message_content">capture_message_content (google.adk.telemetry.TelemetryConfig attribute)</a>, <a href="google-adk.html#id162">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.check_for_deprecated_save_live_audio">check_for_deprecated_save_live_audio() (google.adk.agents.RunConfig class method)</a>
@@ -866,6 +913,10 @@
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAIResponsesLlm.client">(google.adk.labs.openai.OpenAIResponsesLlm attribute)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.client_id">client_id (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.client_secret">client_secret (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.clone">clone() (google.adk.agents.BaseAgent method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.skill_toolset.SkillToolset.clone_with_updated_skills">clone_with_updated_skills() (google.adk.tools.skill_toolset.SkillToolset method)</a>
@@ -952,7 +1003,11 @@
 </li>
         <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.code_block_delimiters">code_block_delimiters (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id71">[1]</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.code_challenge_method">code_challenge_method (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.code_executor">code_executor (google.adk.agents.LlmAgent attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.code_verifier">code_verifier (google.adk.auth.OAuth2Auth attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.events.EventActions.compaction">compaction (google.adk.events.EventActions attribute)</a>
 </li>
@@ -996,8 +1051,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.tool_confirmation.ToolConfirmation.confirmed">confirmed (google.adk.tools.tool_confirmation.ToolConfirmation attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.models.BaseLlm.connect">connect() (google.adk.models.BaseLlm method)</a>
+        <li><a href="google-adk.html#google.adk.live.CascadeLive.connect">connect() (google.adk.live.CascadeLive method)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.models.BaseLlm.connect">(google.adk.models.BaseLlm method)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.tools.mcp_tool.McpToolset.connection_params">connection_params (google.adk.tools.mcp_tool.McpToolset property)</a>
 
         <ul>
@@ -1036,9 +1095,11 @@
 </li>
         <li><a href="google-adk.html#google.adk.integrations.eventarc.EventarcToolset.create_publish_tool">create_publish_tool() (google.adk.integrations.eventarc.EventarcToolset method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.create_session">create_session() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.create_session">create_session() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.create_session">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.create_session">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.create_session">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -1051,6 +1112,8 @@
         <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService.create_session_sync">create_session_sync() (google.adk.sessions.InMemorySessionService method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.credential_by_key">credential_by_key (google.adk.agents.InvocationContext attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthConfig.credential_key">credential_key (google.adk.auth.AuthConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.credential_service">credential_service (google.adk.agents.InvocationContext attribute)</a>
 
@@ -1128,11 +1191,15 @@
 </li>
         <li><a href="google-adk.html#google.adk.models.ServiceTier.DEFERRED">DEFERRED (google.adk.models.ServiceTier attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.integrations.model_armor.ModelArmorConfig.deidentify_sensitive_data">deidentify_sensitive_data (google.adk.integrations.model_armor.ModelArmorConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.artifacts.BaseArtifactService.delete_artifact">delete_artifact() (google.adk.artifacts.BaseArtifactService method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.delete_session">delete_session() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.delete_session">delete_session() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.delete_session">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.delete_session">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.delete_session">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -1142,10 +1209,10 @@
           <li><a href="google-adk.html#google.adk.sessions.VertexAiSessionService.delete_session">(google.adk.sessions.VertexAiSessionService method)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService.delete_session_sync">delete_session_sync() (google.adk.sessions.InMemorySessionService method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService.delete_session_sync">delete_session_sync() (google.adk.sessions.InMemorySessionService method)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.description">description (google.adk.agents.BaseAgent attribute)</a>
 
         <ul>
@@ -1232,6 +1299,10 @@
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.effort">(google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>, <a href="google-adk.html#id133">[1]</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.integrations.eleven_labs.ElevenLabsSTT">ElevenLabsSTT (class in google.adk.integrations.eleven_labs)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.integrations.eleven_labs.ElevenLabsTTS">ElevenLabsTTS (class in google.adk.integrations.eleven_labs)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.enable_affective_dialog">enable_affective_dialog (google.adk.agents.RunConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.data_agent.DataAgentToolConfig.enable_data_agent_modification">enable_data_agent_modification (google.adk.tools.data_agent.DataAgentToolConfig attribute)</a>
@@ -1280,10 +1351,10 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.Context.event_author">event_author (google.adk.agents.Context property)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.telemetry.ContentCapturingMode.EVENT_ONLY">EVENT_ONLY (google.adk.telemetry.ContentCapturingMode attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.integrations.eventarc.EventarcToolset">EventarcToolset (class in google.adk.integrations.eventarc)</a>
 </li>
         <li><a href="google-adk.html#google.adk.sessions.Session.events">events (google.adk.sessions.Session attribute)</a>
@@ -1305,6 +1376,10 @@
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.workflow.RetryConfig.exceptions">exceptions (google.adk.workflow.RetryConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler.exchange_auth_token">exchange_auth_token() (google.adk.auth.AuthHandler method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthConfig.exchanged_auth_credential">exchanged_auth_credential (google.adk.auth.AuthConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.application_integration_tool.IntegrationConnectorTool.EXCLUDE_FIELDS">EXCLUDE_FIELDS (google.adk.tools.application_integration_tool.IntegrationConnectorTool attribute)</a>
 </li>
@@ -1342,6 +1417,10 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.telemetry.TelemetryConfig.experimental_features_opt_in">experimental_features_opt_in (google.adk.telemetry.TelemetryConfig attribute)</a>, <a href="google-adk.html#id163">[1]</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.expires_at">expires_at (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.expires_in">expires_in (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.explicit_vad_signal">explicit_vad_signal (google.adk.agents.RunConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.openai.OpenAIResponsesLlm.extra_request_args">extra_request_args (google.adk.integrations.openai.OpenAIResponsesLlm attribute)</a>
@@ -1367,6 +1446,10 @@
         <li><a href="google-adk.html#google.adk.evaluation.AgentEvaluator.find_config_for_test_file">find_config_for_test_file() (google.adk.evaluation.AgentEvaluator static method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.find_sub_agent">find_sub_agent() (google.adk.agents.BaseAgent method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreMemoryService">FirestoreMemoryService (class in google.adk.integrations.firestore)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService">FirestoreSessionService (class in google.adk.integrations.firestore)</a>
 </li>
         <li><a href="google-adk.html#google.adk.models.ServiceTier.FLEX">FLEX (google.adk.models.ServiceTier attribute)</a>
 </li>
@@ -1454,6 +1537,10 @@
 </li>
         <li><a href="google-adk.html#google.adk.telemetry.TelemetryConfig.genai_semconv_stability_opt_in">genai_semconv_stability_opt_in (google.adk.telemetry.TelemetryConfig attribute)</a>, <a href="google-adk.html#id164">[1]</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler.generate_auth_request">generate_auth_request() (google.adk.auth.AuthHandler method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler.generate_auth_uri">generate_auth_uri() (google.adk.auth.AuthHandler method)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.openai.OpenAILlm.generate_content_async">generate_content_async() (google.adk.integrations.openai.OpenAILlm method)</a>
 
         <ul>
@@ -1462,6 +1549,8 @@
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAILlm.generate_content_async">(google.adk.labs.openai.OpenAILlm method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAIResponsesLlm.generate_content_async">(google.adk.labs.openai.OpenAIResponsesLlm method)</a>
+</li>
+          <li><a href="google-adk.html#google.adk.live.CascadeLive.generate_content_async">(google.adk.live.CascadeLive method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.models.BaseLlm.generate_content_async">(google.adk.models.BaseLlm method)</a>
 </li>
@@ -1498,16 +1587,26 @@
           <li><a href="google-adk.html#google.adk.tools.McpToolset.get_auth_config">(google.adk.tools.McpToolset method)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProvider.get_auth_credential">get_auth_credential() (google.adk.integrations.agent_identity.GcpAuthProvider method)</a>
+        <li><a href="google-adk.html#google.adk.auth.BaseAuthProvider.get_auth_credential">get_auth_credential() (google.adk.auth.BaseAuthProvider method)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProvider.get_auth_credential">(google.adk.integrations.agent_identity.GcpAuthProvider method)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.Context.get_auth_response">get_auth_response() (google.adk.agents.Context method)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.auth.AuthHandler.get_auth_response">(google.adk.auth.AuthHandler method)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.integrations.bigquery.get_bigquery_skill">get_bigquery_skill() (in module google.adk.integrations.bigquery)</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.tools.bigquery.get_bigquery_skill">(in module google.adk.tools.bigquery)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.AuthConfig.get_credential_key">get_credential_key() (google.adk.auth.AuthConfig method)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.SandboxClient.get_current_url">get_current_url() (google.adk.integrations.vmaas.SandboxClient method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.agent_registry.AgentRegistry.get_endpoint">get_endpoint() (google.adk.integrations.agent_registry.AgentRegistry method)</a>
@@ -1548,9 +1647,11 @@
 </li>
         <li><a href="google-adk.html#google.adk.integrations.secret_manager.SecretManagerClient.get_secret">get_secret() (google.adk.integrations.secret_manager.SecretManagerClient method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.get_session">get_session() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.get_session">get_session() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.get_session">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.get_session">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.get_session">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -1630,9 +1731,11 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.get_user_choice_tool.get_user_choice">get_user_choice() (in module google.adk.tools.get_user_choice_tool)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.get_user_state">get_user_state() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.get_user_state">get_user_state() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.get_user_state">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.get_user_state">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.get_user_state">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -1806,6 +1909,13 @@
 </li>
         </ul></li>
         <li>
+    google.adk.integrations.eleven_labs
+
+        <ul>
+          <li><a href="google-adk.html#module-google.adk.integrations.eleven_labs">module</a>
+</li>
+        </ul></li>
+        <li>
     google.adk.integrations.eventarc
 
         <ul>
@@ -1854,6 +1964,8 @@
           <li><a href="google-adk.html#module-google.adk.integrations.mongodb">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     google.adk.integrations.oci
 
@@ -1875,8 +1987,6 @@
           <li><a href="google-adk.html#module-google.adk.integrations.parameter_manager">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     google.adk.integrations.redis
 
@@ -2400,6 +2510,8 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.google_tool.GoogleTool">GoogleTool (class in google.adk.tools.google_tool)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.grant_types_supported">grant_types_supported (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.workflow.Workflow.graph">graph (google.adk.workflow.Workflow attribute)</a>
 </li>
     </ul></td>
@@ -2411,6 +2523,8 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.integrations.livekit.LiveKitCall.hang_up">hang_up() (google.adk.integrations.livekit.LiveKitCall method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler.has_auth_response">has_auth_response() (google.adk.auth.AuthHandler method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.sessions.State.has_delta">has_delta() (google.adk.sessions.State method)</a>
 </li>
@@ -2454,6 +2568,10 @@
           <li><a href="google-adk.html#google.adk.integrations.vmaas.SandboxClient.hover_at">(google.adk.integrations.vmaas.SandboxClient method)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.http">http (google.adk.auth.AuthCredential attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes.HTTP">HTTP (google.adk.auth.AuthCredentialTypes attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.http_options">http_options (google.adk.agents.RunConfig attribute)</a>
 
         <ul>
@@ -2482,6 +2600,8 @@
           <li><a href="google-adk.html#google.adk.sessions.Session.id">(google.adk.sessions.Session attribute)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.id_token">id_token (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.image_config">image_config (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.openai.OpenAIResponsesLlm.include">include (google.adk.integrations.openai.OpenAIResponsesLlm attribute)</a>
@@ -2708,9 +2828,11 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.skills.Resources.list_scripts">list_scripts() (google.adk.skills.Resources method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.list_sessions">list_sessions() (google.adk.integrations.redis.RedisSessionService method)</a>
+        <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreSessionService.list_sessions">list_sessions() (google.adk.integrations.firestore.FirestoreSessionService method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService.list_sessions">(google.adk.integrations.redis.RedisSessionService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.BaseSessionService.list_sessions">(google.adk.sessions.BaseSessionService method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.DatabaseSessionService.list_sessions">(google.adk.sessions.DatabaseSessionService method)</a>
@@ -2739,6 +2861,10 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.live_session_resumption_handle">live_session_resumption_handle (google.adk.agents.InvocationContext attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.live.LiveEgress">LiveEgress (class in google.adk.live)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.live.LiveIngress">LiveIngress (class in google.adk.live)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.livekit.LiveKitCall">LiveKitCall (class in google.adk.integrations.livekit)</a>
 </li>
@@ -2947,6 +3073,8 @@
 </li>
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAIResponsesLlm.model">(google.adk.labs.openai.OpenAIResponsesLlm attribute)</a>
 </li>
+          <li><a href="google-adk.html#google.adk.live.CascadeLive.model">(google.adk.live.CascadeLive attribute)</a>
+</li>
           <li><a href="google-adk.html#google.adk.models.BaseLlm.model">(google.adk.models.BaseLlm attribute)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.google_search_agent_tool.GoogleSearchAgentTool.model">(google.adk.tools.google_search_agent_tool.GoogleSearchAgentTool attribute)</a>
@@ -2982,6 +3110,8 @@
           <li><a href="google-adk.html#google.adk.integrations.gcs.GCSCredentialsConfig.model_post_init">(google.adk.integrations.gcs.GCSCredentialsConfig method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.labs.antigravity.AntigravityAgent.model_post_init">(google.adk.labs.antigravity.AntigravityAgent method)</a>
+</li>
+          <li><a href="google-adk.html#google.adk.live.CascadeLive.model_post_init">(google.adk.live.CascadeLive method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.Session.model_post_init">(google.adk.sessions.Session method)</a>
 </li>
@@ -3061,6 +3191,8 @@
           <li><a href="google-adk.html#module-google.adk.integrations.daytona">google.adk.integrations.daytona</a>
 </li>
           <li><a href="google-adk.html#module-google.adk.integrations.e2b">google.adk.integrations.e2b</a>
+</li>
+          <li><a href="google-adk.html#module-google.adk.integrations.eleven_labs">google.adk.integrations.eleven_labs</a>
 </li>
           <li><a href="google-adk.html#module-google.adk.integrations.eventarc">google.adk.integrations.eventarc</a>
 </li>
@@ -3270,13 +3402,17 @@
 </li>
           <li><a href="google-adk.html#google.adk.tools.RemoteMcpServer.name">(google.adk.tools.RemoteMcpServer attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.tools.tool_configs.ToolConfig.name">(google.adk.tools.tool_configs.ToolConfig attribute)</a>
+        </ul></li>
+        <li><a href="google-adk.html#google.adk.tools.set_model_response_tool.SetModelResponseTool.NAME">NAME (google.adk.tools.set_model_response_tool.SetModelResponseTool attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.tools.tool_configs.ToolConfig.name">name (google.adk.tools.tool_configs.ToolConfig attribute)</a>
+
+        <ul>
           <li><a href="google-adk.html#google.adk.workflow.BaseNode.name">(google.adk.workflow.BaseNode attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.AgentEngineSandboxComputer.navigate">navigate() (google.adk.integrations.vmaas.AgentEngineSandboxComputer method)</a>
 
         <ul>
@@ -3305,6 +3441,8 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.workflow.NodeTimeoutError">NodeTimeoutError</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.nonce">nonce (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -3313,6 +3451,10 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.oauth2">oauth2 (google.adk.auth.AuthCredential attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes.OAUTH2">OAUTH2 (google.adk.auth.AuthCredentialTypes attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.plugins.BasePlugin.on_agent_error_callback">on_agent_error_callback() (google.adk.plugins.BasePlugin method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.plugins.BasePlugin.on_event_callback">on_event_callback() (google.adk.plugins.BasePlugin method)</a>
@@ -3328,6 +3470,8 @@
         <li><a href="google-adk.html#google.adk.plugins.BasePlugin.on_tool_error_callback">on_tool_error_callback() (google.adk.plugins.BasePlugin method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.plugins.BasePlugin.on_user_message_callback">on_user_message_callback() (google.adk.plugins.BasePlugin method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes.OPEN_ID_CONNECT">OPEN_ID_CONNECT (google.adk.auth.AuthCredentialTypes attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.AgentEngineSandboxComputer.open_web_browser">open_web_browser() (google.adk.integrations.vmaas.AgentEngineSandboxComputer method)</a>
 </li>
@@ -3404,6 +3548,8 @@
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.parent_agent">parent_agent (google.adk.agents.BaseAgent attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.Context.parent_ctx">parent_ctx (google.adk.agents.Context property)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthHandler.parse_and_store_auth_response">parse_and_store_auth_response() (google.adk.auth.AuthHandler method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.LiveRequest.partial">partial (google.adk.agents.LiveRequest attribute)</a>
 
@@ -3517,6 +3663,8 @@
           <li><a href="google-adk.html#google.adk.tools.pubsub.PubSubToolConfig.project_id">(google.adk.tools.pubsub.PubSubToolConfig attribute)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.prompt">prompt (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.model_armor.ModelArmorConfig.prompt_template_name">prompt_template_name (google.adk.integrations.model_armor.ModelArmorConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.eventarc.EventarcToolConfig.publish_timeout">publish_timeout (google.adk.integrations.eventarc.EventarcToolConfig attribute)</a>
@@ -3531,6 +3679,8 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.auth.AuthConfig.raw_auth_credential">raw_auth_credential (google.adk.auth.AuthConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.tools.mcp_tool.McpTool.raw_mcp_tool">raw_mcp_tool (google.adk.tools.mcp_tool.McpTool property)</a>
 </li>
         <li><a href="google-adk.html#google.adk.environment.BaseEnvironment.read_file">read_file() (google.adk.environment.BaseEnvironment method)</a>
@@ -3559,9 +3709,13 @@
           <li><a href="google-adk.html#google.adk.labs.openai.OpenAIResponsesLlm.reasoning">(google.adk.labs.openai.OpenAIResponsesLlm attribute)</a>
 </li>
         </ul></li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.redirect_uri">redirect_uri (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionService">RedisSessionService (class in google.adk.integrations.redis)</a>
 </li>
         <li><a href="google-adk.html#google.adk.skills.Resources.references">references (google.adk.skills.Resources attribute)</a>, <a href="google-adk.html#id156">[1]</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.refresh_token">refresh_token (google.adk.auth.OAuth2Auth attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.models.LLMRegistry.register">register() (google.adk.models.LLMRegistry static method)</a>
 </li>
@@ -3584,6 +3738,8 @@
         <ul>
           <li><a href="google-adk.html#google.adk.tools.McpToolset.require_confirmation">(google.adk.tools.McpToolset property)</a>
 </li>
+          <li><a href="google-adk.html#google.adk.workflow.FunctionNode.require_confirmation">(google.adk.workflow.FunctionNode attribute)</a>
+</li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.workflow.BaseNode.rerun_on_resume">rerun_on_resume (google.adk.workflow.BaseNode attribute)</a>
 
@@ -3598,6 +3754,8 @@
         <li><a href="google-adk.html#google.adk.models.LLMRegistry.resolve">resolve() (google.adk.models.LLMRegistry static method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.telemetry.TelemetryConfig.resolved_content_capturing_mode">resolved_content_capturing_mode (google.adk.telemetry.TelemetryConfig property)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.resource_ref">resource_ref (google.adk.auth.AuthCredential attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.skills.Skill.resources">resources (google.adk.skills.Skill attribute)</a>, <a href="google-adk.html#id160">[1]</a>
 </li>
@@ -3641,6 +3799,8 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.skill_toolset.SkillLifecycleConfig.revalidate_skills">revalidate_skills (google.adk.tools.skill_toolset.SkillLifecycleConfig attribute)</a>, <a href="google-adk.html#id225">[1]</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.revocation_endpoint">revocation_endpoint (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.runners.Runner.rewind_async">rewind_async() (google.adk.runners.Runner method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.events.EventActions.rewind_before_invocation_id">rewind_before_invocation_id (google.adk.events.EventActions attribute)</a>
@@ -3657,6 +3817,8 @@
           <li><a href="google-adk.html#google.adk.workflow.Edge.route">(google.adk.workflow.Edge attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.routing_config">routing_config (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.runners.Runner.run">run() (google.adk.runners.Runner method)</a>
@@ -3665,8 +3827,6 @@
           <li><a href="google-adk.html#google.adk.workflow.BaseNode.run">(google.adk.workflow.BaseNode method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager.run_after_agent_callback">run_after_agent_callback() (google.adk.plugins.PluginManager method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager.run_after_model_callback">run_after_model_callback() (google.adk.plugins.PluginManager method)</a>
@@ -3807,8 +3967,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.save_live_blob">save_live_blob (google.adk.agents.RunConfig attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.scopes">scopes (google.adk.integrations.agent_identity.GcpAuthProviderScheme attribute)</a>, <a href="google-adk.html#id81">[1]</a>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.scopes">scopes (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.scopes">(google.adk.integrations.agent_identity.GcpAuthProviderScheme attribute)</a>, <a href="google-adk.html#id81">[1]</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.AgentEngineSandboxComputer.screen_size">screen_size() (google.adk.integrations.vmaas.AgentEngineSandboxComputer method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.skills.Resources.scripts">scripts (google.adk.skills.Resources attribute)</a>, <a href="google-adk.html#id157">[1]</a>
@@ -3836,6 +4000,8 @@
         <li><a href="google-adk.html#google.adk.agents.Context.search_memory">search_memory() (google.adk.agents.Context method)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.integrations.firestore.FirestoreMemoryService.search_memory">(google.adk.integrations.firestore.FirestoreMemoryService method)</a>
+</li>
           <li><a href="google-adk.html#google.adk.memory.BaseMemoryService.search_memory">(google.adk.memory.BaseMemoryService method)</a>
 </li>
         </ul></li>
@@ -3904,6 +4070,10 @@
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.server_params">server_params (google.adk.tools.mcp_tool.StdioConnectionParams attribute)</a>, <a href="google-adk.html#id209">[1]</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredential.service_account">service_account (google.adk.auth.AuthCredential attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.AuthCredentialTypes.SERVICE_ACCOUNT">SERVICE_ACCOUNT (google.adk.auth.AuthCredentialTypes attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.service_tier">service_tier (google.adk.agents.RunConfig attribute)</a>
 
@@ -4056,6 +4226,8 @@
         <li><a href="google-adk.html#google.adk.agents.Context.state">state (google.adk.agents.Context property)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.state">(google.adk.auth.OAuth2Auth attribute)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.Session.state">(google.adk.sessions.Session attribute)</a>
 </li>
         </ul></li>
@@ -4101,6 +4273,8 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.streaming_mode">streaming_mode (google.adk.agents.RunConfig attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.live.CascadeLive.stt">stt (google.adk.live.CascadeLive attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.sub_agents">sub_agents (google.adk.agents.BaseAgent attribute)</a>
 
         <ul>
@@ -4111,8 +4285,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.support_cfc">support_cfc (google.adk.agents.RunConfig attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProvider.supported_auth_schemes">supported_auth_schemes (google.adk.integrations.agent_identity.GcpAuthProvider property)</a>
+        <li><a href="google-adk.html#google.adk.auth.BaseAuthProvider.supported_auth_schemes">supported_auth_schemes (google.adk.auth.BaseAuthProvider property)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProvider.supported_auth_schemes">(google.adk.integrations.agent_identity.GcpAuthProvider property)</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.integrations.openai.OpenAILlm.supported_models">supported_models() (google.adk.integrations.openai.OpenAILlm class method)</a>
 
         <ul>
@@ -4145,6 +4323,14 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.terminate_on_close">terminate_on_close (google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id214">[1]</a>
 </li>
+        <li><a href="google-adk.html#google.adk.live.AgentSpokenOutput.text">text (google.adk.live.AgentSpokenOutput attribute)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.live.PartialTranscript.text">(google.adk.live.PartialTranscript attribute)</a>
+</li>
+          <li><a href="google-adk.html#google.adk.live.UserTurnFinished.text">(google.adk.live.UserTurnFinished attribute)</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.thinking_config">thinking_config (google.adk.labs.openai.OpenAIGenerateContentConfig attribute)</a>
 
         <ul>
@@ -4191,6 +4377,12 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.token_compaction_checked">token_compaction_checked (google.adk.agents.InvocationContext attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.token_endpoint">token_endpoint (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OAuth2Auth.token_endpoint_auth_method">token_endpoint_auth_method (google.adk.auth.OAuth2Auth attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.token_endpoint_auth_methods_supported">token_endpoint_auth_methods_supported (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.crewai.CrewaiTool.tool">tool (google.adk.integrations.crewai.CrewaiTool attribute)</a>
 
         <ul>
@@ -4225,6 +4417,10 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.integrations.model_armor.ModelArmorConfig.tool_output_blocked_message">tool_output_blocked_message (google.adk.integrations.model_armor.ModelArmorConfig attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.integrations.model_armor.ModelArmorConfig.tool_output_template_name">tool_output_template_name (google.adk.integrations.model_armor.ModelArmorConfig attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.tool_thread_pool_config">tool_thread_pool_config (google.adk.agents.RunConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.toolbox_toolset.ToolboxToolset">ToolboxToolset (class in google.adk.tools.toolbox_toolset)</a>
@@ -4289,10 +4485,16 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.integrations.redis.RedisSessionServiceConfig.ttl_seconds">ttl_seconds (google.adk.integrations.redis.RedisSessionServiceConfig attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.live.CascadeLive.tts">tts (google.adk.live.CascadeLive attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.integrations.eventarc.CloudEventAttributesBinding.type">type (google.adk.integrations.eventarc.CloudEventAttributesBinding attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.type_">type_ (google.adk.integrations.agent_identity.GcpAuthProviderScheme attribute)</a>, <a href="google-adk.html#id82">[1]</a>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.type_">type_ (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
+
+        <ul>
+          <li><a href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.type_">(google.adk.integrations.agent_identity.GcpAuthProviderScheme attribute)</a>, <a href="google-adk.html#id82">[1]</a>
 </li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.SandboxClient.type_text">type_text() (google.adk.integrations.vmaas.SandboxClient method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.integrations.vmaas.AgentEngineSandboxComputer.type_text_at">type_text_at() (google.adk.integrations.vmaas.AgentEngineSandboxComputer method)</a>
@@ -4342,6 +4544,8 @@
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.sessions.State.USER_PREFIX">USER_PREFIX (google.adk.sessions.State attribute)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.auth.OpenIdConnectWithConfig.userinfo_endpoint">userinfo_endpoint (google.adk.auth.OpenIdConnectWithConfig attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -4467,7 +4671,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=1647406f"></script>
+</div><script src="_static/documentation_options.js?v=84389e84"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
