@@ -48,7 +48,7 @@ extra:
 theme:
   name: material
   font:
-    text: Roboto
+    text: Google Sans
     code: Roboto Mono
   logo: assets/agent-development-kit.png
   favicon: assets/agent-development-kit.png

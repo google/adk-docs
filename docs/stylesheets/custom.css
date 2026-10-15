@@ -585,7 +585,7 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
  * resolve from the nearest declaring ancestor, and Pagefind declares these on
  * :root, where an equal-specificity rule would lose on source order. */
 body {
-  --pf-font: Roboto, Helvetica, Arial, sans-serif;
+  --pf-font: "Google Sans", Helvetica, Arial, sans-serif;
   --pf-border-radius: 4px;
   --pf-modal-max-width: 46rem;
 }

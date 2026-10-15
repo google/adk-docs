@@ -39,8 +39,7 @@ body.adk-landing-page .md-content__inner { max-width: 1280px !important; margin:
   --landing-accent: #3b82f6;
   --landing-accent2: #8b5cf6;
   --landing-accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    /* --font-sans: 'Inter', system-ui, -apple-system, sans-serif; */
-  --font-sans: 'Roboto', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Google Sans', system-ui, -apple-system, sans-serif;
   --font-mono: 'Roboto Mono', 'JetBrains Mono', monospace;
 
   position: relative;
