@@ -165,5 +165,5 @@ start paid work, which suits an agent that should only prepare lists.
 ## Additional resources
 
 - [SpecStream MCP documentation](https://specstream.ai/docs/mcp)
-- [SpecStream tools on GitHub](https://github.com/Specstreamai/specstream-tools)
+- [SpecStream tools on GitHub](https://github.com/specstream/specstream-tools)
 - [SpecStream pricing](https://specstream.ai/pricing)
