@@ -343,7 +343,7 @@ For Google MCP servers, authentication headers are automatically passed in.
 
     - `list_mcp_servers(self, filter_str, page_size, page_token)`: Fetches a list
       of registered MCP Servers.
-    - `search_mcp_servers(*, search_string, search_type, filter_str, order_by,
+    - `search_mcp_servers(self, *, search_string, search_type, filter_str, order_by,
       page_size, page_token)`: Searches registered MCP servers.
     - `get_mcp_server(self, name)`: Retrieves detailed metadata of a specific MCP
       Server.
@@ -351,7 +351,7 @@ For Google MCP servers, authentication headers are automatically passed in.
       instance from a registered MCP Server.
     - `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of
       registered A2A Agents.
-    - `search_agents(*, search_string, search_type, filter_str, order_by,
+    - `search_agents(self, *, search_string, search_type, filter_str, order_by,
       page_size, page_token)`: Searches registered A2A agents.
     - `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A
       Agent.
