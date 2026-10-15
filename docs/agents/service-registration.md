@@ -42,7 +42,8 @@ The `services.yaml` file supports the following properties:
 
 ## Register services with `services.py`
 
-Use a `services.py` file in the agent directory for complex initialization or
+Use a `services.py` file, placed in the same location as `services.yaml`, for
+complex initialization or
 when you require more control over the service creation process.
 
 **Example `services.py`:**
