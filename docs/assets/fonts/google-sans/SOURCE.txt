@@ -1,0 +1,14 @@
+Google Sans web fonts
+=====================
+
+These variable WOFF2 files contain the Latin and Latin Extended subsets of
+Google Sans, in normal and italic styles with a supported weight range of
+400–700.
+
+Project: https://github.com/googlefonts/googlesans
+Web font source: https://fonts.google.com/specimen/Google+Sans
+Google Fonts release path: fonts.gstatic.com/s/googlesans/v71/
+Retrieved: 2026-10-15
+
+Google Sans is distributed under the SIL Open Font License, Version 1.1. See
+OFL.txt in this directory.

@@ -24,6 +24,7 @@ validation:
 
 # Custom CSS
 extra_css:
+  - stylesheets/fonts.css
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
@@ -47,8 +48,7 @@ extra:
 # Configuration
 theme:
   name: material
-  # Fonts are loaded explicitly in overrides/main.html so requests only include
-  # weights that are available in the public Google Fonts catalog.
+  # Fonts are loaded explicitly so Google Sans can be self-hosted.
   font: false
   logo: assets/agent-development-kit.png
   favicon: assets/agent-development-kit.png
