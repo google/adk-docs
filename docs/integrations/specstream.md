@@ -55,11 +55,13 @@ charges per matching row, up to a maximum you approve before anything runs.
     === "Remote MCP Server"
 
         ```python
+        import os
+
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
         from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
-        SPECSTREAM_API_KEY = "YOUR_SPECSTREAM_API_KEY"
+        SPECSTREAM_API_KEY = os.environ["SPECSTREAM_API_KEY"]
 
         root_agent = Agent(
             model="gemini-flash-latest",
@@ -89,7 +91,7 @@ charges per matching row, up to a maximum you approve before anything runs.
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        const SPECSTREAM_API_KEY = "YOUR_SPECSTREAM_API_KEY";
+        const SPECSTREAM_API_KEY = process.env.SPECSTREAM_API_KEY;
 
         const rootAgent = new LlmAgent({
             model: "gemini-flash-latest",
