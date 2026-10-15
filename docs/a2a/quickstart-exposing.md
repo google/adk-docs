@@ -127,7 +127,33 @@ When you call `to_a2a()`, ADK automatically handles several setup steps to expos
 * **`push_config_store` (optional):** A custom store implementation for managing A2A push notifications. If not provided, the system defaults to an in-memory store (`InMemoryPushNotificationConfigStore`).
 * **`agent_card` (optional):** An `AgentCard` object or a path to a JSON file. If omitted, ADK automatically generates an agent card from your agent's code.
 * **`runner` (optional):** A pre-built `Runner`. If omitted, a default runner backed by in-memory services is created.
+* **`agent_executor_factory` (optional):** A function with signature `Callable[[Runner], A2aAgentExecutor]` that creates the executor. See [Customize the executor factory](#customize-the-executor-factory).
 * **`lifespan` (optional):** An async context manager for Starlette lifespan events, used to run startup and shutdown logic. See [Manage the application lifecycle](#manage-the-application-lifecycle).
+
+### Customize the executor factory
+
+Pass `agent_executor_factory` to customize the executor while keeping
+`to_a2a()`'s application setup. The factory receives your supplied `runner`, or
+a default `Runner` if you omit it. Use that runner when constructing the
+executor so it retains the configured agent and services.
+
+For example, this factory enables the [new executor implementation](#agent-executor-v2):
+
+```python
+from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from google.adk.runners import Runner
+
+def create_executor(runner: Runner) -> A2aAgentExecutor:
+    return A2aAgentExecutor(runner=runner, force_new_version=True)
+
+a2a_app = to_a2a(root_agent, agent_executor_factory=create_executor)
+```
+
+The factory runs synchronously when `to_a2a()` creates the application, before
+the application's lifespan starts. It returns an executor, rather than being
+called for each request. You can also pass an `A2aAgentExecutorConfig` to the
+executor to configure the converters and interceptors described below.
 
 ### Manage the application lifecycle
 
