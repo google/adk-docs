@@ -353,45 +353,15 @@ Use these parameters to control runtime guardrails and debugging:
   Python in favor of `SaveFilesAsArtifactsPlugin`.
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
+- `labels` (Python): Adds labels to model requests for this invocation, for
+  example `RunConfig(labels={"service": "customer_support"})`. These override
+  matching keys in the agent's `generate_content_config.labels`. Support
+  depends on the model backend.
 - `service_tier`: Selects the serving capacity for the run's model calls. ADK
   Python only, and applies only to Gemini models that use the Interactions API.
   `ServiceTier.DEFERRED` queues each model call to run on off-peak capacity and
   cannot be combined with `StreamingMode.SSE`. See
   [Deferred scheduling](/agents/models/google-gemini/deferred-schedule/).
-
-## Add labels to model requests
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
-</div>
-
-In Python, `RunConfig.labels` accepts a `dict[str, str]` and defaults to `None`.
-Use it to label model requests for a single invocation, for example to attribute
-usage to a service. Invocation labels override matching keys in the agent's
-`generate_content_config.labels`.
-
-=== "Python"
-
-    ```python
-    from google.adk.agents.run_config import RunConfig
-    from google.genai import types
-
-    config = RunConfig(labels={"service": "customer_support"})
-
-    async for event in runner.run_async(
-        user_id="user",
-        session_id="session",
-        new_message=types.Content(
-            role="user", parts=[types.Part(text="Hello")]
-        ),
-        run_config=config,
-    ):
-        print(event)
-    ```
-
-Label support and validation rules depend on the model backend. For Gemini,
-follow the label requirements in the
-[GenerateContent request reference](https://ai.google.dev/api/generate-content).
 
 ## API reference
 
