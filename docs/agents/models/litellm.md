@@ -100,6 +100,23 @@ agent_claude_direct = LlmAgent(
 )
 ```
 
+## Configure fallback models
+
+Pass `fallbacks` to `LiteLlm` to try another model if the primary call fails:
+
+```python
+from google.adk.models.lite_llm import LiteLlm
+
+model = LiteLlm(
+    model="openai/YOUR_PRIMARY_MODEL",
+    fallbacks=["openai/YOUR_FALLBACK_MODEL"],
+)
+```
+
+Use models available to your account and configure credentials for each
+provider. LiteLLM handles fallback selection and retries. See the
+[complete agent example](https://github.com/google/adk-python/tree/main/contributing/samples/models/litellm_with_fallback_models).
+
 ## Anthropic thinking blocks
 
 <div class="language-support-tag">
