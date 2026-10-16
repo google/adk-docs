@@ -208,8 +208,7 @@ tells the agent:
     To apply shared rules or a consistent personality to *all* 
     agents in your system, use `GlobalInstructionPlugin` instead of 
     the deprecated `global_instruction` parameter.
-
-    Go has no `GlobalInstructionPlugin`. In Go, set `GlobalInstruction` or
+     For ADK Go set `GlobalInstruction` or
     `GlobalInstructionProvider` on `llmagent.Config`.
 
 ## Equip the agent with tools
