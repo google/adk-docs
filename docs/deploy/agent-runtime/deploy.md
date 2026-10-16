@@ -133,13 +133,10 @@ such as:
     └── main.go
     ``` 
 
-    The container that `adkgo deploy agentengine` builds starts your program
-    with `web -host 0.0.0.0 -port 8080 agentengine`, where `agentengine` is a
-    `web` sublauncher keyword. Your `main.go` must therefore run your agent with
-    the Agent Engine launcher from
+    Your `main.go` must run your agent with the Agent Engine launcher from
     `google.golang.org/adk/v2/cmd/launcher/agentengine` instead of
-    `full.NewLauncher()`. Pass it the Agent Runtime resource ID, which the
-    service provides in the `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
+    `full.NewLauncher()`, passing it the Agent Runtime resource ID from the
+    `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
 
     ```go
     import "google.golang.org/adk/v2/cmd/launcher/agentengine"
@@ -219,10 +216,8 @@ For `region`, you can find a list of the supported regions on the
         --mem_ttl duration          Time-To-Live for memories (default 8760h0m0s)
     ```
 
-    Without `--agent_engine_id`, each deployment creates a new Agent Runtime
-    instance. To redeploy to an existing instance, pass its `RESOURCE_ID` with
-    `--agent_engine_id`. Add `--mem_deploy` to provision or update a Memory
-    Bank for the instance in the same step.
+    To redeploy to an existing Agent Runtime instance instead of creating a new
+    one, pass its `RESOURCE_ID` with `--agent_engine_id`.
 
 
 ### Deploy command output
