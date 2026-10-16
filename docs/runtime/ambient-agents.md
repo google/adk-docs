@@ -210,11 +210,9 @@ When a trigger endpoint receives an event, it:
     go run event_processing_agent.go web api pubsub
     ```
 
-    The Go server listens on port 8080 and serves trigger endpoints under the
-    `/api` path prefix. The `pubsub` and `eventarc` subcommands each have their
-    own `-path_prefix` flag to change it. The app name is the agent's name,
-    `event_processor`. In the following request, use
-    `http://localhost:8080/api/apps/event_processor/trigger/pubsub` as the URL.
+    For the Go server, use
+    `http://localhost:8080/api/apps/event_processor/trigger/pubsub` as the URL
+    in the following request.
 
 **2. Send a test event:**
 
@@ -391,11 +389,14 @@ during bursts of events.
     | :------ | :------ | :------------------- |
     | Max concurrent invocations | 100 | `--trigger_max_concurrent_runs` |
 
-    !!! note "Pub/Sub triggers in ADK Go v2.3.0 to v2.5.0"
+    !!! note "Pub/Sub trigger concurrency in ADK Go"
 
         ADK Go v2.3.0 through v2.5.0 don't apply
         `--trigger_max_concurrent_runs` to Pub/Sub triggers, so Pub/Sub events
         run without a concurrency limit. Eventarc triggers apply the limit.
+        ADK Go v2.6.0 and higher apply it to Pub/Sub triggers too. On Cloud
+        Run, the service's `--concurrency` and `--max-instances` settings bound
+        Pub/Sub load in the earlier releases.
 
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
@@ -524,8 +525,8 @@ deploying ambient agents with trigger endpoints.
 
     Deploy your agent to Cloud Run with the `adkgo` CLI. Enable each trigger
     with its own flag. Trigger settings take the trigger type as a prefix, for
-    example `--eventarc_max_concurrent_runs`. Pass the path to your agent's
-    `main` Go file, not a directory, with `-e`:
+    example `--eventarc_max_concurrent_runs`. Pass your agent's `main` Go file
+    with `-e`:
 
     ```bash
     ./adkgo deploy cloudrun \
@@ -538,8 +539,8 @@ deploying ambient agents with trigger endpoints.
       --eventarc_max_concurrent_runs=5
     ```
 
-    In Go, trigger endpoints are served under the `/api` path prefix, so
-    point push subscriptions and Eventarc triggers at
+    ADK Go serves trigger endpoints under the `/api` path prefix, so point
+    push subscriptions and Eventarc triggers at
     `/api/apps/{app_name}/trigger/pubsub` and
     `/api/apps/{app_name}/trigger/eventarc`.
 

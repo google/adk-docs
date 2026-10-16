@@ -393,14 +393,10 @@ Sessions store the state and event history for a specific user's interaction wit
 
 #### Update a session
 
-!!! note "Go: available in v2.4.0 and later"
-
-    The Go ADK REST API server supports this endpoint in ADK Go v2.4.0 and
-    later. In Go, the `stateDelta` in this endpoint's request body can only
-    change session-scoped keys. The server rejects a key with the `app:`,
-    `user:`, or `temp:` prefix with HTTP 400 unless its value is unchanged.
-
 Updates an existing session.
+
+ADK Go serves this endpoint in v2.4.0 and higher, and its `stateDelta` can only
+change session-scoped keys.
 
 *   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
