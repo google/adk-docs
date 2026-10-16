@@ -72,20 +72,10 @@ strict_policy = BashToolPolicy(
 )
 ```
 
-Entries match whole command tokens. For example, `"ls"` permits `ls -la`, but
-not `lsof`, `./ls`, or `/bin/ls`. To allow an absolute executable path, list it
-explicitly. The `"git status"` entry permits `git status --short`, but not
-`git commit`.
-
-Commands run directly without a shell. Pipes, redirection, wildcard expansion,
-and command substitution are not evaluated. For example, `ls *.txt` passes
-the literal argument `*.txt` to `ls`. To reject specific strings before
-execution, set `blocked_operators`; it is empty by default.
-
-The workspace sets the working directory, but does not isolate the process
-from the rest of the filesystem. Allowing an interpreter such as `bash` or
-`python` also allows it to run scripts or code. Use an isolated execution
-environment when commands need stronger separation from the host.
+Prefixes match whole command tokens: `"git status"` allows `git status --short`,
+but not `git commit`. Commands run without a shell, so pipes, redirection and
+wildcard expansion are not evaluated. The workspace sets the working directory;
+it does not isolate the process from the rest of the filesystem.
 
 ### Built-in protections
 
@@ -95,31 +85,12 @@ environment when commands need stronger separation from the host.
 4. **Core Dumps Disabled:** To prevent sensitive memory leaks, core dumps are strictly disabled, `RLIMIT_CORE` set to `0`, for the executing subprocess.
 5. **Process Group Termination:** If a command exceeds the `timeout_seconds`, the tool issues a `SIGKILL` to the entire process group to ensure no orphan background processes are left running.
 
-## Command results
-
-After a confirmed command finishes, the tool returns a dictionary containing
-`stdout`, `stderr`, and the process `returncode`. For example:
-
-```json
-{
-  "stdout": "report.txt\n",
-  "stderr": "<no stderr captured>",
-  "returncode": 0
-}
-```
-
-An empty output stream is represented by `<no stdout captured>` or
-`<no stderr captured>`. A nonzero exit code is returned in `returncode` without
-adding an `error` field, so check the exit code as well as any error message.
-
-Validation failures, pending or rejected confirmation, and unsupported
-platforms return an `error` message without the process fields. A timeout
-returns `error` together with the captured output and `returncode`. Other
-execution exceptions return `error` and the output fields, but may omit
-`returncode`.
-
 ## Available tools
 
 | Tool Name | Class Name | Description |
 | :--- | :--- | :--- |
 | `execute_bash` | `ExecuteBashTool` | Executes a bash command within a workspace. POSIX only |
+
+Confirmed commands return `stdout`, `stderr` and `returncode`. Check the exit
+code for command failures; validation or execution failures can also return an
+`error` message.
