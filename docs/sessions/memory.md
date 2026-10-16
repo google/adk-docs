@@ -566,10 +566,9 @@ For example, you can automate this step with a callback:
 
 === "Go"
 
-    In Go, agent callbacks can't reach the memory service or the session. Use a
-    Plugin's `AfterRunCallback` instead, which receives the full invocation
-    context, and register the Plugin on the runner together with the memory
-    service:
+    Agent callbacks don't have access to the memory service. Save the session
+    from a Plugin's `AfterRunCallback` instead, and register the Plugin on the
+    runner together with the memory service:
 
     ```go
     import (

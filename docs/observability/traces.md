@@ -95,11 +95,11 @@ maybe_set_otel_providers([gcp_exporters])
 
 In Go, use the `google.golang.org/adk/v2/telemetry` package to create the OpenTelemetry providers, then register them globally so ADK uses them.
 
-If you run your agent with the ADK Go launcher, you don't need this setup: the launcher already calls `telemetry.New` and registers the providers globally, reading the same environment variables. Pass extra options through `launcher.Config.TelemetryOptions`, and use the `-otel_to_cloud` flag for Google Cloud export.
+If you run your agent with the ADK Go launcher, you don't need this setup. The launcher registers the providers from the same environment variables, and its `-otel_to_cloud` flag enables Google Cloud export.
 
 #### OTLP export setup
 
-`telemetry.New` adds an OTLP HTTP span exporter when `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` or `OTEL_EXPORTER_OTLP_ENDPOINT` is set, and reads `OTEL_SERVICE_NAME` and `OTEL_RESOURCE_ATTRIBUTES` for the resource:
+To export spans to an OpenTelemetry Collector, set the standard OTel environment variables before you call `telemetry.New`:
 
 ```go
 package main
@@ -130,11 +130,9 @@ func main() {
 }
 ```
 
-To send spans to another destination, pass your own span processors with `telemetry.WithSpanProcessors`, or a preconfigured `TracerProvider` with `telemetry.WithTracerProvider`.
-
 #### GCP export setup
 
-To export traces to Google Cloud Trace, pass `telemetry.WithOtelToCloud(true)` to `telemetry.New`. ADK reads the project from your application default credentials or the `GOOGLE_CLOUD_PROJECT` environment variable. For a complete example, see [Cloud Trace](../integrations/cloud-trace.md).
+To export traces to Cloud Trace, pass `telemetry.WithOtelToCloud(true)` to `telemetry.New`. For a complete example, see [Cloud Trace](/integrations/cloud-trace/).
 
 ### Kotlin programmatic setup
 
