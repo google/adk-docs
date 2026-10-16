@@ -327,20 +327,18 @@ paths in your Go source files and your `go.mod` file.
 all import statements in your source files from `google.golang.org/adk/...` to
 `google.golang.org/adk/v2/...`.
 
-### Agent Execution: Agent interface changes
+### Agent Execution: Custom Agents
 
-In ADK Go 1.x, agents implemented the `agent.Agent` interface by providing a
-`Run` method. In ADK Go 2.0, agents are evaluated as individual *nodes* within
-the new Workflow Graph engine.
+In ADK Go 2.0, agents can also run as individual *nodes* within the new
+Workflow Graph engine. Custom agents keep working as they did in 1.x: you pass a
+`Run` function to `agent.New`, and ADK calls it with an
+`agent.InvocationContext` and runs the agent's before and after callbacks
+around it. The `agent.Agent` interface keeps the same `Run` signature.
 
-*   **Execution driver custom overrides:** Custom agent types that override
-    internal execution behavior may no longer work as expected. The Workflow
-    Graph engine manages execution scheduling and event emission, and custom
-    implementations that bypass these mechanisms are silently ignored.
-
-**Migration action:** Move custom execution logic into standardized
-`BeforeAgentCallback` and `AfterAgentCallback` hooks to safely inject custom
-logic into the execution lifecycle.
+**Migration action:** No change to how you create or register a custom agent.
+Code inside `Run` still needs the import path change above and any other
+changes on this page, such as the new `session.NewEvent` signature. See
+[Custom agents](/agents/custom-agents/).
 
 ### Event Construction: `session.NewEvent` signature change
 

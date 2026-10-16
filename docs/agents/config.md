@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
