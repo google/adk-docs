@@ -87,7 +87,7 @@ To prepare your ADK project for deployment to Agent Runtime:
     your project.
 
     ```shell
-    agents-cli scaffold enhance --deployment-target agent_engine
+    agents-cli scaffold enhance --deployment-target agent_runtime
     ```
 
 1.  Follow the instructions from the Agents CLI tool. In general, you can accept

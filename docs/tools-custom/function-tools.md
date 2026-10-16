@@ -39,6 +39,8 @@ correctly.
 
 #### Parameters
 
+Parameters determine the data your tool expects to receive when called. You can configure them as either required or optional based on your tool's needs.
+
 ##### Required parameters
 
 === "Python"
@@ -272,6 +274,126 @@ are **ignored by the ADK framework** when generating the tool schema for the
 LLM. The LLM will not be aware of them and cannot pass arguments to them. It's
 best to rely on explicitly defined parameters for all data you expect from the
 LLM.
+
+##### Configure JSON schema tool declarations
+
+ADK for Python generates JSON schemas from your function signatures using Pydantic for model function declarations. This feature (`JSON_SCHEMA_FOR_FUNC_DECL`) is **enabled by default**.
+
+!!! example "Experimental"
+    
+    JSON schema tool declarations (`JSON_SCHEMA_FOR_FUNC_DECL`) are an
+    experimental feature of ADK for Python. The feature is enabled by default,
+    but its behavior and API may change, and ADK emits an `[EXPERIMENTAL]`
+    warning while it is active.
+
+###### Option 1: Configure via Command Line
+
+Set the appropriate environment variable in your terminal before launching your agent process:
+
+=== "macOS/Linux"
+
+    ```bash
+    export ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+    
+=== "Windows (Command Prompt)"
+
+    ```cmd
+    set ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+    
+=== "Windows (PowerShell)"
+
+    ```powershell
+    $env:ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL="1"
+    ```
+
+To disable JSON schema generation and fall back to the previous `Schema`-based declaration behavior:
+
+=== "macOS/Linux"
+
+    ```bash
+    export ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+
+=== "Windows (Command Prompt)"
+
+    ```cmd
+    set ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL=1
+    ```
+
+=== "Windows (PowerShell)"
+
+    ```powershell
+    $env:ADK_DISABLE_JSON_SCHEMA_FOR_FUNC_DECL="1"
+    ```
+
+###### Option 2: Configure in Python
+
+Use ADK's `override_feature_enabled` function before creating tools and agents:
+
+```python
+import asyncio
+from google.adk.features import FeatureName, override_feature_enabled
+from google.adk.agents import Agent
+from google.adk.tools import FunctionTool
+
+# The feature is enabled by default, so pass False to fall back to the previous behavior:
+override_feature_enabled(FeatureName.JSON_SCHEMA_FOR_FUNC_DECL, False)
+
+def get_current_weather(location: str, unit: str = "celsius") -> str:
+    """Get the current weather for a given location.
+    
+    Args:
+        location: The city and state, e.g. San Francisco, CA
+        unit: Temperature unit ('celsius' or 'fahrenheit')
+    """
+    return f"Weather in {location}: 22° {unit.capitalize()}"
+
+async def main():
+    weather_tool = FunctionTool(func=get_current_weather)
+    
+    agent = Agent(
+        model="gemini-2.5-flash",
+        name="my_agent",
+        instruction="You are a helpful assistant.",
+        tools=[weather_tool]
+    )
+    # Execution logic here
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Alternatively, set the environment variable in your script before initializing agent components:
+
+```python
+import os
+import asyncio
+
+os.environ["ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL"] = "1"
+
+from google.adk.agents import Agent
+from google.adk.tools import FunctionTool
+
+def get_current_weather(location: str) -> str:
+    """Get the current weather for a given location."""
+    return f"Weather in {location}: 20°C"
+
+async def main():
+    weather_tool = FunctionTool(func=get_current_weather)
+    
+    agent = Agent(
+        model="gemini-2.5-flash",
+        name="my_agent",
+        instruction="You are a helpful assistant.",
+        tools=[weather_tool]
+    )
+    # Execution logic here
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
 
 #### Context injection
 
@@ -617,6 +739,11 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     with the response. For more details on using the Resume feature, see [Resume
     stopped agents](/runtime/resume/).
 
+    In **Kotlin**, the runner resolves the invocation from the function
+    response's own call ID, so you do not need to pass `invocationId` to
+    `runAsync`. A response whose ID matches no function call in the session
+    throws instead.
+
 ??? Tip "Applies to only Java ADK"
 
     When passing `ToolContext` with Function Tools, ensure that one of the
@@ -679,6 +806,12 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:call_reimbursement_tool"
+    ```
+
 ??? "Python complete example: File Processing Simulation"
 
     ```python
@@ -694,6 +827,15 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   incoming FunctionResponse stream (progress vs. completion) for user updates.
 - **Final return**: The function returns the final result dictionary, which is
   sent in the concluding FunctionResponse to indicate completion.
+- **Kotlin has no `LongRunningFunctionTool` class**: Annotate the function with
+  `@Tool(isLongRunning = true)`, or pass `isLongRunning = true` to a `BaseTool`
+  subclass.
+- **Kotlin turn count**: The tool above returns a value rather than
+  `Unit`, so non-resumable apps send that placeholder to the model and call it a
+  second time, ending turn 1 in an interim reply. A resumable app pauses on the
+  function call with no second model call. Returning `Unit` suppresses the
+  placeholder response entirely, ending the turn on the function call in either
+  mode.
 
 ## Agent-as-a-Tool {#agent-tool}
 

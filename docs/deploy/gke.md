@@ -288,7 +288,7 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
             Country string `json:"country" jsonschema:"The country to look up."`
         }
 
-        func getCapitalCity(_ tool.Context, args getCapitalCityArgs) (string, error) {
+        func getCapitalCity(_ agent.Context, args getCapitalCityArgs) (string, error) {
             capitals := map[string]string{
                 "france":  "Paris",
                 "japan":   "Tokyo",
@@ -717,7 +717,7 @@ You'll need the service URL provided after deployment.
 
     If you deployed your agent with the UI enabled:
 
-    You can test your agent by simply navigating to the kubernetes service URL in your web browser.
+    You can test your agent by simply navigating to the Kubernetes service URL in your web browser.
 
     The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
 

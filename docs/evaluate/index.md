@@ -59,7 +59,7 @@ This approach involves creating individual test files, each representing a singl
 -   `Expected Intermediate Agent Responses`: These are the natural language
     responses that the agent (or sub-agents) generates as it moves towards
     generating a final answer. These natural language responses are usually an
-    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
+    artifact of a multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
     interest to the end user, but for a developer/owner of the system, are of
     critical importance, as they give you the confidence that the agent went
     through the right path to generate final response.
@@ -404,6 +404,17 @@ Here is a summary of all the available criteria:
 *   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
     conversation.
 
+The following are *efficiency* criteria. They report a value but never pass or
+fail an eval case, and they are reported for every eval without being listed in
+`EvalConfig`:
+
+*   **tool_call_count_v1**: Number of tool calls made.
+*   **inference_call_count_v1**: Number of model calls made.
+*   **token_usage_v1**: Tokens consumed, with a per-type breakdown reported
+    alongside the total.
+*   **invocation_duration_v1**: Wall-clock seconds the turn took, measured
+    while the agent ran.
+
 !!! note
 
     Some criteria (such as response quality, safety, and multi-turn quality)
@@ -464,6 +475,12 @@ Choose criteria based on your evaluation goals:
 *   **Evaluate tool usage in multi-turn workflows:** Use
     `multi_turn_tool_use_quality_v1` to assess the quality, relevance, and
     correctness of tool or function calls made across multiple turns.
+*   **Track how expensive an agent is:** The efficiency criteria
+    (`tool_call_count_v1`, `inference_call_count_v1`, `token_usage_v1`,
+    `invocation_duration_v1`) are reported automatically, with no
+    configuration and no extra model calls. Compare them across runs to catch
+    a change that keeps quality flat but doubles token usage. They never fail
+    an eval, so they add no new failure mode to a CI/CD run.
 
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
@@ -488,10 +505,10 @@ For details on how to set up an eval with user simulation, see
 
 As a developer, you can evaluate your agents using the ADK in the following ways:
 
-- **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.
-- **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.
-- **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
-- **Conformance Testing** (**`adk conformance`**):** Execute automated tests against your baseline files to detect unexpected deviations or regressions.
+- **Web-based UI** (`adk web`): Evaluate agents interactively through a web-based interface.
+- **Programmatically** (`pytest`): Integrate evaluation into your testing pipeline using `pytest` and test files.
+- **Command Line Interface** (`adk eval`): Run evaluations on an existing evaluation set file directly from the command line.
+- **Conformance Testing** (`adk conformance`): Execute automated tests against your baseline files to detect unexpected deviations or regressions.
 
 ### Run evaluations via the web UI
 
@@ -606,7 +623,7 @@ adk eval \
 Here are the details for each command line argument:
 
 * `AGENT_MODULE_FILE_PATH`: The path to the agent directory, not a file, whose `__init__.py` exposes a module by the name "agent". "agent" module contains a `root_agent`.
-* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK and created with `adk eval_set create`. You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
+* `EVAL_SET_FILE_PATH_OR_ID`: The path to evaluations file(s), or the id of an eval set managed by ADK and created with `adk eval_set create`. You can specify one or more of either, but you cannot mix file paths and eval set ids in the same command. For each eval set, all evals run by default. If you want to run only specific evals from an eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name or id, demarcated by a colon `:` .
 * For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`
 * `CONFIG_FILE_PATH`: The path to the config file.
