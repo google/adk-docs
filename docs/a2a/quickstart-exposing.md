@@ -127,7 +127,24 @@ When you call `to_a2a()`, ADK automatically handles several setup steps to expos
 * **`push_config_store` (optional):** A custom store implementation for managing A2A push notifications. If not provided, the system defaults to an in-memory store (`InMemoryPushNotificationConfigStore`).
 * **`agent_card` (optional):** An `AgentCard` object or a path to a JSON file. If omitted, ADK automatically generates an agent card from your agent's code.
 * **`runner` (optional):** A pre-built `Runner`. If omitted, a default runner backed by in-memory services is created.
+* **`agent_executor_factory` (optional):** A function that receives the configured `Runner` and returns an `A2aAgentExecutor`, as shown below.
 * **`lifespan` (optional):** An async context manager for Starlette lifespan events, used to run startup and shutdown logic. See [Manage the application lifecycle](#manage-the-application-lifecycle).
+
+For example, use an executor factory to enable the [new executor implementation](#agent-executor-v2):
+
+```python
+from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from google.adk.runners import Runner
+
+def create_executor(runner: Runner) -> A2aAgentExecutor:
+    return A2aAgentExecutor(runner=runner, force_new_version=True)
+
+a2a_app = to_a2a(root_agent, agent_executor_factory=create_executor)
+```
+
+The factory runs when `to_a2a()` creates the application, before its lifespan
+starts, and receives the supplied Runner or the default one.
 
 ### Manage the application lifecycle
 
