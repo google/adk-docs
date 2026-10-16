@@ -76,7 +76,7 @@ func main() {
 	log.Infof("sending the request to the model")
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		log.Fatalf("did not get a valid response back from teh model", err)
+		log.Fatalf("did not get a valid response back from the model: %v", err)
 	}
 
 	for i, cand := range resp.Candidates {
