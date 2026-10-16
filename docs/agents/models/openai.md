@@ -124,47 +124,18 @@ The two APIs support the same features, with these differences:
 - Structured output via `OutputSchema` (JSON schema)
 - Reasoning models (e.g. o-series), including reasoning-token accounting
 - Token logprobs
-- Tool choice via `ToolConfig.FunctionCallingConfig`: the `AUTO`, `NONE`, and `ANY` modes, with `AUTO` and `ANY` optionally limited to `AllowedFunctionNames`. Other modes, such as `VALIDATED`, return an error. The Chat Completions API receives the tool choice only when the request declares tools.
-- Processing tier via `ServiceTier` (ADK Go v2.4.0 or later): `flex` and `priority` select the OpenAI tiers of the same name, and `standard` or `unspecified` selects the default tier
-- Request timeout via `HTTPOptions.Timeout` (ADK Go v2.4.0 or later), which bounds the whole call, including retries and, when streaming, the full stream. ADK ignores `HTTPOptions.Headers`. To send extra headers to OpenAI, use `ClientConfig.Options`.
+- Tool choice via `ToolConfig.FunctionCallingConfig`: the `AUTO`, `NONE`, and `ANY` modes
+- Processing tier via `ServiceTier`, in ADK Go v2.4.0 and higher
+- Request timeout via `HTTPOptions.Timeout`, in ADK Go v2.4.0 and higher
 
 ## Limitations
 
 - **Text only** — multimodal input (images, audio, files) is not supported.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
-- **Function tools don't use strict mode** (ADK Go v2.5.0 or later) — ADK sends function tools with OpenAI strict schema validation off. Optional parameters stay optional, but the model's tool-call arguments might not match the declared schema. Tools built with `functiontool` validate arguments against their input schema. Other tools should validate their own input.
-- **Reasoning isn't carried across turns** (ADK Go v2.5.0 or later) — ADK doesn't send reasoning from earlier turns back to the model on either API, so reasoning informs only the turn that produced it. If a later turn needs a conclusion, have the model state it in its answer.
-- **Unsupported `GenerateContentConfig` settings return an error** rather than being silently ignored:
-    - `TopK`, `CandidateCount` above one, `Labels`, `SafetySettings`, and a `ResponseMIMEType` other than `text/plain` or `application/json` each return their own error, such as `openaimodel.ErrTopKNotSupported` or `openaimodel.ErrUnsupportedMIMEType`.
-    - The Responses API also rejects stop sequences (`ErrStopSequencesNotSupported`), frequency and presence penalties (`ErrPenaltiesNotSupported`), and seed (`ErrUnsupportedConfigField`), which the [Chat Completions API](#chat-completions-api) supports.
-    - In ADK Go v2.4.0 or later, the following return `openaimodel.ErrUnsupportedConfigField`, with the setting named in the message:
-        - The fields `CachedContent`, `ResponseModalities`, `MediaResolution`, `SpeechConfig`, `AudioTimestamp`, `ImageConfig`, `RoutingConfig`, `ModelSelectionConfig`, `ModelArmorConfig`, `EnableEnhancedCivicAnswers`, and `AudioTranscriptionConfig`.
-        - Every `HTTPOptions` field except `Timeout` and `Headers`: `BaseURL`, `BaseURLResourceScope`, `APIVersion`, `ExtraBody`, `ExtrasRequestProvider`, and `RetryOptions`.
-        - These values: an unknown `ServiceTier`, a zero or negative `HTTPOptions.Timeout`, `Logprobs` without `ResponseLogprobs`, a negative `MaxOutputTokens` or `CandidateCount`, a `ThinkingConfig.ThinkingBudget` below -1, and an unknown `ThinkingConfig.ThinkingLevel`.
-
-## Handle incomplete and failed responses
-
-Requires ADK Go v2.4.0 or later.
-
-On the Responses API, when a content filter or another reason that isn't the
-output token limit cuts a turn short, `FinishReason` is `SAFETY` or `OTHER`. If
-the turn still returns content, `CustomMetadata[openaimodel.FinishMessageKey]`
-(`"openai_finish_message"`) holds OpenAI's own reason, such as
-`content_filter`. A turn cut short by `MaxOutputTokens` has `FinishReason`
-`MAX_TOKENS` and no finish message. ADK's REST server doesn't include
-`CustomMetadata` in events, so ADK Web shows only the `FinishReason`. On the
-Chat Completions API, a content filter sets `FinishReason` to `SAFETY` with no
-finish message.
-
-A blocking call whose response has no usable output fails with
-`openaimodel.ErrNoOutputItems` or `openaimodel.ErrNoTextOrToolContent` on the
-Responses API, and with `openaimodel.ErrNoChoices` or
-`openaimodel.ErrNoTextOrToolContent` on the Chat Completions API. When the
-Responses API reports a response as failed, which arrives as HTTP 200, the
-call returns an error that wraps `openaimodel.ErrResponseFailed` and includes
-the response ID, error code, and message when OpenAI provides them. Check for
-these errors with `errors.Is`.
+- **Function tools don't use strict mode** — In ADK Go v2.5.0 and higher, ADK sends function tools with OpenAI strict schema validation off. Optional parameters stay optional, but the model's tool-call arguments might not match the declared schema. Validate tool arguments before acting on them.
+- **Reasoning isn't carried across turns** — In ADK Go v2.5.0 and higher, ADK doesn't send reasoning from earlier turns back to the model on either API, so reasoning informs only the turn that produced it.
+- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports. In ADK Go v2.4.0 and higher, other settings that have no OpenAI equivalent also return an error. The [Go API reference](https://pkg.go.dev/google.golang.org/adk/v2/model/openaimodel) lists which settings are sent, rejected, or ignored.
 
 ## Configuration options
 
