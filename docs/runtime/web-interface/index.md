@@ -67,7 +67,7 @@ Use the following command to start the ADK web interface:
     subcommands on the command line:
 
     ```shell
-    go run agent.go web api webui
+    go run main.go web api webui
     ```
 
     The `web` keyword activates the HTTP server. `api` adds the ADK REST API
@@ -238,7 +238,7 @@ browser to use the web interface:
     For example, to run on port 9090 with a custom API prefix:
 
     ```shell
-    go run agent.go web -port 9090 api -path_prefix /myapi webui -api_server_address http://localhost:9090/myapi
+    go run main.go web -port 9090 api -path_prefix /myapi webui -api_server_address http://localhost:9090/myapi
     ```
 
 ## Usage telemetry
