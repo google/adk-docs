@@ -518,10 +518,7 @@ schema definitions.
     response string under `output_key` instead of the parsed object (see
     [`LlmAgent`](https://github.com/google/adk-kotlin/blob/v1.0.0/core/src/commonMain/kotlin/com/google/adk/kt/agents/LlmAgent.kt)).
 
-!!! note "`OutputKey` in Go"
 
-    In Go, ADK writes `OutputKey` to the final event's state delta for you, so
-    you don't need to set it in a callback.
 
 === "Python"
 
