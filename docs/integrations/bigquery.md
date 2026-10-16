@@ -108,6 +108,11 @@ credentials_config = BigQueryCredentialsConfig(
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
+To select a BigQuery location, pass a `BigQueryToolConfig(location="US")`
+from `google.adk.integrations.bigquery.config` as the toolset's
+`bigquery_tool_config`. Choose a [location](https://cloud.google.com/bigquery/docs/locations)
+that matches your dataset; leaving it unset lets BigQuery determine it.
+
 ## Sample Code
 
 The following sample code demonstrates how to use the `BigQueryToolset` in an ADK agent using Application Default Credentials (ADC).
