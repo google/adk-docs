@@ -259,6 +259,6 @@ specific tool identifiers.
 
 ## Additional resources
 
-- [PayPal MCP Server Documentation](https://docs.paypal.ai/developer/tools/ai/mcp-quickstart)
+- [PayPal MCP Server Documentation](https://developer.paypal.com/ai-tools/mcp-server/)
 - [PayPal MCP Server Repository](https://github.com/paypal/paypal-mcp-server)
-- [PayPal Agent Tools Reference](https://docs.paypal.ai/developer/tools/ai/agent-tools-ref)
+- [PayPal Agent Tools Reference](https://developer.paypal.com/ai-tools/agent-tools/)
