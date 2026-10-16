@@ -162,13 +162,11 @@ following key points:
 *   You must use the `run_skill_script` to run scripts from a skill's `scripts/`
     directory.
 
-!!! note "Skill tools in Go"
-
-    ADK Go has no `run_skill_script` tool. Its `SkillToolset` provides the
-    `list_skills`, `load_skill`, and `load_skill_resource` tools, and its
-    default instruction covers only `load_skill` and `load_skill_resource`. To
-    replace the default instruction, set `SystemInstruction` in
-    `skilltoolset.Config`. To change the toolset name, set `Name`.
+In ADK Go, `SkillToolset` provides the `list_skills`, `load_skill`, and
+`load_skill_resource` tools, and its default instruction includes the first
+three of these points. To replace the default instruction, set
+`SystemInstruction` in `skilltoolset.Config`. To change the toolset name, set
+`Name`.
 
 ### Skill validation
 
@@ -182,15 +180,6 @@ meets the following requirements:
 *   **description**:
     *   Must not be empty.
     *   Must be 1024 characters or less.
-
-In ADK Go, `skill.Validate` applies these checks. `skill.Parse` reads and
-validates the YAML frontmatter from a `SKILL.md` reader. `skill.ParseBytes`
-does the same for in-memory content and also returns the Markdown body.
-`skill.Build` validates a frontmatter and returns the complete `SKILL.md`
-content as bytes. Go also reads the optional `allowed-tools` field as a YAML
-list. ADK Go v2.3.0 and later also accept a space- or comma-separated string.
-`load_skill` returns the field to the model with the skill's instructions, but
-ADK Go doesn't restrict the agent's tools to it.
 
 !!! note "Directory must match the name"
     
@@ -394,13 +383,6 @@ You can define Skills within the code of your agent, as shown below.
         // handle error
     }
     ```
-
-    To combine several sources, such as a filesystem source and your own
-    `skill.Source`, pass them to `skill.NewMergedSource`. It queries the sources
-    in order, and loading a skill uses the first source that has it. When two
-    sources define a skill with the same name, listing the skills returns
-    `skill.ErrDuplicateSkill`. The toolset lists skills on every model request,
-    so the agent run fails with this error rather than `NewMergedSource`.
 
 === "Kotlin"
 

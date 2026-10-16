@@ -239,43 +239,6 @@ Parameters determine the data your tool expects to receive when called. You can 
     Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's
     not required.
 
-##### Override the inferred schema
-
-=== "Go"
-
-    To replace the schema that ADK infers from your argument and result types,
-    set `InputSchema` or `OutputSchema` in `functiontool.Config` to a
-    `*jsonschema.Schema` from the `github.com/google/jsonschema-go/jsonschema`
-    package. ADK validates the model's arguments against `InputSchema` before it
-    calls your function. The schema must still describe JSON that decodes into
-    your argument type.
-
-    ???+ "Example: Explicit input schema"
-        ```go
-        type GetWeatherParams struct {
-            Location string `json:"location"`
-            Unit     string `json:"unit"`
-        }
-
-        func getWeather(ctx agent.Context, args GetWeatherParams) (map[string]any, error) {
-            // ... function logic ...
-            return map[string]any{"status": "success", "report": "Weather for " + args.Location + " is sunny."}, nil
-        }
-
-        weatherTool, err := functiontool.New(functiontool.Config{
-            Name:        "get_weather",
-            Description: "Retrieves the weather for a city.",
-            InputSchema: &jsonschema.Schema{
-                Type: "object",
-                Properties: map[string]*jsonschema.Schema{
-                    "location": {Type: "string", Description: "The city and state, e.g., San Francisco, CA"},
-                    "unit":     {Type: "string", Enum: []any{"celsius", "fahrenheit"}},
-                },
-                Required: []string{"location", "unit"},
-            },
-        }, getWeather)
-        ```
-
 ##### Optional parameters with `typing.Optional`
 
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or
@@ -659,8 +622,7 @@ In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass
 a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you
 instantiate the `LongRunningFunctionTool` class. In Go, you set
 `IsLongRunning: true` in the `functiontool.Config` that you pass to
-`functiontool.New`. ADK then adds a note to the tool description that tells the
-model not to call the tool again while it's pending.
+`functiontool.New`.
 
 1. **Initiation:** When the LLM calls the tool, your function starts the
    long-running operation.

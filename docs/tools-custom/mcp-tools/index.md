@@ -449,7 +449,6 @@ In addition to executable **Tools**, MCP servers can expose **Resources** data f
 * **Security & Scoping**: Always supply `tool_filter=[...]` in `McpToolset` to expose only necessary actions to your LLM.
 * **Timeouts**: Configure explicit timeouts on `StdioConnectionParams(timeout=5)` to prevent hanging subprocesses.
 * **Lifecycle Cleanup**: In non-`adk web` runners, invoke `await toolset.close()` or use async context managers to gracefully shutdown subprocesses.
-* **Go Connection Handling**: `mcptoolset.New` doesn't connect to the server. The toolset opens the MCP session the first time it lists or calls tools. If a request fails because the connection or session was closed (`mcp.ErrConnectionClosed`, `mcp.ErrSessionMissing`, `io.ErrClosedPipe`, or `io.EOF`), the toolset reconnects with the same transport and retries the request once. This works for transports that can connect again, such as `mcp.StreamableClientTransport`. An `mcp.CommandTransport` wraps a single `exec.Cmd`, which can't be started twice, so a stdio server that exits isn't restarted and the request fails. To customize the MCP client, such as its name, version, or handlers, pass your own `*mcp.Client` in `mcptoolset.Config.Client`.
 * **Environment Detection**: Dynamically pick connection types based on environment variables, for example: `K_SERVICE` for Cloud Run vs Stdio for local dev.
 
 ### Configure the environment-aware connection
