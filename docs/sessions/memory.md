@@ -92,6 +92,11 @@ required.
     memoryService := memory.InMemoryService()
     ```
 
+    Searches return at most 10 memory entries, ranked by the number of distinct
+    query words they match, with more matches first. Query words containing
+    non-ASCII characters also support substring matching. For example, `机器学习`
+    matches `我喜欢机器学习`, while the ASCII query `thon` does not match `Python`.
+
 === "Java"
 
     ```java
