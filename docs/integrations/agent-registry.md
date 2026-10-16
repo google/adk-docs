@@ -358,32 +358,9 @@ For Google MCP servers, authentication headers are automatically passed in.
     - `get_remote_a2a_agent(self, agent_name)`: Creates an ADK RemoteA2aAgent
       instance for a registered A2A Agent.
 
-    Both search methods accept optional keyword arguments. Set `search_type` to
-    `"KEYWORD"` or `"SEMANTIC"` and provide a `search_string`. You can also pass
-    `filter_str` and `order_by` to the search API. Each call returns one page;
-    pass its `nextPageToken` back as `page_token` to fetch the next page.
-
-    Using the `registry` initialized above, this example reads every page of a
-    keyword search:
-
-    ```python
-    page_token = None
-    while True:
-        response = registry.search_agents(
-            search_string="calendar",
-            search_type="KEYWORD",
-            page_size=10,
-            page_token=page_token,
-        )
-        for agent in response.get("agents", []):
-            print(agent["name"])
-        page_token = response.get("nextPageToken")
-        if not page_token:
-            break
-    ```
-
-    For MCP servers, use `search_mcp_servers` and read the `mcpServers` key in
-    each response.
+    Both search methods use keyword arguments. Set `search_type` to `"KEYWORD"`
+    or `"SEMANTIC"` and provide a `search_string`. To fetch another page, pass
+    the response's `nextPageToken` as `page_token` with the same search options.
 
 === "Go"
 
