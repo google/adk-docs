@@ -141,12 +141,13 @@ async def call_agent_async(query):
           
 # --8<-- [end:call_reimbursement_tool]          
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-                   
-# reimbursement that doesn't require approval
-# asyncio.run(call_agent_async("Please reimburse 50$ for meals"))
-await call_agent_async("Please reimburse 50$ for meals") # For Notebooks, uncomment this line and comment the above line
-# reimbursement that requires approval
-# asyncio.run(call_agent_async("Please reimburse 200$ for meals"))
-await call_agent_async("Please reimburse 200$ for meals") # For Notebooks, uncomment this line and comment the above line
+async def main():
+    # reimbursement that does not require approval
+    await call_agent_async("Please reimburse 50$ for meals")
+    # reimbursement that requires approval
+    await call_agent_async("Please reimburse 200$ for meals")
+
+# Note: In Colab or another notebook you can await the calls in `main` directly
+# at the top level. As a standalone script, run them through asyncio.run().
+if __name__ == "__main__":
+    asyncio.run(main())
