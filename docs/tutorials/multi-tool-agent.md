@@ -67,7 +67,8 @@ entirely on your machine and is recommended for internal development.
 
 === "Go"
 
-    ## Create a new Go module
+    **Create a new Go module**
+    { #create-a-new-go-module }
 
     If you are starting a new project, you can create a new Go module:
 
@@ -77,7 +78,8 @@ entirely on your machine and is recommended for internal development.
     go mod init example.com/my-agent
     ```
 
-    ## Install ADK
+    **Install ADK**
+    { #install-adk }
 
     To add the ADK to your project, run the following command:
 
@@ -126,7 +128,8 @@ entirely on your machine and is recommended for internal development.
         (`mkdir`, `echo`) typically generate files with null bytes and/or incorrect
         encoding.
 
-    ### `__init__.py`
+    **`__init__.py`**
+    { #__init__py }
 
     Now create an `__init__.py` file in the folder:
 
@@ -140,7 +143,8 @@ entirely on your machine and is recommended for internal development.
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/__init__.py"
     ```
 
-    ### `agent.py`
+    **`agent.py`**
+    { #agentpy }
 
     Create an `agent.py` file in the same folder:
 
@@ -160,7 +164,8 @@ entirely on your machine and is recommended for internal development.
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
     ```
 
-    ### `.env`
+    **`.env`**
+    { #env }
 
     Create a `.env` file in the same folder:
 
@@ -188,7 +193,8 @@ entirely on your machine and is recommended for internal development.
         tsconfig.json
     ```
 
-    ### `agent.ts`
+    **`agent.ts`**
+    { #agentts }
 
     Create an `agent.ts` file in your project folder:
 
@@ -208,7 +214,8 @@ entirely on your machine and is recommended for internal development.
     --8<-- "examples/typescript/snippets/get-started/multi_tool_agent/agent.ts"
     ```
 
-    ### `.env`
+    **`.env`**
+    { #env_1 }
 
     Create a `.env` file in the same folder:
 
@@ -235,7 +242,8 @@ entirely on your machine and is recommended for internal development.
         go.mod
     ```
 
-    ### `agent.go`
+    **`agent.go`**
+    { #agentgo }
 
     Create an `agent.go` file in your project folder:
 
@@ -255,7 +263,8 @@ entirely on your machine and is recommended for internal development.
     --8<-- "examples/go/snippets/get-started/multi_tool_agent/main.go:full_code"
     ```
 
-    ### `.env`
+    **`.env`**
+    { #env_2 }
 
     Create a `.env` file in the same folder:
 
@@ -284,7 +293,8 @@ entirely on your machine and is recommended for internal development.
     └── test/
     ```
 
-    ### Create `MultiToolAgent.java`
+    **Create `MultiToolAgent.java`**
+    { #create-multitoolagentjava }
 
     Create a `MultiToolAgent.java` source file in the `agents.multitool` package
     in the `src/main/java/agents/multitool/` directory.
@@ -309,7 +319,8 @@ entirely on your machine and is recommended for internal development.
     │               └── multitool/
     ```
 
-    ### Create `MultiToolAgent.kt`
+    **Create `MultiToolAgent.kt`**
+    { #create-multitoolagentkt }
 
     Create a `MultiToolAgent.kt` source file in the `src/main/kotlin/agents/multitool/` directory.
 
@@ -699,7 +710,8 @@ including Gemini Enterprise Agent Platform, see the
     │                   └── MultiToolAgent.kt
     ```
 
-    ### Run your Agent
+    **Run your Agent**
+    { #run-your-agent_1 }
 
     You can run the `main()` method of your Kotlin class using Gradle:
 
