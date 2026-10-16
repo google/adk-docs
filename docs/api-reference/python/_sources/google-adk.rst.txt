@@ -169,6 +169,14 @@ google.adk.integrations.e2b module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.eleven\_labs module
+------------------------------------------
+
+.. automodule:: google.adk.integrations.eleven_labs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.eventarc module
 ---------------------------------------
 
