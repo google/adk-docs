@@ -52,7 +52,7 @@ Consider a simplified code development pipeline:
 * **Code Reviewer Agent:**  An LLM Agent that reviews the generated code for errors, style issues, and adherence to best practices.  It receives the output of the Code Writer Agent.
 * **Code Refactorer Agent:** An LLM Agent that takes the reviewed code, and the reviewer's comments, and refactors it to improve quality and address issues.
 
-Using a `SequentialAgent` makes it simple to define this exection flow, as shown
+Using a `SequentialAgent` makes it simple to define this execution flow, as shown
 in the following code snippet:
 
 ```py
@@ -82,3 +82,12 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules across your workflow using the `GlobalInstructionPlugin` 
+    on your `App` ([Python](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py), 
+    [TypeScript](https://github.com/google/adk-js/blob/main/core/src/plugins/global_instruction_plugin.ts), 
+    [Java](https://github.com/google/adk-java/blob/main/core/src/main/java/com/google/adk/plugins/GlobalInstructionPlugin.java)) 
+    or the `GlobalInstruction` parameter on your agent 
+    ([Go](https://github.com/google/adk-go/blob/main/agent/llmagent/llmagent.go)).

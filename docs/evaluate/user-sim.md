@@ -358,5 +358,5 @@ Key fields:
     in the `google-adk[eval]` extra) and access to the Cloud Text-to-Speech API.
 
 See the sample at
-[`contributing/samples/live/live_non_blocking_tool_agent`](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_non_blocking_tool_agent)
+[`contributing/samples/live/non_blocking_tool_agent`](https://github.com/google/adk-python/tree/main/contributing/samples/live/non_blocking_tool_agent)
 for a complete, runnable live eval configuration.
