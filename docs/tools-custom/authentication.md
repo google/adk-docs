@@ -218,8 +218,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
           auth_type=AuthCredentialTypes.OAUTH2,
           oauth2=OAuth2Auth(
               client_id=YOUR_OAUTH_CLIENT_ID,
-              client_secret=YOUR_OAUTH_CLIENT_SECRET,
-              prompt="select_account",
+              client_secret=YOUR_OAUTH_CLIENT_SECRET
           ),
       )
 
@@ -231,10 +230,9 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-      Set `OAuth2Auth.prompt` to control the `prompt` parameter in the authorization
-      URL. The example above requests account selection. Supported values depend on
-      your OAuth provider. The field defaults to `None`; when it is `None` or an
-      empty string, ADK sends `prompt=consent`.
+      To request account selection, set `prompt="select_account"` on
+      `OAuth2Auth`. Supported values depend on the provider; ADK sends
+      `prompt=consent` when this field is omitted, `None`, or empty.
 
 === "OAuth2 (Client Credentials)"
 
