@@ -451,7 +451,7 @@ Optional. Note it and move on.
 - **Recommended action**: [One of "Approve", "Request changes", or "Close PR";
   include a brief, 2-3 sentence explanation and the top 1 or 2 risk factors
   leading to this recommendation.]
-- **Number of lines changed**: [T-Shirt Size: "XS" =< 9 lines changed | "S" =< 49 | "M" =< 249; L =< 999 | "XL" =< 1999 | "XXL" > 1999] [number]
+- **Number of lines changed**: [T-Shirt Size: "XS" =< 9 lines changed | "S" =< 49 | "M" =< 249; "L" =< 999 | "XL" =< 1999 | "XXL" > 1999] [number]
 - **Number of files changed**: [number]
 - **Verified against**: [ADK release tag, for example google/adk-python v1.20.0]
 
