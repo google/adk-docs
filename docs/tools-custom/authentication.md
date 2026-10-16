@@ -328,6 +328,11 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+For OAuth2 endpoint discovery in Python, use the experimental `ExtendedOAuth2`
+scheme from `google.adk.auth.auth_schemes`. Set `issuer_url` to your provider's
+issuer and supply the flow and scopes as above, with empty strings for endpoint
+URLs you want ADK to discover. Explicit endpoint URLs are preserved.
+
 #### Use Google API toolsets
 
 These toolsets often have dedicated configuration methods.
