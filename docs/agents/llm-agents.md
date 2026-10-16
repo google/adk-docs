@@ -715,8 +715,6 @@ Control whether the agent receives the prior conversation history.
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-Go has no planner. In Go, configure the model's thinking directly with
-`ThinkingConfig` in `llmagent.Config.GenerateContentConfig`.
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step
 reasoning and planning before execution. There are two main planners:
