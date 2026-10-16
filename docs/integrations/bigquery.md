@@ -108,26 +108,10 @@ credentials_config = BigQueryCredentialsConfig(
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
-## Configure the BigQuery location
-
-Set `BigQueryToolConfig.location` when your tools need to process data in a
-specific BigQuery location. It defaults to `None`, which lets BigQuery determine
-the query location from the data being queried.
-
-Using `credentials_config` from one of the authentication examples above:
-
-```python
-from google.adk.integrations.bigquery import BigQueryToolset
-from google.adk.integrations.bigquery.config import BigQueryToolConfig
-
-bigquery_toolset = BigQueryToolset(
-    credentials_config=credentials_config,
-    bigquery_tool_config=BigQueryToolConfig(location="US"),
-)
-```
-
-Choose a location that matches your BigQuery dataset. For supported locations, see the
-[BigQuery locations guide](https://cloud.google.com/bigquery/docs/locations).
+To select a BigQuery location, pass a `BigQueryToolConfig(location="US")`
+from `google.adk.integrations.bigquery.config` as the toolset's
+`bigquery_tool_config`. Choose a [location](https://cloud.google.com/bigquery/docs/locations)
+that matches your dataset; leaving it unset lets BigQuery determine it.
 
 ## Sample Code
 
