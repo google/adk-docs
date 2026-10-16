@@ -343,16 +343,24 @@ For Google MCP servers, authentication headers are automatically passed in.
 
     - `list_mcp_servers(self, filter_str, page_size, page_token)`: Fetches a list
       of registered MCP Servers.
+    - `search_mcp_servers(self, *, search_string, search_type, filter_str, order_by,
+      page_size, page_token)`: Searches registered MCP servers.
     - `get_mcp_server(self, name)`: Retrieves detailed metadata of a specific MCP
       Server.
     - `get_mcp_toolset(self, mcp_server_name)`: Constructs an ADK McpToolset
       instance from a registered MCP Server.
     - `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of
       registered A2A Agents.
+    - `search_agents(self, *, search_string, search_type, filter_str, order_by,
+      page_size, page_token)`: Searches registered A2A agents.
     - `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A
       Agent.
     - `get_remote_a2a_agent(self, agent_name)`: Creates an ADK RemoteA2aAgent
       instance for a registered A2A Agent.
+
+    Both search methods use keyword arguments. Set `search_type` to `"KEYWORD"`
+    or `"SEMANTIC"` and provide a `search_string`. To fetch another page, pass
+    the response's `nextPageToken` as `page_token` with the same search options.
 
 === "Go"
 
