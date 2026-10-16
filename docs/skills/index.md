@@ -162,12 +162,6 @@ following key points:
 *   You must use the `run_skill_script` to run scripts from a skill's `scripts/`
     directory.
 
-In ADK Go, `SkillToolset` provides the `list_skills`, `load_skill`, and
-`load_skill_resource` tools, and its default instruction includes the first
-three of these points. To replace the default instruction, set
-`SystemInstruction` in `skilltoolset.Config`. To change the toolset name, set
-`Name`.
-
 ### Skill validation
 
 The frontmatter of a skill's `SKILL.md` file is validated to ensure that it
