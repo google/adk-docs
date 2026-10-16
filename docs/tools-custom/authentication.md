@@ -328,33 +328,10 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-##### Discover OAuth2 endpoints
-
-For providers that publish discovery metadata, the experimental `ExtendedOAuth2`
-scheme can fill in missing OAuth2 endpoints using an `issuer_url`. Specify the
-flow and scopes, and set the endpoint fields to empty strings:
-
-```python
-from fastapi.openapi.models import OAuthFlowAuthorizationCode, OAuthFlows
-from google.adk.auth.auth_schemes import ExtendedOAuth2
-
-auth_scheme = ExtendedOAuth2(
-    issuer_url="https://auth.example.com",
-    flows=OAuthFlows(
-        authorizationCode=OAuthFlowAuthorizationCode(
-            authorizationUrl="",
-            tokenUrl="",
-            scopes={"read": "Read access"},
-        )
-    ),
-)
-```
-
-Use your provider's issuer URL and scopes, then pass this scheme with your
-`AuthCredential` as in the authorization-code example above. ADK attempts
-discovery when an endpoint required by the flow is missing, and preserves any
-endpoint URL you have already supplied. If required endpoints are missing and
-discovery fails, credential validation raises `ValueError`.
+For OAuth2 endpoint discovery in Python, use the experimental `ExtendedOAuth2`
+scheme from `google.adk.auth.auth_schemes`. Set `issuer_url` to your provider's
+issuer and supply the flow and scopes as above, with empty strings for endpoint
+URLs you want ADK to discover. Explicit endpoint URLs are preserved.
 
 #### Use Google API toolsets
 
