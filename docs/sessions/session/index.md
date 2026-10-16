@@ -325,9 +325,7 @@ the storage backend that best suits your needs:
     sessionService, err := vertexai.NewSessionService(ctx, vertexai.VertexAIServiceConfig{
         ProjectID: "your-gcp-project-id",
         Location:  "us-central1",
-        // The numeric reasoning engine ID. If you leave it empty, the service
-        // reads the engine from the app name of each call, which must then be
-        // the numeric ID or the full reasoning engine resource name.
+        // The numeric reasoning engine ID.
         ReasoningEngine: "1234567890",
     })
     if err != nil {
@@ -404,10 +402,7 @@ For more information on connecting to Google Cloud from ADK agents, see
 * **Persistence:** Yes. Data survives application restarts.
 * **Requires:** A configured database. In Python, also the `db` extra,
   installed with `pip install google-adk[db]`. In Go, a
-  [GORM](https://gorm.io/) driver for your database. Go also supports
-  Spanner. If your application already has a `*gorm.DB` connection, pass it to
-  `database.NewSessionServiceFromDB` (Go v2.4.0 and later) instead of opening
-  a new one.
+  [GORM](https://gorm.io/) driver for your database.
 * **Best for:** Applications needing reliable, persistent storage that you
   manage yourself.
 
@@ -470,15 +465,6 @@ operations through a two-tiered locking architecture:
   row-level locking (via `SELECT ... FOR UPDATE`) to prevent race conditions
   when multiple processes or replicas try to update the same session
   simultaneously.
-
-In Go, the session service uses neither lock. Each `AppendEvent` call runs in a
-single database transaction that reads the stored session and compares its last
-update time with that of the session you pass. If another write committed after
-you fetched the session, the call fails with a `stale session error`. The event
-is not saved to the database, but it has already been added to the session
-object you passed, so fetch the session again with `Get` before you retry. The
-check does not lock the row, so two writes that overlap in time can both pass
-it and both succeed.
 
 !!! warning "Async driver requirement"
 

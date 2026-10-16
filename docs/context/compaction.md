@@ -38,50 +38,52 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 
 To implement this in your project, use the following configuration:
 
-```python
-# 1. Correct the import path to use the google.adk namespace
-from google.adk.apps.app import App, EventsCompactionConfig
-from google.adk.agents import Agent
+=== "Python"
 
-# 2. Initialize your root agent (required for App setup)
-root_agent = Agent(
-    name="my_root_agent",
-    description="Main coordinating agent for the workflow."
-)
+    ```python
+    # 1. Correct the import path to use the google.adk namespace
+    from google.adk.apps.app import App, EventsCompactionConfig
+    from google.adk.agents import Agent
 
-# 3. Token-based configuration: Activates the priority/pre-call layer
-compaction_config = EventsCompactionConfig(
-    token_threshold=4000,     # Triggers compaction when actual token count exceeds this
-    event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
-)
+    # 2. Initialize your root agent (required for App setup)
+    root_agent = Agent(
+        name="my_root_agent",
+        description="Main coordinating agent for the workflow."
+    )
 
-# 4. Register with required name and root_agent fields, and the config object
-app = App(
-    name="my_compacting_agent_app",
-    root_agent=root_agent,
-    events_compaction_config=compaction_config
-)
-```
+    # 3. Token-based configuration: Activates the priority/pre-call layer
+    compaction_config = EventsCompactionConfig(
+        token_threshold=4000,     # Triggers compaction when actual token count exceeds this
+        event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
+    )
 
-In Go, set `TokenThreshold` and `EventRetentionSize` on the runner's
-`compaction.Config`. You must set both, or `runner.New` returns an error:
+    # 4. Register with required name and root_agent fields, and the config object
+    app = App(
+        name="my_compacting_agent_app",
+        root_agent=root_agent,
+        events_compaction_config=compaction_config
+    )
+    ```
 
-```go
-import (
-	"google.golang.org/adk/v2/runner"
-	"google.golang.org/adk/v2/session/compaction"
-)
+=== "Go"
 
-r, err := runner.New(runner.Config{
-	AppName:        "my_compacting_agent_app",
-	Agent:          rootAgent,
-	SessionService: sessionService,
-	Compaction: &compaction.Config{
-		TokenThreshold:     4000, // Compact once the prompt reaches this many tokens.
-		EventRetentionSize: 5,    // Number of recent raw events to keep intact.
-	},
-})
-```
+    ```go
+    import (
+        "google.golang.org/adk/v2/runner"
+        "google.golang.org/adk/v2/session/compaction"
+    )
+
+    // Set both fields, or runner.New returns an error.
+    r, err := runner.New(runner.Config{
+        AppName:        "my_compacting_agent_app",
+        Agent:          rootAgent,
+        SessionService: sessionService,
+        Compaction: &compaction.Config{
+            TokenThreshold:     4000, // Compact once the prompt reaches this many tokens.
+            EventRetentionSize: 5,    // Number of recent raw events to keep intact.
+        },
+    })
+    ```
 
 ## Sliding window compaction
 
@@ -203,11 +205,9 @@ in the following sample code:
     ```
 
     In Go, sliding-window compaction runs at the end of `Runner.Run`, not in the
-    background. The loop over its events doesn't end until the summarizer
-    returns, so a slow summarizer model adds latency to each turn that triggers
-    a compaction.
+    background.
 
-Once configured, the ADK `Runner` handles the compaction process in the
+In Python, once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
 ## Example of context compaction
@@ -394,46 +394,3 @@ customize the `prompt` on `LlmSummarizer`. In Go, set `PromptTemplate` on
 For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
-
-In Go, `LLMSummarizerConfig` also accepts the following fields:
-
-*   **`Timeout`**: Bounds the summarization call. Zero, the default, means no
-    timeout. If you don't set a `Summarizer`, the runner creates one from the
-    root agent's model with a 60-second timeout. This requires the root agent
-    to be an LLM agent with a model. Otherwise, `runner.New` returns an error.
-*   **`MaxToolContentChars`**: Caps the length of each text part, tool call, or
-    tool response in the transcript sent to the summarizer. Defaults to 2000. A
-    negative value disables truncation.
-*   **`MaxTranscriptChars`**: Caps the length of the whole transcript. Defaults
-    to 200,000. A negative value disables the cap. If the transcript is still
-    too long after shortening individual parts, the compaction fails rather
-    than dropping older events.
-*   **`GenerateContentConfig`**: Only its `SafetySettings`, `Temperature`,
-    `TopP`, `TopK`, `Seed`, `HTTPOptions`, and `Labels` are applied to the
-    summarization call. Other fields, such as `MaxOutputTokens` and
-    `ThinkingConfig`, are ignored. The runner's default summarizer passes the
-    root agent's `GenerateContentConfig`.
-
-To replace the summarization logic in Go, implement the `compaction.Summarizer`
-interface and set it as `Summarizer` on `compaction.Config`. Its one method is
-`SummarizeEvents(ctx context.Context, events []*session.Event) (compaction.SummarizeResult, error)`.
-Return a result with nil `Content` and a nil error to leave that range
-uncompacted.
-
-When sliding-window compaction fails in Go, `Runner.Run` yields an error that
-wraps `compaction.ErrCompaction`, provided you keep reading events until the
-iterator ends. If you break out of the loop early, for example after the final
-response, the error is only logged. The turn's events are already saved by
-then, so you can log the error instead of treating the turn as failed. A failed
-token-based compaction is logged, and the turn continues with the uncompacted
-prompt.
-
-```go
-for event, err := range r.Run(ctx, userID, sessionID, msg, agent.RunConfig{}) {
-	if errors.Is(err, compaction.ErrCompaction) {
-		log.Printf("compaction failed: %v", err)
-		continue
-	}
-	// Handle other errors and the event.
-}
-```
