@@ -347,12 +347,11 @@ For Google MCP servers, authentication headers are automatically passed in.
       Server.
     - `get_mcp_toolset(self, mcp_server_name)`: Constructs an ADK McpToolset
       instance from a registered MCP Server.
-    - `list_endpoints(self, filter_str, page_size, page_token)`: Fetches one page of
-      registered model endpoints. All three arguments are optional.
-    - `get_endpoint(self, name)`: Retrieves endpoint metadata by its full resource
-      name.
-    - `get_model_name(self, endpoint_name)`: Resolves an endpoint's connection URI to
-      a model identifier. Raises `ValueError` if no connection URI is found.
+    - `list_endpoints(self, filter_str, page_size, page_token)`: Lists registered
+      model endpoints.
+    - `get_endpoint(self, name)`: Retrieves metadata by endpoint resource name.
+    - `get_model_name(self, endpoint_name)`: Resolves a registered endpoint to
+      its model identifier.
     - `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of
       registered A2A Agents.
     - `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A
@@ -381,33 +380,6 @@ For Google MCP servers, authentication headers are automatically passed in.
     `All*` iterators manage the page token themselves. A non-2xx response from the
     Agent Registry API is returned as an `*agentregistry.APIError` carrying the
     `StatusCode` and the response `Body`.
-
-## Resolve a registered model endpoint
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
-</div>
-
-Using the Python `registry` initialized above, list the available endpoints and
-resolve an endpoint to a model identifier:
-
-```python
-page = registry.list_endpoints(page_size=10)
-for endpoint in page.get("endpoints", []):
-    print(endpoint["name"])
-
-endpoint_name = (
-    f"projects/{project_id}/locations/{location}/endpoints/YOUR_ENDPOINT_ID"
-)
-endpoint_info = registry.get_endpoint(endpoint_name)
-model_name = registry.get_model_name(endpoint_name)
-```
-
-`get_endpoint` returns the registered metadata. `get_model_name` reads the
-connection URI and extracts the model resource name, such as
-`projects/PROJECT_ID/locations/LOCATION/publishers/google/models/MODEL_ID`.
-For paginated endpoint lists, pass a returned `nextPageToken` as `page_token`
-to `list_endpoints` to read the next page.
 
 ## Configuration Options
 
