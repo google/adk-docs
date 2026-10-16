@@ -287,6 +287,10 @@ Understanding artifacts involves grasping a few key components: the service that
     print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
     ```
 
+    The built-in Python artifact services also accept dictionaries that validate
+    as a `types.Part` in `save_artifact`. When saving through `ToolContext` or
+    `CallbackContext`, use a `types.Part` as in the examples below.
+
 === "TypeScript"
 
     ```typescript
