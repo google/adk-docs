@@ -102,6 +102,10 @@ cd adk-kotlin
 #
 # -integrations-spring is a JVM-only module first published at 1.2.0, so it is
 # listed here and the Spring AI adapter appears in the reference.
+#
+# -integrations-anthropic (JVM-only) and -integrations-openai (KMP, with a jvm
+# target) were first published at 1.4.0 and carry the Claude and Chat
+# Completions model backends.
 echo "Injecting Dokka aggregation for the published modules..."
 cat >> build.gradle.kts <<'AGGREGATED_MODULES'
 
@@ -111,6 +115,8 @@ dependencies {
   dokka(project(":google-adk-kotlin-a2a"))
   dokka(project(":google-adk-kotlin-integrations"))
   dokka(project(":google-adk-kotlin-integrations-spring"))
+  dokka(project(":google-adk-kotlin-integrations-anthropic"))
+  dokka(project(":google-adk-kotlin-integrations-openai"))
   dokka(project(":google-adk-kotlin-litertlm"))
   dokka(project(":google-adk-kotlin-processor"))
   dokka(project(":google-adk-kotlin-webserver"))
