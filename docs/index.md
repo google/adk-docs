@@ -41,6 +41,8 @@ hide:
 <!-- FAQ Section -->
 {{% include '_includes/homepage/_faq.md' %}}
 
+</div>
+
 <script>
 function initHomepage() {
   // Asciinema player (for _agent-cli.md)
