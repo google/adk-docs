@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
-The `LlmAgent` class, often aliased simply as `Agent`, is a core component in
+The `LlmAgent` class, aliased as `Agent` in Python, is a core component in
 ADK, acting as the core part of your agent application. It leverages the power
 of a Large Language Model (LLM) or generative AI model for reasoning,
 understanding natural language, making decisions, generating responses, and
