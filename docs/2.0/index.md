@@ -395,9 +395,9 @@ graph routing, workflow state, and human-in-the-loop pausing:
 validators to expect and store the five new fields on all Event payloads,
 using the serialized names shown above. ADK Go versions before v2.2.0
 serialize `Routes`, `RequestedInput`, and `Output` under their Go field names,
-so events stored by those versions use those keys. ADK Go v2.2.0 and later
-still decode those events, because Go matches JSON keys case-insensitively.
-Non-Go validators and rigid schemas must accept both forms.
+so events stored by those versions use those keys. ADK Go v2.2.0 and higher
+still decode those events. Non-Go validators and rigid schemas must accept
+both forms.
 
 If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
 them through the

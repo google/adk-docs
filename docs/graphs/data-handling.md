@@ -429,20 +429,10 @@ accepted and produced by any agent node.
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:input-output-schema"
     ```
 
-    Unlike agent nodes, `NewFunctionNode`, `NewEmittingFunctionNode`, and
-    `NewDynamicNode` do not infer schemas from type parameters. They attach no
-    schema, so ADK only converts their input to the Go parameter type and does
-    not check it against a JSON schema. To attach a `*jsonschema.Schema` to a
-    node, use the explicit-schema constructors. Each returns an error if a
-    schema does not resolve:
-
-    -   `workflow.NewFunctionNodeWithSchema` and
-        `workflow.NewEmittingFunctionNodeWithSchema`
-    -   `workflow.NewDynamicNodeWithSchema`
-    -   `workflow.NewAgentNodeWithSchemas`
-
-    `workflow.NewJoinNodeWithSchema` takes a resolved input schema and applies
-    it to each predecessor's output separately, not to the combined map.
+    Function and dynamic nodes do not infer a schema from their type
+    parameters. To validate their input against a JSON schema, use the
+    `WithSchema` variants of their constructors, such as
+    `workflow.NewFunctionNodeWithSchema`.
 
     **Prebuilt workflow agents**: set `InputSchema` and `OutputSchema` on
     `llmagent.Config`. `OutputSchema` forces the model to reply with a JSON

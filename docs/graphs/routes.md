@@ -261,12 +261,9 @@ A sequential route runs each node once, in the listed order.
     -   `workflow.Default` — matches when no other route on the same source
         node matches
 
-    ADK compares routes as strings, so a node emits integer and boolean route
-    values in their string form, such as `Routes: []string{"2"}` for
+    ADK Go compares routes as strings, so a node emits integer and boolean
+    route values in their string form, such as `Routes: []string{"2"}` for
     `workflow.IntRoute(2)` or `[]string{"true"}` for `workflow.BoolRoute(true)`.
-    An edge without a route always fires. If every outgoing edge of a node has
-    a route, none of them matches, and there is no `workflow.Default` edge,
-    that path of the workflow ends at the node without an error.
 
     The following pattern is the Go equivalent of the Python router:
 
@@ -488,16 +485,10 @@ accomplish this goal.
 
     To nest a graph without wrapping it in an agent, create the node directly
     with `workflow.NewWorkflowNode`. Its output is the output of the inner
-    graph's terminal node. If more than one terminal node produces output, the
-    node fails with `workflow.ErrMultipleTerminalOutputs`:
+    graph's terminal node:
 
     ```go
-    innerNode, err := workflow.NewWorkflowNode("inner_workflow",
-        workflow.Chain(workflow.Start, innerStepA, innerStepB))
-    if err != nil {
-        return nil, err
-    }
-    outerEdges := workflow.Chain(workflow.Start, outerStepNode, innerNode, finalNode)
+    --8<-- "examples/go/snippets/graphs/routes/main.go:workflow-node"
     ```
 
 ## Loop and escalation exit
