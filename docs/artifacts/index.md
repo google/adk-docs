@@ -1263,53 +1263,17 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-Python's `FileArtifactService` stores artifacts under a local `root_dir`. Pass
-the service to the `Runner` to use it from tools and callbacks. A new service
-instance pointing to the same directory can read previously saved artifacts.
+For local persistence in Python, use `FileArtifactService` with a directory
+that remains available across application restarts:
 
 ```python
-import asyncio
-from google.adk.agents import LlmAgent
 from google.adk.artifacts import FileArtifactService
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.genai import types
 
 artifact_service = FileArtifactService(root_dir="./artifacts")
-runner = Runner(
-    app_name="artifact_app",
-    agent=LlmAgent(name="artifact_agent", model="gemini-2.5-flash"),
-    session_service=InMemorySessionService(),
-    artifact_service=artifact_service,
-)
-
-async def save_and_reload_report():
-    scope = {
-        "app_name": runner.app_name,
-        "user_id": "user123",
-        "session_id": "session123",
-        "filename": "report.txt",
-    }
-    version = await artifact_service.save_artifact(
-        **scope,
-        artifact=types.Part.from_bytes(data=b"Report content", mime_type="text/plain"),
-    )
-    reopened_service = FileArtifactService(root_dir="./artifacts")
-    artifact = await reopened_service.load_artifact(**scope, version=version)
-    if artifact is not None:
-        print(artifact.inline_data.data)
-
-asyncio.run(save_and_reload_report())
 ```
 
-Each save creates a version. Omit `version` when loading to get the latest
-available version, or pass a saved version number as above. A missing artifact
-or version returns `None`.
-
-The directory must remain available to the application. In a container, use a
-persistent volume if artifacts need to survive container replacement. This
-service persists artifacts; the `InMemorySessionService` in the example still
-keeps sessions only in memory.
+Pass it to the Runner as shown above. The same artifact save, load and version
+methods apply.
 
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
