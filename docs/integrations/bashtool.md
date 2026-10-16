@@ -1,6 +1,6 @@
 ---
 catalog_title: Bash Tool
-catalog_description: Execute bash commands within a secure, resource-limited local sandbox
+catalog_description: Run approved commands in a local workspace with resource limits
 catalog_icon: /integrations/assets/bash.png
 catalog_tags: ["code", "google"]
 ---
@@ -26,12 +26,19 @@ pip install google-adk
 
 !!! warning "POSIX-only"
 
-    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS. Executing this tool on a Windows system will result in a hard error.
+    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS. On Windows, the tool returns an error response.
 
-To use the Bash Tool, instantiate `ExecuteBashTool` and include it in your agent's `tools` list. Ensure `my_workspace_path` is defined prior to running the snippet as a valid directory path string:
+To use the Bash Tool, create a workspace and include `ExecuteBashTool` in your
+agent's `tools` list:
 
 ```python
+from pathlib import Path
+
+from google.adk.agents import Agent
 from google.adk.tools.bash_tool import ExecuteBashTool, BashToolPolicy
+
+workspace = Path("workspace")
+workspace.mkdir(exist_ok=True)
 
 policy = BashToolPolicy(
     allowed_command_prefixes=("ls", "cat", "grep"),
@@ -41,7 +48,12 @@ policy = BashToolPolicy(
     max_child_processes=5
 )
 
-tool = ExecuteBashTool(workspace=my_workspace_path, policy=policy)
+root_agent = Agent(
+    name="workspace_agent",
+    model="gemini-flash-latest",
+    instruction="Inspect files in the workspace using approved commands.",
+    tools=[ExecuteBashTool(workspace=workspace, policy=policy)],
+)
 ```
 
 ## Security and execution safeguards
@@ -53,13 +65,27 @@ Because executing arbitrary code carries inherent risks, the `ExecuteBashTool` i
 By default, `BashToolPolicy` is initialized with `allowed_command_prefixes=("*",)`. This means that **all commands are permitted by default**. To secure your application, you must explicitly restrict the allowed commands when initializing the policy:
 
 ```python
-# Secure implementation example
 from google.adk.tools.bash_tool import BashToolPolicy
 
 strict_policy = BashToolPolicy(
-    allowed_command_prefixes=("ls ", "cat ", "pwd")
+    allowed_command_prefixes=("ls", "cat", "git status")
 )
 ```
+
+Entries match whole command tokens. For example, `"ls"` permits `ls -la`, but
+not `lsof`, `./ls`, or `/bin/ls`. To allow an absolute executable path, list it
+explicitly. The `"git status"` entry permits `git status --short`, but not
+`git commit`.
+
+Commands run directly without a shell. Pipes, redirection, wildcard expansion,
+and command substitution are not evaluated. For example, `ls *.txt` passes
+the literal argument `*.txt` to `ls`. To reject specific strings before
+execution, set `blocked_operators`; it is empty by default.
+
+The workspace sets the working directory, but does not isolate the process
+from the rest of the filesystem. Allowing an interpreter such as `bash` or
+`python` also allows it to run scripts or code. Use an isolated execution
+environment when commands need stronger separation from the host.
 
 ### Built-in protections
 
@@ -68,6 +94,29 @@ strict_policy = BashToolPolicy(
 3. **Resource Limits:** OS-level limits,`setrlimit`, are applied to restrict memory consumption, file sizes, and the number of child processes to prevent fork bombs or memory exhaustion. 
 4. **Core Dumps Disabled:** To prevent sensitive memory leaks, core dumps are strictly disabled, `RLIMIT_CORE` set to `0`, for the executing subprocess.
 5. **Process Group Termination:** If a command exceeds the `timeout_seconds`, the tool issues a `SIGKILL` to the entire process group to ensure no orphan background processes are left running.
+
+## Command results
+
+After a confirmed command finishes, the tool returns a dictionary containing
+`stdout`, `stderr`, and the process `returncode`. For example:
+
+```json
+{
+  "stdout": "report.txt\n",
+  "stderr": "<no stderr captured>",
+  "returncode": 0
+}
+```
+
+An empty output stream is represented by `<no stdout captured>` or
+`<no stderr captured>`. A nonzero exit code is returned in `returncode` without
+adding an `error` field, so check the exit code as well as any error message.
+
+Validation failures, pending or rejected confirmation, and unsupported
+platforms return an `error` message without the process fields. A timeout
+returns `error` together with the captured output and `returncode`. Other
+execution exceptions return `error` and the output fields, but may omit
+`returncode`.
 
 ## Available tools
 
