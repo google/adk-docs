@@ -1,0 +1,361 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ADK for TypeScript: API Reference - v2.2.1</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+/* typedoc-theme-fresh */
+
+/* @view-transition {
+  navigation: auto;
+} */
+
+:root {
+  --light-color-background: #fafafe;
+  --light-color-background-active: #eaeced;
+  --light-color-text: #222222;
+  --light-color-text-aside: #5e5e5e;
+
+  --dark-color-background: #1a1a1c;
+  --dark-color-background-active: #2f2f2b;
+  --dark-color-text: #dfdfd6;
+  --dark-color-text-aside: #b0b0b0;
+
+  --dim-header-height: 2.5rem;
+  --dim-footer-height: 0px;
+
+  --light-code-background: #ffffff18;
+  --dark-code-background: #00000018;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  & > .container.container-main {
+    margin: 0 auto;
+    margin-top: var(--dim-header-height);
+    --dim-container-main-margin-y: 0px;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+:root[data-theme="light"] {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+:root[data-theme="dark"] {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+.tsd-page-toolbar {
+  position: fixed;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-background) 80%, transparent) 60%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  border-bottom: none;
+
+  .title {
+    font-weight: 500;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 0;
+    margin-right: auto;
+
+    &:hover {
+      color: var(--color-contrast-text);
+      text-decoration: none;
+    }
+  }
+
+  .tsd-theme-toggle {
+    display: flex;
+    position: relative;
+    margin-right: 12px;
+    color: var(--color-text-aside);
+    
+    select {
+      cursor: pointer;
+      border: 1px solid var(--color-background-active);
+      border-radius: 4px;
+      padding: 6px 8px;
+      padding-left: 32px;  /* Space for the icon */
+      font-size: 14px;
+      background: transparent;
+      transition: background-color 200ms;
+      color: var(--color-text-aside);
+      
+      /* for Firefox and Chrome: these are inconsistent */
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      
+      &:hover {
+        background-color: var(--color-background-active);
+      }
+    }
+  }
+}
+
+.tsd-widget {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: auto;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 200ms;
+  color: var(--color-text-aside);
+  opacity: 100%;
+
+  &:hover {
+    background-color: var(--color-background-active);
+  }
+}
+
+#tsd-search-results {
+  & > li {
+    padding-inline: 6px;
+    transition: background-color 200ms;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.col-content {
+  overflow: hidden;
+  padding-block: 24px;
+
+  & > .tsd-typography {
+    padding-bottom: 24px;
+  }
+}
+
+.col-sidebar {
+  top: var(--dim-header-height);  /* Relevant for tablet layout. */
+}
+
+.site-menu {
+  top: var(--dim-header-height);
+  padding-block: 24px;
+  box-sizing: border-box;
+}
+
+.page-menu {
+  top: var(--dim-header-height);
+  padding-block: 48px 24px;
+  box-sizing: border-box;
+}
+
+.tsd-navigation,
+.tsd-page-navigation {
+  > details {
+    margin-bottom: 8px;
+  }
+
+  a {
+    border-radius: 4px;
+    padding-inline: 6px;
+    margin-bottom: 2px;
+  }
+  a:hover {
+    text-decoration: none;
+    background-color: var(--color-background-active);
+  }
+  a.current {
+    background-color: var(--color-background-active);
+    span {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-navigation {
+  & > a {
+    /* Top-level navigation anchor. */
+    margin-block: 16px;
+    font-size: 18px;
+    background: transparent !important;
+    padding: 0;
+    
+    &:hover {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-page-navigation {
+  border-left: 1px solid var(--color-background-active);
+  padding-left: 4px;
+  padding-block: 4px;
+}
+
+.tsd-page-navigation-section {
+  & > summary > svg {
+    margin-right: 0;
+  }
+  & > div {
+    margin-left: 24px;
+  }
+}
+
+.tsd-page-title {
+  color: var(--color-contrast-text);
+}
+
+h1 > code.tsd-tag {
+  margin-left: 12px;
+}
+
+code.tsd-tag {
+  display: inline-block;
+  transform: translateY(-0.1em);
+  background: var(--color-background-secondary);
+  border: 0;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tsd-breadcrumb {
+  margin-bottom: 12px;
+  li:after {
+    content: " › ";
+    opacity: 0.4;
+  }
+  li:last-of-type::after {
+    content: "";
+  }
+}
+
+.tsd-signature,
+.tsd-signatures .tsd-signature {
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-background-secondary);
+  font-weight: 500;
+  padding: 10px 8px;
+  line-height: 1.3;
+}
+
+.tsd-anchor-icon {
+  color: var(--color-text-aside);
+  padding-bottom: 1px;
+}
+
+.tsd-kind-icon {
+  filter: grayscale(0.5) opacity(0.8);
+}
+
+/* Accordion icon */
+.tsd-accordion-summary > svg {
+  color: var(--color-text-aside);
+  opacity: 50%;
+  stroke-width: 1px;
+  transition: transform 200ms ease-in-out;
+}
+
+.tsd-accordion-summary > svg:has(+ h2) {
+  height: 24px;
+  width: 24px;
+}
+
+/* Desktop sizing */
+@media (min-width: 1200px) {
+  .container-main {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 2.5fr) minmax(0, 17rem);
+  }
+
+  .site-menu {
+    padding-right: 8px;
+  }
+  .page-menu {
+    padding-left: 24px;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+}
+
+/* Tablet sizing */
+@media (min-width: 770px) and (max-width: 1199px) {
+  .page-menu {
+    padding-block: 24px 24px;
+  }
+  .site-menu {
+    padding-block: 0 24px;
+    margin-top: 0;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+}
+
+/* Mobile sizing */
+@media (max-width: 769px) {
+  .page-menu {
+    display: none;
+  }
+  .site-menu {
+    padding: 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .has-menu .col-sidebar {
+    padding: 0 1rem;
+    max-height: 100dvh;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+  .md-show {
+    display: none !important;
+  }
+}
+</style>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">ADK for TypeScript: API Reference</a><div id="tsd-toolbar-links"></div><div class="tsd-theme-toggle md-show" style="position: relative"><div style="position: absolute; left: 8px; top: 4px; pointer-events: none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-moon-icon lucide-sun-moon"><path d="M12 2v2"></path><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"></path><path d="M16 12a4 4 0 0 0-4-4"></path><path d="m19 5-1.256 1.256"></path><path d="M20 12h2"></path></svg></div><select id="tsd-theme"><option value="os">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 8px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search" style="margin-bottom: 1px; margin-left: 4px; margin-right: 4px;"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><span class="lg-show" style="margin-left: 4px; margin-right: 12ch;">Search…</span></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 4px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu" style="margin-left: 4px; margin-right: 4px;"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>ADK for TypeScript: API Reference - v2.2.1</h1></div><h2>Hierarchy Summary</h2><ul class="tsd-full-hierarchy"><li data-refl="2639" id="BaseArtifactService"><a href="interfaces/BaseArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseArtifactService</a><ul><li data-refl="463" id="FileArtifactService"><a href="classes/FileArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>FileArtifactService</a></li><li data-refl="489" id="GcsArtifactService"><a href="classes/GcsArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>GcsArtifactService</a></li><li data-refl="2685" id="InMemoryArtifactService"><a href="classes/InMemoryArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemoryArtifactService</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2992" id="BaseCodeExecutor"><a href="classes/BaseCodeExecutor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseCodeExecutor</a><ul><li data-refl="523" id="AgentEngineSandboxCodeExecutor"><a href="classes/AgentEngineSandboxCodeExecutor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AgentEngineSandboxCodeExecutor</a></li><li data-refl="563" id="ContainerCodeExecutor"><a href="classes/ContainerCodeExecutor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ContainerCodeExecutor</a></li><li data-refl="598" id="UnsafeLocalCodeExecutor"><a href="classes/UnsafeLocalCodeExecutor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>UnsafeLocalCodeExecutor</a></li><li data-refl="3007" id="BuiltInCodeExecutor"><a href="classes/BuiltInCodeExecutor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BuiltInCodeExecutor</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3079" id="BaseContextCompactor"><a href="interfaces/BaseContextCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseContextCompactor</a><ul><li data-refl="3041" id="AgentControlledContextCompactor"><a href="classes/AgentControlledContextCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AgentControlledContextCompactor</a></li><li data-refl="3058" id="AnchoredContextCompactor"><a href="classes/AnchoredContextCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AnchoredContextCompactor</a></li><li data-refl="3103" id="TokenBasedContextCompactor"><a href="classes/TokenBasedContextCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>TokenBasedContextCompactor</a></li><li data-refl="3120" id="TrajectoryThoughtPruningCompactor"><a href="classes/TrajectoryThoughtPruningCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>TrajectoryThoughtPruningCompactor</a></li><li data-refl="3133" id="TruncatingContextCompactor"><a href="classes/TruncatingContextCompactor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>TruncatingContextCompactor</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2935" id="BaseCredentialExchanger"><a href="interfaces/BaseCredentialExchanger.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseCredentialExchanger</a><ul><li data-refl="883" id="AutoAuthCredentialExchanger"><a href="classes/AutoAuthCredentialExchanger.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AutoAuthCredentialExchanger</a></li><li data-refl="915" id="OAuth2BearerExchanger"><a href="classes/OAuth2BearerExchanger.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>OAuth2BearerExchanger</a></li><li data-refl="2945" id="OAuth2CredentialExchanger"><a href="classes/OAuth2CredentialExchanger.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>OAuth2CredentialExchanger</a></li><li data-refl="924" id="ServiceAccountCredentialExchanger"><a href="classes/ServiceAccountCredentialExchanger.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ServiceAccountCredentialExchanger</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2893" id="BaseCredentialService"><a href="interfaces/BaseCredentialService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseCredentialService</a><ul><li data-refl="2902" id="InMemoryCredentialService"><a href="classes/InMemoryCredentialService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemoryCredentialService</a></li><li data-refl="2917" id="SessionStateCredentialService"><a href="classes/SessionStateCredentialService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>SessionStateCredentialService</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3148" id="BaseEnvironment"><a href="classes/BaseEnvironment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseEnvironment</a><ul><li data-refl="620" id="LocalEnvironment"><a href="classes/LocalEnvironment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LocalEnvironment</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3449" id="BaseExampleProvider"><a href="classes/BaseExampleProvider.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseExampleProvider</a><ul><li data-refl="3459" id="VertexAiExampleStore"><a href="classes/VertexAiExampleStore.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexAiExampleStore</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3586" id="BaseLlm"><a href="classes/BaseLlm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseLlm</a><ul><li data-refl="3629" id="ChromeBuiltInLlm"><a href="classes/ChromeBuiltInLlm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ChromeBuiltInLlm</a></li><li data-refl="3786" id="Gemini"><a href="classes/Gemini.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>Gemini</a><ul><li data-refl="3538" id="ApigeeLlm"><a href="classes/ApigeeLlm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ApigeeLlm</a></li></ul></li><li data-refl="3911" id="RoutedLlm"><a href="classes/RoutedLlm.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RoutedLlm</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2347" id="BaseLlmRequestProcessor"><a href="classes/BaseLlmRequestProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseLlmRequestProcessor</a><ul><li data-refl="2362" id="ContentRequestProcessor"><a href="classes/ContentRequestProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ContentRequestProcessor</a></li><li data-refl="2369" id="ContextCompactorRequestProcessor"><a href="classes/ContextCompactorRequestProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ContextCompactorRequestProcessor</a></li><li data-refl="2379" id="InteractionsRequestProcessor"><a href="classes/InteractionsRequestProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InteractionsRequestProcessor</a></li><li data-refl="2321" id="AgentTransferLlmRequestProcessor"><a href="classes/AgentTransferLlmRequestProcessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AgentTransferLlmRequestProcessor</a></li><li data-refl="2852" id="AuthPreprocessor"><a href="classes/AuthPreprocessor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AuthPreprocessor</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3502" id="BaseMemoryService"><a href="interfaces/BaseMemoryService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseMemoryService</a><ul><li data-refl="3515" id="InMemoryMemoryService"><a href="classes/InMemoryMemoryService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemoryMemoryService</a></li><li data-refl="652" id="VertexAiMemoryBankService"><a href="classes/VertexAiMemoryBankService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexAiMemoryBankService</a></li><li data-refl="714" id="VertexAiRagMemoryService"><a href="classes/VertexAiRagMemoryService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexAiRagMemoryService</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="6457" id="BaseNode"><a href="classes/BaseNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseNode</a><ul><li data-refl="1610" id="BaseAgent"><a href="classes/BaseAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseAgent</a><ul><li data-refl="1380" id="RemoteA2AAgent"><a href="classes/RemoteA2AAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RemoteA2AAgent</a></li><li data-refl="1869" id="Agent"><a href="classes/Agent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>Agent</a></li><li data-refl="2148" id="LoopAgent"><a href="classes/LoopAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoopAgent</a></li><li data-refl="2243" id="ParallelAgent"><a href="classes/ParallelAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ParallelAgent</a></li><li data-refl="2405" id="RoutedAgent"><a href="classes/RoutedAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RoutedAgent</a></li><li data-refl="2533" id="SequentialAgent"><a href="classes/SequentialAgent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>SequentialAgent</a></li></ul></li><li data-refl="6524" id="FunctionNode"><a href="classes/FunctionNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>FunctionNode</a></li><li data-refl="6594" id="JoinNode"><a href="classes/JoinNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>JoinNode</a></li><li data-refl="6750" id="ParallelWorker"><a href="classes/ParallelWorker.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ParallelWorker</a></li><li data-refl="6799" id="ToolNode"><a href="classes/ToolNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ToolNode</a></li><li data-refl="6837" id="Workflow"><a href="classes/Workflow.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>Workflow</a></li><li data-refl="6960" id="WorkflowNode"><a href="classes/WorkflowNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>WorkflowNode</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="7057" id="BaseNodeConfig"><a href="interfaces/BaseNodeConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseNodeConfig</a><ul><li data-refl="1692" id="BaseAgentConfig"><a href="interfaces/BaseAgentConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseAgentConfig</a><ul><li data-refl="1471" id="RemoteA2AAgentConfig"><a href="interfaces/RemoteA2AAgentConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>RemoteA2AAgentConfig</a></li><li data-refl="2081" id="LlmAgentConfig"><a href="interfaces/LlmAgentConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>LlmAgentConfig</a></li><li data-refl="2227" id="LoopAgentConfig"><a href="interfaces/LoopAgentConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>LoopAgentConfig</a></li><li data-refl="2494" id="RoutedAgentConfig"><a href="interfaces/RoutedAgentConfig.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>RoutedAgentConfig</a></li></ul></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3945" id="BasePlanner"><a href="classes/BasePlanner.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BasePlanner</a><ul><li data-refl="3960" id="BuiltInPlanner"><a href="classes/BuiltInPlanner.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BuiltInPlanner</a></li><li data-refl="3983" id="PlanReActPlanner"><a href="classes/PlanReActPlanner.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>PlanReActPlanner</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="4034" id="BasePlugin"><a href="classes/BasePlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BasePlugin</a><ul><li data-refl="4151" id="GlobalInstructionPlugin"><a href="classes/GlobalInstructionPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>GlobalInstructionPlugin</a></li><li data-refl="4269" id="LoggingPlugin"><a href="classes/LoggingPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoggingPlugin</a></li><li data-refl="4524" id="ReflectAndRetryModelPlugin"><a href="classes/ReflectAndRetryModelPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ReflectAndRetryModelPlugin</a></li><li data-refl="4704" id="ReflectAndRetryToolPlugin"><a href="classes/ReflectAndRetryToolPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ReflectAndRetryToolPlugin</a></li><li data-refl="4874" id="SecurityPlugin"><a href="classes/SecurityPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>SecurityPlugin</a></li><li data-refl="5033" id="ToolCallIntegrityPlugin"><a href="classes/ToolCallIntegrityPlugin.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ToolCallIntegrityPlugin</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5019" id="BasePolicyEngine"><a href="interfaces/BasePolicyEngine.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BasePolicyEngine</a><ul><li data-refl="4864" id="InMemoryPolicyEngine"><a href="classes/InMemoryPolicyEngine.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemoryPolicyEngine</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5300" id="BaseSessionService"><a href="classes/BaseSessionService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseSessionService</a><ul><li data-refl="740" id="DatabaseSessionService"><a href="classes/DatabaseSessionService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>DatabaseSessionService</a></li><li data-refl="771" id="VertexAiSessionService"><a href="classes/VertexAiSessionService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexAiSessionService</a></li><li data-refl="5354" id="InMemorySessionService"><a href="classes/InMemorySessionService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemorySessionService</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3087" id="BaseSummarizer"><a href="interfaces/BaseSummarizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>BaseSummarizer</a><ul><li data-refl="3091" id="LlmSummarizer"><a href="classes/LlmSummarizer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LlmSummarizer</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5471" id="BaseTool"><a href="classes/BaseTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseTool</a><ul><li data-refl="288" id="LoadMcpResourceTool"><a href="classes/LoadMcpResourceTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoadMcpResourceTool</a></li><li data-refl="361" id="MCPTool"><a href="classes/MCPTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>MCPTool</a></li><li data-refl="1144" id="RestApiTool"><a href="classes/RestApiTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RestApiTool</a></li><li data-refl="1247" id="LoadSkillResourceTool"><a href="classes/LoadSkillResourceTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoadSkillResourceTool</a></li><li data-refl="1276" id="RunSkillInlineScriptTool"><a href="classes/RunSkillInlineScriptTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RunSkillInlineScriptTool</a></li><li data-refl="1309" id="RunSkillScriptTool"><a href="classes/RunSkillScriptTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>RunSkillScriptTool</a></li><li data-refl="5440" id="AgentTool"><a href="classes/AgentTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AgentTool</a></li><li data-refl="5535" id="BuiltInTool"><a href="classes/BuiltInTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BuiltInTool</a><ul><li data-refl="5582" id="EnterpriseWebSearchTool"><a href="classes/EnterpriseWebSearchTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>EnterpriseWebSearchTool</a></li><li data-refl="5783" id="GoogleMapsGroundingTool"><a href="classes/GoogleMapsGroundingTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>GoogleMapsGroundingTool</a></li><li data-refl="5808" id="GoogleSearchTool"><a href="classes/GoogleSearchTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>GoogleSearchTool</a></li><li data-refl="6017" id="UrlContextTool"><a href="classes/UrlContextTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>UrlContextTool</a></li><li data-refl="6041" id="VertexAiSearchTool"><a href="classes/VertexAiSearchTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexAiSearchTool</a></li><li data-refl="6098" id="VertexRagRetrievalTool"><a href="classes/VertexRagRetrievalTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>VertexRagRetrievalTool</a></li></ul></li><li data-refl="5560" id="ConsolidateContextTool"><a href="classes/ConsolidateContextTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ConsolidateContextTool</a></li><li data-refl="5606" id="ExampleTool"><a href="classes/ExampleTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ExampleTool</a></li><li data-refl="5630" id="ExitLoopTool"><a href="classes/ExitLoopTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ExitLoopTool</a></li><li data-refl="5653" id="FinishTaskTool"><a href="classes/FinishTaskTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>FinishTaskTool</a></li><li data-refl="5711" id="FunctionTool"><a href="classes/FunctionTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>FunctionTool</a><ul><li data-refl="5880" id="LongRunningFunctionTool"><a href="classes/LongRunningFunctionTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LongRunningFunctionTool</a></li></ul></li><li data-refl="5833" id="LoadArtifactsTool"><a href="classes/LoadArtifactsTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoadArtifactsTool</a></li><li data-refl="5859" id="LoadMemoryTool"><a href="classes/LoadMemoryTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoadMemoryTool</a></li><li data-refl="5906" id="PreloadMemoryTool"><a href="classes/PreloadMemoryTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>PreloadMemoryTool</a></li><li data-refl="5932" id="BaseRetrievalTool"><a href="classes/BaseRetrievalTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseRetrievalTool</a><ul><li data-refl="5954" id="LlamaIndexRetrieval"><a href="classes/LlamaIndexRetrieval.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LlamaIndexRetrieval</a><ul><li data-refl="1211" id="FilesRetrieval"><a href="classes/FilesRetrieval.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>FilesRetrieval</a></li></ul></li></ul></li><li data-refl="6124" id="WebMCPTool"><a href="classes/WebMCPTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>WebMCPTool</a></li><li data-refl="6388" id="ListSkillsTool"><a href="classes/ListSkillsTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ListSkillsTool</a></li><li data-refl="6411" id="LoadSkillTool"><a href="classes/LoadSkillTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>LoadSkillTool</a></li><li data-refl="6434" id="SearchSkillsTool"><a href="classes/SearchSkillsTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>SearchSkillsTool</a></li><li data-refl="6718" id="NodeTool"><a href="classes/NodeTool.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>NodeTool</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5506" id="BaseToolset"><a href="classes/BaseToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>BaseToolset</a><ul><li data-refl="143" id="AgentRegistrySingleMCPToolset"><a href="classes/AgentRegistrySingleMCPToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>AgentRegistrySingleMCPToolset</a></li><li data-refl="390" id="MCPToolset"><a href="classes/MCPToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>MCPToolset</a></li><li data-refl="1091" id="OpenAPIToolset"><a href="classes/OpenAPIToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>OpenAPIToolset</a></li><li data-refl="1332" id="SkillToolset"><a href="classes/SkillToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>SkillToolset</a></li><li data-refl="6152" id="WebMCPToolset"><a href="classes/WebMCPToolset.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>WebMCPToolset</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3717" id="ChromeCreateCoreOptions"><a href="interfaces/ChromeCreateCoreOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>ChromeCreateCoreOptions</a><ul><li data-refl="3730" id="ChromeCreateOptions"><a href="interfaces/ChromeCreateOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>ChromeCreateOptions</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5384" id="CompositeSessionKey"><a href="interfaces/CompositeSessionKey.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>CompositeSessionKey</a><ul><li data-refl="2661" id="DeleteArtifactRequest"><a href="interfaces/DeleteArtifactRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>DeleteArtifactRequest</a></li><li data-refl="2667" id="ListVersionsRequest"><a href="interfaces/ListVersionsRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>ListVersionsRequest</a></li><li data-refl="2672" id="LoadArtifactRequest"><a href="interfaces/LoadArtifactRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>LoadArtifactRequest</a></li><li data-refl="2678" id="SaveArtifactRequest"><a href="interfaces/SaveArtifactRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>SaveArtifactRequest</a></li><li data-refl="5336" id="GetSessionRequest"><a href="interfaces/GetSessionRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>GetSessionRequest</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3286" id="CreateEventParams"><a href="interfaces/CreateEventParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>CreateEventParams</a><ul><li data-refl="7082" id="CreateNodeErrorEventParams"><a href="interfaces/CreateNodeErrorEventParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>CreateNodeErrorEventParams</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5327" id="CreateSessionRequest"><a href="interfaces/CreateSessionRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>CreateSessionRequest</a><ul><li data-refl="801" id="VertexAiCreateSessionRequest"><a href="interfaces/VertexAiCreateSessionRequest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>VertexAiCreateSessionRequest</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="1243" id="FilesRetrievalParams"><a href="interfaces/FilesRetrievalParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>FilesRetrievalParams</a><ul><li data-refl="1238" id="FilesRetrievalConstructorParams"><a href="interfaces/FilesRetrievalConstructorParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>FilesRetrievalConstructorParams</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3836" id="GeminiParams"><a href="interfaces/GeminiParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>GeminiParams</a><ul><li data-refl="3577" id="ApigeeLlmParams"><a href="interfaces/ApigeeLlmParams.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>ApigeeLlmParams</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="3855" id="LlmResponse"><a href="interfaces/LlmResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>LlmResponse</a><ul><li data-refl="3320" id="Event"><a href="interfaces/Event.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>Event</a><ul><li data-refl="3218" id="CompactedEvent"><a href="interfaces/CompactedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>CompactedEvent</a></li><li data-refl="7157" id="NodeErrorEvent"><a href="interfaces/NodeErrorEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>NodeErrorEvent</a></li></ul></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2386" id="ReadonlyContext"><a href="classes/ReadonlyContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ReadonlyContext</a><ul><li data-refl="1712" id="Context"><a href="classes/Context.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>Context</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="5218" id="Runner"><a href="classes/Runner.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>Runner</a><ul><li data-refl="5169" id="InMemoryRunner"><a href="classes/InMemoryRunner.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>InMemoryRunner</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="2748" id="SessionArtifactService"><a href="interfaces/SessionArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>SessionArtifactService</a><ul><li data-refl="5683" id="ForwardingArtifactService"><a href="classes/ForwardingArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ForwardingArtifactService</a></li><li data-refl="2713" id="ScopedArtifactService"><a href="classes/ScopedArtifactService.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>ScopedArtifactService</a></li></ul></li></ul><ul class="tsd-full-hierarchy"><li data-refl="6377" id="SkillRegistry"><a href="interfaces/SkillRegistry.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Interface"><use href="assets/icons.svg#icon-256"></use></svg>SkillRegistry</a><ul><li data-refl="814" id="GCPSkillRegistry"><a href="classes/GCPSkillRegistry.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Class"><use href="assets/icons.svg#icon-128"></use></svg>GCPSkillRegistry</a></li></ul></li></ul></div><div class="col-sidebar"><div class="page-menu"></div><div class="site-menu"><nav class="tsd-navigation"><a href="index.html">ADK for TypeScript: API Reference - v2.2.1</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><div class="overlay"></div></body></html>
