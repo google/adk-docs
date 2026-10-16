@@ -1,25 +1,12 @@
 # Ollama model host for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 [Ollama](https://ollama.com/) is a tool that allows you to host and run
-open-source models locally. ADK Python integrates with Ollama-hosted models through the
+open-source models locally. ADK integrates with Ollama-hosted models through the
 [LiteLLM](/agents/models/litellm/) model connector library.
-
-## Use with Go
-
-In Go, use the native `openaimodel` connector with Ollama's OpenAI-compatible
-endpoint. Set `ClientConfig.API` to `openaimodel.APIChatCompletions` and
-`BaseURL` to your endpoint, for example `http://localhost:11434/v1`. See
-[Chat Completions API](/agents/models/openai/#chat-completions-api) for the Go
-configuration.
-
-Set a nonempty `APIKey` for that endpoint, using a placeholder if your local
-server does not require authentication. An empty value can inherit
-`OPENAI_API_KEY` and send that key to the configured endpoint. The examples
-below use Python's LiteLLM connector.
 
 ## Get started
 
