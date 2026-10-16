@@ -1,7 +1,7 @@
 # Use the Web Interface
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ADK web interface lets you test your agents directly in the browser. This
@@ -112,6 +112,29 @@ Use the following command to start the ADK web interface:
 
     In Java, the web interface and the API server are bundled together.
 
+=== "Kotlin"
+
+    In Kotlin there is no standalone `adk` CLI. Construct an `AdkDevServer` in
+    your own `main` — it serves the web interface plus the REST API behind it:
+
+    ```kotlin title="WebMain.kt"
+    import com.google.adk.kt.webserver.AdkServerConfig
+    import com.google.adk.kt.webserver.dev.AdkDevServer
+
+    fun main() =
+        AdkDevServer(AdkServerConfig.inMemory(rootAgent)).start(wait = true)
+    ```
+
+    Then run that class with the Gradle `application` plugin, pointing
+    `mainClass` at it — a top-level `main` in `WebMain.kt` compiles to
+    `WebMainKt`:
+
+    ```console
+    gradle run
+    ```
+
+    Use `AdkApiServer` instead to serve the REST API without the web interface.
+
 Once started, the server prints the access URL to the console. Open it in your
 browser to use the web interface:
 
@@ -153,6 +176,20 @@ browser to use the web interface:
     | For local testing, access at http://localhost:8000.                         |
     +-----------------------------------------------------------------------------+
     ```
+
+=== "Kotlin"
+
+    ```shell
+    [main] INFO com.google.adk.kt.webserver.AdkApiServer - AdkDevServer starting on 127.0.0.1:8080
+    [main] INFO ktor.application - Autoreload is disabled because the development mode is off.
+    [main] INFO com.google.adk.kt.webserver.routes.StaticRoutesKt - Serving embedded static browser assets as fallback.
+    [main] INFO ktor.application - Application started in 0.191 seconds.
+    [DefaultDispatcher-worker-1] INFO ktor.application - Responding at http://127.0.0.1:8080
+    ```
+
+    The interface is served at `/dev-ui`, and `/` redirects there. Note the
+    default port is **8080**, not 8000.
+
 ## Common options
 
 === "Python"
@@ -240,6 +277,38 @@ browser to use the web interface:
     ```shell
     go run agent.go web -port 9090 api -path_prefix /myapi webui -api_server_address http://localhost:9090/myapi
     ```
+
+=== "Kotlin"
+
+    There is no CLI, so these are properties on `AdkServerConfig` rather than
+    flags. It is a data class, so `copy()` overrides one without restating the
+    rest.
+
+    | Property | Description | Default |
+    |----------|-------------|---------|
+    | `port` | Port to run the server on | `8080` |
+    | `host` | Host binding address | `127.0.0.1` |
+    | `sessionService` | Session storage | required |
+    | `artifactService` | Artifact storage | required |
+    | `agentLoader` | Which agents to serve | required |
+    | `webUiEnabled` | Mount the web interface | server default |
+    | `captureMessageContent` | Record prompts and responses into trace spans | `false` |
+
+    ```kotlin
+    AdkDevServer(
+        AdkServerConfig.inMemory(rootAgent).copy(port = 9090, host = "0.0.0.0"),
+    ).start(wait = true)
+    ```
+
+    `AdkServerConfig.inMemory()` fills the three required properties with a
+    single-agent loader and in-memory services. `webUiEnabled` defaults to on
+    for `AdkDevServer` and off for `AdkApiServer`; the `adk.web.ui.enabled`
+    system property overrides it either way.
+
+    !!! warning "captureMessageContent records prompt and response text"
+
+        It exists so the trace view can display message content, which means
+        potential PII in your spans. Leave it off outside local development.
 
 ## Usage telemetry
 
