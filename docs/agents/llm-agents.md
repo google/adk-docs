@@ -223,6 +223,11 @@ Initialize `McpInstructionProvider` with MCP server connection parameters and
 the name of the prompt to fetch. Pass this instance to the `instruction`
 parameter of `LlmAgent`.
 
+!!! warning "Caution"
+    Instructions fetched from an MCP server directly control your agent's
+    behavior. Only connect to MCP servers that you trust, and protect any
+    credentials used in the connection parameters.
+
 === "Python"
 
     ```python
