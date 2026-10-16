@@ -445,7 +445,7 @@ including Gemini Enterprise Agent Platform, see the
             root_agent = Agent(
                 name="weather_time_agent",
                 model="replace-me-with-model-id", #e.g. gemini-live-2.5-flash-native-audio
-                ...
+            )
             ```
 
         ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
