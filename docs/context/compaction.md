@@ -207,8 +207,8 @@ in the following sample code:
     In Go, sliding-window compaction runs at the end of `Runner.Run`, not in the
     background.
 
-In Python, once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval.
+Once configured, the ADK `Runner` handles the compaction process each time the
+session reaches the interval. In Python, compaction runs in the background.
 
 ## Example of context compaction
 
