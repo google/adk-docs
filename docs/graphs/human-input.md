@@ -58,29 +58,18 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go v2.0.0, a HITL graph node is built with
-    `workflow.NewEmittingFunctionNode` and `workflow.ResumeOrRequestInput`.
-    This is the direct equivalent of Python's `RequestInput` node:
-
-    -   On the **first pass**, `workflow.ResumeOrRequestInput` emits a
-        `session.RequestInput` event (surfaced as `Event.RequestedInput`) and
-        returns `ErrNodeInterrupted`, pausing the workflow.
-    -   After the human replies, the node is **re-invoked from the top**
-        (`RerunOnResume: &true`) and `ResumeOrRequestInput` returns the reply
-        payload, which flows as typed input to the next node via `event.Output`.
-
-    ```go
-    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-get-started"
-    ```
-
-    For the handoff pattern that the Python example uses, emit the request with
-    `workflow.NewRequestInputEvent`, return `workflow.ErrNodeInterrupted`, and
-    leave `RerunOnResume` unset. The node does not run again. The reply becomes
-    its output and is passed to the next node:
+    In ADK Go v2.0.0, a human input node emits a request with
+    `workflow.NewRequestInputEvent` and returns `workflow.ErrNodeInterrupted`.
+    The `step1` node pauses the workflow until the user replies. The node does
+    not run again. The reply becomes its output and is passed to the next node.
 
     ```go
     --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-handoff"
     ```
+
+    A node that needs to run again after the reply sets `RerunOnResume` and
+    calls `workflow.ResumeOrRequestInput` instead. For more information, see
+    [human input in dynamic workflows](/graphs/dynamic/#human-input).
 
 ## Configuration options
 

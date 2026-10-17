@@ -21,7 +21,7 @@
 //
 // In ADK Go v2, the primary way to add a human input node to a graph-based
 // workflow is workflow.NewEmittingFunctionNode with workflow.ResumeOrRequestInput.
-// This is the direct Go equivalent of the Python RequestInput node:
+// The node runs again when the workflow resumes:
 //
 //   - On the first pass the node emits a session.RequestInput event
 //     (surfaced via Event.RequestedInput) and returns ErrNodeInterrupted,
@@ -65,7 +65,9 @@ const (
 // newGraphHITLWorkflow demonstrates a graph HITL node using
 // workflow.NewEmittingFunctionNode and workflow.ResumeOrRequestInput.
 //
-// This is the Go equivalent of the Python RequestInput node:
+// It implements the following Python workflow with a node that runs again on
+// resume. newGraphHITLHandoffWorkflow shows the handoff behavior that the
+// Python example has:
 //
 //	def step1():  # Human input step
 //	    yield RequestInput(message="Enter a number:")
