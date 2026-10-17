@@ -38,30 +38,52 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 
 To implement this in your project, use the following configuration:
 
-```python
-# 1. Correct the import path to use the google.adk namespace
-from google.adk.apps.app import App, EventsCompactionConfig
-from google.adk.agents import Agent
+=== "Python"
 
-# 2. Initialize your root agent (required for App setup)
-root_agent = Agent(
-    name="my_root_agent",
-    description="Main coordinating agent for the workflow."
-)
+    ```python
+    # 1. Correct the import path to use the google.adk namespace
+    from google.adk.apps.app import App, EventsCompactionConfig
+    from google.adk.agents import Agent
 
-# 3. Token-based configuration: Activates the priority/pre-call layer
-compaction_config = EventsCompactionConfig(
-    token_threshold=4000,     # Triggers compaction when actual token count exceeds this
-    event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
-)
+    # 2. Initialize your root agent (required for App setup)
+    root_agent = Agent(
+        name="my_root_agent",
+        description="Main coordinating agent for the workflow."
+    )
 
-# 4. Register with required name and root_agent fields, and the config object
-app = App(
-    name="my_compacting_agent_app",
-    root_agent=root_agent,
-    events_compaction_config=compaction_config
-)
-```
+    # 3. Token-based configuration: Activates the priority/pre-call layer
+    compaction_config = EventsCompactionConfig(
+        token_threshold=4000,     # Triggers compaction when actual token count exceeds this
+        event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
+    )
+
+    # 4. Register with required name and root_agent fields, and the config object
+    app = App(
+        name="my_compacting_agent_app",
+        root_agent=root_agent,
+        events_compaction_config=compaction_config
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/v2/runner"
+        "google.golang.org/adk/v2/session/compaction"
+    )
+
+    // Set both fields, or runner.New returns an error.
+    r, err := runner.New(runner.Config{
+        AppName:        "my_compacting_agent_app",
+        Agent:          rootAgent,
+        SessionService: sessionService,
+        Compaction: &compaction.Config{
+            TokenThreshold:     4000, // Compact once the prompt reaches this many tokens.
+            EventRetentionSize: 5,    // Number of recent raw events to keep intact.
+        },
+    })
+    ```
 
 ## Sliding window compaction
 
@@ -182,8 +204,11 @@ in the following sample code:
     })
     ```
 
-Once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval.
+    In Go, sliding-window compaction runs at the end of `Runner.Run`, not in the
+    background.
+
+Once configured, the ADK `Runner` handles the compaction process each time the
+session reaches the interval. In Python, compaction runs in the background.
 
 ## Example of context compaction
 
