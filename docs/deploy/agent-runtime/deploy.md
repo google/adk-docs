@@ -211,14 +211,10 @@ For `region`, you can find a list of the supported regions on the
     -r, --region string             GCP Region
     -d, --source_dir string         Directory to archive, defaults to current working directory
         --agent_engine_id string    ID of the Agent Engine instance to update if it exists
-        --mem_deploy                If set to true then memory bank will be deployed too
-        --mem_model string          Name of the model to be used for memory generation
-        --mem_ttl duration          Time-To-Live for memories (default 8760h0m0s)
     ```
 
     To redeploy to an existing Agent Runtime instance instead of creating a new
     one, pass its `RESOURCE_ID` with `--agent_engine_id`.
-
 
 ### Deploy command output
 
