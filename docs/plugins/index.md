@@ -1218,28 +1218,26 @@ In Python, ADK notifies your Plugin of two more lifecycle events:
     call is bounded by the runner's `plugin_close_timeout`, five seconds by
     default.
 
-=== "Go"
+In Go, set `CloseFunc` in `plugin.Config` to release resources the Plugin
+owns, such as a buffered exporter that must flush before the process exits.
+The `Runner` doesn't call it for you: call the Plugin's `Close` method when
+your application shuts down. ADK Go doesn't enforce
+`runner.PluginConfig.CloseTimeout`, so bound any slow cleanup inside
+`CloseFunc` itself.
 
-    Set `CloseFunc` in `plugin.Config` to release resources the Plugin owns,
-    such as a buffered exporter that must flush before the process exits. The
-    `Runner` doesn't call it for you: call the Plugin's `Close` method when
-    your application shuts down. ADK Go doesn't enforce
-    `runner.PluginConfig.CloseTimeout`, so bound any slow cleanup inside
-    `CloseFunc` itself.
-
-    ```go
-    p, err := plugin.New(plugin.Config{
-        Name: "my_plugin",
-        CloseFunc: func() error {
-            // Flush buffers and release clients here.
-            return nil
-        },
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer p.Close()
-    ```
+```go
+p, err := plugin.New(plugin.Config{
+	Name: "my_plugin",
+	CloseFunc: func() error {
+		// Flush buffers and release clients here.
+		return nil
+	},
+})
+if err != nil {
+	log.Fatal(err)
+}
+defer p.Close()
+```
 
 ## Next steps
 
