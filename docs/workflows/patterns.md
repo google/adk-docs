@@ -1014,4 +1014,4 @@ A conceptual example of using a `CustomPolicyEngine` to require user confirmatio
     });
     ```
 
-    You can find the full code sample [here](https://github.com/google/adk-docs/blob/main/examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
+    You can find the [full code sample](https://github.com/google/adk-docs/blob/main/examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
