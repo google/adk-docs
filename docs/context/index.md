@@ -108,6 +108,14 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.runners.InMemoryRunner
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:conceptual_runner_example"
+    ```
+
 ## Types of context
 
 ADK uses the `Context` class as the central mechanism to manage an agent's environment, state, and resources. While `Context` serves as the foundational base for all agent interactions, it manifests in specialized "flavors" designed to provide the right balance of capabilities and permissions depending on where they are used in the agent's execution flow.
@@ -204,6 +212,18 @@ Here are the primary context flavors you will encounter:
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.BaseAgent
+        import com.google.adk.kt.agents.InvocationContext
+        import com.google.adk.kt.events.Event
+        import kotlinx.coroutines.flow.Flow
+        import kotlinx.coroutines.flow.flow
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:invocation_context_agent"
+        ```
+
 ### `ReadonlyContext`
 - **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
 - **Purpose:** Offers a safe, read-only view of fundamental contextual details.
@@ -263,6 +283,16 @@ Here are the primary context flavors you will encounter:
             // context.state().put("new_key", "value"); // UnsupportedOperationException
             return "Process the request for a " + userTier + " user.";
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.ReadonlyContext
+        import com.google.adk.kt.types.Content
+        import com.google.adk.kt.types.Part
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:readonly_context_instruction"
         ```
 
 ### `CallbackContext` and `Context`
@@ -349,6 +379,17 @@ Here are the primary context flavors you will encounter:
             System.out.println("Preparing model call " + (callCount + 1) + " for invocation " + callbackContext.invocationId());
             return Maybe.empty(); // Allow model call to proceed
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.CallbackContext
+        import com.google.adk.kt.callbacks.CallbackChoice
+        import com.google.adk.kt.models.LlmRequest
+        import com.google.adk.kt.models.LlmResponse
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:callback_context_callback"
         ```
 
 ### `ToolContext`
@@ -453,6 +494,14 @@ Here are the primary context flavors you will encounter:
 
             return Map.of("result", "Data for " + query + " fetched");
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:tool_context_tool"
         ```
 
 Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
@@ -567,6 +616,17 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.CallbackContext
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_state_tool"
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_state_callback"
+        ```
+
 *   **Get current identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
@@ -618,6 +678,14 @@ You'll frequently need to read information stored within the context.
             String functionCallId = toolContext.functionCallId().orElse("N/A"); // Specific to ToolContext
             System.out.println("Log: Invocation= " + invId + " Agent= " + agentName + " FunctionCallID= " + functionCallId);
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_ids"
         ```
 
 *   **Access the initial user input:** Refer back to the message that started the current invocation.
@@ -688,6 +756,14 @@ You'll frequently need to read information stored within the context.
                 System.out.println("This invocation started with user input: " + initialText);
             }
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.CallbackContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_initial_user_input"
         ```
 
 ### Manage state
@@ -786,6 +862,17 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+        import java.util.UUID
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:passing_data_tool1"
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:passing_data_tool2"
+        ```
+
 *   **Update user preferences:**
 
     === "Python"
@@ -838,6 +925,14 @@ State is crucial for memory and data flow. When you modify state using `Callback
             System.out.println("Set user preference '" + preference + "' to '" + value + "'");
             return Map.of("status", "Preference updated");
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:updating_preferences"
         ```
 
 *   **State prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
@@ -991,6 +1086,15 @@ Use artifacts to handle files or large data blobs associated with the session. C
                      return {"error": f"Local file not found: {file_path}"}
             ```
 
+        === "Kotlin"
+
+            ```kotlin
+            import com.google.adk.kt.agents.CallbackContext
+            import com.google.adk.kt.types.Part
+
+            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_save_ref"
+            ```
+
         === "TypeScript"
 
             ```typescript
@@ -1107,6 +1211,16 @@ Use artifacts to handle files or large data blobs associated with the session. C
             }
             ```
 
+        === "Kotlin"
+
+            ```kotlin
+            import com.google.adk.kt.tools.ToolContext
+            import java.io.File
+            import java.io.FileNotFoundException
+
+            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_summarize"
+            ```
+
 *   **List Artifacts:** Discover what files are available.
 
     === "Python"
@@ -1167,6 +1281,14 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 return Map.of("error", "Artifact service error: " + e);
             }
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_list"
         ```
 
 ### Handle tool authentication
@@ -1433,6 +1555,14 @@ Access relevant information from the past or external sources.
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.ToolContext
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:memory_search"
+    ```
+
 ### Render UI Widgets
 
 <div class="language-support-tag">
@@ -1584,6 +1714,21 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
         return Flowable.empty();
       }
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.BaseAgent
+    import com.google.adk.kt.agents.InvocationContext
+    import com.google.adk.kt.events.Event
+    import com.google.adk.kt.types.Content
+    import com.google.adk.kt.types.Part
+    import com.google.adk.kt.types.Role
+    import kotlinx.coroutines.flow.Flow
+    import kotlinx.coroutines.flow.flow
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:advanced_invocation_context"
     ```
 
 Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
