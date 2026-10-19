@@ -308,6 +308,7 @@ Here are the primary context flavors you will encounter:
 
     In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
 
+
     === "Python"
 
         ```python
