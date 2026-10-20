@@ -12,10 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import yaml
 import html
+import sys
 from pathlib import Path
+
+import yaml
 from mkdocs.plugins import log
+
+# The macros plugin imports this module by path; make the repo root (and so
+# the langscope package) importable.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from langscope import support as langscope_support
+
+
+def _langscope(env):
+    """The language-scoping settings the hook publishes, or None if off."""
+    return (env.conf.get('extra') or {}).get('langscope')
+
+
+def _page_language(env):
+    """The SDK scope of the page being rendered (python/...), or None."""
+    scope = _langscope(env)
+    page = getattr(env, 'page', None)
+    if not scope or page is None:
+        return None
+    seg = page.file.src_uri.split('/', 1)[0]
+    return seg if seg in scope['lang_keys'] else None
 
 def define_env(env):
     """
@@ -24,6 +47,24 @@ def define_env(env):
     - variables: the dictionary that contains the environment variables
     - macro: a decorator function, to declare a macro.
     """
+
+    @env.macro
+    def sdk_picker():
+        """Renders one get-started button per SDK, for the homepage."""
+        scope = _langscope(env)
+        if not scope:
+            return '<a href="get-started/" class="btn btn-primary">Start building</a>'
+        parts = ['<div class="adk-sdk-grid">']
+        for lang in scope['languages']:
+            key = html.escape(lang['key'])
+            label = html.escape(lang['label'])
+            parts.append(
+                f'<a class="adk-sdk-card" href="{key}/get-started/" data-adk-lang="{key}">'
+                f'<img src="assets/icon-{key}.svg" alt="" width="32" height="32">'
+                f'<span>{label}</span></a>'
+            )
+        parts.append('</div>')
+        return ''.join(parts)
 
     @env.macro
     def render_catalog(path_filter):
@@ -37,6 +78,9 @@ def define_env(env):
         # env.conf['docs_dir'] is the absolute path to docs.
         docs_dir = Path(env.conf['docs_dir'])
         files = sorted(docs_dir.glob(path_filter))
+        # In a language view, list only integrations that support the
+        # language, and link their pages in it.
+        lang = _page_language(env)
 
         # Collect all tags and cards data first
         all_tags = set()
@@ -49,6 +93,8 @@ def define_env(env):
 
             try:
                 content = file_path.read_text(encoding='utf-8')
+                if lang and lang not in langscope_support.supported_languages(content):
+                    continue
                 # Simple frontmatter extraction
                 if content.startswith('---'):
                     parts = content.split('---', 2)
@@ -87,7 +133,7 @@ def define_env(env):
 
                 # Calculate root-relative link from file path
                 rel_path = file_path.relative_to(docs_dir).with_suffix('')
-                link = f"/{rel_path}/"
+                link = f"/{lang}/{rel_path}/" if lang else f"/{rel_path}/"
 
                 # Ensure icon path is root-relative
                 if not icon.startswith('/') and not icon.startswith('http'):
@@ -117,8 +163,8 @@ def define_env(env):
 
         # Filter Buttons
         html_parts.append(f'<div class="catalog-filter-bar" id="{catalog_id}-filters">')
-        html_parts.append(f'<span class="catalog-filter-label">Filter:</span>')
-        html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
+        html_parts.append('<span class="catalog-filter-label">Filter:</span>')
+        html_parts.append('<button class="catalog-filter-btn active" data-filter="all">All</button>')
         for tag in sorted_tags:
             safe_tag = html.escape(tag)
             # handle MCP button all caps display exception:

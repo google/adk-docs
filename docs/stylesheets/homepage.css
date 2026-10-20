@@ -748,6 +748,37 @@ html[data-md-color-scheme="slate"] .adk-landing .feature-badge {
   margin: 0 auto 40px;
 }
 
+/* SDK picker: one get-started card per language (scripts/integrations.py) */
+.md-typeset .adk-landing .adk-sdk-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 clamp(16px, 4vw, 40px);
+}
+
+.md-typeset .adk-landing .adk-sdk-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 128px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  color: var(--landing-fg) !important;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: all 0.2s;
+}
+
+.md-typeset .adk-landing .adk-sdk-card:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+}
+
 /* Static features grid (replaces Splide carousel) */
 .md-typeset .adk-landing .features-grid {
   display: grid;
