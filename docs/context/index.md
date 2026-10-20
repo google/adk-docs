@@ -308,90 +308,89 @@ Here are the primary context flavors you will encounter:
 
     In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
 
+=== "Python"
 
-    === "Python"
+    ```python
+    # Example: Callback receiving Context (CallbackContext is unified into Context)
+    from google.adk.agents.context import Context
+    from google.adk.models import LlmRequest
+    from google.genai import types
+    from typing import Optional
 
-        ```python
-        # Example: Callback receiving Context (CallbackContext is unified into Context)
-        from google.adk.agents.context import Context
-        from google.adk.models import LlmRequest
-        from google.genai import types
-        from typing import Optional
+    def my_before_model_cb(context: Context, request: LlmRequest) -> Optional[types.Content]:
+        # Read/Write state example
+        call_count = context.state.get("model_calls", 0)
+        context.state["model_calls"] = call_count + 1 # Modify state (tracks delta)
 
-        def my_before_model_cb(context: Context, request: LlmRequest) -> Optional[types.Content]:
-            # Read/Write state example
-            call_count = context.state.get("model_calls", 0)
-            context.state["model_calls"] = call_count + 1 # Modify state (tracks delta)
+        # Optionally load an artifact
+        # config_part = context.load_artifact("model_config.json")
+        print(f"Preparing model call #{call_count + 1} for invocation {context.invocation_id}")
+        return None # Allow model call to proceed
+    ```
 
-            # Optionally load an artifact
-            # config_part = context.load_artifact("model_config.json")
-            print(f"Preparing model call #{call_count + 1} for invocation {context.invocation_id}")
-            return None # Allow model call to proceed
-        ```
+=== "TypeScript"
 
-    === "TypeScript"
+    ```typescript
+    // Pseudocode: Callback receiving Context
+    import { Context, LlmRequest } from '@google/adk';
+    import { Content } from '@google/genai';
 
-        ```typescript
-        // Pseudocode: Callback receiving Context
-        import { Context, LlmRequest } from '@google/adk';
-        import { Content } from '@google/genai';
+    function myBeforeModelCb(context: Context, request: LlmRequest): Content | undefined {
+      // Read/Write state example
+      const callCount = (context.state.get('model_calls') as number) || 0;
+      context.state.set('model_calls', callCount + 1); // Modify state
 
-        function myBeforeModelCb(context: Context, request: LlmRequest): Content | undefined {
-          // Read/Write state example
-          const callCount = (context.state.get('model_calls') as number) || 0;
-          context.state.set('model_calls', callCount + 1); // Modify state
+      // Optionally load an artifact
+      // const configPart = await context.loadArtifact('model_config.json');
+      console.log(`Preparing model call #${callCount + 1} for invocation ${context.invocationId}`);
+      return undefined; // Allow model call to proceed
+    }
+    ```
 
-          // Optionally load an artifact
-          // const configPart = await context.loadArtifact('model_config.json');
-          console.log(`Preparing model call #${callCount + 1} for invocation ${context.invocationId}`);
-          return undefined; // Allow model call to proceed
-        }
-        ```
+=== "Go"
 
-    === "Go"
+    ```go
+    import (
+      "fmt"
 
-        ```go
-        import (
-        	"fmt"
+      "google.golang.org/adk/v2/agent"
+      "google.golang.org/adk/v2/model"
+    )
 
-        	"google.golang.org/adk/v2/agent"
-        	"google.golang.org/adk/v2/model"
-        )
+    --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
+    ```
 
-        --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
-        ```
+=== "Java"
 
-    === "Java"
+    ```java
+    // Example: Callback receiving CallbackContext
+    import com.google.adk.agents.CallbackContext;
+    import com.google.adk.models.LlmRequest;
+    import com.google.adk.models.LlmResponse;
+    import io.reactivex.rxjava3.core.Maybe;
 
-        ```java
-        // Example: Callback receiving CallbackContext
-        import com.google.adk.agents.CallbackContext;
-        import com.google.adk.models.LlmRequest;
-        import com.google.adk.models.LlmResponse;
-        import io.reactivex.rxjava3.core.Maybe;
+    public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request) {
+        // Read/Write state example
+        int callCount = (int) callbackContext.state().getOrDefault("model_calls", 0);
+        callbackContext.state().put("model_calls", callCount + 1); // Modify state (tracks delta)
 
-        public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request) {
-            // Read/Write state example
-            int callCount = (int) callbackContext.state().getOrDefault("model_calls", 0);
-            callbackContext.state().put("model_calls", callCount + 1); // Modify state (tracks delta)
+        // Optionally load an artifact
+        // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
+        System.out.println("Preparing model call " + (callCount + 1) + " for invocation " + callbackContext.invocationId());
+        return Maybe.empty(); // Allow model call to proceed
+    }
+    ```
 
-            // Optionally load an artifact
-            // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
-            System.out.println("Preparing model call " + (callCount + 1) + " for invocation " + callbackContext.invocationId());
-            return Maybe.empty(); // Allow model call to proceed
-        }
-        ```
+=== "Kotlin"
 
-    === "Kotlin"
+    ```kotlin
+    import com.google.adk.kt.agents.CallbackContext
+    import com.google.adk.kt.callbacks.CallbackChoice
+    import com.google.adk.kt.models.LlmRequest
+    import com.google.adk.kt.models.LlmResponse
 
-        ```kotlin
-        import com.google.adk.kt.agents.CallbackContext
-        import com.google.adk.kt.callbacks.CallbackChoice
-        import com.google.adk.kt.models.LlmRequest
-        import com.google.adk.kt.models.LlmResponse
-
-        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:callback_context_callback"
-        ```
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:callback_context_callback"
+    ```
 
 ### `ToolContext`
 - **Where Used:** Passed as `tool_context` to the functions backing `FunctionTool`s and to tool execution callbacks (`before_tool_callback`, `after_tool_callback`).
