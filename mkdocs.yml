@@ -149,6 +149,7 @@ plugins:
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools/index.md'
+        'mcp/index.md': 'tools-custom/mcp-tools/index.md'
         'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
         'tools/google-cloud-tools.md': 'integrations/index.md'
         'tools/built-in-tools.md': 'integrations/index.md'
@@ -328,7 +329,9 @@ nav:
       - Workflow patterns: workflows/patterns.md
     - Models for Agents:
       - agents/models/index.md
-      - Gemini: agents/models/google-gemini.md
+      - Gemini:
+        - agents/models/google-gemini/index.md
+        - Deferred scheduling: agents/models/google-gemini/deferred-schedule.md
       - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
       - Agent Platform hosted: agents/models/agent-platform.md
