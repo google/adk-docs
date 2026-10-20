@@ -21,10 +21,11 @@ Use the following command to run your agent in an ADK API server:
     ```
 
     To keep sessions in memory while the server is running, use
-    `adk api_server --session_service_uri=memory://`. The SQLite memory URL
-    forms `sqlite://`, `sqlite:///`, and `sqlite:///:memory:` also select the
-    in-memory session service. Sessions are lost when the server exits. To
-    retain sessions across restarts, use
+    `adk api_server --session_service_uri=memory://`. With ADK Python v2.12.0
+    or later and the `db` extra installed (`pip install 'google-adk[db]'`),
+    the SQLite memory URL forms `sqlite://`, `sqlite:///`, and
+    `sqlite:///:memory:` also keep sessions in memory. Sessions are lost when
+    the server exits. To retain sessions across restarts, use
     `adk api_server --session_service_uri=sqlite:///sessions.db`.
 
 === "TypeScript"
