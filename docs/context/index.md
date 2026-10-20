@@ -1034,6 +1034,15 @@ Use artifacts to handle files or large data blobs associated with the session. C
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
                ```
 
+        === "Kotlin"
+
+            ```kotlin
+            import com.google.adk.kt.agents.CallbackContext
+            import com.google.adk.kt.types.Part
+
+            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_save_ref"
+            ```
+
     2.  **Summarizer Tool:** Load the artifact to get the path/URI, read the actual document content using appropriate libraries, summarize, and return the result.
 
         === "Python"
@@ -1085,15 +1094,6 @@ Use artifacts to handle files or large data blobs associated with the session. C
                      return {"error": f"Artifact service error: {e}"}
                 except FileNotFoundError:
                      return {"error": f"Local file not found: {file_path}"}
-            ```
-
-        === "Kotlin"
-
-            ```kotlin
-            import com.google.adk.kt.agents.CallbackContext
-            import com.google.adk.kt.types.Part
-
-            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_save_ref"
             ```
 
         === "TypeScript"
