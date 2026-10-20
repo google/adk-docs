@@ -32,6 +32,7 @@ extra_css:
 # Custom JavaScript
 extra_javascript:
   - javascript/copy-page.js
+  - javascript/language-switcher.js
 
 # Additional config
 extra:
