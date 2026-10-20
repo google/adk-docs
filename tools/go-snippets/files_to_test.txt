@@ -26,6 +26,7 @@ snippets/tools-custom/weather_sentiment/main.go
 snippets/callbacks/types_of_callbacks/main.go
 snippets/context/main.go
 snippets/tools/function-tools/func_tool.go
+snippets/tools/agent-tool-workaround/main.go
 snippets/sessions/state_example/state_example.go
 snippets/sessions/session_management_example/session_management_example.go
 snippets/sessions/instruction_template/instruction_template_example.go
