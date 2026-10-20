@@ -1,7 +1,7 @@
 # Increase tool performance with parallel execution
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.10.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.10.0</span><span class="lst-go">Go</span>
 </div>
 
 Starting with Agent Development Kit (ADK) version 1.10.0 for Python, the framework
@@ -22,19 +22,19 @@ following scenarios:
 -   **Publishing and communication tasks:** When the agent needs to publish
     or communicate through multiple, independent channels or multiple recipients.
 
-However, your custom tools must be built with asynchronous execution support to
-enable this performance improvement. This guide explains how parallel tool
-execution works in the ADK and how to build your tools to take full advantage of
-this processing feature.
+In Python, your custom tools must support asynchronous execution to enable
+this performance improvement. In Go, ordinary tool handlers run concurrently
+without asynchronous function syntax. See [Go tool execution](#go-tool-execution)
+for synchronization and execution controls.
 
 !!! warning
-    Any ADK Tools that use synchronous processing in a set of tool function
+    In Python, tools that use synchronous processing in a set of tool function
     calls will block other tools from executing in parallel, even if the other
     tools allow for parallel execution.
 
 ## Build parallel-ready tools
 
-Enable parallel execution of your tool functions by defining them as
+In Python, enable parallel execution of your tool functions by defining them as
 asynchronous functions. In Python code, this means using `async def` and `await`
 syntax which allows the ADK to run them concurrently in an `asyncio` event loop.
 The following sections show examples of agent tools built for parallel
@@ -135,6 +135,67 @@ example:
 
       return {"total_processed": len(results), "results": results}
 ```
+
+## Go tool execution
+
+When a model response contains multiple function calls, ADK Go's default task
+runner dispatches their handlers concurrently, with one goroutine per call.
+Execution order is unspecified. For ordinary function tools, ADK waits for all
+handlers to return and merges their responses before making the next model
+request. This completion barrier does not wait for background work started by a
+handler or for deferred results from long-running or live streaming tools.
+
+### Protect shared state
+
+Handlers can run concurrently even when they belong to the same tool. Protect
+shared maps, counters, and clients that are not safe for concurrent use with
+`sync.Mutex` or another synchronization mechanism. All accesses to the shared
+resource must use the same protection, including reads and read-modify-write
+operations. For example, a counter tool can use a closure to share a mutex:
+
+```go
+var mu sync.Mutex
+calls := 0
+
+countCalls := func(ctx agent.Context, args struct{}) (map[string]int, error) {
+    mu.Lock()
+    defer mu.Unlock()
+    calls++
+    return map[string]int{"calls": calls}, nil
+}
+```
+
+Import `sync` and `google.golang.org/adk/v2/agent`, then pass `countCalls` to
+[`functiontool.New`](/tools-custom/function-tools/#function-tool).
+
+### Control task execution
+
+In ADK Go v2.5.0, use
+[`platform.WithTaskRunner`](https://pkg.go.dev/google.golang.org/adk/v2/platform#WithTaskRunner)
+to install a different execution strategy on the context passed to
+`runner.Run`. For example, this runner executes each batch sequentially:
+
+```go
+ctx := platform.WithTaskRunner(context.Background(),
+    func(ctx context.Context, tasks []func(context.Context)) {
+        for _, task := range tasks {
+            task(ctx)
+        }
+    },
+)
+```
+
+Import `context` and `google.golang.org/adk/v2/platform`. Pass the returned
+`ctx` to `runner.Run` instead of creating a new background context for the run.
+A custom task runner must invoke every task exactly once and wait for all tasks
+to finish. It can also limit concurrency instead of serializing the batch. The
+runner applies to ADK's other task-based fan-out on that context too, not just
+tool calls.
+
+A sequential runner only serializes tasks within each batch. It does not
+automatically protect shared resources from unrelated concurrent agent runs or
+goroutines. Keep synchronization around shared state when those accesses are
+possible.
 
 ## Write parallel-ready prompts and tool descriptions
 
