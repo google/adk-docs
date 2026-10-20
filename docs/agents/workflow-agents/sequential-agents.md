@@ -1,7 +1,7 @@
 # Sequential template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ***SequentialAgent*** class is a [template workflow](/agents/workflow-agents/)
@@ -81,6 +81,11 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
+        ```
+
+    === "Kotlin"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/agents/workflow-agents/SequentialAgentExample.kt:init"
         ```
 
 !!! tip "Global instructions for all agents"
