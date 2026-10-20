@@ -72,6 +72,23 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
         ```
 
     === "Go"
+
+        Use ADK Go v2.5.0 or later for this example. Earlier versions can
+        overwrite the saved document's `OutputKey` with an empty value on
+        function-call events. If you use the repository's Go examples module,
+        update its ADK dependency first, from `examples/go`:
+
+        ```shell
+        go get google.golang.org/adk/v2@v2.5.0
+        ```
+
+        The Go example uses `exitlooptool.New()` to create the prebuilt
+        `exit_loop` tool. When called, the tool sets `Escalate` to end the
+        enclosing loop and `SkipSummarization` to prevent an additional model
+        request to summarize the tool result. Setting `Escalate` alone in a
+        custom tool does not skip that summarization. The refiner's instruction
+        tells the model when to call `exit_loop`.
+
         ```go
         --8<-- "examples/go/snippets/agents/workflow-agents/loop/main.go:init"
         ```
