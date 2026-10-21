@@ -20,9 +20,10 @@ how and when other agents run, defining the control flow of a process.
     These workflow architectures provide more control, flexibility
     and capability to evolve your agent workflows over time.
 
-    In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
-    deprecated in favor of `Workflow`: constructing one emits a
-    `DeprecationWarning`, and the classes will be removed in a future release.
+    In Python and TypeScript, `SequentialAgent`, `ParallelAgent`, and
+    `LoopAgent` are deprecated in favor of `Workflow`: constructing one emits a
+    deprecation warning, and the classes will be removed in a future release.
+    A `Workflow` cannot be used as an `LlmAgent` sub-agent.
 
 <img src="/assets/template_workflows.svg" alt="Template agent workflows in ADK">
 

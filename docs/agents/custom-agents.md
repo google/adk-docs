@@ -407,11 +407,12 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
 ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
 
-!!! note "Deprecated in Python"
+!!! note "Deprecated in Python and TypeScript"
 
-    In Python, `SequentialAgent`, `ParallelAgent`, and `LoopAgent` are
-    deprecated in favor of `Workflow`: constructing one emits a
-    `DeprecationWarning`, and the classes will be removed in a future release.
+    In Python and TypeScript, `SequentialAgent`, `ParallelAgent`, and
+    `LoopAgent` are deprecated in favor of `Workflow`: constructing one emits a
+    deprecation warning, and the classes will be removed in a future release.
+    A `Workflow` cannot be used as an `LlmAgent` sub-agent.
 
 * **[`SequentialAgent`](workflow-agents/sequential-agents.md):** Executes its `sub_agents` one after another in the order they are listed.
     * **Context:** Passes the *same* [`InvocationContext`](../runtime/index.md) sequentially, allowing agents to easily pass results via shared state.

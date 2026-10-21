@@ -22,9 +22,10 @@ object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
-    In Python, `SequentialAgent` is deprecated in favor of `Workflow`:
-    constructing one emits a `DeprecationWarning`, and the class will be removed
-    in a future release.
+    In Python and TypeScript, `SequentialAgent` is deprecated in favor of
+    `Workflow`: constructing one emits a deprecation warning, and the class will
+    be removed in a future release. A `Workflow` cannot be used as an `LlmAgent`
+    sub-agent.
 
 ### Example scenario
 

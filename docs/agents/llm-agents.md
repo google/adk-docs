@@ -39,7 +39,8 @@ First, you need to establish what the agent *is* and what it's *for*.
   this agent's reasoning. This is either a string identifier like
   `"gemini-flash-latest"` or a `BaseLlm` instance. If you omit `model`, the
   agent inherits the model of its nearest `LlmAgent` ancestor, skipping over any
-  `SequentialAgent`, `ParallelAgent`, or custom `BaseAgent` parent. If no
+  parent that is not an `LlmAgent`, such as a `SequentialAgent`,
+  `ParallelAgent`, `LoopAgent`, or custom `BaseAgent`. If no
   ancestor sets a model, the agent falls back to the built-in default model
   described in [Configure a default model](#configure-a-default-model). The
   choice of model impacts the agent's capabilities, cost, and performance. See
@@ -127,9 +128,7 @@ tells the agent:
 - The instruction is a string template, you can use the `{var}` syntax to insert
   dynamic values into the instruction.
 - `{var}` is used to insert the value of the state variable named var.
-- `{artifact.var}` is used to insert the artifact named var. The artifact is
-  loaded as a `google.genai.types.Part` and inserted as `str(part)`, which
-  renders every field of the part, not just its text content.
+- `{artifact.var}` is used to insert the text content of the artifact named var.
 - If the state variable or artifact does not exist, the agent will raise an
   error. If you want to ignore the error, you can append a `?` to the variable
   name as in `{var?}`.
