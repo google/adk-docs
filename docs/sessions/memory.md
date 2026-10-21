@@ -566,9 +566,9 @@ For example, you can automate this step with a callback:
 
 === "Go"
 
-    Agent callbacks don't have access to the memory service. Save the session
-    from a Plugin's `AfterRunCallback` instead, and register the Plugin on the
-    runner together with the memory service:
+    In ADK Go, agent callbacks don't have access to the memory service. Save
+    the session from a Plugin's `AfterRunCallback` instead, and register the
+    Plugin on the runner together with the memory service:
 
     ```go
     import (
