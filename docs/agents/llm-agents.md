@@ -203,56 +203,14 @@ tells the agent:
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
     ```
 
+To fetch agent instructions dynamically from a Model Context Protocol (MCP)
+server in Python, see [Dynamic instructions with `McpInstructionProvider`](/tools-custom/mcp-tools/advanced/#dynamic-instructions-with-mcpinstructionprovider).
+
 !!! note "GlobalInstructionPlugin"
 
     To apply shared rules or a consistent personality to *all* 
     agents in your system, use `GlobalInstructionPlugin` instead of 
     the deprecated `global_instruction` parameter.
-
-### Dynamic instructions with `McpInstructionProvider`
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
-</div>
-
-To manage agent instructions dynamically in Python, use
-`McpInstructionProvider`. This class fetches agent instructions from a Model
-Context Protocol (MCP) server.
-
-Initialize `McpInstructionProvider` with MCP server connection parameters and
-the name of the prompt to fetch. Pass this instance to the `instruction`
-parameter of `LlmAgent`.
-
-!!! warning "Caution"
-    Instructions fetched from an MCP server directly control your agent's
-    behavior. Only connect to MCP servers that you trust, and protect any
-    credentials used in the connection parameters.
-
-=== "Python"
-
-    ```python
-    from google.adk.agents import LlmAgent, McpInstructionProvider
-    from google.adk.tools.mcp_tool import SseConnectionParams
-
-    # Define the MCP connection parameters.
-    mcp_connection_params = SseConnectionParams(
-        url="https://mcp.example.com",
-        headers={"Authorization": "Bearer YOUR_MCP_API_KEY"},
-    )
-
-    # Create an instance of the instruction provider.
-    instruction_provider = McpInstructionProvider(
-        connection_params=mcp_connection_params,
-        prompt_name="my-agent-prompt",
-    )
-
-    # Use the instruction provider in the agent.
-    my_agent = LlmAgent(
-        model="gemini-2.0-flash",
-        name="my_mcp_agent",
-        instruction=instruction_provider,
-    )
-    ```
 
 ## Equip the agent with tools
 
