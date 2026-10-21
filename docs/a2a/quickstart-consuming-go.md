@@ -97,7 +97,7 @@ In the Go ADK, the agent card is generated dynamically when you expose an agent 
 
 #### How it works
 
-The main agent uses `remoteagent.New` to consume the remote agent (`prime_agent` in our example). As you can see below, it requires the `Name`, `Description`, and the `AgentCardSource` URL.
+The main agent uses `remoteagent.NewA2A` from the `google.golang.org/adk/v2/agent/remoteagent/v2` package to consume the remote agent (`prime_agent` in our example). As you can see below, it sets the `Name`, an optional `Description`, and an `AgentCardProvider`. `NewA2A` requires either a static `AgentCard` or an `AgentCardProvider`, and `remoteagent.NewAgentCardProvider` creates a provider from a URL or a local file path. The older `google.golang.org/adk/v2/agent/remoteagent` package, without the `/v2` suffix, is deprecated.
 
 ```go title="a2a_basic/main.go"
 --8<-- "examples/go/a2a_basic/main.go:new-prime-agent"

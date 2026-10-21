@@ -38,7 +38,7 @@ To proceed, confirm that your agent code is configured as follows:
     3. Your go.mod and go.sum files are present in your project directory to manage
        dependencies.
 
-    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) in the Github repo.
+    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) in the GitHub repo.
 
 === "Java"
 
@@ -46,7 +46,7 @@ To proceed, confirm that your agent code is configured as follows:
     2. Your agent variable is global and follows the format `public static final BaseAgent ROOT_AGENT`.
     3. Your agent definition is present in a static class method.
 
-    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
+    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the GitHub repo.
 
 
 ## Environment variables
