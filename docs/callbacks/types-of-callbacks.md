@@ -170,9 +170,9 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ## LLM Interaction Callbacks
 
-These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model. In Python, `LlmAgent` also accepts an `on_model_error_callback`, which runs when the model call raises an exception. If it returns an `LlmResponse`, the exception is suppressed and that response is used instead.
+These callbacks are specific to `LlmAgent` and provide hooks around the interaction with the Large Language Model. In Python, `LlmAgent` also accepts an `on_model_error_callback`, which runs when the model call raises an exception. If it returns an `LlmResponse`, the exception is suppressed and that response is used instead. In Go, set `OnModelErrorCallbacks` on `llmagent.Config`. These callbacks run when the model call returns an error. If a callback returns a non-nil `*model.LLMResponse` and a nil error, that response is used instead. If it returns an error, that error replaces the original one.
 
-The model callbacks also run in a live bidirectional session, where the callbacks fire at different points in the turn and blocking has different effects than in a request-response flow. See [Guardrails for live agents](../live/guardrails.md).
+The model callbacks also run in a live bidirectional session, where the callbacks fire at different points in the turn and blocking has different effects than in a request-response flow. See [Guardrails for live agents](../live/guardrails.md). In Go, model callbacks, including `OnModelErrorCallbacks`, don't run in a live session.
 
 ### Before Model Callback
 
@@ -251,7 +251,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ## Tool Execution Callbacks
 
-These callbacks are also specific to `LlmAgent` and trigger around the execution of tools that the LLM might request, including `FunctionTool` and `AgentTool`. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that `dict` value is used as the tool result.
+These callbacks are also specific to `LlmAgent` and trigger around the execution of tools that the LLM might request, including `FunctionTool` and `AgentTool`. In Python, `LlmAgent` also accepts an `on_tool_error_callback`, which runs when the tool raises an exception. If it returns a `dict`, the exception is suppressed and that `dict` value is used as the tool result. In Go, set `OnToolErrorCallbacks` on `llmagent.Config`. These callbacks run when a tool call fails, except for errors from streaming tools. If a callback returns a non-nil `map[string]any` and a nil error, that map is used as the tool result. If it returns an error, that error replaces the original one.
 
 ### Before Tool Callback
 

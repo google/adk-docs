@@ -92,7 +92,7 @@ async def call_agent_async(query):
                 return part.function_call
 
     def get_function_response(event: Event, function_call_id: str) -> types.FunctionResponse:
-        # Get the function response for the fuction call with specified id.
+        # Get the function response for the function call with specified id.
         if not event.content or not event.content.parts:
             return
         for part in event.content.parts:
@@ -128,7 +128,7 @@ async def call_agent_async(query):
 
 
     if long_running_function_response:
-        # query the status of the correpsonding ticket via tciket_id
+        # query the status of the corresponding ticket via ticket_id
         # send back an intermediate / final response
         updated_response = long_running_function_response.model_copy(deep=True)
         updated_response.response = {'status': 'approved'}

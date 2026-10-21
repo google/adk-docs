@@ -274,6 +274,10 @@ Here are the primary context flavors you will encounter:
     - **Artifact Methods:** `load_artifact(filename)` and `save_artifact(filename, part)` methods for interacting with the configured `artifact_service` (both `async` in Python).
     - Direct `user_content` access.
 
+!!! note
+
+    In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
+
     === "Python"
 
         ```python
