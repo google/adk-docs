@@ -494,6 +494,48 @@ Dynamic workflows in ADK can support parallel execution.
         return results
     ```
 
+    To run the same agent over each item in a list with bounded concurrency,
+    set `parallel_worker=True` and `max_parallel_workers` on the agent:
+
+    !!! note "Pending Python feature"
+
+        The following example requires the pending
+        [`LlmAgent.max_parallel_workers` addition](https://github.com/google/adk-python/issues/7641)
+        to ADK Python. Older versions
+        reject this option on `Agent`.
+
+    ```python
+    from google.adk import Agent, Context, Workflow
+    from google.adk.workflow import node, START
+
+    summarizer = Agent(
+        name="summarizer",
+        instruction="Summarize the document in the user message.",
+        parallel_worker=True,
+        max_parallel_workers=4,
+    )
+
+    @node(rerun_on_resume=True)
+    async def summarize_documents(ctx: Context) -> list[str]:
+        documents = ["First document", "Second document", "Third document"]
+        return await ctx.run_node(summarizer, node_input=documents)
+
+    root_agent = Workflow(
+        name="document_summaries",
+        edges=[(START, summarize_documents)],
+    )
+    ```
+
+    Each item becomes a separate user message to the agent. At most four items
+    run at once, and the returned list preserves the input order. Omitting
+    `max_parallel_workers`, or setting it to `None`, leaves concurrency
+    unlimited. A limit must be at least `1` and requires
+    `parallel_worker=True`.
+
+    The limit applies to one worker run, not to all model or tool calls in the
+    application. The enclosing workflow's `max_concurrency` bounds graph
+    nodes, so use `max_parallel_workers` to limit these dynamic items.
+
     !!! tip "Tip: Resuming parallel nodes"
 
         The workflow framework ensures that if a dynamic workflow is resumed,
