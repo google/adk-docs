@@ -285,6 +285,10 @@ in and out of frame.
 
 ## Tool execution context
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+</div>
+
 A tool receives a `ToolContext`, and a callback a `CallbackContext`, for state, history, and
 artifacts. Both work the same as in any ADK agent — see
 [Agent context](../context/index.md) — with one difference that matters live: **the
