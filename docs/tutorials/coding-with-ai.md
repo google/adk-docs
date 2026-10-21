@@ -8,6 +8,9 @@ server.
 - [**Agents CLI in Agent Platform**](#agents-cli): Command-line tool and coding skills for ADK development.
 - [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
   ADK documentation through an MCP server.
+- [**Google Developer Knowledge MCP Server**](#developer-knowledge-mcp-server):
+  Search ADK documentation alongside other official Google developer docs
+  through a remote MCP server and agent skill.
 - [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
   following the `llms.txt` standard.
 
@@ -122,6 +125,51 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
 Any coding tool that supports MCP servers can use the same server configuration
 shown above. Adapt the JSON example from the Antigravity or Cursor sections for
 your tool's MCP settings.
+
+## Google Developer Knowledge MCP Server {#developer-knowledge-mcp-server}
+
+The
+[Developer Knowledge MCP server](https://developers.google.com/knowledge/mcp)
+is a remote MCP server that searches the live, official documentation for
+Google developer products, including ADK (`adk.dev`), Gemini API, Google Cloud,
+and Firebase. Because ADK agents often combine these products, connecting your
+coding tool to this server helps it answer questions and generate code from
+current docs instead of stale training data or hallucinated APIs. The server
+exposes the `search_documents`, `get_documents`, and `answer_query` tools.
+
+Most tools, including Claude Code and Cursor, connect with an API key in the
+`X-Goog-Api-Key` header. Add the following to your tool's MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "google-developer-knowledge": {
+      "url": "https://developerknowledge.googleapis.com/mcp",
+      "headers": { "X-Goog-Api-Key": "YOUR_API_KEY" }
+    }
+  }
+}
+```
+
+Antigravity can instead install the server with Google credentials from its MCP
+store. For API key setup and per-tool instructions, refer to
+[Connect to the Developer Knowledge MCP server](https://developers.google.com/knowledge/mcp).
+
+To teach your coding assistant when and how to use these tools, install the
+[`retrieving-developer-knowledge`](https://github.com/google/skills/tree/main/skills/developers/retrieving-developer-knowledge)
+agent skill, which works alongside the ADK skills from Agents CLI:
+
+```bash
+npx skills add google/skills --skill retrieving-developer-knowledge
+```
+
+With the server and skill in place, you can ask your coding assistant to ground
+ADK tasks in the docs, for example:
+
+```text
+Look up how to add an MCP toolset to an ADK agent, then add a toolset for a
+remote MCP server to my root agent.
+```
 
 ## ADK Docs Index
 
