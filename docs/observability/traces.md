@@ -134,6 +134,8 @@ func main() {
 
 To export traces to Cloud Trace, pass `telemetry.WithOtelToCloud(true)` to `telemetry.New`. For a complete example, see [Cloud Trace](/integrations/cloud-trace/).
 
+If you enable `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`, exported spans can include prompt and response content. For details, see [Capture prompt content](/observability/logging/#capture-prompt-content-in-adk-web).
+
 ### Kotlin programmatic setup
 
 In Kotlin, ADK automatically uses the `GlobalOpenTelemetry` instance to export traces. You should configure your OpenTelemetry SDK before starting the agent.

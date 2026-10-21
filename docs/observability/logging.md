@@ -93,8 +93,9 @@ span content without it, so prompt and response content is also exported with
 your traces.
 
 !!! warning
-    The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` setting logs the
-    full content of user prompts and agent responses. This is useful for
+    The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` setting records the
+    full content of user prompts and agent responses in logs and, depending on
+    the value and ADK language, in exported trace spans. This is useful for
     debugging but may capture sensitive data or PII. In production, set this to
     false or ensure you have appropriate data handling policies in place.
 
