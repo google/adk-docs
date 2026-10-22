@@ -134,9 +134,9 @@ is a remote MCP server that searches the live, official documentation for
 Google developer products, including ADK (`adk.dev`), Gemini API, Google Cloud,
 and Firebase. Because ADK agents often combine these products, connecting your
 coding tool to this server helps it answer questions and generate code from
-current docs instead of stale training data or hallucinated APIs. The server
-provides the `search_documents`, `get_documents`, and `answer_query` tools and
-complements the Agents CLI skills and the ADK Docs MCP server.
+current docs rather than relying only on training data. The server provides the
+`search_documents`, `get_documents`, and `answer_query` tools and complements
+the Agents CLI skills and the ADK Docs MCP server.
 
 To add it to your coding tool, follow
 [Configure your IDE or coding agent](https://developers.google.com/knowledge/mcp#configure-ide)
