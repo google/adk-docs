@@ -81,9 +81,16 @@ A few ADK settings behave differently depending on which model you are running:
 | Feature | Gemini 2.5 Flash Live | Gemini 3.1 Flash Live | Gemini 3.8 Live | Gemini 3.8 Live Extended Thinking |
 |---|---|---|---|---|
 | [Proactivity and affective dialog](configuration.md#proactivity-and-affective-dialog) | Opt-in via `RunConfig` | `RunConfig` settings ignored | `RunConfig` settings ignored | `RunConfig` settings ignored |
-| [Non-blocking tools](tools.md#non-blocking-tools) | Supported | Not supported | Supported | Required on every tool |
+| [Non-blocking tools](tools.md#non-blocking-tools) | Supported | Not supported | Supported | Required on every tool (see below) |
 | [`response_scheduling`](tools.md#non-blocking-tools) on tools | Supported | Not supported | Supported | Not supported |
-| [End of the model's response](events.md#streaming-flags) | `turn_complete` | `turn_complete` | `turn_complete` | `interaction_status` is `IDLE` |
+| [End of the model's response](events.md#interaction-status) | `turn_complete` | `turn_complete` | `turn_complete` | `interaction_status` is `IDLE` (see below) |
+
+When moving from 2.5 to a newer model, iterate over `event.content.parts`
+instead of reading `parts[0]`, because a single server event can carry several
+parts. Turn coverage can also include all detected audio activity and video
+frames, which changes token costs if you stream video continuously. See the
+upstream
+[migration notes](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview#migrating-from-gemini-25-flash-live).
 
 Each model's page in the [AI Studio](https://ai.google.dev/gemini-api/docs/models)
 and
@@ -96,11 +103,13 @@ Gemini 3.8 Live Extended Thinking requires ADK Python 2.10 or higher and two
 changes to your agent:
 
 - **Non-blocking tools**: Set `behavior = types.Behavior.NON_BLOCKING` on every
-  tool, and leave `response_scheduling` unset.
+  tool, and leave `response_scheduling` unset. See
+  [Non-blocking tools](tools.md#non-blocking-tools).
 - **Interaction status**: Because `turn_complete` can arrive several times per
   request, read `event.interaction_status` (`interactionStatus` over
   `/run_live`), which is `IN_PROGRESS` while the model is still working on the
-  request and `IDLE` once it has finished.
+  request and `IDLE` once it has finished. See
+  [Interaction status](events.md#interaction-status).
 
 ## Platform limits and quotas
 
