@@ -51,7 +51,7 @@ Use the following command to run your agent in an ADK API server:
     the command line:
 
     ```shell
-    go run agent.go web api
+    go run main.go web api
     ```
 
     The `web` keyword activates the HTTP server. `api` adds the ADK REST API
@@ -168,7 +168,7 @@ The output should appear similar to:
     subcommand. For example:
 
     ```shell
-    go run agent.go web -port 8000 api -path_prefix ""
+    go run main.go web -port 8000 api -path_prefix ""
     ```
 
 === "Java"
