@@ -22,14 +22,14 @@ object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
-### Example scenario
+## Example scenario
 
 You want to build an agent that can summarize any webpage, using two tools:
 **Get Page Contents** and **Summarize Page**. Since the agent must always call
 **Get Page Contents** before calling **Summarize Page**, you can build your
 agent using the ***SequentialAgent*** class.
 
-### How it works
+## How it works
 
 When the `SequentialAgent`'s `Run Async` method is called, it performs the following actions:
 
@@ -44,7 +44,7 @@ When the `SequentialAgent`'s `Run Async` method is called, it performs the follo
     temporary (`temp:`) namespace, making it easy to pass data between steps within
     a single turn.
 
-### Full Example: Code Development Pipeline
+## Full Example: Code Development Pipeline
 
 Consider a simplified code development pipeline:
 

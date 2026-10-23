@@ -30,7 +30,7 @@ see the
 and
 [Guide](https://google.github.io/agents-cli/).
 
-### Prerequisites {#prerequisites-ad}
+## Prerequisites {#prerequisites-ad}
 
 You need the following resources configured to use this deployment path:
 
@@ -55,7 +55,7 @@ You need the following resources configured to use this deployment path:
     Unix-based systems, for installation details, see the
     [Make tool](https://www.gnu.org/software/make/) documentation.
 
-### Prepare your ADK project {#prepare-ad}
+## Prepare your ADK project {#prepare-ad}
 
 When you deploy an ADK project to Agent Runtime, you need some additional files
 to support the deployment operation. The following Agents CLI command backs up your
@@ -109,7 +109,7 @@ When you successfully complete this process, the tool shows the following messag
 For more information about the changes Agents CLI makes to your ADK project, see
 [Changes to your ADK project](#adk-agents-cli-changes).
 
-### Connect to your Google Cloud project {#connect-ad}
+## Connect to your Google Cloud project {#connect-ad}
 
 Before you deploy your ADK project, you must connect to Google Cloud and your
 project. After logging into your Google Cloud account, you should verify that
@@ -140,7 +140,7 @@ To connect to Google Cloud and list your project:
 Once you have successfully connected to Google Cloud and set your Cloud Project
 ID, you are ready to deploy your ADK project files to Agent Runtime.
 
-### Deploy your ADK project {#deploy-ad}
+## Deploy your ADK project {#deploy-ad}
 
 When using Agents CLI, you deploy using the `agents-cli deploy` command. This
 command builds a container from your agent code, pushes it to a registry, and
@@ -182,7 +182,7 @@ the agent running on Google Cloud Agent Runtime. For details on testing the
 deployed agent, see
 [Test deployed agent](/deploy/agent-runtime/test/).
 
-### Changes to your ADK project {#adk-agents-cli-changes}
+## Changes to your ADK project {#adk-agents-cli-changes}
 
 The Agents CLI tools add more files to your project for deployment. The procedure
 below backs up your existing project files before modifying them. This guide
