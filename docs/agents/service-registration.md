@@ -1,14 +1,15 @@
 # Service registration
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.34.0</span>
 </div>
 
 Extend ADK runtime capabilities by registering custom services for sessions,
-artifacts, and memory. Registering custom services allows you to integrate your
-own backend systems and storage providers into your agents.
+artifacts, memory, and Agent2Agent (A2A) task stores. Registering custom
+services allows you to integrate your own backend systems and storage providers
+into your agents.
 
-You can register custom services using either of the following methods:
+Register custom services using either of the following methods:
 
 *   **`services.yaml`**: A YAML configuration file for services that instantiate
     with simple constructors.
@@ -22,33 +23,39 @@ instantiate with a simple constructor (for example, `MyService(uri="...")`).
 Place this file in the agent directory (for `adk run`) or the agents root
 directory (for `adk web` and `adk api_server`).
 
-**Example `services.yaml`:**
+Define your custom services in `services.yaml`:
 
 ```yaml
 services:
   - scheme: mysession
     type: session
     class: my_custom_package.modules.MyCustomSessionService
+  - scheme: myartifact
+    type: artifact
+    class: my_custom_package.storage.MyCustomArtifactService
   - scheme: mymemory
     type: memory
     class: my_custom_package.modules.MyCustomMemoryService
+  - scheme: mytaskstore
+    type: task_store
+    class: my_custom_package.tasks.MyCustomTaskStore
 ```
 
 The `services.yaml` file supports the following properties:
 
 *   `scheme`: The URI scheme that triggers the custom service (for example,
     `mysession://`).
-*   `type`: The type of service, which can be `session`, `artifact`, or
-    `memory`.
+*   `type`: The type of service, which can be `session`, `artifact`, `memory`,
+    or `task_store`.
 *   `class`: The fully qualified class name of the service implementation.
 
 ## Register services with `services.py`
 
 Use a `services.py` file, placed in the same location as `services.yaml`, for
-complex initialization or
-when you require more control over the service creation process.
+complex initialization or when you require more control over the service
+creation process.
 
-**Example `services.py`:**
+Register custom `session`, `artifact`, and `memory` services in `services.py`:
 
 ```python
 from google.adk.cli.service_registry import get_service_registry

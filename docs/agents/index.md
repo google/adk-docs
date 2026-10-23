@@ -89,6 +89,10 @@ features:
     logging, monitoring, or custom side-effects without altering core agent
     logic.
 
+*   [**Service registration**](service-registration.md):
+    Register custom backend services for sessions, artifacts, memory, and
+    Agent2Agent (A2A) task stores.
+
 ## Next Steps
 
 Now that you have an overview of the different agent types available in ADK,
@@ -109,5 +113,3 @@ dive deeper into how they work and how to use them effectively:
 * [**Agent optimization:**](/optimize/) Discover methodologies
   to evaluate, test, and enhance the performance, reliability, and
   cost-efficiency of your agent applications.
-* [**Service registration:**](service-registration.md) Learn how to register
-  custom services for sessions, artifacts, and memory.
