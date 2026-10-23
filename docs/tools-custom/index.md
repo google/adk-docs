@@ -64,9 +64,9 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 ADK offers flexibility by supporting several types of tools:
 
 1. **[Function Tools](/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+    * **[Functions/Methods](/tools-custom/function-tools/#function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](/tools-custom/function-tools/#agent-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](/tools-custom/function-tools/#long-run-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
 2. **[Built-in Tools](/integrations/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
@@ -206,7 +206,7 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `agent.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 

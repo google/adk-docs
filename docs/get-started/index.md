@@ -47,6 +47,13 @@ set up and running a simple agent in less than 20 minutes.
     Create your first ADK agent with your coding agent.
 
     [:octicons-arrow-right-24: Start with Agents CLI](agents-cli.md) <br>
+
+-   :material-swap-horizontal:{ .lg .middle } **Migrate to ADK**
+
+    ---
+    Migrate existing agents and workflows to ADK with Agents CLI.
+
+    [:octicons-arrow-right-24: Migrate to ADK](migrate.md) <br>
 </div>
 
 To get started with a technical overview check this [link](about.md).

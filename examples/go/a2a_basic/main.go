@@ -22,7 +22,7 @@ import (
 
 	"google.golang.org/adk/v2/agent"
 	"google.golang.org/adk/v2/agent/llmagent"
-	"google.golang.org/adk/v2/agent/remoteagent"
+	"google.golang.org/adk/v2/agent/remoteagent/v2"
 	"google.golang.org/adk/v2/artifact"
 	"google.golang.org/adk/v2/model/gemini"
 	"google.golang.org/adk/v2/runner"
@@ -71,9 +71,9 @@ func newRollAgent(ctx context.Context) (agent.Agent, error) {
 // --8<-- [start:new-prime-agent]
 func newPrimeAgent() (agent.Agent, error) {
 	remoteAgent, err := remoteagent.NewA2A(remoteagent.A2AConfig{
-		Name:            "prime_agent",
-		Description:     "Agent that handles checking if numbers are prime.",
-		AgentCardSource: "http://localhost:8001",
+		Name:              "prime_agent",
+		Description:       "Agent that handles checking if numbers are prime.",
+		AgentCardProvider: remoteagent.NewAgentCardProvider("http://localhost:8001"),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create remote prime agent: %w", err)

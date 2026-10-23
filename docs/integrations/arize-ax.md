@@ -7,9 +7,9 @@ catalog_tags: ["observability", "evaluation"]
 
 # Arize AX observability for ADK
 
-[Arize AX](https://arize.com/docs/ax) is a production-grade observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing, evaluation, and monitoring capabilities for your Google ADK applications. To get started, sign up for a [free account](https://app.arize.com/auth/join).
+[Arize AX](https://arize.com/products/ax/) is the full-featured AI observability and evaluation platform from [Arize AI](https://arize.com/) for production teams, AI-native companies, and enterprises. It is available as managed cloud or enterprise self-hosted deployment and provides comprehensive tracing, evaluation, and monitoring capabilities for Google ADK applications. To get started, sign up for a [free account](https://app.arize.com/auth/join).
 
-For an open-source, self-hosted alternative, check out [Phoenix](https://arize.com/docs/phoenix).
+For an open-source path for local development, experimentation, or single-container self-hosting, check out the [Arize Phoenix ADK integration](/integrations/phoenix/). Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) show how teams use traces to evaluate agent decisions, tool calls, and model behavior.
 
 ## Overview
 
