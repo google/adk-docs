@@ -275,6 +275,18 @@ You can set the logging level for your ADK agent using standard logging controls
     maybe_set_otel_providers([gcp_exporters])
     ```
 
+    !!! note "Log routing in Python"
+
+        Outside Agent Engine, ADK preserves the OpenTelemetry event name, which
+        Cloud Logging uses to route records to logs named after each event type.
+        Account for these log names when configuring filters and export sinks,
+        including sinks that write to BigQuery.
+
+        On Agent Engine, detected through `GOOGLE_CLOUD_AGENT_ENGINE_ID`, ADK
+        clears the event name so records use the configured log name instead.
+        The default is `aiplatform.googleapis.com/reasoning_engine_stdout`.
+        The event type remains available in the `event.name` label.
+
 === "Go"
 
     To export logs to Google Cloud Logging, use the `WithOtelToCloud` option:
