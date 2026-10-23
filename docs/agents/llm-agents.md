@@ -214,6 +214,27 @@ server in Python, see [Dynamic instructions with `McpInstructionProvider`](/tool
      For ADK Go set `GlobalInstruction` or
     `GlobalInstructionProvider` on `llmagent.Config`.
 
+### Separate static and dynamic instructions in Python
+
+In Python, use `static_instruction` for content that stays the same between
+requests. State placeholders are not expanded there; keep values that change
+in `instruction`:
+
+```python
+from google.adk.agents import LlmAgent
+
+agent = LlmAgent(
+    name="trip_assistant",
+    model="gemini-flash-latest",
+    static_instruction="You help users plan trips.",
+    instruction="Plan a trip to {destination}.",
+)
+```
+
+Set `destination` in session state before running this agent. Separating the
+instructions does not enable explicit caching; see [Model context caching](/context/caching/).
+The Live API does not support `static_instruction`.
+
 ## Equip the agent with tools
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
