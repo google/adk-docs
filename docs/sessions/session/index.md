@@ -277,7 +277,7 @@ the storage backend that best suits your needs:
 ### `VertexAiSessionService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 
 * **How it works:** Uses Google Cloud Agent Platform infrastructure via API
@@ -358,6 +358,37 @@ the storage backend that best suits your needs:
             .blockingGet();
     ```
 
+=== "Kotlin"
+
+    `VertexAiSessionService` is JVM-only in ADK Kotlin. It is not available on
+    Android; use it from a server-side agent.
+
+    ```kotlin
+    import com.google.adk.kt.sessions.SessionKey
+    import com.google.adk.kt.sessions.VertexAiSessionService
+    import kotlinx.coroutines.runBlocking
+
+    // The reasoning engine is pinned here, at construction. In the other tabs
+    // the engine is chosen per call, through `app_name`; in Kotlin `appName`
+    // is never parsed for it and is only a label on the session.
+    val sessionService =
+        VertexAiSessionService(
+            project = "your-gcp-project-id",
+            location = "us-central1",
+            // The bare numeric engine id. A full
+            // "projects/.../reasoningEngines/..." resource name is rejected;
+            // project and location are separate arguments.
+            reasoningEngineId = "1234567890",
+        )
+
+    // Session methods are suspend functions; `runBlocking` here is the
+    // counterpart of the Java tab's `.blockingGet()`.
+    val mySession = runBlocking {
+        // A null id lets the service assign one.
+        sessionService.createSession(SessionKey("example-app", "u_123", id = null))
+    }
+    ```
+
 For more information on connecting to Google Cloud from ADK agents, see
 [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
@@ -370,19 +401,57 @@ For more information on connecting to Google Cloud from ADK agents, see
 * **How it works:** Connects to a relational database (e.g., PostgreSQL, MySQL,
   SQLite) to store session data persistently in tables.
 * **Persistence:** Yes. Data survives application restarts.
-* **Requires:** A configured database and the `db` extra, installed with
-  `pip install google-adk[db]`.
+* **Requires:** A configured database. In Python, also the `db` extra,
+  installed with `pip install google-adk[db]`. In Go, a
+  [GORM](https://gorm.io/) driver for your database.
 * **Best for:** Applications needing reliable, persistent storage that you
   manage yourself.
 
-```py
-from google.adk.sessions import DatabaseSessionService
-# Example using a local SQLite file:
-# Note: The implementation requires an async database driver.
-# For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
-db_url = "sqlite+aiosqlite:///./my_agent_data.db"
-session_service = DatabaseSessionService(db_url=db_url)
-```
+=== "Python"
+
+    ```py
+    from google.adk.sessions import DatabaseSessionService
+    # Example using a local SQLite file:
+    # Note: The implementation requires an async database driver.
+    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
+    session_service = DatabaseSessionService(db_url=db_url)
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "log"    
+        "github.com/glebarez/sqlite"
+        "gorm.io/gorm"
+
+        "google.golang.org/adk/v2/session/database"
+    )
+
+    // Example using a local SQLite file. Any GORM dialector works, for
+    // example gorm.io/driver/postgres for PostgreSQL.
+    sessionService, err := database.NewSessionService(sqlite.Open("my_agent_data.db"), &gorm.Config{})
+    if err != nil {
+        log.Fatal(err)
+    }
+    // Creates the tables and adds any columns a newer ADK release needs.
+    // Run it every time the application starts.
+    if err := database.AutoMigrate(sessionService); err != nil {
+        log.Fatal(err)
+    }
+    ```
+
+    !!! warning "Run `AutoMigrate` on every startup"
+
+        The Go session service does not create or update its tables. Call
+        `database.AutoMigrate` each time your application starts, before it
+        serves traffic. It creates missing tables and columns and does not
+        drop existing ones, so a database keeps working after an ADK upgrade
+        adds a column. It can also change the type of an existing column to
+        match what ADK expects. If you manage the schema yourself instead of
+        running `AutoMigrate`, add the new columns before deploying the ADK
+        release that introduces them. Otherwise, writes to that table fail.
 
 #### Concurrency and locking
 

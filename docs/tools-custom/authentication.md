@@ -167,13 +167,13 @@ When adding an authenticated tool to your agent, you need to provide its require
 
 You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
 
-#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
+#### Use OpenAPI-based toolsets
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
 === "API Key"
 
-      Create a tool requiring an API Key.
+      Create a tool requiring an API key for simple authentication that needs no token exchange:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
@@ -190,9 +190,9 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-=== "OAuth2"
+=== "OAuth2 (Authorization Code)"
 
-      Create a tool requiring OAuth2.
+      Create a tool requiring the OAuth 2.0 authorization code flow for interactive authentication on behalf of a human user:
 
       ```py
       from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
@@ -230,9 +230,56 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+=== "OAuth2 (Client Credentials)"
+
+      Create a tool that uses the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. Supply a `client_id` and `client_secret` to obtain an access token:
+
+      ```python
+      from fastapi.openapi.models import (
+          OAuth2,
+          OAuthFlowClientCredentials,
+          OAuthFlows,
+      )
+      from google.adk.auth import (
+          AuthCredential,
+          AuthCredentialTypes,
+          OAuth2Auth,
+      )
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import (
+          OpenAPIToolset,
+      )
+
+      # Define the OAuth2 scheme with the client credentials flow.
+      flows = OAuthFlows(
+          clientCredentials=OAuthFlowClientCredentials(
+              tokenUrl="https://example.com/token",  # Replace with your authorization server's token endpoint.
+              scopes={"read:weather": "Read weather data"},
+          )
+      )
+      auth_scheme = OAuth2(flows=flows)
+
+      # Define the AuthCredential with a client ID and client secret.
+      # Do not hardcode secrets: load them from a .env file locally or from a
+      # secrets manager in production. See "Self-managed authentication" above.
+      auth_credential = AuthCredential(
+          auth_type=AuthCredentialTypes.OAUTH2,
+          oauth2=OAuth2Auth(
+              client_id="YOUR_CLIENT_ID",
+              client_secret="YOUR_CLIENT_SECRET",
+          ),
+      )
+
+      weather_toolset = OpenAPIToolset(
+          spec_str="...",  # Pass your OpenAPI specification YAML string here.
+          spec_str_type="yaml",
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
+      )
+      ```
+
 === "Service Account"
 
-      Create a tool requiring Service Account.
+      Create a tool that authenticates as a non-human identity using a Service Account JSON key or Application Default Credentials:
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
@@ -251,9 +298,9 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-=== "OpenID connect"
+=== "OpenID Connect"
 
-      Create a tool requiring OpenID connect.
+      Create a tool requiring OpenID Connect to verify user identity via an authorization server:
 
       ```py
       from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
@@ -281,7 +328,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-#### Use Google API toolsets (e.g., `calendar_tool_set`)
+#### Use Google API toolsets
 
 These toolsets often have dedicated configuration methods.
 
@@ -289,17 +336,19 @@ Tip: For how to create a Google OAuth Client ID & Secret, see this guide: [Get y
 
 ```py
 # Example: Configuring Google Calendar Tools
-from google.adk.tools.google_api_tool import calendar_tool_set
+from google.adk.tools.google_api_tool import CalendarToolset
 
 client_id = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
 client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
 
+calendar_toolset = CalendarToolset()
+
 # Use the specific configure method for this toolset type
-calendar_tool_set.configure_auth(
-    client_id=oauth_client_id, client_secret=oauth_client_secret
+calendar_toolset.configure_auth(
+    client_id=client_id, client_secret=client_secret
 )
 
-# agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
+# agent = LlmAgent(..., tools=[calendar_toolset])
 ```
 
 #### Use ID token
@@ -378,21 +427,17 @@ The use of this configuration parameter is mutually exclusive, and cannot
 include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
 configuration block.
 
-Follow this example to configure the key:
+Set the key on the credentials configuration of the toolset you are using. The
+following example uses BigQuery:
 
 ```python
-from google.adk.auth.auth_credential import AuthCredential
-from google.adk.auth.auth_credential import AuthCredentialTypes
+from google.adk.integrations.bigquery import BigQueryCredentialsConfig
 
-# Configure the tool to look for "my_frontend_token" in the session state
-credentials_config = AuthCredential(
-    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
-    google_credentials_config={
-        # Do not hardcode authentication keys in production code
-        "external_access_token_key": "get_my_frontend_token" 
-    }
+# Configure the toolset to look for "my_frontend_token" in the session state
+credentials_config = BigQueryCredentialsConfig(
+    # Do not hardcode authentication keys in production code
+    external_access_token_key="my_frontend_token"
 )
-
 ```
 
 #### Authentication request flow
@@ -402,6 +447,43 @@ handles the redirection flow, and retries the tool call once authorized.
 
 ![Authentication](../assets/auth_part1.svg)
 
+### Authenticate at a toolset level
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
+</div>
+
+Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
+Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
+If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework performs the following steps:
+
+1. **Pause execution:** Safely halts the current flow.
+2. **Request credentials:** Issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
+
+This approach gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the authentication procedure, ensuring the necessary credentials are resolved before your agent accesses tools in the toolset.
+
+#### How to enable it
+
+To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
+
+```python
+from google.adk.auth import AuthConfig
+from google.adk.tools.base_toolset import BaseToolset
+
+
+class MyAuthenticatedToolset(BaseToolset):
+  async def get_tools(
+      self, readonly_context: Optional[ReadonlyContext] = None
+  ) -> list[BaseTool]:
+    # ADK resolves the credential from get_auth_config() before calling this,
+    # so the tools you return here can rely on it.
+    return []  # Replace with the tools in your toolset.
+
+    return AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    )
+```
 
 ### Handle the interactive OAuth/OIDC flow (client-side)
 
@@ -756,7 +838,7 @@ except Exception as e:
 **Step 7: Return Tool Result**
 
 * After a successful API call, process the result into a dictionary format that is useful for the LLM.
-* **Crucially, include a**  along with the data.
+* **Crucially, include a**  `status` field along with the data.
 
 ```py
 # Inside your tool function, after successful API call

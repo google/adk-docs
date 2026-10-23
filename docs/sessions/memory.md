@@ -566,29 +566,48 @@ For example, you can automate this step with a callback:
 
 === "Go"
 
+    In ADK Go, agent callbacks don't have access to the memory service. Save
+    the session from a Plugin's `AfterRunCallback` instead, and register the
+    Plugin on the runner together with the memory service:
+
     ```go
     import (
-        "context"
+        "log"
+
         "google.golang.org/adk/v2/agent"
         "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/session"
+        "google.golang.org/adk/v2/plugin"
+        "google.golang.org/adk/v2/runner"
         "google.golang.org/adk/v2/tool"
         "google.golang.org/adk/v2/tool/loadmemorytool"
     )
 
-    func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
-        if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
-            return nil, err
-        }
-        return nil, nil
-    }
+    autoSavePlugin, _ := plugin.New(plugin.Config{
+        Name: "auto_save_session_to_memory",
+        AfterRunCallback: func(ctx agent.InvocationContext) {
+            if m := ctx.Memory(); m != nil {
+                if err := m.AddSessionToMemory(ctx, ctx.Session()); err != nil {
+                    log.Printf("failed to save session to memory: %v", err)
+                }
+            }
+        },
+    })
 
-    agent, _ := llmagent.New(llmagent.Config{
-        Model:               model,
-        Name:                "Generic_QA_Agent",
-        Instruction:         "Answer the user's questions",
-        Tools:               []tool.Tool{loadmemorytool.New()},
-        AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
+    rootAgent, _ := llmagent.New(llmagent.Config{
+        Model:       model,
+        Name:        "Generic_QA_Agent",
+        Instruction: "Answer the user's questions",
+        Tools:       []tool.Tool{loadmemorytool.New()},
+    })
+
+    r, _ := runner.New(runner.Config{
+        AppName:        "my_app",
+        Agent:          rootAgent,
+        SessionService: sessionService,
+        MemoryService:  memoryService,
+        PluginConfig: runner.PluginConfig{
+            Plugins: []*plugin.Plugin{autoSavePlugin},
+        },
     })
     ```
 
@@ -597,6 +616,26 @@ For example, you can automate this step with a callback:
     ```kotlin
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
     ```
+
+### Write specific events or facts from a callback
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
+</div>
+
+The `CallbackContext.addSessionToMemory` method is the default behavior for
+memory and saves the whole session of your agent. When you want finer control,
+`CallbackContext` also offers two more methods: `addEventsToMemory`, for a
+chosen subset of events, and `addMemory`, for facts you construct yourself.
+Both accept optional `customMetadata`, and both fill in the app, user and
+session from the current invocation.
+
+```kotlin
+--8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:callback_memory_writes"
+```
+
+All three throw `IllegalStateException` if the runner has no memory service
+configured, so they fail at run time rather than at compile time.
 
 ## Extend memory capabilities
 

@@ -145,3 +145,4 @@ see the following pages:
 * [BigQuery Toolset](/integrations/bigquery/)
 * [BigQuery Agent Analytics](/integrations/bigquery-agent-analytics/)
 * [Data Agent](/integrations/data-agent/)
+* [Model Armor](/integrations/model-armor/)

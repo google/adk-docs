@@ -7,7 +7,7 @@
 ADK agents can use the [Google Gemma](https://ai.google.dev/gemma/docs) family of generative AI models that offer a
 wide range of capabilities. ADK supports many Gemma features,
 including [Tool Calling](/tools-custom/)
-and [Structured Output](/agents/llm-agents/#structuring-data-input_schema-output_schema-output_key).
+and [Structured Output](/agents/llm-agents/#data-handling).
 
 You can use Gemma 4 through the [Gemini API](https://ai.google.dev/gemini-api/docs),
 or with one of many self-hosting options on Google Cloud:
@@ -61,7 +61,7 @@ Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
         .instruction("""
             You are a helpful assistant that can provide current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 
@@ -210,7 +210,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
         .instruction("""
             You are a helpful assistant that can provide the current weather.
         """)
-        .tools(FunctionTool.create(this, "getWeather")]    
+        .tools(FunctionTool.create(this, "getWeather"))
         .build();
 
     @Schema(name = "getWeather", 

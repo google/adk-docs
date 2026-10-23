@@ -152,9 +152,9 @@ The output should appear similar to:
     
     !!! note "Go: default port and path prefix"
 
-    The Go API server defaults to port **8080** (not 8000) and serves all
-    REST endpoints under the **`/api`** path prefix by default. Adjust all
-    example `curl` commands below accordingly:
+        The Go API server defaults to port **8080** (not 8000) and serves all
+        REST endpoints under the **`/api`** path prefix by default. Adjust all
+        example `curl` commands below accordingly:
 
     | Python/TypeScript/Java | Go |
     |---|---|

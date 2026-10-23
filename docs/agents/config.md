@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
@@ -49,7 +49,7 @@ the Agent Config files.
 To set up ADK for use with Agent Config:
 
 1.  Install the ADK Python libraries by following the
-    [Installation](/get-started/installation/#python)
+    [Installation](/get-started/installation/)
     instructions. *Python is currently required.* For more information, see the
     [Known limitations](#known-limitations).
 1.  Verify that ADK is installed by running the following command in your
@@ -63,7 +63,7 @@ To set up ADK for use with Agent Config:
     If the `adk` command fails to run and the version is not listed in step 2, make
     sure your Python environment is active. Execute `source .venv/bin/activate` in
     your terminal on Mac and Linux. For other platform commands, see the
-    [Installation](/get-started/installation/#python)
+    [Installation](/get-started/installation/)
     page.
 
 ### Build an agent

@@ -167,6 +167,21 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 
     * You can provide a service account to be used instead of default credentials by generating a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating), and providing the right [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account.
     * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
+    * To use custom workflows, override the default `ExecuteConnection` integration with the `connection_template_override` parameter.
+
+        !!! note "Language Support"
+            This parameter requires **Python SDK v1.21.0** or higher.
+
+      ```py
+      from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+
+      connector_tool = ApplicationIntegrationToolset(
+          project="YOUR_PROJECT_ID",
+          location="YOUR_LOCATION", # e.g., "us-central1"
+          connection="YOUR_CONNECTION_NAME",
+          connection_template_override="YOUR_CUSTOM_INTEGRATION_NAME",
+      )
+      ```
 
 
     `ApplicationIntegrationToolset` supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
@@ -347,7 +362,7 @@ workflow as a tool for your agent or create a new one.
     To update the `agent.java` file and add the tool to your agent, use the following code:
 
       ```java
-          import com.google.adk.agent.LlmAgent;
+          import com.google.adk.agents.LlmAgent;
           import com.google.adk.tools.BaseTool;
           import com.google.common.collect.ImmutableList;
 
@@ -374,7 +389,7 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-        ```
+      ```
 
 **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.
