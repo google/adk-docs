@@ -542,6 +542,11 @@ For example, you can automate this step with a callback:
     )
     ```
 
+    A Python tool can also save the current session: accept a `ToolContext`
+    parameter and call `await tool_context.add_session_to_memory()`. Use a
+    Runner with a memory service configured as shown above. To include the
+    tool result and the agent's reply, save after the run with the callback.
+
 === "TypeScript"
 
     ```typescript
