@@ -284,6 +284,10 @@ inside tools and callbacks regardless of which agent style you use.
     available to downstream nodes:
 
     ```python
+    from google.adk import Context, Event, Workflow
+    from google.genai.types import Content
+
+
     async def init_state_node(attempts: int = 0):
       yield Event(
           state={
@@ -439,42 +443,47 @@ accepted and produced by any agent node.
 
 === "Python"
 
-    Use the curly-brace `{ }` syntax to select properties from the input
-    schema, or `< >` to select a property and also qualify it by the name
-    of the source node:
+    Use the curly-brace `{Class.field}` syntax in the agent instruction to
+    select properties from the node's `input_schema`. Session state still uses
+    plain `{state_key}` placeholders; the `Class.` prefix documents which
+    schema the field comes from:
 
     ```python
+    from google.adk import Agent, Event, Workflow
+    from pydantic import BaseModel
+
+
+    city_generator_agent = Agent(
+        name="city_generator_agent",
+        model="gemini-flash-latest",
+        instruction="Return the name of a random city. Return only the name.",
+    )
+
+
     class CityTime(BaseModel):
         time_info: str  # time information
         city: str       # city name
 
+
     def lookup_time_function(city: str):
         """Simulate returning the current time in the specified city."""
-        return Event(output=CityTime(time_info='10:10 AM', city=city))
+        return Event(output=CityTime(time_info="10:10 AM", city=city))
+
 
     city_report_agent = Agent(
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-
-        # data selection based on class and parameter
-        # instruction="""
-        #     Return a sentence in the following format:
-        #     It is {CityTime.time_info} in {CityTime.city} right now.
-        # """,
-
-        # more restrictive data selection based on source node name
         instruction="""
             Return a sentence in the following format:
-            It is <CityTime.time_info from lookup_time_function> in
-            <CityTime.city from lookup_time_function> right now.
+            It is {CityTime.time_info} in {CityTime.city} right now.
         """,
     )
 
     root_agent = Workflow(
         name="root_agent",
         edges=[
-            (START, city_generator_agent, lookup_time_function, city_report_agent)
+            ("START", city_generator_agent, lookup_time_function, city_report_agent)
         ],
     )
     ```
