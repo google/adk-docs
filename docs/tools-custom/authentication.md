@@ -466,23 +466,39 @@ This approach gives you a single, centralized place to define auth requirements 
 
 To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
 
+This example uses the `auth_scheme` and `auth_credential` from the configuration
+examples above.
+
 ```python
+from typing import Optional
+
+from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.auth import AuthConfig
+from google.adk.tools.base_tool import BaseTool
 from google.adk.tools.base_toolset import BaseToolset
 
 
 class MyAuthenticatedToolset(BaseToolset):
+  def __init__(self, auth_config: AuthConfig):
+    super().__init__()
+    self._auth_config = auth_config
+
+  def get_auth_config(self) -> AuthConfig:
+    return self._auth_config
+
   async def get_tools(
       self, readonly_context: Optional[ReadonlyContext] = None
   ) -> list[BaseTool]:
-    # ADK resolves the credential from get_auth_config() before calling this,
-    # so the tools you return here can rely on it.
+    # ADK resolves credentials before listing tools.
     return []  # Replace with the tools in your toolset.
 
-    return AuthConfig(
+
+toolset = MyAuthenticatedToolset(
+    AuthConfig(
         auth_scheme=auth_scheme,
         raw_auth_credential=auth_credential,
     )
+)
 ```
 
 ### Handle the interactive OAuth/OIDC flow (client-side)
