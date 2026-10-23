@@ -230,6 +230,10 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+      To request account selection, set `prompt="select_account"` on
+      `OAuth2Auth`. Supported values depend on the provider; ADK sends
+      `prompt=consent` when this field is omitted, `None`, or empty.
+
 === "OAuth2 (Client Credentials)"
 
       Create a tool that uses the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. Supply a `client_id` and `client_secret` to obtain an access token:
