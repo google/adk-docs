@@ -530,7 +530,7 @@ By adhering to these guidelines, you provide the LLM with the clarity and struct
 ## Toolsets: Grouping and Dynamically Providing Tools
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 
@@ -565,7 +565,7 @@ When the agent initializes or needs to determine its available capabilities, the
 
 ### Example: A Simple Math Toolset
 
-Let's create a basic example of a toolset that provides simple arithmetic operations.
+Let's create a basic example of a toolset that provides simple arithmetic operations:
 
 === "Python"
 
@@ -602,7 +602,7 @@ In this example:
 
 ### Filter tools in toolsets
 
-<div class="language-support-tag" title="The version badge covers the Kotlin ToolFilter API shown here. Python, Java and TypeScript filter tools through their own BaseToolset APIs.">
+<div class="language-support-tag langscope-all" title="The version badge covers the Kotlin ToolFilter API shown here. Python, Java and TypeScript filter tools through their own BaseToolset APIs.">
    <span class="lst-supported">Supported in ADK</span><span class="lst-kotlin">Kotlin v0.7.0</span>
 </div>
 

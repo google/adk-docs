@@ -220,7 +220,10 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
         The Go console launcher does not support `--save_session`, `--resume`,
         `--replay`, `--session_id`, `--session_service_uri`, or
         `--artifact_service_uri`. These are Python CLI features. Session and
-        artifact services are configured in Go code via `launcher.Config`.
+        artifact services are configured in Go code via `launcher.Config`,
+        for example with `session/database` for a persistent database-backed
+        session store or `artifact/gcsartifact` for Cloud Storage-backed
+        artifacts.
 
     Flags are passed after the `console` keyword (or directly if `console` is
     the default):

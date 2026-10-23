@@ -1,3 +1,7 @@
+---
+languages: [java]
+---
+
 # Build live streaming agent with Java
 
 Build a Java agent that holds a low-latency, two-way voice conversation with ADK Streaming.

@@ -1,3 +1,7 @@
+---
+languages: [python]
+---
+
 # Build Your First Intelligent Agent Team: A Progressive Weather Bot with ADK
 
 <a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
