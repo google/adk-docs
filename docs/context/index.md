@@ -1,7 +1,7 @@
 # Agent context
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 In the Agent Development Kit (ADK), *context* refers to the crucial bundle of information available to your agent and its tools during specific operations. Think of it as the necessary background knowledge and resources needed to handle a current task or conversation turn effectively.
@@ -108,6 +108,14 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.runners.InMemoryRunner
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:conceptual_runner_example"
+    ```
+
 ## Types of context
 
 ADK uses the `Context` class as the central mechanism to manage an agent's environment, state, and resources. While `Context` serves as the foundational base for all agent interactions, it manifests in specialized "flavors" designed to provide the right balance of capabilities and permissions depending on where they are used in the agent's execution flow.
@@ -204,6 +212,18 @@ Here are the primary context flavors you will encounter:
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.BaseAgent
+        import com.google.adk.kt.agents.InvocationContext
+        import com.google.adk.kt.events.Event
+        import kotlinx.coroutines.flow.Flow
+        import kotlinx.coroutines.flow.flow
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:invocation_context_agent"
+        ```
+
 ### `ReadonlyContext`
 - **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
 - **Purpose:** Offers a safe, read-only view of fundamental contextual details.
@@ -265,6 +285,16 @@ Here are the primary context flavors you will encounter:
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.ReadonlyContext
+        import com.google.adk.kt.types.Content
+        import com.google.adk.kt.types.Part
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:readonly_context_instruction"
+        ```
+
 ### `CallbackContext` and `Context`
 
 - **Where Used:** Passed as `callback_context` to agent lifecycle callbacks (`before_agent_callback`, `after_agent_callback`) and model interaction callbacks (`before_model_callback`, `after_model_callback`).
@@ -278,78 +308,89 @@ Here are the primary context flavors you will encounter:
 
     In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
 
-    === "Python"
+=== "Python"
 
-        ```python
-        # Example: Callback receiving Context (CallbackContext is unified into Context)
-        from google.adk.agents.context import Context
-        from google.adk.models import LlmRequest
-        from google.genai import types
-        from typing import Optional
+    ```python
+    # Example: Callback receiving Context (CallbackContext is unified into Context)
+    from google.adk.agents.context import Context
+    from google.adk.models import LlmRequest
+    from google.genai import types
+    from typing import Optional
 
-        def my_before_model_cb(context: Context, request: LlmRequest) -> Optional[types.Content]:
-            # Read/Write state example
-            call_count = context.state.get("model_calls", 0)
-            context.state["model_calls"] = call_count + 1 # Modify state (tracks delta)
+    def my_before_model_cb(context: Context, request: LlmRequest) -> Optional[types.Content]:
+        # Read/Write state example
+        call_count = context.state.get("model_calls", 0)
+        context.state["model_calls"] = call_count + 1 # Modify state (tracks delta)
 
-            # Optionally load an artifact
-            # config_part = context.load_artifact("model_config.json")
-            print(f"Preparing model call #{call_count + 1} for invocation {context.invocation_id}")
-            return None # Allow model call to proceed
-        ```
+        # Optionally load an artifact
+        # config_part = context.load_artifact("model_config.json")
+        print(f"Preparing model call #{call_count + 1} for invocation {context.invocation_id}")
+        return None # Allow model call to proceed
+    ```
 
-    === "TypeScript"
+=== "TypeScript"
 
-        ```typescript
-        // Pseudocode: Callback receiving Context
-        import { Context, LlmRequest } from '@google/adk';
-        import { Content } from '@google/genai';
+    ```typescript
+    // Pseudocode: Callback receiving Context
+    import { Context, LlmRequest } from '@google/adk';
+    import { Content } from '@google/genai';
 
-        function myBeforeModelCb(context: Context, request: LlmRequest): Content | undefined {
-          // Read/Write state example
-          const callCount = (context.state.get('model_calls') as number) || 0;
-          context.state.set('model_calls', callCount + 1); // Modify state
+    function myBeforeModelCb(context: Context, request: LlmRequest): Content | undefined {
+      // Read/Write state example
+      const callCount = (context.state.get('model_calls') as number) || 0;
+      context.state.set('model_calls', callCount + 1); // Modify state
 
-          // Optionally load an artifact
-          // const configPart = await context.loadArtifact('model_config.json');
-          console.log(`Preparing model call #${callCount + 1} for invocation ${context.invocationId}`);
-          return undefined; // Allow model call to proceed
-        }
-        ```
+      // Optionally load an artifact
+      // const configPart = await context.loadArtifact('model_config.json');
+      console.log(`Preparing model call #${callCount + 1} for invocation ${context.invocationId}`);
+      return undefined; // Allow model call to proceed
+    }
+    ```
 
-    === "Go"
+=== "Go"
 
-        ```go
-        import (
-        	"fmt"
+    ```go
+    import (
+      "fmt"
 
-        	"google.golang.org/adk/v2/agent"
-        	"google.golang.org/adk/v2/model"
-        )
+      "google.golang.org/adk/v2/agent"
+      "google.golang.org/adk/v2/model"
+    )
 
-        --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
-        ```
+    --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
+    ```
 
-    === "Java"
+=== "Java"
 
-        ```java
-        // Example: Callback receiving CallbackContext
-        import com.google.adk.agents.CallbackContext;
-        import com.google.adk.models.LlmRequest;
-        import com.google.adk.models.LlmResponse;
-        import io.reactivex.rxjava3.core.Maybe;
+    ```java
+    // Example: Callback receiving CallbackContext
+    import com.google.adk.agents.CallbackContext;
+    import com.google.adk.models.LlmRequest;
+    import com.google.adk.models.LlmResponse;
+    import io.reactivex.rxjava3.core.Maybe;
 
-        public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request) {
-            // Read/Write state example
-            int callCount = (int) callbackContext.state().getOrDefault("model_calls", 0);
-            callbackContext.state().put("model_calls", callCount + 1); // Modify state (tracks delta)
+    public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request) {
+        // Read/Write state example
+        int callCount = (int) callbackContext.state().getOrDefault("model_calls", 0);
+        callbackContext.state().put("model_calls", callCount + 1); // Modify state (tracks delta)
 
-            // Optionally load an artifact
-            // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
-            System.out.println("Preparing model call " + (callCount + 1) + " for invocation " + callbackContext.invocationId());
-            return Maybe.empty(); // Allow model call to proceed
-        }
-        ```
+        // Optionally load an artifact
+        // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
+        System.out.println("Preparing model call " + (callCount + 1) + " for invocation " + callbackContext.invocationId());
+        return Maybe.empty(); // Allow model call to proceed
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.CallbackContext
+    import com.google.adk.kt.callbacks.CallbackChoice
+    import com.google.adk.kt.models.LlmRequest
+    import com.google.adk.kt.models.LlmResponse
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:callback_context_callback"
+    ```
 
 ### `ToolContext`
 - **Where Used:** Passed as `tool_context` to the functions backing `FunctionTool`s and to tool execution callbacks (`before_tool_callback`, `after_tool_callback`).
@@ -453,6 +494,14 @@ Here are the primary context flavors you will encounter:
 
             return Map.of("result", "Data for " + query + " fetched");
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:tool_context_tool"
         ```
 
 Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
@@ -567,6 +616,17 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.CallbackContext
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_state_tool"
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_state_callback"
+        ```
+
 *   **Get current identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
@@ -618,6 +678,14 @@ You'll frequently need to read information stored within the context.
             String functionCallId = toolContext.functionCallId().orElse("N/A"); // Specific to ToolContext
             System.out.println("Log: Invocation= " + invId + " Agent= " + agentName + " FunctionCallID= " + functionCallId);
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_ids"
         ```
 
 *   **Access the initial user input:** Refer back to the message that started the current invocation.
@@ -688,6 +756,14 @@ You'll frequently need to read information stored within the context.
                 System.out.println("This invocation started with user input: " + initialText);
             }
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.agents.CallbackContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:accessing_initial_user_input"
         ```
 
 ### Manage state
@@ -786,6 +862,17 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+        import java.util.UUID
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:passing_data_tool1"
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:passing_data_tool2"
+        ```
+
 *   **Update user preferences:**
 
     === "Python"
@@ -838,6 +925,14 @@ State is crucial for memory and data flow. When you modify state using `Callback
             System.out.println("Set user preference '" + preference + "' to '" + value + "'");
             return Map.of("status", "Preference updated");
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:updating_preferences"
         ```
 
 *   **State prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
@@ -937,6 +1032,15 @@ Use artifacts to handle files or large data blobs associated with the session. C
                // Example usage:
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
                ```
+
+        === "Kotlin"
+
+            ```kotlin
+            import com.google.adk.kt.agents.CallbackContext
+            import com.google.adk.kt.types.Part
+
+            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_save_ref"
+            ```
 
     2.  **Summarizer Tool:** Load the artifact to get the path/URI, read the actual document content using appropriate libraries, summarize, and return the result.
 
@@ -1107,6 +1211,16 @@ Use artifacts to handle files or large data blobs associated with the session. C
             }
             ```
 
+        === "Kotlin"
+
+            ```kotlin
+            import com.google.adk.kt.tools.ToolContext
+            import java.io.File
+            import java.io.FileNotFoundException
+
+            --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_summarize"
+            ```
+
 *   **List Artifacts:** Discover what files are available.
 
     === "Python"
@@ -1167,6 +1281,14 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 return Map.of("error", "Artifact service error: " + e);
             }
         }
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        import com.google.adk.kt.tools.ToolContext
+
+        --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:artifacts_list"
         ```
 
 ### Handle tool authentication
@@ -1433,6 +1555,14 @@ Access relevant information from the past or external sources.
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.ToolContext
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:memory_search"
+    ```
+
 ### Render UI Widgets
 
 <div class="language-support-tag">
@@ -1584,6 +1714,21 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
         return Flowable.empty();
       }
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.BaseAgent
+    import com.google.adk.kt.agents.InvocationContext
+    import com.google.adk.kt.events.Event
+    import com.google.adk.kt.types.Content
+    import com.google.adk.kt.types.Part
+    import com.google.adk.kt.types.Role
+    import kotlinx.coroutines.flow.Flow
+    import kotlinx.coroutines.flow.flow
+
+    --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:advanced_invocation_context"
     ```
 
 Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
