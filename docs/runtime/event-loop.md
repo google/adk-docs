@@ -49,7 +49,7 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 
     ```py
     # Simplified view of Runner's main loop logic
-    async def run_async(new_query, ...) -> AsyncGenerator[Event, None]:
+    async def run_async(new_query) -> AsyncGenerator[Event, None]:
         # 1. Append new_query to session event history (via SessionService)
         await session_service.append_event(session, Event(author='user', content=new_query))
 
