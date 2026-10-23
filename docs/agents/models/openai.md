@@ -124,13 +124,18 @@ The two APIs support the same features, with these differences:
 - Structured output via `OutputSchema` (JSON schema)
 - Reasoning models (e.g. o-series), including reasoning-token accounting
 - Token logprobs
+- Tool choice via `ToolConfig.FunctionCallingConfig`: the `AUTO`, `NONE`, and `ANY` modes
+- Processing tier via `ServiceTier`, in ADK Go v2.4.0 and higher
+- Request timeout via `HTTPOptions.Timeout`, in ADK Go v2.4.0 and higher
 
 ## Limitations
 
 - **Text only** — multimodal input (images, audio, files) is not supported.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
-- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports.
+- **Function tools don't use strict mode** — In ADK Go v2.5.0 and higher, ADK sends function tools with OpenAI strict schema validation off. Optional parameters stay optional, but the model's tool-call arguments might not match the declared schema. Validate tool arguments before acting on them.
+- **Reasoning isn't carried across turns** — In ADK Go v2.5.0 and higher, ADK doesn't send reasoning from earlier turns back to the model on either API, so reasoning informs only the turn that produced it.
+- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports. In ADK Go v2.4.0 and higher, other settings that have no OpenAI equivalent also return an error. The [Go API reference](https://pkg.go.dev/google.golang.org/adk/v2/model/openaimodel) lists which settings are sent, rejected, or ignored.
 
 ## Configuration options
 
