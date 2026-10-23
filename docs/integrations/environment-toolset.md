@@ -115,11 +115,11 @@ local_environment=LocalEnvironment(
 The ***LocalEnvironment*** implementation includes the following tools an
 agent can run within a local compute environment:
 
--   ***ReadFile***: Read an existing text file based on agent instructions.
--   ***EditFile***: Edit an existing text file based on agent instructions.
--   ***WriteFile***: Create a new text file based on agent instructions.
+-   ***ReadFile***: Read an existing text file based on agent instructions. It supports reading specific line ranges (start_line, end_line) to manage context window limits.
+-   ***EditFile***: Perform surgical text replacements in an existing file. It requires an exact old_string that appears exactly once in the file, replacing it with a new_string.
+-   ***WriteFile***: Create or overwrite a text file based on agent instructions. Use this for new files or full rewrites.
 -   ***Execute***: Execute terminal commands, including running installers,
-    shell scripts, and program code, based on agent instructions.
+    shell scripts, and program code, based on agent instructions. It is recommended to use ReadFile instead of shell commands (like cat, head, tail) for file reading.
 
 !!! danger "Danger: Potential data loss, code execution"
 
