@@ -188,7 +188,7 @@ language.
 
 ## Available tools
 
-Tool <img width="200px"/> | Description
+Tool | Description
 ---- | -----------
 `notion-search` | Search across your Notion workspace and connected tools like Slack, Google Drive, and Jira. Falls back to basic workspace search if AI features aren’t available.
 `notion-fetch` | Retrieves content from a Notion page or database by its URL
