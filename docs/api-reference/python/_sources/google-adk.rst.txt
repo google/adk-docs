@@ -249,6 +249,14 @@ google.adk.integrations.openai module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.opensandbox module
+------------------------------------------
+
+.. automodule:: google.adk.integrations.opensandbox
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.parameter\_manager module
 ------------------------------------------------
 
@@ -289,6 +297,14 @@ google.adk.integrations.slack module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.typesafe module
+---------------------------------------
+
+.. automodule:: google.adk.integrations.typesafe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.vmaas module
 ------------------------------------
 
@@ -301,6 +317,14 @@ google.adk.labs.antigravity module
 ----------------------------------
 
 .. automodule:: google.adk.labs.antigravity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.labs.classifiers module
+----------------------------------
+
+.. automodule:: google.adk.labs.classifiers
     :members:
     :undoc-members:
     :show-inheritance:
