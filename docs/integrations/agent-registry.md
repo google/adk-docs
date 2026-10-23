@@ -347,6 +347,11 @@ For Google MCP servers, authentication headers are automatically passed in.
       Server.
     - `get_mcp_toolset(self, mcp_server_name)`: Constructs an ADK McpToolset
       instance from a registered MCP Server.
+    - `list_endpoints(self, filter_str, page_size, page_token)`: Lists registered
+      model endpoints.
+    - `get_endpoint(self, name)`: Retrieves metadata by endpoint resource name.
+    - `get_model_name(self, endpoint_name)`: Resolves a registered endpoint to
+      its model identifier.
     - `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of
       registered A2A Agents.
     - `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A
