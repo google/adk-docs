@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.12.0"
+    "version": "2.13.0"
   },
   "paths": {
     "/health": {
@@ -2001,7 +2001,7 @@
                 "type": "null"
               }
             ],
-            "description": "Required. The environment being operated."
+            "description": "Required. The target environment where the computer use tool operates."
           },
           "excludedPredefinedFunctions": {
             "anyOf": [
@@ -2016,7 +2016,7 @@
               }
             ],
             "title": "Excludedpredefinedfunctions",
-            "description": "Optional. By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions) are included in the final model call. Some of them can be explicitly excluded from being automatically included. This can serve two purposes: 1. Using a more restricted / different action space. 2. Improving the definitions / instructions of predefined functions."
+            "description": "Optional. A list of predefined functions to explicitly exclude from the model call. By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions) are included. Excluding functions allows for a more restricted action space or custom definitions for predefined functions."
           },
           "enablePromptInjectionDetection": {
             "anyOf": [
@@ -2028,7 +2028,7 @@
               }
             ],
             "title": "Enablepromptinjectiondetection",
-            "description": "Optional. Enables the prompt injection detection check on computer-use request."
+            "description": "Optional. Whether to enable the prompt injection detection check on the computer use request."
           },
           "disabledSafetyPolicies": {
             "anyOf": [
@@ -2043,13 +2043,13 @@
               }
             ],
             "title": "Disabledsafetypolicies",
-            "description": "Optional. Disabled safety policies for computer use."
+            "description": "Optional. A list of safety policies to disable for the computer use tool."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "ComputerUse",
-        "description": "Tool to support computer use."
+        "description": "A tool that enables the model to interact directly with a computer environment."
       },
       "Content": {
         "properties": {
@@ -2228,7 +2228,7 @@
           "ENVIRONMENT_DESKTOP"
         ],
         "title": "Environment",
-        "description": "The environment being operated."
+        "description": "The target environment where the computer use tool operates."
       },
       "Event-Input": {
         "properties": {
