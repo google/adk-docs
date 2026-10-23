@@ -353,6 +353,10 @@ Use these parameters to control runtime guardrails and debugging:
   Python in favor of `SaveFilesAsArtifactsPlugin`.
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
+- `labels` (Python): Adds labels to model requests for this invocation, for
+  example `RunConfig(labels={"service": "customer_support"})`. These override
+  matching keys in the agent's `generate_content_config.labels`. Support
+  depends on the model backend.
 - `service_tier`: Selects the serving capacity for the run's model calls. ADK
   Python only, and applies only to Gemini models that use the Interactions API.
   `ServiceTier.DEFERRED` queues each model call to run on off-peak capacity and
