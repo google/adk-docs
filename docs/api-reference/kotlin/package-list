@@ -10,8 +10,10 @@ com.google.adk.kt.agents
 com.google.adk.kt.annotations
 com.google.adk.kt.apps
 com.google.adk.kt.artifacts
+com.google.adk.kt.auth
 com.google.adk.kt.callbacks
 com.google.adk.kt.collections
+com.google.adk.kt.environment
 com.google.adk.kt.events
 com.google.adk.kt.ids
 com.google.adk.kt.interop
@@ -20,6 +22,7 @@ com.google.adk.kt.memory
 com.google.adk.kt.memory.appsearch
 com.google.adk.kt.models
 com.google.adk.kt.plugins
+com.google.adk.kt.retry
 com.google.adk.kt.runners
 com.google.adk.kt.serialization
 com.google.adk.kt.sessions
@@ -29,11 +32,16 @@ com.google.adk.kt.summarizer
 com.google.adk.kt.telemetry
 com.google.adk.kt.tools
 com.google.adk.kt.tools.appfunctions
+com.google.adk.kt.tools.environment
 com.google.adk.kt.tools.mcp
 com.google.adk.kt.types
 com.google.adk.kt.workflow
 module:google-adk-kotlin-integrations
 com.google.adk.kt.plugins.agentanalytics
+module:google-adk-kotlin-integrations-anthropic
+com.google.adk.kt.models.anthropic
+module:google-adk-kotlin-integrations-openai
+com.google.adk.kt.models.openai
 module:google-adk-kotlin-integrations-spring
 com.google.adk.kt.models.springai
 module:google-adk-kotlin-litertlm
