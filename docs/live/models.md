@@ -18,14 +18,28 @@ prosody, and it is what a standard Gemini model cannot do over a bidirectional c
 |-------|-----------|----------------|
 | Gemini 2.5 Flash Live | `gemini-2.5-flash-native-audio-preview-12-2025` (Preview) | `gemini-live-2.5-flash-native-audio` (GA) |
 | Gemini 3.1 Flash Live | `gemini-3.1-flash-live-preview` (Preview) | Not available |
+| Gemini 3.8 Live | `gemini-3.8-live` (GA) | `gemini-3.8-live` (GA) |
+| Gemini 3.8 Live Extended Thinking | `gemini-3.8-live-extended-thinking` (GA) | Not available |
 
-Gemini 2.5 Flash Live is one model with a different ID on each backend; the features are the
-same either way. `gemini-live-2.5-flash-native-audio` is ADK's `LlmAgent.DEFAULT_LIVE_MODEL`,
-the only Live model that is publicly available, and the model used in this section's examples.
+Gemini 2.5 Flash Live is one model with a different ID on each backend; the
+features are the same either way. ADK's `LlmAgent.DEFAULT_LIVE_MODEL` is
+`gemini-live-2.5-flash-native-audio`, which is also the model used in this
+section's examples.
 
-Gemini 3.1 Flash Live is the newer model and is lower latency, but it is AI Studio only and
-it drops features that 2.5 has — see [Per-model feature support](#per-model-feature-support)
-before you switch.
+Gemini 3.1 Flash Live is available only on AI Studio and does not support
+non-blocking tools. For details, see
+[Per-model feature support](#per-model-feature-support) and the
+[Gemini 3.1 Flash Live model page](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview).
+
+Gemini 3.8 Live runs on both backends. Gemini 3.8 Live Extended Thinking adds
+background reasoning, is available only on AI Studio, and requires changes to
+your agent, which are listed in
+[Per-model feature support](#per-model-feature-support). To compare the two
+models, see the Gemini 3.8 Live model page for
+[AI Studio](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-live) or
+[Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/3-8-live),
+and the
+[Gemini 3.8 Live Extended Thinking model page](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-live-extended-thinking).
 
 ## Choosing a backend
 
@@ -62,23 +76,40 @@ support the `TEXT` response modality, so to get text alongside speech you use
 
 ### Per-model feature support
 
-A few `RunConfig` and tool settings depend on which model you are running:
+A few ADK settings behave differently depending on which model you are running:
 
-| Feature | Gemini 2.5 Flash Live | Gemini 3.1 Flash Live |
-|---|---|---|
-| [Proactivity and affective dialog](configuration.md#proactivity-and-affective-dialog) | Opt-in via `RunConfig` | Not supported |
-| [`response_scheduling`](tools.md#non-blocking-tools) on tools | Supported | Not supported; function calling is synchronous, so the model stays silent until you return the tool response |
-| Thinking control | `thinking_budget` | `thinking_level` (`minimal`, `low`, `medium`, `high`) |
+| Feature | Gemini 2.5 Flash Live | Gemini 3.1 Flash Live | Gemini 3.8 Live | Gemini 3.8 Live Extended Thinking |
+|---|---|---|---|---|
+| [Proactivity and affective dialog](configuration.md#proactivity-and-affective-dialog) | Opt-in via `RunConfig` | `RunConfig` settings ignored | `RunConfig` settings ignored | `RunConfig` settings ignored |
+| [Non-blocking tools](tools.md#non-blocking-tools) | Supported | Not supported | Supported | Required on every tool (see below) |
+| [`response_scheduling`](tools.md#non-blocking-tools) on tools | Supported | Not supported | Supported | Not supported |
+| [End of the model's response](events.md#interaction-status) | `turn_complete` | `turn_complete` | `turn_complete` | `interaction_status` is `IDLE` (see below) |
 
-!!! warning "Moving from 2.5 to 3.1"
+When moving from 2.5 to a newer model, iterate over `event.content.parts`
+instead of reading `parts[0]`, because a single server event can carry several
+parts. Turn coverage can also include all detected audio activity and video
+frames, which changes token costs if you stream video continuously. See the
+upstream
+[migration notes](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview#migrating-from-gemini-25-flash-live).
 
-    Leaving `RunConfig.proactivity` or `RunConfig.enable_affective_dialog` set is the most
-    common upgrade failure — remove them. Two more differences bite client code: a single
-    server event can now carry several content parts at once, so iterate over
-    `event.content.parts` instead of reading `parts[0]`; and turn coverage now defaults to
-    including all detected audio activity and video frames, which changes token costs if you
-    stream video continuously. See the upstream
-    [migration notes](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview#migrating-from-gemini-25-flash-live).
+Each model's page in the [AI Studio](https://ai.google.dev/gemini-api/docs/models)
+and
+[Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)
+documentation covers model-level behavior, such as supported thinking levels. In
+ADK, you set thinking through the agent's
+`generate_content_config.thinking_config`.
+
+Gemini 3.8 Live Extended Thinking requires ADK Python 2.10 or higher and two
+changes to your agent:
+
+- **Non-blocking tools**: Set `behavior = types.Behavior.NON_BLOCKING` on every
+  tool, and leave `response_scheduling` unset. See
+  [Non-blocking tools](tools.md#non-blocking-tools).
+- **Interaction status**: Because `turn_complete` can arrive several times per
+  request, read `event.interaction_status` (`interactionStatus` over
+  `/run_live`), which is `IN_PROGRESS` while the model is still working on the
+  request and `IDLE` once it has finished. See
+  [Interaction status](events.md#interaction-status).
 
 ## Platform limits and quotas
 
@@ -138,8 +169,11 @@ agent = Agent(
 # AI Studio
 DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
-# AI Studio, if you do not need proactivity, affective dialog, or non-blocking tools
-# DEMO_AGENT_MODEL=gemini-3.1-flash-live-preview
+# AI Studio or Agent Platform
+# DEMO_AGENT_MODEL=gemini-3.8-live
+
+# AI Studio, for multi-step reasoning and slow tools
+# DEMO_AGENT_MODEL=gemini-3.8-live-extended-thinking
 
 # Agent Platform
 # DEMO_AGENT_MODEL=gemini-live-2.5-flash-native-audio
@@ -176,7 +210,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 **Selecting the right model:**
 
-1. **Choose a backend**: AI Studio for prototyping, Agent Platform for production. This picks the ID column in the table above, and on Agent Platform it settles the model too — Gemini 2.5 Flash Live is the only Live model there
+1. **Choose a backend**: AI Studio for prototyping, Agent Platform for production. This picks the ID column in the table above, and on Agent Platform it narrows the choice to Gemini 2.5 Flash Live and Gemini 3.8 Live
 2. **Check current availability**: Refer to the model table above and the official documentation
 3. **Configure environment variable**: Set the model name in your `.env` file and read it from there when constructing the agent
 
