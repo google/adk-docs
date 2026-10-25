@@ -103,10 +103,12 @@ replacing the launcher. The following example sends spans to an OTLP endpoint:
 --8<-- "examples/go/snippets/runtime/launchers/options/main.go:telemetry_options"
 ```
 
-The launcher appends its own `telemetry.WithOtelToCloud` value, set from the
-`-otel_to_cloud` flag, after `TelemetryOptions`. A `WithOtelToCloud` option in
-`TelemetryOptions` is therefore overridden: use the flag to turn export to
-Google Cloud on or off.
+Starting the binary with the `-otel_to_cloud` flag turns export to Google
+Cloud on, whatever `TelemetryOptions` holds. In ADK Go v2.6.0 and earlier, the
+launcher also overrides a `telemetry.WithOtelToCloud(true)` option in
+`TelemetryOptions` when the flag is not set
+([adk-go#1967](https://github.com/google/adk-go/issues/1967)), so use the flag to
+turn the export on.
 
 ### Kotlin programmatic setup
 
