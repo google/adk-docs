@@ -110,6 +110,39 @@ responses directly in your terminal.
     [user]: exit
     ```
 
+## Answer prompts in the Go console
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.0.0</span>
+</div>
+
+When a turn ends with calls that wait for a person, such as a
+[tool confirmation](../tools-custom/confirmation.md) or a workflow's request
+for input, the Go console prompts for each of them in turn. The next line that
+you type answers the current prompt:
+
+| Prompt | What the console prints | How it reads your answer |
+|--------|-------------------------|--------------------------|
+| Tool confirmation | The confirmation hint, or `Confirm <tool>?` when there is none, then `Type 'yes' to confirm, anything else to reject.` | `y`, `yes`, `true` or `confirm`, in any case, confirms the call. Anything else, including an empty line, rejects it. |
+| Workflow input | The request message, its payload and the expected response schema | A JSON object is sent as the response. Any other JSON value, or plain text, is sent under a `payload` key. |
+| Other long-running tool | `waiting for response (kind: <name>)` and the call's arguments | A JSON object is sent as the response. Any other JSON value, or plain text, is sent under a `result` key. |
+
+For example, to approve a confirmation:
+
+```shell
+Agent -> Approve the purchase of 3 items?
+  Type 'yes' to confirm, anything else to reject.
+User -> yes
+```
+
+Once every pending prompt has an answer, the console sends all of them as
+`FunctionResponse` parts in a single user message and the run resumes. A
+workflow routes each response to the node that is waiting for it. An agent that
+is not a workflow currently uses only the first response.
+
+To answer a confirmation through the REST API instead, see
+[Remote confirmation with REST API](../tools-custom/confirmation.md#remote-response).
+
 ## Choose the launcher modes in Go
 
 <div class="language-support-tag">

@@ -46,7 +46,9 @@ snippets/sessions/memory_example/memory_example.go
 snippets/tools-custom/customer_support_agent/main.go
 snippets/get-started/multi_tool_agent/main.go
 snippets/runtime/triggers/event_processing_agent.go
+snippets/runtime/launchers/agentengine/main.go
 snippets/runtime/launchers/custom/main.go
+snippets/runtime/launchers/options/main.go
 snippets/runtime/launchers/prod/main.go
 snippets/graphs/human-input/main.go
 snippets/graphs/index/main.go

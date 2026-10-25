@@ -133,26 +133,38 @@ such as:
     └── main.go
     ``` 
 
-    Your `main.go` must run your agent with the launcher from the
-    `google.golang.org/adk/v2/cmd/launcher/agentengine` package instead of
-    `full.NewLauncher()`, passing it the Agent Runtime resource ID from the
-    `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
+    The container that `adkgo deploy agentengine` builds starts your binary
+    with `web -host 0.0.0.0 -port 8080 agentengine`, where the port is the
+    `--server_port` option of the command. Build the launcher in `main.go` with
+    `agentengine.NewLauncher()`, from
+    `google.golang.org/adk/v2/cmd/launcher/agentengine`, passing it the Agent
+    Runtime resource ID from the `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment
+    variable. This launcher serves the `agentengine` web sublauncher. A binary
+    built with `full.NewLauncher()` or `prod.NewLauncher()` exits with
+    `cannot parse following arguments: [agentengine]`.
 
     ```go
-    import "google.golang.org/adk/v2/cmd/launcher/agentengine"
-
-    // ...
-
-    l := agentengine.NewLauncher(os.Getenv("GOOGLE_CLOUD_AGENT_ENGINE_ID"))
-    if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
-        log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
-    }
+    --8<-- "examples/go/snippets/runtime/launchers/agentengine/main.go:agentengine_launcher"
     ```
 
+    The `agentengine` sublauncher serves the query API at
+    `POST <path_prefix>/reasoning_engine` and
+    `POST <path_prefix>/stream_reasoning_engine`. It takes the following flags
+    after the `agentengine` keyword, for example when you run the binary
+    locally with `./agent web -port 8080 agentengine -sse-write-timeout 5m`:
+
+    | Flag | Description | Default |
+    |------|-------------|---------|
+    | `-path_prefix` | Path prefix of the query API | `/api` |
+    | `-max_payload_size` | Bytes of the request body that are read: a longer body is truncated, not rejected | `10485760` (10 MiB) |
+    | `-sse-write-timeout` | Write timeout for streaming (SSE) responses | `2m` |
+
+    The `web` flags, such as `-host` and `-port`, come before the
+    `agentengine` keyword. For the other ways to build a Go launcher, see
+    [Choose the launcher modes in Go](../../runtime/command-line.md#choose-the-launcher-modes-in-go).
     For a complete example, see
     [examples/agentengine](https://github.com/google/adk-go/tree/v2.5.0/examples/agentengine)
     in the ADK Go repository.
-    
 
 
 ## Deploy the agent {#deploy-agent}
