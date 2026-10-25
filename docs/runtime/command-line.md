@@ -55,6 +55,11 @@ Use the following command to run your agent in the ADK command line interface:
     go run agent.go console   # or explicitly name the console subcommand
     ```
 
+    `full.NewLauncher()` is meant for development. To choose which modes a
+    binary offers, for example to leave the console and the development web
+    UI out of a production build, see
+    [Choose the launcher modes in Go](#choose-the-launcher-modes-in-go).
+
 === "Java"
 
     Create an `AgentCliRunner` class (see [Java Quickstart](../get-started/java.md)) and run:
@@ -104,6 +109,94 @@ responses directly in your terminal.
     [my_agent]: The weather in New York is sunny with a temperature of 25°C.
     [user]: exit
     ```
+
+## Choose the launcher modes in Go
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v0.1.0</span>
+</div>
+
+A Go agent binary offers the modes of the launcher that its `main` function
+builds. ADK Go provides two ready-made launchers, and you can compose your own
+from the same parts.
+
+| Launcher | Modes it offers | Default when no mode is given |
+|----------|-----------------|-------------------------------|
+| `full.NewLauncher()` | `console`, and `web` with the `webui`, `a2a`, `pubsub`, `eventarc` and `api` sublaunchers | `console` |
+| `prod.NewLauncher()` | `web` with the `api` and `a2a` sublaunchers only: no console and no development web UI | `web` |
+
+### Run a production binary
+
+A binary built with `full.NewLauncher()` ships the console and the development
+web UI. For a deployed agent, use `prod.NewLauncher()` from
+`google.golang.org/adk/v2/cmd/launcher/prod` instead:
+
+```go
+--8<-- "examples/go/snippets/runtime/launchers/prod/main.go:prod_launcher"
+```
+
+The `web` mode serves only the sublaunchers that you name on the command line,
+and it does not start without at least one. Pass the web server flags first,
+then the sublauncher keywords. Because `web` is the default mode of
+`prod.NewLauncher()`, the `web` keyword itself is optional:
+
+```shell
+./agent -port 8080 api a2a       # REST API and A2A
+./agent web -port 8080 api       # the same with the web keyword, REST API only
+```
+
+Started with no sublauncher keyword, the binary exits with
+`no active sublaunchers found - please specify them in the command line`.
+Modes that the launcher does not include are rejected, so `./agent console`
+fails with `cannot parse following arguments: [console]`.
+
+### Compose a launcher
+
+To offer a different set of modes, build the launcher from sublaunchers:
+
+- `universal.NewLauncher(sublaunchers...)`, from
+  `google.golang.org/adk/v2/cmd/launcher/universal`, chooses one sublauncher by
+  the first command-line argument, its keyword. When the first argument is not
+  a keyword, or there are no arguments, it runs the **first** sublauncher passed
+  to it.
+- `web.NewLauncher(sublaunchers...)`, from
+  `google.golang.org/adk/v2/cmd/launcher/web`, is the `web` mode. It runs one
+  web server for the web sublaunchers that the command line names: `api`
+  (`web/api`), `a2a` (`web/a2a`), `webui` (`web/webui`), `pubsub`
+  (`web/triggers/pubsub`) and `eventarc` (`web/triggers/eventarc`).
+
+The following launcher serves the REST API by default and keeps the console
+available for local testing:
+
+```go
+--8<-- "examples/go/snippets/runtime/launchers/custom/main.go:custom_launcher"
+```
+
+```shell
+./agent api        # the web mode, with the REST API
+./agent console    # the console
+```
+
+`full.NewLauncher()` and `prod.NewLauncher()` are built the same way:
+`full.NewLauncher()` is
+`universal.NewLauncher(console.NewLauncher(), web.NewLauncher(webui.NewLauncher(), a2a.NewLauncher(), pubsub.NewLauncher(), eventarc.NewLauncher(), api.NewLauncher()))`,
+and `prod.NewLauncher()` is
+`universal.NewLauncher(web.NewLauncher(api.NewLauncher(), a2a.NewLauncher()))`.
+
+### Add a custom mode
+
+A custom mode implements one of two interfaces:
+
+- [`launcher.SubLauncher`](https://pkg.go.dev/google.golang.org/adk/v2/cmd/launcher#SubLauncher),
+  for a mode of `universal.NewLauncher()` such as `console`. It provides
+  `Keyword`, `Parse`, `CommandLineSyntax`, `SimpleDescription` and `Run`.
+- [`web.Sublauncher`](https://pkg.go.dev/google.golang.org/adk/v2/cmd/launcher/web#Sublauncher),
+  for routes on the shared web server, such as `api`. Instead of `Run`, it
+  provides `SetupSubrouters`, which adds its routes to the server's router, and
+  `UserMessage`, which prints where to reach them when the server starts.
+
+Each keyword must be unique within its launcher: `universal.NewLauncher()` and
+`web.NewLauncher()` return an error at startup when two sublaunchers share one.
 
 ## Session options
 
