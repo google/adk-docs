@@ -96,7 +96,7 @@ Tool | Description
 The `E2BPlugin` constructor accepts optional settings such as `template`,
 `envs`, `timeout`, and `lifecycle`. Other supported E2B sandbox creation options
 are forwarded to the E2B SDK. See the
-[configuration reference](https://github.com/e2b-dev/e2b-adk-plugin#configuration)
+[configuration reference](https://github.com/e2b-dev/e2b-adk-plugin/blob/main/packages/e2b-adk-python/README.md#configuration)
 for the full option list.
 
 ## Additional resources
@@ -104,6 +104,6 @@ for the full option list.
 - [Build ADK agents with E2B](https://docs.e2b.dev/agents/google-adk)
 - [E2B documentation](https://docs.e2b.dev/)
 - [e2b-adk on PyPI](https://pypi.org/project/e2b-adk/)
-- [e2b-adk on GitHub](https://github.com/e2b-dev/e2b-adk-plugin)
-- [Data analysis agent example](https://github.com/e2b-dev/e2b-adk-plugin/blob/main/examples/data_analysis.py)
-- [Code generator agent example](https://github.com/e2b-dev/e2b-adk-plugin/blob/main/examples/code_generator.py)
+- [e2b-adk on GitHub](https://github.com/e2b-dev/e2b-adk-plugin/tree/main/packages/e2b-adk-python)
+- [Data analysis agent example](https://github.com/e2b-dev/e2b-adk-plugin/blob/main/packages/e2b-adk-python/examples/data_analysis.py)
+- [Code generator agent example](https://github.com/e2b-dev/e2b-adk-plugin/blob/main/packages/e2b-adk-python/examples/code_generator.py)
