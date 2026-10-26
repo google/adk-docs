@@ -4,15 +4,14 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-Live agents require a model that can hold a bidirectional connection; a standard Gemini
-model will not. For the models ADK supports outside live agents, and for non-Gemini
-providers, see [Models for agents](../agents/models/index.md).
+Live agents run in one of two [voice architectures](architectures/index.md) under `run_live()`:
 
-## Live models
+- **[Speech-to-speech](architectures/speech-to-speech.md)**: A single native audio Live model handles audio input and audio output directly over a bidirectional connection.
+- **[Cascade](architectures/cascade.md)**: Chains speech-to-text, any text LLM, and text-to-speech in sequence.
 
-Live agents run on models that take audio in and produce audio out, end to end, with no
-intermediate text-to-speech stage. That is what gives them human-like speech with natural
-prosody, and it is what a standard Gemini model cannot do over a bidirectional connection.
+## Native audio models { #live-models }
+
+Native audio models take audio in and produce audio out end to end, with no intermediate text-to-speech stage. That gives them natural prosody over a single bidirectional connection.
 
 | Model | AI Studio | Agent Platform |
 |-------|-----------|----------------|
@@ -27,38 +26,10 @@ Gemini 3.1 Flash Live is the newer model and is lower latency, but it is AI Stud
 it drops features that 2.5 has — see [Per-model feature support](#per-model-feature-support)
 before you switch.
 
-## Choosing a backend
-
-Live models are reached through one of two backends. ADK talks to both with the same code;
-you switch with environment variables, so you can develop on one and deploy on the other.
-
-| | AI Studio | Agent Platform |
-|---|---|---|
-| **Full name** | Google AI Studio | Gemini Enterprise Agent Platform |
-| **Best for** | Prototyping, development | Production, enterprise |
-| **Auth** | API key (`GOOGLE_API_KEY`) | Cloud credentials (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`) |
-| **Setup** | API key only | Cloud project setup |
-| **Limits** | [Session duration and concurrency](#platform-limits-and-quotas) | [Session duration and concurrency](#platform-limits-and-quotas) |
-
-Switch with the `GOOGLE_GENAI_USE_ENTERPRISE` environment variable (`FALSE` for AI Studio,
-`TRUE` for Agent Platform); no code changes. See the
-[quickstarts](get-started/streaming-python.md) for setup.
-
-!!! note "Agent Platform: the `global` location is not supported"
-
-    Live models are not available at `GOOGLE_CLOUD_LOCATION=global`. Use a regional
-    endpoint such as `us-central1`, `us-east1`, or `asia-northeast1`, and check it against
-    the endpoint-locations table in
-    [Agent Platform locations](https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations)
-    before deploying.
-
-These models produce audio directly, with natural prosody, and detect the conversation
-language on their own. What you configure on top — voices, transcription, turn detection —
-is described in [Configuration](configuration.md).
-
-One property is fixed at the model level: Live models produce **audio only**. They do not
+These models produce **audio only** and detect the conversation language automatically. They do not
 support the `TEXT` response modality, so to get text alongside speech you use
-[audio transcription](configuration.md#audio-transcription).
+[audio transcription](configuration.md#audio-transcription). Voice selection, transcription, and turn
+detection are covered in [Configuration](configuration.md).
 
 ### Per-model feature support
 
@@ -79,6 +50,42 @@ A few `RunConfig` and tool settings depend on which model you are running:
     including all detected audio activity and video frames, which changes token costs if you
     stream video continuously. See the upstream
     [migration notes](https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-live-preview#migrating-from-gemini-25-flash-live).
+
+## Cascaded models
+
+In a [cascaded architecture](architectures/cascade.md), the reasoning stage accepts any text model in [Models for agents](../agents/models/index.md). For the speech stages, ADK supports the following Gemini speech models:
+
+| Stage | Model |
+|-------|-------|
+| **Speech-to-text (`GeminiSTT`)** | `gemini-3.5-transcribe-live` |
+| **Text-to-speech (`GeminiTTS`)** | `gemini-3.8-flash-lite-tts`, `gemini-3.8-flash-tts` |
+
+`CascadeLive` also includes built-in adapters for [ElevenLabs models](https://elevenlabs.io/docs/overview/models) (`ElevenLabsSTT`, `ElevenLabsTTS`) and supports any other speech provider through [custom transforms](architectures/cascade.md#custom-speech-transforms).
+
+## Choosing a backend
+
+Gemini models are reached through one of two backends. ADK talks to both with the same code;
+you switch with environment variables, so you can develop on one and deploy on the other.
+
+| | AI Studio | Agent Platform |
+|---|---|---|
+| **Full name** | Google AI Studio | Gemini Enterprise Agent Platform |
+| **Best for** | Prototyping, development | Production, enterprise |
+| **Auth** | API key (`GOOGLE_API_KEY`) | Cloud credentials (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`) |
+| **Setup** | API key only | Cloud project setup |
+| **Limits** | [Session duration and concurrency](#platform-limits-and-quotas) | [Session duration and concurrency](#platform-limits-and-quotas) |
+
+Switch with the `GOOGLE_GENAI_USE_ENTERPRISE` environment variable (`FALSE` for AI Studio,
+`TRUE` for Agent Platform); no code changes. See the
+[quickstarts](get-started/streaming-python.md) for setup.
+
+!!! note "Agent Platform: the `global` location is not supported for Live API models"
+
+    Live API models are not available at `GOOGLE_CLOUD_LOCATION=global`. Use a regional
+    endpoint such as `us-central1`, `us-east1`, or `asia-northeast1`, and check it against
+    the endpoint-locations table in
+    [Agent Platform locations](https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations)
+    before deploying.
 
 ## Platform limits and quotas
 
