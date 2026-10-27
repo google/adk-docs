@@ -276,6 +276,7 @@ plugins:
         - mcp/*.md
         - a2a/*.md
         - live/*.md
+        - live/architectures/*.md
         - grounding/*.md
         Reference:
         - release-notes.md
@@ -310,6 +311,7 @@ nav:
       - agents/index.md
       - Simple agents: agents/llm-agents.md
       - Managed agents: agents/managed-agents.md
+      - Service registration: agents/service-registration.md
     - Graph Workflows:
       - graphs/index.md
       - Graph routes: graphs/routes.md
@@ -439,9 +441,10 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
-      # Revamp IA also plans Building/Prompting and Production/Observability,
-      # plus an Architectures section once cascade lands. Left unfilled here
-      # rather than shipping stub pages.
+      - Architectures:
+        - Choose an architecture: live/architectures/index.md
+        - Speech-to-speech: live/architectures/speech-to-speech.md
+        - Cascade: live/architectures/cascade.md
       - Building:
         - Workflows: live/workflows.md
         - Tools: live/tools.md
