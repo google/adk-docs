@@ -8,7 +8,7 @@
 These instructions explain how to test an ADK agent deployed to the
 [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
-the deployment of your agent to the Agent Runtime runtime environment using one
+the deployment of your agent to the Agent Runtime environment using one
 of the [available methods](/deploy/agent-runtime/). This guide shows you
 how to view, interact, and test your deployed agent through the Google Cloud
 Console, and interact with the agent using REST API calls or the Agent Platform SDK
