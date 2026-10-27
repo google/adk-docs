@@ -424,7 +424,8 @@ run_config = RunConfig(
 Both behaviors are probabilistic and make responses less predictable, so leave them off for
 formal or high-precision contexts and while debugging.
 
-Both settings are model-dependent: Gemini 2.5 Flash Live supports them, Gemini 3.1 Flash
-Live does not, and leaving them set is the most common failure when moving to 3.1. See
+Both settings are model-dependent: Gemini 2.5 Flash Live supports them, but the Gemini 3.1
+Flash Live and Gemini 3.8 Live models do not. ADK doesn't send these settings to Gemini 3.x
+Live models, so leaving them set has no effect. See
 [Per-model feature support](models.md#per-model-feature-support).
 
