@@ -209,6 +209,11 @@ For `region`, you can find a list of the supported regions on the
     Names must match `[a-zA-Z_][a-zA-Z0-9_]*` and be unique across `--env`
     flags. Values can be empty and can contain commas or additional `=`
     characters. Quote values as needed for your shell.
+    Variables are sent in flag order, after any defaults they do not override.
+    For a value such as `'$(BASE_URL)/api'`, define `BASE_URL` in an earlier
+    `--env` flag so the runtime can expand the reference.
+    Use `'$$(NAME)'` to escape a reference. References to undefined variables
+    remain unchanged.
 
     By default, Go deployments include these variables. A custom `--env`
     value overrides a default with the same name:
