@@ -73,7 +73,7 @@ async def setup_session_and_runner():
     runner = Runner(agent=file_processor_agent, app_name=APP_NAME, session_service=session_service)
     return session, runner
 
-# --8<-- [start: call_reimbursement_tool]
+# --8<-- [start:call_reimbursement_tool]
 
 # Agent Interaction
 async def call_agent_async(query):
