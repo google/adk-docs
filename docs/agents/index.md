@@ -20,10 +20,10 @@ to combine and orchestrate multiple agents and code execution tasks.
 Building an agent with just a model, instructions, and tools is a great place
 to start for most developers. As your agent grows in capability and complexity,
 you are likely to want to break up the capabilities of your agent application
-in order to better manage its behavior, work within model operating context limits,
-and modularize your code to keep it manageable. ADK agent ***Workflow*** architectures
-allow you to evolve an agent from a monolithic structure to more modular code and
-project structures.
+in order to better manage its behavior, work within model operating context
+limits, and modularize your code to keep it manageable. ADK agent ***Workflow***
+architectures allow you to evolve an agent from a monolithic structure to more
+modular code and project structures.
 
 ## Grow from single agent to workflows
 
@@ -38,8 +38,8 @@ project, or as you discover limitations of a single-agent approach, such as:
   does not reliably complete all instructions, or perform them with the required
   level of quality or speed.
 * **Context limitations:** You may discover that the amount of data required to
-  perform an agent task exceeds the context window limitations of the AI model you
-  are using.
+  perform an agent task exceeds the context window limitations of the AI model
+  you are using.
 * **Agent code modularity:** As the complexity and organization of your agent
   code grows, you may want to break up the agent capabilities to make your code
   more manageable or enable re-use of agent code for other agent projects.
@@ -88,6 +88,10 @@ features:
     Hook into specific events during an agent's execution lifecycle to add
     logging, monitoring, or custom side-effects without altering core agent
     logic.
+
+*   [**Service registration**](service-registration.md):
+    Register custom backend services for sessions, artifacts, memory, and
+    Agent2Agent (A2A) task stores.
 
 ## Next Steps
 
