@@ -55,7 +55,7 @@ runs. ADK gives you two ways to do that, plus plain blocking for the fast case:
 | Your situation | Use | How |
 |---|---|---|
 | Tool returns in under a second | **Blocking** (the default) | A normal `return` tool |
-| Long wait with nothing to narrate | **[Non-blocking tool](#non-blocking-tools)** | Set `response_scheduling` on the tool |
+| Long wait with nothing to narrate | **[Non-blocking tool](#non-blocking-tools)** | Set `response_scheduling` or `behavior` on the tool |
 | Long wait worth narrating | **[Streaming tool](#streaming-tools)** | `yield` progress from an async generator |
 
 ## Non-blocking tools
@@ -94,6 +94,20 @@ the result in when it is ready. A runnable example ships as the
 | `WHEN_IDLE` | Waits for a natural pause | Reports and lookups, the usual choice |
 | `INTERRUPT` | Delivers immediately | Alarms, failures, "the transfer failed" |
 | `SILENT` | Enters context, announced only if relevant | Background info the model may use later |
+
+### Setting `behavior` explicitly
+
+You can also mark a tool non-blocking with the `behavior` field. When set, it takes
+precedence over `response_scheduling`:
+
+```python
+report_tool = FunctionTool(export_report)
+report_tool.behavior = types.Behavior.NON_BLOCKING
+```
+
+!!! note "Requires ADK Python 2.10 or higher"
+
+    The `behavior` field was added in adk-python 2.10.
 
 ## Streaming tools
 
