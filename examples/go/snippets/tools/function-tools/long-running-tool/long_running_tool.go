@@ -62,8 +62,9 @@ func createTicketAsync(ctx agent.Context, args CreateTicketArgs) (CreateTicketRe
 func createTicketAgent(ctx context.Context) (agent.Agent, error) {
 	ticketTool, err := functiontool.New(
 		functiontool.Config{
-			Name:        "create_ticket_long_running",
-			Description: "Creates a new support ticket with a specified urgency level.",
+			Name:          "create_ticket_long_running",
+			Description:   "Creates a new support ticket with a specified urgency level.",
+			IsLongRunning: true,
 		},
 		createTicketAsync,
 	)
