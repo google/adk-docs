@@ -4,7 +4,7 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-In a speech-to-speech architecture, a single multimodal model processes incoming audio, executes reasoning and tool calls, and generates spoken audio directly over a persistent [Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api) connection. There is no separate speech-to-text stage on the way in and no separate text-to-speech stage on the way out.
+In a speech-to-speech architecture, a single multimodal model processes incoming audio, executes reasoning and tool calls, and generates spoken audio directly over a persistent [Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api) connection, without converting the speech to text between the input and output..
 
 For a comparison with chained STT-LLM-TTS pipelines, see [Choose a voice architecture](index.md).
 
@@ -43,7 +43,7 @@ Run the agent with `adk web` or pass it to [`Runner.run_live()`](../sessions.md#
 
 ## Capabilities specific to speech-to-speech
 
-While tools, workflows, callbacks, and sessions work the same across both voice architectures, several capabilities apply specifically to native audio models:
+The following capabilities apply specifically to native audio models:
 
 - **Live video and image input**: Stream live camera or screen frames alongside audio so the agent can see what the user is showing. See [Audio and video](../audio-video.md#images-and-video).
 - **Affective dialog and proactive audio**: Supported native audio models can adapt their spoken tone to the user's emotional expression and decide when to speak or stay silent. See [Proactivity and affective dialog](../configuration.md#proactivity-and-affective-dialog).
