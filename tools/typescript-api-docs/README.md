@@ -18,8 +18,7 @@ and is the right thing when you are changing the script itself -- see
 `node` 18 or newer, `npm`, and `git`. The script redirects `npm_config_cache`
 into its own temporary workspace, so it leaves no global installs behind and
 does not touch `~/.npm` or any adk-js clone you already have. It does not
-install node for you, and it is not meant to: a build that provisions its own
-toolchain is a build nobody can reproduce.
+install node for you, and it is not meant to.
 
 ## Which version is "current"
 
