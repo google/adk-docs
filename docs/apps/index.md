@@ -155,7 +155,6 @@ You can use the ***Runner*** class to run your agent workflow using the
 === "TypeScript"
 
     ```typescript title="main.ts"
-    import 'dotenv/config'; // load API keys and settings
     import {InMemoryRunner, isFinalResponse, stringifyContent} from '@google/adk';
     import {app} from './agent.js'; // import code from agent.ts
 
