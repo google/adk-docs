@@ -161,4 +161,4 @@ public class LongRunningFunctionExample {
             });
   }
 }
-// --8<-- [start:full_code]
+// --8<-- [end:full_code]

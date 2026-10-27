@@ -303,7 +303,7 @@ You can set the logging level for your ADK agent using standard logging controls
     If using the Go launcher, you can also enable GCP export via the CLI flag:
 
     ```bash
-    go run main.go web -otel_to_cloud
+    go run main.go web -otel_to_cloud api
     ```
 
 === "Kotlin"

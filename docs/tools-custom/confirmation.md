@@ -408,17 +408,17 @@ requirements:
 
     !!! note "Note: Confirmation with Resume feature"
 
-    If your ADK agent workflow is configured with the
-    [Resume](/runtime/resume/) feature, you also must include
-    the Invocation ID (`invocation_id`) parameter with the confirmation
-    response. The Invocation ID you provide must be the same invocation
-    that generated the confirmation request, otherwise the system
-    starts a new invocation with the confirmation response. If your
-    agent uses the Resume feature, consider including the Invocation ID
-    as a parameter with your confirmation request, so it can be
-    included with the response. For more details on using the Resume
-    feature, see
-    [Resume stopped agents](/runtime/resume/).
+        If your ADK agent workflow is configured with the
+        [Resume](/runtime/resume/) feature, you also must include
+        the Invocation ID (`invocation_id`) parameter with the confirmation
+        response. The Invocation ID you provide must be the same invocation
+        that generated the confirmation request, otherwise the system
+        starts a new invocation with the confirmation response. If your
+        agent uses the Resume feature, consider including the Invocation ID
+        as a parameter with your confirmation request, so it can be
+        included with the response. For more details on using the Resume
+        feature, see
+        [Resume stopped agents](/runtime/resume/).
 
 ## Known limitations {#known-limitations}
 
