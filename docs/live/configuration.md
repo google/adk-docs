@@ -13,7 +13,9 @@ different configurations.
 
 `RunConfig` is not live-specific; [Runtime configuration](../runtime/runconfig.md) documents
 the full class and the fields that apply to `run_async()`. What follows is the subset that
-matters under `run_live()`, plus the voice-facing settings that only exist in a live session.
+matters under `run_live()` for native audio models. For agents using the
+[cascaded architecture](architectures/cascade.md#configure-a-cascaded-agent), configure voice and
+turn detection on the speech providers instead.
 
 ## RunConfig Parameter Quick Reference
 
