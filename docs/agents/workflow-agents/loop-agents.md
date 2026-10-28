@@ -1,7 +1,7 @@
 # Loop template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ***LoopAgent*** class is a [template workflow](/agents/workflow-agents/) agent
@@ -79,6 +79,11 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/LoopAgentExample.java:init"
+        ```
+
+    === "Kotlin"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/agents/workflow-agents/LoopAgentDocImprovAgent.kt:init"
         ```
 
 !!! tip "Global instructions for all agents"
