@@ -317,19 +317,20 @@ the storage backend that best suits your needs:
 === "Go"
 
     ```go
-    import "google.golang.org/adk/v2/session/vertexai"
+    import "google.golang.org/adk/v2/session"
 
+    // 2. VertexAIService
     // Before running, ensure your environment is authenticated:
     // gcloud auth application-default login
+    // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+    // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
 
-    sessionService, err := vertexai.NewSessionService(ctx, vertexai.VertexAIServiceConfig{
-        ProjectID: "your-gcp-project-id",
-        Location:  "us-central1",
-        // The numeric reasoning engine ID.
-        ReasoningEngine: "1234567890",
-    })
+    modelName := "gemini-flash-latest" // Replace with your desired model
+    vertexService, err := session.VertexAIService(ctx, modelName)
     if err != nil {
-        log.Fatal(err)
+      log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+    } else {
+      fmt.Println("Successfully initialized VertexAIService.")
     }
     ```
 
@@ -454,8 +455,8 @@ For more information on connecting to Google Cloud from ADK agents, see
 
 #### Concurrency and locking
 
-In Python, the `DatabaseSessionService` ensures data integrity during concurrent
-operations through a two-tiered locking architecture:
+The `DatabaseSessionService` ensures data integrity during concurrent operations
+through a two-tiered locking architecture:
 
 * **In-Process locking:** The service uses an internal, in-process lock to
   serialize `append_event` calls for the same session. This prevents race
@@ -468,10 +469,10 @@ operations through a two-tiered locking architecture:
 
 !!! warning "Async driver requirement"
 
-    In Python, `DatabaseSessionService` requires an async database driver.
-    When using SQLite, you must use `sqlite+aiosqlite` instead of `sqlite` in
-    your connection string. For other databases (PostgreSQL, MySQL), ensure
-    you're using an async-compatible driver, such as `asyncpg` for PostgreSQL,
+    `DatabaseSessionService` requires an async database driver. When using
+    SQLite, you must use `sqlite+aiosqlite` instead of `sqlite` in your
+    connection string. For other databases (PostgreSQL, MySQL), ensure you're
+    using an async-compatible driver, such as `asyncpg` for PostgreSQL,
     `aiomysql` for MySQL.
 
 !!! note "Session database schema change in ADK Python v1.22.0"
