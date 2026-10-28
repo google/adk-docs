@@ -27,6 +27,14 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 
 They are packaged in the toolset `BigQueryToolset`.
 
+!!! tip "Location setting"
+
+    To select a BigQuery location, pass a `BigQueryToolConfig(location="US")`
+    from `google.adk.integrations.bigquery.config` as the toolset's
+    `bigquery_tool_config`. Choose a [location](https://cloud.google.com/bigquery/docs/locations)
+    that matches your dataset; leaving it unset lets BigQuery determine
+    the location.
+
 ## Authentication
 
 The `BigQueryToolset` supports several authentication mechanisms through `BigQueryCredentialsConfig`.
