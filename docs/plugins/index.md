@@ -231,7 +231,6 @@ methods, as shown in the following code example:
     	"fmt"
 
     	"google.golang.org/adk/v2/agent"
-    	"google.golang.org/adk/v2/agent/llmagent"
     	"google.golang.org/adk/v2/model"
     	"google.golang.org/adk/v2/plugin"
         "google.golang.org/genai"
@@ -258,7 +257,7 @@ methods, as shown in the following code example:
     /**
      * Count agent runs.
      */
-    func (p *CountInvocationPlugin) BeforeAgentCallback(ctx agent.CallbackContext) (*genai.Content, error) {
+    func (p *CountInvocationPlugin) BeforeAgentCallback(ctx agent.Context) (*genai.Content, error) {
     	p.AgentCount++
     	fmt.Printf("[Plugin] Agent run count: %d\n", p.AgentCount)
     	return nil, nil
@@ -267,7 +266,7 @@ methods, as shown in the following code example:
     /**
      * Count LLM requests.
      */
-    func (p *CountInvocationPlugin) BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+    func (p *CountInvocationPlugin) BeforeModelCallback(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
     	p.LlmRequestCount++
     	fmt.Printf("[Plugin] LLM request count: %d\n", p.LlmRequestCount)
     	return nil, nil
@@ -1012,7 +1011,7 @@ The following code example shows the basic syntax of this callback:
 === "Go"
 
     ```go
-    func (p *MyPlugin) OnModelErrorCallback(ctx agent.CallbackContext, req *model.LLMRequest, err error) (*model.LLMResponse, error) {
+    func (p *MyPlugin) OnModelErrorCallback(ctx agent.Context, req *model.LLMRequest, err error) (*model.LLMResponse, error) {
       // Your implementation here
       return nil, nil
     }
@@ -1218,6 +1217,27 @@ In Python, ADK notifies your Plugin of two more lifecycle events:
     Plugin owns, such as an HTTP client or a metrics exporter. Each `close()`
     call is bounded by the runner's `plugin_close_timeout`, five seconds by
     default.
+
+In Go, set `CloseFunc` in `plugin.Config` to release resources the Plugin
+owns, such as a buffered exporter that must flush before the process exits.
+The `Runner` doesn't call it for you: call the Plugin's `Close` method when
+your application shuts down. ADK Go doesn't enforce
+`runner.PluginConfig.CloseTimeout`, so bound any slow cleanup inside
+`CloseFunc` itself.
+
+```go
+p, err := plugin.New(plugin.Config{
+	Name: "my_plugin",
+	CloseFunc: func() error {
+		// Flush buffers and release clients here.
+		return nil
+	},
+})
+if err != nil {
+	log.Fatal(err)
+}
+defer p.Close()
+```
 
 ## Next steps
 
