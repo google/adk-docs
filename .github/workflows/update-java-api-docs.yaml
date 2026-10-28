@@ -20,7 +20,7 @@
 # tools/java-api-docs/README.md. The short version is that the build compiles
 # adk-java from source and resolves its full Maven dependency set, so the
 # output depends on the toolchain it was built with. One pinned, disposable
-# environment makes it reproducible; a maintainer's laptop does not.
+# environment makes it reproducible.
 #
 # Two triggers, doing different jobs:
 #   workflow_dispatch - the real thing. Builds and opens a pull request.
