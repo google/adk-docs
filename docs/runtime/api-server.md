@@ -393,10 +393,13 @@ Sessions store the state and event history for a specific user's interaction wit
 
 #### Update a session
 
-Updates an existing session.
+!!! note "Not available in Go"
 
-ADK Go serves this endpoint in v2.4.0 and higher, and its `stateDelta` can only
-change session-scoped keys.
+    The `PATCH` session update endpoint is not implemented in the Go ADK REST
+    API server. To modify session state in Go, pass a `stateDelta` field in
+    your `/run` or `/run_sse` request body instead.
+
+Updates an existing session.
 
 *   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
