@@ -92,10 +92,11 @@ identifiers, or `run_live()` raises `ValueError: Session not found`.
 
 ## LiveRequestQueue
 
-`LiveRequestQueue` is your channel for sending messages to the agent. Every message is a
+[`LiveRequestQueue`](../api-reference/python/google-adk.html#google.adk.agents.LiveRequestQueue)
+is your channel for sending messages to the agent. Every message is a
 `LiveRequest`, a single container for the different kinds of input:
 
-```python title='Reference: <a href="../api-reference/python/google-adk.html#google.adk.agents.LiveRequestQueue">LiveRequestQueue</a>'
+```python title='Reference: LiveRequestQueue'
 class LiveRequest(BaseModel):
     content: Optional[Content] = None            # Text and structured data
     blob: Optional[Blob] = None                  # Audio/video bytes
@@ -152,12 +153,13 @@ thread; to feed it from another thread, use `loop.call_soon_threadsafe()`.
 
 ## The run_live() loop
 
-`run_live()` is an async generator. It yields `Event` objects the moment they are generated,
+[`run_live()`](../api-reference/python/google-adk.html#google.adk.runners.Runner.run_live) is an async
+generator. It yields `Event` objects the moment they are generated,
 with no buffering or polling, while you send new input concurrently through the queue. That
 concurrency is what makes interruption work: the agent can be speaking while the user starts
 talking over it.
 
-```python title='Reference: <a href="../api-reference/python/google-adk.html#google.adk.runners.Runner.run_live">Runner.run_live()</a>'
+```python title='Reference: Runner.run_live()'
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
