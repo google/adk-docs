@@ -210,6 +210,10 @@ When a trigger endpoint receives an event, it:
     go run event_processing_agent.go web api pubsub
     ```
 
+    For the Go server, use
+    `http://localhost:8080/api/apps/event_processor/trigger/pubsub` as the URL
+    in the following request.
+
 **2. Send a test event:**
 
 ```bash
@@ -383,7 +387,16 @@ during bursts of events.
 
     | Setting | Default | Flag |
     | :------ | :------ | :------------------- |
-    | Max concurrent invocations | 10 | `--trigger_max_concurrent_runs` |
+    | Max concurrent invocations | 100 | `--trigger_max_concurrent_runs` |
+
+    !!! note "Pub/Sub trigger concurrency in ADK Go"
+
+        ADK Go v2.3.0 through v2.5.0 don't apply
+        `--trigger_max_concurrent_runs` to Pub/Sub triggers, so Pub/Sub events
+        run without a concurrency limit. Eventarc triggers apply the limit.
+        ADK Go v2.6.0 and higher apply it to Pub/Sub triggers too. On Cloud
+        Run, the service's `--concurrency` and `--max-instances` settings bound
+        Pub/Sub load in the earlier releases.
 
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
@@ -400,7 +413,7 @@ semaphore.
 === "Go"
 
     ```bash
-    go run event_processing_agent.go web api pubsub --trigger_max_concurrent_runs=5
+    go run event_processing_agent.go web api eventarc --trigger_max_concurrent_runs=5
     ```
 
 ### Automatic retry with backoff
@@ -423,7 +436,7 @@ request is retried with exponential backoff and jitter.
     | :------ | :------ | :------------------- |
     | Max retry attempts | 3 | `--trigger_max_retries` |
     | Base backoff delay | 1.0s | `--trigger_base_delay` |
-    | Max backoff delay | 30.0s | `--trigger_max_delay` |
+    | Max backoff delay | 10.0s | `--trigger_max_delay` |
 
 If all retries are exhausted, the endpoint returns HTTP 500, signaling
 Pub/Sub or Eventarc to retry delivery at a higher level.
@@ -510,17 +523,26 @@ deploying ambient agents with trigger endpoints.
 
 === "Go"
 
-    Deploy your agent to Cloud Run with triggers enabled using the corresponding trigger flag (all the settings are prefixed with trigger type)
+    Deploy your agent to Cloud Run with the `adkgo` CLI. Enable each trigger
+    with its own flag. Trigger settings take the trigger type as a prefix, for
+    example `--eventarc_max_concurrent_runs`. Pass your agent's `main` Go file
+    with `-e`:
 
     ```bash
-    adk deploy cloud_run \
-      --project=$GOOGLE_CLOUD_PROJECT \
-      --region=$GOOGLE_CLOUD_LOCATION \
+    ./adkgo deploy cloudrun \
+      -p $GOOGLE_CLOUD_PROJECT \
+      -r $GOOGLE_CLOUD_LOCATION \
+      -s $SERVICE_NAME \
+      -e ./main.go \
       --pubsub \
-      --pubsub_max_concurrent_runs=5 \
       --eventarc \
       --eventarc_max_concurrent_runs=5
     ```
+
+    ADK Go serves trigger endpoints under the `/api` path prefix, so point
+    push subscriptions and Eventarc triggers at
+    `/api/apps/{app_name}/trigger/pubsub` and
+    `/api/apps/{app_name}/trigger/eventarc`.
 
 After deployment, connect the appropriate GCP infrastructure to your agent's
 trigger endpoint:
