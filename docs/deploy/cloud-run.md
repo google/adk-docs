@@ -490,6 +490,9 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--a2a_agent_url`: A2A agent card URL as advertised in the public agent card. This flag is only valid when used with the --a2a flag.
     * `--api`: If included, deploys the ADK API server. Enabled by default.
     * `--webui`: If included, deploys the ADK dev UI alongside the agent API server. Enabled by default.
+    * `--debug_api`: If included, enables the debug endpoints of the API server, which the dev UI needs for its Traces and agent structure panels. The debug endpoints expose tool names, arguments, and responses, which can include user data, so don't enable them on publicly accessible services. Requires `--api`. Disabled by default.
+    * `--pubsub`: If included, enables the Pub/Sub [trigger endpoint](/runtime/ambient-agents/). Disabled by default.
+    * `--eventarc`: If included, enables the Eventarc [trigger endpoint](/runtime/ambient-agents/). Disabled by default.
     * `--temp_dir`: Temp directory for build artifacts. Defaults to os.TempDir().
     * `--help`: Show the help message and exit.
 
