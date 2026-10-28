@@ -11,7 +11,7 @@ catalog_tags: ["data", "mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-The [`adk-perseus-context`](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
+The [`adk-perseus-context`](https://pypi.org/project/adk-perseus-context/)
 integration injects a deterministically compiled context into your ADK agent's
 system instruction. It is powered by Perseus, an open-source context compiler:
 Perseus resolves directives like `@file`, `@search`, and `@memory` into one
@@ -159,6 +159,5 @@ agent = Agent(
 
 ## Resources
 
-- [adk-perseus-context on GitHub](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
 - [adk-perseus-context on PyPI](https://pypi.org/project/adk-perseus-context/)
 - [Perseus Vault Memory integration](/integrations/perseus-vault/)

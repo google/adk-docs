@@ -166,6 +166,27 @@ async for event in runner.run_live(...):
 
 Without handling `interrupted`, already-buffered audio keeps playing over the user.
 
+### Interaction status
+
+Some models send `turn_complete` more than once per request. For those models,
+`event.interaction_status` (`interactionStatus` over `/run_live`) is `IN_PROGRESS` until the
+model finishes, then `IDLE`. It's `None` for other models, so fall back to `turn_complete`:
+
+```python
+from google.genai import types
+
+async for event in runner.run_live(...):
+    if event.turn_complete and event.interaction_status in (
+        None,
+        types.InteractionStatus.IDLE,
+    ):
+        enable_microphone()     # the model has finished the request
+```
+
+!!! note "Requires ADK Python 2.8 or higher"
+
+    The `interaction_status` field was added in adk-python 2.8.
+
 ## Handling errors
 
 Errors surface on `event.error_code` and `event.error_message`. The one decision to make is
