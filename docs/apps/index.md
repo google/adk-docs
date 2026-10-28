@@ -1,7 +1,7 @@
 # App workflow management class
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v1.4.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The ***App*** class is a top-level container for an entire Agent Development Kit
@@ -75,6 +75,26 @@ sample code:
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript title="agent.ts"
+    import {App, LlmAgent} from '@google/adk';
+
+    export const rootAgent = new LlmAgent({
+      model: 'gemini-flash-latest',
+      name: 'greeter_agent',
+      description: 'An agent that provides a friendly greeting.',
+      instruction: 'Reply with Hello, World!',
+    });
+
+    export const app = new App({
+      name: 'agents',
+      rootAgent: rootAgent,
+      // Optionally include App-level features:
+      // plugins, resumabilityConfig
+    });
+    ```
+
 === "Java"
 
     ```java title="AgentConfiguration.java"
@@ -132,6 +152,33 @@ You can use the ***Runner*** class to run your agent workflow using the
 
     ```
 
+=== "TypeScript"
+
+    ```typescript title="main.ts"
+    import {InMemoryRunner, isFinalResponse, stringifyContent} from '@google/adk';
+    import {app} from './agent.js'; // import code from agent.ts
+
+    // Set a Runner using the imported application object
+    const runner = new InMemoryRunner({app});
+
+    async function main() {
+      try {
+        for await (const event of runner.runEphemeral({
+          userId: 'user',
+          newMessage: {role: 'user', parts: [{text: 'Hello there!'}]},
+        })) {
+          if (isFinalResponse(event) && event.content) {
+            console.log(`Response: ${stringifyContent(event)}`);
+          }
+        }
+      } catch (e) {
+        console.error(`An error occurred during agent execution: ${e}`);
+      }
+    }
+
+    main();
+    ```
+
 === "Java"
 
     ```java title="AppMain.java"
@@ -168,6 +215,14 @@ You can use the ***Runner*** class to run your agent workflow using the
 
     ```console
     python3 main.py
+    ```
+
+=== "TypeScript"
+
+    Run your App agent with the `main.ts` code using the following command:
+
+    ```console
+    npx tsx main.ts
     ```
 
 === "Java"
