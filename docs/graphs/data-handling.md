@@ -429,11 +429,6 @@ accepted and produced by any agent node.
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:input-output-schema"
     ```
 
-    Function and dynamic nodes do not infer a schema from their type
-    parameters. To validate their input against a JSON schema, use the
-    `WithSchema` variants of their constructors, such as
-    `workflow.NewFunctionNodeWithSchema`.
-
     **Prebuilt workflow agents**: set `InputSchema` and `OutputSchema` on
     `llmagent.Config`. `OutputSchema` forces the model to reply with a JSON
     object matching the schema (the agent cannot use tools when `OutputSchema`

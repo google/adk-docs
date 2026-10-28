@@ -20,13 +20,12 @@
 // NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
 // available in ADK Go v2.0.0 and higher.
 //
-// This file contains six snippet regions used in docs/graphs/routes.md:
+// This file contains five snippet regions used in docs/graphs/routes.md:
 //
 //	function-node       – workflow.NewFunctionNode as a graph node
 //	sequential-nodes    – sequential route using workflow.Chain
 //	parallel-fan-out    – fan-out/join using workflow.NewJoinNode + EdgeBuilder
 //	nested-workflows    – inner workflowagent wrapped as workflow.NewAgentNode
-//	workflow-node       – inner graph nested with workflow.NewWorkflowNode
 //	loop-escalate       – back-edge loop using workflow.EdgeBuilder.AddRoute
 package main
 
@@ -264,49 +263,6 @@ func newNestedWorkflows() (agent.Agent, error) {
 
 // --8<-- [end:nested-workflows]
 
-// newWorkflowNode nests a graph directly with workflow.NewWorkflowNode,
-// without wrapping it in a workflowagent.
-func newWorkflowNode() (agent.Agent, error) {
-	innerStepA := workflow.NewFunctionNode("inner_step_a",
-		func(_ agent.Context, input string) (string, error) {
-			return "[A] " + input, nil
-		},
-		workflow.NodeConfig{},
-	)
-	innerStepB := workflow.NewFunctionNode("inner_step_b",
-		func(_ agent.Context, input string) (string, error) {
-			return "[B] " + input, nil
-		},
-		workflow.NodeConfig{},
-	)
-	outerStepNode := workflow.NewFunctionNode("outer_step",
-		func(_ agent.Context, input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		},
-		workflow.NodeConfig{},
-	)
-	finalNode := workflow.NewFunctionNode("final_node",
-		func(_ agent.Context, result string) (string, error) {
-			return "Final: " + result, nil
-		},
-		workflow.NodeConfig{},
-	)
-
-	// --8<-- [start:workflow-node]
-	innerNode, err := workflow.NewWorkflowNode("inner_workflow",
-		workflow.Chain(workflow.Start, innerStepA, innerStepB))
-	if err != nil {
-		return nil, err
-	}
-	outerEdges := workflow.Chain(workflow.Start, outerStepNode, innerNode, finalNode)
-	// --8<-- [end:workflow-node]
-
-	return workflowagent.New(workflowagent.Config{
-		Name:  "parent_workflow_node",
-		Edges: outerEdges,
-	})
-}
-
 // --8<-- [start:loop-escalate]
 // draft carries the working document through the refinement loop.
 type draft struct {
@@ -434,12 +390,6 @@ func main() {
 		log.Fatalf("newNestedWorkflows: %v", err)
 	}
 	log.Printf("created %s", nestedAgent.Name())
-
-	workflowNodeAgent, err := newWorkflowNode()
-	if err != nil {
-		log.Fatalf("newWorkflowNode: %v", err)
-	}
-	log.Printf("created %s", workflowNodeAgent.Name())
 
 	loopAgent, err := newLoopEscalate()
 	if err != nil {

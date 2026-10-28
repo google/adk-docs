@@ -532,10 +532,6 @@ Dynamic workflows in ADK can support parallel execution.
     --8<-- "examples/go/snippets/graphs/dynamic/main.go:parallel-route"
     ```
 
-    To retry failed items, set `RetryConfig` in the `NodeConfig` of the
-    `ParallelWorker`, not the wrapped node. The `NewParallelWorker` function
-    returns an error if the wrapped node has its own `RetryConfig`.
-
     !!! tip "Tip: Resuming parallel nodes"
 
         The workflow framework ensures that if a dynamic workflow is resumed,
