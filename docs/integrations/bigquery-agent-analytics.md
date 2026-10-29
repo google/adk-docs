@@ -1326,7 +1326,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `RetryConfig` | `agentanalytics.RetryConfig` | `MaxRetries: 3`, `InitialDelay: 100ms`, `MaxDelay: 10s`, `Multiplier: 2.0` | Tune exponential backoff for retryable Storage Write API append errors |
     | `DisableSessionMetadata` | `bool` | `false` | Omit `attributes.session_metadata` (`session_id`, `app_name`, `user_id`, `state`) |
     | `CaptureFullMessageContent` | `bool` | `false` | Disable length truncation on text payloads (`MaxContentLen` is ignored; sensitive-key redaction still runs) |
-    | `DisableSensitiveKeyRedaction` | `bool` | `false` | Opt out of automatic sensitive-key, `temp:`, URI, header, and credential-pattern redaction |
+    | `DisableSensitiveKeyRedaction` | `bool` | `false` | Opt out of automatic sensitive-key, `temp:`-value, URI, header, and credential-pattern redaction. This does not retain top-level lowercase `temp:` entries in `state_delta`: they are still removed, and temp-only `STATE_DELTA` rows are still suppressed |
     | `ContentFormatter` | `agentanalytics.ContentFormatter` | `nil` | Custom `func(payload any, eventType string) (any, error)` applied before serialization |
     | `DebugContentFormatterErrors` | `bool` | `false` | Include error-shape metadata (such as byte length) in local warning logs when `ContentFormatter` fails, without logging raw error text |
     | `EventAllowlist` | `[]string` | `nil` | Log only the listed event types (supports `"EVENT"` as an alias for session-event rows) |
@@ -1353,14 +1353,15 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     In Go, `ContentFormatter` receives the raw typed content payload: a string
     for a static `AGENT_STARTING` instruction, `*genai.Content` for
     `USER_MESSAGE_RECEIVED`, `*model.LLMRequest` for `LLM_REQUEST`,
-    `*model.LLMResponse` for `LLM_RESPONSE`, and maps for tool payloads and
-    other content-bearing events. It does not transform attributes. In
-    particular, `STATE_DELTA` stores its payload in `attributes.state_delta` and
-    does not invoke `ContentFormatter`. Clone any pointer, slice, or map you
-    modify (including `Part.Text`, `Part.ExecutableCode.Code`,
-    `Part.CodeExecutionResult.Output`, `Part.FunctionCall.Args`, and
-    `Part.FunctionResponse.Response` inside `*genai.Content`) and never mutate
-    the live payload.
+    `*model.LLMResponse` for `LLM_RESPONSE`, and maps for tool and other
+    map-shaped events. `NODE_OUTPUT` and `A2A_INTERACTION` pass through their
+    original output/response values, which can also be slices or scalars. It
+    does not transform attributes. In particular, `STATE_DELTA` stores its
+    payload in `attributes.state_delta` and does not invoke `ContentFormatter`.
+    Clone any pointer, slice, or map you modify (including `Part.Text`,
+    `Part.ExecutableCode.Code`, `Part.CodeExecutionResult.Output`,
+    `Part.FunctionCall.Args`, and `Part.FunctionResponse.Response` inside
+    `*genai.Content`) and never mutate the live payload.
 
     These helpers clone the values they edit and stop after 50 nesting levels.
     Excessively nested or cyclic payloads return an error, so the plugin records
@@ -2564,7 +2565,7 @@ also populate `content_parts` for `LLM_RESPONSE` events in addition to
       "storage_mode": "GCS_REFERENCE",
       "text": "AAAA... [OFFLOADED]",
       "object_ref": {
-        "uri": "gs://sample-bucket-name/2025-12-10/e-f9545d6d/ae5235e6_p1.txt",
+        "uri": "gs://sample-bucket-name/2025-12-10/a2c7f13d3a3f0bbb8793692f76a6012a/3916f5762bcd4d42_ca5e3c9d99e24e46b614f2f44f93bf6e_c0_p1.txt",
         "authorizer": "us.bqml_connection",
         "details": {"gcs_metadata": {"content_type": "text/plain"}}
       }
@@ -2585,7 +2586,7 @@ also populate `content_parts` for `LLM_RESPONSE` events in addition to
       "storage_mode": "GCS_REFERENCE",
       "text": "[MEDIA OFFLOADED]",
       "object_ref": {
-        "uri": "gs://sample-bucket-name/2025-12-10/e-f9545d6d/ae5235e6_p2.png",
+        "uri": "gs://sample-bucket-name/2025-12-10/a2c7f13d3a3f0bbb8793692f76a6012a/3916f5762bcd4d42_ca5e3c9d99e24e46b614f2f44f93bf6e_c0_p2.png",
         "authorizer": "us.bqml_connection",
         "details": {"gcs_metadata": {"content_type": "image/png"}}
       }
