@@ -529,7 +529,7 @@ LIMIT 20;
         	Input string `json:"input" jsonschema:"Text to reverse."`
         }
 
-        func reverseString(_ tool.Context, args ReverseArgs) (map[string]any, error) {
+        func reverseString(_ agent.Context, args ReverseArgs) (map[string]any, error) {
         	runes := []rune(args.Input)
         	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
         		runes[i], runes[j] = runes[j], runes[i]
@@ -2997,12 +2997,12 @@ safely rewritten fail closed.
     The Go plugin (`google.golang.org/adk/plugin/agentanalytics`, v2.1.0+)
     enables built-in redaction by default (`DisableSensitiveKeyRedaction: false`).
     Key names are normalized by lowercasing and stripping underscores (`_`) and
-    hyphens (`-`), so both `snake_case`, `kebab-case`, and `camelCase` variants
+    hyphens (`-`), so `snake_case`, `kebab-case`, and `camelCase` variants
     (such as `api_key`, `api-key`, `apiKey`, `clientSecret`, `accessToken`,
-    `refreshToken`, `idToken`, `privateKey`, `sessionToken`, `bearerToken`,
-    `authToken`, `secretKey`, `passphrase`, `cookie`, and `setCookie`) are
-    matched and replaced with `"[REDACTED]"` across structured `content` (unless
-    `LogRawContent: true`) and `attributes`.
+    `refreshToken`, `idToken`, `privateKey`, `sessionToken`, `secretAccessKey`,
+    `codeVerifier`, `authCode`, and `passphrase`) are matched and replaced with
+    `"[REDACTED]"` across structured `content` and `attributes` (unless
+    `DisableSensitiveKeyRedaction: true`).
 
     In addition, the Go plugin:
 
@@ -3010,10 +3010,10 @@ safely rewritten fail closed.
       `state_delta`), and redacts whole credential-container envelopes under
       `credential` or `credentials`.
     - Scrubs credential userinfo and sensitive query parameters from external
-      URIs (failing closed to `"[REDACTED_URI]"` when a sensitive query value
-      cannot be safely rewritten), and scrubs `Authorization` headers, `Bearer`
-      and `Basic` tokens, and embedded JSON credential fragments in
-      `error_message` and `uri`.
+      URIs (failing closed to `"[REDACTED_SENSITIVE_URI]"` when a sensitive
+      query value cannot be safely rewritten), and scrubs `Authorization`
+      headers, `Bearer` and `Basic` tokens, and embedded JSON credential
+      fragments in `error_message` and `uri`.
     - Runs custom `ContentFormatter` (`func(content any, eventType string) (any, error)`)
       before built-in redaction. If `ContentFormatter` returns a non-nil error,
       the Go plugin replaces the payload with `"[FORMATTER_FAILED]"` (or omits
@@ -3115,7 +3115,7 @@ written:
     	cfg := agentanalytics.DefaultConfig()
     	cfg.ProjectID = "your-gcp-project-id"
     	cfg.DatasetID = "agent_analytics"
-    	cfg.TableID = "agent_events"
+    	cfg.TableName = "agent_events"
     	cfg.ContentFormatter = redactCustomSecrets
     	return cfg
     }
@@ -3243,7 +3243,7 @@ If you do not need to log authentication-related events, exclude them entirely:
     cfg := agentanalytics.DefaultConfig()
     cfg.ProjectID = "your-gcp-project-id"
     cfg.DatasetID = "agent_analytics"
-    cfg.TableID = "agent_events"
+    cfg.TableName = "agent_events"
     cfg.EventDenylist = []string{
     	"HITL_CREDENTIAL_REQUEST",
     	"HITL_CREDENTIAL_REQUEST_COMPLETED",
