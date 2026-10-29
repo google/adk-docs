@@ -150,9 +150,9 @@ The table is the union of the Python, Go, and Java event sets:
 - **Python** emits all 29 event types in the table.
   `WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY` require
   ADK Python v2.13.0 or later.
-- **Go** emits all 27 event types in the table except the two Python v2.13.0
-  workflow node observation events (`WORKFLOW_NODE_FIRST_OBSERVED` and
-  `WORKFLOW_NODE_OBSERVATION_SUMMARY`).
+- **Go** emits 27 of the 29 event types in the table; it does not emit the two
+  Python v2.13.0 workflow node observation events
+  (`WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY`).
 - **Java** emits all non-workflow rows plus `TOOL_PAUSED`; it does not emit
   `INVOCATION_ERROR`, `AGENT_ERROR`, `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
   `EVENT_COMPACTION`, `NODE_OUTPUT`, `NODE_ERROR`,
@@ -209,9 +209,13 @@ The table is the union of the Python, Go, and Java event sets:
 
 === "Go"
 
-    The Go plugin is published as a separate module in the `adk-go` repository
-    so that core ADK applications do not pull in the BigQuery and Cloud Storage
-    client dependencies unless needed:
+    The Go plugin is published as an independent Go submodule
+    (`plugin/agentanalytics/go.mod`) in the `adk-go` repository so that core ADK
+    applications do not pull in the BigQuery and Cloud Storage client
+    dependencies unless needed. Because the submodule is versioned at `v0.x` /
+    `v1.x` (`module google.golang.org/adk/plugin/agentanalytics`), its import
+    path does not have a `/v2` major-version suffix even though core ADK
+    packages use `google.golang.org/adk/v2/...`:
 
     ```bash
     go get google.golang.org/adk/plugin/agentanalytics
