@@ -156,10 +156,11 @@ The table is the union of the Python, Go, and Java event sets:
 - **Go** emits 28 of the 30 event types in the table; it does not emit the two
   Python v2.13.0 workflow node observation events
   (`WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY`).
-- **Java** emits all rows except `INVOCATION_ERROR`, `AGENT_ERROR`,
-  `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, `NODE_OUTPUT`,
-  `NODE_ERROR`, `WORKFLOW_NODE_FIRST_OBSERVED`, and
-  `WORKFLOW_NODE_OBSERVATION_SUMMARY`, plus `TOOL_PAUSED`.
+- **Java** emits 21 of the 30 event types in the table: all rows except
+  `INVOCATION_ERROR`, `AGENT_ERROR`, `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
+  `EVENT_COMPACTION`, `NODE_OUTPUT`, `NODE_ERROR`,
+  `WORKFLOW_NODE_FIRST_OBSERVED`, and `WORKFLOW_NODE_OBSERVATION_SUMMARY` (of
+  the workflow events, Java emits `TOOL_PAUSED`).
 
 | Event Type | Captured When | Key Payload Fields | View |
 | --- | --- | --- | --- |
@@ -1324,7 +1325,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `DatasetID` | `string` | `"agent_analytics"` | Select the BigQuery dataset |
     | `TableName` | `string` | `"agent_events"` | Select the BigQuery table name |
     | `MaxContentLen` | `int` | `500 * 1024` | Truncate inline text values to this many Unicode code points (runes). `0` uses the default (`500 * 1024` runes); `-1` disables truncation |
-    | `BatchSize` | `int` | `100` | Maximum number of rows per Storage Write API append batch |
+    | `BatchSize` | `int` | `100` | Maximum number of rows dequeued per write batch |
     | `BatchFlushIntv` | `time.Duration` | `time.Second` | Maximum interval before flushing a partial batch |
     | `QueueMaxSize` | `int` | `10000` | Capacity of the in-memory row channel before new events are dropped (`QueueFullDrops`) |
     | `ClientOptions` | `[]option.ClientOption` | `nil` | Custom Google Cloud client options (credentials, endpoints) for BigQuery and Storage Write API clients |
@@ -1343,7 +1344,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `EventAllowlist` | `[]string` | `nil` | Log only the listed event types (supports `"EVENT"` as an alias for session-event rows) |
     | `EventDenylist` | `[]string` | `nil` | Skip the listed event types |
     | `PayloadColumnDenylist` | `[]string` | `nil` | Omit selected payload columns (`"content"`, `"content_parts"`, `"attributes"`, `"latency_ms"`) from the table schema, written rows, and views |
-    | `CustomMetadataAllowlist` | `[]string` | `nil` | Capture matching keys (exact or `"prefix*"`) from `session.Event.CustomMetadata` and final `model.LLMResponse.CustomMetadata` into `attributes.custom_metadata` |
+    | `CustomMetadataAllowlist` | `[]string` | `nil` | Capture matching keys (exact or `"prefix*"`) from `session.Event.CustomMetadata` and final `model.LLMResponse.CustomMetadata` into `attributes.custom_metadata`; also gates `AGENT_STATE_CHECKPOINT` emission (when checkpoint keys such as `"adk_agent_state"` / `"agent_state"` or `"end_of_agent"` / `"adk_end_of_agent"` match) and `CustomMetadata`-carried `"adk_compaction"` |
     | `FinalResponseToolNames` | `[]string` | `nil` | Emit an additional `AGENT_RESPONSE` row with `attributes.source_tool` when a listed tool completes |
     | `DisableFlushOnRunEnd` | `bool` | `false` | Do not wait for the batch queue to flush at the end of each `AfterRun` callback |
     | `DisableSchemaUpgrade` | `bool` | `false` | Disable automatic additive schema upgrades on existing tables |
@@ -1361,14 +1362,13 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `ViewPrefix` | `string` | `"v"` | Prefix for per-event-type view names (`<ViewPrefix>_<event_type>`) |
     | `ExactlyOnceDelivery` | `bool` | `false` | Write through a `COMMITTED` Storage Write stream with explicit batch offsets instead of the default stream |
 
-    In Go, `ContentFormatter` receives the raw typed payload (`*genai.Content`
-    on `USER_MESSAGE_RECEIVED`, `*model.LLMRequest` on `LLM_REQUEST`,
-    `*model.LLMResponse` on `LLM_RESPONSE`, or `map[string]any` / `[]any` on
-    tool and state events), not the final JSON. Return a redacted copy and never
-    mutate the live payload (the sample `maskContent` helper below inspects
-    `Part.Text`; extend it to `Part.FunctionCall.Args` or
-    `Part.FunctionResponse.Response` if your `genai.Content` parts carry
-    structured tool payloads):
+    In Go, `ContentFormatter` receives the raw typed payload (`string` on
+    `AGENT_STARTING`, `*genai.Content` on `USER_MESSAGE_RECEIVED`,
+    `*model.LLMRequest` on `LLM_REQUEST`, `*model.LLMResponse` on
+    `LLM_RESPONSE`, or `map[string]any` / `[]any` on tool and state events),
+    not the final JSON. Clone any pointer, slice, or map you modify (including
+    `Part.Text`, `Part.FunctionCall.Args`, and `Part.FunctionResponse.Response`
+    inside `*genai.Content`) and never mutate the live payload:
 
     ```go title="analytics.go"
     package analytics
@@ -1386,9 +1386,9 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
 
     var dollarPattern = regexp.MustCompile(`\$\d+(?:,\d{3})*(?:\.\d+)?`)
 
-    func maskContent(c *genai.Content) *genai.Content {
+    func maskContent(c *genai.Content, eventType string) (*genai.Content, error) {
     	if c == nil {
-    		return nil
+    		return nil, nil
     	}
     	cloned := *c
     	if len(c.Parts) > 0 {
@@ -1401,10 +1401,36 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     			if partCopy.Text != "" {
     				partCopy.Text = dollarPattern.ReplaceAllString(partCopy.Text, "xxx")
     			}
+    			if partCopy.FunctionCall != nil {
+    				fcCopy := *partCopy.FunctionCall
+    				if fcCopy.Args != nil {
+    					redactedArgs, err := redactDollarAmounts(fcCopy.Args, eventType)
+    					if err != nil {
+    						return nil, err
+    					}
+    					if argsMap, ok := redactedArgs.(map[string]any); ok {
+    						fcCopy.Args = argsMap
+    					}
+    				}
+    				partCopy.FunctionCall = &fcCopy
+    			}
+    			if partCopy.FunctionResponse != nil {
+    				frCopy := *partCopy.FunctionResponse
+    				if frCopy.Response != nil {
+    					redactedResp, err := redactDollarAmounts(frCopy.Response, eventType)
+    					if err != nil {
+    						return nil, err
+    					}
+    					if respMap, ok := redactedResp.(map[string]any); ok {
+    						frCopy.Response = respMap
+    					}
+    				}
+    				partCopy.FunctionResponse = &frCopy
+    			}
     			cloned.Parts[i] = &partCopy
     		}
     	}
-    	return &cloned
+    	return &cloned, nil
     }
 
     func redactDollarAmounts(payload any, eventType string) (any, error) {
@@ -1412,7 +1438,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     	case string:
     		return dollarPattern.ReplaceAllString(v, "xxx"), nil
     	case *genai.Content:
-    		return maskContent(v), nil
+    		return maskContent(v, eventType)
     	case *model.LLMRequest:
     		if v == nil {
     			return nil, nil
@@ -1421,12 +1447,20 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     		if len(v.Contents) > 0 {
     			cloned.Contents = make([]*genai.Content, len(v.Contents))
     			for i, c := range v.Contents {
-    				cloned.Contents[i] = maskContent(c)
+    				masked, err := maskContent(c, eventType)
+    				if err != nil {
+    					return nil, err
+    				}
+    				cloned.Contents[i] = masked
     			}
     		}
     		if v.Config != nil && v.Config.SystemInstruction != nil {
+    			maskedSys, err := maskContent(v.Config.SystemInstruction, eventType)
+    			if err != nil {
+    				return nil, err
+    			}
     			cfgCopy := *v.Config
-    			cfgCopy.SystemInstruction = maskContent(v.Config.SystemInstruction)
+    			cfgCopy.SystemInstruction = maskedSys
     			cloned.Config = &cfgCopy
     		}
     		return &cloned, nil
@@ -1434,8 +1468,12 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     		if v == nil {
     			return nil, nil
     		}
+    		maskedContent, err := maskContent(v.Content, eventType)
+    		if err != nil {
+    			return nil, err
+    		}
     		cloned := *v
-    		cloned.Content = maskContent(v.Content)
+    		cloned.Content = maskedContent
     		return &cloned, nil
     	case map[string]any:
     		cloned := make(map[string]any, len(v))
@@ -2365,10 +2403,12 @@ that carry a workflow `node_info.path`:
   `drain_callback`, and `boundary_basis: "event_observation"`.
 
 At most `max_observation_summaries_per_segment` (default `200`) summary rows are
-emitted per runner segment. When more distinct node paths are observed in a
-single segment, the final summary row includes `truncated_node_count` (and
-`untracked_overflow_event_count` when path tracking saturates), and the omitted
-node paths are counted under the `workflow_observation_capacity` drop reason.
+emitted per runner segment (`WORKFLOW_NODE_FIRST_OBSERVED` rows continue to be
+emitted for overflow paths up to 4,096 distinct node paths per segment). When
+more distinct node paths are observed in a single segment, the final summary row
+includes `truncated_node_count` (and `untracked_overflow_event_count` when path
+tracking saturates), and the omitted node paths are counted under the
+`workflow_observation_capacity` drop reason.
 
 ```json
 {
@@ -3249,12 +3289,12 @@ written:
 
 === "Go"
 
-    In Go the formatter receives the raw typed payload (such as `*genai.Content`,
-    `*model.LLMRequest`, `*model.LLMResponse`, or `map[string]any`), not the
-    final JSON. Return a redacted copy and never mutate the live payload (the
-    sample `redactGenAIContentSecrets` helper below inspects `Part.Text`; extend
-    it to `Part.FunctionCall.Args` or `Part.FunctionResponse.Response` if your
-    `genai.Content` parts carry structured tool payloads):
+    In Go the formatter receives the raw typed payload (such as `string`,
+    `*genai.Content`, `*model.LLMRequest`, `*model.LLMResponse`, or
+    `map[string]any`), not the final JSON. Clone any pointer, slice, or map you
+    modify (including `Part.Text`, `Part.FunctionCall.Args`, and
+    `Part.FunctionResponse.Response` inside `*genai.Content`) and never mutate
+    the live payload:
 
     ```go
     package analytics
@@ -3275,7 +3315,7 @@ written:
     	case string:
     		return ssnPattern.ReplaceAllString(v, "[REDACTED_SSN]"), nil
     	case *genai.Content:
-    		return redactGenAIContentSecrets(v), nil
+    		return redactGenAIContentSecrets(v, eventType)
     	case *model.LLMRequest:
     		if v == nil {
     			return nil, nil
@@ -3284,12 +3324,20 @@ written:
     		if len(v.Contents) > 0 {
     			cloned.Contents = make([]*genai.Content, len(v.Contents))
     			for i, c := range v.Contents {
-    				cloned.Contents[i] = redactGenAIContentSecrets(c)
+    				redactedContent, err := redactGenAIContentSecrets(c, eventType)
+    				if err != nil {
+    					return nil, err
+    				}
+    				cloned.Contents[i] = redactedContent
     			}
     		}
     		if v.Config != nil && v.Config.SystemInstruction != nil {
+    			redactedSys, err := redactGenAIContentSecrets(v.Config.SystemInstruction, eventType)
+    			if err != nil {
+    				return nil, err
+    			}
     			cfgCopy := *v.Config
-    			cfgCopy.SystemInstruction = redactGenAIContentSecrets(v.Config.SystemInstruction)
+    			cfgCopy.SystemInstruction = redactedSys
     			cloned.Config = &cfgCopy
     		}
     		return &cloned, nil
@@ -3297,8 +3345,12 @@ written:
     		if v == nil {
     			return nil, nil
     		}
+    		redactedContent, err := redactGenAIContentSecrets(v.Content, eventType)
+    		if err != nil {
+    			return nil, err
+    		}
     		cloned := *v
-    		cloned.Content = redactGenAIContentSecrets(v.Content)
+    		cloned.Content = redactedContent
     		return &cloned, nil
     	case map[string]any:
     		cloned := make(map[string]any, len(v))
@@ -3329,9 +3381,9 @@ written:
     	}
     }
 
-    func redactGenAIContentSecrets(c *genai.Content) *genai.Content {
+    func redactGenAIContentSecrets(c *genai.Content, eventType string) (*genai.Content, error) {
     	if c == nil {
-    		return nil
+    		return nil, nil
     	}
     	cloned := *c
     	if len(c.Parts) > 0 {
@@ -3344,10 +3396,36 @@ written:
     			if partCopy.Text != "" {
     				partCopy.Text = ssnPattern.ReplaceAllString(partCopy.Text, "[REDACTED_SSN]")
     			}
+    			if partCopy.FunctionCall != nil {
+    				fcCopy := *partCopy.FunctionCall
+    				if fcCopy.Args != nil {
+    					redactedArgs, err := redactCustomSecrets(fcCopy.Args, eventType)
+    					if err != nil {
+    						return nil, err
+    					}
+    					if argsMap, ok := redactedArgs.(map[string]any); ok {
+    						fcCopy.Args = argsMap
+    					}
+    				}
+    				partCopy.FunctionCall = &fcCopy
+    			}
+    			if partCopy.FunctionResponse != nil {
+    				frCopy := *partCopy.FunctionResponse
+    				if frCopy.Response != nil {
+    					redactedResp, err := redactCustomSecrets(frCopy.Response, eventType)
+    					if err != nil {
+    						return nil, err
+    					}
+    					if respMap, ok := redactedResp.(map[string]any); ok {
+    						frCopy.Response = respMap
+    					}
+    				}
+    				partCopy.FunctionResponse = &frCopy
+    			}
     			cloned.Parts[i] = &partCopy
     		}
     	}
-    	return &cloned
+    	return &cloned, nil
     }
 
     func newRedactedConfig() agentanalytics.Config {
@@ -3537,11 +3615,11 @@ call) reconstructs cleanly from BigQuery.
   the Java plugin (v1.7.0+); earlier Java builds created plugin-owned
   OpenTelemetry spans that could surface as duplicates next to framework spans.
 - **`trace_id` inherited from the ambient OTel span when present.** If the
-  surrounding runtime has already started an OTel span, such as Agent Engine's
-  invocation span, the ADK `Runner` invocation span, or any span you opened
-  before the agent runs. The plugin reads its `trace_id` and stamps it on
-  every BigQuery row. BigQuery rows therefore join cleanly to your existing
-  Cloud Trace traces via a shared `trace_id`.
+  surrounding runtime has already started an OTel span—such as Agent Engine's
+  invocation span, the ADK `Runner` invocation span (in Python and Java), or
+  any span you opened before the agent runs—the plugin reads its `trace_id` and
+  stamps it on every BigQuery row. BigQuery rows therefore join cleanly to your
+  existing Cloud Trace traces via a shared `trace_id`.
 - **Fallback when no ambient span is present.** If no ambient OTel span is
   active (e.g. a non-Agent-Engine deployment with no host-side tracer
   configured), Python generates a random per-invocation 32-hex `trace_id`, Go
@@ -3701,7 +3779,7 @@ across loop cleanup and shutdown.
 | `arrow_prep_failed` | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
 | `retry_exhausted` | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
 | `permission_denied` | *(Python v2.13.0+)* Storage Write API returned `PERMISSION_DENIED` (`google.api_core.exceptions.PermissionDenied`). Non-retryable; check that the service account has `bigquery.tables.updateData` (e.g., `roles/bigquery.dataEditor`) on the target table. |
-| `not_found` | *(Python v2.13.0+)* Storage Write API returned `NOT_FOUND` (`google.api_core.exceptions.NotFound`), such as when the target dataset, table, or write stream does not exist. Non-retryable. |
+| `not_found` | *(Python v2.13.0+)* Storage Write API returned `NOT_FOUND` (`google.api_core.exceptions.NotFound`) on the default stream, such as when the target dataset, table, or write stream does not exist (`NOT_FOUND` in `exactly_once_delivery` mode is counted under `offset_conflict`). Non-retryable. |
 | `non_retryable` | Storage Write API returned another non-retryable error (quota, schema rejection, invalid argument). Usually requires operator intervention. |
 | `unexpected_error` | Any other exception caught while preparing or writing the batch. |
 | `shutdown_timeout` | Rows remained queued when a bounded shutdown or close timed out. |
