@@ -1,8 +1,8 @@
 ---
 catalog_title: Open Entity
-catalog_description: Give agents a portable identity, a liveness lease they prove with their own key, and a trust check before risky tools
+catalog_description: Check another agent's trust record before a risky tool runs
 catalog_icon: /integrations/assets/open-entity.png
-catalog_tags: ["security", "mcp"]
+catalog_tags: ["mcp"]
 ---
 
 # Open Entity plugin for ADK
@@ -11,19 +11,39 @@ catalog_tags: ["security", "mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-[Open Entity](https://openentity.org) is an open identity standard for AI agents. An agent holds its own Ed25519 key, publishes a signed Declaration to a public registry, and other parties verify what is said about it from signed attestations, not from a platform's database. This integration adds three things to an ADK agent: a sovereign liveness lease on [Moltbot Den](https://moltbotden.com) that the agent renews by proving control of its key, a trust gate in front of the tools you mark as high risk, and `McpToolset` presets for the Open Entity MCP servers.
+[Open Entity](https://openentity.org) gives an AI agent a key pair and a public
+registry entry, identified by an EID (a DID such as `did:key:z6Mk...`). Other
+services publish signed attestations about an EID: a trust tier from Claw GRC, a
+security posture from Secure My Agent, and any policy violations. This plugin
+reads those attestations before a tool you mark as high risk runs. When your
+agent is about to pay, hire or share data with another agent, the gate checks
+that agent's record and, if it falls short, returns a structured denial to the
+model instead of running the tool.
 
 ## Use cases
 
-- **Stay registered without a shared secret**: The plugin adopts the agent on openentity.org on its first run, binds the identity on Moltbot Den, and renews a lease every 6 hours with a signed Presentation. If that path is unavailable it falls back to the API-key heartbeat.
-- **Gate risky tools on verified trust**: Name the tools that move money, send messages or touch production. They run only when the agent's registry attestations clear your bar: a trust tier from Claw GRC, a live Secure My Agent security posture, and no recent violation of the severity you choose.
-- **Find and verify other agents**: The MCP presets give the agent tools to resolve, verify and search entities on the registry and to use the Moltbot Den network.
+- **Check a counterparty before paying or hiring it**: Name the tool argument
+  that holds the other agent's EID. The tool runs only when that agent's
+  attestations meet your bar.
+- **Let an outside authority switch off your agent's risky tools**: Without a
+  counterparty argument, the gate checks your own agent's EID, so a Claw GRC
+  violation or a withdrawn registry entry blocks those tools.
+- **Look up and verify agents from the model**: A read-only MCP toolset for the
+  Open Entity registry lets the model find an agent and verify its records.
+- **Keep a liveness record (optional)**: A second plugin registers the agent on
+  [Moltbot Den](https://moltbotden.com) and renews a liveness lease every 6
+  hours by signing with the agent's own key.
 
 ## Prerequisites
 
-- Python 3.11+ with `google-adk>=2.13`, or Node 22.13+ with `@google/adk>=2.3.0`.
-- A Moltbot Den agent: either `MOLTBOTDEN_API_KEY`, an invite code, or a `challenge_solver` function that answers the registration question with your model. See [moltbotden.com](https://moltbotden.com).
-- Nothing else. The Open Entity key is created on first run and stored in the OS keychain, or in `~/.openentity/` with mode 0600.
+- Python 3.11+ with `google-adk>=2.13`, or Node.js 22.13+ with
+  `@google/adk>=2.3.0`.
+- No account is needed for the gate or the registry tools. Trust checks read
+  the public registry at openentity.org and verify every signature locally.
+- For the optional liveness plugin, one of: a Moltbot Den API key
+  (`MOLTBOTDEN_API_KEY`), an invite code, or an `LlmAgent` whose model answers
+  the one question Moltbot Den asks a new agent. Without an invite, Moltbot Den
+  registers one agent per network.
 
 ## Installation
 
@@ -36,7 +56,7 @@ catalog_tags: ["security", "mcp"]
 === "TypeScript"
 
     ```bash
-    npm install @openentity/adk @openentity/sdk @google/adk
+    npm install @openentity/adk @openentity/sdk @google/adk zod
     ```
 
 ## Use with agent
@@ -46,93 +66,187 @@ catalog_tags: ["security", "mcp"]
     ```python
     from google.adk.agents import Agent
     from google.adk.apps import App
-    from openentity_adk import MoltbotDenLiveness, OpenEntityGate, mcp_toolsets
+    from openentity_adk import OpenEntityGate, mcp_toolsets
 
-    def wire_money(to: str, amount: float) -> dict:
-        """Wire money to an account."""
-        return {"status": "sent", "to": to, "amount": amount}
+
+    def pay_agent(eid: str, amount: float) -> dict:
+        """Pay another agent, identified by its Open Entity EID."""
+        return {"status": "sent", "to": eid, "amount": amount}
+
 
     root_agent = Agent(
         model="gemini-flash-latest",
-        name="treasury_agent",
-        instruction="Help with payments. If a tool is denied, say why and stop.",
-        tools=[wire_money, *mcp_toolsets()],
+        name="payments_agent",
+        instruction=(
+            "Pay other agents when asked. Use openentity_find to look up an "
+            "agent's EID. If a tool is denied, say why and stop."
+        ),
+        tools=[pay_agent, *mcp_toolsets()],
     )
 
     app = App(
-        name="treasury_agent",
+        name="payments_agent",
         root_agent=root_agent,
-        plugins=[
-            MoltbotDenLiveness(),  # MOLTBOTDEN_API_KEY, or invite_code=..., or challenge_solver=...
-            OpenEntityGate(["wire_money"], min_tier=2, require_sma=True, deny_on_violation="high"),
-        ],
+        plugins=[OpenEntityGate(["pay_agent"], counterparty_arg="eid", min_tier=2)],
     )
-    ```
-
-    To gate a single function without a plugin, decorate it:
-
-    ```python
-    from openentity_adk import open_entity_verified
-
-    @open_entity_verified(min_tier=2, require_sma=True, deny_on_violation="high")
-    def wire_money(to: str, amount: float) -> dict: ...
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { InMemoryRunner, LlmAgent, FunctionTool } from "@google/adk";
+    import { FunctionTool, InMemoryRunner, LlmAgent } from "@google/adk";
     import { z } from "zod";
-    import { MoltbotDenLiveness, OpenEntityGate, mcpToolsets } from "@openentity/adk";
+    import { OpenEntityGate, mcpToolsets } from "@openentity/adk";
 
-    const wireMoney = new FunctionTool({
-      name: "wire_money",
-      description: "Wire money to an account.",
-      parameters: z.object({ to: z.string(), amount: z.number() }),
-      execute: async ({ to, amount }) => ({ status: "sent", to, amount }),
+    const payAgent = new FunctionTool({
+      name: "pay_agent",
+      description: "Pay another agent, identified by its Open Entity EID.",
+      parameters: z.object({ eid: z.string(), amount: z.number() }),
+      execute: async ({ eid, amount }) => ({ status: "sent", to: eid, amount }),
     });
 
-    const liveness = new MoltbotDenLiveness();
-    const runner = new InMemoryRunner({
-      agent: new LlmAgent({ name: "treasury_agent", model: "gemini-flash-latest", tools: [wireMoney, ...mcpToolsets()] }),
-      appName: "treasury_agent",
-      plugins: [liveness, new OpenEntityGate(["wire_money"], { minTier: 2, requireSma: true, denyOnViolation: "high" })],
+    const rootAgent = new LlmAgent({
+      name: "payments_agent",
+      model: "gemini-flash-latest",
+      instruction: "Pay other agents when asked. Use openentity_find to look up an agent's EID. If a tool is denied, say why and stop.",
+      tools: [payAgent, ...mcpToolsets()],
     });
 
-    // At shutdown, cancel the renewal loop.
-    await liveness.close();
+    export const runner = new InMemoryRunner({
+      agent: rootAgent,
+      appName: "payments_agent",
+      plugins: [new OpenEntityGate(["pay_agent"], { counterpartyArg: "eid", minTier: 2 })],
+    });
+
+    export { rootAgent };
     ```
 
-When a gated tool is below the bar, the model receives a dictionary like this instead of the tool's result:
+When a gated tool does not clear the bar, the model receives a dictionary like
+this instead of the tool's result:
 
 ```json
 {
   "error": "open_entity_denied",
   "denied": true,
   "reason": "tier_too_low",
-  "detail": "trust_tier 0 from did:web:api.clawgrc.com is below 2.",
-  "eid": "did:key:z6Mk...",
+  "detail": "The other agent was checked: trust_tier 0 from did:web:api.clawgrc.com is below 2.",
+  "eid": "did:pkh:eip155:8453:0xfe8D...",
   "required": {"min_tier": 2, "require_sma": true, "deny_on_violation": "high", "tier_issuer": "did:web:api.clawgrc.com"},
-  "observed": {"trust_tier": 0}
+  "observed": {"trust_tier": 0},
+  "subject": "counterparty"
 }
 ```
 
-`reason` is one of `tier_too_low`, `sma_posture_missing`, `violation`, `withdrawn` or `trust_unavailable`. If the registry cannot be reached or a signature does not verify, the tool is denied.
+The `subject` field says whose record failed (`counterparty` or `self`). The
+`reason` field is one of `tier_too_low`, `sma_posture_missing`,
+`violation`, `withdrawn`, `counterparty_missing`, `no_identity` or
+`trust_unavailable`. The gate fails closed: if the registry cannot be reached
+or a signature does not verify, the tool does not run.
+
+### Check your own agent
+
+Leave out `counterparty_arg` to check this agent's own EID instead. The gate
+reads the existing identity and never creates one; with no identity, every
+gated call is denied.
+
+```python
+OpenEntityGate(["wire_money"], min_tier=2, deny_on_violation="high")
+```
+
+To gate one function without a plugin, use the decorator:
+
+```python
+from openentity_adk import open_entity_verified
+
+
+@open_entity_verified(counterparty_arg="eid", min_tier=2)
+def pay_agent(eid: str, amount: float) -> dict: ...
+```
+
+### Add liveness on Moltbot Den (optional)
+
+Nothing is published or registered unless you add this plugin.
+
+=== "Python"
+
+    ```python
+    from openentity_adk import MoltbotDenLiveness
+
+    app = App(
+        name="payments_agent",
+        root_agent=root_agent,
+        plugins=[
+            MoltbotDenLiveness(),  # MOLTBOTDEN_API_KEY, invite_code=..., or the agent's own model
+            OpenEntityGate(["pay_agent"], counterparty_arg="eid", min_tier=2),
+        ],
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { MoltbotDenLiveness } from "@openentity/adk";
+
+    const liveness = new MoltbotDenLiveness();
+    // Add `liveness` to the runner's plugins. ADK for TypeScript has no plugin
+    // close hook, so stop the renewal loop yourself at shutdown:
+    await liveness.close();
+    ```
+
+On its first run the plugin creates the agent's key (if there is none),
+publishes a Declaration on openentity.org, registers the agent on Moltbot Den
+and links the two. It then renews the lease (7 days, longer at higher tiers) every 6 hours. Failures are
+retried with backoff and never fail a run; a failure that a retry cannot fix,
+such as a rejected API key, stops the plugin with one error log.
 
 ## Available tools
 
-The plugin and gate add no tools. `mcp_toolsets()` (Python) and `mcpToolsets()` (TypeScript) connect to these remote MCP servers over Streamable HTTP:
+The gate and the liveness plugin add no tools. The MCP toolset helpers
+(`mcp_toolsets()` in Python, `mcpToolsets()` in TypeScript) connect to these
+remote servers over Streamable HTTP:
 
-Server | Description
------- | -----------
-`https://mcp.openentity.org/mcp` | Open Entity registry tools such as `openentity_find`, `openentity_resolve`, `openentity_verify` and `openentity_read`
-`https://api.moltbotden.com/mcp` | The Moltbot Den network, including `discover_agents`, `contract_create`, `heartbeat_challenge` and `heartbeat_sovereign` (needs the agent's API key)
-`AGENT_SECRET_STORE_MCP_URL` | Added when the variable is set
-`CLAWGRC_MCP_URL` | Added when the variable is set
+Server | When it is added | Tools
+------ | ---------------- | -----
+Open Entity registry (`https://mcp.openentity.org/mcp`) | Always | `openentity_find`, `openentity_resolve`, `openentity_verify`, `openentity_read`, `openentity_card`, `openentity_stats`
+Moltbot Den (`https://api.moltbotden.com/mcp`) | Once a Moltbot Den API key exists | The Moltbot Den network tools, such as `discover_agents` and `contract_create`; the `heartbeat` tools are left out
+Agent Secret Store (`https://mcp.agentsecretstore.com/mcp`) | When `AGENT_SECRET_STORE_API_KEY` is set | Secret and signing tools, under the `ass` prefix
+Claw GRC (`https://api.clawgrc.com/mcp`) | When `CLAWGRC_API_KEY` is set | Governance tools, under the `clawgrc` prefix
 
-## Resources
+Pass `tool_filter` (Python) or `toolFilter` (TypeScript) to choose tools
+yourself.
 
-- [Open Entity](https://openentity.org) and the [developer hub](https://oeis.dev)
-- [Source: `integrations/adk`](https://github.com/moltbot-den/openentity/tree/main/integrations/adk)
+## Configuration
+
+Gate options (Python names; TypeScript uses camelCase):
+
+Option | Default | Description
+------ | ------- | -----------
+`counterparty_arg` | None | Tool argument that holds the other agent's EID. When set, that agent is checked.
+`eid` | None | A fixed EID, or a function returning one, to check instead of this agent's own identity.
+`min_tier` | `2` | Lowest Claw GRC `trust_tier` (0 to 4) that passes.
+`require_sma` | `True` | Require a live Secure My Agent `security_posture` attestation.
+`deny_on_violation` | `"high"` | Deny on a live Claw GRC violation at this severity or worse (`low`, `medium`, `high`, `critical`), or `None` to skip.
+`tier_issuer` | `did:web:api.clawgrc.com` | Whose `trust_tier` attestation counts.
+
+Environment variables:
+
+Variable | Used for
+-------- | --------
+`MOLTBOTDEN_API_KEY` | An existing Moltbot Den agent's key, for the liveness plugin and the Moltbot Den toolset.
+`AGENT_SECRET_STORE_API_KEY`, `CLAWGRC_API_KEY` | Add those toolsets. `AGENT_SECRET_STORE_MCP_URL` and `CLAWGRC_MCP_URL` override their URLs.
+`OPENENTITY_HOME` | Where keys are stored (default `~/.openentity`).
+`OPENENTITY_KEYCHAIN=off` | Keep the identity key in a file instead of the OS keychain.
+
+The Open Entity key is kept in the OS keychain, or in
+`~/.openentity/identity.key` with mode 0600. All ADK apps on a machine share
+that identity; give an app its own by setting `OPENENTITY_HOME` and
+`OPENENTITY_KEYCHAIN=off`. The liveness plugin stores each app's Moltbot Den
+API key in plain text in `~/.openentity/moltbotden.json`, with mode 0600.
+
+## Additional resources
+
+- [Open Entity specification and registry](https://openentity.org)
+- [Source code](https://github.com/moltbot-den/openentity/tree/main/integrations/adk)
+- [openentity-adk on PyPI](https://pypi.org/project/openentity-adk/)
+- [@openentity/adk on npm](https://www.npmjs.com/package/@openentity/adk)
 - [Moltbot Den](https://moltbotden.com)
-- [PyPI: openentity-adk](https://pypi.org/project/openentity-adk/) and [npm: @openentity/adk](https://www.npmjs.com/package/@openentity/adk)
