@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-go">Go v2.1.0</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-go">Go</span><span class="lst-java">Java v1.5.0</span><span class="lst-kotlin">Kotlin v0.8.0</span>
 </div>
 
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
@@ -27,7 +27,8 @@ Tracing** for human-in-the-loop interactions, and **Automatic View Creation**
 Support for **ADK 2.0** multi-agent workflows extends tracing to agent
 transfers, state checkpoints, event compaction, and long-running tools in
 **Python** and **Go**. It adds four workflow event types: `AGENT_TRANSFER`,
-`AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and `TOOL_PAUSED`. It also stamps
+`AGENT_STATE_CHECKPOINT` (in Go, emitted when checkpoint keys are enabled in
+`CustomMetadataAllowlist`), `EVENT_COMPACTION`, and `TOOL_PAUSED`. It also stamps
 an `attributes.adk` envelope on every row so you can reconstruct the agent
 execution graph and join a paused tool to the row that resumes it. In **Java**,
 this support currently covers the `TOOL_PAUSED` event and its pause/resume
@@ -35,7 +36,7 @@ pairing keys only (without the `attributes.adk` envelope). See [Agent workflow
 and pause/resume events (ADK 2.0)](#adk-2-events) for details.
 
 The plugin includes three reliability and observability capabilities (Java:
-v1.7.0 or later; Go: v2.1.0 or later):
+v1.7.0 or later; Go):
 
 - **Cross-region Storage Write API routing.** Writes to BigQuery datasets
   outside the `US` multi-region (for example `EU` or `northamerica-northeast1`)
@@ -58,12 +59,14 @@ v1.7.0 or later; Go: v2.1.0 or later):
   join cleanly to Cloud Trace traces.
 
 In Python (v2.7.0 and later) and Go, every row also receives a stable
-`event_id` before it enters the write queue. The ID is preserved across Storage
-Write API retries, so consumers can identify retry duplicates. An opt-in
-`exactly_once_delivery` (`ExactlyOnceDelivery` in Go) mode uses committed
-streams and explicit offsets to prevent duplicates from ambiguous retries within
-a live processor. This mode does not guarantee lossless delivery; see [Delivery
-and deduplication](#delivery-and-deduplication).
+32-character hexadecimal `event_id` before it enters the write queue. The ID is
+preserved across Storage Write API retries, so consumers can identify retry
+duplicates. An opt-in `exactly_once_delivery` (`ExactlyOnceDelivery` in Go)
+mode uses committed streams and explicit offsets to prevent duplicates from
+ambiguous retries within a live processor. This mode does not guarantee lossless
+delivery, and stream-rotation / `ResourceExhausted` retry handling differs
+between Python and Go; see [Delivery and
+deduplication](#delivery-and-deduplication).
 
 Python (v2.7.0 and later) and Go also capture model and workflow termination
 details. Final `LLM_RESPONSE` rows include `finish_reason` and, when supplied
@@ -147,16 +150,16 @@ apply to Python, Go, and Java.
 
 The table is the union of the Python, Go, and Java event sets:
 
-- **Python** emits all 29 event types in the table.
+- **Python** emits all 30 event types in the table.
   `WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY` require
   ADK Python v2.13.0 or later.
-- **Go** emits 27 of the 29 event types in the table; it does not emit the two
+- **Go** emits 28 of the 30 event types in the table; it does not emit the two
   Python v2.13.0 workflow node observation events
   (`WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY`).
-- **Java** emits all non-workflow rows plus `TOOL_PAUSED`; it does not emit
-  `INVOCATION_ERROR`, `AGENT_ERROR`, `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
-  `EVENT_COMPACTION`, `NODE_OUTPUT`, `NODE_ERROR`,
-  `WORKFLOW_NODE_FIRST_OBSERVED`, or `WORKFLOW_NODE_OBSERVATION_SUMMARY`.
+- **Java** emits all rows except `INVOCATION_ERROR`, `AGENT_ERROR`,
+  `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, `NODE_OUTPUT`,
+  `NODE_ERROR`, `WORKFLOW_NODE_FIRST_OBSERVED`, and
+  `WORKFLOW_NODE_OBSERVATION_SUMMARY`, plus `TOOL_PAUSED`.
 
 | Event Type | Captured When | Key Payload Fields | View |
 | --- | --- | --- | --- |
@@ -164,7 +167,7 @@ The table is the union of the Python, Go, and Java event sets:
 | `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
 | `INVOCATION_ERROR` | An invocation fails with an unhandled exception | error message, sanitized traceback | `v_invocation_error` |
-| `AGENT_STARTING` | Agent execution begins | instruction text; in ADK Python v2.12.0+ and Go, also instruction source, static instruction, description, model, and sub-agent names | `v_agent_starting` |
+| `AGENT_STARTING` | Agent execution begins | instruction text; in ADK Python v2.12.0+, also instruction source, static instruction, description, model, and sub-agent names (Go records `instruction_source`, `agent_description`, `sub_agents`, and `model` when set on the agent itself, and does not populate `static_instruction`) | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
 | `AGENT_ERROR` | Agent execution fails with an unhandled exception | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
@@ -183,7 +186,7 @@ The table is the union of the Python, Go, and Java event sets:
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
 | `AGENT_RESPONSE` | Final agent response is yielded | response (content), source event ID/author/branch (attributes) | `v_agent_response` |
 | `AGENT_TRANSFER` | One agent hands off control to another | from agent, to agent, source event ID | `v_agent_transfer` |
-| `AGENT_STATE_CHECKPOINT` | An agent snapshots its state (or marks the end of its run) | agent state, end-of-agent flag, source event ID | `v_agent_state_checkpoint` |
+| `AGENT_STATE_CHECKPOINT` | An agent snapshots its state (or marks the end of its run); in Go, emitted when checkpoint keys are enabled in `CustomMetadataAllowlist` | agent state, end-of-agent flag, source event ID | `v_agent_state_checkpoint` |
 | `EVENT_COMPACTION` | A window of events is compacted into a summary | window start/end timestamps, compacted content | `v_event_compaction` |
 | `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
 | `NODE_OUTPUT` | A workflow node emits a final structured output | output, node path, run ID, parent run ID | `v_node_output` |
@@ -212,13 +215,14 @@ The table is the union of the Python, Go, and Java event sets:
     The Go plugin is published as an independent Go submodule
     (`plugin/agentanalytics/go.mod`) in the `adk-go` repository so that core ADK
     applications do not pull in the BigQuery and Cloud Storage client
-    dependencies unless needed. Because the submodule is versioned at `v0.x` /
-    `v1.x` (`module google.golang.org/adk/plugin/agentanalytics`), its import
-    path does not have a `/v2` major-version suffix even though core ADK
-    packages use `google.golang.org/adk/v2/...`:
+    dependencies unless needed. The Go plugin is versioned separately from ADK
+    Go (`module google.golang.org/adk/plugin/agentanalytics`, without a `/v2`
+    major-version suffix) and has no tagged release yet. Use `@latest` for both
+    ADK Go and the plugin module:
 
     ```bash
-    go get google.golang.org/adk/plugin/agentanalytics
+    go get google.golang.org/adk/v2@latest
+    go get google.golang.org/adk/plugin/agentanalytics@latest
     ```
 
 ## Quickstart
@@ -260,18 +264,21 @@ The table is the union of the Python, Go, and Java event sets:
 === "Go"
 
     Create the plugin with `agentanalytics.NewBigQueryAgentAnalyticsPlugin` and
-    pass it to `runner.New` via `PluginConfig`. Call `defer bqPlugin.Close()` to
-    flush buffered events and release BigQuery clients on exit. For
-    prerequisites, see [Prerequisites](#prerequisites).
+    pass it to `runner.New` via `PluginConfig`. Because ADK Go's runner does not
+    close plugins automatically, call `defer bqPlugin.Close()` inside your run
+    function to flush buffered events and release BigQuery clients before
+    exiting. For prerequisites, see [Prerequisites](#prerequisites).
 
     ```go title="main.go"
     package main
 
     import (
     	"context"
+    	"fmt"
     	"log"
 
     	"google.golang.org/adk/plugin/agentanalytics"
+    	"google.golang.org/adk/v2/agent"
     	"google.golang.org/adk/v2/agent/llmagent"
     	"google.golang.org/adk/v2/model/gemini"
     	"google.golang.org/adk/v2/plugin"
@@ -280,9 +287,7 @@ The table is the union of the Python, Go, and Java event sets:
     	"google.golang.org/genai"
     )
 
-    func main() {
-    	ctx := context.Background()
-
+    func run(ctx context.Context) error {
     	bqPlugin, err := agentanalytics.NewBigQueryAgentAnalyticsPlugin(
     		ctx,
     		"your-gcp-project-id",
@@ -290,17 +295,17 @@ The table is the union of the Python, Go, and Java event sets:
     		"agent_events",
     	)
     	if err != nil {
-    		log.Fatalf("Failed to create BigQuery plugin: %v", err)
+    		return fmt.Errorf("create BigQuery plugin: %w", err)
     	}
     	defer bqPlugin.Close()
 
-    	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
     		Project:  "your-gcp-project-id",
     		Location: "us-central1",
     		Backend:  genai.BackendVertexAI,
     	})
     	if err != nil {
-    		log.Fatalf("Failed to create model: %v", err)
+    		return fmt.Errorf("create model: %w", err)
     	}
 
     	myAgent, err := llmagent.New(llmagent.Config{
@@ -309,21 +314,43 @@ The table is the union of the Python, Go, and Java event sets:
     		Instruction: "You are a helpful assistant.",
     	})
     	if err != nil {
-    		log.Fatalf("Failed to create agent: %v", err)
+    		return fmt.Errorf("create agent: %w", err)
     	}
 
+    	sessionService := session.InMemoryService()
     	r, err := runner.New(runner.Config{
     		AppName:        "my_agent",
     		Agent:          myAgent,
-    		SessionService: session.InMemoryService(),
+    		SessionService: sessionService,
     		PluginConfig: runner.PluginConfig{
     			Plugins: []*plugin.Plugin{bqPlugin},
     		},
     	})
     	if err != nil {
-    		log.Fatalf("Failed to create runner: %v", err)
+    		return fmt.Errorf("create runner: %w", err)
     	}
-    	_ = r
+
+    	sessResp, err := sessionService.Create(ctx, &session.CreateRequest{
+    		AppName: "my_agent",
+    		UserID:  "demo_user",
+    	})
+    	if err != nil {
+    		return fmt.Errorf("create session: %w", err)
+    	}
+
+    	userMsg := genai.NewContentFromText("Hello!", genai.RoleUser)
+    	for _, err := range r.Run(ctx, "demo_user", sessResp.Session.ID(), userMsg, agent.RunConfig{}) {
+    		if err != nil {
+    			return fmt.Errorf("run error: %w", err)
+    		}
+    	}
+    	return nil
+    }
+
+    func main() {
+    	if err := run(context.Background()); err != nil {
+    		log.Fatal(err)
+    	}
     }
     ```
 
@@ -412,7 +439,7 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
-??? example "Full example with GCS offloading, OpenTelemetry, and BigQuery tools"
+??? example "Full example with GCS offloading, OpenTelemetry, and tools"
 
     === "Python"
 
@@ -507,6 +534,12 @@ LIMIT 20;
 
     === "Go"
 
+        The Go example below registers a custom `functiontool` (`reverse_string`).
+        Note that `cfg.EnableOTelCorrelation = true` records `attributes.otel`
+        only when the host application opens an active OpenTelemetry span in
+        `ctx` before calling `r.Run`, because the ADK Go runner does not open
+        OpenTelemetry spans itself.
+
         ```go title="main.go"
         package main
 
@@ -541,9 +574,7 @@ LIMIT 20;
         	return map[string]any{"reversed": string(runes)}, nil
         }
 
-        func main() {
-        	ctx := context.Background()
-
+        func run(ctx context.Context) error {
         	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
         	datasetID := os.Getenv("BIG_QUERY_DATASET_ID")
         	gcsBucket := os.Getenv("GCS_BUCKET_NAME")
@@ -560,7 +591,7 @@ LIMIT 20;
 
         	bqPlugin, err := agentanalytics.NewBigQueryAgentAnalyticsPluginWithConfig(ctx, cfg)
         	if err != nil {
-        		log.Fatalf("Failed to create BigQuery plugin: %v", err)
+        		return fmt.Errorf("failed to create BigQuery plugin: %w", err)
         	}
         	defer bqPlugin.Close()
 
@@ -569,16 +600,16 @@ LIMIT 20;
         		Description: "Reverses the provided input string.",
         	}, reverseString)
         	if err != nil {
-        		log.Fatalf("Failed to create tool: %v", err)
+        		return fmt.Errorf("failed to create tool: %w", err)
         	}
 
-        	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+        	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
         		Project:  projectID,
         		Location: "us-central1",
         		Backend:  genai.BackendVertexAI,
         	})
         	if err != nil {
-        		log.Fatalf("Failed to create model: %v", err)
+        		return fmt.Errorf("failed to create model: %w", err)
         	}
 
         	demoAgent, err := llmagent.New(llmagent.Config{
@@ -588,7 +619,7 @@ LIMIT 20;
         		Tools:       []tool.Tool{reverseTool},
         	})
         	if err != nil {
-        		log.Fatalf("Failed to create agent: %v", err)
+        		return fmt.Errorf("failed to create agent: %w", err)
         	}
 
         	sessionService := session.InMemoryService()
@@ -601,7 +632,7 @@ LIMIT 20;
         		},
         	})
         	if err != nil {
-        		log.Fatalf("Failed to create runner: %v", err)
+        		return fmt.Errorf("failed to create runner: %w", err)
         	}
 
         	sessResp, err := sessionService.Create(ctx, &session.CreateRequest{
@@ -609,13 +640,13 @@ LIMIT 20;
         		UserID:  "demo_user",
         	})
         	if err != nil {
-        		log.Fatalf("Failed to create session: %v", err)
+        		return fmt.Errorf("failed to create session: %w", err)
         	}
 
         	userMsg := genai.NewContentFromText("Please reverse the word 'analytics'.", genai.RoleUser)
         	for event, err := range r.Run(ctx, "demo_user", sessResp.Session.ID(), userMsg, agent.RunConfig{}) {
         		if err != nil {
-        			log.Fatalf("Run error: %v", err)
+        			return fmt.Errorf("run error: %w", err)
         		}
         		if event.IsFinalResponse() && event.Content != nil {
         			for _, part := range event.Content.Parts {
@@ -624,6 +655,13 @@ LIMIT 20;
         				}
         			}
         		}
+        	}
+        	return nil
+        }
+
+        func main() {
+        	if err := run(context.Background()); err != nil {
+        		log.Fatal(err)
         	}
         }
         ```
@@ -821,9 +859,21 @@ For the agent to work properly, the principal (e.g., service account, user
 account) under which the agent is running needs these Google Cloud roles:
 
 - `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
-- `roles/bigquery.dataEditor` at Table Level to write log/event data.
+- `roles/bigquery.dataEditor` at Dataset Level (or Table Level if the events
+  table already exists and automatic view creation is disabled) to create or
+  upgrade the events table, create the per-event-type views (Python and Go
+  create views by default), and write log/event data.
 - **If using GCS offloading:** `roles/storage.objectCreator` and
   `roles/storage.objectViewer` on the target bucket.
+
+If your principal has `roles/bigquery.dataEditor` only on the target table,
+table creation and automatic view creation (`create_views=True` in Python,
+`DisableCreateViews: false` in Go) will fail. Either grant
+`roles/bigquery.dataEditor` on the dataset, or pre-create the table and views
+from a deployment step (`create_views=False` in Python; `DisableCreateViews:
+true` in Go plus `bqPlugin.SyncViews(ctx)` or `cfg.ViewDefinitions()`). In Go,
+background view-creation failures are logged only when a non-default `Logger` is
+configured on `agentanalytics.Config`, so setting `Logger` is recommended.
 
 ## Configuration options {#configuration-options}
 
@@ -1051,7 +1101,7 @@ account) under which the agent is running needs these Google Cloud roles:
     ### Delivery and deduplication {#delivery-and-deduplication}
 
     <div class="language-support-tag">
-      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span>
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go</span>
     </div>
 
     Every row receives a 32-character hexadecimal `event_id` before enqueue.
@@ -1069,11 +1119,11 @@ account) under which the agent is running needs these Google Cloud roles:
     The `event_id IS NULL` condition retains rows written before the column was
     introduced.
 
-    Set `exactly_once_delivery=True` to use one loop-local committed stream and
-    explicit offsets. This prevents a retry whose first result was ambiguous
-    from creating a duplicate within the lifetime of that processor. It can
-    consume additional BigQuery `CreateWriteStream` quota when a stream must be
-    rotated.
+    Set `exactly_once_delivery=True` (`ExactlyOnceDelivery: true` in Go) to use
+    a committed stream and explicit offsets. This prevents a retry whose first
+    result was ambiguous from creating a duplicate within the lifetime of that
+    processor. It can consume additional BigQuery `CreateWriteStream` quota when
+    a stream must be rotated.
 
     ```python
     config = BigQueryLoggerConfig(exactly_once_delivery=True)
@@ -1083,9 +1133,25 @@ account) under which the agent is running needs these Google Cloud roles:
     can still be dropped after retry exhaustion, an offset conflict, or a
     replacement-stream failure. After a failed stream rotation, events arriving
     during the 30-second rotation backoff are also dropped. Monitor the
-    `offset_conflict` and other [drop
+    `offset_conflict` (`AppendFailureDrops` in Go) and other [drop
     reasons](#dropped-event-observability), and retain `event_id` as a consumer
     deduplication key.
+
+    In **Go** (`cfg.ExactlyOnceDelivery = true`), stream rotation and retry
+    classification differ slightly from Python:
+
+    - After `OutOfRange`, `NotFound`, or an unexpected `AlreadyExists`, Go
+      replaces the committed stream (at most once per batch) and resends the
+      batch within the same append, unless the stream was rotated by an earlier
+      batch and has not committed yet (in which case Go drops the batch and
+      pauses rotation) or an earlier attempt of the batch had an unknown outcome
+      (in which case `OutOfRange` or `NotFound` drops the batch to prevent
+      duplicates and replaces the stream before the next batch). Python drops the
+      batch after any of the three and replaces the stream before the next batch.
+    - On an RPC-level receive error after a successful `Send`, Go treats
+      `Unavailable`, `DeadlineExceeded`, `Canceled`, `Aborted`, `Internal`, and
+      `Unknown` as unknown outcomes, whereas Python also treats
+      `ResourceExhausted` (`TooManyRequests`) as an unknown outcome.
 
     ### Table readiness callbacks {#table-readiness-callbacks}
 
@@ -1242,28 +1308,32 @@ account) under which the agent is running needs these Google Cloud roles:
     - **`agentanalytics.NewBigQueryAgentAnalyticsPluginWithClients(ctx, cfg, bqClient, writeClient)`**:
       Uses caller-supplied `*bigquery.Client` and
       `*bqstorage.BigQueryWriteClient` instances. Passing `bqClient == nil`
-      skips table inspection, creation, and schema upgrades for pre-provisioned,
-      append-only deployments (in that mode `cfg.ProjectID` must be explicit).
+      skips table inspection, creation, schema upgrades, and automatic view
+      creation for pre-provisioned, append-only deployments (in that mode
+      `cfg.ProjectID` must be set explicitly, and calling `bqPlugin.SyncViews`
+      returns `agentanalytics: BigQuery client is not configured for view
+      creation`; use `cfg.ViewDefinitions()` to obtain the `Name`, `EventType`,
+      and `Query` for each view instead).
 
     #### `agentanalytics.Config` fields
 
     | Field | Type | Default (`DefaultConfig()`) | Use when |
     | --- | --- | --- | --- |
     | `Enabled` | `bool` | `true` | Enable or disable the plugin. In a struct literal without `DefaultConfig()`, set `Enabled: true` explicitly |
-    | `ProjectID` | `string` | `""` *(detected from client)* | Select the Google Cloud project |
+    | `ProjectID` | `string` | `""` *(detected when the plugin creates its own BigQuery client; must be explicit when passing custom clients)* | Select the Google Cloud project |
     | `DatasetID` | `string` | `"agent_analytics"` | Select the BigQuery dataset |
     | `TableName` | `string` | `"agent_events"` | Select the BigQuery table name |
-    | `MaxContentLen` | `int` | `500 * 1024` | Truncate inline text values to this UTF-8 byte length. `0` uses the default (`500 KiB`); `-1` disables truncation |
+    | `MaxContentLen` | `int` | `500 * 1024` | Truncate inline text values to this many Unicode code points (runes). `0` uses the default (`500 * 1024` runes); `-1` disables truncation |
     | `BatchSize` | `int` | `100` | Maximum number of rows per Storage Write API append batch |
     | `BatchFlushIntv` | `time.Duration` | `time.Second` | Maximum interval before flushing a partial batch |
     | `QueueMaxSize` | `int` | `10000` | Capacity of the in-memory row channel before new events are dropped (`QueueFullDrops`) |
     | `ClientOptions` | `[]option.ClientOption` | `nil` | Custom Google Cloud client options (credentials, endpoints) for BigQuery and Storage Write API clients |
     | `ClusteringFields` | `[]string` | `[]string{"event_type", "agent", "user_id"}` | Customize clustering fields when creating the table (up to 4 fields) |
-    | `CustomTags` | `map[string]any` | `nil` | Add static key-value tags under `attributes.custom_tags` on every row |
+    | `CustomTags` | `map[string]any` | `map[string]any{}` (`make(map[string]any)`) | Add static key-value tags under `attributes.custom_tags` on every row |
     | `LogMultiModalContent` | `bool` | `true` | Populate `content_parts` for user messages and model requests/responses |
     | `DisableMultiModalContent` | `bool` | `false` | Explicitly disable `content_parts` extraction even when starting from `DefaultConfig()` |
-    | `ShutdownTimeout` | `time.Duration` | `10 * time.Second` | Maximum time `Close()` waits for queued batches and view creation to finish |
-    | `Logger` | `agentanalytics.Logger` | `log.Default()` | Custom logger (`Printf(format string, v ...any)`) for warning and error diagnostics |
+    | `ShutdownTimeout` | `time.Duration` | `10 * time.Second` | Bounds each background batch write (including retries), a run-end flush, and the BigQuery writes when `Close()` drains the queue. It is not a single wall-clock bound on `Close()`: with GCS uploads and view creation, `Close()` can take noticeably longer (up to ~2.5x `ShutdownTimeout`) |
+    | `Logger` | `agentanalytics.Logger` | `log.Default()` | Custom logger implementing both `Printf(format string, v ...any)` and `Println(v ...any)` for warning and error diagnostics (including background view creation failures) |
     | `RetryConfig` | `agentanalytics.RetryConfig` | `MaxRetries: 3`, `InitialDelay: 100ms`, `MaxDelay: 10s`, `Multiplier: 2.0` | Tune exponential backoff for retryable Storage Write API append errors |
     | `DisableSessionMetadata` | `bool` | `false` | Omit `attributes.session_metadata` (`session_id`, `app_name`, `user_id`, `state`) |
     | `CaptureFullMessageContent` | `bool` | `false` | Disable length truncation on text payloads (`MaxContentLen` is ignored; sensitive-key redaction still runs) |
@@ -1275,7 +1345,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `PayloadColumnDenylist` | `[]string` | `nil` | Omit selected payload columns (`"content"`, `"content_parts"`, `"attributes"`, `"latency_ms"`) from the table schema, written rows, and views |
     | `CustomMetadataAllowlist` | `[]string` | `nil` | Capture matching keys (exact or `"prefix*"`) from `session.Event.CustomMetadata` and final `model.LLMResponse.CustomMetadata` into `attributes.custom_metadata` |
     | `FinalResponseToolNames` | `[]string` | `nil` | Emit an additional `AGENT_RESPONSE` row with `attributes.source_tool` when a listed tool completes |
-    | `DisableFlushOnRunEnd` | `bool` | `false` | Do not wait for the batch queue to flush at the end of each `AfterRun` / `OnRunError` callback |
+    | `DisableFlushOnRunEnd` | `bool` | `false` | Do not wait for the batch queue to flush at the end of each `AfterRun` callback |
     | `DisableSchemaUpgrade` | `bool` | `false` | Disable automatic additive schema upgrades on existing tables |
     | `EnableOTelCorrelation` | `bool` | `false` | Capture ambient OpenTelemetry `span_id` and `trace_id` under `attributes.otel` |
     | `GCSBucketName` | `string` | `""` | Offload inline text larger than `MaxInlineTextSize` and binary blobs to this GCS bucket |
@@ -1284,15 +1354,21 @@ account) under which the agent is running needs these Google Cloud roles:
     | `ConnectionID` | `string` | `""` | BigQuery connection ID (`"location.connection_id"`) stored as `object_ref.authorizer` for Object Tables / signed URLs |
     | `MaxInlineTextSize` | `int` | `32 * 1024` | Byte threshold (`32 KiB` default) above which text parts are offloaded to GCS when offloading is configured |
     | `GCSMaxConcurrentUploads` | `int` | `8` | Maximum concurrent GCS uploads during a batch flush |
-    | `GCSUploadTimeout` | `time.Duration` | `10 * time.Second` | Per-object timeout for GCS uploads |
-    | `GCSMaxPendingUploadBytes` | `int64` | `256 * 1024 * 1024` | Memory cap (`256 MiB` default) on pending binary bytes queued for GCS upload across buffered rows |
+    | `GCSUploadTimeout` | `time.Duration` | `10 * time.Second` | Per-batch deadline for that batch's concurrent GCS uploads; after a timeout, unfinished parts fall back and offloading pauses for the same duration |
+    | `GCSMaxPendingUploadBytes` | `int64` | `256 * 1024 * 1024` | Memory cap (`256 MiB` default) on pending text and binary payload bytes queued for GCS upload across buffered rows |
     | `GCSOffloader` | `agentanalytics.GCSContentOffloader` | `nil` | Custom offloader implementation (overrides the default GCS client created from `GCSBucketName`) |
     | `DisableCreateViews` | `bool` | `false` | Disable automatic background creation of the 25 per-event-type BigQuery views (`v_<event_type>`) |
     | `ViewPrefix` | `string` | `"v"` | Prefix for per-event-type view names (`<ViewPrefix>_<event_type>`) |
     | `ExactlyOnceDelivery` | `bool` | `false` | Write through a `COMMITTED` Storage Write stream with explicit batch offsets instead of the default stream |
 
-    ```go
-    package main
+    In Go, `ContentFormatter` receives the raw typed payload (`*genai.Content`
+    on `USER_MESSAGE_RECEIVED`, `*model.LLMRequest` on `LLM_REQUEST`,
+    `*model.LLMResponse` on `LLM_RESPONSE`, or `map[string]any` / `[]any` on
+    tool and state events), not the final JSON. Return a redacted copy and never
+    mutate the live payload:
+
+    ```go title="analytics.go"
+    package analytics
 
     import (
     	"context"
@@ -1301,23 +1377,95 @@ account) under which the agent is running needs these Google Cloud roles:
     	"time"
 
     	"google.golang.org/adk/plugin/agentanalytics"
+    	"google.golang.org/adk/v2/model"
+    	"google.golang.org/genai"
     )
 
     var dollarPattern = regexp.MustCompile(`\$\d+(?:,\d{3})*(?:\.\d+)?`)
 
-    func redactDollarAmounts(payload any, eventType string) (any, error) {
-    	if text, ok := payload.(string); ok {
-    		return dollarPattern.ReplaceAllString(text, "xxx"), nil
+    func maskContent(c *genai.Content) *genai.Content {
+    	if c == nil {
+    		return nil
     	}
-    	return payload, nil
+    	cloned := *c
+    	if len(c.Parts) > 0 {
+    		cloned.Parts = make([]*genai.Part, len(c.Parts))
+    		for i, p := range c.Parts {
+    			if p == nil {
+    				continue
+    			}
+    			partCopy := *p
+    			if partCopy.Text != "" {
+    				partCopy.Text = dollarPattern.ReplaceAllString(partCopy.Text, "xxx")
+    			}
+    			cloned.Parts[i] = &partCopy
+    		}
+    	}
+    	return &cloned
     }
 
-    func createPlugin(ctx context.Context) (*agentanalytics.BigQueryAgentAnalyticsPlugin, error) {
+    func redactDollarAmounts(payload any, eventType string) (any, error) {
+    	switch v := payload.(type) {
+    	case string:
+    		return dollarPattern.ReplaceAllString(v, "xxx"), nil
+    	case *genai.Content:
+    		return maskContent(v), nil
+    	case *model.LLMRequest:
+    		if v == nil {
+    			return nil, nil
+    		}
+    		cloned := *v
+    		if len(v.Contents) > 0 {
+    			cloned.Contents = make([]*genai.Content, len(v.Contents))
+    			for i, c := range v.Contents {
+    				cloned.Contents[i] = maskContent(c)
+    			}
+    		}
+    		if v.Config != nil && v.Config.SystemInstruction != nil {
+    			cfgCopy := *v.Config
+    			cfgCopy.SystemInstruction = maskContent(v.Config.SystemInstruction)
+    			cloned.Config = &cfgCopy
+    		}
+    		return &cloned, nil
+    	case *model.LLMResponse:
+    		if v == nil {
+    			return nil, nil
+    		}
+    		cloned := *v
+    		cloned.Content = maskContent(v.Content)
+    		return &cloned, nil
+    	case map[string]any:
+    		cloned := make(map[string]any, len(v))
+    		for k, val := range v {
+    			redacted, err := redactDollarAmounts(val, eventType)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[k] = redacted
+    		}
+    		return cloned, nil
+    	case []any:
+    		cloned := make([]any, len(v))
+    		for i, item := range v {
+    			redacted, err := redactDollarAmounts(item, eventType)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i] = redacted
+    		}
+    		return cloned, nil
+    	default:
+    		return payload, nil
+    	}
+    }
+
+    func CreatePlugin(ctx context.Context) (*agentanalytics.BigQueryAgentAnalyticsPlugin, error) {
     	cfg := agentanalytics.DefaultConfig()
     	cfg.ProjectID = "my-project"
     	cfg.DatasetID = "my_dataset"
     	cfg.TableName = "agent_events"
     	cfg.EventAllowlist = []string{
+    		agentanalytics.EventUserMessageReceived,
     		agentanalytics.EventLLMRequest,
     		agentanalytics.EventLLMResponse,
     	}
@@ -1456,20 +1604,20 @@ provides a comprehensive reference with example values.
 | Field Name | Type | Mode | Description | Example Value |
 | --- | --- | --- | --- | --- |
 | **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
-| **event_id** | `STRING` | `NULLABLE` | A 32-character hexadecimal ID (Python) or UUID string (Go) assigned before enqueue. Storage Write API retries preserve it so consumers can identify duplicate rows. Rows written before schema version 2 have `NULL`. | `ca5e3c9d99e24e46b614f2f44f93bf6e` |
+| **event_id** | `STRING` | `NULLABLE` | A 32-character hexadecimal ID (Python and Go) assigned before enqueue. Storage Write API retries preserve it so consumers can identify duplicate rows. Rows written before schema version 2 have `NULL`. | `ca5e3c9d99e24e46b614f2f44f93bf6e` |
 | **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include LLM, tool, agent, invocation, state, HITL, A2A, response, workflow, node output, and node error events described in [Event types and payloads](#event-types). Used for high-level filtering. | `LLM_REQUEST` |
 | **agent** | `STRING` | `NULLABLE` | The name of the agent responsible for this event. Defined during agent initialization or via the `root_agent_name` context. | `my_bq_agent` |
 | **session_id** | `STRING` | `NULLABLE` | A persistent identifier for the entire conversation thread. Stays constant across multiple turns and sub-agent calls. | `04275a01-1649-4a30-b6a7-5b443c69a7bc` |
 | **invocation_id** | `STRING` | `NULLABLE` | The unique identifier for a single execution turn or request cycle. Corresponds to `trace_id` in many contexts. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
 | **user_id** | `STRING` | `NULLABLE` | The identifier of the user (human or system) initiating the session. Extracted from the `User` object or metadata. | `test_user` |
-| **trace_id** | `STRING` | `NULLABLE` | Trace identifier. It is a 32-character hex OpenTelemetry trace ID when inherited from an ambient span (e.g. Agent Engine's invocation span or the ADK Runner span), so BigQuery rows join cleanly to your existing Cloud Trace traces. Without an ambient span, Python also generates that format as its per-invocation fallback, while Go and Java fall back to the ADK invocation ID (or a generated UUID in Go if `invocation_id` is empty). Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
-| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID (or UUID in Go when no ambient OTel span is active) identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span.** The plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. The root invocation span reuses the ambient OTel span's id when one is active; child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
+| **trace_id** | `STRING` | `NULLABLE` | Trace identifier. It is a 32-character hex OpenTelemetry trace ID when inherited from an ambient span (e.g. Agent Engine's invocation span or the ADK Runner span), so BigQuery rows join cleanly to your existing Cloud Trace traces. Without an ambient span, Python generates a random 32-character hex fallback, Go derives a stable 32-character hex `trace_id` by SHA-256 from the invocation ID (or generates a random 32-character hex value if `invocation_id` is empty), and Java falls back to the ADK invocation ID. Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
+| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span.** The plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. In Python and Java, the root invocation span reuses the ambient OTel span's id when one is active; in Go, the plugin always generates its own 16-hex root `span_id` and records any ambient OTel span ID in `parent_span_id`. Child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
 | **parent_span_id** | `STRING` | `NULLABLE` | Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `4c4a42bfdeb84934` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
 | **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
-| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. In Python and Go, it can be populated on rows whose `status` remains `OK`, such as a final `LLM_RESPONSE` or (in Python) a row whose custom `content_formatter` failed (for example, `content_formatter raised ImportError`). | `Error 404: Dataset not found` |
+| **error_message** | `STRING` | `NULLABLE` | Sanitized diagnostic message for exceptions and model termination details. In Python and Go, it can be populated on rows whose `status` remains `OK`, such as a final `LLM_RESPONSE` or a row whose custom `content_formatter` / `ContentFormatter` failed (for example, `content_formatter raised ImportError` or `content_formatter panicked`). | `Error 404: Dataset not found` |
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` when content or metadata is truncated or replaced by a safety boundary, including the configured `max_content_length` (`MaxContentLen` in Go), sanitizer depth or node budgets, and diagnostic-text sanitization. In ADK Python v2.12.0 and later, it is also set by redaction of common credential patterns in the formatted parts of a model response and by `[FORMATTING FAILED]`, the placeholder written when the plugin's built-in formatting of response or compaction content fails (not to be confused with `[FORMATTER_FAILED]`, which marks a custom `content_formatter` failure). Ordinary structured sensitive-key redaction does not set it by itself. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
 
@@ -1533,7 +1681,7 @@ you can optionally create the table manually using the DDL below.
 ### Automatically Created Views
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-go">Go v2.1.0</span><span class="lst-java">Java v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-go">Go</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
 In Python (`create_views=True`) and Go (`DisableCreateViews: false`), the plugin
@@ -1572,8 +1720,12 @@ You can also refresh views on demand:
   evaluation views](#agent-evaluation-views)).
 - **Go**: Unwrap the plugin with
   `bqPlugin, ok := agentanalytics.AsBigQueryAgentAnalyticsPlugin(adkPlugin)` and
-  call `bqPlugin.SyncViews(ctx)` (or inspect the generated SQL statements
-  without executing them via `cfg.ViewDefinitions()`).
+  call `bqPlugin.SyncViews(ctx)`. If you constructed the plugin with
+  `NewBigQueryAgentAnalyticsPluginWithClients(..., nil, ...)` (`bqClient == nil`),
+  the plugin creates no views automatically and `SyncViews` returns
+  `agentanalytics: BigQuery client is not configured for view creation`; use
+  `cfg.ViewDefinitions()` (which returns `Name`, `EventType`, and `Query`) to
+  inspect or execute the view DDL yourself.
 
 Every Python and Go view includes these **common columns**: `timestamp`,
 `event_id`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`,
@@ -1592,7 +1744,7 @@ columns:
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
-| **`v_agent_starting`** | `agent_instruction` (STRING); in ADK Python v2.12.0+ and Go, also `instruction_source` (STRING), `static_instruction` (STRING), `agent_description` (STRING), `model` (STRING), `sub_agents` (JSON) |
+| **`v_agent_starting`** | `agent_instruction` (STRING); in ADK Python v2.12.0+ and Go, also `instruction_source` (STRING), `static_instruction` (STRING; always `NULL` in Go), `agent_description` (STRING), `model` (STRING), `sub_agents` (JSON) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
 | **`v_agent_error`** | `total_ms` (INT64), `error_traceback` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
@@ -1905,19 +2057,26 @@ updated by tools).
 | `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
 
 In Python and Go, the `AGENT_ERROR` and `INVOCATION_ERROR` rows have
-`status="ERROR"`, a sanitized `error_message`, and a sanitized traceback in
-`content`. The agent error view also exposes the elapsed `total_ms`. These
-events represent unhandled errors that escape agent or runner execution.
+`status="ERROR"`, a sanitized `error_message`, and a sanitized
+`content.error_traceback` value (in Python, the formatted traceback; in Go, the
+sanitized `err.Error()` message without a stack trace). The agent error view
+also exposes the elapsed `total_ms`. In Python, both events represent unhandled
+exceptions that escape agent or runner execution; in Go, `AGENT_ERROR` is also
+emitted when an `AfterAgent` callback receives a non-nil error from a failed
+agent activation that ADK handled without failing the whole invocation.
 
 In ADK Python v2.12.0+ and Go, `AGENT_STARTING` rows can also add these
 `attributes` keys, which the `v_agent_starting` view exposes as columns:
 
 - `instruction_source`: `"provider"` when the agent's instruction comes from a
   callable `InstructionProvider`.
-- `static_instruction`: The text of the agent's static instruction.
+- `static_instruction`: The text of the agent's static instruction *(Python
+  v2.12.0+; not populated by the Go plugin, so
+  `v_agent_starting.static_instruction` is `NULL` in Go)*.
 - `agent_description`: The agent's description.
-- `model`: The agent's model name. If an LLM agent leaves `model` unset, this
-  is the model inherited from the nearest ancestor agent that sets one.
+- `model`: The agent's model name. In Python, if an LLM agent leaves `model`
+  unset, this is the model inherited from the nearest ancestor agent that sets
+  one; in Go, `model` is recorded only when set on the agent itself.
 - `sub_agents`: The names of the agent's sub-agents.
 
 A key is omitted when it does not apply or its value is empty. In Python
@@ -2025,7 +2184,7 @@ in `attributes.a2a_metadata`; Java omits that duplicate. The Python and Go
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span><span class="lst-go">Go v2.1.0</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 !!! note "Java support"
@@ -2046,7 +2205,8 @@ rows back to the ADK event that produced them.
 #### The `attributes.adk` envelope
 
 The envelope is written by the **Python** and **Go** plugins. Every row carries
-an `attributes.adk` object. `schema_version` and `app_name` are always present;
+an `attributes.adk` object. `schema_version` is always present (along with
+`app_name` in Python, and in Go whenever `app_name` is non-empty);
 event-originating fields are added for rows that originate from an ADK `Event`
 (lifecycle and workflow events), so on a callback-only row they are omitted and
 resolve to SQL `NULL` when queried.
@@ -2054,21 +2214,22 @@ resolve to SQL `NULL` when queried.
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `schema_version` | string | Envelope version (currently `"1"`). Gate downstream queries on this when the envelope evolves. |
-| `app_name` | string | The ADK app that produced the row. |
+| `app_name` | string | The ADK app that produced the row (omitted in Go when empty). |
 | `source_event_id` | string | ID of the originating ADK `Event`. The reliable key for joining the multiple rows a single event can produce. |
-| `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). In Go, `node` also includes `message_as_output` (bool) and `output_for` (string) when set on `NodeInfo`. |
+| `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). In Go, `node` also includes `message_as_output` (bool) and `output_for` (array of strings) when set on `NodeInfo`. |
 | `branch` | string | The event's branch, when the workflow runs branched paths. |
-| `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or `unknown`. |
-| `route` | string | The route selected by the event action, when set. |
+| `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or *(Python)* `unknown`. |
+| `route` | string or array | The route selected by the event action (a string in Python, or an array of strings in Go), when set. |
 | `render_ui_widgets` | array | Serialized UI widgets requested by the event action, when set *(Python)*. |
 | `rewind_before_invocation_id` | string | Invocation ID that the event action requests rewinding before, when set *(Python)*. |
 | `pause_kind` | string | On `TOOL_PAUSED`: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. On a resumed `TOOL_COMPLETED` row it is always `tool`; HITL completions are logged as `HITL_*_REQUEST_COMPLETED`, never `TOOL_COMPLETED`. |
 | `function_call_id` | string | The function call ID. Set on `TOOL_PAUSED` and on the matching resumed `TOOL_COMPLETED` row so the two can be paired (ordinary tools only). |
 
-In **Go**, `attributes.adk` also stamps `event_id`, `adk_version`,
-`invocation_id`, `session_id`, and `user_id` on every row, plus `author`,
-`isolation_scope`, `artifact_delta`, `skip_summarization`, and `escalate` on
-rows derived from an ADK `session.Event` when present.
+In **Go**, `attributes.adk` also stamps `event_id` and `author` on every row,
+stamps `adk_version` and `invocation_id` when non-empty, stamps `session_id`
+and `user_id` when `DisableSessionMetadata` is `false` and the values are
+non-empty, and adds `isolation_scope`, `artifact_delta`, `skip_summarization`,
+and `escalate` on rows derived from an ADK `session.Event` when present.
 
 !!! tip "Querying the envelope"
 
@@ -2100,7 +2261,10 @@ routing to a specialist sub-agent).
 Logged when an agent snapshots its state. The plugin also emits a checkpoint with
 `end_of_agent: true` to mark the end of an agent's run. The `v_agent_state_checkpoint`
 view exposes `agent_state_type` so you can distinguish a real state object from an
-explicit `null` checkpoint (the end-of-run marker) versus an absent value.
+explicit `null` checkpoint (the end-of-run marker) versus an absent value. In
+Go, checkpoints come from the `CustomMetadata` keys
+`adk_agent_state`/`agent_state` and `end_of_agent`/`adk_end_of_agent`, and are
+emitted only when those keys are listed in `CustomMetadataAllowlist`.
 
 ```json
 {
@@ -2137,7 +2301,7 @@ text of the compacted window (a string), not a structured object.
 #### NODE_OUTPUT and NODE_ERROR
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go v2.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go</span>
 </div>
 
 For a final, non-partial event with a workflow node path, the plugin emits
@@ -2937,7 +3101,7 @@ secrets. For additional control, you can layer custom redaction on top.
 ### Built-in redaction {#built-in-redaction}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v2.1.0</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 The Python plugin normalizes key names to lowercase and treats hyphens like
@@ -2998,7 +3162,7 @@ safely rewritten fail closed.
 
 !!! note "Built-in redaction in Go"
 
-    The Go plugin (`google.golang.org/adk/plugin/agentanalytics`, v2.1.0+)
+    The Go plugin (`google.golang.org/adk/plugin/agentanalytics`)
     enables built-in redaction by default (`DisableSensitiveKeyRedaction: false`).
     Key names are normalized by lowercasing and stripping underscores (`_`) and
     hyphens (`-`), so `snake_case`, `kebab-case`, and `camelCase` variants
@@ -3019,9 +3183,10 @@ safely rewritten fail closed.
       headers, `Bearer` and `Basic` tokens, and embedded JSON credential
       fragments in `error_message` and `uri`.
     - Runs custom `ContentFormatter` (`func(content any, eventType string) (any, error)`)
-      before built-in redaction. If `ContentFormatter` returns a non-nil error,
-      the Go plugin replaces the payload with `"[FORMATTER_FAILED]"` (or omits
-      redacted inline text parts from `content_parts`) and increments
+      before built-in redaction. If `ContentFormatter` returns a non-nil error or
+      panics, the Go plugin writes `"[FORMATTER_FAILED]"` to `content`, writes no
+      `content_parts`, appends `content_formatter raised <error type>` or
+      `content_formatter panicked` to `error_message`, and increments
       `DropStats().FormatterFailureDrops`.
 
 !!! note "Built-in redaction in Java"
@@ -3080,14 +3245,20 @@ written:
 
 === "Go"
 
+    In Go the formatter receives the raw typed payload (such as `*genai.Content`,
+    `*model.LLMRequest`, `*model.LLMResponse`, or `map[string]any`), not the
+    final JSON. Return a redacted copy and never mutate the live payload:
+
     ```go
-    package main
+    package analytics
 
     import (
     	"regexp"
     	"strings"
 
     	"google.golang.org/adk/plugin/agentanalytics"
+    	"google.golang.org/adk/v2/model"
+    	"google.golang.org/genai"
     )
 
     var ssnPattern = regexp.MustCompile(`\b\d{3}-\d{2}-\d{4}\b`)
@@ -3096,6 +3267,32 @@ written:
     	switch v := content.(type) {
     	case string:
     		return ssnPattern.ReplaceAllString(v, "[REDACTED_SSN]"), nil
+    	case *genai.Content:
+    		return redactGenAIContentSecrets(v), nil
+    	case *model.LLMRequest:
+    		if v == nil {
+    			return nil, nil
+    		}
+    		cloned := *v
+    		if len(v.Contents) > 0 {
+    			cloned.Contents = make([]*genai.Content, len(v.Contents))
+    			for i, c := range v.Contents {
+    				cloned.Contents[i] = redactGenAIContentSecrets(c)
+    			}
+    		}
+    		if v.Config != nil && v.Config.SystemInstruction != nil {
+    			cfgCopy := *v.Config
+    			cfgCopy.SystemInstruction = redactGenAIContentSecrets(v.Config.SystemInstruction)
+    			cloned.Config = &cfgCopy
+    		}
+    		return &cloned, nil
+    	case *model.LLMResponse:
+    		if v == nil {
+    			return nil, nil
+    		}
+    		cloned := *v
+    		cloned.Content = redactGenAIContentSecrets(v.Content)
+    		return &cloned, nil
     	case map[string]any:
     		cloned := make(map[string]any, len(v))
     		for k, val := range v {
@@ -3110,9 +3307,40 @@ written:
     			cloned[k] = redactedVal
     		}
     		return cloned, nil
+    	case []any:
+    		cloned := make([]any, len(v))
+    		for i, item := range v {
+    			redactedItem, err := redactCustomSecrets(item, eventType)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i] = redactedItem
+    		}
+    		return cloned, nil
     	default:
     		return content, nil
     	}
+    }
+
+    func redactGenAIContentSecrets(c *genai.Content) *genai.Content {
+    	if c == nil {
+    		return nil
+    	}
+    	cloned := *c
+    	if len(c.Parts) > 0 {
+    		cloned.Parts = make([]*genai.Part, len(c.Parts))
+    		for i, p := range c.Parts {
+    			if p == nil {
+    				continue
+    			}
+    			partCopy := *p
+    			if partCopy.Text != "" {
+    				partCopy.Text = ssnPattern.ReplaceAllString(partCopy.Text, "[REDACTED_SSN]")
+    			}
+    			cloned.Parts[i] = &partCopy
+    		}
+    	}
+    	return &cloned
     }
 
     func newRedactedConfig() agentanalytics.Config {
@@ -3249,8 +3477,8 @@ If you do not need to log authentication-related events, exclude them entirely:
     cfg.DatasetID = "agent_analytics"
     cfg.TableName = "agent_events"
     cfg.EventDenylist = []string{
-    	"HITL_CREDENTIAL_REQUEST",
-    	"HITL_CREDENTIAL_REQUEST_COMPLETED",
+    	agentanalytics.EventHITLCredentialRequest,
+    	agentanalytics.EventHITLCredentialCompleted,
     }
     ```
 
@@ -3288,15 +3516,17 @@ call) reconstructs cleanly from BigQuery.
 
 - **Internal span tracking, no OTel span export.** The plugin tracks the
   parent-child hierarchy on its own internal stack of 16-hex `span_id` values.
-  The root invocation span reuses the ambient OTel span's id when one is active
-  (so it lines up with the runner's invocation span); child BQAA spans are
-  generated internally. It does **not** call
+  In Python and Java, the root invocation span reuses the ambient OTel span's id
+  when one is active (so it lines up with the runner's invocation span); in Go,
+  the plugin always generates its own 16-hex root `span_id` and records any
+  ambient OTel span ID in `parent_span_id`. Child BQAA spans are generated
+  internally. It does **not** call
   `tracer.start_span(...)` on any configured OpenTelemetry
   `TracerProvider`, so its instrumentation never reaches your configured
   exporter. This is what prevents duplicate spans in Cloud Trace when Agent
   Engine telemetry is enabled (`GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY=true`)
   or when you wire any other Cloud Trace exporter into the host process. The
-  same internal, ID-only span tracking applies to the Go plugin (v2.1.0+) and
+  same internal, ID-only span tracking applies to the Go plugin and
   the Java plugin (v1.7.0+); earlier Java builds created plugin-owned
   OpenTelemetry spans that could surface as duplicates next to framework spans.
 - **`trace_id` inherited from the ambient OTel span when present.** If the
@@ -3307,10 +3537,11 @@ call) reconstructs cleanly from BigQuery.
   Cloud Trace traces via a shared `trace_id`.
 - **Fallback when no ambient span is present.** If no ambient OTel span is
   active (e.g. a non-Agent-Engine deployment with no host-side tracer
-  configured), the plugin generates a per-invocation 32-hex `trace_id` (the Go
-  and Java plugins fall back to the ADK invocation ID as the `trace_id`, or a
-  generated UUID if no invocation ID is set) so the parent-child hierarchy is
-  always preserved in BigQuery, even without any external tracer setup.
+  configured), Python generates a random per-invocation 32-hex `trace_id`, Go
+  derives a stable 32-hex `trace_id` by SHA-256 from the invocation ID (or
+  generates a random 32-hex value if no invocation ID is set), and Java falls
+  back to the ADK invocation ID as the `trace_id`, so the parent-child hierarchy
+  is always preserved in BigQuery, even without any external tracer setup.
 - **No `TracerProvider` is required.** Configuring an OpenTelemetry
   `TracerProvider` in your host process is optional. It only matters if you
   want the plugin's `trace_id` to be sourced from your own pre-existing
@@ -3379,15 +3610,15 @@ call) reconstructs cleanly from BigQuery.
 
 === "Go"
 
-    In Go (`google.golang.org/adk/plugin/agentanalytics`, v2.1.0+), the plugin
+    In Go (`google.golang.org/adk/plugin/agentanalytics`), the plugin
     lifecycle and operational helpers are exposed through the ADK `*plugin.Plugin`
     handle and the unwrapped `*agentanalytics.BigQueryAgentAnalyticsPlugin`:
 
     - **`adkPlugin.Close() error`**: Drains queued events, stops the background
       batch processor (bounded by `ShutdownTimeout`, default `10s`), and closes
-      plugin-owned BigQuery, Storage Write, and GCS clients. Calling
-      `runner.PluginConfig.Close()` automatically calls `Close()` on all
-      registered plugins.
+      plugin-owned BigQuery, Storage Write, and GCS clients. ADK Go's runner does
+      not close plugins automatically. Call `adkPlugin.Close()` yourself before
+      exit, for example `defer bqPlugin.Close()` right after construction.
     - **`agentanalytics.AsBigQueryAgentAnalyticsPlugin(adkPlugin)`**: Unwraps the
       underlying `*agentanalytics.BigQueryAgentAnalyticsPlugin` from an ADK
       `*plugin.Plugin` handle. The unwrapped handle remains accessible even after
@@ -3399,11 +3630,14 @@ call) reconstructs cleanly from BigQuery.
       observability](#dropped-event-observability).
     - **`bqPlugin.SyncViews(ctx context.Context) error`**: Manually creates or
       refreshes all 25 per-event-type BigQuery analytics views (`CREATE OR
-      REPLACE VIEW`), even when `DisableCreateViews: true`.
+      REPLACE VIEW`), even when `DisableCreateViews: true`. If the plugin was
+      constructed with `NewBigQueryAgentAnalyticsPluginWithClients(..., nil, ...)`
+      (`bqClient == nil`), `SyncViews` returns
+      `agentanalytics: BigQuery client is not configured for view creation`.
     - **`cfg.ViewDefinitions() ([]agentanalytics.ViewDefinition, error)`**:
-      Returns the deterministic list of 25 view definitions (`Name` and `Query`)
-      for `cfg` without making any network calls, so views can be provisioned
-      externally via Terraform or deployment pipelines.
+      Returns the deterministic list of 25 view definitions (`Name`,
+      `EventType`, and `Query`) for `cfg` without making any network calls, so
+      views can be provisioned externally via Terraform or deployment pipelines.
 
     ```go
     // Unwrap the concrete plugin to inspect drop stats or sync views manually:
@@ -3442,7 +3676,7 @@ call) reconstructs cleanly from BigQuery.
 ### Dropped-event observability {#dropped-event-observability}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v2.1.0</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 BigQuery logging is best-effort. Events can be dropped when the in-memory queue
@@ -3468,22 +3702,22 @@ across loop cleanup and shutdown.
 | `setup_unavailable` | A row could not be admitted because plugin setup failed or remained in retry backoff. |
 | `shutdown_race` | A callback attempted to admit a row while shutdown was starting or in progress. |
 | `stale_loop` | Queued rows belonged to an event loop that had already closed and could no longer drain them. |
-| `workflow_observation_capacity` | *(Python v2.13.0+)* A `WORKFLOW_NODE_OBSERVATION_SUMMARY` row was not emitted because a single runner call observed more distinct workflow node paths than `max_observation_summaries_per_segment` (default `200`). `WORKFLOW_NODE_FIRST_OBSERVED` rows for paths within the cap are still emitted. |
+| `workflow_observation_capacity` | *(Python v2.13.0+)* A `WORKFLOW_NODE_OBSERVATION_SUMMARY` row was not emitted because a single runner call observed more distinct workflow node paths than `max_observation_summaries_per_segment` (default `200`). `WORKFLOW_NODE_FIRST_OBSERVED` rows are still emitted for overflow paths (up to 4,096 distinct node paths per segment); their summary rows are omitted and counted in `truncated_node_count`. |
 | `formatter_failed` | The custom formatter failed or returned an unsupported type. The row is still written with `[FORMATTER_FAILED]`; this is an incident count, not a dropped-row count. |
 | `content_parse_failed` | Content parsing failed. The row is still written with `[CONTENT_PARSE_FAILED]`; this is an incident count, not a dropped-row count. |
 
-**Drop counters (Go, v2.1.0+):**
+**Drop counters (Go):**
 
 `bqPlugin.DropStats()` returns an `agentanalytics.DropStats` struct with the
 following `int64` fields:
 
 | Field | Cause |
 |---|---|
-| `QueueFullDrops` | Rows dropped because the in-memory channel (`QueueMaxSize`, default `10000`) was full when `Enqueue` was called. Increase `QueueMaxSize` or `BatchSize` on `agentanalytics.Config`. |
-| `AppendFailureDrops` | Rows dropped because `AppendRows` failed after exhausting `MaxRetries` (or encountered a non-retryable write error or schema/descriptor preparation error). |
-| `FormatterFailureDrops` | Custom `ContentFormatter` invocations that returned a non-nil error. The row is still written with `"[FORMATTER_FAILED]"` (or redacted inline text parts are omitted from `content_parts`); this is an incident count, not included in `TotalDrops`. |
-| `ShutdownDrops` | Rows remaining in the queue that could not be drained before `ShutdownTimeout` expired during `Close()`. |
-| `TotalDrops` | Total rows dropped before reaching BigQuery (`QueueFullDrops + AppendFailureDrops + ShutdownDrops`). |
+| `QueueFullDrops` | Rows dropped because the in-memory channel (`QueueMaxSize`, default `10000`) was full when an event callback or `Append` tried to queue a row. Increase `QueueMaxSize` or `BatchSize` on `agentanalytics.Config`. |
+| `AppendFailureDrops` | Rows recorded as failed during Storage Write API delivery (including batches that exhausted `MaxRetries`, non-retryable write or schema/descriptor preparation errors, server-committed appends whose ack was lost on a broken stream before retry failed, recovered callback panics, and remaining batches skipped after a batch failure in `Flush`). |
+| `FormatterFailureDrops` | Custom `ContentFormatter` invocations that returned a non-nil error or panicked. The row is still written with `"[FORMATTER_FAILED]"`, no `content_parts`, and `content_formatter raised <error type>` or `content_formatter panicked` in `error_message`; this is an incident count, not included in `TotalDrops`. |
+| `ShutdownDrops` | Rows remaining in the queue that could not be drained before `ShutdownTimeout` expired during `Close()`, plus rows passed to `Append` after `Close()` has started. |
+| `TotalDrops` | Upper-bound total of rows counted as dropped (`QueueFullDrops + AppendFailureDrops + ShutdownDrops`). Because `AppendFailureDrops` can include server-committed batches whose ack was lost, `TotalDrops` is an upper bound on lost rows. |
 
 **Drop reasons (Java, v1.7.0+):**
 
