@@ -1,7 +1,7 @@
 # Parallel template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ***ParallelAgent*** class is a [template workflow](/agents/workflow-agents/)
@@ -82,3 +82,17 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
         ```java
          --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
         ```
+
+    === "Kotlin"
+        ```kotlin
+         --8<-- "examples/kotlin/snippets/agents/workflow-agents/ParallelAgentWebResearch.kt:init"
+        ```
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules across your workflow using the `GlobalInstructionPlugin` 
+    on your `App` ([Python](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py), 
+    [TypeScript](https://github.com/google/adk-js/blob/main/core/src/plugins/global_instruction_plugin.ts), 
+    [Java](https://github.com/google/adk-java/blob/main/core/src/main/java/com/google/adk/plugins/GlobalInstructionPlugin.java)) 
+    or the `GlobalInstruction` parameter on your agent 
+    ([Go](https://github.com/google/adk-go/blob/main/agent/llmagent/llmagent.go)).
