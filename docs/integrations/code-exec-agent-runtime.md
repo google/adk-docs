@@ -121,7 +121,7 @@ Code Execution tool with your ADK agents:
 The Agent Runtime Code Execution tool has the following parameters. You must set
 one of the following resource parameters:
 
--   **`sandbox_resource_name`** : A sandbox resource path to an
+-   **`sandbox_resource_name`**: A sandbox resource path to an
     existing sandbox environment it uses for each tool call. The expected
 string format is as follows:
     ```
