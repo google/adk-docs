@@ -71,24 +71,20 @@ deduplication](#delivery-and-deduplication).
 Python (v2.7.0 and later) and Go also capture model and workflow termination
 details. Final `LLM_RESPONSE` rows include `finish_reason` and, when supplied
 by the model, a sanitized `error_message`. Workflow nodes can emit `NODE_OUTPUT`
-and `NODE_ERROR`, and unhandled agent or run exceptions emit `AGENT_ERROR` and
-`INVOCATION_ERROR`.
+and `NODE_ERROR`, and agent or run failures emit `AGENT_ERROR` and
+`INVOCATION_ERROR` (in Go, `AGENT_ERROR` also covers failed activations that ADK
+handles without an `AfterAgent` callback).
 
 In ADK Python v2.13.0 and later, the plugin adds:
 
-- **Workflow node observation events** (`WORKFLOW_NODE_FIRST_OBSERVED` and
-  `WORKFLOW_NODE_OBSERVATION_SUMMARY`, with views
-  `v_workflow_node_first_observed` and `v_workflow_node_observation_summary`) to
-  record when each distinct workflow node path is first observed in a runner
-  call and to summarize its activity when the run ends.
 - **Tool result error classification** (`tool_result_classifier` and
   `ToolResultClassification`), alongside built-in detection of MCP tool results
   with `isError=True` / `is_error=True` and `ReflectAndRetryToolPlugin` error
   answers, so tools that report failures in their return value instead of
   raising an exception are recorded as `TOOL_ERROR` rows.
-- **Agent evaluation views** (`create_eval_views=True` and `eval_view_mode`, or
-  on-demand `await plugin.create_eval_views()`), which create `v_eval_session`
-  and `v_eval_turn` views that reconstruct `AgentData` evaluation traces directly
+- **Agent evaluation views** (`create_eval_views=True`, or on-demand
+  `await plugin.create_eval_views()`), which create `v_eval_session` and
+  `v_eval_turn` views that reconstruct `AgentData` evaluation traces directly
   in BigQuery.
 
 !!! warning "BigQuery Storage Write API"
@@ -148,19 +144,14 @@ In **Kotlin**, the plugin logs `INVOCATION_STARTING` and `INVOCATION_COMPLETED`
 only and creates no views, so the other rows and the entire **View** column
 apply to Python, Go, and Java.
 
-The table is the union of the Python, Go, and Java event sets:
+ADK Python v2.13.0 and Go support the 28 event types below and provide 25
+per-event-type views. The three HITL completion events have no dedicated views.
 
-- **Python** emits all 30 event types in the table.
-  `WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY` require
-  ADK Python v2.13.0 or later.
-- **Go** emits 28 of the 30 event types in the table; it does not emit the two
-  Python v2.13.0 workflow node observation events
-  (`WORKFLOW_NODE_FIRST_OBSERVED` and `WORKFLOW_NODE_OBSERVATION_SUMMARY`).
-- **Java** emits 21 of the 30 event types in the table: all rows except
+- **Python** and **Go** emit all 28 event types in the table.
+- **Java** emits 21 of the 28 event types in the table: all rows except
   `INVOCATION_ERROR`, `AGENT_ERROR`, `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
-  `EVENT_COMPACTION`, `NODE_OUTPUT`, `NODE_ERROR`,
-  `WORKFLOW_NODE_FIRST_OBSERVED`, and `WORKFLOW_NODE_OBSERVATION_SUMMARY` (of
-  the workflow events, Java emits `TOOL_PAUSED`).
+  `EVENT_COMPACTION`, `NODE_OUTPUT`, and `NODE_ERROR` (of the workflow events,
+  Java emits `TOOL_PAUSED`).
 
 | Event Type | Captured When | Key Payload Fields | View |
 | --- | --- | --- | --- |
@@ -170,7 +161,7 @@ The table is the union of the Python, Go, and Java event sets:
 | `INVOCATION_ERROR` | An invocation fails with an unhandled exception | error message, sanitized traceback | `v_invocation_error` |
 | `AGENT_STARTING` | Agent execution begins | instruction text; in ADK Python v2.12.0+, also instruction source, static instruction, description, model, and sub-agent names (Go records `instruction_source`, `agent_description`, `sub_agents`, and `model` when set on the agent itself, and does not populate `static_instruction`) | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
-| `AGENT_ERROR` | Agent execution fails with an unhandled exception | error message, sanitized traceback, latency | `v_agent_error` |
+| `AGENT_ERROR` | Agent execution fails; in Go, this also includes failed activations that ADK handles without an `AfterAgent` callback | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
 | `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, finish reason, latency, TTFT | `v_llm_response` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
@@ -192,8 +183,6 @@ The table is the union of the Python, Go, and Java event sets:
 | `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
 | `NODE_OUTPUT` | A workflow node emits a final structured output | output, node path, run ID, parent run ID | `v_node_output` |
 | `NODE_ERROR` | A workflow node ends with a non-model error | error code, error message, node path, run ID, parent run ID | `v_node_error` |
-| `WORKFLOW_NODE_FIRST_OBSERVED` | A workflow node path is first observed in a runner call *(Python v2.13.0+)* | app name, workflow segment ID, node path/run ID/parent run ID, source event ID and timestamp, boundary basis | `v_workflow_node_first_observed` |
-| `WORKFLOW_NODE_OBSERVATION_SUMMARY` | A runner call drains its observed workflow node summaries *(Python v2.13.0+)* | app name, workflow segment ID, node path/run ID/parent run ID, first/last source event IDs and timestamps, span ms, event/error counts, interrupt flags, drain callback, boundary basis, truncated node count | `v_workflow_node_observation_summary` |
 
 ## Installation
 
@@ -925,14 +914,13 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
     | `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
     | `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
-    | `queue_max_size` | `int` | `10000` | Bound the in-memory event queue. In ADK Python v2.13.0 and later, when `queue_max_size > 1`, `min(max(2, queue_max_size // 100), queue_max_size - 1)` slots (`100` at the default `10000`) are reserved for terminal `INVOCATION_COMPLETED` and `INVOCATION_ERROR` rows so non-terminal bursts cannot drop the turn's closing row |
+    | `queue_max_size` | `int` | `10000` | Bounds the in-memory event queue. In ADK Python v2.13.0, all event types share this capacity; terminal `INVOCATION_COMPLETED` and `INVOCATION_ERROR` rows can also be dropped when it is full and are counted under `queue_full` |
     | `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
     | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` are [redacted](#built-in-redaction). |
     | `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
     | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
     | `create_views` | `bool` | `True` | Create per-event-type BigQuery views |
     | `create_eval_views` | `bool` | `False` | In ADK Python v2.13.0 and later, also create the [agent evaluation views](#agent-evaluation-views) (`{view_prefix}_eval_session` and `{view_prefix}_eval_turn`) during setup |
-    | `eval_view_mode` | `Literal["full", "conversation_only"]` | `"full"` | In ADK Python v2.13.0 and later, select which events must be enabled to build the [agent evaluation views](#agent-evaluation-views): `"full"` requires the full turn, tool, model-request, transfer, and HITL event set, whereas `"conversation_only"` requires only `USER_MESSAGE_RECEIVED`, `AGENT_RESPONSE`, and `INVOCATION_COMPLETED` |
     | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
     | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
     | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*`: exact keys or `"prefix*"` patterns. In ADK Python v2.12.0 and later, final `LLM_RESPONSE` rows capture keys from `llm_response.custom_metadata` |
@@ -946,7 +934,6 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `on_schema_error` | `Optional[Callable[[Exception], None]]` | `None` | In ADK Python v2.12.0 and later, run a synchronous callback with the exception each time the [table readiness check](#table-readiness-callbacks) fails to read, create, or upgrade the table. Values that aren't synchronous callables raise `ValueError` when the plugin is constructed |
     | `on_schema_ready` | `Optional[Callable[[], None]]` | `None` | In ADK Python v2.12.0 and later, run a synchronous no-argument callback each time the [table readiness check](#table-readiness-callbacks) succeeds, including any requested views. Values that aren't synchronous callables raise `ValueError` when the plugin is constructed |
     | `tool_result_classifier` | `Optional[ToolResultClassifier]` | `None` | In ADK Python v2.13.0 and later, classify a returned tool result as `"ERROR"` or `"OK"` via a synchronous callback returning `ToolResultClassification` (or `None` to fall back to the built-in MCP `isError` / `is_error` rule). See [Tool result error classification](#tool-result-error-classification) |
-    | `max_observation_summaries_per_segment` | `int` | `200` | In ADK Python v2.13.0 and later, cap how many distinct workflow node paths in a single runner call receive a `WORKFLOW_NODE_OBSERVATION_SUMMARY` row when the run drains. Must be a positive integer (`>= 1`) |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -1273,25 +1260,24 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
       (`turn_latency_ms`, token and error counts, `eval_ready`), and a
       single-turn `trace` whose inner `turn_index` is `0`.
 
-    `eval_view_mode` controls which events must remain enabled in
-    `event_allowlist` / `event_denylist`:
+    In ADK Python v2.13.0, evaluation views require `content` (putting
+    `"content"` in `payload_column_denylist` raises `ValueError`) and all 15
+    events listed below. Filtering out a required event in `event_allowlist` /
+    `event_denylist` is rejected; this release has no conversation-only
+    evaluation mode:
 
-    - `"full"` (default) requires `USER_MESSAGE_RECEIVED`, `AGENT_STARTING`,
-      `LLM_REQUEST`, `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_PAUSED`,
-      `AGENT_TRANSFER`, `HITL_CREDENTIAL_REQUEST`, `HITL_CONFIRMATION_REQUEST`,
+    - `USER_MESSAGE_RECEIVED`, `AGENT_STARTING`, `LLM_REQUEST`,
+      `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_PAUSED`, `AGENT_TRANSFER`,
+      `HITL_CREDENTIAL_REQUEST`, `HITL_CONFIRMATION_REQUEST`,
       `HITL_INPUT_REQUEST`, `HITL_CREDENTIAL_REQUEST_COMPLETED`,
       `HITL_CONFIRMATION_REQUEST_COMPLETED`, `HITL_INPUT_REQUEST_COMPLETED`,
       `AGENT_RESPONSE`, and `INVOCATION_COMPLETED`.
-    - `"conversation_only"` requires only `USER_MESSAGE_RECEIVED`,
-      `AGENT_RESPONSE`, and `INVOCATION_COMPLETED` when tool, model-request,
-      transfer, or HITL events are intentionally filtered out.
 
-    Both modes require the `content` column (putting `"content"` in
-    `payload_column_denylist` raises `ValueError`). Because the views aggregate
-    across the table by `session_id` / `invocation_id`, filtering on
-    `session_start_timestamp` or `turn_start_timestamp` does not prune the base
-    table's `timestamp` partitions; for large tables, materialize a
-    date-filtered slice before running evaluation jobs.
+    Because the views aggregate across the table by `session_id` /
+    `invocation_id`, filtering on `session_start_timestamp` or
+    `turn_start_timestamp` does not prune the base table's `timestamp`
+    partitions; for large tables, materialize a date-filtered slice before
+    running evaluation jobs.
 
 === "Go"
 
@@ -1308,20 +1294,22 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
       has `Enabled: false` and returns a no-op disabled plugin.
     - **`agentanalytics.NewBigQueryAgentAnalyticsPluginWithClients(ctx, cfg, bqClient, writeClient)`**:
       Uses caller-supplied `*bigquery.Client` and
-      `*bqstorage.BigQueryWriteClient` instances. Passing `bqClient == nil`
-      skips table inspection, creation, schema upgrades, and automatic view
-      creation for pre-provisioned, append-only deployments (in that mode
-      `cfg.ProjectID` must be set explicitly, and calling `bqPlugin.SyncViews`
-      returns `agentanalytics: BigQuery client is not configured for view
-      creation`; use `cfg.ViewDefinitions()` to obtain the `Name`, `EventType`,
-      and `Query` for each view instead).
+      `*bqstorage.BigQueryWriteClient` instances. When `bqClient` is non-nil and
+      `cfg.ProjectID` is empty or `bigquery.DetectProjectID`, the plugin uses
+      `bqClient.Project()`. Passing `bqClient == nil` skips table inspection,
+      creation, schema upgrades, and automatic view creation for pre-provisioned,
+      append-only deployments (in that mode `cfg.ProjectID` must be set
+      explicitly, and calling `bqPlugin.SyncViews` returns `agentanalytics:
+      BigQuery client is not configured for view creation`; use
+      `cfg.ViewDefinitions()` to obtain the `Name`, `EventType`, and `Query` for
+      each view instead).
 
     #### `agentanalytics.Config` fields
 
     | Field | Type | Default (`DefaultConfig()`) | Use when |
     | --- | --- | --- | --- |
     | `Enabled` | `bool` | `true` | Enable or disable the plugin. In a struct literal without `DefaultConfig()`, set `Enabled: true` explicitly |
-    | `ProjectID` | `string` | `""` *(detected when the plugin creates its own BigQuery client; must be explicit when passing custom clients)* | Select the Google Cloud project |
+    | `ProjectID` | `string` | `""` (set a project ID, or use `bigquery.DetectProjectID` when the plugin creates its client; with a supplied non-nil `bqClient`, an empty value uses `bqClient.Project()`; set an explicit project ID when `bqClient` is nil) | Select the Google Cloud project |
     | `DatasetID` | `string` | `"agent_analytics"` | Select the BigQuery dataset |
     | `TableName` | `string` | `"agent_events"` | Select the BigQuery table name |
     | `MaxContentLen` | `int` | `500 * 1024` | Truncate inline text values to this many Unicode code points (runes). `0` uses the default (`500 * 1024` runes); `-1` disables truncation |
@@ -1368,7 +1356,16 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     `LLM_RESPONSE`, or `map[string]any` / `[]any` on tool and state events),
     not the final JSON. Clone any pointer, slice, or map you modify (including
     `Part.Text`, `Part.FunctionCall.Args`, and `Part.FunctionResponse.Response`
-    inside `*genai.Content`) and never mutate the live payload:
+    inside `*genai.Content`) and never mutate the live payload.
+
+    These helpers clone the values they edit and stop after 50 nesting levels.
+    Excessively nested or cyclic payloads return an error, so the plugin records
+    `[FORMATTER_FAILED]` instead of risking a process crash. These helpers
+    recurse through JSON-shaped `map[string]any` and `[]any` values (plus
+    `[]string`, `map[string]string`, and `[]map[string]any`). Add bounded cases
+    for any other concrete types your tools return, or normalize those values
+    before formatting, and test the actual payloads before relying on this
+    redaction:
 
     ```go title="analytics.go"
     package analytics
@@ -1386,7 +1383,10 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
 
     var dollarPattern = regexp.MustCompile(`\$\d+(?:,\d{3})*(?:\.\d+)?`)
 
-    func maskContent(c *genai.Content, eventType string) (*genai.Content, error) {
+    func maskContent(c *genai.Content, eventType string, depth int) (*genai.Content, error) {
+    	if depth >= 50 {
+    		return nil, fmt.Errorf("redaction nesting limit exceeded")
+    	}
     	if c == nil {
     		return nil, nil
     	}
@@ -1404,7 +1404,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     			if partCopy.FunctionCall != nil {
     				fcCopy := *partCopy.FunctionCall
     				if fcCopy.Args != nil {
-    					redactedArgs, err := redactDollarAmounts(fcCopy.Args, eventType)
+    					redactedArgs, err := redactDollarAmountsAtDepth(fcCopy.Args, eventType, depth+1)
     					if err != nil {
     						return nil, err
     					}
@@ -1417,7 +1417,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     			if partCopy.FunctionResponse != nil {
     				frCopy := *partCopy.FunctionResponse
     				if frCopy.Response != nil {
-    					redactedResp, err := redactDollarAmounts(frCopy.Response, eventType)
+    					redactedResp, err := redactDollarAmountsAtDepth(frCopy.Response, eventType, depth+1)
     					if err != nil {
     						return nil, err
     					}
@@ -1434,11 +1434,18 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     }
 
     func redactDollarAmounts(payload any, eventType string) (any, error) {
+    	return redactDollarAmountsAtDepth(payload, eventType, 0)
+    }
+
+    func redactDollarAmountsAtDepth(payload any, eventType string, depth int) (any, error) {
+    	if depth >= 50 {
+    		return nil, fmt.Errorf("redaction nesting limit exceeded")
+    	}
     	switch v := payload.(type) {
     	case string:
     		return dollarPattern.ReplaceAllString(v, "xxx"), nil
     	case *genai.Content:
-    		return maskContent(v, eventType)
+    		return maskContent(v, eventType, depth+1)
     	case *model.LLMRequest:
     		if v == nil {
     			return nil, nil
@@ -1447,7 +1454,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     		if len(v.Contents) > 0 {
     			cloned.Contents = make([]*genai.Content, len(v.Contents))
     			for i, c := range v.Contents {
-    				masked, err := maskContent(c, eventType)
+    				masked, err := maskContent(c, eventType, depth+1)
     				if err != nil {
     					return nil, err
     				}
@@ -1455,7 +1462,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     			}
     		}
     		if v.Config != nil && v.Config.SystemInstruction != nil {
-    			maskedSys, err := maskContent(v.Config.SystemInstruction, eventType)
+    			maskedSys, err := maskContent(v.Config.SystemInstruction, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
@@ -1468,7 +1475,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     		if v == nil {
     			return nil, nil
     		}
-    		maskedContent, err := maskContent(v.Content, eventType)
+    		maskedContent, err := maskContent(v.Content, eventType, depth+1)
     		if err != nil {
     			return nil, err
     		}
@@ -1476,23 +1483,68 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     		cloned.Content = maskedContent
     		return &cloned, nil
     	case map[string]any:
+    		if v == nil {
+    			return map[string]any(nil), nil
+    		}
     		cloned := make(map[string]any, len(v))
     		for k, val := range v {
-    			redacted, err := redactDollarAmounts(val, eventType)
+    			redacted, err := redactDollarAmountsAtDepth(val, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
     			cloned[k] = redacted
     		}
     		return cloned, nil
+    	case map[string]string:
+    		if v == nil {
+    			return map[string]string(nil), nil
+    		}
+    		cloned := make(map[string]string, len(v))
+    		for k, val := range v {
+    			redacted, err := redactDollarAmountsAtDepth(val, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[k], _ = redacted.(string)
+    		}
+    		return cloned, nil
     	case []any:
+    		if v == nil {
+    			return []any(nil), nil
+    		}
     		cloned := make([]any, len(v))
     		for i, item := range v {
-    			redacted, err := redactDollarAmounts(item, eventType)
+    			redacted, err := redactDollarAmountsAtDepth(item, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
     			cloned[i] = redacted
+    		}
+    		return cloned, nil
+    	case []string:
+    		if v == nil {
+    			return []string(nil), nil
+    		}
+    		cloned := make([]string, len(v))
+    		for i, item := range v {
+    			redacted, err := redactDollarAmountsAtDepth(item, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i], _ = redacted.(string)
+    		}
+    		return cloned, nil
+    	case []map[string]any:
+    		if v == nil {
+    			return []map[string]any(nil), nil
+    		}
+    		cloned := make([]map[string]any, len(v))
+    		for i, item := range v {
+    			redacted, err := redactDollarAmountsAtDepth(item, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i], _ = redacted.(map[string]any)
     		}
     		return cloned, nil
     	default:
@@ -1651,7 +1703,7 @@ provides a comprehensive reference with example values.
 | **session_id** | `STRING` | `NULLABLE` | A persistent identifier for the entire conversation thread. Stays constant across multiple turns and sub-agent calls. | `04275a01-1649-4a30-b6a7-5b443c69a7bc` |
 | **invocation_id** | `STRING` | `NULLABLE` | The unique identifier for a single execution turn or request cycle. Corresponds to `trace_id` in many contexts. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
 | **user_id** | `STRING` | `NULLABLE` | The identifier of the user (human or system) initiating the session. Extracted from the `User` object or metadata. | `test_user` |
-| **trace_id** | `STRING` | `NULLABLE` | Trace identifier. It is a 32-character hex OpenTelemetry trace ID when inherited from an ambient span (e.g. Agent Engine's invocation span or the ADK Runner span), so BigQuery rows join cleanly to your existing Cloud Trace traces. Without an ambient span, Python generates a random 32-character hex fallback, Go derives a stable 32-character hex `trace_id` by SHA-256 from the invocation ID (or generates a random 32-character hex value if `invocation_id` is empty), and Java falls back to the ADK invocation ID. Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
+| **trace_id** | `STRING` | `NULLABLE` | Trace identifier. It is a 32-character hex OpenTelemetry trace ID when inherited from an ambient span (e.g. Agent Engine's invocation span or the ADK Runner span), so BigQuery rows join cleanly to your existing Cloud Trace traces. Without an ambient span, Python generates a random 32-character hex fallback. Without an ambient span, Go generates a random 32-hex `trace_id` when `invocation_id` is empty. Otherwise, it uses SHA-256 over a random per-plugin seed and the invocation ID, producing a stable 32-hex ID within that plugin instance. Java falls back to the ADK invocation ID. Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
 | **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span.** The plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. In Python and Java, the root invocation span reuses the ambient OTel span's id when one is active; in Go, the plugin always generates its own 16-hex root `span_id` and records any ambient OTel span ID in `parent_span_id`. Child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
 | **parent_span_id** | `STRING` | `NULLABLE` | Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `4c4a42bfdeb84934` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
@@ -1803,8 +1855,6 @@ columns:
 | **`v_tool_paused`** | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
 | **`v_node_output`** | `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `output` (JSON) |
 | **`v_node_error`** | `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `error_code` (STRING) |
-| **`v_workflow_node_first_observed`** *(Python v2.13.0+)* | `app_name` (STRING), `workflow_segment_id` (STRING), `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `source_event_id` (STRING), `source_event_timestamp` (TIMESTAMP), `boundary_basis` (STRING) |
-| **`v_workflow_node_observation_summary`** *(Python v2.13.0+)* | `app_name` (STRING), `workflow_segment_id` (STRING), `node_path` (STRING), `node_run_id` (STRING), `node_parent_run_id` (STRING), `first_source_event_id` (STRING), `last_source_event_id` (STRING), `first_source_event_timestamp` (TIMESTAMP), `last_source_event_timestamp` (TIMESTAMP), `source_event_span_ms` (FLOAT64), `observed_event_count` (INT64), `node_interrupt_observed` (BOOL), `descendant_interrupt_observed` (BOOL), `node_error_observed_count` (INT64), `drain_callback` (STRING), `boundary_basis` (STRING), `truncated_node_count` (INT64) |
 
 In addition to the per-event-type views above, ADK Python v2.13.0 and later can
 create two optional [agent evaluation views](#agent-evaluation-views)
@@ -1813,10 +1863,8 @@ create two optional [agent evaluation views](#agent-evaluation-views)
 
 Go creates all 25 per-event-type views from `v_user_message_received` through
 `v_node_error` (with identical column names and projection-aware column dropping
-when `PayloadColumnDenylist` is set). The two workflow node observation views
-(`v_workflow_node_first_observed` and `v_workflow_node_observation_summary`) and
-the evaluation views (`v_eval_session` and `v_eval_turn`) are Python-only
-(v2.13.0+).
+when `PayloadColumnDenylist` is set). The evaluation views (`v_eval_session`
+and `v_eval_turn`) are Python-only (v2.13.0+).
 
 The four workflow views (`v_agent_transfer`, `v_agent_state_checkpoint`,
 `v_event_compaction`, `v_tool_paused`) and the `pause_kind` / `function_call_id`
@@ -1991,7 +2039,7 @@ a `tool_origin` field that classifies the tool's provenance:
 | `TRANSFER_AGENT` | `TransferToAgentTool` (`transfer_to_agent`) instances (generic agent transfer) |
 | `TRANSFER_A2A` | Python and Go: `transfer_to_agent` calls that resolve to a remote A2A agent (classified at call-level) |
 | `TOOLBOX` | Python (v2.13.0+) and Go: MCP Toolbox for Databases (`ToolboxTool`) tools |
-| `SKILL` | Python (v2.13.0+) and Go: `SkillToolset` built-in skill tools (`list_skills`, `load_skill`, `load_skill_resource`, `run_skill_script`, `search_skills`, `unload_skill`) |
+| `SKILL` | Python (v2.13.0+): `SkillToolset` built-ins (`list_skills`, `load_skill`, `load_skill_resource`, `run_skill_script`, `search_skills`, `unload_skill`); Go: `SkillToolset` built-ins (`list_skills`, `load_skill`, `load_skill_resource`) |
 | `UNKNOWN` | Unclassified tools |
 
 **4. TOOL_STARTING**
@@ -2068,8 +2116,10 @@ updated by tools).
 
 !!! note "Built-in redaction"
 
-    State keys prefixed with `temp:` are automatically redacted to `[REDACTED]`
-    in the logged `state_delta`. See [Built-in
+    Python replaces `temp:` state values with `[REDACTED]`. Go removes top-level
+    lowercase `temp:` entries from `state_delta` before logging and emits no
+    `STATE_DELTA` row if nothing remains. Other `temp:` values in structured
+    content and attributes are replaced with `[REDACTED]`. See [Built-in
     redaction](#built-in-redaction) for details.
 
 ```json
@@ -2374,69 +2424,6 @@ Both auto-created views expose `node_path`, `node_run_id`, and
   },
   "status": "ERROR",
   "error_message": "Input did not satisfy the node contract"
-}
-```
-
-#### WORKFLOW_NODE_FIRST_OBSERVED and WORKFLOW_NODE_OBSERVATION_SUMMARY
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.13.0</span>
-</div>
-
-In ADK Python v2.13.0 and later, each runner invocation opens an observation
-segment identified by `attributes.adk.workflow_segment_id` and tracks events
-that carry a workflow `node_info.path`:
-
-- **`WORKFLOW_NODE_FIRST_OBSERVED`** is emitted the first time a distinct
-  `node_info.path` is observed within the current runner segment. Its
-  `attributes.adk` envelope records `workflow_segment_id`, `node` (`path`,
-  `run_id`, `parent_run_id`), `source_event_id`, `source_event_timestamp`, and
-  `boundary_basis: "event_observation"`.
-- **`WORKFLOW_NODE_OBSERVATION_SUMMARY`** is emitted for each observed node path
-  when the runner segment drains in `after_run_callback` (`drain_callback:
-  "after_run"`) or `on_run_error_callback` (`drain_callback: "on_run_error"`).
-  Its `attributes.adk` envelope records `workflow_segment_id`, `node`,
-  `first_source_event_id`, `last_source_event_id`,
-  `first_source_event_timestamp`, `last_source_event_timestamp`,
-  `source_event_span_ms`, `observed_event_count`, `node_interrupt_observed`,
-  `descendant_interrupt_observed`, `node_error_observed_count`,
-  `drain_callback`, and `boundary_basis: "event_observation"`.
-
-At most `max_observation_summaries_per_segment` (default `200`) summary rows are
-emitted per runner segment (`WORKFLOW_NODE_FIRST_OBSERVED` rows continue to be
-emitted for overflow paths up to 4,096 distinct node paths per segment). When
-more distinct node paths are observed in a single segment, the final summary row
-includes `truncated_node_count` (and `untracked_overflow_event_count` when path
-tracking saturates), and the omitted node paths are counted under the
-`workflow_observation_capacity` drop reason.
-
-```json
-{
-  "event_type": "WORKFLOW_NODE_OBSERVATION_SUMMARY",
-  "content": null,
-  "attributes": {
-    "adk": {
-      "schema_version": "1",
-      "app_name": "my_workflow_app",
-      "workflow_segment_id": "5b7c8e90-1234-4a5b-8c9d-0123456789ab",
-      "node": {
-        "path": "workflow/validate@run-7",
-        "run_id": "run-7",
-        "parent_run_id": null
-      },
-      "first_source_event_id": "evt-001",
-      "last_source_event_id": "evt-004",
-      "first_source_event_timestamp": 1733856000.1,
-      "last_source_event_timestamp": 1733856000.45,
-      "source_event_span_ms": 350.0,
-      "observed_event_count": 4,
-      "node_interrupt_observed": false,
-      "descendant_interrupt_observed": false,
-      "node_error_observed_count": 0,
-      "drain_callback": "after_run",
-      "boundary_basis": "event_observation"
-    }
-  }
 }
 ```
 
@@ -3122,9 +3109,12 @@ If events are not appearing in your BigQuery table after deployment:
 
     The BigQuery Agent Analytics plugin captures detailed event payloads,
     including tool arguments, LLM prompts, and authentication-related events
-    (such as HITL credential requests). Built-in redaction matches key names
-    exactly after lowercasing and hyphen normalization, so camelCase variants
-    such as `clientSecret` or `accessToken` are **not** matched. ADK serializes
+    (such as HITL credential requests). In Python, built-in redaction matches
+    key names exactly after lowercasing and hyphen normalization, so camelCase
+    variants such as `clientSecret` or `accessToken` are **not** matched. Go
+    additionally ignores underscore and hyphen separators and does match those
+    variants; the rest of this warning concerns Python's credential-request
+    payload. ADK serializes
     `adk_request_credential` arguments with camelCase aliases, so an
     `AuthenticatedFunctionTool` OAuth2 flow can write `client_secret` and
     `access_token` values into the `content` column
@@ -3158,9 +3148,11 @@ wherever they appear in structured `content` or `attributes`:
 `x_amz_credential`, `x_amz_signature`, `x_goog_credential`,
 `x_goog_security_token`, `x_goog_signature`
 
-Any key prefixed with **`temp:`** is also replaced with `[REDACTED]`, including
-in session state and `state_delta`. A `secret:` prefix is not treated as a
-special prefix; use the `temp:` scope or a custom formatter for
+Python replaces **`temp:`** state values with `[REDACTED]`. Go removes top-level
+lowercase **`temp:`** entries from `state_delta` before logging and emits no
+`STATE_DELTA` row if nothing remains. Other **`temp:`** values in structured
+content and attributes are replaced with `[REDACTED]`. A `secret:` prefix is not
+treated as a special prefix; use the `temp:` scope or a custom formatter for
 application-specific secret scopes.
 
 !!! warning "Correction to earlier guidance"
@@ -3218,8 +3210,10 @@ safely rewritten fail closed.
 
     In addition, the Go plugin:
 
-    - Redacts any key prefixed with **`temp:`** (including in session state and
-      `state_delta`), and redacts whole credential-container envelopes under
+    - Removes top-level lowercase **`temp:`** entries from `state_delta` before
+      logging and emits no `STATE_DELTA` row if nothing remains; replaces other
+      **`temp:`** values in structured content and attributes with
+      `"[REDACTED]"`; and redacts whole credential-container envelopes under
       `credential` or `credentials`.
     - Scrubs credential userinfo and sensitive query parameters from external
       URIs (failing closed to `"[REDACTED_SENSITIVE_URI]"` when a sensitive
@@ -3294,12 +3288,22 @@ written:
     `map[string]any`), not the final JSON. Clone any pointer, slice, or map you
     modify (including `Part.Text`, `Part.FunctionCall.Args`, and
     `Part.FunctionResponse.Response` inside `*genai.Content`) and never mutate
-    the live payload:
+    the live payload.
+
+    These helpers clone the values they edit and stop after 50 nesting levels.
+    Excessively nested or cyclic payloads return an error, so the plugin records
+    `[FORMATTER_FAILED]` instead of risking a process crash. These helpers
+    recurse through JSON-shaped `map[string]any` and `[]any` values (plus
+    `[]string`, `map[string]string`, and `[]map[string]any`). Add bounded cases
+    for any other concrete types your tools return, or normalize those values
+    before formatting, and test the actual payloads before relying on this
+    redaction:
 
     ```go
     package analytics
 
     import (
+    	"fmt"
     	"regexp"
     	"strings"
 
@@ -3311,11 +3315,18 @@ written:
     var ssnPattern = regexp.MustCompile(`\b\d{3}-\d{2}-\d{4}\b`)
 
     func redactCustomSecrets(content any, eventType string) (any, error) {
+    	return redactCustomSecretsAtDepth(content, eventType, 0)
+    }
+
+    func redactCustomSecretsAtDepth(content any, eventType string, depth int) (any, error) {
+    	if depth >= 50 {
+    		return nil, fmt.Errorf("redaction nesting limit exceeded")
+    	}
     	switch v := content.(type) {
     	case string:
     		return ssnPattern.ReplaceAllString(v, "[REDACTED_SSN]"), nil
     	case *genai.Content:
-    		return redactGenAIContentSecrets(v, eventType)
+    		return redactGenAIContentSecrets(v, eventType, depth+1)
     	case *model.LLMRequest:
     		if v == nil {
     			return nil, nil
@@ -3324,7 +3335,7 @@ written:
     		if len(v.Contents) > 0 {
     			cloned.Contents = make([]*genai.Content, len(v.Contents))
     			for i, c := range v.Contents {
-    				redactedContent, err := redactGenAIContentSecrets(c, eventType)
+    				redactedContent, err := redactGenAIContentSecrets(c, eventType, depth+1)
     				if err != nil {
     					return nil, err
     				}
@@ -3332,7 +3343,7 @@ written:
     			}
     		}
     		if v.Config != nil && v.Config.SystemInstruction != nil {
-    			redactedSys, err := redactGenAIContentSecrets(v.Config.SystemInstruction, eventType)
+    			redactedSys, err := redactGenAIContentSecrets(v.Config.SystemInstruction, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
@@ -3345,7 +3356,7 @@ written:
     		if v == nil {
     			return nil, nil
     		}
-    		redactedContent, err := redactGenAIContentSecrets(v.Content, eventType)
+    		redactedContent, err := redactGenAIContentSecrets(v.Content, eventType, depth+1)
     		if err != nil {
     			return nil, err
     		}
@@ -3353,27 +3364,82 @@ written:
     		cloned.Content = redactedContent
     		return &cloned, nil
     	case map[string]any:
+    		if v == nil {
+    			return map[string]any(nil), nil
+    		}
     		cloned := make(map[string]any, len(v))
     		for k, val := range v {
+    			if depth+1 >= 50 {
+    				return nil, fmt.Errorf("redaction nesting limit exceeded")
+    			}
     			if strings.EqualFold(k, "internal_token") {
     				cloned[k] = "[REDACTED]"
     				continue
     			}
-    			redactedVal, err := redactCustomSecrets(val, eventType)
+    			redactedVal, err := redactCustomSecretsAtDepth(val, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
     			cloned[k] = redactedVal
     		}
     		return cloned, nil
+    	case map[string]string:
+    		if v == nil {
+    			return map[string]string(nil), nil
+    		}
+    		cloned := make(map[string]string, len(v))
+    		for k, val := range v {
+    			if depth+1 >= 50 {
+    				return nil, fmt.Errorf("redaction nesting limit exceeded")
+    			}
+    			if strings.EqualFold(k, "internal_token") {
+    				cloned[k] = "[REDACTED]"
+    				continue
+    			}
+    			redactedVal, err := redactCustomSecretsAtDepth(val, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[k], _ = redactedVal.(string)
+    		}
+    		return cloned, nil
     	case []any:
+    		if v == nil {
+    			return []any(nil), nil
+    		}
     		cloned := make([]any, len(v))
     		for i, item := range v {
-    			redactedItem, err := redactCustomSecrets(item, eventType)
+    			redactedItem, err := redactCustomSecretsAtDepth(item, eventType, depth+1)
     			if err != nil {
     				return nil, err
     			}
     			cloned[i] = redactedItem
+    		}
+    		return cloned, nil
+    	case []string:
+    		if v == nil {
+    			return []string(nil), nil
+    		}
+    		cloned := make([]string, len(v))
+    		for i, item := range v {
+    			redactedItem, err := redactCustomSecretsAtDepth(item, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i], _ = redactedItem.(string)
+    		}
+    		return cloned, nil
+    	case []map[string]any:
+    		if v == nil {
+    			return []map[string]any(nil), nil
+    		}
+    		cloned := make([]map[string]any, len(v))
+    		for i, item := range v {
+    			redactedItem, err := redactCustomSecretsAtDepth(item, eventType, depth+1)
+    			if err != nil {
+    				return nil, err
+    			}
+    			cloned[i], _ = redactedItem.(map[string]any)
     		}
     		return cloned, nil
     	default:
@@ -3381,7 +3447,10 @@ written:
     	}
     }
 
-    func redactGenAIContentSecrets(c *genai.Content, eventType string) (*genai.Content, error) {
+    func redactGenAIContentSecrets(c *genai.Content, eventType string, depth int) (*genai.Content, error) {
+    	if depth >= 50 {
+    		return nil, fmt.Errorf("redaction nesting limit exceeded")
+    	}
     	if c == nil {
     		return nil, nil
     	}
@@ -3399,7 +3468,7 @@ written:
     			if partCopy.FunctionCall != nil {
     				fcCopy := *partCopy.FunctionCall
     				if fcCopy.Args != nil {
-    					redactedArgs, err := redactCustomSecrets(fcCopy.Args, eventType)
+    					redactedArgs, err := redactCustomSecretsAtDepth(fcCopy.Args, eventType, depth+1)
     					if err != nil {
     						return nil, err
     					}
@@ -3412,7 +3481,7 @@ written:
     			if partCopy.FunctionResponse != nil {
     				frCopy := *partCopy.FunctionResponse
     				if frCopy.Response != nil {
-    					redactedResp, err := redactCustomSecrets(frCopy.Response, eventType)
+    					redactedResp, err := redactCustomSecretsAtDepth(frCopy.Response, eventType, depth+1)
     					if err != nil {
     						return nil, err
     					}
@@ -3622,11 +3691,13 @@ call) reconstructs cleanly from BigQuery.
   existing Cloud Trace traces via a shared `trace_id`.
 - **Fallback when no ambient span is present.** If no ambient OTel span is
   active (e.g. a non-Agent-Engine deployment with no host-side tracer
-  configured), Python generates a random per-invocation 32-hex `trace_id`, Go
-  derives a stable 32-hex `trace_id` by SHA-256 from the invocation ID (or
-  generates a random 32-hex value if no invocation ID is set), and Java falls
-  back to the ADK invocation ID as the `trace_id`, so the parent-child hierarchy
-  is always preserved in BigQuery, even without any external tracer setup.
+  configured), Python generates a random per-invocation 32-hex `trace_id`.
+  Without an ambient span, Go generates a random 32-hex `trace_id` when
+  `invocation_id` is empty. Otherwise, it uses SHA-256 over a random per-plugin
+  seed and the invocation ID, producing a stable 32-hex ID within that plugin
+  instance. Java falls back to the ADK invocation ID as the `trace_id`, so the
+  parent-child hierarchy is always preserved in BigQuery, even without any
+  external tracer setup.
 - **No `TracerProvider` is required.** Configuring an OpenTelemetry
   `TracerProvider` in your host process is optional. It only matters if you
   want the plugin's `trace_id` to be sourced from your own pre-existing
@@ -3775,7 +3846,7 @@ across loop cleanup and shutdown.
 
 | Reason | Cause |
 |---|---|
-| `queue_full` | The in-memory batch queue overflowed (host produces events faster than the drainer can ship). In Python v2.13.0+, for `queue_max_size > 1`, `min(max(2, queue_max_size // 100), queue_max_size - 1)` queue slots are reserved for terminal `INVOCATION_COMPLETED` and `INVOCATION_ERROR` events so non-terminal bursts shed first. Increase `queue_max_size` on `BigQueryLoggerConfig`, raise `batch_size` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
+| `queue_full` | Bounds the in-memory event queue. In ADK Python v2.13.0, all event types share this capacity; terminal `INVOCATION_COMPLETED` and `INVOCATION_ERROR` rows can also be dropped when it is full and are counted under `queue_full`. Increase `queue_max_size` on `BigQueryLoggerConfig`, raise `batch_size` to drain in larger chunks, or scale the consumer side (more concurrent invocations finishing faster). |
 | `arrow_prep_failed` | A row could not be converted to its Arrow representation (typically schema/type mismatch). Inspect logs for the offending field. |
 | `retry_exhausted` | The Storage Write API call kept returning a retryable error (e.g. transient gRPC failures) until the retry budget was used up. |
 | `permission_denied` | *(Python v2.13.0+)* Storage Write API returned `PERMISSION_DENIED` (`google.api_core.exceptions.PermissionDenied`). Non-retryable; check that the service account has `bigquery.tables.updateData` (e.g., `roles/bigquery.dataEditor`) on the target table. |
@@ -3788,7 +3859,6 @@ across loop cleanup and shutdown.
 | `setup_unavailable` | A row could not be admitted because plugin setup failed or remained in retry backoff. |
 | `shutdown_race` | A callback attempted to admit a row while shutdown was starting or in progress. |
 | `stale_loop` | Queued rows belonged to an event loop that had already closed and could no longer drain them. |
-| `workflow_observation_capacity` | *(Python v2.13.0+)* A `WORKFLOW_NODE_OBSERVATION_SUMMARY` row was not emitted because a single runner call observed more distinct workflow node paths than `max_observation_summaries_per_segment` (default `200`). `WORKFLOW_NODE_FIRST_OBSERVED` rows are still emitted for overflow paths (up to 4,096 distinct node paths per segment); their summary rows are omitted and counted in `truncated_node_count`. |
 | `formatter_failed` | The custom formatter failed or returned an unsupported type. The row is still written with `[FORMATTER_FAILED]`; this is an incident count, not a dropped-row count. |
 | `content_parse_failed` | Content parsing failed. The row is still written with `[CONTENT_PARSE_FAILED]`; this is an incident count, not a dropped-row count. |
 
@@ -3834,7 +3904,7 @@ following `int64` fields:
         "permission_denied", "not_found", "non_retryable",
         "unexpected_error", "shutdown_timeout", "shutdown_cancelled",
         "offset_conflict", "setup_unavailable", "shutdown_race",
-        "stale_loop", "workflow_observation_capacity",
+        "stale_loop",
     }
     total_rows_lost = sum(stats.get(reason, 0) for reason in loss_reasons)
     ```
