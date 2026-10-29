@@ -1350,13 +1350,17 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `ViewPrefix` | `string` | `"v"` | Prefix for per-event-type view names (`<ViewPrefix>_<event_type>`) |
     | `ExactlyOnceDelivery` | `bool` | `false` | Write through a `COMMITTED` Storage Write stream with explicit batch offsets instead of the default stream |
 
-    In Go, `ContentFormatter` receives the raw typed payload (`string` on
-    `AGENT_STARTING`, `*genai.Content` on `USER_MESSAGE_RECEIVED`,
-    `*model.LLMRequest` on `LLM_REQUEST`, `*model.LLMResponse` on
-    `LLM_RESPONSE`, or `map[string]any` / `[]any` on tool and state events),
-    not the final JSON. Clone any pointer, slice, or map you modify (including
-    `Part.Text`, `Part.FunctionCall.Args`, and `Part.FunctionResponse.Response`
-    inside `*genai.Content`) and never mutate the live payload.
+    In Go, `ContentFormatter` receives the raw typed content payload: a string
+    for a static `AGENT_STARTING` instruction, `*genai.Content` for
+    `USER_MESSAGE_RECEIVED`, `*model.LLMRequest` for `LLM_REQUEST`,
+    `*model.LLMResponse` for `LLM_RESPONSE`, and maps for tool payloads and
+    other content-bearing events. It does not transform attributes. In
+    particular, `STATE_DELTA` stores its payload in `attributes.state_delta` and
+    does not invoke `ContentFormatter`. Clone any pointer, slice, or map you
+    modify (including `Part.Text`, `Part.ExecutableCode.Code`,
+    `Part.CodeExecutionResult.Output`, `Part.FunctionCall.Args`, and
+    `Part.FunctionResponse.Response` inside `*genai.Content`) and never mutate
+    the live payload.
 
     These helpers clone the values they edit and stop after 50 nesting levels.
     Excessively nested or cyclic payloads return an error, so the plugin records
@@ -1400,6 +1404,16 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     			partCopy := *p
     			if partCopy.Text != "" {
     				partCopy.Text = dollarPattern.ReplaceAllString(partCopy.Text, "xxx")
+    			}
+    			if partCopy.ExecutableCode != nil {
+    				codeCopy := *partCopy.ExecutableCode
+    				codeCopy.Code = dollarPattern.ReplaceAllString(codeCopy.Code, "xxx")
+    				partCopy.ExecutableCode = &codeCopy
+    			}
+    			if partCopy.CodeExecutionResult != nil {
+    				resultCopy := *partCopy.CodeExecutionResult
+    				resultCopy.Output = dollarPattern.ReplaceAllString(resultCopy.Output, "xxx")
+    				partCopy.CodeExecutionResult = &resultCopy
     			}
     			if partCopy.FunctionCall != nil {
     				fcCopy := *partCopy.FunctionCall
@@ -3151,9 +3165,10 @@ wherever they appear in structured `content` or `attributes`:
 Python replaces **`temp:`** state values with `[REDACTED]`. Go removes top-level
 lowercase **`temp:`** entries from `state_delta` before logging and emits no
 `STATE_DELTA` row if nothing remains. Other **`temp:`** values in structured
-content and attributes are replaced with `[REDACTED]`. A `secret:` prefix is not
-treated as a special prefix; use the `temp:` scope or a custom formatter for
-application-specific secret scopes.
+content and attributes are replaced with `[REDACTED]`. A `secret:` prefix has no
+special meaning. Use `temp:` for invocation-local sensitive state, or sanitize
+application-specific state values before they reach logging. Custom content
+formatters do not redact state attributes.
 
 !!! warning "Correction to earlier guidance"
 
@@ -3283,10 +3298,12 @@ written:
 
 === "Go"
 
-    In Go the formatter receives the raw typed payload (such as `string`,
-    `*genai.Content`, `*model.LLMRequest`, `*model.LLMResponse`, or
-    `map[string]any`), not the final JSON. Clone any pointer, slice, or map you
-    modify (including `Part.Text`, `Part.FunctionCall.Args`, and
+    In Go the formatter receives the raw typed content payload (such as
+    `string`, `*genai.Content`, `*model.LLMRequest`, `*model.LLMResponse`, or
+    `map[string]any`), not the final JSON, and does not transform attributes
+    such as `attributes.state_delta`. Clone any pointer, slice, or map you
+    modify (including `Part.Text`, `Part.ExecutableCode.Code`,
+    `Part.CodeExecutionResult.Output`, `Part.FunctionCall.Args`, and
     `Part.FunctionResponse.Response` inside `*genai.Content`) and never mutate
     the live payload.
 
@@ -3464,6 +3481,16 @@ written:
     			partCopy := *p
     			if partCopy.Text != "" {
     				partCopy.Text = ssnPattern.ReplaceAllString(partCopy.Text, "[REDACTED_SSN]")
+    			}
+    			if partCopy.ExecutableCode != nil {
+    				codeCopy := *partCopy.ExecutableCode
+    				codeCopy.Code = ssnPattern.ReplaceAllString(codeCopy.Code, "[REDACTED_SSN]")
+    				partCopy.ExecutableCode = &codeCopy
+    			}
+    			if partCopy.CodeExecutionResult != nil {
+    				resultCopy := *partCopy.CodeExecutionResult
+    				resultCopy.Output = ssnPattern.ReplaceAllString(resultCopy.Output, "[REDACTED_SSN]")
+    				partCopy.CodeExecutionResult = &resultCopy
     			}
     			if partCopy.FunctionCall != nil {
     				fcCopy := *partCopy.FunctionCall
