@@ -1365,7 +1365,10 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     on `USER_MESSAGE_RECEIVED`, `*model.LLMRequest` on `LLM_REQUEST`,
     `*model.LLMResponse` on `LLM_RESPONSE`, or `map[string]any` / `[]any` on
     tool and state events), not the final JSON. Return a redacted copy and never
-    mutate the live payload:
+    mutate the live payload (the sample `maskContent` helper below inspects
+    `Part.Text`; extend it to `Part.FunctionCall.Args` or
+    `Part.FunctionResponse.Response` if your `genai.Content` parts carry
+    structured tool payloads):
 
     ```go title="analytics.go"
     package analytics
@@ -2061,9 +2064,10 @@ In Python and Go, the `AGENT_ERROR` and `INVOCATION_ERROR` rows have
 `content.error_traceback` value (in Python, the formatted traceback; in Go, the
 sanitized `err.Error()` message without a stack trace). The agent error view
 also exposes the elapsed `total_ms`. In Python, both events represent unhandled
-exceptions that escape agent or runner execution; in Go, `AGENT_ERROR` is also
-emitted when an `AfterAgent` callback receives a non-nil error from a failed
-agent activation that ADK handled without failing the whole invocation.
+exceptions that escape agent or runner execution. In Go, `AGENT_ERROR` is also
+written for an activation that ADK ended without an `AfterAgent` callback and
+whose failure it handled itself, such as a failed node attempt that is retried
+or an agent run as a tool that failed.
 
 In ADK Python v2.12.0+ and Go, `AGENT_STARTING` rows can also add these
 `attributes` keys, which the `v_agent_starting` view exposes as columns:
@@ -3247,7 +3251,10 @@ written:
 
     In Go the formatter receives the raw typed payload (such as `*genai.Content`,
     `*model.LLMRequest`, `*model.LLMResponse`, or `map[string]any`), not the
-    final JSON. Return a redacted copy and never mutate the live payload:
+    final JSON. Return a redacted copy and never mutate the live payload (the
+    sample `redactGenAIContentSecrets` helper below inspects `Part.Text`; extend
+    it to `Part.FunctionCall.Args` or `Part.FunctionResponse.Response` if your
+    `genai.Content` parts carry structured tool payloads):
 
     ```go
     package analytics
@@ -3615,7 +3622,8 @@ call) reconstructs cleanly from BigQuery.
     handle and the unwrapped `*agentanalytics.BigQueryAgentAnalyticsPlugin`:
 
     - **`adkPlugin.Close() error`**: Drains queued events, stops the background
-      batch processor (bounded by `ShutdownTimeout`, default `10s`), and closes
+      batch processor (with each flush/upload stage bounded by `ShutdownTimeout`,
+      default `10s`, up to ~2.5x total wall-clock time), and closes
       plugin-owned BigQuery, Storage Write, and GCS clients. ADK Go's runner does
       not close plugins automatically. Call `adkPlugin.Close()` yourself before
       exit, for example `defer bqPlugin.Close()` right after construction.
