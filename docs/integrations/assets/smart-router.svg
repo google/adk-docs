@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512">
+  <!-- Pruned / inactive tool branches (#64748b) -->
+  <path d="M168,256 L256,256 C288,256 296,128 344,128 L376,128" fill="none" stroke="#64748b" stroke-width="28" stroke-linecap="round"/>
+  <path d="M168,256 L256,256 C288,256 296,384 344,384 L376,384" fill="none" stroke="#64748b" stroke-width="28" stroke-linecap="round" stroke-dasharray="26 28"/>
+  <circle cx="416" cy="128" r="36" fill="none" stroke="#64748b" stroke-width="28"/>
+  <circle cx="416" cy="384" r="36" fill="none" stroke="#64748b" stroke-width="28"/>
+  <!-- Active session-locked route (#4f46e5) and locked canonical menu node (#0d9488) -->
+  <path d="M152,256 L348,256" fill="none" stroke="#4f46e5" stroke-width="32" stroke-linecap="round"/>
+  <path d="M312,208 L368,256 L312,304" fill="none" stroke="#4f46e5" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="108" cy="256" r="46" fill="#4f46e5"/>
+  <circle cx="424" cy="256" r="38" fill="#0d9488"/>
+</svg>
