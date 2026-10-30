@@ -8,6 +8,9 @@ If you require specialized metrics tailored to your specific use cases or
 domains that are not covered by built-in options, you can define your own
 custom metrics.
 
+Use a function for metrics that score invocations. For metrics that also need
+session state, see [Evaluate session state](#evaluate-session-state).
+
 ## Define a Custom Metric
 
 A custom metric is a Python function that evaluates an agent's performance on a
@@ -254,3 +257,131 @@ a score between -1.0 and 1.0:
   }
 }
 ```
+
+## Evaluate session state
+
+!!! note "Proposed API"
+
+    This API is proposed for
+    [adk-python issue #4532](https://github.com/google/adk-python/issues/4532).
+    It is not available in a released version of ADK.
+
+To check the state an agent changes, subclass `Evaluator` and override
+`evaluate_with_context`. The method receives an `EvaluationContext` with three
+optional dictionaries:
+
+| Field | Source |
+| --- | --- |
+| `initial_session_state` | Actual state before the first turn. |
+| `final_session_state` | Actual state after the last turn. |
+| `expected_final_session_state` | `final_session_state` from the eval case. |
+
+ADK captures the actual states during inference and saves them with the inference
+result. Later session updates do not change those snapshots. For an existing
+session, the initial snapshot is its actual state, which can differ from the
+`session_input.state` seed for a new session. Each metric receives its own copy.
+
+A field is `None` when the state is unavailable. Old inference results without
+snapshots also use `None`; ADK does not fill those fields from the live session.
+An empty dictionary is valid state, so check `is None` to detect absent data.
+
+The expected state preserves the eval case value, whose default is `{}`. If you
+omit `final_session_state`, the expected state is empty. Set it to `null` in JSON
+or `None` in Python when no expected state is available.
+
+The following evaluator checks whether the final state exactly matches the
+expected state. It returns `NOT_EVALUATED` if either state is absent. ADK requires
+one result per actual invocation, so the example repeats the case-level score
+for each invocation.
+
+```python
+from google.adk.evaluation import EvaluationContext
+from google.adk.evaluation.eval_metrics import EvalMetric
+from google.adk.evaluation.eval_metrics import EvalStatus
+from google.adk.evaluation.evaluator import EvaluationResult
+from google.adk.evaluation.evaluator import Evaluator
+from google.adk.evaluation.evaluator import PerInvocationResult
+
+
+class FinalStateMatchEvaluator(Evaluator):
+  """Scores 1.0 when the final state matches the expected state."""
+
+  def __init__(self, eval_metric: EvalMetric):
+    if eval_metric.criterion is not None:
+      self._threshold = eval_metric.criterion.threshold
+    elif eval_metric.threshold is not None:
+      self._threshold = eval_metric.threshold
+    else:
+      raise ValueError("final_state_match requires a threshold.")
+
+  def evaluate_with_context(
+      self,
+      actual_invocations,
+      expected_invocations=None,
+      conversation_scenario=None,
+      *,
+      context: EvaluationContext,
+  ) -> EvaluationResult:
+    actual = context.final_session_state
+    expected = context.expected_final_session_state
+    if actual is None or expected is None or not actual_invocations:
+      return EvaluationResult()
+
+    score = 1.0 if actual == expected else 0.0
+    status = (
+        EvalStatus.PASSED if score >= self._threshold else EvalStatus.FAILED
+    )
+    return EvaluationResult(
+        overall_score=score,
+        overall_eval_status=status,
+        per_invocation_results=[
+            PerInvocationResult(
+                actual_invocation=invocation, score=score, eval_status=status
+            )
+            for invocation in actual_invocations
+        ],
+    )
+```
+
+Register the class before a programmatic evaluation run, in the same process:
+
+```python
+from google.adk.evaluation.eval_metrics import Interval
+from google.adk.evaluation.eval_metrics import MetricInfo
+from google.adk.evaluation.eval_metrics import MetricValueInfo
+from google.adk.evaluation.metric_evaluator_registry import (
+    DEFAULT_METRIC_EVALUATOR_REGISTRY,
+)
+
+DEFAULT_METRIC_EVALUATOR_REGISTRY.register_evaluator(
+    metric_info=MetricInfo(
+        metric_name="final_state_match",
+        description="Checks the expected final session state.",
+        metric_value_info=MetricValueInfo(
+            interval=Interval(min_value=0.0, max_value=1.0)
+        ),
+    ),
+    evaluator=FinalStateMatchEvaluator,
+)
+```
+
+Then add the metric to `criteria`. A class already in the registry does not need
+a `custom_metrics` entry:
+
+```json
+{
+  "criteria": {
+    "final_state_match": {"threshold": 1.0}
+  }
+}
+```
+
+For example, set `final_session_state` to `{"order_status": "confirmed"}` in the
+eval case to require exactly that final state. `AgentEvaluator` retains custom
+class registrations from the default registry. A standalone `adk eval` command
+cannot load a class through `custom_metrics.code_config`; that option accepts a
+function path.
+
+An override of `evaluate_with_context` may also be async. Existing evaluators
+that only implement `evaluate_invocations` need no changes. Custom metric
+functions keep their four-argument signature.
