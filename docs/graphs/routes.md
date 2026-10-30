@@ -490,26 +490,43 @@ lifecycle on each iteration.
 
 === "Python"
 
+    A loop is a back-edge: a downstream node routes back to an earlier node,
+    and the engine re-activates that node with a fresh lifecycle on each
+    iteration. The loop exits when the router selects the terminal branch:
+
     ```python
     from google.adk import Event, Workflow
 
 
-    def router(node_input: str):
-        """Route to task B or C based on node_input."""
-        if condition(node_input):
-            return Event(route="RUN_TASK_C")
-        return Event(route="RUN_TASK_B")
+    def seed_draft(topic: str):
+        topic = topic.strip()
+        return {"topic": topic, "bullets": [f"{topic} — point 1"]}
+
+
+    def critic(draft: dict):
+        """Approve once the draft has enough bullets; otherwise request a revise."""
+        if len(draft.get("bullets", [])) >= 3:
+            return Event(route="DONE", output=draft)
+        return Event(route="REVISE", output=draft)
+
+
+    def refine(draft: dict):
+        """Add one more bullet, then loop back to the critic."""
+        bullets = list(draft.get("bullets", []))
+        bullets.append(f"{draft.get('topic', 'topic')} — point {len(bullets) + 1}")
+        return {**draft, "bullets": bullets}
+
+
+    def finalize(draft: dict):
+        return Event(output=draft)
+
 
     root_agent = Workflow(
-        name="routing_workflow",
+        name="loop_workflow",
         edges=[
-            ("START", task_A_node, router),
-            (router,
-              {
-                "RUN_TASK_B": task_B_node,
-                "RUN_TASK_C": task_C_node,
-              },
-            ),
+            ("START", seed_draft, critic),
+            (critic, {"REVISE": refine, "DONE": finalize}),
+            (refine, critic),  # back-edge creates the loop
         ],
     )
     ```

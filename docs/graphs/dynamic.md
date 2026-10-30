@@ -134,7 +134,7 @@ run within a workflow.
 
     # FunctionNode wrapper with options
     success_node = FunctionNode(
-        my_function_node,
+        func=my_function_node,
         name="hello",
         rerun_on_resume=True,
     )
