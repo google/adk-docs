@@ -192,6 +192,49 @@ For `region`, you can find a list of the supported regions on the
     -d, --source_dir string         Directory to archive, defaults to current working directory
     ```
 
+    To configure environment variables in the deployed container, repeat
+    `--env=NAME=VALUE`:
+
+    ```shell
+    adkgo deploy agentengine \
+        -e ./main.go \
+        -p "$PROJECT_ID" \
+        -r "$LOCATION_ID" \
+        -d . \
+        --env=NUM_WORKERS=2 \
+        --env='SERVICE_URL=https://example.com/?a=1,b=2' \
+        --env=OPTIONAL_SETTING=
+    ```
+
+    Names must match `[a-zA-Z_][a-zA-Z0-9_]*` and be unique across `--env`
+    flags. Values can be empty and can contain commas or additional `=`
+    characters. Quote values as needed for your shell.
+    Variables are sent in flag order, after any defaults they do not override.
+    For a value such as `'$(BASE_URL)/api'`, define `BASE_URL` in an earlier
+    `--env` flag so the runtime can expand the reference.
+    Use `'$$(NAME)'` to escape a reference. References to undefined variables
+    remain unchanged.
+
+    By default, Go deployments include these variables. A custom `--env`
+    value overrides a default with the same name:
+
+    | Variable | Default value |
+    | --- | --- |
+    | `GOOGLE_CLOUD_REGION` | The `--region` value |
+    | `NUM_WORKERS` | `1` |
+    | `GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY` | `true` |
+    | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | `true` |
+
+    Set `--default_env=false` to omit all defaults and supply only the
+    variables you need with `--env`.
+
+    When updating an existing deployment with `--agent_engine_id`, omitting
+    both environment flags preserves its environment. Explicitly passing
+    either `--env` or `--default_env` replaces the environment with the selected
+    defaults and custom values. To clear all variables, pass
+    `--default_env=false` without any `--env` flags. Other deployment settings
+    are preserved.
+
 
 ### Deploy command output
 
