@@ -111,6 +111,43 @@ class CustomRetryPlugin(ReflectAndRetryToolPlugin):
 error_handling_plugin = CustomRetryPlugin(max_retries=5)
 ```
 
+### Custom retry guidance (Python)
+
+The Python plugin accepts `reflection_guidance` and `retry_exceeded_guidance`
+as strings or callables. A callable receives a `ToolReflectionContext` with the
+tool name, arguments, error, formatted error details, retry count, retry limit,
+and tool context. It can return a string directly or asynchronously.
+
+```python
+from google.adk.plugins.reflect_retry_tool_plugin import ReflectAndRetryToolPlugin
+from google.adk.plugins.reflect_retry_tool_plugin import ToolReflectionContext
+
+
+def retry_guidance(ctx: ToolReflectionContext) -> str:
+    return (
+        f"Tool {ctx.tool_name} failed: {ctx.error_details}. "
+        f"Check the arguments before retry {ctx.retry_count}/{ctx.max_retries}."
+    )
+
+
+plugin = ReflectAndRetryToolPlugin(
+    reflection_guidance=retry_guidance,
+    retry_exceeded_guidance="Explain the failure and ask the user how to proceed.",
+    throw_exception_if_retry_exceeded=False,
+)
+```
+
+`retry_exceeded_guidance` is used only when
+`throw_exception_if_retry_exceeded=False`. With `max_retries=0`, the first
+failure immediately takes that path. Leaving either provider as `None` retains
+the built-in guidance; an empty string intentionally suppresses that guidance.
+
+Subclasses can override the asynchronous `build_reflection_guidance(ctx)` and
+`build_retry_exceeded_guidance(ctx)` methods instead. Customization changes only
+the `reflection_guidance` field; the plugin still owns the response type, error
+details, and retry counter. Providers must return strings, and provider errors
+propagate to the caller.
+
 ## Next steps
 
 For complete code samples using the Reflect and Retry plugin, see the following:
