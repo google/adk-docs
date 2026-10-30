@@ -132,6 +132,26 @@ such as:
     ├── go.sum
     └── main.go
     ``` 
+
+    Your `main.go` must run your agent with the Agent Engine launcher from
+    `google.golang.org/adk/v2/cmd/launcher/agentengine` instead of
+    `full.NewLauncher()`, passing it the Agent Runtime resource ID from the
+    `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
+
+    ```go
+    import "google.golang.org/adk/v2/cmd/launcher/agentengine"
+
+    // ...
+
+    l := agentengine.NewLauncher(os.Getenv("GOOGLE_CLOUD_AGENT_ENGINE_ID"))
+    if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
+        log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+    }
+    ```
+
+    For a complete example, see
+    [examples/agentengine](https://github.com/google/adk-go/tree/v2.5.0/examples/agentengine)
+    in the ADK Go repository.
     
 
 
@@ -190,8 +210,11 @@ For `region`, you can find a list of the supported regions on the
     -p, --project_name string       GCP Project Name
     -r, --region string             GCP Region
     -d, --source_dir string         Directory to archive, defaults to current working directory
+        --agent_engine_id string    ID of the Agent Engine instance to update if it exists
     ```
 
+    To redeploy to an existing Agent Runtime instance instead of creating a new
+    one, pass its `RESOURCE_ID` with `--agent_engine_id`.
 
 ### Deploy command output
 
