@@ -1,6 +1,6 @@
 ---
 catalog_title: Bash Tool
-catalog_description: Execute bash commands within a secure, resource-limited local sandbox
+catalog_description: Run approved commands in a local workspace with resource limits
 catalog_icon: /integrations/assets/bash.png
 catalog_tags: ["code", "google"]
 ---
@@ -26,12 +26,19 @@ pip install google-adk
 
 !!! warning "POSIX-only"
 
-    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS. Executing this tool on a Windows system will result in a hard error.
+    `ExecuteBashTool` is currently supported **only on POSIX systems** such as Linux or macOS. On Windows, the tool returns an error response.
 
-To use the Bash Tool, instantiate `ExecuteBashTool` and include it in your agent's `tools` list. Ensure `my_workspace_path` is defined prior to running the snippet as a valid directory path string:
+To use the Bash Tool, create a workspace and include `ExecuteBashTool` in your
+agent's `tools` list:
 
 ```python
+from pathlib import Path
+
+from google.adk.agents import Agent
 from google.adk.tools.bash_tool import ExecuteBashTool, BashToolPolicy
+
+workspace = Path("workspace")
+workspace.mkdir(exist_ok=True)
 
 policy = BashToolPolicy(
     allowed_command_prefixes=("ls", "cat", "grep"),
@@ -41,7 +48,12 @@ policy = BashToolPolicy(
     max_child_processes=5
 )
 
-tool = ExecuteBashTool(workspace=my_workspace_path, policy=policy)
+root_agent = Agent(
+    name="workspace_agent",
+    model="gemini-flash-latest",
+    instruction="Inspect files in the workspace using approved commands.",
+    tools=[ExecuteBashTool(workspace=workspace, policy=policy)],
+)
 ```
 
 ## Security and execution safeguards
@@ -53,13 +65,17 @@ Because executing arbitrary code carries inherent risks, the `ExecuteBashTool` i
 By default, `BashToolPolicy` is initialized with `allowed_command_prefixes=("*",)`. This means that **all commands are permitted by default**. To secure your application, you must explicitly restrict the allowed commands when initializing the policy:
 
 ```python
-# Secure implementation example
 from google.adk.tools.bash_tool import BashToolPolicy
 
 strict_policy = BashToolPolicy(
-    allowed_command_prefixes=("ls ", "cat ", "pwd")
+    allowed_command_prefixes=("ls", "cat", "git status")
 )
 ```
+
+Prefixes match whole command tokens: `"git status"` allows `git status --short`,
+but not `git commit`. Commands run without a shell, so pipes, redirection and
+wildcard expansion are not evaluated. The workspace sets the working directory;
+it does not isolate the process from the rest of the filesystem.
 
 ### Built-in protections
 
@@ -74,3 +90,7 @@ strict_policy = BashToolPolicy(
 | Tool Name | Class Name | Description |
 | :--- | :--- | :--- |
 | `execute_bash` | `ExecuteBashTool` | Executes a bash command within a workspace. POSIX only |
+
+Confirmed commands return `stdout`, `stderr` and `returncode`. Check the exit
+code for command failures; validation or execution failures can also return an
+`error` message.
