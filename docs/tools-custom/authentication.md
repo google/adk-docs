@@ -149,7 +149,7 @@ Here is a quick guide to authentication for key ADK toolsets:
 *   [***ApplicationIntegrationToolset***](/integrations/application-integration/):
     Set `auth_scheme` and `auth_credential` during initialization, *if* the API
     requires authentication.
-*   [***GoogleApiToolSet***](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py):
+*   [***GoogleApiToolSet***](/integrations/google-api-toolsets/):
     Use this toolset's specific authentication method.
 
 For more authentication details for other pre-built tools and integrations
