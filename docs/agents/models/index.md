@@ -21,6 +21,10 @@ ADK provides several mechanisms for model integration:
       *  [Claude models](/agents/models/anthropic/)
       *  [Agent Platform hosted models](/agents/models/agent-platform/)
 
+    In Go, pass a `model.LLM` instance to `llmagent.Config.Model`. To resolve a
+    name with [`model.NewLLM`](https://pkg.go.dev/google.golang.org/adk/v2/model#NewLLM),
+    first register a factory with `model.Register`.
+
 2. **Model connectors:** For broader compatibility, especially models outside
    the Google ecosystem or those requiring specific client configurations, such
    as models accessed via Apigee or LiteLLM. You instantiate a specific wrapper
