@@ -365,6 +365,9 @@ routing it through another channel like email or a chat application. To confirm
 the tool call, the user or calling application needs to send a
 `FunctionResponse` event with the tool confirmation data.
 
+To test confirmations locally with the Go console instead, see
+[Answer prompts in the Go console](../runtime/command-line.md#answer-prompts-in-the-go-console).
+
 You can send the request to the ADK API server's `/run` or `/run_sse` endpoint,
 or directly to the ADK runner. The following example uses a  `curl` command to
 send the confirmation to the  `/run_sse` endpoint:

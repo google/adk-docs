@@ -91,6 +91,25 @@ os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
 ```
 
+### Go programmatic setup
+
+In Go, the launcher builds the OpenTelemetry providers when it starts, from the
+`TelemetryOptions` field of `launcher.Config`. Pass `telemetry.Option` values
+from `google.golang.org/adk/v2/telemetry`, such as `WithSpanProcessors`,
+`WithResource` or `WithTracerProvider`, to add your own exporters without
+replacing the launcher. The following example sends spans to an OTLP endpoint:
+
+```go
+--8<-- "examples/go/snippets/runtime/launchers/options/main.go:telemetry_options"
+```
+
+Starting the binary with the `-otel_to_cloud` flag turns export to Google
+Cloud on, whatever `TelemetryOptions` holds. In ADK Go v2.6.0 and earlier, the
+launcher also overrides a `telemetry.WithOtelToCloud(true)` option in
+`TelemetryOptions` when the flag is not set
+([adk-go#1967](https://github.com/google/adk-go/issues/1967)), so use the flag to
+turn the export on.
+
 ### Kotlin programmatic setup
 
 In Kotlin, ADK automatically uses the `GlobalOpenTelemetry` instance to export traces. You should configure your OpenTelemetry SDK before starting the agent.

@@ -103,6 +103,23 @@ The remote agent is exposed using the A2A launcher in the `main` function. The l
 --8<-- "examples/go/a2a_basic/remote_a2a/check_prime_agent/main.go:a2a-launcher"
 ```
 
+#### Configure the A2A request handler
+
+The `a2a` sublauncher builds the A2A request handler with
+`a2asrv.NewHandler`, from `github.com/a2aproject/a2a-go/v2/a2asrv`, and passes
+it the `A2AOptions` field of `launcher.Config`. Use it to add a logger, call
+interceptors, a task store or other `a2asrv.RequestHandlerOption` values
+without replacing the launcher:
+
+```go
+--8<-- "examples/go/snippets/runtime/launchers/options/main.go:a2a_options"
+```
+
+`A2AOptions` configures the request handler only. To change the executor that
+runs the agent, such as its callbacks or its part converter, build
+the executor with `adka2a.NewExecutor` and serve it from your own A2A server
+instead of the `a2a` sublauncher.
+
 ## Example Interactions
 
 Once both services are running, you can interact with the root agent to see how it calls the remote agent via A2A:
