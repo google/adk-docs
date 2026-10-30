@@ -249,8 +249,12 @@ plugins:
       sections:
         Build Agents:
         - get-started/*.md
+        - get-started/python.md: >-
+            Create a Python agent, configure Gemini credentials, and run it with the ADK CLI.
         - tutorials/*.md
         - agents/*.md
+        - agents/llm-agents.md: >-
+            Configure an LLM agent's instructions, tools, and model.
         - graphs/*.md
         - workflows/*.md
         - integrations/*.md
@@ -258,6 +262,8 @@ plugins:
         - runtime/*.md
         - visual-builder/*.md
         - deploy/*.md
+        - deploy/cloud-run.md: >-
+            Deploy ADK agents to Cloud Run with the ADK CLI or a custom container.
         - observability/*.md
         - evaluate/*.md
         - optimize/*.md
