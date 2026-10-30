@@ -86,13 +86,16 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 The available values for this variable are: `NO_CONTENT`, `EVENT_ONLY`,
 `SPAN_ONLY`, and `SPAN_AND_EVENT`. A boolean `true` or `1` means `EVENT_ONLY`,
 which records content on the emitted log events; any value outside these four
-falls back to `NO_CONTENT`. To record content on the inference span, `SPAN_ONLY`
-and `SPAN_AND_EVENT` also require
-`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`.
+falls back to `NO_CONTENT`. In Python, `SPAN_ONLY` and `SPAN_AND_EVENT` also
+require `OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental` to record
+content on the inference span. In ADK Go v2.3.0 and higher, these values record
+span content without it, so prompt and response content is also exported with
+your traces.
 
 !!! warning
-    The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` setting logs the
-    full content of user prompts and agent responses. This is useful for
+    The `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` setting records the
+    full content of user prompts and agent responses in logs and, depending on
+    the value and ADK language, in exported trace spans. This is useful for
     debugging but may capture sensitive data or PII. In production, set this to
     false or ensure you have appropriate data handling policies in place.
 
