@@ -45,3 +45,4 @@ snippets/tools/confirmation/ToolConfirmationExample.kt
 snippets/tools/confirmation/dynamic/ReimbursementTools.kt
 snippets/skills/SkillsExample.kt
 snippets/integrations/BigQueryAnalyticsExample.kt
+snippets/agents/workflow-agents/LoopAgentDocImprovAgent.kt
