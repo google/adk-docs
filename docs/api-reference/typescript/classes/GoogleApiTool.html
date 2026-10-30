@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>GoogleApiTool | ADK for TypeScript: API Reference - v2.3.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>GoogleApiTool | ADK for TypeScript: API Reference - v2.4.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
 /* typedoc-theme-fresh */
 
 /* @view-transition {
@@ -376,14 +376,14 @@ code.tsd-tag {
 <div class="tsd-comment tsd-typography"><p>Wraps a <a href="RestApiTool.html" class="tsd-kind-class">RestApiTool</a> created from a Google API specification and adds
 helper methods for configuring Google OpenID Connect credentials.</p>
 </div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="8485">
+<section class="tsd-panel tsd-hierarchy" data-refl="8533">
 <h4>Hierarchy (<a href="../hierarchy.html#GoogleApiTool">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">GoogleApiTool</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L32">core/src/tools/google_api_tool/google_api_tool.ts:32</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L40">core/src/tools/google_api_tool/google_api_tool.ts:40</a></li></ul></aside>
 <div style="margin-top: 64px"></div>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -392,16 +392,17 @@ helper methods for configuring Google OpenID Connect credentials.</p>
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorgoogleapitool"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">GoogleApiTool</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">restApiTool</span><span class="tsd-signature-symbol">:</span> <a href="RestApiTool.html" class="tsd-signature-type tsd-kind-class">RestApiTool</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">GoogleApiTool</a><a href="#constructorgoogleapitool" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorgoogleapitool"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">GoogleApiTool</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">restApiTool</span><span class="tsd-signature-symbol">:</span> <a href="RestApiTool.html" class="tsd-signature-type tsd-kind-class">RestApiTool</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/GoogleApiToolOptions.html" class="tsd-signature-type tsd-kind-interface">GoogleApiToolOptions</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">GoogleApiTool</a><a href="#constructorgoogleapitool" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">restApiTool</span>: <a href="RestApiTool.html" class="tsd-signature-type tsd-kind-class">RestApiTool</a></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">restApiTool</span>: <a href="RestApiTool.html" class="tsd-signature-type tsd-kind-class">RestApiTool</a></span></li>
+<li><span><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/GoogleApiToolOptions.html" class="tsd-signature-type tsd-kind-interface">GoogleApiToolOptions</a><span class="tsd-signature-symbol"> = {}</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">GoogleApiTool</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L36">core/src/tools/google_api_tool/google_api_tool.ts:36</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L44">core/src/tools/google_api_tool/google_api_tool.ts:44</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -412,35 +413,30 @@ helper methods for configuring Google OpenID Connect credentials.</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#base_tool_signature_symbol">[BASE_TOOL_SIGNATURE_SYMBOL]</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L83">core/src/tools/base_tool.ts:83</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L83">core/src/tools/base_tool.ts:83</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="google_api_tool_signature_symbol"><code class="tsd-tag">Readonly</code><span>[<wbr/>GOOGLE_<wbr/>API_<wbr/>TOOL_<wbr/>SIGNATURE_<wbr/>SYMBOL]</span><a href="#google_api_tool_signature_symbol" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">&quot;[GOOGLE_API_TOOL_SIGNATURE_SYMBOL]&quot;</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L33">core/src/tools/google_api_tool/google_api_tool.ts:33</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L41">core/src/tools/google_api_tool/google_api_tool.ts:41</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="description"><code class="tsd-tag">Readonly</code><span>description</span><a href="#description" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">description</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#description">description</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L86">core/src/tools/base_tool.ts:86</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L86">core/src/tools/base_tool.ts:86</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="islongrunning"><code class="tsd-tag">Readonly</code><span>is<wbr/>Long<wbr/>Running</span><a href="#islongrunning" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">isLongRunning</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#islongrunning">isLongRunning</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L87">core/src/tools/base_tool.ts:87</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L87">core/src/tools/base_tool.ts:87</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="name"><code class="tsd-tag">Readonly</code><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#name">name</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L85">core/src/tools/base_tool.ts:85</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="restapitool"><code class="tsd-tag">Readonly</code><span>rest<wbr/>Api<wbr/>Tool</span><a href="#restapitool" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">restApiTool</span><span class="tsd-signature-symbol">:</span> <a href="RestApiTool.html" class="tsd-signature-type tsd-kind-class">RestApiTool</a></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L34">core/src/tools/google_api_tool/google_api_tool.ts:34</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L85">core/src/tools/base_tool.ts:85</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -455,7 +451,7 @@ helper methods for configuring Google OpenID Connect credentials.</p>
 <h4 class="tsd-returns-title">Returns <a href="../enums/GoogleLLMVariant.html" class="tsd-signature-type tsd-kind-enum">GoogleLLMVariant</a></h4><aside class="tsd-sources">
 <p>Inherited from BaseTool.apiVariant</p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L198">core/src/tools/base_tool.ts:198</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L198">core/src/tools/base_tool.ts:198</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -480,7 +476,7 @@ need to be added to LlmRequest.config.</p>
 <aside class="tsd-sources">
 <p>Overrides <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#_getdeclaration">_getDeclaration</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L46">core/src/tools/google_api_tool/google_api_tool.ts:46</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L57">core/src/tools/google_api_tool/google_api_tool.ts:57</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="checkrequireconfirmation"><span>check<wbr/>Require<wbr/>Confirmation</span><a href="#checkrequireconfirmation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -508,12 +504,12 @@ Python's <code>BaseTool.check_require_confirmation</code>.</p>
 <aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#checkrequireconfirmation">checkRequireConfirmation</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L144">core/src/tools/base_tool.ts:144</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L144">core/src/tools/base_tool.ts:144</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="configureauth"><span>configure<wbr/>Auth</span><a href="#configureauth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="configureauth-1"><span class="tsd-kind-call-signature">configureAuth</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">clientId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">clientSecret</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#configureauth-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="configureauth-1"><span class="tsd-kind-call-signature">configureAuth</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">clientId</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">clientSecret</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#configureauth-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Configures OpenID Connect OAuth2 client credentials on the underlying
 <a href="RestApiTool.html" class="tsd-kind-class">RestApiTool</a>.</p>
@@ -521,11 +517,11 @@ Python's <code>BaseTool.check_require_confirmation</code>.</p>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">clientId</span>: <span class="tsd-signature-type">string</span></span></li>
-<li><span><span class="tsd-kind-parameter">clientSecret</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">clientId</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">clientSecret</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L60">core/src/tools/google_api_tool/google_api_tool.ts:60</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L71">core/src/tools/google_api_tool/google_api_tool.ts:71</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="processllmrequest"><span>process<wbr/>Llm<wbr/>Request</span><a href="#processllmrequest" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -548,7 +544,7 @@ Python's <code>BaseTool.check_require_confirmation</code>.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#processllmrequest">processLlmRequest</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/base_tool.ts#L160">core/src/tools/base_tool.ts:160</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/base_tool.ts#L160">core/src/tools/base_tool.ts:160</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="runasync"><span>run<wbr/>Async</span><a href="#runasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -573,20 +569,20 @@ Gemini.</li>
 <aside class="tsd-sources">
 <p>Overrides <a href="BaseTool.html">BaseTool</a>.<a href="BaseTool.html#runasync">runAsync</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/google_api_tool/google_api_tool.ts#L51">core/src/tools/google_api_tool/google_api_tool.ts:51</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/google_api_tool/google_api_tool.ts#L62">core/src/tools/google_api_tool/google_api_tool.ts:62</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-page-navigation">
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#base_tool_signature_symbol" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>[<wbr/>BASE_<wbr/>TOOL_<wbr/>SIGNATURE_<wbr/>SYMBOL]</span></a><a href="#google_api_tool_signature_symbol"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>[<wbr/>GOOGLE_<wbr/>API_<wbr/>TOOL_<wbr/>SIGNATURE_<wbr/>SYMBOL]</span></a><a href="#description" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>description</span></a><a href="#islongrunning" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Long<wbr/>Running</span></a><a href="#name" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#restapitool"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>rest<wbr/>Api<wbr/>Tool</span></a></div></details>
+<div><a href="#base_tool_signature_symbol" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>[<wbr/>BASE_<wbr/>TOOL_<wbr/>SIGNATURE_<wbr/>SYMBOL]</span></a><a href="#google_api_tool_signature_symbol"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>[<wbr/>GOOGLE_<wbr/>API_<wbr/>TOOL_<wbr/>SIGNATURE_<wbr/>SYMBOL]</span></a><a href="#description" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>description</span></a><a href="#islongrunning" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>is<wbr/>Long<wbr/>Running</span></a><a href="#name" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
 <div><a href="#apivariant" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>api<wbr/>Variant</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
 <div><a href="#_getdeclaration"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>get<wbr/>Declaration</span></a><a href="#checkrequireconfirmation" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>check<wbr/>Require<wbr/>Confirmation</span></a><a href="#configureauth"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>configure<wbr/>Auth</span></a><a href="#processllmrequest" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>process<wbr/>Llm<wbr/>Request</span></a><a href="#runasync"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Async</span></a></div></details></div></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.3.0</a>
+<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.4.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>
