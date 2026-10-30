@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>OpenApiSpecParser | ADK for TypeScript: API Reference - v2.3.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>OpenApiSpecParser | ADK for TypeScript: API Reference - v2.4.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
 /* typedoc-theme-fresh */
 
 /* @view-transition {
@@ -373,24 +373,42 @@ code.tsd-tag {
 <li><a href="" aria-current="page">OpenApiSpecParser</a></li></ul>
 <h1>Class OpenApiSpecParser</h1></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L46">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:46</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L46">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:46</a></li></ul></aside>
 <div style="margin-top: 64px"></div>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="constructor"><span class="deprecated">constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructoropenapispecparser"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">OpenApiSpecParser</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">preservePropertyNames</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">OpenApiSpecParser</a><a href="#constructoropenapispecparser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructoropenapispecparser"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">OpenApiSpecParser</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">preservePropertyNames</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">unconstrainedObjectBodyAsParameter</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">OpenApiSpecParser</a><a href="#constructoropenapispecparser" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">preservePropertyNames</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">OpenApiSpecParser</a></h4><aside class="tsd-sources">
+<li><span><span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">preservePropertyNames</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">unconstrainedObjectBodyAsParameter</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = {}</span></span>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">preservePropertyNames</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
+<div class="tsd-comment tsd-typography"><p>Keeps the original parameter and
+function names instead of converting them to snake_case.</p>
+</div></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag">Optional</code><span class="tsd-kind-property">unconstrainedObjectBodyAsParameter</span><span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span></h5>
+<div class="tsd-comment tsd-typography"><p>Emits a whole-body
+parameter named <code>body</code> when an object request body schema has no
+properties. Defaults to <code>false</code>.</p>
+</div></li></ul></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">OpenApiSpecParser</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Retained for backwards compatibility; empty object schemas
+produce no parameters by default. This option will be removed in a
+future release.</p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L49">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:49</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L60">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:60</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -411,7 +429,7 @@ code.tsd-tag {
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/ParsedOperation.html" class="tsd-signature-type tsd-kind-interface">ParsedOperation</a><span class="tsd-signature-symbol">[]</span></h4><p>An array of parsed operations.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/ad0540e65706bc6593798bcfce35298448747df7/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L60">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:60</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts#L78">core/src/tools/openapi_tool/openapi_spec_parser/openapi_spec_parser.ts:78</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-page-navigation">
@@ -420,7 +438,7 @@ code.tsd-tag {
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
 <div><a href="#parse"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>parse</span></a></div></details></div></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.3.0</a>
+<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.4.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>
