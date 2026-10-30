@@ -145,7 +145,7 @@ jobs:
           # renames it does not quietly ship it.
           [[ ! -d "${TARGET}/META-INF" ]] || fail "META-INF was extracted into the published docs"
 
-          missing_ga="$(grep -L 'googletagmanager.com/gtag/js' $(find "${TARGET}" -name '*.html') | wc -l)"
+          missing_ga="$(find "${TARGET}" -name '*.html' -exec grep -L 'googletagmanager.com/gtag/js' {} + | wc -l)"
           [[ "${missing_ga}" -eq 0 ]] || fail "${missing_ga} HTML files have no analytics tag"
 
           echo "Output looks right: ${pages} pages, no META-INF, analytics tag present."
