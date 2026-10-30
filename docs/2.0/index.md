@@ -41,7 +41,7 @@ to build agents with ADK 2.0!
     ADK TypeScript 2.0 is released for general availability as of
     August 21, 2026.
 
-## ADK Python 1.x compatibility
+## ADK Python 1.x compatibility { .langscope-python }
 
 ADK 2.0 is designed to be compatible with agents developed with ADK 1.x
 releases. However, there are a few breaking changes you should be aware of
@@ -189,7 +189,7 @@ To install the latest version of ADK 1.x, follow these steps:
         source .venv/bin/activate
         ```
 
-## ADK TypeScript 1.x compatibility
+## ADK TypeScript 1.x compatibility { .langscope-typescript }
 
 ADK TypeScript 2.0 is designed to be compatible with agents developed with ADK
 TypeScript 1.x releases. However, there are a few breaking changes you should be
@@ -297,7 +297,7 @@ upgrade to ADK TypeScript 2.0, pin your dependency to the 1.x release line:
 npm install @google/adk@^1.6.0
 ```
 
-## ADK Go 1.x compatibility
+## ADK Go 1.x compatibility { .langscope-go }
 
 ADK Go 2.0 is designed to be compatible with agents developed with ADK Go 1.x
 releases. However, there are a few breaking changes you should be aware of

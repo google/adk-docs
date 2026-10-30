@@ -46,8 +46,10 @@
   {% endif %}
 
   <!-- Navigation list -->
+  <!-- Language-scoped docs: render only the current SDK's subtree (set by
+       hooks/language_scope.py), not all five copies of the nav. -->
   <ul class="md-nav__list" data-md-scrollfix>
-    {% for nav_item in nav.items %}
+    {% for nav_item in (langscope_nav or nav.items) %}
       {% set path = "__nav_" ~ loop.index %}
       {{ item.render(nav_item, path, 1) }}
     {% endfor %}

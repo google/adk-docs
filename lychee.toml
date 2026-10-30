@@ -24,4 +24,7 @@ host_request_interval = "1s"
 # Add paths here for directories containing partial/template files
 exclude_path = [
     "_includes",
+    # Test fixture pages: their root-absolute links resolve against the
+    # fixture's own docs_dir, not the repo's docs/.
+    "tests/langscope/fixture",
 ]
