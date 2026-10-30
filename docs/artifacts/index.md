@@ -163,7 +163,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `List versions`: Lists all available version numbers for a specific artifact filename.
     * `List artifact versions` and `Get artifact version`: In Python, these return `ArtifactVersion` metadata, covering the version number, canonical URI, MIME type, creation time and custom metadata, rather than the artifact payload.
 
-* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+* **Configuration:** You provide an instance of an artifact service when initializing the `Runner`, such as `InMemoryArtifactService`, `GcsArtifactService`, or `FileArtifactService` in Python and Kotlin. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
 === "Python"
 
@@ -1257,6 +1257,24 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         ```kotlin
         --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:gcs_service"
         ```
+### FileArtifactService
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+For local persistence in Python, use `FileArtifactService` with a directory
+that remains available across application restarts:
+
+```python
+from google.adk.artifacts import FileArtifactService
+
+artifact_service = FileArtifactService(root_dir="./artifacts")
+```
+
+Pass it to the Runner as shown above. The same artifact save, load and version
+methods apply.
+
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
 ## Best Practices
