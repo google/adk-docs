@@ -169,13 +169,22 @@ rows apply to both languages.
 For native Gemini Live connections, the plugin records each provider usage
 snapshot as a `LIVE_USAGE` row. This includes `Runner.run_live()` and the Live
 API used by compositional function calling (`support_cfc=True`). The snapshot
-is logged once, even when both model and event callbacks run. Ordinary
-request/response usage remains in `LLM_RESPONSE` rows.
+is recorded on the first model or event callback that observes it, including
+evaluation routes that do not invoke event callbacks. The most recent 1,024
+report identities suppress duplicate callback observations. This bounded,
+best-effort history does not guarantee durable exactly-once delivery; an old
+report can be logged again after eviction. Ordinary request/response usage
+remains in `LLM_RESPONSE` rows.
+
+For native Live, register the analytics plugin before an `on_event_callback`
+plugin that returns a replacement event. Returning an event intentionally
+skips later plugins. In-place metadata edits preserve the original identity.
 
 The row uses the same `content.usage.prompt`, `completion`, and `total` fields
 as `LLM_RESPONSE`. `attributes.usage_metadata` retains the detailed token
 counts, including modality breakdowns, cached and thoughts tokens, and
-`traffic_type` when supplied. The model version is in
+`traffic_type` when supplied. New rows serialize usage enums as SDK values such
+as `ON_DEMAND` and `AUDIO`. The model version is in
 `attributes.model_version`.
 
 `attributes.live_usage` contains:
@@ -192,7 +201,13 @@ With `create_views=True`, `v_live_usage` exposes each raw report, including
 typed cache, thinking and tool-use counts, cache metadata and cache hit rate.
 Numeric fields use `SAFE_CAST`, so redacted values become `NULL`.
 There is no default latest-snapshot selection or cumulative-counter assumption.
-The evaluation views sum reports, consistently with ADK's evaluation generator.
+The evaluation turn and session views sum raw reports without per-connection
+deduplication, consistently with ADK's evaluation generator. Their token totals
+are reported counts, not billable cumulative deltas.
+
+After upgrading, refresh existing evaluation views with
+`await plugin.create_eval_views()` so their SQL includes `LIVE_USAGE` reports.
+Evaluation-view creation is disabled by default.
 
 For a source whose reports are per-turn counts, sum the reports within your
 chosen time range:
@@ -215,7 +230,7 @@ WHERE timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
   AND connection_id IS NOT NULL
 QUALIFY ROW_NUMBER() OVER (
   PARTITION BY session_id, connection_id
-  ORDER BY sequence DESC, timestamp DESC, event_id DESC
+  ORDER BY sequence DESC NULLS LAST, timestamp DESC, event_id DESC
 ) = 1
 ```
 
