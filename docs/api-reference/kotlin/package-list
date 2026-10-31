@@ -36,10 +36,10 @@ com.google.adk.kt.tools.environment
 com.google.adk.kt.tools.mcp
 com.google.adk.kt.types
 com.google.adk.kt.workflow
-module:google-adk-kotlin-integrations
-com.google.adk.kt.plugins.agentanalytics
 module:google-adk-kotlin-integrations-anthropic
 com.google.adk.kt.models.anthropic
+module:google-adk-kotlin-integrations-bigquery
+com.google.adk.kt.plugins.agentanalytics
 module:google-adk-kotlin-integrations-openai
 com.google.adk.kt.models.openai
 module:google-adk-kotlin-integrations-spring
