@@ -86,8 +86,9 @@ async def call_vsearch_agent_async(query):
                 print(f"Agent Response: {final_response_text}")
                 # You can inspect event.grounding_metadata for source citations
                 if event.grounding_metadata:
+                    grounding_chunks = event.grounding_metadata.grounding_chunks or []
                     print(
-                        f"  (Grounding metadata found with {len(event.grounding_metadata.grounding_attributions)} attributions)"
+                        f"  (Grounding metadata found with {len(grounding_chunks)} chunks)"
                     )
 
     except Exception as e:
