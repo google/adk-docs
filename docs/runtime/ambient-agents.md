@@ -389,6 +389,9 @@ during bursts of events.
     | :------ | :------ | :------------------- |
     | Max concurrent invocations | 100 | `--trigger_max_concurrent_runs` |
 
+    By default, ADK Go allows 100 concurrent invocations and ADK Python
+    allows 10.
+
     !!! note "Pub/Sub trigger concurrency in ADK Go"
 
         ADK Go v2.3.0 through v2.5.0 don't apply
@@ -437,6 +440,9 @@ request is retried with exponential backoff and jitter.
     | Max retry attempts | 3 | `--trigger_max_retries` |
     | Base backoff delay | 1.0s | `--trigger_base_delay` |
     | Max backoff delay | 10.0s | `--trigger_max_delay` |
+
+    By default, ADK Go caps the backoff delay at 10 seconds and ADK Python
+    caps it at 30 seconds.
 
 If all retries are exhausted, the endpoint returns HTTP 500, signaling
 Pub/Sub or Eventarc to retry delivery at a higher level.
