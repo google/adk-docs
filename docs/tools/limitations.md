@@ -5,16 +5,25 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 ## One tool per agent limitation {#one-tool-one-agent}
 
-!!! note "ONLY for Search in ADK Python v1.15.0 and lower"
+!!! note "Search in ADK Python"
 
-    This limitation only applies to the use of Google Search and Agent Search
-    tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
-    provides a built-in workaround to remove this limitation.
+    For ADK Python, this search limitation applies to Google Search and Agent
+    Search tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and
+    higher provides a built-in workaround to remove this limitation.
 
-In general, you can use more than one tool in an agent, but use of specific
-tools within an agent excludes the use of any other tools in that agent. The
-following ADK Tools can only be used by themselves, without any other tools, in
-a single agent object:
+!!! note "Go tool combinations"
+
+    ADK Go does not impose a universal one-built-in-tool limit. Whether you can
+    combine native tools with each other or with function tools depends on the
+    model, backend API, and request configuration. Check the selected API's
+    [tool-combination requirements](https://ai.google.dev/gemini-api/docs/generate-content/tool-combination).
+    If the required combination is unsupported, wrap a specialist agent with
+    `agenttool.New`, as shown in the Go tab under
+    [Workaround #1](#workaround-1-agenttoolcreate-method).
+
+In general, you can use more than one tool in an agent. Some SDK and model/API
+combinations require the following native tools to be used without other tools
+in the same agent request:
 
 * [Code Execution](/integrations/code-execution/) with Gemini API (Note: in
   TypeScript, this requires Gemini 2.0+ and does not have this limitation)
@@ -23,8 +32,8 @@ a single agent object:
 * [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
   TypeScript)
 
-For example, the following approach that uses one of these tools along with
-other tools, within a single agent, is ***not supported***:
+The following examples illustrate combinations subject to these restrictions;
+check the requirements for your SDK, model, and backend:
 
 === "Python"
 
@@ -78,7 +87,7 @@ other tools, within a single agent, is ***not supported***:
 ### Workaround #1: AgentTool.create() method
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-go">Go</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
@@ -142,6 +151,33 @@ to use built-in tools with other tools by using multiple agents:
       tools: [new AgentTool({agent: searchAgent}), new AgentTool({agent: codingAgent})],
     });
     ```
+
+=== "Go"
+
+    Keep Google Search in a specialist agent and expose it to the parent as a
+    function tool using `agenttool.New(searchAgent, nil)`. The parent can then
+    combine that function tool with another function tool. The native search
+    tool is sent only in the specialist's model requests.
+
+    ```go
+    --8<-- "examples/go/snippets/tools/agent-tool-workaround/main.go:agents"
+    ```
+
+    The specialist's model must support Google Search, and the parent's model
+    must support function calling. This arrangement does not enable an
+    unsupported native tool on a model. Go has no equivalent of Python's
+    `bypass_multi_tools_limit` option.
+
+    The complete example is `snippets/tools/agent-tool-workaround/main.go` in
+    the [Go examples](https://github.com/google/adk-docs/tree/main/examples/go).
+    [Configure a Gemini API key](/get-started/go/#set-your-api-key), then run
+    from `examples/go`:
+
+    ```shell
+    go run ./snippets/tools/agent-tool-workaround
+    ```
+
+    Try: `What time is it in UTC, and what is the latest news about Go?`
 
 === "Java"
 
@@ -221,12 +257,15 @@ sample agent.
 
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent, with the exception of
-    `GoogleSearchTool` and `VertexAiSearchTool` in ADK Python because of the
-    workaround mentioned above.
+    Transfer-based sub-agents can add function tools for agent transfer. If
+    your SDK, model, or API does not support combining those functions with a
+    built-in tool, use an AgentTool wrapper instead. In Go, the compatibility
+    requirements depend on the model, backend API, and request configuration,
+    as described above. ADK Python provides the Search workaround mentioned
+    above for `GoogleSearchTool` and `VertexAiSearchTool`.
 
-For example, the following approach that uses built-in tools within sub-agents
-is **not supported**:
+The following examples illustrate transfer-based sub-agent configurations that
+are subject to these SDK and model/API restrictions:
 
 === "Python"
 

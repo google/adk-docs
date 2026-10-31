@@ -28,7 +28,7 @@ import (
 	"google.golang.org/adk/v2/runner"
 	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/tool"
-	"google.golang.org/adk/v2/tool/functiontool"
+	"google.golang.org/adk/v2/tool/exitlooptool"
 	"google.golang.org/genai"
 )
 
@@ -42,19 +42,6 @@ const (
 )
 
 // --8<-- [start:init]
-// ExitLoopArgs defines the (empty) arguments for the ExitLoop tool.
-type ExitLoopArgs struct{}
-
-// ExitLoopResults defines the output of the ExitLoop tool.
-type ExitLoopResults struct{}
-
-// ExitLoop is a tool that signals the loop to terminate by setting Escalate to true.
-func ExitLoop(ctx agent.Context, input ExitLoopArgs) (ExitLoopResults, error) {
-	fmt.Printf("[Tool Call] exitLoop triggered by %s \n", ctx.AgentName())
-	ctx.Actions().Escalate = true
-	return ExitLoopResults{}, nil
-}
-
 func main() {
 	ctx := context.Background()
 
@@ -106,13 +93,8 @@ Respond *exactly* with the phrase "%s" and nothing else.`, stateDoc, donePhrase)
 		return fmt.Errorf("failed to create critic agent: %v", err)
 	}
 
-	exitLoopTool, err := functiontool.New(
-		functiontool.Config{
-			Name:        "exitLoop",
-			Description: "Call this function ONLY when the critique indicates no further changes are needed.",
-		},
-		ExitLoop,
-	)
+	// The prebuilt exit_loop tool escalates and skips LLM summarization.
+	exitLoopTool, err := exitlooptool.New()
 	if err != nil {
 		return fmt.Errorf("failed to create exit loop tool: %v", err)
 	}
@@ -133,10 +115,10 @@ Respond *exactly* with the phrase "%s" and nothing else.`, stateDoc, donePhrase)
 **Task:**
 Analyze the 'Critique/Suggestions'.
 IF the critique is *exactly* "%s":
-You MUST call the 'exitLoop' function. Do not output any text.
+You MUST call the 'exit_loop' function. Do not output any text.
 ELSE (the critique contains actionable feedback):
 Carefully apply the suggestions to improve the 'Current Document'. Output *only* the refined document text.`, stateDoc, stateCrit, donePhrase),
-		Description: "Refines the document based on critique, or calls exitLoop if critique indicates completion.",
+		Description: "Refines the document based on critique, or calls exit_loop if critique indicates completion.",
 		Tools:       []tool.Tool{exitLoopTool},
 		OutputKey:   stateDoc,
 	})
