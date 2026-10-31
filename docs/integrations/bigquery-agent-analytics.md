@@ -143,6 +143,7 @@ rows apply to both languages.
 | `AGENT_ERROR` | Agent execution fails with an unhandled exception | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
 | `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, finish reason, latency, TTFT | `v_llm_response` |
+| `LIVE_USAGE` (Python) | Gemini Live reports token usage | raw usage tokens, modality details, model version, connection ID, sequence | `v_live_usage` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
 | `TOOL_STARTING` | A tool begins execution | tool name, args, origin | `v_tool_starting` |
 | `TOOL_COMPLETED` | A tool succeeds | tool name, result, origin, latency | `v_tool_completed` |
@@ -162,6 +163,48 @@ rows apply to both languages.
 | `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
 | `NODE_OUTPUT` | A workflow node emits a final structured output | output, node path, run ID, parent run ID | `v_node_output` |
 | `NODE_ERROR` | A workflow node ends with a non-model error | error code, error message, node path, run ID, parent run ID | `v_node_error` |
+
+## Live token usage (Python)
+
+For native Gemini Live connections, the plugin records each provider usage
+snapshot as a `LIVE_USAGE` row. This includes `Runner.run_live()` and the Live
+API used by compositional function calling (`support_cfc=True`). The snapshot
+is logged once, even when both model and event callbacks run. Ordinary
+request/response usage remains in `LLM_RESPONSE` rows.
+
+The row uses the same `content.usage.prompt`, `completion`, and `total` fields
+as `LLM_RESPONSE`. `attributes.usage_metadata` retains the detailed token
+counts, including modality breakdowns, cached and thoughts tokens, and
+`traffic_type` when supplied. The model version is in
+`attributes.model_version`.
+
+`attributes.live_usage` contains:
+
+- `connection_id`: an ADK-generated ID for the upstream connection. A reconnect
+  or resumed connection gets a new ID even if the provider session ID is reused.
+- `sequence`: the usage snapshot's increasing sequence number within that
+  connection.
+- `live_session_id`: the provider's session ID, when available.
+
+With `create_views=True`, `v_live_usage` exposes these fields and
+`is_latest_for_connection`. The latter selects the greatest sequence number
+within each connection, so it does not depend on event timestamps:
+
+```sql
+SELECT connection_id, live_session_id, usage_total_tokens, usage_metadata
+FROM `my_project.my_dataset.v_live_usage`
+WHERE is_latest_for_connection
+```
+
+Use this selection **only when the backend reports cumulative per-connection
+counters**. The plugin preserves provider values rather than converting them
+to billable deltas. Per-turn usage and a growing prompt context are different
+from a cumulative connection total; check the backend's reporting semantics
+before choosing an aggregation. Summing every cumulative snapshot overcounts.
+
+If `event_allowlist` is configured, add `LIVE_USAGE` to capture these rows.
+`event_denylist` can exclude them. Usage snapshots do not produce LLM latency
+or TTFT measurements and do not close model spans.
 
 ## Installation
 
@@ -1122,6 +1165,7 @@ The following table lists the Python views and their event-specific columns:
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
 | **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
+| **`v_live_usage`** (Python) | `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `traffic_type` (STRING), `connection_id` (STRING), `sequence` (INT64), `live_session_id` (STRING), `is_latest_for_connection` (BOOL) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
