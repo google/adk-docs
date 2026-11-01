@@ -184,10 +184,18 @@ The row uses the same `content.usage.prompt`, `completion`, and `total` fields
 as `LLM_RESPONSE`. `attributes.usage_metadata` retains the detailed token
 counts, including modality breakdowns, cached and thoughts tokens, and
 `traffic_type` when supplied. New rows serialize usage enums as SDK values such
-as `ON_DEMAND` and `AUDIO`. The model version is in
+as `ON_DEMAND` and `AUDIO`. This also changes ordinary `LLM_RESPONSE`
+attributes: enum class prefixes such as `TrafficType.` and `MediaModality.`
+are no longer written, and null usage fields are omitted. Both usage views
+provide a normalized `traffic_type` column for historical and current rows.
+The model version is in
 `attributes.model_version`.
 
 `attributes.live_usage` contains:
+
+Use `(connection_id, sequence)` to correlate reports. `source_event_id` refers
+to the first callback sighting and can differ from a later replacement event's
+persisted ID; a bare model response may have no event envelope.
 
 - `connection_id`: an ADK-generated ID for the upstream connection. A reconnect
   or resumed connection gets a new ID even if the provider session ID is reused.
@@ -719,7 +727,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating. Use `-1` for no limit; other values must be at least `1` |
     | `batch_size` | `int` | `1` | Tune write throughput vs. latency |
     | `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
-    | `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
+    | `shutdown_timeout` | `float` | `10.0` | Max wait for final shutdown flush or cross-loop queue admission (seconds) |
     | `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
     | `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
     | `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
@@ -1208,7 +1216,7 @@ The following table lists the Python views and their event-specific columns:
 | --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `traffic_type` (STRING, Python), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
 | **`v_live_usage`** (Python) | `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `traffic_type` (STRING), `connection_id` (STRING), `sequence` (INT64), `live_session_id` (STRING), `api_backend` (STRING), `service_tier` (STRING), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `cache_metadata` (JSON) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
