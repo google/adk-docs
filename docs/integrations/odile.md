@@ -102,10 +102,11 @@ around the APIs the agent is allowed to call.
 | Tool | What it does |
 | --- | --- |
 | `find_business_agent` | Looks a business up by its E.164 phone number and returns its Direct card and the skills it accepts. |
-| `check_business_availability` | Reads the open times a business publishes. |
-| `leave_business_message` | Leaves a message with a callback number; the business answers on its own line. |
-| `book_business_slot` | Books a slot the business offered. |
-| `send_to_business` | The general form: one request with a skill the card lists, idempotent by `message_id`. |
+| `send_to_business` | One request to that business with a skill its card lists: `take_message`, `check_availability`, `book` or `book_first_available`; idempotent by `message_id`. |
+| `get_replies` and `reply_to_business` | Reads the business's replies to a request and continues the thread. |
+| `call_business`, `get_call_result`, `answer_call_question` | The opt-in voice pilot: a call placed to the business on the agent's behalf, its result, and answers to questions the business asks during the call. |
+| `get_direct_usage` and `get_direct_payment` | The agent identity's free allowance and credits, and how to pay. |
+| `get_m2m_network` | What the network offers and how it is priced. |
 
 The full tool list, prices and the A2A agent card are at
 [odilelabs.com/a2a](https://odilelabs.com/a2a).
