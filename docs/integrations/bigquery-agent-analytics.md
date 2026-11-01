@@ -193,10 +193,6 @@ The model version is in
 
 `attributes.live_usage` contains:
 
-Use `(connection_id, sequence)` to correlate reports. `source_event_id` refers
-to the first callback sighting and can differ from a later replacement event's
-persisted ID; a bare model response may have no event envelope.
-
 - `connection_id`: an ADK-generated ID for the upstream connection. A reconnect
   or resumed connection gets a new ID even if the provider session ID is reused.
 - `sequence`: the usage snapshot's increasing sequence number within that
@@ -204,6 +200,11 @@ persisted ID; a bare model response may have no event envelope.
 - `live_session_id`: the provider's session ID, when available.
 - `api_backend`: `GEMINI_API` or `VERTEX_AI`.
 - `service_tier`: the Live service tier, when reported by the SDK.
+
+Use `(connection_id, sequence)` to correlate reports.
+`attributes.adk.source_event_id` refers to the first callback sighting and can
+differ from a later replacement event's persisted ID; a bare model response may
+have no event envelope.
 
 With `create_views=True`, `v_live_usage` exposes each raw report, including
 typed cache, thinking and tool-use counts, cache metadata and cache hit rate.
@@ -232,7 +233,7 @@ connection, select the latest sequence before summing. Keep the time filter
 inside the query that computes the window:
 
 ```sql
-SELECT connection_id, live_session_id, usage_total_tokens, usage_metadata
+SELECT session_id, connection_id, sequence, live_session_id, usage_total_tokens, usage_metadata
 FROM `my_project.my_dataset.v_live_usage`
 WHERE timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
   AND connection_id IS NOT NULL
@@ -727,7 +728,7 @@ account) under which the agent is running needs these Google Cloud roles:
     | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating. Use `-1` for no limit; other values must be at least `1` |
     | `batch_size` | `int` | `1` | Tune write throughput vs. latency |
     | `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
-    | `shutdown_timeout` | `float` | `10.0` | Max wait for final shutdown flush or cross-loop queue admission (seconds) |
+    | `shutdown_timeout` | `float` | `10.0` | Max wait for final shutdown flush or unclaimed Live queue admission (seconds) |
     | `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
     | `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
     | `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
