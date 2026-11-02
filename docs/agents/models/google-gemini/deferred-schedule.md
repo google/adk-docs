@@ -164,6 +164,10 @@ defines a constant for it.
 
 ## Advanced usage
 
+The following sections describe how to bound the wait time for a deferred run
+with a client-side deadline and how to request deferred scheduling when serving
+an agent over HTTP.
+
 ### Set a client-side deadline {#set-a-client-side-deadline}
 
 A deferred request waits for off-peak capacity, and its duration depends on
@@ -270,6 +274,9 @@ The following limitations apply to deferred scheduling:
     the next run creates a new interaction.
 
 ## Troubleshooting
+
+The following sections describe some common issues when using deferred
+scheduling, and how to resolve them.
 
 ### ADK ignores the tier and the run still succeeds
 
