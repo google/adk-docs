@@ -25,10 +25,10 @@ Using Quarkus, you map your agent into an A2A execution endpoint without manuall
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
 
-The fastest way to get started is by checking the standalone Quarkus app inside the `contrib/samples/a2a_server` folder within the [**`adk-java`** repo](https://github.com/google/adk-java).
+The fastest way to get started is by checking the standalone Quarkus app inside the `examples/a2a_server` folder within the [**`adk-java`** repo](https://github.com/google/adk-java).
 
 ```bash
-cd contrib/samples/a2a_server
+cd examples/a2a_server
 ```
 
 ### 2. How it works
@@ -46,7 +46,7 @@ The app handles incoming JSON-RPC calls over HTTP mounted on `/a2a/remote/v1/mes
 Within the native ADK structure, you can run the Quarkus dev mode task:
 
 ```bash
-./mvnw -f contrib/samples/a2a_server/pom.xml quarkus:dev
+./mvnw -f examples/a2a_server/pom.xml quarkus:dev
 ```
 
 Once executed, Quarkus automatically hosts your A2A compliant REST paths. A manual `curl` allows you to immediately smoke test the payload using native A2A specifications:

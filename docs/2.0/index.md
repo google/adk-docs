@@ -177,7 +177,7 @@ To install the latest version of ADK 1.x, follow these steps:
         .venv\Scripts\activate.bat
         ```
 
-    === "Windows Powershell"
+    === "Windows PowerShell"
 
         ```console
         .venv\Scripts\Activate.ps1
@@ -327,20 +327,18 @@ paths in your Go source files and your `go.mod` file.
 all import statements in your source files from `google.golang.org/adk/...` to
 `google.golang.org/adk/v2/...`.
 
-### Agent Execution: Agent interface changes
+### Agent Execution: Custom Agents
 
-In ADK Go 1.x, agents implemented the `agent.Agent` interface by providing a
-`Run` method. In ADK Go 2.0, agents are evaluated as individual *nodes* within
-the new Workflow Graph engine.
+In ADK Go 2.0, agents can also run as individual *nodes* within the new
+Workflow Graph engine. Custom agents keep working as they did in 1.x: you pass a
+`Run` function to `agent.New`, and ADK calls it with an
+`agent.InvocationContext` and runs the agent's before and after callbacks
+around it. The `agent.Agent` interface keeps the same `Run` signature.
 
-*   **Execution driver custom overrides:** Custom agent types that override
-    internal execution behavior may no longer work as expected. The Workflow
-    Graph engine manages execution scheduling and event emission, and custom
-    implementations that bypass these mechanisms are silently ignored.
-
-**Migration action:** Move custom execution logic into standardized
-`BeforeAgentCallback` and `AfterAgentCallback` hooks to safely inject custom
-logic into the execution lifecycle.
+**Migration action:** No change to how you create or register a custom agent.
+Code inside `Run` still needs the import path change above and any other
+changes on this page, such as the new `session.NewEvent` signature. See
+[Custom agents](/agents/custom-agents/).
 
 ### Event Construction: `session.NewEvent` signature change
 
@@ -378,9 +376,9 @@ graph routing, workflow state, and human-in-the-loop pausing:
 | Go field | Serialized name | Purpose |
 |---|---|---|
 | `IsolationScope string` | `isolationScope` (`json:"isolationScope,omitempty"`) | Restricts which agent contexts see this event in LLM prompt history. |
-| `Routes []string` | `Routes` (no JSON tag) | Routing keys emitted by a node to drive conditional edge dispatch. |
-| `RequestedInput *RequestInput` | `RequestedInput` (no JSON tag) | Signals that a workflow node is pausing for human input. |
-| `Output any` | `Output` (no JSON tag) | Generic data output from a workflow node. |
+| `Routes []string` | `routes` (`json:"routes,omitempty"`) | Routing keys emitted by a node to drive conditional edge dispatch. |
+| `RequestedInput *RequestInput` | `requestedInput` (`json:"requestedInput,omitempty"`) | Signals that a workflow node is pausing for human input. |
+| `Output any` | `output` (`json:"output,omitempty"`) | Generic data output from a workflow node. |
 | `NodeInfo *NodeInfo` | `nodeInfo` (`json:"nodeInfo,omitempty"`) | Workflow-node metadata identifying which node emitted the event. |
 
 *   **Custom session storage:** If you have implemented a custom
@@ -392,10 +390,12 @@ graph routing, workflow state, and human-in-the-loop pausing:
     serialized JSON blobs, you do not need to update your schema.*
 
 **Migration action:** Update your database schemas and downstream client
-validators to expect and store the five new fields on all Event payloads.
-Pay particular attention to `Routes`, `RequestedInput`, and `Output`, which
-have no JSON struct tags and therefore serialize under their Go field names
-exactly as shown above.
+validators to expect and store the five new fields on all Event payloads,
+using the serialized names shown above. ADK Go versions before v2.2.0
+serialize `Routes`, `RequestedInput`, and `Output` under their Go field names,
+so events stored by those versions use those keys. ADK Go v2.2.0 and higher
+still decode those events. Non-Go validators and rigid schemas must accept
+both forms.
 
 If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
 them through the

@@ -189,7 +189,7 @@ asyncio.run(start())
 
 ### Using MCP tools
 
-Execute [MCP](/mcp/) tools as Temporal
+Execute [MCP](/tools-custom/mcp-tools/) tools as Temporal
 Activities:
 
 ```python

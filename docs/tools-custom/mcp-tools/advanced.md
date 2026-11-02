@@ -20,6 +20,7 @@ Use the matrix below to select the right configuration mechanism for your produc
 | **Handle server-requested sampling or auth challenges** | Bi-directional Protocol Callbacks | `sampling_callback`, `elicitation_callback` | Server-initiated LLM generation & auth prompts |
 | **Inspect raw STDERR diagnostic streams** | Diagnostic Stream Logging | `errlog=sys.stderr` | Troubleshooting MCP subprocess crashes |
 | **Render rich, interactive visual widgets in chat** | Experimental UI Rendering | `meta.ui.resourceUri` | Maps, charts, weather cards, or custom forms |
+| **Fetch agent instructions dynamically from an MCP server** | Dynamic Instruction Provider | `McpInstructionProvider` | Centralized prompt management via MCP servers |
 
 ---
 
@@ -349,6 +350,51 @@ async def call_mcp_tool(name: str, arguments: dict) -> list[mcp_types.Content]:
   ]
 
 ``` 
+
+---
+
+## Dynamic instructions with `McpInstructionProvider`
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
+</div>
+
+To manage agent instructions dynamically in Python, use
+`McpInstructionProvider`. This class fetches agent instructions from a Model
+Context Protocol (MCP) server.
+
+Initialize `McpInstructionProvider` with MCP server connection parameters and
+the name of the prompt to fetch. Pass this instance to the `instruction`
+parameter of `LlmAgent`:
+
+```python
+from google.adk.agents import LlmAgent, McpInstructionProvider
+from google.adk.tools.mcp_tool import SseConnectionParams
+
+# Define the MCP connection parameters.
+mcp_connection_params = SseConnectionParams(
+    url="https://mcp.example.com",
+    headers={"Authorization": "Bearer YOUR_MCP_API_KEY"},
+)
+
+# Create an instance of the instruction provider.
+instruction_provider = McpInstructionProvider(
+    connection_params=mcp_connection_params,
+    prompt_name="my-agent-prompt",
+)
+
+# Use the instruction provider in the agent.
+my_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="my_mcp_agent",
+    instruction=instruction_provider,
+)
+```
+
+!!! warning "Caution"
+    Instructions fetched from an MCP server directly control your agent's
+    behavior. Only connect to MCP servers that you trust, and protect any
+    credentials used in the connection parameters.
 
 ---
 
