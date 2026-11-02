@@ -209,26 +209,10 @@ tells the agent:
     agents in your system, use `GlobalInstructionPlugin` instead of 
     the deprecated `global_instruction` parameter.
 
-### Separate static and dynamic instructions in Python
-
-In Python, use `static_instruction` for content that stays the same between
-requests. State placeholders are not expanded there; keep values that change
-in `instruction`:
-
-```python
-from google.adk.agents import LlmAgent
-
-agent = LlmAgent(
-    name="trip_assistant",
-    model="gemini-flash-latest",
-    static_instruction="You help users plan trips.",
-    instruction="Plan a trip to {destination}.",
-)
-```
-
-Set `destination` in session state before running this agent. Separating the
-instructions does not enable explicit caching; see [Model context caching](/context/caching/).
-The Live API does not support `static_instruction`.
+In Python, `static_instruction` holds fixed content without expanding state
+placeholders. Keep dynamic values in `instruction`. This option is not
+supported by the Live API; see [Model context caching](/context/caching/)
+to configure explicit caching.
 
 ## Equip the agent with tools
 
