@@ -265,14 +265,14 @@ The retry policy has the same options in every language. Durations are in
 seconds in Python and TypeScript, and use the language's duration type in Go,
 Java, and Kotlin.
 
-| Option | Python | TypeScript | Go | Java | Kotlin | Default | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Maximum attempts | `max_attempts` | `maxAttempts` | `MaxAttempts` | `maxAttempts` | `maxAttempts` | `5` | Attempts including the original one. A value of 0 or 1 disables retries. |
-| Initial delay | `initial_delay` | `initialDelay` | `InitialDelay` | `initialDelay` | `initialDelay` | 1 second | Wait before the first retry. |
-| Maximum delay | `max_delay` | `maxDelay` | `MaxDelay` | `maxDelay` | `maxDelay` | 60 seconds | Upper limit on the wait between attempts. |
-| Backoff factor | `backoff_factor` | `backoffFactor` | `BackoffFactor` | `backoffFactor` | `backoffFactor` | `2.0` | Multiplier applied to the wait after each attempt. |
-| Jitter | `jitter` | `jitter` | `Jitter` | `jitter` | `jitter` | `1.0` | Random spread applied to each wait, as a fraction of the wait. `0` gives fixed waits. |
-| Errors to retry | `exceptions` | `exceptions` | `ShouldRetry` | `exceptions`, `exceptionClasses` | `exceptions` | All errors | Errors that start a retry. See the following list. |
+| Option | Default | Description |
+| :--- | :--- | :--- |
+| Maximum attempts | `5` | Attempts including the original one. A value of 0 or 1 disables retries. |
+| Initial delay | 1 second | Wait before the first retry. |
+| Maximum delay | 60 seconds | Upper limit on the wait between attempts. |
+| Backoff factor | `2.0` | Multiplier applied to the wait after each attempt. |
+| Jitter | `1.0` | Random spread applied to each wait, as a fraction of the wait. `0` gives fixed waits. |
+| Errors to retry | All errors | Errors that start a retry. See the following list. |
 
 Each language selects the errors to retry in its own way:
 
