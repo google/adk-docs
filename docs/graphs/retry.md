@@ -182,8 +182,8 @@ When `fetch_forecast` fails with a service error or exceeds its timeout, ADK
 waits, then runs the node again with the same input. The next node,
 `report_forecast`, runs only after an attempt succeeds. If all three attempts
 fail, the node fails with the error from the last attempt, and the workflow
-fails with it. Inside the node, the attempt count, which starts at 1, tells you
-which attempt is running.
+fails with it. In all languages except Go, the node context provides an attempt
+count, which starts at 1, so your code can tell which attempt is running.
 
 ## Configure retries
 
@@ -204,16 +204,16 @@ waits between attempts, and which errors start a retry.
 The following decisions have the most effect on how well retries work for your
 workflow:
 
--   **Retry only transient errors.** By default, a retry policy retries every
-    error. An error caused by bad input or a bug fails the same way on every
+-   **Retry only transient errors.** By default, a retry policy retries almost
+    every error. An error caused by bad input or a bug fails the same way on every
     attempt, so retrying it only delays the failure. List the error types that
     can succeed on a later attempt, such as connection errors, rate limit
     errors, and timeouts. For details on how each language matches errors, see
     [Configuration options](#configuration-options).
--   **Set the policy on the node that can fail.** A workflow is itself a node,
-    so you can attach a retry policy to a nested workflow. A failure of any
-    node inside it then retries the whole nested workflow. Setting the policy
-    on the individual node that calls the unreliable service retries less work
+-   **Set the policy on the node that can fail.** In Python, Java, and Kotlin,
+    you can also attach a retry policy to a nested workflow, and a failure of
+    any node inside it then retries the nested workflow. Setting the policy on
+    the individual node that calls the unreliable service retries less work
     and gives you more control.
 -   **Make retried work safe to repeat.** A retry runs the whole node again. If
     the node writes to an external system before it fails, the write can
@@ -279,8 +279,8 @@ Each language selects the errors to retry in its own way:
 -   **Python:** `exceptions` takes exception classes or class names. A listed
     class also matches its subclasses.
 -   **TypeScript:** `exceptions` takes error classes or class names. An error
-    matches when its class name or its `name` property is in the list.
-    Subclasses do not match a listed parent class.
+    matches when its class name or its `name` property is in the list. ADK
+    does not check the class hierarchy.
 -   **Go:** `ShouldRetry` is a function that receives the error and returns
     `true` to retry it. The default retries every error except
     `workflow.ErrInputValidation`.
