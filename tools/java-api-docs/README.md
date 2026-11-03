@@ -15,9 +15,19 @@ itself -- see [Changing this script](#changing-this-script).
 
 ## What it needs
 
-A JDK 17 or newer, `jar`, and `git`. Maven itself is not required: the script
-uses adk-java's `./mvnw` wrapper, so the build uses the Maven version that
-release was built with rather than whatever happens to be installed.
+A JDK, `jar`, and `git`. Maven itself is not required: the script uses
+adk-java's `./mvnw` wrapper, so the build uses the Maven version that release
+was built with rather than whatever happens to be installed.
+
+**Which JDK matters to the output.** adk-java compiles against release 17 and
+that does not change, but the Javadoc tool doing the rendering is whichever
+one your JDK ships, and it stamps its own version into every page it writes.
+CI pins JDK 26 in
+[the workflow](../../.github/workflows/update-java-api-docs.yaml); build on
+anything else and every file will differ from what is committed. The workflow
+asserts the two things that used to be wrong here -- that the pages were
+rendered by the JDK it pinned, and that the copyright footer is not the 1980
+one described below.
 
 ## Which version is "current"
 
@@ -58,6 +68,25 @@ This is also what the rest of the repository already does: `build-docs`,
 `publish-docs`, `python-tests`, `update-python-docs` and
 `feature-matrix-updater` all install their dependencies from public registries
 on `ubuntu-latest`. The API reference generators were the exception.
+
+## The copyright footer
+
+Javadoc's default footer is
+"Copyright {inceptionYear}-{currentYear} {organizationName}. All rights
+reserved.", filled in from the pom. adk-java sets neither `<inceptionYear>`
+nor a project-level `<organization>` -- the only `<organization>` in it sits
+inside `<developers>`, which is a different field the plugin does not read --
+so the footer collapsed to "Copyright &#169; 1980. All rights reserved.": no
+owner, and the ZIP epoch instead of a year.
+
+`generate.sh` now passes `-Dbottom` explicitly. The year is the year of the
+release being documented, read from the tag it checked out, rather than the
+year the build runs. That matters because these pages are committed here: a
+footer that followed the wall clock would rewrite every file the first time
+somebody rebuilt an older version.
+
+If adk-java later sets `<inceptionYear>` and a project-level
+`<organization>`, this override can go.
 
 ## When the build breaks
 
