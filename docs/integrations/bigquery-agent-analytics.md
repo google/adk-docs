@@ -205,10 +205,14 @@ per-event-type views. The three HITL completion events have no dedicated views.
     The Go plugin is published as an independent Go submodule
     (`plugin/agentanalytics/go.mod`) in the `adk-go` repository so that core ADK
     applications do not pull in the BigQuery and Cloud Storage client
-    dependencies unless needed. The Go plugin is versioned separately from ADK
-    Go (`module google.golang.org/adk/plugin/agentanalytics`, without a `/v2`
-    major-version suffix) and has no tagged release yet. Use `@latest` for both
-    ADK Go and the plugin module:
+    dependencies unless needed. The Go plugin is versioned separately from core
+    `google.golang.org/adk/v2` (`module google.golang.org/adk/plugin/agentanalytics`,
+    without a `/v2` major-version suffix; tagged as
+    `plugin/agentanalytics/v0.1.0` starting in plugin release `v0.1.0`, which is
+    what `Go v0.1.0` in the support badges denotes). Install core ADK Go
+    (`v2.0.0+`) and the plugin module with `go get` (`@latest` resolves to the
+    latest tagged release, or pin an explicit plugin release such as
+    `google.golang.org/adk/plugin/agentanalytics@v0.1.0`):
 
     ```bash
     go get google.golang.org/adk/v2@latest
@@ -1089,7 +1093,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     ### Delivery and deduplication {#delivery-and-deduplication}
 
     <div class="language-support-tag">
-      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go</span>
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go v0.1.0</span>
     </div>
 
     Every row receives a 32-character hexadecimal `event_id` before enqueue.
@@ -1789,7 +1793,7 @@ you can optionally create the table manually using the DDL below.
 ### Automatically Created Views
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-go">Go</span><span class="lst-java">Java v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
 In Python (`create_views=True`) and Go (`DisableCreateViews: false`), the plugin
@@ -2291,7 +2295,7 @@ in `attributes.a2a_metadata`; Java omits that duplicate. The Python and Go
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 !!! note "Java support"
@@ -2408,7 +2412,7 @@ text of the compacted window (a string), not a structured object.
 #### NODE_OUTPUT and NODE_ERROR
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.7.0</span><span class="lst-go">Go v0.1.0</span>
 </div>
 
 For a final, non-partial event with a workflow node path, the plugin emits
@@ -3150,7 +3154,7 @@ secrets. For additional control, you can layer custom redaction on top.
 ### Built-in redaction {#built-in-redaction}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 The Python plugin normalizes key names to lowercase and treats hyphens like
@@ -3861,7 +3865,7 @@ call) reconstructs cleanly from BigQuery.
 ### Dropped-event observability {#dropped-event-observability}
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v1.7.0</span>
 </div>
 
 BigQuery logging is best-effort. Events can be dropped when the in-memory queue
