@@ -5,8 +5,8 @@
 </div>
 
 Nodes in a graph-based workflow often call services that fail intermittently
-or respond slowly, such as model APIs, remote tools, and databases. ADK lets you
-attach a retry policy and a timeout to each node, so a node can recover from a
+or respond slowly, such as model APIs, remote tools, and databases. Agent
+Development Kit (ADK) lets you attach a retry policy and a timeout to each node, so a node can recover from a
 transient failure without failing the whole workflow, and a stalled node fails
 after a set time instead of blocking the workflow. For example, you can use
 these settings to:
@@ -23,8 +23,8 @@ succeeds or the node uses up its attempts. Only then does the failure reach the
 rest of the workflow. Nodes without a retry policy are not retried.
 
 !!! example "Experimental in TypeScript, Java, and Kotlin"
-    In ADK TypeScript, Java, and Kotlin, the workflow APIs that node retries
-    and timeouts depend on are experimental releases. They may have
+    In ADK TypeScript, ADK Java, and ADK Kotlin, the workflow APIs that node
+    retries and timeouts depend on are experimental releases. They may have
     limitations and are not recommended for production use in those
     languages.
 
