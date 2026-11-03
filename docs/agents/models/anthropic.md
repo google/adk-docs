@@ -350,7 +350,7 @@ the standard thinking configuration:
 | `thinking_budget` | Behavior |
 | :--- | :--- |
 | Negative, such as `-1` | **Adaptive thinking.** Claude chooses how much to reason for each request. |
-| `0` | Thinking is disabled. |
+| `0` | **No thinking.** Claude responds without extended thinking. |
 | Positive | **Manual thinking.** Claude uses up to this many tokens to reason. Anthropic requires at least 1024, and less than the maximum output tokens. |
 
 Use adaptive thinking unless you need a fixed token budget. Some newer Claude
@@ -523,7 +523,7 @@ The Claude model classes accept the following options:
     | :--- | :--- | :--- | :--- |
     | `model` | `str` | `"claude-sonnet-4-20250514"` (`AnthropicLlm`), `"claude-3-5-sonnet-v2@20241022"` (`Claude`) | The Claude model ID. |
     | `max_tokens` | `int` | `8192` | Maximum output tokens when the request sets no `max_output_tokens`. |
-    | `client` | `AsyncAnthropic` or `AsyncAnthropicVertex` | `None` | A preconfigured Anthropic client. `Claude` requires an `AsyncAnthropicVertex` client. |
+    | `client` | `AsyncAnthropic` or `AsyncAnthropicVertex` | `None` | A preconfigured Anthropic client. The `Claude` class requires an `AsyncAnthropicVertex` client. |
 
 === "TypeScript"
 
