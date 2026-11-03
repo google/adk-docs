@@ -9,8 +9,7 @@ or respond slowly, such as model APIs, remote tools, and databases. Agent
 Development Kit (ADK) lets you attach a retry policy and a timeout to each
 node, so a node can recover from a transient failure without failing the whole
 workflow, and a stalled node fails after a set time instead of blocking the
-workflow. For example, you can use
-these settings to:
+workflow. You can use this functionality handle situations such as the following:
 
 -   Retry a tool call that fails with a connection error, waiting longer between
     each attempt so the remote service has time to recover.
@@ -179,8 +178,8 @@ result.
     --8<-- "examples/kotlin/snippets/graphs/RetryExample.kt:get-started"
     ```
 
-When `fetch_forecast` fails with a service error or exceeds its timeout, ADK
-waits, then runs the node again with the same input. The next node,
+When `fetch_forecast` fails with a service error or exceeds its timeout, the 
+ADK agent waits, then runs the node again with the same input. The next node,
 `report_forecast`, runs only after an attempt succeeds. If all three attempts
 fail, the node fails with the error from the last attempt, and the workflow
 fails with it. In all languages except Go, the node context provides an attempt
@@ -197,7 +196,7 @@ waits between attempts, and which errors start a retry.
     multiplies each later wait by the backoff factor, so the defaults of 1
     second and 2.0 give base waits of 1, 2, 4, and 8 seconds before jitter. The
     maximum delay caps each wait.
--   **Jitter:** ADK adds or subtracts a random amount, up to the jitter factor
+-   **Jitter:** The system adds or subtracts a random amount, up to the jitter factor
     times the delay, from each wait, so that many nodes that fail at the same
     time do not all retry at the same moment. Set jitter to 0 for fixed delays,
     for example in tests.
