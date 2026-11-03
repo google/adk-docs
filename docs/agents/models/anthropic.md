@@ -11,8 +11,8 @@ the same way you build them with Gemini. For example, you can:
 
 -   Run an agent on Claude while keeping your ADK tools, sessions, and
     callbacks unchanged.
--   Combine Claude and Gemini agents in one multi-agent system, using each
-    model for the tasks it handles best.
+-   Combine Claude and Gemini agents in one multi-agent system, and choose
+    the model for each agent based on its task.
 -   Give Claude more reasoning time on complex tasks with extended thinking.
 
 You can reach Claude through two backends: the **Anthropic API**, using an
@@ -176,11 +176,11 @@ export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
 Choose a backend based on where you manage billing, access, and quotas:
 
 -   **Anthropic API:** Use this backend if you already have an Anthropic
-    account, or want new Claude models and features as soon as Anthropic
-    releases them. You authenticate with an Anthropic API key.
+    account and manage Claude usage there. You authenticate with an Anthropic
+    API key.
 -   **Agent Platform:** Use this backend if your application runs on Google
     Cloud, or you want Claude usage governed by your Google Cloud project's
-    IAM permissions, quotas, billing, and data residency settings. You
+    IAM permissions, quotas, and billing. You
     authenticate with Application Default Credentials (ADC), and you don't
     manage a separate API key.
 
@@ -342,8 +342,8 @@ Platform:
 </div>
 
 Extended thinking lets Claude reason through a problem before it responds,
-which improves results on multi-step tasks such as planning, analysis, and
-choosing between tools. You configure it with the `thinking_budget` field of
+which can help on multi-step tasks such as planning, analysis, and choosing
+between tools. You configure it with the `thinking_budget` field of
 the standard thinking configuration:
 
 | `thinking_budget` | Behavior |
@@ -353,8 +353,7 @@ the standard thinking configuration:
 | Positive | **Manual thinking.** Claude uses up to this many tokens to reason. Anthropic requires at least 1024, and less than the maximum output tokens. |
 
 Use adaptive thinking unless you need a fixed token budget. Some newer Claude
-models, such as Claude Opus 4.7, accept only adaptive thinking and reject
-disabled or manual budgets. When you set a thinking configuration, you must
+models accept only adaptive thinking and reject disabled or manual budgets. When you set a thinking configuration, you must
 set `thinking_budget`.
 
 To control how much reasoning effort Claude spends, set the **effort** level:
@@ -447,13 +446,13 @@ as Claude requires.
 
 Agents with long instructions or many tools send the same prompt prefix on
 every request. Claude prompt caching stores that prefix so later requests
-reuse it, which reduces cost and latency. ADK places cache breakpoints on the
+reuse it, which can reduce cost and latency. ADK places cache breakpoints on the
 tool declarations, the system instruction, and the latest conversation
 content.
 
-Claude offers a 5-minute cache by default and a 1-hour cache at a higher write
-cost. Use the 1-hour cache only when requests to the same agent are more than
-5 minutes apart but less than an hour apart.
+Claude supports a 5-minute cache lifetime, which is the default, and a 1-hour
+cache lifetime. Use the 1-hour lifetime when requests to the same agent are
+usually more than 5 minutes apart.
 
 === "Python"
 
