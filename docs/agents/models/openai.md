@@ -1,7 +1,7 @@
 # OpenAI models for ADK agents
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 !!! example "Experimental"
@@ -89,10 +89,33 @@ The following code example shows a basic implementation for using OpenAI models 
 
         For a complete, runnable sample, see [examples/openai/completions/](https://github.com/google/adk-go/tree/main/examples/openai/completions) in the ADK Go repository.
 
+=== "Kotlin"
+
+    === "Chat Completions API"
+
+        ```kotlin
+        import com.google.adk.kt.agents.Instruction
+        import com.google.adk.kt.agents.LlmAgent
+        import com.google.adk.kt.models.openai.ChatCompletions
+
+        // Instantiate the model on the Chat Completions API
+        val llm = ChatCompletions(name = "gpt-4o-mini", apiKey = System.getenv("OPENAI_API_KEY"))
+
+        // Create the agent
+        val agent =
+          LlmAgent(
+            name = "openai_agent",
+            model = llm,
+            instruction = Instruction("You are a helpful AI assistant."),
+          )
+        ```
+
+        For a complete, runnable sample, see [examples/.../chatcompletions/](https://github.com/google/adk-kotlin/tree/v1.5.0/examples/src/main/kotlin/com/google/adk/kt/examples/chatcompletions) in the ADK Kotlin repository.
+
 ## Chat Completions API {#chat-completions-api}
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 By default, `openaimodel` sends requests to the OpenAI
