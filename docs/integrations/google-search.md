@@ -8,7 +8,7 @@ catalog_tags: ["search","google"]
 # Gemini API Google Search tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](/grounding/google_search_grounding/).
@@ -55,4 +55,10 @@ The `google_search` tool allows the agent to perform web searches using Google S
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/built-in-tools/GoogleSearchAgentApp.kt:full_code"
     ```
