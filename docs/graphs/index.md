@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.2.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
@@ -126,6 +126,19 @@ function, and the final agent reports the information.
     --8<-- "examples/go/snippets/graphs/index/main.go:sequential-get-started"
     ```
 
+=== "Kotlin"
+
+    In ADK Kotlin v1.5.0, the `workflow` builder declares the graph's edges,
+    and `chain` connects `Start` and each node in order. An `LlmAgent` is a
+    node, so it goes straight into the graph. The `node()` function wraps a
+    code step as a typed node and can set its `inputSchema` and
+    `outputSchema` contracts. Each node's output is passed to the next node
+    as its input, so you do not need to write to session state.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/index/GetStarted.kt:get-started"
+    ```
+
 This sample code demonstrates how you can assemble a simple, sequential
 workflow and alternate between agent processing and code execution. While you
 could perform these steps using a single agent with a longer prompt and a tool
@@ -228,6 +241,18 @@ translated into a graph-based agent:
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:process-pipeline"
+    ```
+
+=== "Kotlin"
+
+    In ADK Kotlin v1.5.0, a router node selects its routes by setting
+    `context.routes`, and a `route { }` block maps each route value to the
+    node that handles it. Selecting more than one route dispatches to every
+    matching branch, which lets the classifier in this example return more
+    than one category.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/index/ProcessPipeline.kt:process-pipeline"
     ```
 
 This sample code demonstrates how you can compose a sequence of agents to
