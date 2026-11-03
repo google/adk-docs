@@ -101,7 +101,7 @@ function, and the final agent reports the information.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array. Each row
+    In ADK TypeScript, a `Workflow` takes an `edges` array. Each row
     lists the nodes to run in order. The `node()` function wraps a function,
     an agent, a tool, or another `Workflow` as a graph node, and sets the
     node's name and its `inputSchema` and `outputSchema` contracts. Schemas
@@ -115,7 +115,7 @@ function, and the final agent reports the information.
 
 === "Go"
 
-    In ADK Go v2.0.0, sequential workflows use the graph engine:
+    In ADK Go, sequential workflows use the graph engine:
     `workflow.NewFunctionNode` wraps each step, and `workflow.Chain` wires
     the nodes into a sequential `edges` slice. The framework automatically
     passes each node's typed return value to the next node via
@@ -128,7 +128,7 @@ function, and the final agent reports the information.
 
 === "Kotlin"
 
-    In ADK Kotlin v1.5.0, the `workflow` builder declares the graph's edges,
+    In ADK Kotlin, the `workflow` builder declares the graph's edges,
     and `chain` connects `Start` and each node in order. An `LlmAgent` is a
     node, so it goes straight into the graph. The `node()` function wraps a
     code step as a typed node and can set its `inputSchema` and
@@ -220,7 +220,7 @@ translated into a graph-based agent:
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a router node returns an event carrying a
+    In ADK TypeScript, a router node returns an event carrying a
     `route` value, created with `createEvent({route})`. A second edge row
     maps each route value to the node that handles it. Setting `route` to an
     array dispatches to every matching branch, which lets the classifier in
@@ -233,7 +233,7 @@ translated into a graph-based agent:
 
 === "Go"
 
-    In ADK Go v2.0.0, conditional routing uses `workflow.NewEmittingFunctionNode`
+    In ADK Go, conditional routing uses `workflow.NewEmittingFunctionNode`
     to set `event.Routes` and `workflow.StringRoute` edges to dispatch to the
     matching handler — the direct equivalent of Python's `router` function and
     dict dispatch. `workflow.Concat` merges the chain and the conditional edges
@@ -245,7 +245,7 @@ translated into a graph-based agent:
 
 === "Kotlin"
 
-    In ADK Kotlin v1.5.0, a router node selects its routes by setting
+    In ADK Kotlin, a router node selects its routes by setting
     `context.routes`, and a `route { }` block maps each route value to the
     node that handles it. Selecting more than one route dispatches to every
     matching branch, which lets the classifier in this example return more
@@ -281,7 +281,7 @@ are *not compatible* with the following ADK features:
 
 !!! note "Go: graph workflow API"
 
-    The `workflow` package in ADK Go v2.0.0 is the direct equivalent of the
+    The `workflow` package in ADK Go is the direct equivalent of the
     Python `Workflow` class. Use `workflow.NewFunctionNode` and
     `workflow.NewAgentNode` to define nodes, `workflow.Chain` or
     `workflow.Concat` with `[]workflow.Edge` to wire them, and
@@ -290,7 +290,9 @@ are *not compatible* with the following ADK features:
     `workflow.BoolRoute` matched against `event.Routes`. Fan-in is handled by
     `workflow.NewJoinNode`.
 
-    For advanced routing patterns and fan-out/join examples, see
-    [Build graph routes for workflow agents](/graphs/routes/). For prebuilt
-    higher-level alternatives (sequential, parallel, loop), see
-    [Prebuilt workflow agents](/agents/workflow-agents/).
+## Next steps
+
+For advanced routing patterns and fan-out/join examples, see
+[Build graph routes for workflow agents](/graphs/routes/). For prebuilt
+higher-level alternatives (sequential, parallel, loop), see
+[Prebuilt workflow agents](/agents/workflow-agents/).
