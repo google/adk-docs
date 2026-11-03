@@ -318,6 +318,7 @@ nav:
       - Data handling: graphs/data-handling.md
       - Human input: graphs/human-input.md
       - Dynamic workflows: graphs/dynamic.md
+      - Retries and timeouts: graphs/retry.md
     - Multi-Agent Workflows:
       - workflows/index.md
       - Collaborative workflows: workflows/collaboration.md
