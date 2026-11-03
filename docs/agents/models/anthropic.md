@@ -39,7 +39,8 @@ export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
     ```
 
     Create an `AnthropicLlm` instance and pass it to your agent. It reads your
-    API key from the `ANTHROPIC_API_KEY` environment variable.
+    API key from the `ANTHROPIC_API_KEY` environment variable. The
+    `AnthropicLlm` class is available in ADK Python v1.20.0 and later.
 
     ```python
     from google.adk.agents import LlmAgent
