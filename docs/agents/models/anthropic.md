@@ -4,8 +4,8 @@
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v2.4.0</span><span class="lst-go">Go v2.7.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v1.4.0</span>
 </div>
 
-You can use Anthropic's Claude models as the model for your ADK agents. Each
-ADK language provides a Claude model class that translates ADK requests,
+You can use Anthropic's Claude models as the model for your Agent Development
+Kit (ADK) agents. Each ADK language edition provides a Claude model class that translates ADK requests,
 tools, and responses into calls to Claude, so you can build agents with Claude
 the same way you build them with Gemini. For example, you can:
 
@@ -16,8 +16,8 @@ the same way you build them with Gemini. For example, you can:
 -   Give Claude more reasoning time on complex tasks with extended thinking.
 
 You can reach Claude through two backends: the **Anthropic API**, using an
-Anthropic API key, or **Agent Platform**, using your Google Cloud project and
-credentials. For help choosing, see [Choose a backend](#choose-a-backend).
+Anthropic API key, or **Google Cloud Agent Platform**, using your Google Cloud
+project and credentials. For help choosing, see [Choose a backend](#choose-a-backend).
 
 ## Get started
 
@@ -573,12 +573,9 @@ The Claude model classes accept the following options:
 
 -   **Live API:** Claude models don't support ADK bidirectional streaming with
     the Live API.
--   **Extended thinking configuration:** ADK Java and ADK TypeScript don't map
-    thinking configuration to Claude. ADK Java preserves thinking blocks that
-    Claude returns.
--   **TypeScript:** The `Claude` class supports Agent Platform only, returns
-    complete responses without streaming, and accepts text, function call, and
-    function response parts only. For the full list, see the
+-   **TypeScript:** The `Claude` class returns complete responses without
+    streaming, and accepts text, function call, and function response parts
+    only. For the full list, see the
     [Claude integration guide](https://github.com/google/adk-js/blob/main/docs/guides/integrations/models/anthropic_llm/index.md#limitations).
 
 ## Next steps
