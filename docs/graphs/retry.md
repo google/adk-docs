@@ -300,7 +300,7 @@ Each language selects the errors to retry in its own way:
 
 ## Limitations
 
--   **The attempt count is not saved.** ADK keeps the attempt count in memory
+-   **Attempt count is not saved.** ADK keeps the attempt count in memory
     for the current run of the node. If the workflow pauses, for example for
     [human input](/graphs/human-input/), or the application restarts, a node
     that runs again after the workflow resumes starts from attempt 1 with all
