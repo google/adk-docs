@@ -91,26 +91,24 @@ The following code example shows a basic implementation for using OpenAI models 
 
 === "Kotlin"
 
-    === "Chat Completions API"
+	```kotlin
+	import com.google.adk.kt.agents.Instruction
+	import com.google.adk.kt.agents.LlmAgent
+	import com.google.adk.kt.models.openai.ChatCompletions
 
-        ```kotlin
-        import com.google.adk.kt.agents.Instruction
-        import com.google.adk.kt.agents.LlmAgent
-        import com.google.adk.kt.models.openai.ChatCompletions
+	// Instantiate the model on the Chat Completions API
+	val llm = ChatCompletions(name = "gpt-4o-mini", apiKey = System.getenv("OPENAI_API_KEY"))
 
-        // Instantiate the model on the Chat Completions API
-        val llm = ChatCompletions(name = "gpt-4o-mini", apiKey = System.getenv("OPENAI_API_KEY"))
+	// Create the agent
+	val agent =
+	  LlmAgent(
+		name = "openai_agent",
+		model = llm,
+		instruction = Instruction("You are a helpful AI assistant."),
+	  )
+	```
 
-        // Create the agent
-        val agent =
-          LlmAgent(
-            name = "openai_agent",
-            model = llm,
-            instruction = Instruction("You are a helpful AI assistant."),
-          )
-        ```
-
-        For a complete, runnable sample, see [examples/.../chatcompletions/](https://github.com/google/adk-kotlin/tree/v1.5.0/examples/src/main/kotlin/com/google/adk/kt/examples/chatcompletions) in the ADK Kotlin repository.
+	For a complete, runnable sample, see [examples/.../chatcompletions/](https://github.com/google/adk-kotlin/tree/v1.5.0/examples/src/main/kotlin/com/google/adk/kt/examples/chatcompletions) in the ADK Kotlin repository.
 
 ## Chat Completions API {#chat-completions-api}
 
