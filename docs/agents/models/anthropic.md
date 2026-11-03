@@ -579,9 +579,6 @@ The Claude model classes accept the following options:
     complete responses without streaming, and accepts text, function call, and
     function response parts only. For the full list, see the
     [Claude integration guide](https://github.com/google/adk-js/blob/main/docs/guides/integrations/models/anthropic_llm/index.md#limitations).
--   **Go file URLs:** On the Agent Platform backend, the Go `anthropicmodel`
-    package doesn't send images or PDFs referenced by URL. Send them as inline
-    data instead.
 
 ## Next steps
 
