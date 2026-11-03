@@ -6,9 +6,10 @@
 
 Nodes in a graph-based workflow often call services that fail intermittently
 or respond slowly, such as model APIs, remote tools, and databases. Agent
-Development Kit (ADK) lets you attach a retry policy and a timeout to each node, so a node can recover from a
-transient failure without failing the whole workflow, and a stalled node fails
-after a set time instead of blocking the workflow. For example, you can use
+Development Kit (ADK) lets you attach a retry policy and a timeout to each
+node, so a node can recover from a transient failure without failing the whole
+workflow, and a stalled node fails after a set time instead of blocking the
+workflow. For example, you can use
 these settings to:
 
 -   Retry a tool call that fails with a connection error, waiting longer between
@@ -24,7 +25,7 @@ rest of the workflow. Nodes without a retry policy are not retried.
 
 !!! example "Experimental in TypeScript, Java, and Kotlin"
     In ADK TypeScript, ADK Java, and ADK Kotlin, the workflow APIs that node
-    retries and timeouts depend on are experimental releases. They may have
+    retries and timeouts depend on are experimental releases. These APIs may have
     limitations and are not recommended for production use in those
     languages.
 
@@ -192,21 +193,21 @@ waits between attempts, and which errors start a retry.
 
 -   **Attempts:** The maximum attempts value counts the original attempt, so a
     value of 3 allows 2 retries. A value of 0 or 1 disables retries.
--   **Delay:** The wait before the first retry is the initial delay. Each later
-    wait is multiplied by the backoff factor, so the defaults of 1 second and
-    2.0 give base waits of 1, 2, 4, and 8 seconds before jitter. The maximum
-    delay caps each wait.
--   **Jitter:** A random amount, up to the jitter factor times the delay, is
-    added to or subtracted from each wait, so that many nodes that fail at the
-    same time do not all retry at the same moment. Set jitter to 0 for fixed
-    delays, for example in tests.
+-   **Delay:** The wait before the first retry is the initial delay. ADK
+    multiplies each later wait by the backoff factor, so the defaults of 1
+    second and 2.0 give base waits of 1, 2, 4, and 8 seconds before jitter. The
+    maximum delay caps each wait.
+-   **Jitter:** ADK adds or subtracts a random amount, up to the jitter factor
+    times the delay, from each wait, so that many nodes that fail at the same
+    time do not all retry at the same moment. Set jitter to 0 for fixed delays,
+    for example in tests.
 
 The following decisions have the most effect on how well retries work for your
 workflow:
 
 -   **Retry only transient errors.** By default, a retry policy retries almost
-    every error. An error caused by bad input or a bug fails the same way on every
-    attempt, so retrying it only delays the failure. List the error types that
+    every error. An error caused by bad input or a bug fails the same way on
+    every attempt, so retrying it only delays the failure. List the error types that
     can succeed on a later attempt, such as connection errors, rate limit
     errors, and timeouts. For details on how each language matches errors, see
     [Configuration options](#configuration-options).
@@ -233,10 +234,10 @@ its timeout, ADK stops the attempt and treats it as a failure:
 -   In Go, the node's context reaches its deadline, and the attempt fails with
     `context.DeadlineExceeded`.
 
-A timed-out attempt is retried like any other failure when the node has a retry
-policy that covers the timeout error. If you list specific error types in the
-policy, include the timeout error, as the [Get started](#get-started) example
-does. A timeout without a retry policy fails the node the first time it fires.
+ADK retries a timed-out attempt like any other failure when the node has a
+retry policy that covers the timeout error. If you list specific error types in
+the policy, include the timeout error, as the [Get started](#get-started)
+example does. A timeout without a retry policy fails the node the first time it fires.
 
 | Language | Timeout setting | Timeout error | Name to list in a retry policy |
 | :--- | :--- | :--- | :--- |
@@ -255,9 +256,9 @@ code depends on the language:
 -   **TypeScript:** ADK stops reading events from the node when the timeout
     fires. To also cancel work the node has started, such as an HTTP request,
     pass `ctx.abortSignal` to that work.
--   **Kotlin:** The attempt runs in a coroutine that is cancelled when the
-    timeout fires. Code that does not reach a suspension point keeps running
-    until it does.
+-   **Kotlin:** ADK runs the attempt in a coroutine and cancels the coroutine
+    when the timeout fires. Code that does not reach a suspension point keeps
+    running until it does.
 
 ## Configuration options
 
@@ -276,19 +277,19 @@ Java, and Kotlin.
 
 Each language selects the errors to retry in its own way:
 
--   **Python:** `exceptions` takes exception classes or class names. A listed
-    class also matches its subclasses.
--   **TypeScript:** `exceptions` takes error classes or class names. An error
-    matches when its class name or its `name` property is in the list. ADK
-    does not check the class hierarchy.
--   **Go:** `ShouldRetry` is a function that receives the error and returns
-    `true` to retry it. The default retries every error except
+-   **Python:** The `exceptions` setting takes exception classes or class
+    names. A listed class also matches its subclasses.
+-   **TypeScript:** The `exceptions` setting takes error classes or class
+    names. An error matches when its class name or its `name` property is in
+    the list. ADK does not check the class hierarchy.
+-   **Go:** The `ShouldRetry` setting is a function that receives the error
+    and returns `true` to retry it. The default retries every error except
     `workflow.ErrInputValidation`.
--   **Java:** `exceptions` takes simple class names, which match exactly.
-    `exceptionClasses` takes classes, which also match their subclasses. ADK
-    never retries a `WorkflowConfigurationException`.
--   **Kotlin:** `exceptions` takes simple class names, which match exactly. ADK
-    never retries a `WorkflowConfigurationException`.
+-   **Java:** The `exceptions` setting takes simple class names, which match
+    exactly. The `exceptionClasses` setting takes classes, which also match
+    their subclasses. ADK never retries a `WorkflowConfigurationException`.
+-   **Kotlin:** The `exceptions` setting takes simple class names, which match
+    exactly. ADK never retries a `WorkflowConfigurationException`.
 
 !!! warning "Go: unset fields are zero, not defaults"
     In Go, a `RetryConfig` built as a struct literal uses the zero value for
@@ -308,9 +309,9 @@ Each language selects the errors to retry in its own way:
 
 ## Next steps
 
--   [Build graph routes for workflow agents](/graphs/routes/): connect nodes
+-   [Build graph routes for agent workflows](/graphs/routes/): connect nodes
     with sequences, branches, and parallel paths.
--   [Data handling with workflow nodes and agents](/graphs/data-handling/):
-    pass data between nodes.
--   [Human input in workflows](/graphs/human-input/): pause a workflow to ask
-    a person for input.
+-   [Data handling for agent workflows](/graphs/data-handling/): pass data
+    between nodes.
+-   [Human input for agent workflows](/graphs/human-input/): pause a workflow
+    to ask a person for input.
