@@ -246,10 +246,6 @@ does. A timeout without a retry policy fails the node the first time it fires.
 | Java | `NodeConfig.timeout` as a `Duration` | `NodeTimeoutException` | `NodeTimeoutException` |
 | Kotlin | `NodeConfig.timeout` as a `Duration` | `NodeTimeoutException` | `NodeTimeoutError` |
 
-Choose a timeout that is longer than the slowest response you expect from a
-healthy service, so that the timeout catches stalled calls without cutting off
-slow but successful ones.
-
 Stopping an attempt relies on cancellation, and how cancellation reaches your
 code depends on the language:
 
@@ -309,9 +305,6 @@ Each language selects the errors to retry in its own way:
     [human input](/graphs/human-input/), or the application restarts, a node
     that runs again after the workflow resumes starts from attempt 1 with all
     of its attempts available.
--   **Cancellation is not retried.** When the invocation is cancelled, or a
-    node is cancelled because another node failed, ADK does not retry the
-    cancelled node.
 
 ## Next steps
 
