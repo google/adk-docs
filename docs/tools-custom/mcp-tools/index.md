@@ -250,6 +250,44 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         fmt.Printf("Successfully created agent: %s\n", ag.Name())
     }
     ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.ToolFilter
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    // ServerParameters is part of the MCP Java SDK. Add io.modelcontextprotocol.sdk:mcp
+    // as a dependency, because ADK Kotlin does not expose it at compile time.
+    import io.modelcontextprotocol.client.transport.ServerParameters
+    import java.io.File
+
+    val TARGET_FOLDER: String = File("./accessible_files").absolutePath
+
+    val rootAgent =
+        LlmAgent(
+            name = "filesystem_assistant",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction = Instruction("Help users manage local files."),
+            toolsets =
+                listOf(
+                    McpToolset.McpToolsetConfig(
+                        stdioConnectionParams =
+                            McpConnectionParameters.Stdio(
+                                serverParameters =
+                                    ServerParameters.builder("npx")
+                                        .args("-y", "@modelcontextprotocol/server-filesystem", TARGET_FOLDER)
+                                        .build(),
+                            ),
+                        // Optional: Select specific tools exposed to the agent
+                        toolFilter = ToolFilter.allowList("list_directory", "read_file"),
+                    ).toToolset(),
+                ),
+        )
+    ```
     
 ---
 
@@ -332,6 +370,39 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     });
     ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    import java.time.Duration
+
+    val API_KEY: String = System.getenv("GOOGLE_MAPS_API_KEY") ?: ""
+
+    val rootAgent =
+        LlmAgent(
+            name = "travel_planner",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction = Instruction("Plan travel routes and search locations using Google Maps."),
+            toolsets =
+                listOf(
+                    McpToolset.McpToolsetConfig(
+                        streamableHttpConnectionParams =
+                            McpConnectionParameters.StreamableHttp(
+                                url = "https://mapstools.googleapis.com/mcp",
+                                // The transport sets the Content-Type and Accept headers itself.
+                                headers = mapOf("X-Goog-Api-Key" to API_KEY),
+                                timeout = Duration.ofSeconds(5),
+                                readTimeout = Duration.ofSeconds(300),
+                            ),
+                    ).toToolset(),
+                ),
+        )
+    ```
      
 ---
 
@@ -390,6 +461,26 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
         timeout: 5,
     });
     
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    import java.time.Duration
+
+    // Configure Bearer Token Authentication via headers
+    val toolset =
+        McpToolset.McpToolsetConfig(
+            sseConnectionParams =
+                McpConnectionParameters.Sse(
+                    url = "https://mcp-server.example.com",
+                    sseEndpoint = "/sse",
+                    headers = mapOf("Authorization" to "Bearer ${System.getenv("MCP_AUTH_TOKEN")}"),
+                    timeout = Duration.ofSeconds(5),
+                ),
+        ).toToolset()
     ```
     
 ---
