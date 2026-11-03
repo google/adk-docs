@@ -451,7 +451,7 @@ reuse it, which can reduce cost and latency. ADK places cache breakpoints on the
 tool declarations, the system instruction, and the latest conversation
 content.
 
-Claude supports a 5-minute cache lifetime, which is the default, and a 1-hour
+Anthropic supports a 5-minute cache lifetime, which is the default, and a 1-hour
 cache lifetime. Use the 1-hour lifetime when requests to the same agent are
 usually more than 5 minutes apart.
 
