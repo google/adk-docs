@@ -291,7 +291,7 @@ You can use the ***Runner*** class to run your agent workflow using the
 
 === "Kotlin"
 
-    Run your App agent with the `Main.kt` code using your build tool (e.g. Gradle `application` plugin):
+    Run your App agent with the `Main.kt` code using your build tool, such as Gradle `application` plugin:
 
     ```console
     ./gradlew run
