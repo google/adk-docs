@@ -132,6 +132,9 @@ In ADK Python v2.13.0 and later, the plugin adds:
 - **Queryable Event Views**: Automatically create flat, per-event-type BigQuery
   views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream
   analytics by unnesting JSON payload data.
+- **Coding Assistant Tracing**: Capture developer coding-agent sessions (Claude Code)
+  into the same BigQuery table alongside production ADK agents via
+  [BigQuery Agent Analytics Plugins](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins).
 
 ### Captured events summary
 
@@ -4091,6 +4094,30 @@ BigQuery Agent Analytics dataset. You can also publish the notebook as an
 interactive dashboard using [Colab Data
 Apps](https://docs.cloud.google.com/bigquery/docs/colab-data-apps).
 
+### Coding assistant tracing (Claude Code)
+
+To trace coding-assistant workflows and analyze developer sessions alongside
+your ADK agents in the same `agent_events` table, install the official
+[BigQuery Agent Analytics Plugins for Claude Code](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins):
+
+- **`bigquery-agent-analytics-mod`** (recommended for Claude Code v2.1.296+): An
+  in-process TypeScript mod that records turns, model requests (with token counts
+  and latency), and tool calls to BigQuery in background batches with zero
+  interactive latency.
+- **`bigquery-agent-analytics-tracing`**: Hook scripts that call the Python
+  tracing package and stream events to BigQuery.
+
+Install from the `bqaa-tracing` marketplace:
+
+```bash
+claude plugin marketplace add GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins
+claude plugin install bigquery-agent-analytics-mod@bqaa-tracing \
+  --config project=my-gcp-project --config dataset=agent_analytics
+```
+
+For configuration options and setup guides, see the
+[BigQuery-Agent-Analytics-Plugins repository](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins).
+
 ## Feedback
 
 We welcome your feedback on BigQuery Agent Analytics. If you have questions,
@@ -4101,6 +4128,7 @@ suggestions, or encounter any issues, please reach out to the team at
 
 - [Python plugin source](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/bigquery_agent_analytics_plugin.py)
 - [Go plugin source](https://github.com/google/adk-go/tree/main/plugin/agentanalytics)
+- [Claude Code tracing plugins and marketplace](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins)
 - [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
 - [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
 - [BigQuery Agent Analytics SDK examples](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main/examples)
