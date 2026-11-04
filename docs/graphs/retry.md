@@ -19,7 +19,7 @@ workflow. You can use this functionality handle situations such as the following
     fail immediately on all other errors.
 
 A node that has a retry policy runs again when it fails, until an attempt
-succeeds or the node uses up its attempts. Only then does the failure reach the
+succeeds or the node reaches its maximum attempts. Only then does the failure reach the
 rest of the workflow. Nodes without a retry policy are not retried.
 
 !!! example "Experimental in TypeScript, Java, and Kotlin"
