@@ -1,17 +1,17 @@
 ---
-catalog_title: Google API Toolsets
+catalog_title: Google Apps Toolsets
 catalog_description: Work with Calendar, Gmail, Docs, Sheets, Slides, and YouTube
 catalog_icon: /integrations/assets/adk.png
 catalog_tags: ["google", "connectors"]
 ---
 
-# Google API toolsets for ADK
+# Google Apps toolsets for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.0.0</span>
 </div>
 
-The Google API toolsets give ADK agents access to Google Calendar, Gmail,
+The Google Apps toolsets give ADK agents access to Google Calendar, Gmail,
 Google Docs, Google Sheets, Google Slides, and YouTube. Each toolset is
 generated from the API's
 [Google API Discovery](https://developers.google.com/discovery) document: every
