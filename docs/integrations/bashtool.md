@@ -73,9 +73,8 @@ strict_policy = BashToolPolicy(
 ```
 
 Prefixes match whole command tokens: `"git status"` allows `git status --short`,
-but not `git commit`. Commands run without a shell, so pipes, redirection and
-wildcard expansion are not evaluated. The workspace sets the working directory;
-it does not isolate the process from the rest of the filesystem.
+but not `git commit`. Commands run without a shell, , so the tool does not
+evaluate pipes, redirection, or wildcard expansion. The workspace sets the working directory; it does not isolate the process from the rest of the filesystem.
 
 ### Built-in protections
 
@@ -91,6 +90,6 @@ it does not isolate the process from the rest of the filesystem.
 | :--- | :--- | :--- |
 | `execute_bash` | `ExecuteBashTool` | Executes a bash command within a workspace. POSIX only |
 
-Confirmed commands return `stdout`, `stderr` and `returncode`. Check the exit
+Confirmed commands return `stdout`, `stderr`, and `returncode`. Check the exit
 code for command failures; validation or execution failures can also return an
 `error` message.
