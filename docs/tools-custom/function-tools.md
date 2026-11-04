@@ -144,7 +144,7 @@ Parameters determine the data your tool expects to receive when called. You can 
 === "Python"
 
     A parameter is considered **optional** only if you provide a **default
-    value**. This is the standard Python way to define optional arguments.
+    value**. This approach is the standard Python way to define optional arguments.
     Annotating a parameter with `typing.Optional[SomeType]` or the `| None`
     syntax (Python 3.10+) does **not** make it optional on its own: without a
     default value, the parameter stays required.
