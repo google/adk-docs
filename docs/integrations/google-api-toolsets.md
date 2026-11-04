@@ -343,7 +343,7 @@ gmail_toolset = GoogleApiToolset(
 ### Authenticate with a service account
 
 Pass a `ServiceAccount` to call the API as a service account instead of a user.
-The service account can only reach data it has been given access to, such as a
+The service account can reach only data it has been given access to, such as a
 spreadsheet or document shared with the service account's email address. Set
 `scopes` to the scopes the API calls need.
 
