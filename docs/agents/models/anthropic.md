@@ -354,7 +354,7 @@ the standard thinking configuration:
 | Positive | **Manual thinking.** Claude uses up to this many tokens to reason. For minimum and maximum budgets, see Anthropic's extended thinking documentation. |
 
 Use adaptive thinking unless you need a fixed token budget. Some newer Claude
-models accept only adaptive thinking and reject disabled or manual budgets. When you set a thinking configuration, you must
+models accept only adaptive thinking; see Anthropic's extended thinking documentation for the model you use. When you set a thinking configuration, you must
 set `thinking_budget`.
 
 To control how much reasoning effort Claude spends, set the **effort** level:
