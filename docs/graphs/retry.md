@@ -244,7 +244,7 @@ example does. A timeout without a retry policy fails the node the first time it 
 | TypeScript | `timeout` in seconds | `NodeTimeoutError` | `NodeTimeoutError` |
 | Go | `NodeConfig.Timeout` as a `time.Duration` | `context.DeadlineExceeded` | Match it in `ShouldRetry` with `errors.Is` |
 | Java | `NodeConfig.timeout` as a `Duration` | `NodeTimeoutException` | `NodeTimeoutException` |
-| Kotlin | `NodeConfig.timeout` as a `Duration` | `NodeTimeoutException` | `NodeTimeoutError` |
+| Kotlin | `NodeConfig.timeout` as a `Duration` | `NodeTimeoutError` | `NodeTimeoutError` |
 
 Stopping an attempt relies on cancellation, and how cancellation reaches your
 code depends on the language:
