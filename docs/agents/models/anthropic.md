@@ -5,9 +5,9 @@
 </div>
 
 You can use Anthropic's Claude models as the model for your Agent Development
-Kit (ADK) agents. Each ADK language edition provides a Claude model class that translates ADK requests,
+Kit (ADK) agents. The framework provides Claude model classes that translate ADK requests,
 tools, and responses into calls to Claude, so you can build agents with Claude
-the same way you build them with Gemini. For example, you can:
+the same way you build them with Gemini, allowing you to:
 
 -   Run an agent on Claude while keeping your ADK tools, sessions, and
     callbacks unchanged.
@@ -24,8 +24,9 @@ project and credentials. For help choosing, see [Choose a backend](#choose-a-bac
 The following examples create an agent that calls Claude through the Anthropic
 API. Before you run them, get an API key from the
 [Anthropic Console](https://console.anthropic.com/) and set it as an
-environment variable:
-environment variable. In production, store the key in a secret manager rather than in source code or shell history:
+environment variable. In production, store the key in a secret manager rather 
+than in source code or shell history:
+
 ```shell
 export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
 ```
@@ -55,8 +56,8 @@ export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
 
 === "TypeScript"
 
-    In TypeScript, Claude is available through Agent Platform only. Install the
-    ADK integrations package and the Anthropic SDKs:
+    In TypeScript, Claude is available through Google Cloud Agent Platform only. 
+    Install the ADK integrations package and the Anthropic SDKs:
 
     ```shell
     npm install @google/adk @google/adk-integrations @anthropic-ai/sdk @anthropic-ai/vertex-sdk
@@ -81,7 +82,7 @@ export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
     !!! example "Experimental"
 
         The `anthropicmodel` package is experimental. Its API and behavior may
-        change between minor releases.
+        have limitations and it is not recommended for production use.
 
     Create a model with `anthropicmodel.NewModel` and pass it to your agent.
     When `APIKey` is empty, the model reads your key from the
@@ -179,9 +180,9 @@ Choose a backend based on where you manage billing, access, and quotas:
 -   **Anthropic API:** Use this backend if you already have an Anthropic
     account and manage Claude usage there. You authenticate with an Anthropic
     API key.
--   **Agent Platform:** Use this backend if your application runs on Google
-    Cloud, or you want Claude usage governed by your Google Cloud project's
-    IAM permissions, quotas, and billing. You
+-   **Google Cloud:** Use this backend if your application runs
+    on Google Cloud, or you want Claude usage governed by your Google Cloud
+    project's IAM permissions, quotas, and billing. You
     authenticate with Application Default Credentials (ADC), and you don't
     manage a separate API key.
 
@@ -195,16 +196,16 @@ The following table shows how each language selects a backend:
 | Java       | `Claude` with an `AnthropicClient` using an API key | `Claude` with an `AnthropicClient` using a `VertexBackend`           |
 | Kotlin     | `Claude(name, apiKey)`                              | `Claude(name, vertexCredentials)`                                    |
 
-!!! warning "Python model strings use Agent Platform"
+!!! warning "Python model strings use Google Cloud Agent Platform"
 
     In Python, a bare `claude-*` model string, such as
     `model="claude-sonnet-4-6"`, routes to the Agent Platform backend and
     requires Google Cloud project settings. To use the Anthropic API from
     Python, pass an `AnthropicLlm` instance instead of a string.
 
-## Connect through Agent Platform
+## Connect through Google Cloud
 
-To use Claude through Agent Platform, set up your Google Cloud environment:
+To use Claude through Google Cloud, set up your Google Cloud environment:
 
 1.  Enable the Claude models you want to use in
     [Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
@@ -226,8 +227,8 @@ To use Claude through Agent Platform, set up your Google Cloud environment:
 For more details on connecting ADK to Google Cloud, see
 [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
-The following examples create an agent that calls Claude through Agent
-Platform:
+The following examples create an agent that calls Claude through Google
+Cloud:
 
 === "Python"
 
@@ -354,8 +355,9 @@ the standard thinking configuration:
 | Positive | **Manual thinking.** Claude uses up to this many tokens to reason. For minimum and maximum budgets, see Anthropic's extended thinking documentation. |
 
 Use adaptive thinking unless you need a fixed token budget. Some newer Claude
-models accept only adaptive thinking; see Anthropic's extended thinking documentation for the model you use. When you set a thinking configuration, you must
-set `thinking_budget`.
+models accept only adaptive thinking; see Anthropic's extended thinking 
+documentation for the model you use. When you set a thinking configuration, 
+you must set a `thinking_budget` value.
 
 To control how much reasoning effort Claude spends, set the **effort** level:
 `low`, `medium`, `high`, `xhigh`, or `max`. Claude doesn't support the
@@ -438,6 +440,9 @@ thinking blocks and their signatures across tool calls and conversation turns,
 as the Anthropic API requires.
 
 ## Advanced applications
+
+ADK supports some advanced uses of Anthropic models, including cache
+prompts and accessing models through the LiteLLM library.
 
 ### Cache prompts
 
