@@ -9,7 +9,7 @@ or respond slowly, such as model APIs, remote tools, and databases. Agent
 Development Kit (ADK) lets you attach a retry policy and a timeout to each
 node, so a node can recover from a transient failure without failing the whole
 workflow, and a stalled node fails after a set time instead of blocking the
-workflow. You can use this functionality handle situations such as the following:
+workflow. Use retries and timeouts functionality to:
 
 -   Retry a tool call that fails with a connection error, waiting longer between
     each attempt so the remote service has time to recover.
