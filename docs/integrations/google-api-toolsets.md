@@ -17,7 +17,6 @@ ADK generates each toolset from the API's
 [Google API Discovery](https://developers.google.com/discovery) document. Every
 method in the API becomes one tool that the agent can call, and the toolset
 handles OAuth 2.0 authentication for those calls.
-
 The toolsets extend `GoogleApiToolset`, which you can also use directly to
 connect an agent to any other Google API that publishes a discovery document.
 
@@ -45,9 +44,9 @@ connect an agent to any other Google API that publishes a discovery document.
 
 - A [Google Cloud project](https://developers.google.com/workspace/guides/create-project).
 - The API for each toolset you use enabled in that project, for example the
-  Google Calendar API or the Gmail API. See
+  Google Calendar API or the Gmail API. For more information, see
   [Enable Google Workspace APIs](https://developers.google.com/workspace/guides/enable-apis).
-- An OAuth 2.0 client ID and client secret of type **Web application**. See
+- An OAuth 2.0 client ID and client secret of type **Web application**. For more information, see
   [Obtain OAuth 2.0 credentials](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred).
 - If you test with the [ADK web interface](/runtime/web-interface/), add the
   web interface URL, for example `http://localhost:8000/dev-ui/`, to the
@@ -141,7 +140,7 @@ context small and its tool choices accurate.
 The first time the agent calls one of these tools, ADK asks the user to sign in
 with Google and grant access. In the ADK web interface, the consent screen opens
 in a pop-up window. If you build your own client application, it must handle this
-request. See [Authenticating with tools](/tools-custom/authentication/).
+request. For more information, see [Authenticating with tools](/tools-custom/authentication/).
 
 Tool names follow the pattern `<api>_<resource>_<method>` in snake case, based
 on the method ID in the discovery document. For example, the Calendar API method
@@ -668,7 +667,7 @@ toolsets in these ways:
   `https://www.googleapis.com/discovery/v1/apis` the first time the agent loads
   its tools, so the agent needs network access to that endpoint.
 - **Scopes**: The default scope is the first scope in the downloaded discovery
-  document, which can change between runs. See
+  document, which can change between runs. For more information, see
   [OAuth scopes](#oauth-scopes).
 - **Not supported**: Service account authentication, tool name prefixes,
   `additional_scopes`, `additional_headers`, and `discovery_url`.
