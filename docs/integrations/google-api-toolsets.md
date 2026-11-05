@@ -115,7 +115,7 @@ context small and its tool choices accurate.
     import { CalendarToolset, LlmAgent } from "@google/adk";
 
     const calendarToolset = new CalendarToolset({
-        clientId: process.env.OAUTH_CLIENT_ID,
+        clientId: process.env.OAUTH_CLIENT_ID!,
         clientSecret: process.env.OAUTH_CLIENT_SECRET,
         toolFilter: [
             "calendar_events_list",
