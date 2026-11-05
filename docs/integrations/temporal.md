@@ -245,8 +245,8 @@ and other ADK development commands without a running Temporal server. You won't
 get the benefits of durable execution in this mode, nor will you be precisely
 testing the production behavior.
 
-- `TemporalModel` and `activity_as_tool` work automatically — they detect they're
-  outside a workflow and call the underlying LLM or function directly.
+- `TemporalModel` and `activity_as_tool` work automatically. They detect
+  they're outside a workflow and call the underlying LLM or function directly.
 - `TemporalMcpToolSet` requires the `not_in_workflow_toolset` parameter (shown
   in the MCP example above) so it knows how to instantiate the toolset locally.
 
