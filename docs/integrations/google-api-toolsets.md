@@ -11,9 +11,9 @@ catalog_tags: ["google", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.0.0</span><span class="lst-typescript">TypeScript v2.4.0</span>
 </div>
 
-The Google Apps toolsets give ADK agents access to Google Calendar, Gmail,
-Google Docs, Google Sheets, Google Slides, and YouTube. Each toolset is
-generated from the API's
+The Google Apps toolsets give Agent Development Kit (ADK) agents access to
+Google Calendar, Gmail, Google Docs, Google Sheets, Google Slides, and YouTube.
+Each toolset is generated from the API's
 [Google API Discovery](https://developers.google.com/discovery) document: every
 method in the API becomes one tool that the agent can call, and the toolset
 handles OAuth 2.0 authentication for those calls.
@@ -661,7 +661,7 @@ toolsets in these ways:
   its tools, so the agent needs network access to that endpoint.
 - **Scopes**: The default scope is the first scope in the downloaded discovery
   document, which can change between runs. See
-  [OAuth scopes](#oauth-scopes). You can't set or add scopes.
+  [OAuth scopes](#oauth-scopes).
 - **Not supported**: Service account authentication, tool name prefixes,
   `additional_scopes`, `additional_headers`, and `discovery_url`.
 
