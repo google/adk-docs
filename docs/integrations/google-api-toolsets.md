@@ -13,19 +13,19 @@ catalog_tags: ["google", "connectors"]
 
 The Google Apps toolsets give Agent Development Kit (ADK) agents access to
 Google Calendar, Gmail, Google Docs, Google Sheets, Google Slides, and YouTube.
-Each toolset is generated from the API's
+ADK generates each toolset from the API's
 [Google API Discovery](https://developers.google.com/discovery) document: every
 method in the API becomes one tool that the agent can call, and the toolset
 handles OAuth 2.0 authentication for those calls.
 
-The toolsets are built on `GoogleApiToolset`, which you can also use directly to
+The toolsets extend `GoogleApiToolset`, which you can also use directly to
 connect an agent to any other Google API that publishes a discovery document.
 
 !!! example "Experimental in TypeScript"
     In ADK TypeScript, `GoogleApiToolset` and the toolsets built on it are
     experimental and log a warning the first time you create each one. The
-    TypeScript toolsets support fewer options than the Python toolsets, and
-    they choose their OAuth scope differently. See
+    TypeScript toolsets support fewer options than the Python toolsets and
+    choose their OAuth scope differently. See
     [Differences in TypeScript](#differences-in-typescript).
 
 ## Use cases
@@ -66,8 +66,8 @@ connect an agent to any other Google API that publishes a discovery document.
 
 === "TypeScript"
 
-    The toolsets are part of the core package. They need ADK TypeScript v2.4.0
-    or later:
+    The toolsets are part of the core package and require ADK TypeScript
+    v2.4.0 or later:
 
     ```bash
     npm install @google/adk
@@ -176,7 +176,7 @@ Python | TypeScript | Description
 ------ | ---------- | -----------
 `client_id` | `clientId` | OAuth 2.0 client ID used for the user sign-in flow.
 `client_secret` | `clientSecret` | OAuth 2.0 client secret used for the user sign-in flow.
-`tool_filter` | `toolFilter` | A list of tool names to expose, or a predicate function that receives each tool and returns `True` (Python) or `true` (TypeScript) to expose it.
+`tool_filter` | `toolFilter` | A list of tool names to expose, or a predicate function that receives each tool and returns `True` in Python or `true` in TypeScript to expose it.
 `service_account` | Not supported | A `ServiceAccount` to authenticate as a service account instead of a user. See [Authenticate with a service account](#authenticate-with-a-service-account).
 `tool_name_prefix` | Not supported | A prefix added to every tool name, followed by an underscore.
 
@@ -491,9 +491,9 @@ destructive tools with the tool filter and agent instructions.
     one run to the next and can be a read-only or narrow scope that does not
     cover the tools you use. For example, `CalendarToolset` can request
     `https://www.googleapis.com/auth/calendar.acls.readonly`, which does not
-    allow `calendar_events_list`. When this happens, the API rejects the call
-    with an insufficient-scope error. ADK TypeScript v2.4.0 has no option to
-    set or add scopes.
+    allow `calendar_events_list`. When the scope doesn't cover a tool, the API
+    rejects the call with an insufficient-scope error. ADK TypeScript v2.4.0
+    has no option to set or add scopes.
 
 To request more scopes in Python, create a `GoogleApiToolset` directly and pass
 `additional_scopes`. The toolset adds these to the default scope.
@@ -517,7 +517,7 @@ gmail_toolset = GoogleApiToolset(
 </div>
 
 Pass a `ServiceAccount` to call the API as a service account instead of a user.
-The service account can reach only data it has been given access to, such as a
+The service account can reach only the data you share with it, such as a
 spreadsheet or document shared with the service account's email address. Set
 `scopes` to the scopes the API calls need.
 
@@ -555,8 +555,8 @@ To use Application Default Credentials instead of a key file, pass
 </div>
 
 Set `tool_name_prefix` to avoid name collisions when an agent uses tools from
-several sources. The prefix and an underscore are added to every tool name the
-model sees. Values in `tool_filter` use the names without the prefix.
+several sources. The toolset adds the prefix and an underscore to every tool
+name the model sees. Values in `tool_filter` use the names without the prefix.
 
 ```python
 calendar_toolset = CalendarToolset(
@@ -609,7 +609,7 @@ You can also replace the filter after you create the toolset, with
 ## Use other Google APIs
 
 The `GoogleApiToolset` generates tools for any Google API that has a discovery
-document. Pass the API name and version as they appear in the
+document. Pass the API name and version as listed in the
 [APIs Explorer](https://developers.google.com/apis-explorer). For example, to
 use the Google Drive API:
 
@@ -654,8 +654,8 @@ Argument | Description
 The TypeScript toolsets in ADK TypeScript v2.4.0 differ from the Python
 toolsets in these ways:
 
-- **Experimental**: The classes are marked experimental and log a warning
-  the first time you create each one.
+- **Experimental**: The classes are experimental and log a warning the first
+  time you create each one.
 - **Discovery documents**: The toolset downloads the discovery document from
   `https://www.googleapis.com/discovery/v1/apis` the first time the agent loads
   its tools, so the agent needs network access to that endpoint.
@@ -668,8 +668,8 @@ toolsets in these ways:
 ## Additional resources
 
 - [Authenticating with tools](/tools-custom/authentication/)
-- [Google API tools sample agent (Python)](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/google_api)
-- [`GoogleApiToolset` source code (Python)](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py)
-- [Google API toolset offline sample (TypeScript)](https://github.com/google/adk-js/blob/adk-v2.4.0/samples/tools/google_api_tool/agent.ts)
-- [`GoogleApiToolset` source code (TypeScript)](https://github.com/google/adk-js/blob/adk-v2.4.0/core/src/tools/google_api_tool/google_api_toolset.ts)
+- [ADK Python sample agent for Google API tools](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/google_api)
+- [ADK Python `GoogleApiToolset` source code](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py)
+- [ADK TypeScript offline sample for Google API toolsets](https://github.com/google/adk-js/blob/adk-v2.4.0/samples/tools/google_api_tool/agent.ts)
+- [ADK TypeScript `GoogleApiToolset` source code](https://github.com/google/adk-js/blob/adk-v2.4.0/core/src/tools/google_api_tool/google_api_toolset.ts)
 - [Google API Discovery Service](https://developers.google.com/discovery)
