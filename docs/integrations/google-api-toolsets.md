@@ -23,9 +23,9 @@ connect an agent to any other Google API that publishes a discovery document.
 
 !!! example "Experimental in TypeScript"
     In ADK TypeScript, `GoogleApiToolset` and the toolsets built on it are
-    experimental and log a warning when you create them. The TypeScript
-    toolsets support fewer options than the Python toolsets, and they choose
-    their OAuth scope differently. See
+    experimental and log a warning the first time you create each one. The
+    TypeScript toolsets support fewer options than the Python toolsets, and
+    they choose their OAuth scope differently. See
     [Differences in TypeScript](#differences-in-typescript).
 
 ## Use cases
@@ -104,7 +104,7 @@ context small and its tool choices accurate.
         name="calendar_agent",
         instruction=(
             "Help the user manage their Google Calendar. Use 'primary' as the "
-            "calendarId unless the user names another calendar."
+            "calendar_id unless the user names another calendar."
         ),
         tools=[calendar_toolset],
     )
@@ -131,7 +131,7 @@ context small and its tool choices accurate.
         name: "calendar_agent",
         instruction:
             "Help the user manage their Google Calendar. Use 'primary' as the " +
-            "calendarId unless the user names another calendar.",
+            "calendar_id unless the user names another calendar.",
         tools: [calendarToolset],
     });
 
@@ -303,7 +303,7 @@ Tool | Description
 `gmail_users_drafts_create` | Creates a draft.
 `gmail_users_labels_list` | Lists the labels in the mailbox.
 
-Gmail methods take a `userId` parameter. Tell the agent to use `me` for the
+Gmail tools take a `user_id` parameter. Tell the agent to use `me` for the
 signed-in user. Other tools cover history, attachments, and mailbox settings
 such as filters, forwarding, and vacation replies.
 
@@ -603,8 +603,8 @@ to expose only read operations:
     });
     ```
 
-In TypeScript, you can also replace the filter after you create the toolset
-with `setToolFilter()`.
+You can also replace the filter after you create the toolset, with
+`set_tool_filter()` in Python or `setToolFilter()` in TypeScript.
 
 ## Use other Google APIs
 
