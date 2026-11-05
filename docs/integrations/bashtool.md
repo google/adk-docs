@@ -73,7 +73,7 @@ strict_policy = BashToolPolicy(
 ```
 
 Prefixes match whole command tokens: `"git status"` allows `git status --short`,
-but not `git commit`. Commands run without a shell, , so the tool does not
+but not `git commit`. Commands run without a shell, so the tool does not
 evaluate pipes, redirection, or wildcard expansion. The workspace sets the working directory; it does not isolate the process from the rest of the filesystem.
 
 ### Built-in protections
