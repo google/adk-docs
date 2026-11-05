@@ -37,8 +37,7 @@ in the LiteRT-LM GitHub repository.
 
 Before you start the server, you need to download a model. You'll need a
 _Hugging Face_ user access token to download a LiteRT-LM model using `lit`. You
-can get a token for your _Hugging Face_ account
-[here](https://huggingface.co/settings/tokens).
+can get a [_Hugging Face_ access token](https://huggingface.co/settings/tokens).
 
 To see a list of models available for download, use the `lit list` command:
 
