@@ -434,6 +434,10 @@ chat, and thumbnails.
 
 ## Authentication
 
+The toolsets call Google APIs as the signed-in user, using OAuth 2.0. In Python,
+a toolset can also authenticate as a service account. The following sections
+explain how to set up each method and which OAuth scopes a toolset requests.
+
 ### Authenticate users with OAuth 2.0
 
 When you pass a client ID and client secret, each tool call runs as the
@@ -547,6 +551,10 @@ To use Application Default Credentials instead of a key file, pass
 `ServiceAccount(use_default_credential=True, scopes=[...])`.
 
 ## Configuration
+
+You can change which tools a toolset exposes and how the model sees their
+names. Use a predicate function to choose tools by rule, or, in Python, add a
+prefix to tool names to avoid collisions with tools from other sources.
 
 ### Prefix tool names
 
