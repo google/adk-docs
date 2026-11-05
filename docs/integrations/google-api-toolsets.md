@@ -218,7 +218,7 @@ Tool | Description
 `calendar_events_list` | Lists events on a calendar, with optional time range and search query.
 `calendar_events_get` | Returns one event.
 `calendar_events_insert` | Creates an event.
-`calendar_events_quick_add` | Creates an event from a text string such as "Lunch with Ana tomorrow at noon".
+`calendar_events_quick_add` | Creates an event from a text string such as "Lunch tomorrow at noon".
 `calendar_events_patch` | Updates fields of an event.
 `calendar_events_delete` | Deletes an event.
 `calendar_freebusy_query` | Returns free/busy information for a set of calendars.
