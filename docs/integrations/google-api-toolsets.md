@@ -126,7 +126,7 @@ context small and its tool choices accurate.
         ],
     });
 
-    export const rootAgent = new LlmAgent({
+    const rootAgent = new LlmAgent({
         model: "gemini-flash-latest",
         name: "calendar_agent",
         instruction:
@@ -134,11 +134,13 @@ context small and its tool choices accurate.
             "calendarId unless the user names another calendar.",
         tools: [calendarToolset],
     });
+
+    export { rootAgent };
     ```
 
 The first time the agent calls one of these tools, ADK asks the user to sign in
-with Google and grant access. The ADK web interface opens the consent screen in
-a pop-up window. If you build your own client application, it must handle this
+with Google and grant access. In the ADK web interface, the consent screen opens
+in a pop-up window. If you build your own client application, it must handle this
 request. See [Authenticating with tools](/tools-custom/authentication/).
 
 Tool names follow the pattern `<api>_<resource>_<method>` in snake case, based
@@ -180,7 +182,7 @@ Python | TypeScript | Description
 
 ### Calendar
 
-`CalendarToolset` manages calendars, events, access control lists, and
+The `CalendarToolset` manages calendars, events, access control lists, and
 free/busy queries.
 
 === "Python"
@@ -229,7 +231,7 @@ notification channels.
 
 ### Docs
 
-`DocsToolset` creates, reads, and edits Google Docs.
+The `DocsToolset` creates, reads, and edits Google Docs.
 
 === "Python"
 
@@ -257,7 +259,7 @@ Tool | Description
 
 ### Gmail
 
-`GmailToolset` reads and manages messages, threads, drafts, labels, and mailbox
+The `GmailToolset` reads and manages messages, threads, drafts, labels, and mailbox
 settings.
 
 === "Python"
@@ -307,7 +309,7 @@ such as filters, forwarding, and vacation replies.
 
 ### Sheets
 
-`SheetsToolset` reads and writes spreadsheet values and changes spreadsheet
+The `SheetsToolset` reads and writes spreadsheet values and changes spreadsheet
 structure.
 
 === "Python"
@@ -353,7 +355,7 @@ Tool | Description
 
 ### Slides
 
-`SlidesToolset` creates, reads, and edits Google Slides presentations.
+The `SlidesToolset` creates, reads, and edits Google Slides presentations.
 
 === "Python"
 
@@ -383,7 +385,7 @@ Tool | Description
 
 ### YouTube
 
-`YoutubeToolset` searches YouTube and manages a channel's videos, playlists,
+The `YoutubeToolset` searches YouTube and manages a channel's videos, playlists,
 comments, and live broadcasts.
 
 === "Python"
@@ -494,8 +496,7 @@ destructive tools with the tool filter and agent instructions.
     set or add scopes.
 
 To request more scopes in Python, create a `GoogleApiToolset` directly and pass
-`additional_scopes`. The toolset adds these to the default scope. TypeScript
-doesn't support `additional_scopes`.
+`additional_scopes`. The toolset adds these to the default scope.
 
 ```python
 from google.adk.tools.google_api_tool import GoogleApiToolset
@@ -545,9 +546,6 @@ sheets_toolset = SheetsToolset(
 To use Application Default Credentials instead of a key file, pass
 `ServiceAccount(use_default_credential=True, scopes=[...])`.
 
-The TypeScript toolsets support only user authentication with an OAuth client
-ID and client secret.
-
 ## Configuration
 
 ### Prefix tool names
@@ -569,8 +567,6 @@ calendar_toolset = CalendarToolset(
 )
 # The model sees the tool as "google_calendar_events_list".
 ```
-
-The TypeScript toolsets don't accept a prefix.
 
 ### Filter tools with a predicate
 
@@ -612,7 +608,7 @@ with `setToolFilter()`.
 
 ## Use other Google APIs
 
-`GoogleApiToolset` generates tools for any Google API that has a discovery
+The `GoogleApiToolset` generates tools for any Google API that has a discovery
 document. Pass the API name and version as they appear in the
 [APIs Explorer](https://developers.google.com/apis-explorer). For example, to
 use the Google Drive API:
@@ -645,8 +641,7 @@ use the Google Drive API:
     });
     ```
 
-In Python, `GoogleApiToolset` also accepts these keyword-only arguments. The
-TypeScript `GoogleApiToolset` doesn't support them.
+In Python, `GoogleApiToolset` also accepts these keyword-only arguments:
 
 Argument | Description
 -------- | -----------
@@ -675,6 +670,6 @@ toolsets in these ways:
 - [Authenticating with tools](/tools-custom/authentication/)
 - [Google API tools sample agent (Python)](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/google_api)
 - [`GoogleApiToolset` source code (Python)](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py)
-- [Google API tool sample agent (TypeScript)](https://github.com/google/adk-js/blob/adk-v2.4.0/samples/tools/google_api_tool/agent.ts)
+- [Google API toolset offline sample (TypeScript)](https://github.com/google/adk-js/blob/adk-v2.4.0/samples/tools/google_api_tool/agent.ts)
 - [`GoogleApiToolset` source code (TypeScript)](https://github.com/google/adk-js/blob/adk-v2.4.0/core/src/tools/google_api_tool/google_api_toolset.ts)
 - [Google API Discovery Service](https://developers.google.com/discovery)
