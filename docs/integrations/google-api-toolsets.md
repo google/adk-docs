@@ -14,7 +14,7 @@ catalog_tags: ["google", "connectors"]
 The Google Apps toolsets give Agent Development Kit (ADK) agents access to
 Google Calendar, Gmail, Google Docs, Google Sheets, Google Slides, and YouTube.
 ADK generates each toolset from the API's
-[Google API Discovery](https://developers.google.com/discovery) document: every
+[Google API Discovery](https://developers.google.com/discovery) document. Every
 method in the API becomes one tool that the agent can call, and the toolset
 handles OAuth 2.0 authentication for those calls.
 
