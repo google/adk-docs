@@ -339,7 +339,7 @@ overclaims or marketing bias; auto-discovered with no nav edits.
 ## Risk classification
 
 Assign exactly one tier to every finding. Reserve ❌ Critical Risk and 🔴 High
-Risk for items that block merge. A finding that is genuinely take-or-leave
+Risk for items that block merge. A finding that is genuinely optional
 belongs in 🟢 Low Risk.
 
 ### ❌ Critical Risk
