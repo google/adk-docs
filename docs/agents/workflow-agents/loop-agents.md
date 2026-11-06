@@ -22,7 +22,7 @@ the ***LoopAgent*** object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
-### Example scenario
+## Example scenario
 
 You want to build an agent that can generate images of food, but sometimes when
 you want to generate a specific number of items, such as bananas, the agent
@@ -32,7 +32,7 @@ is to keep generating images until it either correctly generates the specified
 number of items, or after a certain number of iterations, you can build your
 agent using a ***LoopAgent*** workflow.
 
-### How it Works
+## How it Works
 
 When the `LoopAgent`'s `Run Async` method is called, it performs the following actions:
 
@@ -46,7 +46,7 @@ When the `LoopAgent`'s `Run Async` method is called, it performs the following a
 
 ![Loop Agent](/assets/loop-agent.png)
 
-### Full Example: Iterative Document Improvement
+## Full Example: Iterative Document Improvement
 
 Imagine a scenario where you want to iteratively improve a document:
 

@@ -29,7 +29,7 @@ ultimately managed by the ***ParallelAgent*** object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
-### How it works
+## How it works
 
 When the `ParallelAgent`'s `run_async()` method is called:
 
@@ -37,7 +37,7 @@ When the `ParallelAgent`'s `run_async()` method is called:
 2. **Independent Branches:**  Each sub-agent operates in its own execution branch.  There is ***no* automatic sharing of conversation history or state between these branches** during execution.
 3. **Result Collection:** The `ParallelAgent` manages the parallel execution and, typically, provides a way to access the results from each sub-agent after they have completed (e.g., through a list of results or events). The order of results may not be deterministic.
 
-### Independent Execution and State Management
+## Independent Execution and State Management
 
 It's *crucial* to understand that sub-agents within a `ParallelAgent` run independently.  If you *need* communication or data sharing between these agents, you must implement it explicitly.  Possible approaches include:
 
@@ -47,7 +47,7 @@ It's *crucial* to understand that sub-agents within a `ParallelAgent` run indepe
 
 ![Parallel Agent](/assets/parallel-agent.png){: width="600"}
 
-### Full Example: Parallel Web Research
+## Full Example: Parallel Web Research
 
 Imagine researching multiple topics simultaneously:
 
