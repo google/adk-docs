@@ -8,7 +8,7 @@ catalog_tags: ["code", "google"]
 # Environment Toolsets for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some types of tasks, particularly coding and file operations, require an agent
@@ -30,26 +30,60 @@ implementation for use with the Environment Toolset framework.
 Enable local environment interactions by adding the ***EnvironmentToolset***
 with a ***LocalEnvironment*** instance to your agent's tools.
 
-```python
-from google.adk import Agent
-from google.adk.environment import LocalEnvironment
-from google.adk.tools.environment import EnvironmentToolset
+=== "Python"
 
-root_agent = Agent(
-    model="gemini-flash-latest",
-    name="my_agent",
-    instruction="""
-    You are a helpful AI assistant that can use the local environment
-    to execute commands and file I/O. Follow the rules of the
-    environment and the user's instructions.
-    """,
-    tools=[
-        EnvironmentToolset(
-            environment=LocalEnvironment(),
-        ),
-    ],
-)
-```
+    ```python
+    from google.adk import Agent
+    from google.adk.environment import LocalEnvironment
+    from google.adk.tools.environment import EnvironmentToolset
+
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="my_agent",
+        instruction="""
+        You are a helpful AI assistant that can use the local environment
+        to execute commands and file I/O. Follow the rules of the
+        environment and the user's instructions.
+        """,
+        tools=[
+            EnvironmentToolset(
+                environment=LocalEnvironment(),
+            ),
+        ],
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.annotations.ExperimentalEnvironmentApi
+    import com.google.adk.kt.environment.LocalEnvironment
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.environment.EnvironmentToolset
+
+    @OptIn(ExperimentalEnvironmentApi::class)
+    val rootAgent =
+        LlmAgent(
+            model = Gemini(name = "gemini-flash-latest"),
+            name = "my_agent",
+            instruction =
+                Instruction(
+                    """
+                    You are a helpful AI assistant that can use the local environment
+                    to execute commands and file I/O. Follow the rules of the
+                    environment and the user's instructions.
+                    """.trimIndent(),
+                ),
+            toolsets =
+                listOf(
+                    EnvironmentToolset(
+                        environment = LocalEnvironment(),
+                    ),
+                ),
+        )
+    ```
 
 For a full implementation example, see the
 [Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/local_environment).
@@ -103,12 +137,25 @@ The ***LocalEnvironment*** class supports the following parameters:
 The following code sample shows how to set these options for a
 ***LocalEnvironment*** object:
 
-```python
-local_environment=LocalEnvironment(
-    working_dir="/tmp/my_agent_workspace",
-    env_vars={"PORT": "8080", "LOG_LEVEL": "DEBUG"},
-)
-```
+=== "Python"
+
+    ```python
+    local_environment=LocalEnvironment(
+        working_dir="/tmp/my_agent_workspace",
+        env_vars={"PORT": "8080", "LOG_LEVEL": "DEBUG"},
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    @OptIn(ExperimentalEnvironmentApi::class)
+    val localEnvironment =
+        LocalEnvironment(
+            workingDir = "/tmp/my_agent_workspace",
+            envVars = mapOf("PORT" to "8080", "LOG_LEVEL" to "DEBUG"),
+        )
+    ```
 
 ### File operations
 
