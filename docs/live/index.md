@@ -12,9 +12,9 @@ accept text, audio, and video input and reply with text or speech.
 
 A live agent is an ADK agent, built with the same agent, tool, and session abstractions you
 use everywhere else. You describe the agent's behavior; ADK manages the real-time connection,
-tool execution, and session state underneath. Today that connection runs on the
-[Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api); ADK handles the wiring so
-your agent code stays the same as the platform evolves.
+tool execution, and session state underneath. You can run a live agent end-to-end on the
+[Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api) with a [speech-to-speech](architectures/speech-to-speech.md)
+model, or chain speech-to-text, any text LLM, and text-to-speech in a [cascaded pipeline](architectures/cascade.md).
 
 <div class="video-grid">
   <div class="video-item">
@@ -42,6 +42,7 @@ your agent code stays the same as the platform evolves.
     - [Start here](get-started/index.md) — pick a language and build one
     - Jump straight to [Python](get-started/streaming-python.md) or
       [Java](get-started/streaming-java.md)
+    - [Choose an architecture](architectures/index.md): [speech-to-speech](architectures/speech-to-speech.md) or [cascade](architectures/cascade.md)
 
 -   :material-book-open-variant: **Building**
 
