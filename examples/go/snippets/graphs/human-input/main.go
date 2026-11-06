@@ -134,7 +134,7 @@ func newGraphHITLWorkflow() (agent.Agent, error) {
 func newGraphHITLHandoffWorkflow() (agent.Agent, error) {
 	step1Node := workflow.NewEmittingFunctionNode[any, string]("step1",
 		func(ctx agent.Context, _ any, emit func(*session.Event) error) (string, error) {
-			// An empty InterruptID is replaced with a generated UUID.
+			// Leaving InterruptID empty generates a new UUID automatically.
 			if err := emit(workflow.NewRequestInputEvent(ctx, session.RequestInput{
 				Message: "Enter a number:",
 			})); err != nil {
