@@ -47,7 +47,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.4.0
+        <div class="library-version" id="library-version">1.5.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -104,7 +104,7 @@
     <h1 class="cover"><span>On</span><wbr><span>Run</span><wbr><span>Error</span><wbr><span><span>Callback</span></span></h1>
     <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
       <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">OnRunErrorCallback</a> : <a href="../-callback/index.html">Callback</a></div><p class="paragraph">Callback executed when an unhandled error escapes an ADK runner run.</p></div>    </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">OnRunErrorCallback</a> : <a href="../-callback/index.html">Callback</a></div><p class="paragraph">Callback executed when an ADK runner run fails.</p></div>    </div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -165,7 +165,7 @@
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call.html"><span class="token function">call</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">invocationContext<span class="token operator">: </span><a href="../../com.google.adk.kt.agents/-invocation-context/index.html">InvocationContext</a><span class="token punctuation">, </span></span><span class="parameter ">error<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Invoked when the run failed, before the error is re-raised to the caller. Notification-only: the error always propagates regardless of what this callback does.</p></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="call.html"><span class="token function">call</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">invocationContext<span class="token operator">: </span><a href="../../com.google.adk.kt.agents/-invocation-context/index.html">InvocationContext</a><span class="token punctuation">, </span></span><span class="parameter ">error<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Invoked when the run fails, before the error is re-raised. Also invoked when afterRun fails after an early stop; that failure is re-raised only if it is an Error. Notification-only: what this callback does never changes whether the error propagates.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
