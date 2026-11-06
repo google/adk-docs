@@ -1,7 +1,7 @@
 # App workflow management class
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v1.4.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v1.4.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.3.0</span>
 </div>
 
 The ***App*** class is a top-level container for an entire Agent Development Kit
@@ -118,6 +118,32 @@ sample code:
         .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin title="Agent.kt"
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.apps.App
+    import com.google.adk.kt.models.Gemini
+
+    val rootAgent =
+        LlmAgent(
+            model = Gemini(name = "gemini-flash-latest"),
+            name = "greeter_agent",
+            description = "An agent that provides a friendly greeting.",
+            instruction = Instruction("Reply with Hello, World!"),
+        )
+
+    val app =
+        App(
+            appName = "agents",
+            rootAgent = rootAgent,
+            // Optionally include App-level features:
+            // plugins, resumabilityConfig, eventsCompactionConfig,
+            // contextCacheConfig
+        )
+    ```
+
 !!! tip "Recommended: Use `app` variable name"
 
     In your agent project code, set your ***App*** object to the variable name
@@ -203,6 +229,36 @@ You can use the ***Runner*** class to run your agent workflow using the
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin title="Main.kt"
+    import com.google.adk.kt.runners.InMemoryRunner
+    import com.google.adk.kt.types.Content
+    import com.google.adk.kt.types.Role
+    import kotlinx.coroutines.runBlocking
+
+    // Set a Runner using the application object defined in Agent.kt
+    val runner = InMemoryRunner(app = app)
+
+    fun main() =
+        runBlocking {
+            try {
+                runner
+                    .runAsync(
+                        userId = "user",
+                        sessionId = "session-1",
+                        newMessage = Content.fromText(Role.USER, "Hello there!"),
+                    ).collect { event ->
+                        if (event.isFinalResponse && event.content != null) {
+                            println("Response: ${event.content?.text()}")
+                        }
+                    }
+            } catch (e: Exception) {
+                println("An error occurred during agent execution: $e")
+            }
+        }
+    ```
+
 !!! note "Version requirement for `Runner.run_debug()` "
 
     The `Runner.run_debug()` command requires ADK Python v1.18.0 or higher.
@@ -228,6 +284,14 @@ You can use the ***Runner*** class to run your agent workflow using the
 === "Java"
 
     Run your App agent with the `AppMain.java` code using your build tool (e.g. Gradle `application` plugin):
+
+    ```console
+    ./gradlew run
+    ```
+
+=== "Kotlin"
+
+    Run your App agent with the `Main.kt` code using your build tool, such as the Gradle `application` plugin:
 
     ```console
     ./gradlew run
