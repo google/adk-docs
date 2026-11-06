@@ -46,3 +46,5 @@ snippets/tools/confirmation/dynamic/ReimbursementTools.kt
 snippets/skills/SkillsExample.kt
 snippets/integrations/BigQueryAnalyticsExample.kt
 snippets/agents/workflow-agents/ParallelAgentWebResearch.kt
+snippets/graphs/index/GetStarted.kt
+snippets/graphs/index/ProcessPipeline.kt
