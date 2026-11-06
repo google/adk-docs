@@ -41,7 +41,7 @@ the input process more predictable and reliable.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a human input node yields a `RequestInput`.
+    In ADK TypeScript, a human input node yields a `RequestInput`.
     The `step1` node pauses the workflow until the user replies, and the
     reply is passed to the next node as its input. A human-in-the-loop node
     does not require a model, which makes the pause deterministic.
@@ -58,7 +58,7 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go v2.0.0, a human input node emits a request with
+    In ADK Go, a human input node emits a request with
     `workflow.NewRequestInputEvent` and returns `workflow.ErrNodeInterrupted`.
     The `step1` node pauses the workflow until the user replies. The node does
     not run again. The reply becomes its output and is passed to the next node.
@@ -123,7 +123,7 @@ the input process more predictable and reliable.
         reply must conform to. Equivalent to Python's `response_schema`
         parameter.
 
-    `workflow.NodeConfig.RerunOnResume` controls what happens on resume:
+    The `workflow.NodeConfig.RerunOnResume` field controls what happens on resume:
 
     -   **`&true`**: the node body is re-run from the top; `ResumeOrRequestInput`
         returns the human's reply on the second pass. Required for nodes that

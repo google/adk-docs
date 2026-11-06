@@ -19,7 +19,7 @@
 //
 // # Graph HITL (primary pattern for /graphs/ pages)
 //
-// In ADK Go v2, the primary way to add a human input node to a graph-based
+// In ADK Go, the primary way to add a human input node to a graph-based
 // workflow is workflow.NewEmittingFunctionNode with workflow.ResumeOrRequestInput.
 // The node runs again when the workflow resumes:
 //
