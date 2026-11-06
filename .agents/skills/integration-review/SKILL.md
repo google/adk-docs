@@ -559,7 +559,7 @@ maintainer can relay all of it and nothing is silently dropped.
   finding genuinely maps to no line (for example, a missing section, or the
   value and maturity judgment call) fall back to a page-level or
   frontmatter-level comment, and say so explicitly.
-- Give the contributor an out where appropriate (for example "remove this link
+- Give the contributor an option where appropriate (for example "remove this link
   and the page serves as the sample").
 - Group the comments by tier in the same order as the report.
 - One finding can produce more than one comment: a finding that spans multiple
