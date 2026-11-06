@@ -396,7 +396,7 @@ before passing results to the next step.
 
     A `JoinNode` releases only after all of its predecessor nodes finish.
     Make sure that every node that feeds a join has an output of its own, and attach a
-    retry configuration to any node that can fail. A predecessor that
+    [retry configuration](/graphs/retry/) to any node that can fail. A predecessor that
     finishes without an output leaves the join with no value for that
     branch, and the resulting failure appears downstream, away from the node
     that caused it.
