@@ -376,9 +376,9 @@ graph routing, workflow state, and human-in-the-loop pausing:
 | Go field | Serialized name | Purpose |
 |---|---|---|
 | `IsolationScope string` | `isolationScope` (`json:"isolationScope,omitempty"`) | Restricts which agent contexts see this event in LLM prompt history. |
-| `Routes []string` | `Routes` (no JSON tag) | Routing keys emitted by a node to drive conditional edge dispatch. |
-| `RequestedInput *RequestInput` | `RequestedInput` (no JSON tag) | Signals that a workflow node is pausing for human input. |
-| `Output any` | `Output` (no JSON tag) | Generic data output from a workflow node. |
+| `Routes []string` | `routes` (`json:"routes,omitempty"`) | Routing keys emitted by a node to drive conditional edge dispatch. |
+| `RequestedInput *RequestInput` | `requestedInput` (`json:"requestedInput,omitempty"`) | Signals that a workflow node is pausing for human input. |
+| `Output any` | `output` (`json:"output,omitempty"`) | Generic data output from a workflow node. |
 | `NodeInfo *NodeInfo` | `nodeInfo` (`json:"nodeInfo,omitempty"`) | Workflow-node metadata identifying which node emitted the event. |
 
 *   **Custom session storage:** If you have implemented a custom
@@ -390,10 +390,12 @@ graph routing, workflow state, and human-in-the-loop pausing:
     serialized JSON blobs, you do not need to update your schema.*
 
 **Migration action:** Update your database schemas and downstream client
-validators to expect and store the five new fields on all Event payloads.
-Pay particular attention to `Routes`, `RequestedInput`, and `Output`, which
-have no JSON struct tags and therefore serialize under their Go field names
-exactly as shown above.
+validators to expect and store the five new fields on all Event payloads,
+using the serialized names shown above. ADK Go versions before v2.2.0
+serialize `Routes`, `RequestedInput`, and `Output` under their Go field names,
+so events stored by those versions use those keys. ADK Go v2.2.0 and higher
+still decode those events. Non-Go validators and rigid schemas must accept
+both forms.
 
 If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
 them through the
