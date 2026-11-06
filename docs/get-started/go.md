@@ -143,6 +143,14 @@ your project to set environment variables:
     information on configuring other models in ADK agents, see
     [Models & Authentication](/agents/models).
 
+### Alternative: Application Default Credentials
+
+If you're using Google Cloud, you can authenticate with Application Default
+Credentials (ADC) instead of an API key. See
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/)
+for setup instructions.
+
+
 
 ## Run your agent
 
