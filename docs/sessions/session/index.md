@@ -480,7 +480,6 @@ through a two-tiered locking architecture:
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
-
 ## Troubleshoot session errors
 
 During execution, ADK can raise specific exceptions to help you identify
@@ -496,3 +495,46 @@ compatibility.
   session before it has been created.
 * **How to resolve:** ensure the session exists first via `create_session(...)`,
   or construct the `Runner` with `auto_create_session=True`.
+
+### `FirestoreSessionService`
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java</span>
+</div>
+
+* **How it works:** Connects to a Google Cloud Firestore NoSQL database to store
+  session data persistently.
+* **Persistence:** Yes. Data survives application restarts.
+* **Requires:** A Firestore database and the
+  `google-adk-firestore-session-service` dependency in your `pom.xml` (Maven) or
+  `build.gradle` (Gradle).
+* **Best for:** Applications needing reliable, persistent storage in the Google
+  Cloud ecosystem.
+
+=== "Java"
+
+    ```java
+    import com.google.cloud.firestore.Firestore;
+    import com.google.cloud.firestore.FirestoreOptions;
+    import com.google.adk.sessions.FirestoreSessionService;
+    import com.google.adk.sessions.Session;
+
+    String appName = "hello-time-agent";
+    String userId = "user1234";
+    String sessionId = "12345";
+
+    // Initialize Firestore
+    FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance();
+    Firestore firestore = firestoreOptions.getService();
+
+    // Create a new session or load an existing one
+    FirestoreSessionService sessionService = new FirestoreSessionService(firestore);
+    Session session = sessionService
+            .createSession(appName, userId, null, sessionId)
+            .blockingGet();
+    ```
+
+For more information on using Firestore Session Service with ADK agents, see
+[Firestore session service](/integrations/firestore-session-service/).
+
+

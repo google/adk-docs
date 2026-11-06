@@ -204,3 +204,4 @@ keyword.extraction.stopwords=a,about,above,after,again,against,all,am,an,and,any
   An example project demonstrating how to build a Java-based Google ADK agent application using Cloud Firestore for session management.
 - [Firestore Session Service - DeepWiki](https://deepwiki.com/google/adk-java/4.3-firestore-session-service):
   Detailed description of Firestore integration in the Google ADK for Java.
+- [Firestore Session Service - Garvik.dev](https://www.garvik.dev/ai-agents/pattern/google-ai-sdk-spring-boot): Practical tutorial on using Firestore Session Service with ADK agents.
