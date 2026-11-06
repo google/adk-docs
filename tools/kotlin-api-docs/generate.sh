@@ -87,7 +87,8 @@ cd adk-kotlin
 # needs no change to adk-kotlin.
 #
 # Deliberately excluded:
-#   -examples, -examples-android, -examples-java  sample apps, not API surface.
+#   -examples, -examples-android, -examples-java,
+#   -examples-spring-boot-kotlin                  sample apps, not API surface.
 #                                                 -examples also declares a JDK 21
 #                                                 toolchain, which fails to
 #                                                 auto-provision and stops the build.
@@ -106,6 +107,8 @@ cd adk-kotlin
 # -integrations-anthropic (JVM-only) and -integrations-openai (KMP, with a jvm
 # target) were first published at 1.4.0 and carry the Claude and Chat
 # Completions model backends.
+#
+# -integrations-bigquery (JVM-only) was first published at 1.5.0.
 echo "Injecting Dokka aggregation for the published modules..."
 cat >> build.gradle.kts <<'AGGREGATED_MODULES'
 
@@ -117,6 +120,7 @@ dependencies {
   dokka(project(":google-adk-kotlin-integrations-spring"))
   dokka(project(":google-adk-kotlin-integrations-anthropic"))
   dokka(project(":google-adk-kotlin-integrations-openai"))
+  dokka(project(":google-adk-kotlin-integrations-bigquery"))
   dokka(project(":google-adk-kotlin-litertlm"))
   dokka(project(":google-adk-kotlin-processor"))
   dokka(project(":google-adk-kotlin-webserver"))
