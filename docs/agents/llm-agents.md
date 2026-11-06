@@ -203,6 +203,9 @@ tells the agent:
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
     ```
 
+To fetch agent instructions dynamically from a Model Context Protocol (MCP)
+server in Python, see [Dynamic instructions with `McpInstructionProvider`](/tools-custom/mcp-tools/advanced/#dynamic-instructions-with-mcpinstructionprovider).
+
 !!! note "GlobalInstructionPlugin"
 
     To apply shared rules or a consistent personality to *all* 

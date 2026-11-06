@@ -185,6 +185,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--memory_service_uri TEXT`: (Optional) The URI of the memory service, for example: `rag://<rag_corpus_id>`, `agentengine://<agent_engine>`, or `memory://`.
     * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
+    * `--with_cloud_run_sandbox`: (Optional) Enables the Cloud Run sandbox for code execution. Disabled by default. When enabled, ADK uses `gcloud beta run deploy` with `--sandbox-launcher`.
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
     * `--help`: Show the help message and exit.
 
