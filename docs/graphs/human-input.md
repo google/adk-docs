@@ -131,13 +131,6 @@ the input process more predictable and reliable.
     -   **`&false`** or **`nil`** (leaf default): the reply is routed to the
         node's successor as input, bypassing the interrupted node.
 
-    !!! note "Note: Response validation"
-
-        When `ResponseSchema` is set, ADK Go validates the reply against it on
-        resume. A reply that does not match fails with
-        `workflow.ErrInvalidResumeResponse`, and the node keeps waiting, so the
-        client can send a corrected reply.
-
 !!! note "Note: Response schema input limitations"
 
     A response schema does not reformat a human reply to fit the specified
