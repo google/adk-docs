@@ -65,9 +65,8 @@ const (
 // newGraphHITLWorkflow demonstrates a graph HITL node using
 // workflow.NewEmittingFunctionNode and workflow.ResumeOrRequestInput.
 //
-// It implements the following Python workflow with a node that runs again on
-// resume. newGraphHITLHandoffWorkflow shows the handoff behavior that the
-// Python example has:
+// newGraphHITLHandoffWorkflow implements the exact handoff behavior shown in the
+// Python example below. (For a node that runs again on resume, see newGraphHITLWorkflow).
 //
 //	def step1():  # Human input step
 //	    yield RequestInput(message="Enter a number:")
