@@ -67,9 +67,16 @@ Safety settings apply
 to the live session. When the model generates content that exceeds a configured threshold,
 the platform terminates generation.
 
-The live connection establishes these settings at startup, so they remain fixed for the
-duration of the session. An instruction string that interpolates session state renders
-once when the session starts, and a resumed connection reuses that rendered instruction.
+The live connection establishes these settings at startup. An instruction string that
+interpolates session state renders once when the session starts, and a resumed connection
+reuses that rendered instruction. Safety settings stay fixed for the duration of the session.
+
+To change the instruction or the tool set at a phase boundary of the conversation, use
+[`send_context_update()`](sessions.md#update-the-instruction-or-tools-mid-session). Each update
+invalidates the model's prompt cache, so reserve it for real transitions. For rules that apply
+to a single turn, such as a policy your retriever selects from the user's transcription, append
+them to the conversation as a partial turn or as part of a tool result instead; that keeps the
+instruction and tools, and the cache built on them, unchanged.
 
 ## Conversation validation
 

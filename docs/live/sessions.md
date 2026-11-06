@@ -102,6 +102,7 @@ class LiveRequest(BaseModel):
     blob: Optional[Blob] = None                  # Audio/video bytes
     activity_start: Optional[ActivityStart] = None  # Manual turn start
     activity_end: Optional[ActivityEnd] = None      # Manual turn end
+    context_update: Optional[LiveContextUpdate] = None  # New instruction/tools
     close: bool = False                          # Graceful termination
 ```
 
@@ -113,6 +114,7 @@ class LiveRequest(BaseModel):
 | `send_content(content)` | Text, as a discrete turn | Turn-by-turn; triggers a response |
 | `send_realtime(blob)` | Audio, image, or video bytes | Continuous streaming |
 | `send_activity_start()` / `send_activity_end()` | Manual turn boundaries | Only when automatic VAD is disabled |
+| `send_context_update(system_instruction=, tools=)` | A new system instruction and/or tool set | Rare phase transitions; see [below](#update-the-instruction-or-tools-mid-session) |
 | `close()` | Termination signal | Ends the session |
 
 ```python
@@ -150,6 +152,58 @@ control with activity signals, see
 Create the queue inside an async context so it binds to the event loop that runs
 `run_live()`. `asyncio.Queue` is safe for concurrent access within a single event loop
 thread; to feed it from another thread, use `loop.call_soon_threadsafe()`.
+
+### Update the instruction or tools mid-session
+
+The agent's instruction and tools are sent to the Live API when the connection opens.
+`send_context_update()` replaces either or both without reconnecting, for example when a
+conversation moves from one phase to another and needs a different persona and tool set:
+
+```python
+from google.adk.tools import FunctionTool
+
+# The caller has been identified; switch from triage to order handling.
+live_request_queue.send_context_update(
+    system_instruction=ORDER_HANDLING_INSTRUCTION,
+    tools=[FunctionTool(lookup_order), FunctionTool(issue_refund)],
+)
+
+# Remove every tool but keep the instruction.
+live_request_queue.send_context_update(tools=[])
+```
+
+Both arguments are replacements. `system_instruction` overrides the whole instruction ADK
+assembled from the agent definition, and `tools` replaces every tool the model currently has,
+including ADK's own `transfer_to_agent`, so pass everything the model should keep. An argument
+left unset keeps its current value; at least one must be set. The tools are regular ADK tools:
+the model's calls to them are executed by ADK like calls to the agent's own tools, and the
+update survives a [reconnect](#session-resumption) of the current `run_live()` call. The next
+`run_live()` call starts from the agent definition again.
+
+!!! warning "Every context update rebuilds the prompt cache"
+
+    The system instruction and the tool declarations are the prefix of the model's prompt. The
+    Live API caches that prefix across turns, and a context update invalidates it, so the next
+    model call re-processes the instruction, the tools, and the whole conversation history.
+    That adds latency to the next response and costs tokens.
+
+    Send a context update on a real phase transition, not on every turn. Turn-specific
+    context, such as a policy rule your guardrail retriever selected for the current
+    utterance, belongs at the end of the conversation instead, where it leaves the cached
+    prefix intact: send it as a partial turn, or return it as part of a tool's result.
+
+    ```python
+    live_request_queue.send_content(
+        types.Content(
+            role="user",
+            parts=[types.Part(text="[POLICY] Do not quote delivery dates for backorders.")],
+        ),
+        partial=True,  # Appends to the turn without triggering a response.
+    )
+    ```
+
+`send_context_update()` requires `google-genai` 2.32.0 or later and is supported on
+Vertex AI (Gemini Enterprise Agent Platform).
 
 ## The run_live() loop
 
