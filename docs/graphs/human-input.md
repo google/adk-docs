@@ -218,25 +218,34 @@ specific tool call.
 
 === "Python"
 
-    The following code sample shows how to construct a ***RequestInput*** object
-    in a workflow node, including a ***response schema***:
+    Set `require_confirmation=True` on a `FunctionTool` so the agent pauses for
+    approval before that tool runs. This is distinct from a graph
+    human-in-the-loop `RequestInput` node, which asks the user for input as its
+    own workflow step rather than confirming a tool call:
 
     ```python
-    async def initial_prompt(ctx: Context):
-       """Ask the user for itinerary information"""
-       input_message = """
-           This is an interactive concierge workflow tasked with making you a great
-           itinerary for you in your city of choice. If you give some details about
-           yourself or what you are generally looking for I can better personalize
-           your itinerary.
-           For example, input your:
-               City (Required),
-               Age,
-               Hobby,
-               Example of attraction you liked
-       """
-       yield RequestInput(message=input_message, response_schema=str)
+    from google.adk import Agent
+    from google.adk.tools import FunctionTool
+
+
+    def reimburse(amount: float) -> dict:
+        """Reimburse an expense amount."""
+        return {"status": "ok", "amount": amount}
+
+
+    root_agent = Agent(
+        name="finance_agent",
+        model="gemini-flash-latest",
+        instruction="Help the user with expense reimbursements.",
+        tools=[
+            FunctionTool(reimburse, require_confirmation=True),
+        ],
+    )
     ```
+
+    For a complete example, see the
+    [human tool confirmation sample](https://github.com/google/adk-python/blob/main/contributing/samples/hitl/human_tool_confirmation/agent.py)
+    and the [Tool confirmation](/tools-custom/confirmation/) guide.
 
 === "TypeScript"
 
