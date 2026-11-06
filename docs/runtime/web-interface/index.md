@@ -240,19 +240,16 @@ browser to use the web interface:
 
     | Flag | Description | Default |
     |------|-------------|---------|
-    | `-webui_address` | WebUI origin as seen from the browser, allowed for CORS. In ADK Go v2.5.0 and higher, the REST API also refuses other cross-origin browser requests with HTTP 403. The value `*` allows any origin and turns off this check and the DNS rebinding check, so don't use it on a publicly accessible service | `localhost:8080` |
+    | `-webui_address` | Origin of the ADK web interface as seen from the browser, allowed for CORS. In ADK Go v2.5.0 and higher, the server also refuses other cross-origin browser requests with HTTP 403. The value `*` allows any origin and turns off this check and the DNS rebinding check, so don't use it on a publicly accessible service | `localhost:8080` |
     | `-path_prefix` | URL path prefix for the REST API | `/api` |
     | `-sse-write-timeout` | Timeout for SSE (streaming) responses | `120s` |
     | `-trace_capacity` | Max in-memory traces to retain | `10000` |
-    | `-include_debug_api` | Serve the debug trace and agent graph endpoints. Don't enable it in production. ADK Go v2.3.0 and higher | `false` |
-
-    In ADK Go v2.3.0 and higher, the web UI's Traces and agent structure panels
-    stay empty unless you pass `-include_debug_api` after `api`.
+    | `-include_debug_api` | Serve the debug trace and agent graph endpoints that the Traces and agent structure panels in ADK Web need. Don't enable it in production. ADK Go v2.3.0 and higher | `false` |
 
     In ADK Go v2.5.0 and higher, the `-host` and `-webui_address` values also
-    help mitigate DNS rebinding for the REST API. When `-host` is a loopback
-    address, the REST API refuses requests whose `Host` header is neither
-    loopback nor the host in `-webui_address` with HTTP 403.
+    help mitigate DNS rebinding. When `-host` is a loopback address, the server
+    returns HTTP 403 for any request whose `Host` header is neither loopback nor
+    the host in `-webui_address`.
 
     **`webui` subcommand flags** (passed after `webui`):
 
