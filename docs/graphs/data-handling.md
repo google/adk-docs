@@ -435,10 +435,10 @@ accepted and produced by any agent node.
     `workflow.NewFunctionNodeWithSchema`.
 
     **Prebuilt workflow agents**: set `InputSchema` and `OutputSchema` on
-    `llmagent.Config`. `OutputSchema` forces the model to reply with a JSON
-    object matching the schema (the agent cannot use tools when `OutputSchema`
-    is set). Use `OutputKey` to save the JSON string to state for downstream
-    agents to reference via `{key}` in their `Instruction`.
+    `llmagent.Config`. The `OutputSchema` field forces the model to reply with
+    a JSON object matching the schema. Use `OutputKey` to save the JSON string
+    to state for downstream agents to reference via `{key}` in their
+    `Instruction`.
 
 ## Access structured data in agents
 
