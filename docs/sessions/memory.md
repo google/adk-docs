@@ -32,30 +32,33 @@ this searchable, long-term knowledge store. It supports these operations:
 - **Searching Information (`search_memory`):** Lets an agent (typically via a
   `Tool`) query the knowledge store and retrieve relevant snippets or context
   based on a search query.
+- **Deleting Information (`delete_memory`):** Removes a single memory entry by
+  its ID. See [Delete individual memories](#delete-individual-memories).
 
-`add_events_to_memory` and `add_memory` are optional and are not implemented by
-every service, so confirm that your chosen service supports them before relying
-on them.
+`add_events_to_memory`, `add_memory`, and `delete_memory` are optional and are
+not implemented by every service, so confirm that your chosen service supports
+them before relying on them.
 
 ## Choose the right memory service
 
-The Python ADK ships three `MemoryService` implementations. Use the table below
+The Python ADK ships four `MemoryService` implementations. Use the table below
 to decide which is the best fit for your agent.
 
-| **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** | **VertexAiRagMemoryService** |
-| :--- | :--- | :--- | :--- |
-| **Persistence** | None, data is lost on restart | Yes, managed by the Agent Platform | Yes, stored in Knowledge Engine |
-| **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. | Vector-search retrieval over the full conversation corpus, or alongside other RAG-indexed content. |
-| **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories powered by LLM | Stores full conversation, indexed by [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
-| **Search Capability** | Basic keyword matching. | Advanced semantic search. | Vector similarity search over Knowledge Engine. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. | Medium. Requires [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/manage-your-rag-corpus). |
-| **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Knowledge Engine, the Agent Platform SDK (optional install). |
-| **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
+| **Feature** | **InMemoryMemoryService** | **SqliteMemoryService** | **VertexAiMemoryBankService** | **VertexAiRagMemoryService** |
+| :--- | :--- | :--- | :--- | :--- |
+| **Persistence** | None, data is lost on restart | Yes, in a local SQLite database file | Yes, managed by the Agent Platform | Yes, stored in Knowledge Engine |
+| **Primary Use Case** | Prototyping, local development, and simple testing. | Local development and single-machine agents that need memory to survive restarts. | Building meaningful, evolving memories from user conversations. | Vector-search retrieval over the full conversation corpus, or alongside other RAG-indexed content. |
+| **Memory Extraction** | Stores full conversation | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories powered by LLM | Stores full conversation, indexed by [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
+| **Search Capability** | Basic keyword matching. | Keyword search, using SQLite FTS5 full-text indexing when available. | Advanced semantic search. | Vector similarity search over Knowledge Engine. |
+| **Setup Complexity** | None. It's the default. | Low. Provide a database file path. | Low. Requires an [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. | Medium. Requires [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/manage-your-rag-corpus). |
+| **Dependencies** | None. | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Knowledge Engine, the Agent Platform SDK (optional install). |
+| **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want persistent memory without any cloud infrastructure. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
 
 You can always import `VertexAiRagMemoryService` from `google.adk.memory`, but
 constructing it raises `ImportError` unless the Agent Platform SDK is installed
 with `pip install google-adk[gcp]`. Memory Bank and RAG-backed memory are
-documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
+documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below,
+and the local SQLite option in [`SqliteMemoryService`](#sqlitememoryservice).
 
 
 ## `InMemoryMemoryService`
@@ -292,6 +295,49 @@ You can also search memory from within a custom tool by using the tool context.
     ```kotlin
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:search_within_tool"
     ```
+
+## `SqliteMemoryService`
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.11.0</span>
+</div>
+
+The `SqliteMemoryService` stores ingested events in a local SQLite database
+file, so memory persists across restarts without any cloud infrastructure. By
+default (`fts="auto"`), it uses SQLite FTS5 full-text indexing when available
+and falls back to token matching when FTS5 is unavailable. Set `fts="off"` to
+force token matching, or `fts="on"` to require FTS5, which raises
+`RuntimeError` if FTS5 is missing.
+
+=== "Python"
+
+    ```py
+    from google.adk.memory import SqliteMemoryService
+
+    memory_service = SqliteMemoryService(
+        db_path="memory.db",  # or a sqlite:/// URL, or ":memory:"
+        fts="auto",
+        max_event_bytes=262144,
+        max_results=50,
+    )
+    ```
+
+`max_results` caps the number of memories returned per query, and
+`max_event_bytes` truncates the search index text stored per event (stored and
+returned content is not truncated). The service implements
+`add_session_to_memory`, `add_events_to_memory`, and `search_memory`, but not
+`add_memory` or `delete_memory`. Re-ingesting events with the same ID within the
+same session updates the existing row in place rather than duplicating it. When
+you use an in-memory database (`":memory:"`), call `await memory_service.close()`
+to release the connection when you are done.
+
+To use it with `adk web` or `adk api_server`, pass a SQLite URL to the
+`--memory_service_uri` flag: `sqlite:///<relative_path>` or
+`sqlite:////<absolute_path>`.
+
+```bash title="bash"
+adk web path/to/your/agents_dir --memory_service_uri="sqlite:///memory.db"
+```
 
 ## Memory Bank
 
@@ -636,6 +682,39 @@ session from the current invocation.
 
 All three throw `IllegalStateException` if the runner has no memory service
 configured, so they fail at run time rather than at compile time.
+
+## Delete individual memories
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.13.0</span>
+</div>
+
+Memory persists independently of sessions: deleting a session from a
+`SessionService` does not remove what was previously ingested into memory. To
+remove an individual memory, call `delete_memory` with the `id` of a
+`MemoryEntry` returned by `search_memory`:
+
+```python
+await memory_service.delete_memory(
+    app_name="my-app",
+    user_id="my-user",
+    memory_id=entry.id,
+)
+```
+
+Inside a tool or callback, the context provides the matching helper, which
+fills in the app and user from the current invocation:
+
+```python
+await tool_context.delete_memory(memory_id)
+```
+
+Among the built-in services, only `InMemoryMemoryService` implements
+`delete_memory`. It also records deleted IDs so that later
+`add_session_to_memory` or `add_events_to_memory` calls do not re-ingest them.
+`SqliteMemoryService`, `VertexAiMemoryBankService`, and
+`VertexAiRagMemoryService` raise `NotImplementedError`. The context helper
+raises `ValueError` if the runner has no memory service configured.
 
 ## Extend memory capabilities
 
