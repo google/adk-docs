@@ -388,14 +388,12 @@ accepted and produced by any agent node.
         output_schema=FlightSearchOutput,
         tools=[search_flights_api],
         mode="single_turn",
-        ...
     )
 
     assistant = Agent(
         name="assistant",
         instruction="You help users plan trips.",
         sub_agents=[flight_searcher],
-        ...
     )
     ```
 

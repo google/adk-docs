@@ -615,7 +615,7 @@ if auth_request_function_call_id and auth_config:
 * Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
 
 ```py
-# (Continuing after user interaction)
+    # (Continuing after user interaction)
 
     # Simulate getting the callback URL (e.g., from user paste or web handler)
     auth_response_uri = await get_user_input(
@@ -703,7 +703,7 @@ Your function signature *must* include [`tool_context: ToolContext`](../tools-cu
 from google.adk.tools import FunctionTool, ToolContext
 from typing import Dict
 
-def my_authenticated_tool_function(param1: str, ..., tool_context: ToolContext) -> dict:
+def my_authenticated_tool_function(param1: str, tool_context: ToolContext) -> dict:
     # ... your logic ...
     pass
 
@@ -767,17 +767,17 @@ exchanged_credential = tool_context.get_auth_response(AuthConfig(
 ))
 # If exchanged_credential is not None, then there is already an exchanged credential from the auth response.
 if exchanged_credential:
-   # ADK exchanged the access token already for us
-        access_token = exchanged_credential.oauth2.access_token
-        refresh_token = exchanged_credential.oauth2.refresh_token
-        creds = Credentials(
-            token=access_token,
-            refresh_token=refresh_token,
-            token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
-            client_id=auth_credential.oauth2.client_id,
-            client_secret=auth_credential.oauth2.client_secret,
-            scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
-        )
+    # ADK exchanged the access token already for us
+    access_token = exchanged_credential.oauth2.access_token
+    refresh_token = exchanged_credential.oauth2.refresh_token
+    creds = Credentials(
+        token=access_token,
+        refresh_token=refresh_token,
+        token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
+        client_id=auth_credential.oauth2.client_id,
+        client_secret=auth_credential.oauth2.client_secret,
+        scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
+    )
     # Cache the token in session state and call the API, skip to step 5
 ```
 
@@ -786,15 +786,15 @@ if exchanged_credential:
 If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the tool needs to start the OAuth flow. Define the AuthScheme and initial AuthCredential and call `tool_context.request_credential()`. Return a response indicating authorization is needed.
 
 ```py
-# Use auth_scheme and auth_credential configured in the tool.
+  # Use auth_scheme and auth_credential configured in the tool.
 
   tool_context.request_credential(AuthConfig(
     auth_scheme=auth_scheme,
     raw_auth_credential=auth_credential,
   ))
-  return {'pending': true, 'message': 'Awaiting user authentication.'}
+  return {'pending': True, 'message': 'Awaiting user authentication.'}
 
-# By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
+  # By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
 ```
 
 **Step 4: Exchange Authorization Code for Tokens**
@@ -841,7 +841,7 @@ except Exception as e:
 * **Crucially, include a**  `status` field along with the data.
 
 ```py
-# Inside your tool function, after successful API call
+    # Inside your tool function, after successful API call
     processed_result = [...] # Process api_result for the LLM
     return {"status": "success", "data": processed_result}
 
