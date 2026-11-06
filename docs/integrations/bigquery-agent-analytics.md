@@ -164,6 +164,7 @@ per-event-type views. The three HITL completion events have no dedicated views.
 | `AGENT_ERROR` | Agent execution fails; in Go, this also includes failed activations that ADK handles without an `AfterAgent` callback | error message, sanitized traceback, latency | `v_agent_error` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
 | `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, finish reason, latency, TTFT | `v_llm_response` |
+| `LIVE_USAGE` (Python) | Gemini Live reports token usage | raw usage tokens, modality details, model version, connection ID, sequence | `v_live_usage` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
 | `TOOL_STARTING` | A tool begins execution | tool name, args, origin | `v_tool_starting` |
 | `TOOL_COMPLETED` | A tool succeeds | tool name, result, origin, latency | `v_tool_completed` |
@@ -183,6 +184,101 @@ per-event-type views. The three HITL completion events have no dedicated views.
 | `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
 | `NODE_OUTPUT` | A workflow node emits a final structured output | output, node path, run ID, parent run ID | `v_node_output` |
 | `NODE_ERROR` | A workflow node ends with a non-model error | error code, error message, node path, run ID, parent run ID | `v_node_error` |
+
+## Live token usage (Python)
+
+For native Gemini Live connections, the plugin records each provider usage
+snapshot as a `LIVE_USAGE` row. This includes `Runner.run_live()` and the Live
+API used by compositional function calling (`support_cfc=True`). The snapshot
+is recorded on the first model or event callback that observes it, including
+evaluation routes that do not invoke event callbacks. The most recent 1,024
+report identities suppress duplicate callback observations. This bounded,
+best-effort history does not guarantee durable exactly-once delivery; an old
+report can be logged again after eviction. Ordinary request/response usage
+remains in `LLM_RESPONSE` rows.
+
+For native Live, register the analytics plugin before an `on_event_callback`
+plugin that returns a replacement event. Returning an event intentionally
+skips later plugins. In-place metadata edits preserve the original identity.
+
+The row uses the same `content.usage.prompt`, `completion`, and `total` fields
+as `LLM_RESPONSE`. `attributes.usage_metadata` retains the detailed token
+counts, including modality breakdowns, cached and thoughts tokens, and
+`traffic_type` when supplied. New rows serialize usage enums as SDK values such
+as `ON_DEMAND` and `AUDIO`. This also changes ordinary `LLM_RESPONSE`
+attributes: enum class prefixes such as `TrafficType.` and `MediaModality.`
+are no longer written, and null usage fields are omitted. Both usage views
+provide a normalized `traffic_type` column for historical and current rows.
+The model version is in
+`attributes.model_version`.
+
+`attributes.live_usage` contains:
+
+- `connection_id`: an ADK-generated ID for the upstream connection. A reconnect
+  or resumed connection gets a new ID even if the provider session ID is reused.
+- `sequence`: the usage snapshot's increasing sequence number within that
+  connection.
+- `live_session_id`: the provider's session ID, when available.
+- `api_backend`: `GEMINI_API` or `VERTEX_AI`.
+- `service_tier`: the Live service tier, when reported by the SDK.
+
+Use `(connection_id, sequence)` to correlate reports.
+`attributes.adk.source_event_id` refers to the first callback sighting and can
+differ from a later replacement event's persisted ID; a bare model response may
+have no event envelope.
+
+With `create_views=True`, `v_live_usage` exposes each raw report, including
+typed cache, thinking and tool-use counts, cache metadata and cache hit rate.
+Numeric fields use `SAFE_CAST`, so redacted values become `NULL`.
+There is no default latest-snapshot selection or cumulative-counter assumption.
+The evaluation turn and session views sum raw reports without per-connection
+deduplication, consistently with ADK's evaluation generator. Their token totals
+are reported counts, not billable cumulative deltas.
+
+After upgrading, refresh existing evaluation views with
+`await plugin.create_eval_views()` so their SQL includes `LIVE_USAGE` reports.
+Evaluation-view creation is disabled by default.
+
+For a source whose reports are per-turn counts, sum the reports within your
+chosen time range:
+
+```sql
+SELECT session_id, SUM(usage_total_tokens) AS reported_tokens
+FROM `my_project.my_dataset.v_live_usage`
+WHERE timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+GROUP BY session_id
+```
+
+Only for a source confirmed to report cumulative counters that reset on each
+connection, select the latest sequence before summing. Keep the time filter
+inside the query that computes the window:
+
+```sql
+SELECT session_id, connection_id, sequence, live_session_id, usage_total_tokens, usage_metadata
+FROM `my_project.my_dataset.v_live_usage`
+WHERE timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+  AND connection_id IS NOT NULL
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY session_id, connection_id
+  ORDER BY sequence DESC NULLS LAST, timestamp DESC, event_id DESC
+) = 1
+```
+
+Neither query establishes billable usage. Verify the backend's reporting and
+resumption semantics first: per-turn counts, cumulative connection counters,
+and session counters that survive reconnection require different aggregation.
+The plugin preserves provider values and does not derive billable deltas.
+
+If `event_allowlist` is configured, add `LIVE_USAGE` to capture these rows.
+`event_denylist` can exclude them. CFC retains its `LLM_RESPONSE` usage fallback
+when `LIVE_USAGE` is filtered; otherwise CFC token queries should read
+`v_live_usage` alongside `v_llm_response`. Usage snapshots do not produce LLM
+latency or TTFT measurements. They do not end the pending model span; a new
+model call clears any unfinished predecessor.
+
+Keep consuming `run_live()` after `turn_complete` if the provider can send a
+trailing usage report. Breaking and closing the stream at that flag can discard
+reports that have not arrived yet.
 
 ## Installation
 
@@ -913,7 +1009,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating. Use `-1` for no limit; other values must be at least `1` |
     | `batch_size` | `int` | `1` | Tune write throughput vs. latency |
     | `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
-    | `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
+    | `shutdown_timeout` | `float` | `10.0` | Max wait for final shutdown flush or unclaimed Live queue admission (seconds) |
     | `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
     | `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
     | `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
@@ -1851,7 +1947,8 @@ columns:
 | --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `traffic_type` (STRING, Python), `cache_metadata` (JSON), `cache_type` (STRING), `finish_reason` (STRING) |
+| **`v_live_usage`** (Python) | `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `traffic_type` (STRING), `connection_id` (STRING), `sequence` (INT64), `live_session_id` (STRING), `api_backend` (STRING), `service_tier` (STRING), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `context_cache_hit_rate` (FLOAT64), `cache_metadata` (JSON) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
