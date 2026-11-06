@@ -24,7 +24,7 @@ project and credentials. For help choosing, see [Choose a backend](#choose-a-bac
 The following examples create an agent that calls Claude through the Anthropic
 API. Before you run them, get an API key from the
 [Anthropic Console](https://console.anthropic.com/) and set it as an
-environment variable. In production, store the key in a secret manager rather 
+environment variable. In production, store the key in a secret manager rather
 than in source code or shell history:
 
 ```shell
