@@ -1,6 +1,6 @@
 ---
 catalog_title: Encore
-catalog_description: Run Go agents as services in your own cloud with Postgres sessions
+catalog_description: Run ADK Go agents on Google Cloud, with APIs and infrastructure declared in code
 catalog_icon: /integrations/assets/encore.png
 catalog_tags: ["data"]
 ---
@@ -11,7 +11,7 @@ catalog_tags: ["data"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go</span>
 </div>
 
-[Encore](https://encore.dev) lets you run ADK Go agents as services in your own Google Cloud project, with ADK sessions stored in Postgres and function tools that call your other services. You declare infrastructure like databases, Pub/Sub topics and cron jobs in Go code, and Encore runs them on your machine and provisions them in that project when you deploy.
+[Encore](https://encore.dev) lets you run ADK Go agents on Google Cloud, with APIs and infrastructure declared in code. You declare databases, Pub/Sub topics and cron jobs in Go, and Encore runs them on your machine and provisions them in your Google Cloud project when you deploy. ADK sessions are stored in Postgres, and function tools can call your other services.
 
 ![Diagram of application code going through Encore to Google Cloud resources such as databases, compute, cron jobs, secrets and messaging](assets/encore-diagram.png)
 
