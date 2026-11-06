@@ -34,6 +34,9 @@ back into your ADK flow. Managed agents provide several built-in advantages:
   provision or secure.
 - **No client-side function declarations:** Server-side tools are configured on
   the managed agent, so you don't declare or execute them locally.
+- **Composable as an inline tool:** Set `mode='single_turn'` to expose the
+  managed agent to a parent `LlmAgent` as an inline single-turn tool, which is
+  the recommended alternative to wrapping it in `AgentTool`.
 
 ## When to use managed agents vs. building your own
 
@@ -42,7 +45,8 @@ mostly a trade-off between out-of-the-box power and fine-grained control.
 
 - **Managed agents** give you a powerful agent out of the box, but with limited
   flexibility. The toolset is predefined and server-side, the agent runs only in
-  the managed environment, and client-side or MCP tools are not supported.
+  the managed environment, and client-executed tools are not supported, though
+  server-side remote MCP servers are.
 - **ADK agents** (such as [`LlmAgent`](/agents/llm-agents/)) give you
   fine-grained control over the model, instructions, tools (including custom
   function tools and MCP tools), and where execution happens.
@@ -137,9 +141,10 @@ than in your ADK process.
 ### Local session vs. remote state
 
 `ManagedAgent` keeps almost no state locally. The ADK session persists only two
-values on the events it emits: the `previous_interaction_id` and the sandbox
+values on the events it emits: the `interaction_id` and the sandbox
 `environment_id`. On each new turn the agent recovers both by scanning prior
-session events, then reuses them so the conversation and its sandbox continue.
+session events, then sends them back to the backend so the conversation and its
+sandbox continue.
 
 Everything else lives server-side. The Managed Agents API owns the sandbox
 environment and the full interaction history, and that remote interaction, not
@@ -154,7 +159,10 @@ state; it never re-sends prior turns.
   Managed Agents API is currently served only from the `global` location.
   Regional endpoints raise an error.
 - **Server-side tools only:** Client-executed tools (Python functions,
-  callables) and MCP tools are not supported and raise a `NotImplementedError`.
+  callables) and raw `types.Tool` MCP configs (`types.Tool.mcp_servers`) are not
+  supported and raise a `NotImplementedError`. Server-side remote MCP servers
+  are supported: declare them as `google.adk.tools.RemoteMcpServer` specs in
+  `tools`.
 - **Streaming only:** The agent uses streaming interactions (`stream=True`).
   Background-polling execution and strictly non-streaming connections are not
   yet fully supported.
@@ -165,9 +173,15 @@ state; it never re-sends prior turns.
 ## Next steps
 
 - **Samples:** [Managed Agent
-  Basic](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/basic)
-  and [Managed Agent Code
-  Execution](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/code_execution).
+  Basic](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/basic),
+  [Managed Agent Code
+  Execution](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/code_execution),
+  [Managed Agent Remote
+  MCP](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/remote_mcp),
+  [Managed Agent Single
+  Turn](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/single_turn),
+  and [Managed Agent System
+  Instruction](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/system_instruction).
 - **Backend documentation:** [Gemini API
   Agents](https://ai.google.dev/gemini-api/docs/agents) and [Agent Platform
   Managed

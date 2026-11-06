@@ -22,6 +22,11 @@ object you define.
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
+    In Python and TypeScript, `SequentialAgent` is deprecated in favor of
+    `Workflow`: constructing one emits a deprecation warning, and the class will
+    be removed in a future release. A `Workflow` cannot be used as an `LlmAgent`
+    sub-agent.
+
 ### Example scenario
 
 You want to build an agent that can summarize any webpage, using two tools:
@@ -56,7 +61,7 @@ Using a `SequentialAgent` makes it simple to define this execution flow, as show
 in the following code snippet:
 
 ```py
-SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
+SequentialAgent(name="CodePipelineAgent", sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
 This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/#data-handling)**.
