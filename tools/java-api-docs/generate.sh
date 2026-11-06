@@ -7,6 +7,11 @@
 # modify any existing adk-java clones or local environments.
 #
 # Prerequisites: java (JDK 17+), jar, git
+#
+# CI builds this on the JDK pinned in update-java-api-docs.yaml, and the
+# Javadoc tool version is stamped into every generated page, so a build on
+# a different JDK produces a diff on every file. Match that pin when
+# running by hand and you are comparing output.
 # Run from: adk-docs repository root
 #
 # Usage: bash tools/java-api-docs/generate.sh <version>
@@ -33,7 +38,7 @@ for cmd in java jar git; do
   if ! command -v "$cmd" &> /dev/null; then
     echo "Error: $cmd is required but not installed."
     if [[ "$cmd" == "java" || "$cmd" == "jar" ]]; then
-      echo "  Install with: brew install openjdk@17"
+      echo "  Install with: brew install openjdk@26"
     fi
     exit 1
   fi
@@ -60,9 +65,33 @@ echo "Cloning adk-java v${VERSION}..."
 git clone --depth 1 --branch "v${VERSION}" https://github.com/google/adk-java adk-java
 cd adk-java
 
+# The footer Javadoc stamps on every page.
+#
+# adk-java's pom has no project-level <organization> and no <inceptionYear> --
+# the only <organization> in it is inside <developers>, which is a different
+# field and not one the Javadoc plugin reads. Its default footer is
+# "Copyright {inceptionYear}-{currentYear} {organizationName}. All rights
+# reserved.", so with two of those three empty the published pages have been
+# carrying "Copyright (c) 1980. All rights reserved." -- no owner, and a year
+# that is the ZIP epoch rather than a date anything happened.
+#
+# Rather than wait on an upstream pom change, set the footer here. The year is
+# the year of the release being documented, taken from the tag we just checked
+# out, not the year the build happens to run: these pages are committed to
+# this repository, so a footer that followed the wall clock would rewrite
+# every one of them the first time anybody rebuilt an old version.
+RELEASE_YEAR=$(git -C "$WORK_DIR/adk-java" log -1 --format=%cd --date=format:%Y)
+if [[ ! "$RELEASE_YEAR" =~ ^[0-9]{4}$ ]]; then
+  echo "Error: could not read the release year from the adk-java tag." >&2
+  exit 1
+fi
+JAVADOC_BOTTOM="Copyright &#169; ${RELEASE_YEAR} Google LLC."
+echo "Footer: ${JAVADOC_BOTTOM}"
+
 # Build aggregated Javadoc JAR
 echo "Building Java API docs with Maven Javadoc..."
-./mvnw -B --no-transfer-progress clean javadoc:aggregate-jar
+./mvnw -B --no-transfer-progress clean javadoc:aggregate-jar \
+  -Dbottom="${JAVADOC_BOTTOM}"
 
 # Resolve the aggregate javadoc jar, asserting there is exactly one match.
 javadoc_jars=("$WORK_DIR"/adk-java/target/google-adk-parent-*-javadoc.jar)

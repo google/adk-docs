@@ -47,7 +47,7 @@ class CheckConditionAgent(name: String) : BaseAgent(name = name) {
 }
 // --8<-- [end:check_condition_agent]
 
-// --8<-- [start:human_in_loop_pattern]
+// --8<-- [start:human_in_loop_tool]
 class ExternalApprovalTool : BaseTool(
     "external_approval_tool",
     "Sends a request for human approval.",
@@ -67,7 +67,7 @@ class ExternalApprovalTool : BaseTool(
         return mapOf("decision" to "approved")
     }
 }
-// --8<-- [end:human_in_loop_pattern]
+// --8<-- [end:human_in_loop_tool]
 
 fun main() {
     val model = Gemini(name = "gemini-flash-latest")
