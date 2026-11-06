@@ -352,7 +352,7 @@ Use these parameters to control runtime guardrails and debugging:
   uploaded files) as run artifacts for debugging and auditing. Deprecated in
   Python in favor of `SaveFilesAsArtifactsPlugin`. In Go, set the
   `SaveInputBlobsAsArtifacts` field of `agent.RunConfig` to `true`. The runner
-  needs an artifact service for this to take effect.
+  needs an artifact service for the setting to take effect.
 - `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
   invocation, useful for tracing or logging.
 - `service_tier`: Selects the serving capacity for the run's model calls. ADK
