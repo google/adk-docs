@@ -1,18 +1,18 @@
 # OpenAI models for ADK agents
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
-
-!!! example "Experimental"
-
-    The `openaimodel` package is experimental and its behavior may change or be removed in the future. We welcome your
-		[feedback](https://github.com/google/adk-go/issues/new?template=feature_request.md)!
 
 You can use OpenAI models with ADK. How you connect depends on the language:
 
 - **Go — native support:** ADK Go provides a direct `openaimodel` package that implements the `model.LLM` interface, targeting the OpenAI Responses API or the [Chat Completions API](#chat-completions-api). [Get started](#get-started).
 - **Python — via LiteLLM:** ADK Python accesses OpenAI models (and many other providers) through the LiteLLM connector. See [LiteLLM](/agents/models/litellm/).
+
+!!! example "Experimental"
+
+    The `openaimodel` package is experimental and its behavior may change or be removed in the future. We welcome your
+		[feedback](https://github.com/google/adk-go/issues/new?template=feature_request.md)!
 
 ## Get started
 
@@ -89,10 +89,31 @@ The following code example shows a basic implementation for using OpenAI models 
 
         For a complete, runnable sample, see [examples/openai/completions/](https://github.com/google/adk-go/tree/main/examples/openai/completions) in the ADK Go repository.
 
+=== "Kotlin"
+
+	```kotlin
+	import com.google.adk.kt.agents.Instruction
+	import com.google.adk.kt.agents.LlmAgent
+	import com.google.adk.kt.models.openai.ChatCompletions
+
+	// Instantiate the model on the Chat Completions API
+	val llm = ChatCompletions(name = "gpt-4o-mini", apiKey = System.getenv("OPENAI_API_KEY"))
+
+	// Create the agent
+	val agent =
+	  LlmAgent(
+		name = "openai_agent",
+		model = llm,
+		instruction = Instruction("You are a helpful AI assistant."),
+	  )
+	```
+
+	For a complete, runnable sample, see [examples/.../chatcompletions/](https://github.com/google/adk-kotlin/tree/v1.5.0/examples/src/main/kotlin/com/google/adk/kt/examples/chatcompletions) in the ADK Kotlin repository.
+
 ## Chat Completions API {#chat-completions-api}
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 By default, `openaimodel` sends requests to the OpenAI
