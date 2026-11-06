@@ -14,10 +14,8 @@ impact on the operating context window of the agent.
 !!! example "Experimental in TypeScript and Kotlin"
     
     The Skills feature is experimental in ADK TypeScript and ADK Kotlin. We
-    welcome your feedback via the respective ADK GitHub repositories:
-    [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
+    welcome your feedback via the respective ADK repositories:
     [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
-    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills),
     [ADK Kotlin](https://github.com/google/adk-kotlin/issues/new).
 
 ## Get started
