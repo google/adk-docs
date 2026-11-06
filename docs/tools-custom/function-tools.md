@@ -620,7 +620,9 @@ proceeding with a task.
 
 In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass
 a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you
-instantiate the `LongRunningFunctionTool` class.
+instantiate the `LongRunningFunctionTool` class. In Go, you set
+`IsLongRunning: true` in the `functiontool.Config` that you pass to
+`functiontool.New`.
 
 1. **Initiation:** When the LLM calls the tool, your function starts the
    long-running operation.
