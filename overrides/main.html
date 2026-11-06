@@ -16,9 +16,25 @@
 
 {% extends "base.html" %}
 
+{#- Name the SDK in scoped pages' titles: the five views of a page are
+    distinct pages (own canonical URL, own code), so tabs, bookmarks and search
+    results should tell them apart. -#}
+{% block htmltitle %}
+  {% set ls = config.extra.langscope %}
+  {% set page_lang = page.url.split("/")[0] if page and page.url else "" %}
+  {% set match = (ls.languages if ls else []) | selectattr("key", "equalto", page_lang) | list %}
+  {% set suffix = " (" ~ match[0].label ~ ")" if match else "" %}
+  {% if page.meta and page.meta.title %}
+    <title>{{ page.meta.title }}{{ suffix }} - {{ config.site_name }}</title>
+  {% elif page.title and not page.is_homepage %}
+    <title>{{ page.title | striptags }}{{ suffix }} - {{ config.site_name }}</title>
+  {% else %}
+    <title>{{ config.site_name }}</title>
+  {% endif %}
+{% endblock %}
+
 {% block extrahead %}
-  <!-- HTML Meta Tags -->
-  <title>Agent Development Kit (ADK)</title>
+  <!-- HTML Meta Tags (the page <title> comes from the htmltitle block) -->
   <meta name="description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
 
   <!-- Facebook Meta Tags -->
@@ -44,14 +60,37 @@
        module script, so the bundle always fetches its index from the origin
        root: correct at a root domain, wrong under a subpath. -->
 
+  <!-- Language-scoped docs: tag each page with the SDKs it belongs to, as a
+       Pagefind filter. Scoped pages carry their own language; shared pages
+       (home, API reference) carry every language so no scope loses them. -->
+  {% set ls = config.extra.langscope %}
+  {% if ls and page and page.url is defined %}
+    {% set page_lang = page.url.split("/")[0] %}
+    {% for key in ls.lang_keys %}
+      {% if page_lang == key or page_lang not in ls.lang_keys %}
+  <meta data-pagefind-filter="language[content]" content="{{ key }}">
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
   <!-- Raise termSimilarity so "LlmAgent" beats pages that merely say "agent"
        often. Set on pagefindOptions, which is read lazily; configureInstance()
-       is ignored once the components create the instance on connect. -->
+       is ignored once the components create the instance on connect.
+       Scope results to the reader's SDK through instance.searchFilters, which
+       every search the components run passes on (pagefindOptions has no
+       filters option). Reapplied after each instant navigation, which can
+       change the SDK without reloading this script. -->
   <script type="module">
-    window.PagefindComponents
+    var instance = window.PagefindComponents
       .getInstanceManager()
-      .getInstance("default")
-      .pagefindOptions.ranking = { termSimilarity: 2.0 };
+      .getInstance("default");
+    instance.pagefindOptions.ranking = { termSimilarity: 2.0 };
+    function scopeSearch() {
+      var lang = window.adkLanguage && window.adkLanguage.preferred();
+      instance.searchFilters = lang ? { language: [lang] } : {};
+    }
+    scopeSearch();
+    if (window.document$) window.document$.subscribe(scopeSearch);
   </script>
 
   <!-- Mirror Material's data-md-color-scheme onto data-pf-theme, the only
@@ -159,11 +198,15 @@
 </span>
 -->
 {% block announce %}
+{#- The release is TypeScript's, so link its TypeScript pages (flat URLs when a
+    local build leaves TypeScript out). -#}
+{% set ls = config.extra.langscope %}
+{% set ts = "typescript/" if ls and "typescript" in ls.lang_keys else "" %}
 <span class="announce-item">
   <strong>Released!</strong>
-  <a href="/2.0/">
+  <a href="{{ (ts ~ '2.0/') | url }}">
     ADK TypeScript 2.0 GA
   </a>
-  is now available with graph workflows support! <a href="/graphs/#typescript">Get started</a>
+  is now available with graph workflows support! <a href="{{ (ts ~ 'graphs/') | url }}">Get started</a>
 </span>
 {% endblock %}
