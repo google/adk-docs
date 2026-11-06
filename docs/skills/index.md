@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -11,13 +11,11 @@ instructions, resources, and tools required for a task, based on the
 The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
-!!! example "Experimental"
+!!! example "Experimental in TypeScript and Kotlin"
     
-    The Skills feature is experimental. We welcome your feedback via the
-    respective ADK GitHub repositories:
-    [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
+    The Skills feature is experimental in ADK TypeScript and ADK Kotlin. We
+    welcome your feedback via the respective ADK repositories:
     [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
-    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills),
     [ADK Kotlin](https://github.com/google/adk-kotlin/issues/new).
 
 ## Get started
