@@ -275,7 +275,8 @@ Here are the primary context flavors you will encounter:
     - Direct `user_content` access.
 
 !!! note
-  In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
+
+    In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type.
 
     === "Python"
 

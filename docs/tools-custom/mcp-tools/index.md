@@ -1,7 +1,7 @@
 # Model Context Protocol tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The **Model Context Protocol (MCP)** is an open standard for connecting generative AI models to external data sources, tools, and systems. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
@@ -140,7 +140,6 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     - Interact with the Agent: select `filesystem_assistant` from the drop-down menu and prompt the Agent with commands: *List files in the current directory* or *What is the content of another_file.md?*
 
     ![MCP with ADK Web - FileSystem Example](../../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
-    ```
 
 === "TypeScript"
 
@@ -291,7 +290,8 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     )
     ```
-    **Step 2**: Set environment variable before running `adk web`, set you Google API key in your terminal
+
+    **Step 2**: Set environment variable before running `adk web`, set your Google API key in your terminal
       
       ```bash
       export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
@@ -331,7 +331,7 @@ Unlike the previous local process example, this pattern connects your agent to a
             }),
         ],
     });
-     ``` 
+    ```
      
 ---
 

@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -11,13 +11,11 @@ instructions, resources, and tools required for a task, based on the
 The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
-!!! example "Experimental"
+!!! example "Experimental in TypeScript and Kotlin"
     
-    The Skills feature is experimental. We welcome your feedback via the
-    respective ADK GitHub repositories:
-    [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
+    The Skills feature is experimental in ADK TypeScript and ADK Kotlin. We
+    welcome your feedback via the respective ADK repositories:
     [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
-    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills),
     [ADK Kotlin](https://github.com/google/adk-kotlin/issues/new).
 
 ## Get started
@@ -36,8 +34,15 @@ You can define [skills in code](#inline-skills) or load
     from google.adk.tools import skill_toolset
 
     weather_skill = load_skill_from_dir(
-        pathlib.Path(__file__).parent / "skills" / "weather_skill"
+        pathlib.Path(__file__).parent / "skills" / "weather-skill"
     )
+
+    def get_weather_tool(city: str) -> dict:
+        """Retrieves the current weather report for a specified city."""
+        return {
+            "status": "success",
+            "report": f"The weather in {city} is sunny with a temperature of 25°C.",
+        }
 
     my_skill_toolset = skill_toolset.SkillToolset(
         skills=[weather_skill],
@@ -111,9 +116,12 @@ You can define [skills in code](#inline-skills) or load
     For a complete example, see the code sample in
     [skills](https://github.com/google/adk-kotlin/tree/main/examples/src/main/kotlin/com/google/adk/kt/examples/skills).
 
-!!! note "Check your working directory"
+!!! note "Check where `skills/` is resolved from"
 
-        Ensure that 'skills/' directory exist in your current working directory and contains the sub-directories for the Skills you want to use in your agent.
+    The Python and TypeScript examples above resolve `skills/` relative to the
+    directory holding the agent source file, so place `skills/` next to that
+    file. The Go and Kotlin examples pass a relative `skills` path, which
+    resolves relative to the current working directory instead.
 
 ## Skill structure
 
@@ -164,6 +172,10 @@ meets the following requirements:
 *   **description**:
     *   Must not be empty.
     *   Must be 1024 characters or less.
+
+!!! note "Directory must match the name"
+    
+    When loading a skill from the filesystem, the directory name must match the **name** in the front matter, or loading fails.
 
 ### Skills directory structure
 
