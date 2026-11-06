@@ -130,7 +130,7 @@ The two APIs support the same features, with these differences:
 
 ## Limitations
 
-- **Text only** — multimodal input (images, audio, files) is not supported.
+- **No audio or video input** — ADK Go returns an error for audio and video input.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
 - **Function tools don't use strict mode** — In ADK Go v2.5.0 and higher, ADK sends function tools with OpenAI strict schema validation off. Optional parameters stay optional, but the model's tool-call arguments might not match the declared schema. Validate tool arguments before acting on them.
