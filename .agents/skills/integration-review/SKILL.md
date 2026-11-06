@@ -410,7 +410,7 @@ Optional. Note it and move on.
 
 -   **REQUIRED: Code citations with URL links**: Any output that includes code
     or doc source citations must provide URL links that point to github.com,
-    cs.corp.google.com, or critique.corp.google.com, including specific line
+    including specific line
     numbers. Do NOT point to local files for code citations. For a PR, link the
     head commit blob, for example
     `https://github.com/google/adk-docs/blob/<sha>/docs/integrations/<page>.md#L76`.
