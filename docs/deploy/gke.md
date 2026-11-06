@@ -386,8 +386,8 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
         v2.5.0 and higher, the web launcher listens only on `127.0.0.1` by
         default. ADK Go v2.0.0 through v2.4.0 listen on all interfaces and don't
         accept the `-host` flag, so remove it if you use one of those versions.
-        The dev UI that the `webui` sublauncher serves is intended for
-        development, not for public production endpoints.
+        The ADK web interface that the `webui` sublauncher serves is intended
+        for development, not for public production endpoints.
 
 ### Build the container image
 
