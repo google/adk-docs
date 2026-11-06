@@ -631,6 +631,14 @@ Here are the details for each command line argument:
 
 ### Run conformance tests
 
+Replay tests need the ADK web server running with the replay plugin, which serves the recorded model and tool responses. If the server is still running with the recording plugin from [Automate the baseline](#automate-the-baseline), stop it and restart it with the replay plugin:
+
+```shell
+adk web --extra_plugins=google.adk.cli.plugins.replay_plugin.ReplayPlugin /path/to/agents
+```
+
+If the replay plugin is not loaded, each test fails with `Replay verification failed: AttributeError: 'NoneType' object has no attribute 'recordings'`.
+
 You can run all your tests at once, run specific ones, or create a summary report.
 
 #### Run all tests
