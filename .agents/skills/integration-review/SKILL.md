@@ -45,8 +45,6 @@ integration page under `docs/integrations/`.
 
 -   Pull requests should be specified as a URL link, for example:
     https://github.com/google/adk-docs/pull/1000
--   Change lists should be specified as a URL link, for example:
-    https://critique.corp.google.com/cl/2000000000 or cl/2000000000
 -   Local files should be specified as a repository path, for example:
     `docs/integrations/bigquery.md`
 
