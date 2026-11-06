@@ -1,989 +1,1451 @@
 # Authenticating with tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-kotlin">Kotlin</span>
 </div>
 
-The tools and services you use within ADK agents may require access to protected
-resources, such as user data in email or calendar applications, or sales records
-in databases. Getting access to these resources typically requires an
-authentication process that includes credentials and access keys which must
-be carefully managed and protected. The requirements for managing authentication
-data can also change if you are running your agent locally or deploying it
-to a hosted service. If multiple users, with potentially different access
-permissions, are interacting with the agent, this creates another layer of
-authentication management requirements.
+Tools often connect to external APIs and services that require credentials. ADK provides a unified authentication framework that separates **what** authentication an API requires `AuthScheme` from **how** credentials are supplied or exchanged `AuthCredential`, orchestrated by `AuthConfig`, in Python, TypeScript, and Kotlin, or `auth.CredentialProvider`, in Go.
 
-!!! danger "WARNING: Credential storage and security risks"
+This guide progresses from the **simplest static configurations** to the **most advanced custom authentication providers**:
 
-    Storing sensitive credentials such as access tokens and especially refresh
-    tokens directly in the session state can pose security risks depending on
-    your session storage backend, your ***SessionService*** implementation,
-    and overall application security posture. Carefully consider how you manage
-    credentials in ADK agents before deploying them for general use.
+1. [How ADK authentication works](#how-adk-authentication-works): Security principals, runtime lifecycle, and credential storage strategies.
+2. [Static and non-interactive authentication](#static-and-non-interactive-authentication): API keys, Bearer tokens, OAuth 2.0 Client Credentials (2LO), Service Accounts, and Google Cloud ID tokens.
+3. [Pre-built toolsets and external frontend tokens](#pre-built-toolsets-and-external-frontend-tokens): Attaching credentials to `OpenAPIToolset`, `GoogleApiToolset`, `McpToolset`, and reusing frontend tokens with `external_access_token_key`.
+4. [Interactive user authentication (3LO OAuth 2.0 and OIDC)](#interactive-user-authentication-3lo-oauth-20-and-oidc): Pausing tool execution with `adk_request_credential` to collect user consent and exchange authorization codes.
+5. [Custom authenticated tools](#custom-authenticated-tools): Building custom tools with `AuthenticatedFunctionTool`, `BaseToolset.get_auth_config()`, or manual `ToolContext` / `Context` helpers.
+6. [Managed authentication and custom auth providers](#managed-authentication-and-custom-auth-providers): Delegating token lifecycles to Google Cloud Agent Identity or registering a custom `BaseAuthProvider` / `auth.CredentialProvider`.
+7. [Framework components and SDK support](#framework-components-and-sdk-support): Class reference, credential types, and multi-language SDK support matrix.
 
-## Authentication and credential management
-
-There are several ways to manage authentication and credentials in ADK
-agents. Each of these methods carries some amount of risk, so you should
-carefully consider which approach best serves your application and customers.
-
-### Recommended: Authentication manager services {#authentication-manager}
-
-When deploying agents to production hosted environments, your agent's ability to
-properly authenticate to restricted tools and services becomes more challenging
-and more important to properly manage. This authentication challenge can become
-even more complicated when users of your agent have varying levels of access to
-restricted tools and data.
-
-Rather than writing code to handle the authentication process and credential
-management for various tools used by your agent, use an *authentication manager*
-service that manages *both* for you. This service should handle the storage of
-keys and secrets, as well as the acquisition, management, and storage of OAuth
-access or refresh tokens. Learn more about 
-[Agent Identity integration](/integrations/agent-identity/) with ADK.
-
-### Self-managed authentication
-
-If you decide to manage your own authentication process with ADK helper functions
-and your own code, consider these recommendations:
-
-*   **API keys and client secrets:** For any API keys and client secrets used
-    inside ADK code, when running on a local compute environment use a local
-    `.env` file excluded from version control. When your agent is hosted or
-    otherwise in a production environment, use a secrets manager. For more
-    details on secrets managers, see the [next section](#secrets-manager).
-*   **Interactive authentication:** When using interactive three-legged auth
-    (3LO) OAuth or OpenID Connect (OIDC) for authentication to tools, write a
-    service on the client application to acquire, manage access, and refresh
-    tokens. Make sure to store these tokens against an authenticated user
-    identifier in an encrypted database.
-
-### Secrets manager services {#secrets-manager}
-
-For production environments, if you are not using an
-[authentication manager](#authentication-manager) service, you should store
-credentials in a dedicated secret manager service to protect that data. With
-this approach, a secret manager securely stores the credentials for any tools or
-services accessed by the agent as needed, and those secrets are not resident in
-agent's operating memory. For example, a custom ADK Tool using this method would
-have only short-lived access tokens or secure references in session memory, and
-retrieve longer-lived refresh tokens from the secrets manager when needed. When
-selecting a secrets manager, consider services from well-established providers,
-such as
-[Google Cloud Secret Manager](https://cloud.google.com/security/products/secret-manager)
-or other secret management services.
-
-### Local encrypted secrets storage
-
-For agent applications that are less security sensitive, keeping credentials in
-local, encrypted storage can be a viable option. Consider using dedicated local
-secrets storage system or encrypting the data in a local database using a robust
-encryption library, and then managing the encryption keys securely using a key
-management service. Take care to only keep short-lived access tokens in
-operating memory and access long-lived credentials and refresh tokens from
-encrypted local storage only when needed.
-
-### In-memory secrets
-
-This method *should only be used in the early development* and testing of your
-agent. With this approach, credentials are stored in the current
-***InMemorySessionService*** instance. The data exists only in session memory
-and is not persisted. However, you should carefully consider the risks of using
-this method based on how long an agent session may last, who has access to the
-agent, and the security of the environment where the agent is running.
-
-## Framework components
-
-Within the ADK framework, the ***AuthScheme*** and ***AuthCredential*** are the
-key components for handling authentication methods and managing credential data:
-
-*   ***AuthScheme***: Defines *how* an API expects authentication credentials,
-    such as an API Key in a header or an OAuth 2.0 Bearer token. ADK supports
-    the same types of authentication schemes as OpenAPI 3.0 and uses specific
-    classes for credential types, including ***APIKey***, ***HTTPBearer***,
-    ***OAuth2***, and ***OpenIdConnectWithConfig***. For more details on each
-    OpenAPI credential type, see
-    [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/).
-
-*   ***AuthCredential***: Holds the *initial* information needed to *start* the
-    authentication process, such as your application's OAuth Client ID or
-    Secret, or an API key value. An instance of this class includes an
-    **auth_type**, such as `API_KEY`, `OAUTH2`, `SERVICE_ACCOUNT`, specifying
-    the credential type.
-
-The general authentication flow involves providing these details when
-configuring a tool. ADK then attempts to automatically exchange the initial
-credential, such as an access token, before the tool makes an API call. For
-flows requiring user interaction, including OAuth consent, ADK triggers a
-specific interactive process with your ***Agent Client*** application.
-
-### Supported initial credential types
-
-*   **API\_KEY:** Provides simple key-value authentication, which usually
-    requires no authentication exchange.
-*   **HTTP:** Provides Basic Auth which is not recommended and may not be
-    supported for exchange, or already obtained Bearer tokens. Bearer tokens do
-    not require an authentication exchange.
-*   **OAUTH2:** Provides standard OAuth 2.0 authentication flows, and requires
-    configuration with client ID, secret, and scopes. This method often
-    triggers an interactive flow for user consent.
-*   **OPEN\_ID\_CONNECT:** Provides authentication based on OpenID Connect.
-    Similar to OAuth2, this type often requires configuration and user
-    interaction.
-*   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
-    JSON key or Application Default Credentials. This type typically exchanges a
-    Bearer token.
-    
-## Tools and integrations quick guide
-
-Here is a quick guide to authentication for key ADK toolsets:
-
-*   [***RestApiTool***](/tools-custom/openapi-tools/):
-    Set `auth_scheme` and `auth_credential` during initialization
-*   [***OpenAPIToolset***](/tools-custom/openapi-tools/):
-    Set `auth_scheme` and `auth_credential` during initialization
-*   [***APIHubToolset***](/integrations/apigee-api-hub/):
-    Set `auth_scheme` and `auth_credential` during initialization, *if* the API
-    requires authentication.
-*   [***ApplicationIntegrationToolset***](/integrations/application-integration/):
-    Set `auth_scheme` and `auth_credential` during initialization, *if* the API
-    requires authentication.
-*   [***GoogleApiToolset***](/integrations/google-api-toolsets/):
-    Use this toolset's specific authentication method.
-
-For more authentication details for other pre-built tools and integrations
-see the [ADK Integrations](/integrations) catalog.
+!!! note "Securing tool inputs and action confirmations"
+    Authentication verifies identity and access permissions, but does not validate the safety of LLM-generated tool arguments. To protect authenticated tools against prompt injection or require human approval before executing high-impact actions, see [Safety and Security](/safety/) and [Action confirmations](/tools-custom/confirmation/).
 
 ---
 
-## Build agentic applications with authenticated tools
+## How ADK authentication works
 
-This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
+### Security principals and identity models
 
-### Configure tools with authentication
+ADK separates authentication responsibility between two principals and supports two runtime identity models:
 
-When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
+| Principal / Identity Model | When It Applies | How It Works | Example Artifacts |
+| :--- | :--- | :--- | :--- |
+| **Developer (Configuration principal)** | Before the agent runs | Registers OAuth clients, configures workload identities or vaults, defines scopes, and attaches `AuthScheme` and `AuthCredential` (or `auth.CredentialProvider` in Go) to tools. | `client_id`, `client_secret`, OpenAPI security definitions, `AuthConfig`, `GcpAuthProviderScheme` |
+| **Agent Identity (Machine-to-machine / 2LO)** | Runtime-non/interactive | The agent authenticates using its own workload identity or service credentials without prompting the user. | OAuth 2.0 `clientCredentials` (2LO), Application Default Credentials (ADC), OIDC ID tokens, Agent Identity 2LO connectors |
+| **End-User Identity (Delegated / 3LO & OIDC)** | Runtime/interactive | The end user grants consent during an interactive session so the agent receives a short-lived, user-scoped token to act on their behalf. | Authorization codes, `adk_request_credential`, user-scoped `access_token` and `refresh_token`, Agent Identity 3LO connectors |
 
-You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
+### Runtime authentication lifecycle
 
-#### Use OpenAPI-based toolsets
+When an agent calls a protected tool, ADK resolves credentials outside the LLM context window so raw tokens and secrets are never exposed to the model:
 
-Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
+- **Non-interactive flows (API keys, Bearer tokens, 2LO, Service Accounts):** ADK resolves and injects the credential into the outbound request immediately without pausing the agent turn.
+- **Interactive flows (3LO OAuth 2.0, OIDC):** If no valid user token exists in the session state, ADK pauses the tool call and emits a system `FunctionCall` named `adk_request_credential`, or returns `*auth.ConsentRequiredError` in Go. Your client application redirects the user to the identity provider, captures the callback URL or token, and sends it back in a `FunctionResponse` to resume the tool.
 
-=== "API Key"
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User as End User
+    participant App as Client Application
+    participant Runner as ADK Runner & Session
+    participant LLM as Gemini LLM
+    participant Tool as Protected Tool
+    participant API as External Service
 
-      Create a tool requiring an API key for simple authentication that needs no token exchange:
+    User->>App: Sends prompt requiring protected data
+    App->>Runner: runner.run_async() / runner.runAsync()
+    Runner->>LLM: Generates turn with tool declarations
+    LLM-->>Runner: FunctionCall (protected_tool)
+    Runner->>Tool: Invokes tool with ToolContext / Context
 
-      ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+    alt Non-interactive or cached token available
+        Tool->>API: Executes authenticated request
+        API-->>Tool: Returns resource payload
+    else Interactive 3LO consent required
+        Tool-->>Runner: Calls request_credential(auth_config)
+        Runner-->>App: Emits Event (FunctionCall: adk_request_credential)
+        App->>User: Redirects to Identity Provider consent URL
+        User->>App: Grants consent & returns redirect URI / code
+        App->>Runner: Sends FunctionResponse (adk_request_credential)
+        Runner->>Tool: Exchanges code, caches token in session, and retries tool
+        Tool->>API: Executes authenticated request with access_token
+        API-->>Tool: Returns resource payload
+    end
 
-      auth_scheme, auth_credential = token_to_scheme_credential(
-          "apikey", "query", "apikey", "YOUR_API_KEY_STRING"
-      )
-      sample_api_toolset = OpenAPIToolset(
-          spec_str="...",  # Fill this with an OpenAPI spec string
-          spec_str_type="yaml",
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
+    Tool-->>Runner: Tool result
+    Runner->>LLM: Summarizes tool output
+    LLM-->>App: Final response
+```
 
-=== "OAuth2 (Authorization Code)"
+### Choosing a credential management strategy
 
-      Create a tool requiring the OAuth 2.0 authorization code flow for interactive authentication on behalf of a human user:
+| Strategy | Relative Credential Exposure | Best For | Trade-off |
+| :--- | :--- | :--- | :--- |
+| **Managed authentication provider**, such as Google Cloud Agent Identity | **Minimal** | Production enterprise deployments | Requires cloud infrastructure setup and IAM bindings. |
+| **Self-managed with a secrets manager**, such as Secret Manager + `BaseAuthProvider` | **Low** | Multi-cloud or custom enterprise environments | You must implement secret retrieval, caching, and token rotation. |
+| **Local environment variables** (`.env` files) | **Medium** | Local development and CLI prototypes | Not suitable for multi-user or production deployments. |
+| **In-memory session state** (default ADK session storage) | **High** | Quick local testing of interactive 3LO flows | Tokens live in process memory and are lost on restart; do not use unencrypted in-memory storage for production credentials. |
 
-      ```py
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-      from fastapi.openapi.models import OAuth2
-      from fastapi.openapi.models import OAuthFlowAuthorizationCode
-      from fastapi.openapi.models import OAuthFlows
-      from google.adk.auth import AuthCredential
-      from google.adk.auth import AuthCredentialTypes
-      from google.adk.auth import OAuth2Auth
+!!! warning "Avoid storing credentials in agent memory and scrub accidental leaks"
+    **Never** store long-lived secrets or refresh tokens in unencrypted in-memory session state in production, and never pass raw credentials through LLM prompts or tool return payloads where they are recorded in conversation history. If a user message or external tool output could accidentally introduce a token or secret into agent memory, prune or redact sensitive values before they are persisted using `before_model_callback` / `after_tool_callback` hooks and [Google Cloud Sensitive Data Protection (Cloud DLP)](https://cloud.google.com/sensitive-data-protection/docs).
 
-      auth_scheme = OAuth2(
-          flows=OAuthFlows(
-              authorizationCode=OAuthFlowAuthorizationCode(
-                  authorizationUrl="https://accounts.google.com/o/oauth2/auth",
-                  tokenUrl="https://oauth2.googleapis.com/token",
-                  scopes={
-                      "https://www.googleapis.com/auth/calendar": "calendar scope"
-                  },
-              )
-          )
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OAUTH2,
-          oauth2=OAuth2Auth(
-              client_id=YOUR_OAUTH_CLIENT_ID,
-              client_secret=YOUR_OAUTH_CLIENT_SECRET
-          ),
-      )
+---
 
-      calendar_api_toolset = OpenAPIToolset(
-          spec_str=google_calendar_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
+## Static and non-interactive authentication
 
-=== "OAuth2 (Client Credentials)"
+Non-interactive authentication requires no end-user prompts at runtime.
 
-      Create a tool that uses the OAuth 2.0 client credentials grant type for non-interactive, machine-to-machine authentication. Supply a `client_id` and `client_secret` to obtain an access token:
+!!! warning "Prefer OAuth 2.0 and credential vaults over static API keys and downloaded service account keys"
+    Static API keys and downloaded service account JSON keys (`service_account_dict` / `JSONKey`) are long-lived credentials that increase the blast radius of a leak. Reserve static API keys for legacy APIs that offer no alternative, prefer keyless **Application Default Credentials (ADC)** over downloaded JSON keys, and use **OAuth 2.0** or a **managed credential vault** ([Google Cloud Agent Identity](#managed-authentication-with-google-cloud-agent-identity-preview) or a custom [`BaseAuthProvider`](#custom-authentication-providers-baseauthprovider-and-providerfunc)) in production.
 
-      ```python
-      from fastapi.openapi.models import (
-          OAuth2,
-          OAuthFlowClientCredentials,
-          OAuthFlows,
-      )
-      from google.adk.auth import (
-          AuthCredential,
-          AuthCredentialTypes,
-          OAuth2Auth,
-      )
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import (
-          OpenAPIToolset,
-      )
+- **ADK Python:** Use the helper functions in `google.adk.tools.openapi_tool.auth.auth_helpers` (`token_to_scheme_credential`, `service_account_dict_to_scheme_credential`, `service_account_scheme_credential`) or construct `fastapi.openapi.models` schemes and `AuthCredential` objects directly.
+- **ADK TypeScript:** Construct `AuthScheme` (OpenAPI 3.0 `SecuritySchemeObject`) and `AuthCredential` objects using `@google/adk`.
+- **ADK Go:** Use the `CredentialProvider` constructors in `google.golang.org/adk/v2/auth` (`auth.APIKey`, `auth.StaticToken`, `auth.TokenSourceProvider`, `auth.ADC`, `auth.ServiceAccount`).
+- **ADK Kotlin (Experimental):** Opt in with `@OptIn(ExperimentalAuthApi::class)` (`com.google.adk.kt.annotations.ExperimentalAuthApi`) and construct `AuthScheme` and `AuthCredential` subtypes in `com.google.adk.kt.auth` (wrapping secret strings in `Secret(...)`).
 
-      # Define the OAuth2 scheme with the client credentials flow.
-      flows = OAuthFlows(
-          clientCredentials=OAuthFlowClientCredentials(
-              tokenUrl="https://example.com/token",  # Replace with your authorization server's token endpoint.
-              scopes={"read:weather": "Read weather data"},
-          )
-      )
-      auth_scheme = OAuth2(flows=flows)
+### API keys
 
-      # Define the AuthCredential with a client ID and client secret.
-      # Do not hardcode secrets: load them from a .env file locally or from a
-      # secrets manager in production. See "Self-managed authentication" above.
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OAUTH2,
-          oauth2=OAuth2Auth(
-              client_id="YOUR_CLIENT_ID",
-              client_secret="YOUR_CLIENT_SECRET",
-          ),
-      )
+Use an API key scheme when an external service expects a static key in a request header, query parameter, or cookie.
 
-      weather_toolset = OpenAPIToolset(
-          spec_str="...",  # Pass your OpenAPI specification YAML string here.
-          spec_str_type="yaml",
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
+=== "Python"
 
-=== "Service Account"
+    ```python
+    from google.adk.tools.openapi_tool import OpenAPIToolset
+    from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
 
-      Create a tool that authenticates as a non-human identity using a Service Account JSON key or Application Default Credentials:
+    auth_scheme, auth_credential = token_to_scheme_credential(
+        token_type="apikey",
+        location="header",  # "header", "query", or "cookie"
+        name="X-Api-Key",
+        credential_value="YOUR_API_KEY_STRING",
+    )
 
-      ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="yaml",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential,
+    )
+    ```
 
-      service_account_cred = json.loads(service_account_json_str)
-      auth_scheme, auth_credential = service_account_dict_to_scheme_credential(
-          config=service_account_cred,
-          scopes=["https://www.googleapis.com/auth/cloud-platform"],
-      )
-      sample_toolset = OpenAPIToolset(
-          spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='json',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
+=== "TypeScript"
 
-=== "OpenID Connect"
+    ```typescript
+    import { AuthCredential, AuthCredentialTypes, AuthScheme, OpenAPIToolset } from '@google/adk';
 
-      Create a tool requiring OpenID Connect to verify user identity via an authorization server:
+    const authScheme: AuthScheme = {
+      type: 'apiKey',
+      in: 'header', // 'header', 'query', or 'cookie'
+      name: 'X-Api-Key',
+    };
 
-      ```py
-      from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
-      from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+    const authCredential: AuthCredential = {
+      authType: AuthCredentialTypes.API_KEY,
+      apiKey: 'YOUR_API_KEY_STRING',
+    };
 
-      auth_scheme = OpenIdConnectWithConfig(
-          authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
-          token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES']
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
-          oauth2=OAuth2Auth(
-              client_id="...",
-              client_secret="...",
-          )
-      )
+    const toolset = new OpenAPIToolset({
+      specStr: openapiSpecString,
+      specType: 'yaml',
+      authScheme,
+      authCredential,
+    });
+    ```
 
-      userinfo_toolset = OpenAPIToolset(
-          spec_str=content, # Fill in an actual spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
+=== "Go"
 
-#### Use Google API toolsets
+    ```go
+    import (
+        "io"
+        "os"
 
-These toolsets often have dedicated configuration methods.
+        "google.golang.org/adk/v2/auth"
+        "google.golang.org/adk/v2/tool/mcptoolset"
+    )
 
-Tip: For how to create a Google OAuth Client ID & Secret, see this guide: [Get your Google API Client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id)
+    apiKeyProvider := auth.APIKey("X-Api-Key", os.Getenv("SERVICE_API_KEY"))
 
-```py
-# Example: Configuring Google Calendar Tools
+    mcpTools, err := mcptoolset.New(mcptoolset.Config{
+        Endpoint: "https://example.com/mcp",
+        Auth:     apiKeyProvider,
+    })
+    if err != nil {
+        return err
+    }
+    defer mcpTools.(io.Closer).Close()
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
+    import com.google.adk.kt.auth.AuthScheme
+    import com.google.adk.kt.auth.Secret
+
+    @OptIn(ExperimentalAuthApi::class)
+    val apiKeyAuthConfig = AuthConfig(
+        authScheme = AuthScheme.ApiKey(
+            name = "X-Api-Key",
+            location = AuthScheme.ApiKey.Location.HEADER, // HEADER, QUERY, or COOKIE
+        ),
+        rawAuthCredential = AuthCredential.ApiKey(
+            apiKey = Secret(System.getenv("SERVICE_API_KEY")),
+        ),
+    )
+    ```
+
+### Bearer and HTTP tokens
+
+Use an HTTP Bearer token when you have a pre-generated token string.
+
+=== "Python"
+
+    ```python
+    from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
+
+    # In ADK Python, pass token_type="oauth2Token" to create an HTTPBearer scheme
+    # paired with an AuthCredentialTypes.HTTP bearer credential:
+    auth_scheme, auth_credential = token_to_scheme_credential(
+        token_type="oauth2Token",
+        location="header",
+        name="Authorization",
+        credential_value="YOUR_BEARER_TOKEN",
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AuthCredential, AuthCredentialTypes, AuthScheme } from '@google/adk';
+
+    const authScheme: AuthScheme = {
+      type: 'http',
+      scheme: 'bearer',
+    };
+
+    const authCredential: AuthCredential = {
+      authType: AuthCredentialTypes.HTTP,
+      http: {
+        scheme: 'bearer',
+        credentials: {
+          token: 'YOUR_BEARER_TOKEN',
+        },
+      },
+    };
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "os"
+
+        "google.golang.org/adk/v2/auth"
+    )
+
+    // Static Bearer token ("Authorization: Bearer <token>")
+    bearerProvider := auth.StaticToken(os.Getenv("BEARER_TOKEN"))
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
+    import com.google.adk.kt.auth.AuthScheme
+
+    @OptIn(ExperimentalAuthApi::class)
+    val bearerAuthConfig = AuthConfig(
+        authScheme = AuthScheme.Http.bearer(bearerFormat = "JWT"),
+        rawAuthCredential = AuthCredential.Http.bearer(
+            token = System.getenv("BEARER_TOKEN"),
+        ),
+    )
+    ```
+
+### OAuth 2.0 Client Credentials (2LO)
+
+Use the OAuth 2.0 Client Credentials grant `clientCredentials` for machine-to-machine communication where the agent authenticates with its own `client_id` and `client_secret` rather than acting on behalf of an end user.
+
+=== "Python"
+
+    ```python
+    from fastapi.openapi.models import OAuth2, OAuthFlowClientCredentials, OAuthFlows
+    from google.adk.auth import AuthCredential, AuthCredentialTypes, OAuth2Auth
+    from google.adk.tools.openapi_tool import OpenAPIToolset
+
+    auth_scheme = OAuth2(
+        flows=OAuthFlows(
+            clientCredentials=OAuthFlowClientCredentials(
+                tokenUrl="https://example.com/oauth2/token",
+                scopes={"read:data": "Read service data"},
+            )
+        )
+    )
+
+    auth_credential = AuthCredential(
+        auth_type=AuthCredentialTypes.OAUTH2,
+        oauth2=OAuth2Auth(
+            client_id="YOUR_CLIENT_ID",
+            client_secret="YOUR_CLIENT_SECRET",
+        ),
+    )
+
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="yaml",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential,
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AuthCredential, AuthCredentialTypes, AuthScheme, OpenAPIToolset } from '@google/adk';
+
+    const authScheme: AuthScheme = {
+      type: 'oauth2',
+      flows: {
+        clientCredentials: {
+          tokenUrl: 'https://example.com/oauth2/token',
+          scopes: { 'read:data': 'Read service data' },
+        },
+      },
+    };
+
+    const authCredential: AuthCredential = {
+      authType: AuthCredentialTypes.OAUTH2,
+      oauth2: {
+        clientId: 'YOUR_CLIENT_ID',
+        clientSecret: 'YOUR_CLIENT_SECRET',
+      },
+    };
+
+    const toolset = new OpenAPIToolset({
+      specStr: openapiSpecString,
+      specType: 'yaml',
+      authScheme,
+      authCredential,
+    });
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "context"
+        "os"
+
+        "golang.org/x/oauth2/clientcredentials"
+        "google.golang.org/adk/v2/auth"
+    )
+
+    ccConfig := &clientcredentials.Config{
+        ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
+        ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
+        TokenURL:     "https://example.com/oauth2/token",
+        Scopes:       []string{"read:data"},
+    }
+
+    oauthProvider := auth.TokenSourceProvider(ccConfig.TokenSource(context.Background()))
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
+    import com.google.adk.kt.auth.AuthScheme
+    import com.google.adk.kt.auth.Secret
+
+    @OptIn(ExperimentalAuthApi::class)
+    val clientCredentialsAuthConfig = AuthConfig(
+        authScheme = AuthScheme.OAuth2.clientCredentials(
+            tokenUrl = "https://example.com/oauth2/token",
+            scopes = mapOf("read:data" to "Read service data"),
+        ),
+        rawAuthCredential = AuthCredential.OAuth2(
+            clientId = System.getenv("OAUTH_CLIENT_ID"),
+            clientSecret = Secret(System.getenv("OAUTH_CLIENT_SECRET")),
+        ),
+    )
+    ```
+
+### Service accounts and Application Default Credentials (ADC)
+
+For Google Cloud APIs and internal services, authenticate using Application Default Credentials (ADC) or an explicit Google Cloud Service Account key.
+
+=== "Python"
+
+    ```python
+    import json
+    from google.adk.auth.auth_credential import ServiceAccount
+    from google.adk.tools.openapi_tool import OpenAPIToolset
+    from google.adk.tools.openapi_tool.auth.auth_helpers import (
+        service_account_dict_to_scheme_credential,
+        service_account_scheme_credential,
+    )
+
+    # Option 1: Use Application Default Credentials (ADC)
+    adc_scheme, adc_credential = service_account_scheme_credential(
+        ServiceAccount(
+            use_default_credential=True,
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+    )
+
+    # Option 2: Use a Service Account JSON dictionary
+    service_account_dict = json.loads(service_account_json_str)
+    sa_scheme, sa_credential = service_account_dict_to_scheme_credential(
+        config=service_account_dict,
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="json",
+        auth_scheme=adc_scheme,
+        auth_credential=adc_credential,
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AuthCredential, AuthCredentialTypes, AuthScheme, OpenAPIToolset } from '@google/adk';
+
+    const authScheme: AuthScheme = {
+      type: 'http',
+      scheme: 'bearer',
+    };
+
+    // Option 1: Use Application Default Credentials (ADC)
+    const adcCredential: AuthCredential = {
+      authType: AuthCredentialTypes.SERVICE_ACCOUNT,
+      serviceAccount: {
+        useDefaultCredential: true,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+      },
+    };
+
+    // Option 2: Use an explicit ServiceAccountCredential object
+    const explicitSaCredential: AuthCredential = {
+      authType: AuthCredentialTypes.SERVICE_ACCOUNT,
+      serviceAccount: {
+        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+        serviceAccountCredential: {
+          type: 'service_account',
+          projectId: 'your-project-id',
+          privateKeyId: 'your-key-id',
+          privateKey: '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n',
+          clientEmail: 'your-sa@your-project.iam.gserviceaccount.com',
+          clientId: '1234567890',
+          authUri: 'https://accounts.google.com/o/oauth2/auth',
+          tokenUri: 'https://oauth2.googleapis.com/token',
+          authProviderX509CertUrl: 'https://www.googleapis.com/oauth2/v1/certs',
+          clientX509CertUrl: 'https://www.googleapis.com/robot/v1/metadata/x509/...',
+          universeDomain: 'googleapis.com',
+        },
+      },
+    };
+
+    const toolset = new OpenAPIToolset({
+      specStr: openapiSpecString,
+      specType: 'json',
+      authScheme,
+      authCredential: adcCredential,
+    });
+    ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/v2/auth"
+
+    // Option 1: Application Default Credentials (ADC)
+    adcProvider := auth.ADC("https://www.googleapis.com/auth/cloud-platform")
+
+    // Option 2: Explicit Service Account JSON key
+    saProvider := auth.ServiceAccount(auth.ServiceAccountConfig{
+        JSONKey: serviceAccountJSONBytes,
+        Scopes:  []string{"https://www.googleapis.com/auth/cloud-platform"},
+    })
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthCredential
+
+    // Option 1: Application Default Credentials (ADC)
+    @OptIn(ExperimentalAuthApi::class)
+    val adcCredential = AuthCredential.ServiceAccount.applicationDefault(
+        scopes = listOf("https://www.googleapis.com/auth/cloud-platform"),
+    )
+
+    // Option 2: Explicit ServiceAccount.Credential key
+    @OptIn(ExperimentalAuthApi::class)
+    val saCredential = AuthCredential.ServiceAccount.fromKey(
+        key = serviceAccountKey, // AuthCredential.ServiceAccount.Credential
+        scopes = listOf("https://www.googleapis.com/auth/cloud-platform"),
+    )
+    ```
+
+### Google Cloud Access Tokens vs. ID Tokens
+
+When configuring Service Account credentials in **ADK Python**, **ADK Go**, or **ADK Kotlin**, choose between an **OAuth 2.0 Access Token**, the default, and an **OpenID Connect (OIDC) ID Token** based on the target service:
+
+| Feature | OAuth 2.0 Access Token (Default) | OIDC ID Token (`use_id_token=True` / `Audience` / `forIdToken`) |
+| :--- | :--- | :--- |
+| **Primary Purpose** | **Authorization:** Grants permission to call Google APIs. | **Authentication:** Proves the caller's identity to a target service. |
+| **Typical Targets** | Google Cloud APIs, such as BigQuery, Cloud Storage, Agent Platform or Calendar. | Cloud Run services, Cloud Run functions, Identity-Aware Proxy (IAP), and custom IAM-secured endpoints. |
+| **Required Parameter** | `scopes` / `Scopes`, list of OAuth scope URIs. | `audience` / `Audience`, the base URL or OAuth client ID of the receiving service). |
+| **Token Format** | Opaque bearer string `ya29...`. | Signed JSON Web Token (JWT) verifiable by the target service. |
+
+To mint an ID token for a Cloud Run service or IAP-protected endpoint, enable ID token mode and specify the target `audience` URL:
+
+=== "Python"
+
+    ```python
+    from google.adk.auth.auth_credential import ServiceAccount
+    from google.adk.tools.openapi_tool import OpenAPIToolset
+    from google.adk.tools.openapi_tool.auth.auth_helpers import (
+        service_account_scheme_credential,
+    )
+
+    sa_config = ServiceAccount(
+        use_default_credential=True,
+        use_id_token=True,
+        audience="https://my-cloud-run-service-xyz.a.run.app",
+    )
+
+    auth_scheme, auth_credential = service_account_scheme_credential(sa_config)
+
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="json",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential,
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "net/http"
+
+        "google.golang.org/adk/v2/auth"
+    )
+
+    // Setting Audience requests a Google-signed ID token instead of an access token.
+    // Omit JSONKey to use Application Default Credentials (ADC).
+    idTokenProvider := auth.ServiceAccount(auth.ServiceAccountConfig{
+        Audience: "https://my-cloud-run-service-xyz.a.run.app",
+    })
+
+    // Wrap an http.Client or pass to mcptoolset.Config{Auth: idTokenProvider}:
+    httpClient := &http.Client{
+        Transport: &auth.Transport{Provider: idTokenProvider},
+    }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthCredential
+
+    // Mint an OIDC ID token using Application Default Credentials (ADC)
+    @OptIn(ExperimentalAuthApi::class)
+    val idTokenCredential = AuthCredential.ServiceAccount.forIdToken(
+        audience = "https://my-cloud-run-service-xyz.a.run.app",
+    )
+    ```
+
+#### `ServiceAccount` parameter reference
+
+| Python (`ServiceAccount`) | TypeScript (`ServiceAccount`) | Go (`ServiceAccountConfig`) | Kotlin (`AuthCredential.ServiceAccount`) | Default | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `use_default_credential` | `useDefaultCredential` | Omit `JSONKey` | `useDefaultCredential` / `ServiceAccount.applicationDefault()` | `False` | When `True`, or when `JSONKey` is empty in Go, uses Application Default Credentials (ADC). |
+| `service_account_credential` | `serviceAccountCredential` | `JSONKey` (`[]byte`) | `serviceAccountCredential` / `ServiceAccount.fromKey()` | `None` | Explicit service account key payload. Required when not using ADC. |
+| `scopes` | `scopes` | `Scopes` (`[]string`) | `scopes` (`List<String>`) | `None` | OAuth 2.0 scopes for access tokens. Required when requesting access tokens with an explicit key; ignored when requesting an ID token. |
+| `use_id_token` | `useIdToken`, interface field only; not exchanged by `ServiceAccountCredentialExchanger` | Inferred when `Audience != ""` | `useIdToken` / `ServiceAccount.forIdToken()` | `False` | When `True`, or when `Audience` is not empty in Go, mints an OIDC ID token instead of an access token. |
+| `audience` | `audience`, interface field only; not exchanged by `ServiceAccountCredentialExchanger` | `Audience` (`string`) | `audience` (`String`) | `None` | Target audience URI for the ID token. Required when `use_id_token` / `useIdToken` is `True`. |
+
+---
+
+## Pre-built toolsets and external frontend tokens
+
+ADK toolsets accept authentication configuration directly in their constructors or helper methods:
+
+| Toolset | How to Configure Authentication | Supported SDKs |
+| :--- | :--- | :--- |
+| **`OpenAPIToolset` / `RestApiTool`** | Pass `auth_scheme` and `auth_credential` (`authScheme` and `authCredential` in TypeScript) to the constructor. | Python, TypeScript |
+| **`GoogleApiToolset` subclasses** (`CalendarToolset`, `GmailToolset`, `DocsToolset`, `SheetsToolset`, `SlidesToolset`, `YoutubeToolset`) | Pass `client_id` and `client_secret` to the constructor, or call `.configure_auth(client_id, client_secret)` on the toolset instance. | Python |
+| **`McpToolset` / `mcptoolset`** | Pass `auth_scheme` and `auth_credential` to `McpToolset` in Python, or `Auth` (`auth.CredentialProvider`) to `mcptoolset.Config` in Go. | Python, Go |
+| **`BigQueryToolset` / `SpannerToolset`** | Pass a credentials config (such as `BigQueryCredentialsConfig`) with client credentials or `external_access_token_key`. | Python |
+| **`ApplicationIntegrationToolset`** | Uses Application Default Credentials by default, or accepts a `service_account_json` / `serviceAccountJson` string. | Python, Java |
+
+### Configuring Google API toolsets (Python)
+
+Pre-built Google Workspace and Google API toolsets in ADK Python include a built-in OAuth 2.0 scheme and provide `.configure_auth()` to register your OAuth client credentials:
+
+```python
 from google.adk.tools.google_api_tool import CalendarToolset
 
-client_id = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
-client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
+calendar_toolset = CalendarToolset(
+    client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    client_secret="YOUR_GOOGLE_CLIENT_SECRET",
+)
 
-calendar_toolset = CalendarToolset()
-
-# Use the specific configure method for this toolset type
+# Or update credentials on an existing toolset instance:
 calendar_toolset.configure_auth(
-    client_id=client_id, client_secret=client_secret
+    client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    client_secret="YOUR_GOOGLE_CLIENT_SECRET",
 )
-
-# agent = LlmAgent(..., tools=[calendar_toolset])
 ```
 
-#### Use ID token
+### Reusing frontend tokens from session state (`external_access_token_key`)
 
-If your agent calls a restricted service, for example a private Cloud Run or Cloud Function, the agent needs to prove your identity, not just your permissions. If you are calling a service that is accessed using Cloud IAM, you should use an ID token.
+When your web or mobile frontend already authenticates the user and holds a valid OAuth access token, you can pass that token directly into the ADK session state in Python instead of running a second OAuth redirect inside the agent.
 
-* **Access Token (Default)**: It calls Google APIs (Drive, BigQuery). Think of it as your keycard.
-    
-* **ID Token**: It calls your own services secured by IAM. Think of it as your passport.
-
-##### Configuration
-
-To implement ID token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
+The `external_access_token_key` parameter on Google tool credentials configs, such as `BigQueryCredentialsConfig`, instructs the toolset to read the bearer token from `tool_context.state[key]` on each tool invocation. It is mutually exclusive with `credentials`, `client_id`, `client_secret`, and `scopes`:
 
 ```python
-from google.adk.auth.auth_credential import ServiceAccount
-from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_scheme_credential
-from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-# Configure the ServiceAccount to use ID token authentication.
-# Replace <YOUR_AUDIENCE_URL> with the URL of the service you are calling.
-sa_config = ServiceAccount(
-    use_default_credential=True,
-    use_id_token=True,
-    audience="<YOUR_AUDIENCE_URL>",
-)
-
-auth_scheme, auth_credential = service_account_scheme_credential(sa_config)
-
-sample_toolset = OpenAPIToolset(
-    spec_str=sa_openapi_spec_str, # Fill this with an OpenAPI spec
-    spec_str_type="json",
-    auth_scheme=auth_scheme,
-    auth_credential=auth_credential,
-)
-
-```
-
-!!! tip "Troubleshooting authentication errors"
-
-    If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' or equivalent role on the target service.
-
-##### Key takeaways
-
-* **Audience Requirement**: The `audience` is a security feature that binds the token to a specific destination, preventing it from being "replayed" against other services.
-  
-* **No Auto-Refresh**: Unlike standard OAuth2 access tokens for users, service-account ID tokens are fetched at the time of the request. They do not auto-refresh on a background timer.
-  
-* **The Flow**: You define the intent and ADK handles the handshake, fetches the token from Google's auth servers, and injects it into your outgoing HTTP headers.
-
-##### ServiceAccount configuration parameters
-
-* `service_account_credential` (Optional): Provide the path or dict for your service account JSON key file. Use this if you are running locally or outside of Google Cloud.
-  
-* `use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud, for example on Cloud Run or Cloud Functions, as it avoids the need for local key files.
-  
-* `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token, for Google APIs, to an ID Token, for your own IAM-secured services.
-  
-* `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, `https://my-service.run.app`. This is a security binding that ensures the token is valid only for that specific destination.
-  
-* `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication.
-
-!!! tip "Pair `use_id_token` with `audience`"
-
-    Always use `use_id_token=True` and `audience` together. If you provide one without the other, the ADK will raise an error to prevent accidental misconfiguration.
-
-#### Use external access tokens
-
-The `external_access_token_key` feature allows your agent to use an existing
-access token provided by the runtime environment, such as a token provided by
-a frontend application, instead of starting a new authentication flow.
-When configured, the credential manager skips standard OAuth flows. Instead, 
-retrieves the key in the agent's `tool_context.state` and directly uses the 
-token for authentication.
-The use of this configuration parameter is mutually exclusive, and cannot
-include `credentials`, `client_id`, `client_secret`, or scopes parameters in the same
-configuration block.
-
-Set the key on the credentials configuration of the toolset you are using. The
-following example uses BigQuery:
-
-```python
-from google.adk.integrations.bigquery import BigQueryCredentialsConfig
-
-# Configure the toolset to look for "my_frontend_token" in the session state
-credentials_config = BigQueryCredentialsConfig(
-    # Do not hardcode authentication keys in production code
-    external_access_token_key="my_frontend_token"
-)
-```
-
-#### Authentication request flow
-
-This diagram visualizes the end-to-end authentication handshake, tracing the path from the initial user query to the point where the ADK captures a credential request,
-handles the redirection flow, and retries the tool call once authorized.
-
-![Authentication](../assets/auth_part1.svg)
-
-### Authenticate at a toolset level
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
-</div>
-
-Instead of authenticating each tool individually, you can authenticate an entire suite of tools at once at the Toolset level.
-Under the hood, the `BaseLlmFlow` automatically checks your `BaseToolset` for authentication requirements *before* it even lists or executes any tools; it does this by checking the toolset's `get_auth_config()` method.
-If your toolset returns an `AuthConfig` object and the session doesn't already have the required credentials, the ADK framework performs the following steps:
-
-1. **Pause execution:** Safely halts the current flow.
-2. **Request credentials:** Issues an `adk_request_credential` event to the client, similar to the interactive flow detailed in [Handle the interactive OAuth/OIDC flow](#handle-the-interactive-oauthoidc-flow-client-side).
-
-This approach gives you a single, centralized place to define auth requirements for a group of related tools. The framework handles the authentication procedure, ensuring the necessary credentials are resolved before your agent accesses tools in the toolset.
-
-#### How to enable it
-
-To set this up, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
-
-```python
-from google.adk.auth import AuthConfig
-from google.adk.tools.base_toolset import BaseToolset
-
-
-class MyAuthenticatedToolset(BaseToolset):
-  async def get_tools(
-      self, readonly_context: Optional[ReadonlyContext] = None
-  ) -> list[BaseTool]:
-    # ADK resolves the credential from get_auth_config() before calling this,
-    # so the tools you return here can rely on it.
-    return []  # Replace with the tools in your toolset.
-
-    return AuthConfig(
-        auth_scheme=auth_scheme,
-        raw_auth_credential=auth_credential,
-    )
-```
-
-### Handle the interactive OAuth/OIDC flow (client-side)
-
-If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
-
-* ***Agent Client*** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
-* ***Agent Client*** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as ***Agent Client*** application
-
-The second case is a special case of first case, because `/run` or `/run_sse` endpoint also invokes `runner.run_async`. The only differences are:
-
-* Whether to call a python function to run the agent (first case) or call a service endpoint to run the agent (second case).
-* Whether the result events are in-memory objects (first case) or serialized json string in http response (second case).
-
-Below sections focus on the first case and you should be able to map it to the second case very straightforward. We will also describe some differences to handle for the second case if necessary.
-
-Here's the step-by-step process for your client application:
-
-**Step 1: Run Agent & Detect Auth Request**
-
-* Initiate the agent interaction using `runner.run_async`.
-* Iterate through the yielded events.
-* Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
-
-```python
-
-# runner = Runner(...)
-# session = await session_service.create_session(...)
-# content = types.Content(...) # User's initial query
-
-print("\nRunning agent...")
-events_async = runner.run_async(
-    session_id=session.id, user_id='user', new_message=content
-)
-
-auth_request_function_call_id, auth_config = None, None
-
-async for event in events_async:
-    # Use helper to check for the specific auth request event
-    if (auth_request_function_call := get_auth_request_function_call(event)):
-        print("--> Authentication required by agent.")
-        # Store the ID needed to respond later
-        if not (auth_request_function_call_id := auth_request_function_call.id):
-            raise ValueError(f'Cannot get function call id from function call: {auth_request_function_call}')
-        # Get the AuthConfig containing the auth_uri etc.
-        auth_config = get_auth_config(auth_request_function_call)
-        break # Stop processing events for now, need user interaction
-
-if not auth_request_function_call_id:
-    print("\nAuth not required or agent finished.")
-    # return # Or handle final response if received
-
-```
-
-*Helper functions `helpers.py`:*
-
-```py
-from google.adk.events import Event
-from google.adk.auth import AuthConfig # Import necessary type
+from google.adk.agents import Agent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.adk.tools.bigquery import BigQueryCredentialsConfig, BigQueryToolset
 from google.genai import types
 
-def get_auth_request_function_call(event: Event) -> types.FunctionCall:
-    # Get the special auth request function call from the event
-    if not event.content or not event.content.parts:
-        return
-    for part in event.content.parts:
-        if (
-            part
-            and part.function_call
-            and part.function_call.name == 'adk_request_credential'
-            and event.long_running_tool_ids
-            and part.function_call.id in event.long_running_tool_ids
-        ):
+TOKEN_STATE_KEY = "temp:user_bigquery_access_token"
 
-            return part.function_call
+# 1. Point the toolset at the session state key holding the frontend token
+credentials_config = BigQueryCredentialsConfig(
+    external_access_token_key=TOKEN_STATE_KEY
+)
+bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 
-def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
-    # Extracts the AuthConfig object from the arguments of the auth request function call
-    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
-        raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
-    if isinstance(auth_config, dict):
-        auth_config = AuthConfig.model_validate(auth_config)
-    elif not isinstance(auth_config, AuthConfig):
-        raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
-    return auth_config
+agent = Agent(
+    name="bigquery_agent",
+    model="gemini-2.5-flash",
+    instruction="Use BigQuery tools to answer questions about user datasets.",
+    tools=[bigquery_toolset],
+)
+
+# 2. Seed or update the token in session state before running the turn
+async def run_with_frontend_token(user_id: str, frontend_oauth_token: str):
+    session_service = InMemorySessionService()
+    session = await session_service.create_session(
+        app_name="analytics_app",
+        user_id=user_id,
+        state={TOKEN_STATE_KEY: frontend_oauth_token},
+    )
+    runner = Runner(
+        agent=agent,
+        app_name="analytics_app",
+        session_service=session_service,
+    )
+    content = types.Content(
+        role="user",
+        parts=[types.Part.from_text(text="List the datasets in my project.")],
+    )
+    async for event in runner.run_async(
+        user_id=user_id, session_id=session.id, new_message=content
+    ):
+        if event.is_final_response():
+            print(event.content.parts[0].text)
 ```
 
-**Step 2: Redirect User for Authorization**
-
-* Get the authorization URL (`auth_uri`) from the `auth_config` extracted in the previous step.
-* **Crucially, append your application's**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).
-* Direct the user to this complete URL (e.g., open it in their browser).
-
-```py
-# (Continuing after detecting auth needed)
-
-if auth_request_function_call_id and auth_config:
-    # Get the base authorization URL from the AuthConfig
-    base_auth_uri = auth_config.exchanged_auth_credential.oauth2.auth_uri
-
-    if base_auth_uri:
-        redirect_uri = 'http://localhost:8000/callback' # MUST match your OAuth client app config
-        # Append redirect_uri (use urlencode in production)
-        auth_request_uri = base_auth_uri + f'&redirect_uri={redirect_uri}'
-        # Now you need to redirect your end user to this auth_request_uri or ask them to open this auth_request_uri in their browser
-        # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your application to access their data
-        # And then the auth provider will redirect the end user to the redirect_uri you provided
-        # Next step: Get this callback URL from the user (or your web server handler)
-    else:
-         print("ERROR: Auth URI not found in auth_config.")
-         # Handle error
-
-```
-
-**Step 3. Handle the Redirect Callback (Client):**
-
-* Your application must have a mechanism (e.g., a web server route at the `redirect_uri`) to receive the user after they authorize the application with the provider.
-* The provider redirects the user to your `redirect_uri` and appends an `authorization_code` (and potentially `state`, `scope`) as query parameters to the URL.
-* Capture the **full callback URL** from this incoming request.
-* (This step happens outside the main agent execution loop, in your web server or equivalent callback handler.)
-
-**Step 4. Send Authentication Result Back to ADK (Client):**
-
-* Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.
-* Set the captured callback URL in the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.
-* Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.
-      * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)
-      * Set `id` to the `auth_request_function_call_id` you saved.
-      * Set `response` to the *serialized* (e.g., `.model_dump()`) updated `AuthConfig` object.
-* Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
-
-```py
-# (Continuing after user interaction)
-
-    # Simulate getting the callback URL (e.g., from user paste or web handler)
-    auth_response_uri = await get_user_input(
-        f'Paste the full callback URL here:\n> '
-    )
-    auth_response_uri = auth_response_uri.strip() # Clean input
-
-    if not auth_response_uri:
-        print("Callback URL not provided. Aborting.")
-        return
-
-    # Update the received AuthConfig with the callback details
-    auth_config.exchanged_auth_credential.oauth2.auth_response_uri = auth_response_uri
-    # Also include the redirect_uri used, as the token exchange might need it
-    auth_config.exchanged_auth_credential.oauth2.redirect_uri = redirect_uri
-
-    # Construct the FunctionResponse Content object
-    auth_content = types.Content(
-        role='user', # Role can be 'user' when sending a FunctionResponse
-        parts=[
-            types.Part(
-                function_response=types.FunctionResponse(
-                    id=auth_request_function_call_id,       # Link to the original request
-                    name='adk_request_credential', # Special framework function name
-                    response=auth_config.model_dump() # Send back the *updated* AuthConfig
-                )
-            )
-        ],
-    )
-
-    # --- Resume Execution ---
-    print("\nSubmitting authentication details back to the agent...")
-    events_async_after_auth = runner.run_async(
-        session_id=session.id,
-        user_id='user',
-        new_message=auth_content, # Send the FunctionResponse back
-    )
-
-    # --- Process Final Agent Output ---
-    print("\n--- Agent Response after Authentication ---")
-    async for event in events_async_after_auth:
-        # Process events normally, expecting the tool call to succeed now
-        print(event) # Print the full event for inspection
-
-```
-
-!!! note "Note: Authorization response with Resume feature"
-
-    If your ADK agent workflow is configured with the
-    [Resume](/runtime/resume/) feature, you also must include
-    the Invocation ID (`invocation_id`) parameter with the authorization
-    response. The Invocation ID you provide must be the same invocation
-    that generated the authorization request, otherwise the system
-    starts a new invocation with the authorization response. If your
-    agent uses the Resume feature, consider including the Invocation ID
-    as a parameter with your authorization request, so it can be included
-    with the authorization response. For more details on using the Resume
-    feature, see
-    [Resume stopped agents](/runtime/resume/).
-
-**Step 5: ADK Handles Token Exchange & Tool Retry and gets Tool result**
-
-* ADK receives the `FunctionResponse` for `adk_request_credential`.
-* It uses the information in the updated `AuthConfig` (including the callback URL containing the code) to perform the OAuth **token exchange** with the provider's token endpoint, obtaining the access token (and possibly refresh token).
-* ADK internally makes these tokens available by setting them in the session state.
-* ADK **automatically retries** the original tool call (the one that initially failed due to missing auth).
-* This time, the tool finds the valid tokens (via `tool_context.get_auth_response()`) and successfully executes the authenticated API call.
-* The agent receives the actual result from the tool and generates its final response to the user.
+!!! tip "Use the `temp:` prefix for short-lived tokens"
+    Prefixing the state key with `temp:`; for example, `temp:user_bigquery_access_token` scopes the token to the current invocation so it is not written to persistent database storage.
 
 ---
 
-The sequence diagram of auth response flow, where the ***Agent Client*** sends back the auth response and ADK retries the tool, is as follows:
+## Interactive user authentication (3LO OAuth 2.0 and OIDC)
 
-![Authentication](../assets/auth_part2.svg)
+When a tool requires 3-legged OAuth 2.0 `authorizationCode` or OpenID Connect (OIDC) user consent, ADK coordinates a 4-step interactive handshake between your agent and your client application.
 
-## Build custom tools (`FunctionTool`) requiring authentication
+### Configuring 3LO OAuth 2.0 or OpenID Connect on a toolset
 
-This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
+Configure `OpenAPIToolset`, or `AuthConfig` in Kotlin, with an OAuth 2.0 `authorizationCode` flow or an OpenID Connect scheme:
 
-### Prerequisites
+=== "Python (OAuth 2.0 3LO)"
 
-Your function signature *must* include [`tool_context: ToolContext`](../tools-custom/index.md#tool-context). ADK automatically injects this object, providing access to state and auth mechanisms.
+    ```python
+    from fastapi.openapi.models import OAuth2, OAuthFlowAuthorizationCode, OAuthFlows
+    from google.adk.auth import AuthCredential, AuthCredentialTypes, OAuth2Auth
+    from google.adk.tools.openapi_tool import OpenAPIToolset
 
-```py
-from google.adk.tools import FunctionTool, ToolContext
-from typing import Dict
-
-def my_authenticated_tool_function(param1: str, ..., tool_context: ToolContext) -> dict:
-    # ... your logic ...
-    pass
-
-my_tool = FunctionTool(func=my_authenticated_tool_function)
-
-```
-
-### Authentication Logic within the Tool Function
-
-Implement the following steps inside your function:
-
-**Step 1: Check for Cached & Valid Credentials:**
-
-Inside your tool function, first check if valid credentials (e.g., access/refresh tokens) are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.invocation_context.session.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.invocation_context.session.state.get(credential_name, None)`.
-
-```py
-from google.oauth2.credentials import Credentials
-from google.auth.transport.requests import Request
-
-# Inside your tool function
-TOKEN_CACHE_KEY = "my_tool_tokens" # Choose a unique key
-SCOPES = ["scope1", "scope2"] # Define required scopes
-
-creds = None
-cached_token_info = tool_context.state.get(TOKEN_CACHE_KEY)
-if cached_token_info:
-    try:
-        creds = Credentials.from_authorized_user_info(cached_token_info, SCOPES)
-        if not creds.valid and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-            tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json()) # Update cache
-        elif not creds.valid:
-            creds = None # Invalid, needs re-auth
-            tool_context.state[TOKEN_CACHE_KEY] = None
-    except Exception as e:
-        print(f"Error loading/refreshing cached creds: {e}")
-        creds = None
-        tool_context.state[TOKEN_CACHE_KEY] = None
-
-if creds and creds.valid:
-    # Skip to Step 5: Make Authenticated API Call
-    pass
-else:
-    # Proceed to Step 2...
-    pass
-
-```
-
-**Step 2: Check for Auth Response from Client**
-
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.
-* This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
-
-```py
-# Use auth_scheme and auth_credential configured in the tool.
-# exchanged_credential: AuthCredential | None
-
-exchanged_credential = tool_context.get_auth_response(AuthConfig(
-  auth_scheme=auth_scheme,
-  raw_auth_credential=auth_credential,
-))
-# If exchanged_credential is not None, then there is already an exchanged credential from the auth response.
-if exchanged_credential:
-   # ADK exchanged the access token already for us
-        access_token = exchanged_credential.oauth2.access_token
-        refresh_token = exchanged_credential.oauth2.refresh_token
-        creds = Credentials(
-            token=access_token,
-            refresh_token=refresh_token,
-            token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
-            client_id=auth_credential.oauth2.client_id,
-            client_secret=auth_credential.oauth2.client_secret,
-            scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
+    auth_scheme = OAuth2(
+        flows=OAuthFlows(
+            authorizationCode=OAuthFlowAuthorizationCode(
+                authorizationUrl="https://accounts.google.com/o/oauth2/v2/auth",
+                tokenUrl="https://oauth2.googleapis.com/token",
+                scopes={
+                    "https://www.googleapis.com/auth/calendar.readonly": "Read calendar events"
+                },
+            )
         )
-    # Cache the token in session state and call the API, skip to step 5
+    )
+
+    auth_credential = AuthCredential(
+        auth_type=AuthCredentialTypes.OAUTH2,
+        oauth2=OAuth2Auth(
+            client_id="YOUR_CLIENT_ID",
+            client_secret="YOUR_CLIENT_SECRET",
+        ),
+    )
+
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="yaml",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential,
+    )
+    ```
+
+=== "TypeScript (OAuth 2.0 3LO)"
+
+    ```typescript
+    import { AuthCredential, AuthCredentialTypes, AuthScheme, OpenAPIToolset } from '@google/adk';
+
+    const authScheme: AuthScheme = {
+      type: 'oauth2',
+      flows: {
+        authorizationCode: {
+          authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+          tokenUrl: 'https://oauth2.googleapis.com/token',
+          scopes: {
+            'https://www.googleapis.com/auth/calendar.readonly': 'Read calendar events',
+          },
+        },
+      },
+    };
+
+    const authCredential: AuthCredential = {
+      authType: AuthCredentialTypes.OAUTH2,
+      oauth2: {
+        clientId: 'YOUR_CLIENT_ID',
+        clientSecret: 'YOUR_CLIENT_SECRET',
+      },
+    };
+
+    const toolset = new OpenAPIToolset({
+      specStr: openapiSpecString,
+      specType: 'yaml',
+      authScheme,
+      authCredential,
+    });
+    ```
+
+=== "Kotlin (OAuth 2.0 3LO)"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
+    import com.google.adk.kt.auth.AuthScheme
+    import com.google.adk.kt.auth.Secret
+
+    @OptIn(ExperimentalAuthApi::class)
+    val calendarAuthConfig = AuthConfig(
+        authScheme = AuthScheme.OAuth2.authorizationCode(
+            authorizationUrl = "https://accounts.google.com/o/oauth2/v2/auth",
+            tokenUrl = "https://oauth2.googleapis.com/token",
+            scopes = mapOf(
+                "https://www.googleapis.com/auth/calendar.readonly" to "Read calendar events"
+            ),
+        ),
+        rawAuthCredential = AuthCredential.OAuth2(
+            clientId = System.getenv("GOOGLE_OAUTH_CLIENT_ID"),
+            clientSecret = Secret(System.getenv("GOOGLE_OAUTH_CLIENT_SECRET")),
+        ),
+    )
+    ```
+
+=== "Python (OpenID Connect)"
+
+    ```python
+    from google.adk.auth import (
+        AuthCredential,
+        AuthCredentialTypes,
+        OAuth2Auth,
+        OpenIdConnectWithConfig,
+    )
+    from google.adk.tools.openapi_tool import OpenAPIToolset
+
+    auth_scheme = OpenIdConnectWithConfig(
+        openIdConnectUrl="https://accounts.google.com/.well-known/openid-configuration",
+        authorization_endpoint="https://accounts.google.com/o/oauth2/v2/auth",
+        token_endpoint="https://oauth2.googleapis.com/token",
+        scopes=["openid", "email", "profile"],
+    )
+
+    auth_credential = AuthCredential(
+        auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
+        oauth2=OAuth2Auth(
+            client_id="YOUR_CLIENT_ID",
+            client_secret="YOUR_CLIENT_SECRET",
+        ),
+    )
+
+    toolset = OpenAPIToolset(
+        spec_str=openapi_spec_string,
+        spec_str_type="yaml",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential,
+    )
+    ```
+
+=== "TypeScript (OpenID Connect)"
+
+    ```typescript
+    import {
+      AuthCredential,
+      AuthCredentialTypes,
+      OpenAPIToolset,
+      OpenIdConnectWithConfig,
+    } from '@google/adk';
+
+    const authScheme: OpenIdConnectWithConfig = {
+      type: 'openIdConnect',
+      openIdConnectUrl: 'https://accounts.google.com/.well-known/openid-configuration',
+      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+      tokenEndpoint: 'https://oauth2.googleapis.com/token',
+      scopes: ['openid', 'email', 'profile'],
+    };
+
+    const authCredential: AuthCredential = {
+      authType: AuthCredentialTypes.OPEN_ID_CONNECT,
+      oauth2: {
+        clientId: 'YOUR_CLIENT_ID',
+        clientSecret: 'YOUR_CLIENT_SECRET',
+      },
+    };
+
+    const toolset = new OpenAPIToolset({
+      specStr: openapiSpecString,
+      specType: 'yaml',
+      authScheme,
+      authCredential,
+    });
+    ```
+
+=== "Kotlin (OpenID Connect)"
+
+    ```kotlin
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
+    import com.google.adk.kt.auth.AuthScheme
+    import com.google.adk.kt.auth.Secret
+
+    @OptIn(ExperimentalAuthApi::class)
+    val oidcAuthConfig = AuthConfig(
+        authScheme = AuthScheme.OpenIdConnect(
+            authorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth",
+            tokenEndpoint = "https://oauth2.googleapis.com/token",
+            scopes = listOf("openid", "email", "profile"),
+        ),
+        rawAuthCredential = AuthCredential.OAuth2(
+            variant = AuthCredential.OAuth2.Variant.OPEN_ID_CONNECT,
+            clientId = System.getenv("OIDC_CLIENT_ID"),
+            clientSecret = Secret(System.getenv("OIDC_CLIENT_SECRET")),
+        ),
+    )
+    ```
+
+### Handling the interactive `adk_request_credential` flow in your client
+
+When testing locally with `adk web`, the browser UI handles the OAuth popup automatically (provided `http://localhost:8000/dev-ui` is registered as an authorized redirect URI on your OAuth client). When building a custom web, CLI, or backend application, implement the 4-step loop below:
+
+1. **Detect `adk_request_credential`:** Inspect events returned by `runner.run_async()` (`runner.runAsync()` in TypeScript) for a `FunctionCall` with `name == "adk_request_credential"` (`REQUEST_CREDENTIAL_FUNCTION_CALL_NAME`).
+2. **Extract `auth_uri` and redirect the user:** Read `exchanged_auth_credential.oauth2.auth_uri` (`exchangedAuthCredential.oauth2.authUri` in TypeScript) from the function call arguments, append your application's `redirect_uri`, and direct the user to that URL to grant consent.
+3. **Send the callback URL in a `FunctionResponse`:** Capture the full redirect URL returned by the identity provider (containing the `code` and `state` parameters), attach it to `auth_config.exchanged_auth_credential.oauth2.auth_response_uri` (`authResponseUri`), and send a `FunctionResponse` matching the original `adk_request_credential` call ID.
+4. **Resume execution:** Pass the `FunctionResponse` message into `runner.run_async()`. ADK exchanges the authorization code for tokens, stores them in the session, retries the tool, and streams the final answer.
+
+=== "Python"
+
+    ```python
+    from google.adk.auth import AuthConfig
+    from google.genai import types
+
+    # Steps 1 & 2: Detect adk_request_credential and extract the consent URL
+    auth_request_call_id = None
+    auth_config_dict = None
+
+    async for event in runner.run_async(
+        user_id=user_id, session_id=session.id, new_message=user_message
+    ):
+        for fn_call in event.get_function_calls():
+            if fn_call.name == "adk_request_credential":
+                auth_request_call_id = fn_call.id
+                auth_config_dict = fn_call.args.get("auth_config")
+                break
+
+    if auth_config_dict:
+        auth_config = AuthConfig.model_validate(auth_config_dict)
+        base_auth_uri = auth_config.exchanged_auth_credential.oauth2.auth_uri
+        redirect_uri = "http://localhost:8000/callback"
+
+        # Redirect the user to: f"{base_auth_uri}&redirect_uri={redirect_uri}"
+        # After the user grants consent, capture the full callback URL:
+        full_callback_url = await wait_for_oauth_callback()
+
+        # Step 3: Populate the callback URL and construct the FunctionResponse
+        auth_config.exchanged_auth_credential.oauth2.auth_response_uri = full_callback_url
+        auth_config.exchanged_auth_credential.oauth2.redirect_uri = redirect_uri
+
+        auth_content = types.Content(
+            role="user",
+            parts=[
+                types.Part(
+                    function_response=types.FunctionResponse(
+                        id=auth_request_call_id,
+                        name="adk_request_credential",
+                        response=auth_config.model_dump(),
+                    )
+                )
+            ],
+        )
+
+        # Step 4: Resume the runner with the completed credentials
+        async for event in runner.run_async(
+            user_id=user_id, session_id=session.id, new_message=auth_content
+        ):
+            if event.is_final_response():
+                print(event.content.parts[0].text)
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {
+      AuthConfig,
+      getFunctionCalls,
+      isFinalResponse,
+      REQUEST_CREDENTIAL_FUNCTION_CALL_NAME,
+    } from '@google/adk';
+    import { Content } from '@google/genai';
+
+    // Steps 1 & 2: Detect adk_request_credential and extract the consent URL
+    let authRequestCallId: string | undefined;
+    let authConfig: AuthConfig | undefined;
+
+    for await (const event of runner.runAsync({
+      userId,
+      sessionId: session.id,
+      newMessage: userMessage,
+    })) {
+      for (const fnCall of getFunctionCalls(event)) {
+        if (fnCall.name === REQUEST_CREDENTIAL_FUNCTION_CALL_NAME) {
+          authRequestCallId = fnCall.id;
+          authConfig = fnCall.args?.['authConfig'] as unknown as AuthConfig;
+          break;
+        }
+      }
+    }
+
+    if (authConfig && authRequestCallId && authConfig.exchangedAuthCredential?.oauth2) {
+      const baseAuthUri = authConfig.exchangedAuthCredential.oauth2.authUri;
+      const redirectUri = 'http://localhost:8000/callback';
+
+      // Redirect the user to `${baseAuthUri}&redirect_uri=${encodeURIComponent(redirectUri)}`
+      // Capture the full callback URL returned after user consent:
+      const fullCallbackUrl = await waitForOAuthCallback();
+
+      // Step 3: Populate the callback URL and construct the FunctionResponse
+      authConfig.exchangedAuthCredential.oauth2.authResponseUri = fullCallbackUrl;
+      authConfig.exchangedAuthCredential.oauth2.redirectUri = redirectUri;
+
+      const authContent: Content = {
+        role: 'user',
+        parts: [
+          {
+            functionResponse: {
+              id: authRequestCallId,
+              name: REQUEST_CREDENTIAL_FUNCTION_CALL_NAME,
+              response: authConfig as unknown as Record<string, unknown>,
+            },
+          },
+        ],
+      };
+
+      // Step 4: Resume the runner with the completed credentials
+      for await (const event of runner.runAsync({
+        userId,
+        sessionId: session.id,
+        newMessage: authContent,
+      })) {
+        if (isFinalResponse(event)) {
+          console.log(event.content?.parts?.[0]?.text);
+        }
+      }
+    }
+    ```
+
+??? example "Complete runnable Python CLI example (`tools_and_agent.py`, `agent_cli.py`, `helpers.py`)"
+
+    The following complete sample demonstrates an interactive OAuth 2.0 / OIDC CLI flow in Python:
+
+    === "`tools_and_agent.py`"
+
+        ```python
+        --8<-- "examples/python/snippets/tools/auth/tools_and_agent.py"
+        ```
+
+    === "`agent_cli.py`"
+
+        ```python
+        --8<-- "examples/python/snippets/tools/auth/agent_cli.py"
+        ```
+
+    === "`helpers.py`"
+
+        ```python
+        --8<-- "examples/python/snippets/tools/auth/helpers.py"
+        ```
+
+---
+
+## Custom authenticated tools
+
+When building your own tools instead of using `OpenAPIToolset`, ADK provides three patterns depending on how much control you need over the credential lifecycle.
+
+### Option A: Declarative `AuthenticatedFunctionTool` (Python, Experimental)
+
+In ADK Python, `AuthenticatedFunctionTool` wraps a function and manages credential lookup and `request_credential` automatically. Define a `credential: AuthCredential` parameter on your function, and ADK hides `credential` from the LLM schema and injects the resolved `AuthCredential` only after authentication succeeds:
+
+```python
+import httpx
+from fastapi.openapi.models import OAuth2, OAuthFlowAuthorizationCode, OAuthFlows
+from google.adk.auth import AuthConfig, AuthCredential, AuthCredentialTypes, OAuth2Auth
+from google.adk.tools.authenticated_function_tool import AuthenticatedFunctionTool
+
+auth_scheme = OAuth2(
+    flows=OAuthFlows(
+        authorizationCode=OAuthFlowAuthorizationCode(
+            authorizationUrl="https://github.com/login/oauth/authorize",
+            tokenUrl="https://github.com/login/oauth/access_token",
+            scopes={"read:user": "Read GitHub user profile"},
+        )
+    )
+)
+
+auth_credential = AuthCredential(
+    auth_type=AuthCredentialTypes.OAUTH2,
+    oauth2=OAuth2Auth(
+        client_id="YOUR_GITHUB_CLIENT_ID",
+        client_secret="YOUR_GITHUB_CLIENT_SECRET",
+    ),
+)
+
+async def get_github_profile(credential: AuthCredential) -> dict:
+    """Fetches the authenticated user's GitHub profile."""
+    # After CredentialManager exchanges the OAuth code, the bearer token is
+    # available on credential.http.credentials.token:
+    token = credential.http.credentials.token
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            "https://api.github.com/user",
+            headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+        )
+        response.raise_for_status()
+        return response.json()
+
+github_profile_tool = AuthenticatedFunctionTool(
+    func=get_github_profile,
+    auth_config=AuthConfig(
+        auth_scheme=auth_scheme,
+        raw_auth_credential=auth_credential,
+    ),
+)
 ```
 
-**Step 3: Initiate Authentication Request**
+### Option B: Custom `BaseToolset` with `get_auth_config()` (Python)
 
-If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the tool needs to start the OAuth flow. Define the AuthScheme and initial AuthCredential and call `tool_context.request_credential()`. Return a response indicating authorization is needed.
+When packaging multiple related tools into a custom `BaseToolset` subclass in Python, override `get_auth_config()`. ADK resolves the toolset's `AuthConfig` and populates `exchanged_auth_credential` before calling `get_tools()` or executing tools in the toolset:
 
-```py
-# Use auth_scheme and auth_credential configured in the tool.
+```python
+from typing import Optional
+from fastapi.openapi.models import OAuth2, OAuthFlowClientCredentials, OAuthFlows
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.auth import AuthConfig, AuthCredential, AuthCredentialTypes, OAuth2Auth
+from google.adk.tools.base_tool import BaseTool
+from google.adk.tools.base_toolset import BaseToolset
 
-  tool_context.request_credential(AuthConfig(
-    auth_scheme=auth_scheme,
-    raw_auth_credential=auth_credential,
-  ))
-  return {'pending': true, 'message': 'Awaiting user authentication.'}
+class InternalCrmToolset(BaseToolset):
+    def __init__(self, client_id: str, client_secret: str):
+        super().__init__()
+        scheme = OAuth2(
+            flows=OAuthFlows(
+                clientCredentials=OAuthFlowClientCredentials(
+                    tokenUrl="https://crm.example.com/oauth/token",
+                    scopes={"crm:read": "Read CRM records"},
+                )
+            )
+        )
+        credential = AuthCredential(
+            auth_type=AuthCredentialTypes.OAUTH2,
+            oauth2=OAuth2Auth(client_id=client_id, client_secret=client_secret),
+        )
+        self._auth_config = AuthConfig(
+            auth_scheme=scheme,
+            raw_auth_credential=credential,
+        )
 
-# By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
+    def get_auth_config(self) -> Optional[AuthConfig]:
+        return self._auth_config
+
+    async def get_tools(
+        self, readonly_context: Optional[ReadonlyContext] = None
+    ) -> list[BaseTool]:
+        # ADK populates self._auth_config.exchanged_auth_credential before calling get_tools()
+        return []
 ```
 
-**Step 4: Exchange Authorization Code for Tokens**
+### Option C: Manual `FunctionTool` inspection via `ToolContext` / `Context`
 
-ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in [Build agentic applications with authenticated tools](#build-agentic-applications-with-authenticated-tools) to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
+If you need custom branching logic (for example, returning a fallback response when the user has not authenticated), call `tool_context.get_auth_response()` (`toolContext.getAuthResponse()` in TypeScript, `context.getAuthResponse()` in Kotlin) and `tool_context.request_credential()` (`toolContext.requestCredential()` in TypeScript, `context.requestCredential()` in Kotlin) directly inside a `FunctionTool`:
 
-**Step 5: Cache Obtained Credentials**
+=== "Python"
 
-After successfully obtaining the token from ADK (Step 2) or if the token is still valid (Step 1), **immediately store** the new `Credentials` object in `tool_context.state` (serialized, e.g., as JSON) using your cache key.
+    ```python
+    from google.adk.auth import AuthConfig
+    from google.adk.tools import FunctionTool, ToolContext
 
-```py
-# Inside your tool function, after obtaining 'creds' (either refreshed or newly exchanged)
-# Cache the new/refreshed tokens
-tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json())
-print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
-# Proceed to Step 6 (Make API Call)
+    def fetch_protected_orders(
+        order_id: str,
+        tool_context: ToolContext,
+    ) -> dict:
+        """Retrieves order details using manual ToolContext credential checks."""
+        # 1. Check whether the session already holds a resolved credential
+        cred = tool_context.get_auth_response(my_auth_config)
 
-```
+        if not cred or not cred.oauth2 or not cred.oauth2.access_token:
+            # 2. Pause execution and emit adk_request_credential
+            tool_context.request_credential(my_auth_config)
+            return {"status": "pending", "message": "User authorization required."}
 
-**Step 6: Make Authenticated API Call**
+        # 3. Use the resolved access token
+        access_token = cred.oauth2.access_token
+        return {"status": "ok", "order_id": order_id, "authenticated": bool(access_token)}
 
-* Once you have a valid `Credentials` object (`creds` from Step 1 or Step 4), use it to make the actual call to the protected API using the appropriate client library (e.g., `googleapiclient`, `requests`). Pass the `credentials=creds` argument.
-* Include error handling, especially for `HttpError` 401/403, which might mean the token expired or was revoked between calls. If you get such an error, consider clearing the cached token (`tool_context.state.pop(...)`) and potentially returning the `auth_required` status again to force re-authentication.
+    order_tool = FunctionTool(func=fetch_protected_orders)
+    ```
 
-```py
-# Inside your tool function, using the valid 'creds' object
-# Ensure creds is valid before proceeding
-if not creds or not creds.valid:
-   return {"status": "error", "error_message": "Cannot proceed without valid credentials."}
+=== "TypeScript"
 
-try:
-   service = build("calendar", "v3", credentials=creds) # Example
-   api_result = service.events().list(...).execute()
-   # Proceed to Step 7
-except Exception as e:
-   # Handle API errors (e.g., check for 401/403, maybe clear cache and re-request auth)
-   print(f"ERROR: API call failed: {e}")
-   return {"status": "error", "error_message": f"API call failed: {e}"}
-```
+    ```typescript
+    import { AuthConfig, Context, FunctionTool } from '@google/adk';
+    import { z } from 'zod';
 
-**Step 7: Return Tool Result**
+    const fetchProtectedOrders = new FunctionTool({
+      name: 'fetch_protected_orders',
+      description: 'Retrieves order details using manual Context credential checks.',
+      parameters: z.object({
+        orderId: z.string(),
+      }),
+      execute: async ({ orderId }, toolContext?: Context) => {
+        if (!toolContext) {
+          throw new Error('Tool execution Context is required.');
+        }
 
-* After a successful API call, process the result into a dictionary format that is useful for the LLM.
-* **Crucially, include a**  `status` field along with the data.
+        // 1. Check whether the session already holds a resolved credential
+        const cred = toolContext.getAuthResponse(myAuthConfig as AuthConfig);
+        const accessToken = cred?.oauth2?.accessToken;
 
-```py
-# Inside your tool function, after successful API call
-    processed_result = [...] # Process api_result for the LLM
-    return {"status": "success", "data": processed_result}
+        if (!accessToken) {
+          // 2. Pause execution and emit adk_request_credential
+          toolContext.requestCredential(myAuthConfig as AuthConfig);
+          return { status: 'pending', message: 'User authorization required.' };
+        }
 
-```
+        // 3. Use the resolved access token
+        return { status: 'ok', orderId, authenticated: true };
+      },
+    });
+    ```
 
-??? "Full Code"
+=== "Kotlin"
 
-    === "Tools and Agent"
+    ```kotlin
+    import com.google.adk.kt.agents.Context
+    import com.google.adk.kt.annotations.ExperimentalAuthApi
+    import com.google.adk.kt.annotations.SecretAccess
+    import com.google.adk.kt.auth.AuthConfig
+    import com.google.adk.kt.auth.AuthCredential
 
-         ```py title="tools_and_agent.py"
-         --8<-- "examples/python/snippets/tools/auth/tools_and_agent.py"
-         ```
-    === "Agent CLI"
+    @OptIn(ExperimentalAuthApi::class, SecretAccess::class)
+    suspend fun fetchProtectedOrders(
+        orderId: String,
+        context: Context,
+        myAuthConfig: AuthConfig,
+    ): Map<String, Any> {
+        // 1. Check whether the session already holds a credential returned by the app
+        val cred = context.getAuthResponse(myAuthConfig) as? AuthCredential.OAuth2
+        val accessToken = cred?.accessToken?.reveal()
 
-         ```py title="agent_cli.py"
-         --8<-- "examples/python/snippets/tools/auth/agent_cli.py"
-         ```
-    === "Helper"
+        if (accessToken.isNullOrEmpty()) {
+            // 2. Record the sign-in request on the current tool call's EventActions
+            context.requestCredential(myAuthConfig)
+            return mapOf("status" to "pending", "message" to "User authorization required.")
+        }
 
-         ```py title="helpers.py"
-         --8<-- "examples/python/snippets/tools/auth/helpers.py"
-         ```
-    === "Spec"
+        // 3. Use the resolved access token
+        return mapOf("status" to "ok", "orderId" to orderId, "authenticated" to true)
+    }
+    ```
 
-         ```yaml
-         openapi: 3.0.1
-         info:
-         title: Okta User Info API
-         version: 1.0.0
-         description: |-
-            API to retrieve user profile information based on a valid Okta OIDC Access Token.
-            Authentication is handled via OpenID Connect with Okta.
-         contact:
-            name: API Support
-            email: support@example.com # Replace with actual contact if available
-         servers:
-         - url: <substitute with your server name>
-            description: Production Environment
-         paths:
-         /okta-jwt-user-api:
-            get:
-               summary: Get Authenticated User Info
-               description: |-
-               Fetches profile details for the user
-               operationId: getUserInfo
-               tags:
-               - User Profile
-               security:
-               - okta_oidc:
-                     - openid
-                     - email
-                     - profile
-               responses:
-               '200':
-                  description: Successfully retrieved user information.
-                  content:
-                     application/json:
-                     schema:
-                        type: object
-                        properties:
-                           sub:
-                           type: string
-                           description: Subject identifier for the user.
-                           example: "abcdefg"
-                           name:
-                           type: string
-                           description: Full name of the user.
-                           example: "Example LastName"
-                           locale:
-                           type: string
-                           description: User's locale, e.g., en-US or en_US.
-                           example: "en_US"
-                           email:
-                           type: string
-                           format: email
-                           description: User's primary email address.
-                           example: "username@example.com"
-                           preferred_username:
-                           type: string
-                           description: Preferred username of the user (often the email).
-                           example: "username@example.com"
-                           given_name:
-                           type: string
-                           description: Given name (first name) of the user.
-                           example: "Example"
-                           family_name:
-                           type: string
-                           description: Family name (last name) of the user.
-                           example: "LastName"
-                           zoneinfo:
-                           type: string
-                           description: User's timezone, e.g., America/Los_Angeles.
-                           example: "America/Los_Angeles"
-                           updated_at:
-                           type: integer
-                           format: int64 # Using int64 for Unix timestamp
-                           description: Timestamp when the user's profile was last updated (Unix epoch time).
-                           example: 1743617719
-                           email_verified:
-                           type: boolean
-                           description: Indicates if the user's email address has been verified.
-                           example: true
-                        required:
-                           - sub
-                           - name
-                           - locale
-                           - email
-                           - preferred_username
-                           - given_name
-                           - family_name
-                           - zoneinfo
-                           - updated_at
-                           - email_verified
-               '401':
-                  description: Unauthorized. The provided Bearer token is missing, invalid, or expired.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-               '403':
-                  description: Forbidden. The provided token does not have the required scopes or permissions to access this resource.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-         components:
-         securitySchemes:
-            okta_oidc:
-               type: openIdConnect
-               description: Authentication via Okta using OpenID Connect. Requires a Bearer Access Token.
-               openIdConnectUrl: https://your-endpoint.okta.com/.well-known/openid-configuration
-         schemas:
-            Error:
-               type: object
-               properties:
-               code:
-                  type: string
-                  description: An error code.
-               message:
-                  type: string
-                  description: A human-readable error message.
-               required:
-                  - code
-                  - message
-         ```
+---
+
+## Managed authentication and custom auth providers
+
+For enterprise deployments, you can offload token storage, refresh, and secret rotation to **Google Cloud Agent Identity** or register your own **`BaseAuthProvider`** (or `auth.ProviderFunc` in Go).
+
+### Managed authentication with Google Cloud Agent Identity (Preview)
+
+!!! note "Preview feature"
+    Google Cloud Agent Identity and IAM Connector integration (`GcpAuthProvider` in Python and `google.golang.org/adk/v2/auth/gcp` in Go) is currently in **Preview**. For full setup instructions on provisioning agent identities and IAM bindings, see [Google Cloud Agent Identity](/integrations/agent-identity/), [Manage auth providers](https://cloud.google.com/iam/docs/manage-auth-providers), [Authenticate with 2LO](https://cloud.google.com/iam/docs/auth-with-2lo), and [Authenticate with 3LO](https://cloud.google.com/iam/docs/auth-with-3lo).
+
+Google Cloud Agent Identity and IAM Connectors manage OAuth 2.0 (2LO and 3LO) and API key credentials in a managed cloud vault without storing client secrets or refresh tokens in your agent code or session state:
+
+- **In ADK Python (`pip install "google-adk[agent-identity]"`):** Register `GcpAuthProvider()` with `CredentialManager` and pass `GcpAuthProviderScheme` to `AuthConfig` or directly to `McpToolset(auth_scheme=...)`.
+- **How 3LO callback finalization works with `GcpAuthProvider`:** When 3LO user consent is required, ADK emits `adk_request_credential` containing `oauth2.auth_uri` and `oauth2.nonce`. After the user grants consent, the connector redirects to your `continue_uri` with `user_id_validation_state` and `connector_name` (or `auth_provider_name`). The ADK web server (`adk web` / `adk api_server`) exposes a built-in `POST /agent-identity/finalize` endpoint (using `FinalizeCredentialsRequest`) that completes the token exchange directly into the cloud vault before your client resumes the agent turn. For a complete working 2LO, 3LO, and MCP sample with a custom FastAPI web client, see [`contributing/samples/integrations/gcp_auth`](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/gcp_auth).
+
+=== "Python"
+
+    ```python
+    from google.adk.auth import AuthConfig, CredentialManager
+    from google.adk.integrations.agent_identity import (
+        GcpAuthProvider,
+        GcpAuthProviderScheme,
+    )
+
+    # 1. Install extra: pip install "google-adk[agent-identity]"
+    # 2. Register GcpAuthProvider with CredentialManager once at startup
+    CredentialManager.register_auth_provider(GcpAuthProvider())
+
+    # 3. Reference your Agent Identity AuthProvider or IAM Connector resource name:
+    #    - Agent Identity: "projects/{project}/locations/{location}/authProviders/{id}"
+    #    - IAM Connector:  "projects/{project}/locations/{location}/connectors/{id}"
+    scheme = GcpAuthProviderScheme(
+        name="projects/my-project/locations/us-central1/authProviders/my-oauth-provider",
+        scopes=["https://www.googleapis.com/auth/drive.readonly"],
+        continue_uri="https://my-app.example.com/commit",  # Required for 3LO flows
+    )
+
+    auth_config = AuthConfig(auth_scheme=scheme)
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "context"
+        "errors"
+
+        "google.golang.org/adk/v2/auth"
+        "google.golang.org/adk/v2/auth/gcp"
+        "google.golang.org/adk/v2/tool/mcptoolset"
+    )
+
+    // 1. Create a managed GCP CredentialProvider (resolves the acting user via
+    //    agent.IdentityFromContext and caches tokens in InMemoryCredentialStore).
+    gcpProvider, err := gcp.NewProvider(context.Background(), gcp.ProviderConfig{
+        Scheme: gcp.ProviderScheme{
+            // Agent Identity ("authProviders/*") or IAM Connector ("connectors/*")
+            Name:        "projects/my-project/locations/us-central1/authProviders/my-oauth-provider",
+            Scopes:      []string{"https://www.googleapis.com/auth/drive.readonly"},
+            ContinueURI: "https://my-app.example.com/commit",
+        },
+        Store: auth.NewInMemoryCredentialStore(),
+    })
+    if err != nil {
+        return err
+    }
+
+    // 2. Attach the provider to mcptoolset.Config or auth.Transport.
+    mcpTools, err := mcptoolset.New(mcptoolset.Config{
+        Endpoint: "https://example.com/mcp",
+        Auth:     gcpProvider,
+    })
+
+    // When 3-legged user consent is required, Credential() returns an error
+    // wrapping *auth.ConsentRequiredError:
+    var consentErr *auth.ConsentRequiredError
+    if errors.As(err, &consentErr) {
+        // Redirect the end user to consentErr.AuthURI
+    }
+    ```
+
+### Custom authentication providers (`BaseAuthProvider` and `ProviderFunc`)
+
+When integrating with a custom enterprise secret vault (such as HashiCorp Vault, AWS Secrets Manager, or an internal token exchange service), implement a custom authentication provider and register it with ADK:
+
+=== "Python"
+
+    ```python
+    from typing import Literal
+    from pydantic import Field
+    from google.adk.agents.callback_context import CallbackContext
+    from google.adk.auth import (
+        AuthConfig,
+        AuthCredential,
+        AuthCredentialTypes,
+        BaseAuthProvider,
+        CredentialManager,
+        CustomAuthScheme,
+        HttpAuth,
+        HttpCredentials,
+    )
+
+    class VaultBearerScheme(CustomAuthScheme):
+        """Custom AuthScheme identifying tokens fetched from an enterprise vault."""
+        type_: Literal["vaultBearerScheme"] = Field(
+            default="vaultBearerScheme", alias="type"
+        )
+        vault_secret_path: str
+
+    class VaultAuthProvider(BaseAuthProvider):
+        """Fetches short-lived bearer tokens from an enterprise secret manager."""
+
+        @property
+        def supported_auth_schemes(self) -> tuple[type[VaultBearerScheme], ...]:
+            return (VaultBearerScheme,)
+
+        async def get_auth_credential(
+            self, auth_config: AuthConfig, context: CallbackContext | None = None
+        ) -> AuthCredential | None:
+            scheme = auth_config.auth_scheme
+            if not isinstance(scheme, VaultBearerScheme):
+                raise TypeError(f"Unsupported scheme: {type(scheme)}")
+
+            # Replace with your asynchronous secret manager or token exchange call
+            token = await fetch_token_from_vault(scheme.vault_secret_path)
+
+            return AuthCredential(
+                auth_type=AuthCredentialTypes.HTTP,
+                http=HttpAuth(
+                    scheme="bearer",
+                    credentials=HttpCredentials(token=token),
+                ),
+            )
+
+    # Register the custom provider (reads provider.supported_auth_schemes automatically)
+    CredentialManager.register_auth_provider(VaultAuthProvider())
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {
+      AuthConfig,
+      AuthCredential,
+      AuthCredentialTypes,
+      AuthProviderRegistry,
+      BaseAuthProvider,
+    } from '@google/adk';
+
+    class VaultAuthProvider implements BaseAuthProvider {
+      async getAuthCredential(
+        authConfig: AuthConfig,
+        context?: unknown
+      ): Promise<AuthCredential | undefined> {
+        // Replace with your asynchronous secret manager or token exchange call
+        const token = await fetchTokenFromVault(authConfig.credentialKey);
+
+        return {
+          authType: AuthCredentialTypes.HTTP,
+          http: {
+            scheme: 'bearer',
+            credentials: { token },
+          },
+        };
+      }
+    }
+
+    // Register the custom provider for the target scheme type
+    const registry = new AuthProviderRegistry();
+    registry.register('http', new VaultAuthProvider());
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "context"
+        "errors"
+
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/auth"
+    )
+
+    // Use auth.ProviderFunc to adapt any function into an auth.CredentialProvider.
+    // Recover the acting user's identity from ctx via agent.IdentityFromContext.
+    vaultProvider := auth.ProviderFunc(func(ctx context.Context) (auth.Credential, error) {
+        id, ok := agent.IdentityFromContext(ctx)
+        if !ok || id.UserID == "" {
+            return nil, errors.New("vault: missing acting user identity")
+        }
+        token, err := fetchTokenFromVault(ctx, "secret/data/api-token", id.UserID)
+        if err != nil {
+            return nil, err
+        }
+        return auth.BearerCredential{Token: token}, nil
+    })
+    ```
+
+---
+
+## Framework components and SDK support
+
+| Component | Python (`google.adk.auth`) | TypeScript (`@google/adk`) | Go (`google.golang.org/adk/v2/auth`) | Kotlin (`com.google.adk.kt.auth`) | Role |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Authentication Scheme** | `AuthScheme` (`SecurityScheme`, `OpenIdConnectWithConfig`, `CustomAuthScheme`) | `AuthScheme` (`OpenAPIV3.SecuritySchemeObject`, `OpenIdConnectWithConfig`) | Built into `CredentialProvider` constructors (`gcp.ProviderScheme` for Agent Identity) | `AuthScheme` (`ApiKey`, `Http`, `OAuth2`, `OpenIdConnect`, `OpenIdConnectUrl`) | Declares the security protocol required by the target API (such as header API key, OAuth2 flows, or OIDC endpoints). |
+| **Authentication Credential** | `AuthCredential` & `AuthCredentialTypes` | `AuthCredential` & `AuthCredentialTypes` | `Credential` interface (`APIKeyCredential`, `BearerCredential`, `BasicCredential`, `OAuth2Credential`) | `AuthCredential` (`ApiKey`, `Http`, `OAuth2`, `ServiceAccount`) & `Secret` | Holds the secret material, client ID/secret, service account key, or exchanged access token. |
+| **OAuth 2.0 Payload** | `OAuth2Auth` | `OAuth2Auth` | `oauth2.TokenSource` / `*auth.ConsentRequiredError` | `AuthCredential.OAuth2` (`Variant.OAUTH2`, `Variant.OPEN_ID_CONNECT`) | Stores OAuth 2.0 client credentials, redirect URIs, authorization codes, and exchanged access/refresh tokens. |
+| **Authentication Configuration** | `AuthConfig` | `AuthConfig` | Passed via `mcptoolset.Config.Auth` or `auth.Transport` | `AuthConfig` & `CredentialKey` | Binds an `AuthScheme` to a raw `AuthCredential`, tracks `exchanged_auth_credential`, and computes a `credential_key`. |
+| **Authentication Provider** | `BaseAuthProvider` & `CredentialManager` | `BaseAuthProvider` & `AuthProviderRegistry` | `CredentialProvider`, `RefreshingProvider`, & `ProviderFunc` | Not supported | Pluggable interface that resolves an `AuthConfig` into a ready-to-use credential at runtime. |
+| **Runtime Handler** | `AuthHandler` & `CredentialManager` | `AuthHandler` & `ToolAuthHandler` | `auth.Transport`, `auth.InMemoryCredentialStore`, & `auth/gcp.NewProvider` | `AuthHandler` (internal) & `Context` (`requestCredential`, `getAuthResponse`) | Manages token caching in session state, generates 3LO consent URIs, and exchanges authorization codes for access tokens. |
+
+### Supported credential types
+
+| Credential Type (`AuthCredentialTypes`) | OpenAPI / Protocol Mapping | Interactive User Prompt? | Typical Use Case |
+| :--- | :--- | :--- | :--- |
+| **`API_KEY`** (`"apiKey"`) | OpenAPI `apiKey` (`header`, `query`, `cookie`) | No | Calling third-party REST APIs authenticated by a static key. |
+| **`HTTP`** (`"http"`) | OpenAPI `http` (`bearer`, `basic`) | No | Injecting pre-existing Bearer JWTs or HTTP Basic credentials. |
+| **`OAUTH2`** (`"oauth2"` — 2LO `clientCredentials`) | OpenAPI `oauth2` (`clientCredentials`) | No | Service-to-service OAuth 2.0 where the agent authenticates with its own client ID and secret. |
+| **`OAUTH2`** (`"oauth2"` — 3LO `authorizationCode` / `implicit`) | OpenAPI `oauth2` (`authorizationCode`, `implicit`) | **Yes** (`adk_request_credential`) | Accessing end-user resources (such as Google Calendar, GitHub, or Jira) with user consent. |
+| **`OPEN_ID_CONNECT`** (`"openIdConnect"`) | OpenAPI `openIdConnect` (`OpenIdConnectWithConfig`) | **Yes** (`adk_request_credential`) | Authenticating users through an OIDC identity provider with automatic endpoint discovery. |
+| **`SERVICE_ACCOUNT`** (`"serviceAccount"`) | Google Cloud Service Account / ADC | No | Calling Google Cloud APIs (with access tokens) or Cloud Run / IAP endpoints (with ID tokens in Python, Go, and Kotlin). |
+
+### Multi-language SDK support matrix
+
+| Capability | Python | TypeScript | Go | Java | Kotlin |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **API Key & Static Bearer/Basic Tokens** | Supported (`token_to_scheme_credential`, `AuthCredential`) | Supported (`AuthScheme`, `AuthCredential`) | Supported (`auth.APIKey`, `auth.StaticToken`, `auth.BasicCredential`) | Not supported | Experimental (`AuthScheme.ApiKey`, `AuthScheme.Http`, `AuthCredential`) |
+| **OAuth 2.0 Client Credentials (2LO)** | Supported (`OAuthFlowClientCredentials`, `OAuth2Auth`) | Supported (`AuthScheme`, `OAuth2Auth`) | Supported (`auth.TokenSourceProvider`) | Not supported | Experimental (`AuthScheme.OAuth2.clientCredentials`, `AuthCredential.OAuth2`) |
+| **Interactive 3LO OAuth 2.0 & OIDC (`adk_request_credential`)** | Supported (`AuthHandler`, `ToolContext`) | Supported (`AuthHandler`, `Context`) | Supported (`*auth.ConsentRequiredError`) | Not supported | Experimental (`Context.requestCredential`, `Context.getAuthResponse`) |
+| **Service Account & Application Default Credentials (ADC)** | Supported (`service_account_dict_to_scheme_credential`, `service_account_scheme_credential`) | Supported (`ServiceAccountCredentialExchanger` for access tokens) | Supported (`auth.ADC`, `auth.ServiceAccount`) | Supported on `ApplicationIntegrationToolset` (`serviceAccountJson` / ADC) | Experimental (`AuthCredential.ServiceAccount.applicationDefault`, `fromKey`) |
+| **Service Account OIDC ID Tokens (`use_id_token` / `Audience` / `forIdToken`)** | Supported (`ServiceAccount(use_id_token=True, audience=...)`) | Not supported | Supported (`ServiceAccountConfig{Audience: ...}`) | Not supported | Experimental (`AuthCredential.ServiceAccount.forIdToken`) |
+| **Declarative `AuthenticatedFunctionTool`** | Supported (`AuthenticatedFunctionTool`) | Not supported (use `FunctionTool` with `Context`) | Not supported | Not supported | Not supported (use `FunctionTool` with `Context`) |
+| **Toolset-level `get_auth_config()`** | Supported (`BaseToolset.get_auth_config`) | Not supported | Not supported | Not supported | Not supported |
+| **External Token Injection (`external_access_token_key`)** | Supported (`BigQueryCredentialsConfig`) | Not supported | Not supported | Not supported | Not supported |
+| **Google Cloud Agent Identity & IAM Connectors (Preview)** | Supported (`GcpAuthProvider`, `GcpAuthProviderScheme`) | Not supported | Supported (`auth/gcp.NewProvider`, `auth/gcp.NewClient`) | Not supported | Not supported |
+| **Custom Auth Providers (`BaseAuthProvider` / `ProviderFunc`)** | Supported (`BaseAuthProvider`, `CredentialManager.register_auth_provider`) | Supported (`BaseAuthProvider`, `AuthProviderRegistry.register`) | Supported (`auth.CredentialProvider`, `auth.ProviderFunc`) | Not supported | Not supported |
+
+### Additional resources
+
+For comprehensive checklists covering prompt safety, memory integrity, output guardrails, and organizational governance, consult:
+
+* [ADK Safety and Security Guide](/safety/)
+* [OWASP AI Agent Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html)
+* [Google Secure AI Framework (SAIF)](https://safety.google/cybersecurity-advancements/saif/)
+* [IBM AI Agent Security Guide](https://www.ibm.com/think/tutorials/ai-agent-security)
