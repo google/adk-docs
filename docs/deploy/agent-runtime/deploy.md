@@ -133,8 +133,8 @@ such as:
     └── main.go
     ``` 
 
-    Your `main.go` must run your agent with the Agent Engine launcher from
-    `google.golang.org/adk/v2/cmd/launcher/agentengine` instead of
+    Your `main.go` must run your agent with the launcher from the
+    `google.golang.org/adk/v2/cmd/launcher/agentengine` package instead of
     `full.NewLauncher()`, passing it the Agent Runtime resource ID from the
     `GOOGLE_CLOUD_AGENT_ENGINE_ID` environment variable:
 
