@@ -1,7 +1,7 @@
 # Use the API Server
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
@@ -94,6 +94,41 @@ Use the following command to run your agent in an ADK API server:
 
     In Java, both the Dev UI and the API server are bundled together.
 
+=== "Kotlin"
+
+    In Kotlin, there is no standalone `adk` CLI. Instead, add the webserver
+    library to your build and start an `AdkApiServer` from your agent's
+    `main` function:
+
+    ```kotlin title="build.gradle.kts (add to dependencies)"
+    implementation("com.google.adk:google-adk-kotlin-webserver:1.5.0")
+    ```
+
+    ```kotlin title="Main.kt"
+    import com.google.adk.kt.webserver.AdkApiServer
+    import com.google.adk.kt.webserver.AdkServerConfig
+
+    fun main() {
+        // ... build your agent, rootAgent ...
+        // inMemory() serves rootAgent under its name, keeping session and
+        // artifact state in the process.
+        AdkApiServer(AdkServerConfig.inMemory(rootAgent)).start(wait = true)
+    }
+    ```
+
+    Then run the main class, for example with the Gradle `application`
+    plugin:
+
+    ```shell
+    gradle run
+    ```
+
+    The server serves the agent under its `name`, which is the app name you
+    use in requests. It listens on `127.0.0.1` port **8080** by default; to
+    change the port, pass it to `inMemory`, for example
+    `AdkServerConfig.inMemory(rootAgent, port = 8000)`. `AdkApiServer` serves
+    the REST API only. To serve the Dev UI as well, use `AdkDevServer`.
+
 This command will launch a local web server, where you can run cURL commands or
 send API requests to test your agent. By default, the server runs on
 `http://localhost:8000`.
@@ -177,6 +212,16 @@ The output should appear similar to:
     2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
     2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
+    ```
+
+=== "Kotlin"
+
+    ```shell
+    [main] INFO com.google.adk.kt.webserver.AdkApiServer - AdkApiServer starting on 127.0.0.1:8080
+    [main] INFO io.ktor.server.Application - Autoreload is disabled because the development mode is off.
+    [main] WARN com.google.adk.kt.webserver.AdkApiServer - Responses use the mixed spelling: /version emits `language_version` and the development trace endpoints emit `span_id`. This default will change in a future release; set camelCaseEnforced or adk.wire.camelcase.enforced=true to migrate now.
+    [main] INFO io.ktor.server.Application - Application started in 0.41 seconds.
+    [DefaultDispatcher-worker-1] INFO io.ktor.server.Application - Responding at http://127.0.0.1:8080
     ```
 
 Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
