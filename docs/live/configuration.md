@@ -7,7 +7,7 @@
 `RunConfig` is where you shape a live session: how the agent sounds, how it transcribes
 speech, when it decides a turn is over, how much history it keeps, and what limits it runs
 under. You pass it to
-[`Runner.run_live()`](https://google.github.io/adk-docs/api-reference/python/), and it
+[`Runner.run_live()`](../api-reference/python/google-adk.html#google.adk.runners.Runner.run_live), and it
 applies to that session only. Two users of the same agent can run with completely
 different configurations.
 
