@@ -396,10 +396,8 @@ during bursts of events.
 
         ADK Go v2.3.0 through v2.5.0 don't apply
         `--trigger_max_concurrent_runs` to Pub/Sub triggers, so Pub/Sub events
-        run without a concurrency limit. Eventarc triggers apply the limit.
-        ADK Go v2.6.0 and higher apply it to Pub/Sub triggers too. On Cloud
-        Run, the service's `--concurrency` and `--max-instances` settings bound
-        Pub/Sub load in the earlier releases.
+        run without a concurrency limit. To limit Pub/Sub concurrency, use
+        ADK Go v2.6.0 or higher.
 
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
@@ -529,10 +527,8 @@ deploying ambient agents with trigger endpoints.
 
 === "Go"
 
-    Deploy your agent to Cloud Run with the `adkgo` CLI. Enable each trigger
-    with its own flag. Trigger settings take the trigger type as a prefix, for
-    example `--eventarc_max_concurrent_runs`. Pass your agent's `main` Go file
-    with `-e`:
+    Deploy your agent to Cloud Run with the `adkgo` CLI and a flag for each
+    trigger:
 
     ```bash
     ./adkgo deploy cloudrun \
