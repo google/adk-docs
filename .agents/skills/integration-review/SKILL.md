@@ -192,7 +192,7 @@ catalog_tags: ["<tag>", "<tag>"]
   content, flag but leave to the author; on anything you edit, remove them.
 - Agent Development Kit should be referred to as "ADK", never "Google ADK" or
   "The ADK", in prose and code comments.
-- **Do not start a sentence with an inline-code word.** Rephrase (for example
+- **Do not start a sentence with code syntax.** Rephrase (for example
   "The `package-name` library adds..." rather than "`package-name` adds...").
 - **No marketing bias.** These are the ADK docs: remove copy that reads like
   marketing and makes sweeping claims.
