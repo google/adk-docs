@@ -504,7 +504,7 @@ Here are the primary context flavors you will encounter:
         --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:tool_context_tool"
         ```
 
-Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
+Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application.
 
 
 ## Common tasks using context
@@ -1601,7 +1601,7 @@ agent responses, use `context.render_ui_widget()`.
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
-While most interactions happen via `CallbackContext` or `ToolContext`, sometimes the agent's core logic (`_run_async_impl`/`_run_live_impl`) needs direct access.
+While most interactions happen via `CallbackContext` or `ToolContext`, sometimes the agent's core logic needs direct access, such as `_run_async_impl` or `_run_live_impl` in Python, or `runAsyncImpl` in TypeScript, Java, and Kotlin.
 
 === "Python"
 
@@ -1731,7 +1731,7 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
     --8<-- "examples/kotlin/snippets/context/ContextExamples.kt:advanced_invocation_context"
     ```
 
-Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
+Setting the end-of-invocation flag to **True** is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks or tools via their respective context objects, which also have access to modify the underlying `InvocationContext`'s flag. Specifically,  use `ctx.end_invocation = True` in Python, `ctx.endInvocation = true` in TypeScript, `ctx.setEndInvocation(true)` in Java, or `context.isEndOfInvocation = true` or `context.endInvocation()` in Kotlin.
 
 ## Key Takeaways & Best Practices
 
