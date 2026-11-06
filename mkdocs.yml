@@ -400,6 +400,8 @@ nav:
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
+    - Human input:
+      - User choice: human-input/user-choice.md
     - Artifacts:
       - artifacts/index.md
     - Skills for Agents:
