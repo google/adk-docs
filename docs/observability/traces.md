@@ -130,7 +130,7 @@ func main() {
 }
 ```
 
-#### GCP export setup
+#### Google Cloud export setup
 
 To export traces to Cloud Trace, pass `telemetry.WithOtelToCloud(true)` to `telemetry.New`. For a complete example, see [Cloud Trace](/integrations/cloud-trace/).
 
