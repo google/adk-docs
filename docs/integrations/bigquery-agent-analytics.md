@@ -222,8 +222,8 @@ per-event-type views. The three HITL completion events have no dedicated views.
     with ADK Python v2.13.0. Section badges show the plugin release that
     introduced a feature; `Go v0.1.0` marks features available since the first
     tagged release. Install core ADK Go (`v2.0.0+`) and the plugin module with
-    `go get` (`@latest` resolves to the latest tagged release, or pin an explicit
-    plugin release such as
+    `go get` (`@latest` resolves to the latest tagged release, or pin a
+    specific plugin release such as
     `google.golang.org/adk/plugin/agentanalytics@v1.0.0`):
 
     ```bash
@@ -1342,7 +1342,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `RetryConfig` | `agentanalytics.RetryConfig` | `MaxRetries: 3`, `InitialDelay: 100ms`, `MaxDelay: 10s`, `Multiplier: 2.0` | Tune exponential backoff for retryable Storage Write API append errors |
     | `DisableSessionMetadata` | `bool` | `false` | Omit `attributes.session_metadata` (`session_id`, `app_name`, `user_id`, `state`) |
     | `CaptureFullMessageContent` | `bool` | `false` | Disable length truncation on text payloads (`MaxContentLen` is ignored; sensitive-key redaction still runs) |
-    | `DisableSensitiveKeyRedaction` | `bool` | `false` | Opt out of automatic sensitive-key, `temp:`-value, URI, header, and credential-pattern redaction. This does not retain top-level lowercase `temp:` entries in `state_delta`: they are still removed, and temp-only `STATE_DELTA` rows are still suppressed |
+    | `DisableSensitiveKeyRedaction` | `bool` | `false` | Opt out of automatic sensitive-key, `temp:`-value, URI, header, and credential-pattern redaction. This does not retain top-level lowercase `temp:` entries (including keys with leading whitespace) in `state_delta`: they are still removed, and temp-only `STATE_DELTA` rows are still suppressed |
     | `ContentFormatter` | `agentanalytics.ContentFormatter` | `nil` | Custom `func(payload any, eventType string) (any, error)` applied before serialization |
     | `DebugContentFormatterErrors` | `bool` | `false` | Include error-shape metadata (such as byte length) in local warning logs when `ContentFormatter` fails, without logging raw error text |
     | `EventAllowlist` | `[]string` | `nil` | Log only the listed event types (supports `"EVENT"` as an alias for session-event rows) |
@@ -1651,7 +1651,10 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
           The message is redacted like other error messages and truncated to
           `MaxContentLen`, but `ContentFormatter` and `PayloadColumnDenylist`
           do not apply to it, so copy tool output into it only when storing
-          that text is acceptable.
+          that text is acceptable. Classifying a call as `ToolResultError` also
+          skips `FinalResponseToolNames` `AGENT_RESPONSE` emission, while an
+          otherwise-successful `finish_task` call still closes the runtime task
+          span.
         - `Decision: agentanalytics.ToolResultOK` logs the call as
           `TOOL_COMPLETED`, even if the built-in rule below would have flagged
           it.
@@ -1663,8 +1666,10 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     4. **Built-in `isError` / `is_error` rule**: A result whose top-level
        `isError` or `is_error` is the boolean `true` is logged as `TOOL_ERROR`
        with the fixed message `"Tool returned an MCP result with
-       isError=true."`. ADK Go's MCP toolset already turns an MCP result with
-       `IsError` set into a tool error, so MCP tools reach step 1.
+       isError=true."` (skipping both `finish_task` span completion and
+       `FinalResponseToolNames` `AGENT_RESPONSE` emission). ADK Go's MCP
+       toolset already turns an MCP result with `IsError` set into a tool
+       error, so MCP tools reach step 1.
 
     The classifier runs synchronously on the agent's goroutine and can be
     called concurrently for parallel tool calls, so keep it fast and safe for
@@ -1752,9 +1757,11 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     and `trace` structure as the Python views.
 
     - Call `bqPlugin.SyncEvalViews(ctx)` to create or replace the two views
-      synchronously, even when `CreateEvalViews` is `false`. When
-      `CreateEvalViews` is `true`, `bqPlugin.SyncViews(ctx)` refreshes them
-      too.
+      synchronously, even when `CreateEvalViews` is `false` (if that call
+      interrupts an unfinished startup per-event view pass, call
+      `bqPlugin.SyncViews(ctx)` afterward to create any remaining per-event
+      views). When `CreateEvalViews` is `true`, `bqPlugin.SyncViews(ctx)`
+      refreshes both view groups and isolates validation errors between them.
     - Call `cfg.EvalViewDefinitions()` to get their `CREATE OR REPLACE VIEW`
       statements without making network calls, for example to provision them
       from a deployment pipeline.
@@ -2317,7 +2324,8 @@ updated by tools).
 !!! note "Built-in redaction"
 
     Python replaces `temp:` state values with `[REDACTED]`. Go removes top-level
-    lowercase `temp:` entries from `state_delta` before logging and emits no
+    lowercase `temp:` entries (after trimming leading whitespace) from
+    `state_delta` before logging and emits no
     `STATE_DELTA` row if nothing remains. Other `temp:` values in structured
     content and attributes are replaced with `[REDACTED]`. See [Built-in
     redaction](#built-in-redaction) for details.
@@ -2524,7 +2532,8 @@ non-empty, and adds `isolation_scope`, `artifact_delta`, `skip_summarization`,
 and `escalate` on rows derived from an ADK `session.Event` when present. Go also
 sets `function_call_id` on `TOOL_STARTING`, `TOOL_COMPLETED`, and `TOOL_ERROR`
 rows, so the rows of concurrent tool calls can be correlated (see the Go note
-under [TOOL_PAUSED and pause/resume pairing](#tool_paused-and-pauseresume-pairing)).
+under [TOOL_PAUSED and pause/resume
+pairing](#tool_paused-and-pauseresume-pairing)).
 
 !!! tip "Querying the envelope"
 
@@ -2837,7 +2846,7 @@ feature.
 | Behavior | Go plugin v1.0.0 | ADK Python v2.13.0 |
 | --- | --- | --- |
 | Streamed model calls | One `LLM_RESPONSE` row per call, for the final response. Streamed chunks only set its `latency_ms.time_to_first_token_ms`, so token usage is counted once. | Also an `LLM_RESPONSE` row for every partial chunk, so `v_llm_response` row counts and summed token counts are higher for streamed calls. |
-| `AGENT_ERROR` and `INVOCATION_ERROR` | Inferred at the end of the run from agent spans that are still open and from unrecovered errors, because ADK Go gives plugins no agent or run error callbacks. `AGENT_ERROR` rows written at run end carry the run-end time, `content.error_traceback` holds the one-line `err.Error()`, and an open agent span without a recorded error leaves `content` and `error_message` `NULL`. | Written when the exception leaves the agent or runner, with `str(error)` and the full traceback. |
+| `AGENT_ERROR` and `INVOCATION_ERROR` | Inferred at the end of the run from agent spans that are still open and from unrecovered errors, because ADK Go gives plugins no agent or run error callbacks. `AGENT_ERROR` rows written at run end carry the run-end time, `content.error_traceback` holds the one-line `err.Error()`, and an open agent span without a recorded error synthesizes `agent "<name>" execution failed before completion` in both `error_message` and `content.error_traceback`. | Written when the exception leaves the agent or runner, with `str(error)` and the full traceback. |
 | `function_call_id` on tool rows | Also set on `TOOL_STARTING`, `TOOL_COMPLETED`, and `TOOL_ERROR`. A long-running tool writes a pending and a resumed `TOOL_COMPLETED` row with the same ID; only the resumed row has `pause_kind` set to `tool`. | Set only on `TOOL_PAUSED` and on the resumed `TOOL_COMPLETED`. |
 | `AGENT_RESPONSE` for final events with function responses | Written when the event also carries visible answer text, such as the final event of an `agenttool` call with `SkipSummarization`. | Not written for events that carry function responses. |
 | `LLM_RESPONSE` text offloaded to GCS | Left out of `content.response`: a single text response above `MaxInlineTextSize` (32 KiB) is written as `{"response": ""}`, with the preview and `object_ref` in `content_parts`. If the upload fails, the inline text (up to `MaxContentLen`) is restored. | Kept inline in `content.response`, up to `max_content_length`. |
@@ -4159,7 +4168,7 @@ following `int64` fields:
 |---|---|
 | `QueueFullDrops` | Rows dropped because the in-memory channel (`QueueMaxSize`, default `10000`) was full when an event callback or `Append` tried to queue a row. Increase `QueueMaxSize` or `BatchSize` on `agentanalytics.Config`. |
 | `AppendFailureDrops` | Rows recorded as failed during Storage Write API delivery (including batches that exhausted `MaxRetries`, non-retryable write or schema/descriptor preparation errors, server-committed appends whose ack was lost on a broken stream before retry failed, recovered callback panics, and remaining batches skipped after a batch failure in `Flush`). |
-| `RowErrorDrops` | *(v1.0.0+)* Rows that BigQuery rejected individually through `AppendRowsResponse.RowErrors`. The plugin drops only those rows and resends the rest of the request (keeping the stream offset in sync when `ExactlyOnceDelivery` is enabled) instead of failing the whole batch. |
+| `RowErrorDrops` | *(v1.0.0+)* Rows that BigQuery rejected individually through `AppendRowsResponse.RowErrors` (when `AppendRowsResponse.Error` is `nil` or `InvalidArgument` with in-range row indices). The plugin drops only those rows and resends the rest of the request instead of failing the whole batch; if all row indices are out of range, or if `ExactlyOnceDelivery` is enabled and an earlier retry of that request had an ambiguous send, the plugin skips row isolation to prevent duplicates and counts the request under `AppendFailureDrops` instead. |
 | `FormatterFailureDrops` | Custom `ContentFormatter` invocations that returned a non-nil error or panicked. The row is still written with `"[FORMATTER_FAILED]"`, no `content_parts`, and `content_formatter raised <error type>` or `content_formatter panicked` in `error_message`; this is an incident count, not included in `TotalDrops`. |
 | `ShutdownDrops` | Rows remaining in the queue that could not be drained before `ShutdownTimeout` expired during `Close()`, plus rows passed to `Append` after `Close()` has started. |
 | `TotalDrops` | Upper-bound total of rows counted as dropped (`QueueFullDrops + AppendFailureDrops + RowErrorDrops + ShutdownDrops`). Because `AppendFailureDrops` can include server-committed batches whose ack was lost, `TotalDrops` is an upper bound on lost rows. |
