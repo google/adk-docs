@@ -47,8 +47,10 @@ The decision logic follows this order for each configured tool:
 2.  **Mock strategy** is used as a fallback if no injection config applies. The
     simulator calls an LLM to generate a realistic response based on the tool's
     schema and any stateful context.
-3.  **No-op** is returned (`None`) if the tool is not in the simulator config,
-    allowing the real tool to execute normally.
+3.  **Unmocked-tool policy** applies if the tool is not configured, or if no
+    injection applies and no fallback strategy is configured. The default
+    `"passthrough"` returns `None`, allowing normal tool execution. The opt-in
+    `"error"` policy blocks the call unless its name is in `allowed_real_tools`.
 
 ## Integration
 
@@ -127,6 +129,83 @@ app = App(
 )
 ```
 
+### Blocking unmocked tool calls
+
+!!! note "Unreleased"
+
+    These controls are part of an unreleased change. Older builds can ignore
+    unknown configuration fields. Verify that your installed build includes
+    the strict simulation implementation before relying on interception.
+
+Set `unmocked_tool_policy="error"` to report missing simulation coverage before
+a real tool runs. For example, this fixture handles only the test order:
+
+```python
+from google.adk.tools.environment_simulation import EnvironmentSimulationFactory
+from google.adk.tools.environment_simulation.environment_simulation_config import (
+    EnvironmentSimulationConfig,
+    InjectionConfig,
+    ToolSimulationConfig,
+)
+
+config = EnvironmentSimulationConfig(
+    unmocked_tool_policy="error",
+    allowed_real_tools=["get_test_clock"],
+    tool_simulation_configs=[
+        ToolSimulationConfig(
+            tool_name="get_order",
+            injection_configs=[
+                InjectionConfig(
+                    match_args={"order_id": "test-123"},
+                    injected_response={"status": "shipped"},
+                )
+            ],
+        )
+    ],
+)
+plugin = EnvironmentSimulationFactory.create_plugin(config)
+# Place plugin first in the App's plugins list.
+```
+
+| Intercepted call | Result |
+| :--- | :--- |
+| `get_order(order_id="test-123")` | Returns the fixture without executing the tool. |
+| `get_order(order_id="other")` | Raises `UnmockedToolCallError`: no injection applied and no fallback is configured. |
+| `cancel_order()` | Raises `UnmockedToolCallError`: no simulation configuration exists. |
+| `get_test_clock()` | Continues to normal execution because the name is explicitly allowed. |
+
+`allowed_real_tools` uses exact, case-sensitive names. It does not support
+wildcards or argument constraints, and a name applies to every intercepted
+agent's tool with that name. There are no implicit exceptions for framework
+control tools such as agent transfer; configure or explicitly allow any such
+tool your evaluation needs.
+
+Injections and fallback mock strategies take precedence over the allowlist.
+An empty response (`{}`) and an injected error both count as simulation outcomes.
+A skipped probability draw without a fallback counts as missing coverage.
+Matcher and generator exceptions propagate even for allowed tools; in strict
+mode malformed JSON, a missing tool declaration, and a non-dictionary generated
+response also fail instead of enabling real execution. The deprecated tracing
+strategy is unimplemented and raises in strict mode. A configured fallback
+generator may still call its model. For
+evaluations based only on fixed fixtures, omit fallback mock strategies and
+model-backed argument matchers.
+
+Attach strict simulation **before** tool execution. An after-tool callback
+cannot prevent side effects. For app-wide coverage, including sub-agent calls,
+put the simulation plugin first in `App.plugins`. An earlier plugin that
+returns a response skips later before-tool plugins. For an agent callback,
+put it first in that agent's `before_tool_callback` list; plugins run before
+agent callbacks, and other agents need their own callback.
+
+The exception is available from
+`google.adk.tools.environment_simulation.UnmockedToolCallError`. The plugin
+manager wraps it in a `RuntimeError` and retains it as `__cause__`. Evaluation
+inference reports failure with the tool name and missing-coverage reason.
+Blocking a parallel call does not roll back allowed calls that have already
+started. Enforcement covers intercepted tool calls, not direct external calls
+inside callbacks or custom agent code.
+
 ## Configuration reference
 
 You can configure the Environment Simulator with a set of dataclasses. The
@@ -139,6 +218,8 @@ The top-level configuration object.
 Field                            | Type                         | Default              | Description
 :------------------------------- | :--------------------------- | :------------------- | :----------
 `tool_simulation_configs`        | `List[ToolSimulationConfig]` | required             | One entry per tool to simulate. Must not be empty, and tool names must be unique.
+`unmocked_tool_policy`           | `"passthrough" \| "error"` | `"passthrough"`      | Allow normal execution or block calls without a simulation outcome. Strict mode requires before-tool interception.
+`allowed_real_tools`             | `list[str]`                  | `[]`                 | Exact tool names permitted to run when no injection or fallback strategy applies.
 `simulation_model`               | `str`                        | `"gemini-flash-latest"` | The LLM used for tool connection analysis and mock response generation.
 `simulation_model_configuration` | `GenerateContentConfig`      | thinking enabled     | LLM generation config for internal simulator calls.
 `environment_data`               | `str \| None`                | `None`               | Optional environment context (e.g., a JSON database snapshot) passed to mock strategies to generate more realistic responses.
