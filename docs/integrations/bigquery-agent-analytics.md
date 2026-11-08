@@ -132,9 +132,11 @@ In ADK Python v2.13.0 and later, the plugin adds:
 - **Queryable Event Views**: Automatically create flat, per-event-type BigQuery
   views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream
   analytics by unnesting JSON payload data.
-- **Coding Assistant Tracing**: Capture developer coding-agent sessions (Claude Code)
-  into the same BigQuery table alongside production ADK agents via
-  [BigQuery Agent Analytics Plugins](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins).
+- **Coding-agent analysis (companion)**: Use the separate
+  [BigQuery Agent Analytics Plugins](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins)
+  to stream developer coding-assistant sessions (Claude Code) into the same
+  BigQuery table alongside production ADK agents (see
+  [Coding assistant tracing](#coding-assistant-tracing-claude-code)).
 
 ### Captured events summary
 
@@ -4094,20 +4096,48 @@ BigQuery Agent Analytics dataset. You can also publish the notebook as an
 interactive dashboard using [Colab Data
 Apps](https://docs.cloud.google.com/bigquery/docs/colab-data-apps).
 
-### Coding assistant tracing (Claude Code)
+## Coding assistant tracing (Claude Code)
 
 To trace coding-assistant workflows and analyze developer sessions alongside
-your ADK agents in the same `agent_events` table, install the official
-[BigQuery Agent Analytics Plugins for Claude Code](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins):
+your ADK agents in the same `agent_events` table, use the companion
+[BigQuery Agent Analytics Plugins](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins)
+for Claude Code:
 
-- **`bigquery-agent-analytics-mod`** (recommended for Claude Code v2.1.296+): An
-  in-process TypeScript mod that records turns, model requests (with token counts
-  and latency), and tool calls to BigQuery in background batches with zero
-  interactive latency.
+- **`bigquery-agent-analytics-mod`** (early access; see the plugin repository
+  for supported Claude Code versions): Records sessions, turns, model requests
+  (with token counts and latency), and tool calls, writing them to BigQuery in
+  background batches to minimize interactive latency without waiting on network
+  uploads.
 - **`bigquery-agent-analytics-tracing`**: Hook scripts that call the Python
   tracing package and stream events to BigQuery.
 
-Install from the `bqaa-tracing` marketplace:
+!!! note "Data privacy and support status"
+
+    Coding-assistant sessions can include source code, file contents, command
+    outputs, credentials, and developer identity. Review the plugin's redaction
+    and filtering options in the plugin repository before enabling tracing, and
+    restrict access to the BigQuery dataset accordingly. These companion plugins
+    are maintained in a separate repository and are not an officially supported
+    Google product.
+
+!!! warning "Run one tracer per table"
+
+    Install either `bigquery-agent-analytics-mod` or
+    `bigquery-agent-analytics-tracing` for a given table, not both. The two
+    plugins write the same events, so enabling both causes every event to be
+    written twice.
+
+Before installing `bigquery-agent-analytics-mod` from the `bqaa-tracing`
+marketplace, make sure that:
+
+1. Your target BigQuery dataset already exists, and any pre-existing
+   `agent_events` table includes the `event_id STRING` column (run the plugin
+   repository's `setup.sh` once to create the dataset or add missing columns).
+2. Google Cloud Application Default Credentials are configured
+   (`gcloud auth application-default login`).
+
+Install the plugin, then run `/reload-plugins` or start a new Claude Code
+session:
 
 ```bash
 claude plugin marketplace add GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins
@@ -4115,7 +4145,9 @@ claude plugin install bigquery-agent-analytics-mod@bqaa-tracing \
   --config project=my-gcp-project --config dataset=agent_analytics
 ```
 
-For configuration options and setup guides, see the
+For configuration options, redaction settings, and step-by-step setup, see the
+[Quickstart](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins/blob/main/plugins/claude_code_mod/QUICKSTART.md)
+and the
 [BigQuery-Agent-Analytics-Plugins repository](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-Plugins).
 
 ## Feedback
