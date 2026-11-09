@@ -162,7 +162,7 @@ Here is a quick guide to authentication for key ADK toolsets:
 *   [***ApplicationIntegrationToolset***](/integrations/application-integration/):
     Set `auth_scheme` and `auth_credential` during initialization, *if* the API
     requires authentication.
-*   [***GoogleApiToolset***](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py):
+*   [***Google Apps Toolset***](/integrations/google-api-toolsets/):
     Use this toolset's specific authentication method.
 
 For more authentication details for other pre-built tools and integrations
@@ -172,7 +172,7 @@ see the [ADK Integrations](/integrations) catalog.
 
 ## Build agentic applications with authenticated tools
 
-This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolset`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
+This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `Google Apps Toolset`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
 
 ### Configure tools with authentication
 
@@ -367,7 +367,7 @@ sample_toolset = OpenAPIToolset(
 
 ##### ServiceAccount configuration parameters
 
-* `service_account_credential` (Required unless use_default_credential=True): Provide a `ServiceAccountCredential` object, or a dict holding the contents of your service account JSON key file. Use this if you are running locally or outside of Google Cloud.
+* `service_account_credential` Provide a `ServiceAccountCredential` object, or a dict holding the contents of your service account JSON key file. Use this if you are running locally or outside of Google Cloud. This setting is required unless `use_default_credential` is set to `True`. 
   
 * `use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud, for example on Cloud Run or Cloud Functions, as it avoids the need for local key files.
   
@@ -375,7 +375,7 @@ sample_toolset = OpenAPIToolset(
   
 * `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, `https://my-service.run.app`. This is a security binding that ensures the token is valid only for that specific destination.
   
-* `scopes` (Required when requesting an Access Token with service_account_credential): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication. With `use_default_credential=True`, `scopes` defaults to the broad `cloud-platform` scope; for production deployments, set only the scopes your tool needs.
+* `scopes` Use this setting when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. Required when requesting an Access Token with `service_account_credential`. You do not need to set this if you are using ID tokens for private service authentication. With `use_default_credential=True`, `scopes` defaults to the broad `cloud-platform` scope; for production deployments, set only the scopes your tool needs.: 
 
 !!! warning "Pair `use_id_token` with `audience`"
 
