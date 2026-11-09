@@ -10,7 +10,7 @@ sub-agents. Template workflow agents are specialized components designed for
 orchestrating the execution flow of sub-agents. Their primary role is to manage
 how and when other agents run, defining the control flow of a process.
 
-!!! note "Deprecated: Use graph-based workflows"
+!!! warning "Deprecated: Use graph-based workflows"
 
     In ADK Python, TypeScript, Go, and Kotlin, template workflows have been 
     superseded by more flexible workflow structures, including
