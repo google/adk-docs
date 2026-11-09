@@ -24,7 +24,7 @@ model that extends `LlmResponse`. Live sessions use these fields:
 |-------|---------------|
 | `content.parts[].text` | Text parts — in a live session, thought summaries and other non-spoken content |
 | `content.parts[].inline_data` | Raw audio bytes for playback (ephemeral) |
-| `content.parts[].file_data` | Reference to audio saved in artifacts (when `save_live_blob=True`) |
+| `content.parts[].file_data` | Reference to audio or the user's image frames saved in artifacts (when `save_live_blob=True`) |
 | `content.parts[].function_call` / `function_response` | Tool invocations and results (ADK executes these for you) |
 | `input_transcription` / `output_transcription` | User and model speech as text |
 | `partial` | `True` for an incremental chunk, `False` for the merged result |
@@ -92,8 +92,8 @@ async for event in runner.run_live(...):
 
 `inline_data` is ephemeral and never persisted. Set
 [`save_live_blob=True`](configuration.md#save_live_blob) and ADK aggregates audio into files
-in the artifact service, delivering a `file_data` reference instead of (not in addition to)
-raw bytes so you can retrieve the audio later. For formats and playback, see
+in the artifact service, delivering a `file_data` reference in addition to the raw bytes so
+you can retrieve the audio later. For formats and playback, see
 [Audio and video](audio-video.md).
 
 ### Transcription
