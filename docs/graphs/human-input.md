@@ -41,7 +41,7 @@ the input process more predictable and reliable.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a human input node yields a `RequestInput`.
+    In ADK TypeScript, a human input node yields a `RequestInput`.
     The `step1` node pauses the workflow until the user replies, and the
     reply is passed to the next node as its input. A human-in-the-loop node
     does not require a model, which makes the pause deterministic.
@@ -58,20 +58,18 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go v2.0.0, a HITL graph node is built with
-    `workflow.NewEmittingFunctionNode` and `workflow.ResumeOrRequestInput`.
-    This is the direct equivalent of Python's `RequestInput` node:
-
-    -   On the **first pass**, `workflow.ResumeOrRequestInput` emits a
-        `session.RequestInput` event (surfaced as `Event.RequestedInput`) and
-        returns `ErrNodeInterrupted`, pausing the workflow.
-    -   After the human replies, the node is **re-invoked from the top**
-        (`RerunOnResume: &true`) and `ResumeOrRequestInput` returns the reply
-        payload, which flows as typed input to the next node via `event.Output`.
+    In ADK Go, a human input node emits a request with
+    `workflow.NewRequestInputEvent` and returns `workflow.ErrNodeInterrupted`.
+    The `step1` node pauses the workflow until the user replies. The node does
+    not run again. The reply becomes its output and is passed to the next node.
 
     ```go
-    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-get-started"
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-handoff"
     ```
+
+    A node that needs to run again after the reply sets `RerunOnResume` and
+    calls `workflow.ResumeOrRequestInput` instead. For more information, see
+    [human input in dynamic workflows](/graphs/dynamic/#human-input).
 
 ## Configuration options
 
@@ -121,21 +119,17 @@ the input process more predictable and reliable.
     -   **`Payload`** (`any`): Optional structured data sent alongside the
         prompt so the client can render additional context. Equivalent to
         Python's `payload` parameter.
+    -   **`ResponseSchema`** (`*jsonschema.Schema`): Optional JSON schema the
+        reply must conform to. Equivalent to Python's `response_schema`
+        parameter.
 
-    `workflow.NodeConfig.RerunOnResume` controls what happens on resume:
+    The `workflow.NodeConfig.RerunOnResume` field controls what happens on resume:
 
     -   **`&true`**: the node body is re-run from the top; `ResumeOrRequestInput`
         returns the human's reply on the second pass. Required for nodes that
         use `ResumeOrRequestInput`.
     -   **`&false`** or **`nil`** (leaf default): the reply is routed to the
         node's successor as input, bypassing the interrupted node.
-
-    !!! note "Note: Structured response from the client"
-
-        ADK Go does not automatically parse or validate the structure of the
-        human's reply payload. If your workflow needs structured feedback,
-        include a UI or a downstream agent node to validate the response before
-        acting on it.
 
 !!! note "Note: Response schema input limitations"
 
