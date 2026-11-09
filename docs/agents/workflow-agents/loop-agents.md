@@ -14,17 +14,12 @@ its sub-agents. The sub-agents within the defined loop may or may not utilize AI
 models, but the overall execution of those sub-agents is ultimately managed by
 the ***LoopAgent*** object you define.
 
-!!! note "Alternative: graph-based workflows"
+!!! warning "Deprecated: Use graph-based workflows"
 
-    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
-
-    by more flexible workflow structures, including
+    In ADK Python, TypeScript, Go, and Kotlin, template workflows have been 
+    superseded by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
-
-    In Python and TypeScript, `LoopAgent` is deprecated in favor of `Workflow`:
-    constructing one emits a deprecation warning, and the class will be removed
-    in a future release. A `Workflow` cannot be used as an `LlmAgent` sub-agent.
 
 ### Example scenario
 
