@@ -15,7 +15,7 @@
     <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Submodules" href="google-adk.html">
 
     <!-- Generated with Sphinx 8.3.0 and Furo 2025.12.19 -->
-        <title>Agent Development Kit (Python) 2.13.0 documentation</title>
+        <title>Agent Development Kit (Python) 2.14.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
@@ -186,7 +186,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Agent Development Kit (Python) 2.13.0 documentation</div></a>
+      <a href="#"><div class="brand">Agent Development Kit (Python) 2.14.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -207,7 +207,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
-  <span class="sidebar-brand-text">Agent Development Kit (Python) 2.13.0 documentation</span>
+  <span class="sidebar-brand-text">Agent Development Kit (Python) 2.14.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -241,6 +241,7 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-integrations-eleven-labs-module">google.adk.integrations.eleven_labs module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.eventarc">google.adk.integrations.eventarc module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.firestore">google.adk.integrations.firestore module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.fsspec">google.adk.integrations.fsspec module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.gcs">google.adk.integrations.gcs module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.langchain">google.adk.integrations.langchain module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.livekit">google.adk.integrations.livekit module</a></li>
@@ -254,6 +255,7 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-integrations-secret-manager-module">google.adk.integrations.secret_manager module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-integrations-skill-registry-module">google.adk.integrations.skill_registry module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.slack">google.adk.integrations.slack module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.teams">google.adk.integrations.teams module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.typesafe">google.adk.integrations.typesafe module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.vmaas">google.adk.integrations.vmaas module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.labs.antigravity">google.adk.labs.antigravity module</a></li>
@@ -314,6 +316,7 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-set-model-response-tool-module">google.adk.tools.set_model_response_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-skill-toolset-module">google.adk.tools.skill_toolset module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.spanner">google.adk.tools.spanner module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-args-matcher-module">google.adk.tools.tool_args_matcher module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-configs-module">google.adk.tools.tool_configs module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-confirmation-module">google.adk.tools.tool_confirmation module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-context-module">google.adk.tools.tool_context module</a></li>
@@ -402,6 +405,23 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.BaseAgentConfig.sub_agents"><code class="docutils literal notranslate"><span class="pre">BaseAgentConfig.sub_agents</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackInfo"><code class="docutils literal notranslate"><span class="pre">CallbackInfo</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackInfo.type"><code class="docutils literal notranslate"><span class="pre">CallbackInfo.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id0"><code class="docutils literal notranslate"><span class="pre">CallbackInfo.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType"><code class="docutils literal notranslate"><span class="pre">CallbackType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.AFTER_AGENT"><code class="docutils literal notranslate"><span class="pre">CallbackType.AFTER_AGENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.AFTER_MODEL"><code class="docutils literal notranslate"><span class="pre">CallbackType.AFTER_MODEL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.AFTER_TOOL"><code class="docutils literal notranslate"><span class="pre">CallbackType.AFTER_TOOL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.BEFORE_AGENT"><code class="docutils literal notranslate"><span class="pre">CallbackType.BEFORE_AGENT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.BEFORE_MODEL"><code class="docutils literal notranslate"><span class="pre">CallbackType.BEFORE_MODEL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.BEFORE_TOOL"><code class="docutils literal notranslate"><span class="pre">CallbackType.BEFORE_TOOL</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.ON_AGENT_ERROR"><code class="docutils literal notranslate"><span class="pre">CallbackType.ON_AGENT_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.ON_MODEL_ERROR"><code class="docutils literal notranslate"><span class="pre">CallbackType.ON_MODEL_ERROR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.CallbackType.ON_TOOL_ERROR"><code class="docutils literal notranslate"><span class="pre">CallbackType.ON_TOOL_ERROR</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.agents.Context"><code class="docutils literal notranslate"><span class="pre">Context</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.actions"><code class="docutils literal notranslate"><span class="pre">Context.actions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.add_events_to_memory"><code class="docutils literal notranslate"><span class="pre">Context.add_events_to_memory()</span></code></a></li>
@@ -409,6 +429,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.add_session_to_memory"><code class="docutils literal notranslate"><span class="pre">Context.add_session_to_memory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.attempt_count"><code class="docutils literal notranslate"><span class="pre">Context.attempt_count</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.branch"><code class="docutils literal notranslate"><span class="pre">Context.branch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.callback_info"><code class="docutils literal notranslate"><span class="pre">Context.callback_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.custom_metadata"><code class="docutils literal notranslate"><span class="pre">Context.custom_metadata</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.delete_memory"><code class="docutils literal notranslate"><span class="pre">Context.delete_memory()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.Context.error"><code class="docutils literal notranslate"><span class="pre">Context.error</span></code></a></li>
@@ -642,9 +663,9 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.agents.RunConfig.save_live_audio"><code class="docutils literal notranslate"><span class="pre">RunConfig.save_live_audio</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id0"><code class="docutils literal notranslate"><span class="pre">RunConfig.msg</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id69"><code class="docutils literal notranslate"><span class="pre">RunConfig.wrapped_property</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id70"><code class="docutils literal notranslate"><span class="pre">RunConfig.field_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id69"><code class="docutils literal notranslate"><span class="pre">RunConfig.msg</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id70"><code class="docutils literal notranslate"><span class="pre">RunConfig.wrapped_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="google-adk.html#id71"><code class="docutils literal notranslate"><span class="pre">RunConfig.field_name</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -756,12 +777,12 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.code_block_delimiters"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.code_block_delimiters</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.execution_result_delimiters"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.execution_result_delimiters</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.timeout_seconds"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.timeout_seconds</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id71"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.code_block_delimiters</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id72"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.error_retry_attempts</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id73"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.execution_result_delimiters</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id74"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.optimize_data_file</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id75"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.stateful</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id76"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.timeout_seconds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id72"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.code_block_delimiters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id73"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.error_retry_attempts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id74"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.execution_result_delimiters</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id75"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.optimize_data_file</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id76"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.stateful</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id77"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.timeout_seconds</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.execute_code"><code class="docutils literal notranslate"><span class="pre">BaseCodeExecutor.execute_code()</span></code></a></li>
 </ul>
 </li>
@@ -781,6 +802,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.initialize"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.initialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.is_initialized"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.is_initialized</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.read_file"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.read_file_stream"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.read_file_stream()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.working_dir"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.working_dir</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.BaseEnvironment.write_file"><code class="docutils literal notranslate"><span class="pre">BaseEnvironment.write_file()</span></code></a></li>
 </ul>
@@ -797,6 +819,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.execute"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.execute()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.initialize"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.initialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.read_file"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.read_file_stream"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.read_file_stream()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.working_dir"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.working_dir</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.environment.LocalEnvironment.write_file"><code class="docutils literal notranslate"><span class="pre">LocalEnvironment.write_file()</span></code></a></li>
 </ul>
@@ -814,6 +837,12 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.AgentEvaluator.evaluate_eval_set"><code class="docutils literal notranslate"><span class="pre">AgentEvaluator.evaluate_eval_set()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.AgentEvaluator.find_config_for_test_file"><code class="docutils literal notranslate"><span class="pre">AgentEvaluator.find_config_for_test_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.AgentEvaluator.migrate_eval_data_to_new_schema"><code class="docutils literal notranslate"><span class="pre">AgentEvaluator.migrate_eval_data_to_new_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.evaluation.RunResult"><code class="docutils literal notranslate"><span class="pre">RunResult</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.RunResult.invocation_scores"><code class="docutils literal notranslate"><span class="pre">RunResult.invocation_scores</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.RunResult.score"><code class="docutils literal notranslate"><span class="pre">RunResult.score</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.evaluation.RunResult.status"><code class="docutils literal notranslate"><span class="pre">RunResult.status</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -863,6 +892,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.events.RequestInput.response_schema"><code class="docutils literal notranslate"><span class="pre">RequestInput.response_schema</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.events.get_active_events"><code class="docutils literal notranslate"><span class="pre">get_active_events()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.examples">google.adk.examples module</a><ul>
@@ -873,8 +903,8 @@
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.examples.Example"><code class="docutils literal notranslate"><span class="pre">Example</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.examples.Example.input"><code class="docutils literal notranslate"><span class="pre">Example.input</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.examples.Example.output"><code class="docutils literal notranslate"><span class="pre">Example.output</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id77"><code class="docutils literal notranslate"><span class="pre">Example.input</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id78"><code class="docutils literal notranslate"><span class="pre">Example.output</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id78"><code class="docutils literal notranslate"><span class="pre">Example.input</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id79"><code class="docutils literal notranslate"><span class="pre">Example.output</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.examples.VertexAiExampleStore"><code class="docutils literal notranslate"><span class="pre">VertexAiExampleStore</span></code></a><ul>
@@ -896,10 +926,10 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.scopes"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.scopes</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.continue_uri"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.continue_uri</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.agent_identity.GcpAuthProviderScheme.type_"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.type_</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id79"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.continue_uri</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id80"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id81"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.scopes</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id82"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.type_</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id80"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.continue_uri</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id81"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id82"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.scopes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id83"><code class="docutils literal notranslate"><span class="pre">GcpAuthProviderScheme.type_</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -974,6 +1004,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.execute"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.execute()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.initialize"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.initialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.read_file"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.read_file_stream"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.read_file_stream()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.working_dir"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.working_dir</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.daytona.DaytonaEnvironment.write_file"><code class="docutils literal notranslate"><span class="pre">DaytonaEnvironment.write_file()</span></code></a></li>
 </ul>
@@ -986,6 +1017,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.execute"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.execute()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.initialize"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.initialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.read_file"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.read_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.read_file_stream"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.read_file_stream()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.working_dir"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.working_dir</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.e2b.E2BEnvironment.write_file"><code class="docutils literal notranslate"><span class="pre">E2BEnvironment.write_file()</span></code></a></li>
 </ul>
@@ -1049,6 +1081,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.fsspec">google.adk.integrations.fsspec module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.gcs">google.adk.integrations.gcs module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.gcs.GCSAdminToolset"><code class="docutils literal notranslate"><span class="pre">GCSAdminToolset</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.gcs.GCSAdminToolset.get_tools"><code class="docutils literal notranslate"><span class="pre">GCSAdminToolset.get_tools()</span></code></a></li>
@@ -1175,9 +1208,18 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.AzureOpenAIResponsesLlm.azure_endpoint"><code class="docutils literal notranslate"><span class="pre">AzureOpenAIResponsesLlm.azure_endpoint</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.api_key"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.api_key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.base_url"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.base_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.client"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.model"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.model</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.classify"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.classify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIDecisionsClassifier.model_post_init"><code class="docutils literal notranslate"><span class="pre">OpenAIDecisionsClassifier.model_post_init()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIGenerateContentConfig"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAIGenerateContentConfig.effort"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.effort</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id119"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.effort</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id120"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.effort</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm"><code class="docutils literal notranslate"><span class="pre">OpenAILlm</span></code></a><ul>
@@ -1186,11 +1228,11 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm.api_key"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm.base_url"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm.client"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id120"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id121"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id122"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id123"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.max_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id124"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.model</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id121"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id122"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id123"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id124"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.max_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id125"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.model</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm.supported_models"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.supported_models()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.openai.OpenAILlm.generate_content_async"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.generate_content_async()</span></code></a></li>
 </ul>
@@ -1278,6 +1320,14 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.slack">google.adk.integrations.slack module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.slack.SlackRunner"><code class="docutils literal notranslate"><span class="pre">SlackRunner</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.slack.SlackRunner.start"><code class="docutils literal notranslate"><span class="pre">SlackRunner.start()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.integrations.teams">google.adk.integrations.teams module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.integrations.teams.TeamsRunner"><code class="docutils literal notranslate"><span class="pre">TeamsRunner</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.teams.TeamsRunner.create_app"><code class="docutils literal notranslate"><span class="pre">TeamsRunner.create_app()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.integrations.teams.TeamsRunner.start"><code class="docutils literal notranslate"><span class="pre">TeamsRunner.start()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1409,6 +1459,10 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.LlmClassifier.model_post_init"><code class="docutils literal notranslate"><span class="pre">LlmClassifier.model_post_init()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.RefusalAnswer"><code class="docutils literal notranslate"><span class="pre">RefusalAnswer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.RefusalAnswer.type"><code class="docutils literal notranslate"><span class="pre">RefusalAnswer.type</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.Score"><code class="docutils literal notranslate"><span class="pre">Score</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.Score.criteria"><code class="docutils literal notranslate"><span class="pre">Score.criteria</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.classifiers.Score.instructions"><code class="docutils literal notranslate"><span class="pre">Score.instructions</span></code></a></li>
@@ -1450,7 +1504,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.cached_content"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.cached_content</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.candidate_count"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.candidate_count</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.continuation_token"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.continuation_token</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id151"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.effort</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id152"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.effort</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.enable_enhanced_civic_answers"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.enable_enhanced_civic_answers</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.frequency_penalty"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.frequency_penalty</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAIGenerateContentConfig.generation_output_config"><code class="docutils literal notranslate"><span class="pre">OpenAIGenerateContentConfig.generation_output_config</span></code></a></li>
@@ -1491,11 +1545,11 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAILlm.api_key"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAILlm.base_url"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAILlm.client"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id152"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id153"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id154"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id155"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.max_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id156"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.model</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id153"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.api_key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id154"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.base_url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id155"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id156"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.max_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id157"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.model</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAILlm.supported_models"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.supported_models()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.labs.openai.OpenAILlm.generate_content_async"><code class="docutils literal notranslate"><span class="pre">OpenAILlm.generate_content_async()</span></code></a></li>
 </ul>
@@ -1627,7 +1681,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.planners.BuiltInPlanner.apply_thinking_config"><code class="docutils literal notranslate"><span class="pre">BuiltInPlanner.apply_thinking_config()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.planners.BuiltInPlanner.build_planning_instruction"><code class="docutils literal notranslate"><span class="pre">BuiltInPlanner.build_planning_instruction()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.planners.BuiltInPlanner.process_planning_response"><code class="docutils literal notranslate"><span class="pre">BuiltInPlanner.process_planning_response()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id157"><code class="docutils literal notranslate"><span class="pre">BuiltInPlanner.thinking_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id158"><code class="docutils literal notranslate"><span class="pre">BuiltInPlanner.thinking_config</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.planners.PlanReActPlanner"><code class="docutils literal notranslate"><span class="pre">PlanReActPlanner</span></code></a><ul>
@@ -1701,22 +1755,22 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.credential_service"><code class="docutils literal notranslate"><span class="pre">Runner.credential_service</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.context_cache_config"><code class="docutils literal notranslate"><span class="pre">Runner.context_cache_config</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.resumability_config"><code class="docutils literal notranslate"><span class="pre">Runner.resumability_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id158"><code class="docutils literal notranslate"><span class="pre">Runner.agent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id159"><code class="docutils literal notranslate"><span class="pre">Runner.agent</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.app"><code class="docutils literal notranslate"><span class="pre">Runner.app</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id159"><code class="docutils literal notranslate"><span class="pre">Runner.app_name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id160"><code class="docutils literal notranslate"><span class="pre">Runner.artifact_service</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id160"><code class="docutils literal notranslate"><span class="pre">Runner.app_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id161"><code class="docutils literal notranslate"><span class="pre">Runner.artifact_service</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.close"><code class="docutils literal notranslate"><span class="pre">Runner.close()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id161"><code class="docutils literal notranslate"><span class="pre">Runner.context_cache_config</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id162"><code class="docutils literal notranslate"><span class="pre">Runner.credential_service</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id163"><code class="docutils literal notranslate"><span class="pre">Runner.memory_service</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id164"><code class="docutils literal notranslate"><span class="pre">Runner.plugin_manager</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id165"><code class="docutils literal notranslate"><span class="pre">Runner.resumability_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id162"><code class="docutils literal notranslate"><span class="pre">Runner.context_cache_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id163"><code class="docutils literal notranslate"><span class="pre">Runner.credential_service</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id164"><code class="docutils literal notranslate"><span class="pre">Runner.memory_service</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id165"><code class="docutils literal notranslate"><span class="pre">Runner.plugin_manager</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id166"><code class="docutils literal notranslate"><span class="pre">Runner.resumability_config</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.rewind_async"><code class="docutils literal notranslate"><span class="pre">Runner.rewind_async()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.run"><code class="docutils literal notranslate"><span class="pre">Runner.run()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.run_async"><code class="docutils literal notranslate"><span class="pre">Runner.run_async()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.run_debug"><code class="docutils literal notranslate"><span class="pre">Runner.run_debug()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.runners.Runner.run_live"><code class="docutils literal notranslate"><span class="pre">Runner.run_live()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id166"><code class="docutils literal notranslate"><span class="pre">Runner.session_service</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id167"><code class="docutils literal notranslate"><span class="pre">Runner.session_service</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1797,21 +1851,21 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Frontmatter.compatibility"><code class="docutils literal notranslate"><span class="pre">Frontmatter.compatibility</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Frontmatter.allowed_tools"><code class="docutils literal notranslate"><span class="pre">Frontmatter.allowed_tools</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Frontmatter.metadata"><code class="docutils literal notranslate"><span class="pre">Frontmatter.metadata</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id167"><code class="docutils literal notranslate"><span class="pre">Frontmatter.allowed_tools</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id168"><code class="docutils literal notranslate"><span class="pre">Frontmatter.compatibility</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id169"><code class="docutils literal notranslate"><span class="pre">Frontmatter.description</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id170"><code class="docutils literal notranslate"><span class="pre">Frontmatter.license</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id171"><code class="docutils literal notranslate"><span class="pre">Frontmatter.metadata</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id172"><code class="docutils literal notranslate"><span class="pre">Frontmatter.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id168"><code class="docutils literal notranslate"><span class="pre">Frontmatter.allowed_tools</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id169"><code class="docutils literal notranslate"><span class="pre">Frontmatter.compatibility</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id170"><code class="docutils literal notranslate"><span class="pre">Frontmatter.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id171"><code class="docutils literal notranslate"><span class="pre">Frontmatter.license</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id172"><code class="docutils literal notranslate"><span class="pre">Frontmatter.metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id173"><code class="docutils literal notranslate"><span class="pre">Frontmatter.name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources"><code class="docutils literal notranslate"><span class="pre">Resources</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.references"><code class="docutils literal notranslate"><span class="pre">Resources.references</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.assets"><code class="docutils literal notranslate"><span class="pre">Resources.assets</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.scripts"><code class="docutils literal notranslate"><span class="pre">Resources.scripts</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id173"><code class="docutils literal notranslate"><span class="pre">Resources.assets</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id174"><code class="docutils literal notranslate"><span class="pre">Resources.references</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id175"><code class="docutils literal notranslate"><span class="pre">Resources.scripts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id174"><code class="docutils literal notranslate"><span class="pre">Resources.assets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id175"><code class="docutils literal notranslate"><span class="pre">Resources.references</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id176"><code class="docutils literal notranslate"><span class="pre">Resources.scripts</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.get_asset"><code class="docutils literal notranslate"><span class="pre">Resources.get_asset()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.get_reference"><code class="docutils literal notranslate"><span class="pre">Resources.get_reference()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Resources.get_script"><code class="docutils literal notranslate"><span class="pre">Resources.get_script()</span></code></a></li>
@@ -1828,9 +1882,9 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.frontmatter"><code class="docutils literal notranslate"><span class="pre">Skill.frontmatter</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.instructions"><code class="docutils literal notranslate"><span class="pre">Skill.instructions</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.resources"><code class="docutils literal notranslate"><span class="pre">Skill.resources</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id176"><code class="docutils literal notranslate"><span class="pre">Skill.frontmatter</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id177"><code class="docutils literal notranslate"><span class="pre">Skill.instructions</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id178"><code class="docutils literal notranslate"><span class="pre">Skill.resources</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id177"><code class="docutils literal notranslate"><span class="pre">Skill.frontmatter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id178"><code class="docutils literal notranslate"><span class="pre">Skill.instructions</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id179"><code class="docutils literal notranslate"><span class="pre">Skill.resources</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.model_post_init"><code class="docutils literal notranslate"><span class="pre">Skill.model_post_init()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.description"><code class="docutils literal notranslate"><span class="pre">Skill.description</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.skills.Skill.name"><code class="docutils literal notranslate"><span class="pre">Skill.name</span></code></a></li>
@@ -1867,10 +1921,10 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.capture_message_content"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.capture_message_content</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.adk_experimental_telemetry_opt_in"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.adk_experimental_telemetry_opt_in</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.experimental_features_opt_in"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.experimental_features_opt_in</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id179"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.adk_experimental_telemetry_opt_in</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id180"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.capture_message_content</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id181"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.experimental_features_opt_in</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id182"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.genai_semconv_stability_opt_in</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id180"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.adk_experimental_telemetry_opt_in</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id181"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.capture_message_content</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id182"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.experimental_features_opt_in</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id183"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.genai_semconv_stability_opt_in</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.model_post_init"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.model_post_init()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.content_capturing_mode_value"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.content_capturing_mode_value</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.telemetry.TelemetryConfig.resolved_content_capturing_mode"><code class="docutils literal notranslate"><span class="pre">TelemetryConfig.resolved_content_capturing_mode</span></code></a></li>
@@ -1922,6 +1976,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.BaseTool.process_llm_request"><code class="docutils literal notranslate"><span class="pre">BaseTool.process_llm_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.BaseTool.response_scheduling"><code class="docutils literal notranslate"><span class="pre">BaseTool.response_scheduling</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.BaseTool.run_async"><code class="docutils literal notranslate"><span class="pre">BaseTool.run_async()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.BaseTool.title"><code class="docutils literal notranslate"><span class="pre">BaseTool.title</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.DiscoveryEngineSearchTool"><code class="docutils literal notranslate"><span class="pre">DiscoveryEngineSearchTool</span></code></a><ul>
@@ -2085,6 +2140,7 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.base_tool.BaseTool.process_llm_request"><code class="docutils literal notranslate"><span class="pre">BaseTool.process_llm_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.base_tool.BaseTool.response_scheduling"><code class="docutils literal notranslate"><span class="pre">BaseTool.response_scheduling</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.base_tool.BaseTool.run_async"><code class="docutils literal notranslate"><span class="pre">BaseTool.run_async()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.base_tool.BaseTool.title"><code class="docutils literal notranslate"><span class="pre">BaseTool.title</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -2390,18 +2446,18 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.timeout"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.timeout</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.sse_read_timeout"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.sse_read_timeout</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.httpx_client_factory"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.httpx_client_factory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id222"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.headers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id223"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.httpx_client_factory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id224"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.sse_read_timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id225"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id226"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id223"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.headers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id224"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.httpx_client_factory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id225"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.sse_read_timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id226"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id227"><code class="docutils literal notranslate"><span class="pre">SseConnectionParams.url</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.server_params"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.server_params</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.timeout"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id227"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.server_params</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id228"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id228"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.server_params</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id229"><code class="docutils literal notranslate"><span class="pre">StdioConnectionParams.timeout</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams</span></code></a><ul>
@@ -2411,12 +2467,12 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.sse_read_timeout"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.sse_read_timeout</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.terminate_on_close"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.terminate_on_close</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.httpx_client_factory"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.httpx_client_factory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id229"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.headers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id230"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.httpx_client_factory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id231"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.sse_read_timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id232"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.terminate_on_close</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id233"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.timeout</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id234"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.url</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id230"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.headers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id231"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.httpx_client_factory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id232"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.sse_read_timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id233"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.terminate_on_close</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id234"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.timeout</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id235"><code class="docutils literal notranslate"><span class="pre">StreamableHTTPConnectionParams.url</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.mcp_tool.adk_to_mcp_tool_type"><code class="docutils literal notranslate"><span class="pre">adk_to_mcp_tool_type()</span></code></a></li>
@@ -2468,15 +2524,15 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultReport.stats"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.stats</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultReport.estimated_cost_usd"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.estimated_cost_usd</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultReport.error_type"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.error_type</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id251"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.agent_name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id252"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.app_name</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id253"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.error_type</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id254"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.estimated_cost_usd</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id255"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.invocation_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id256"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.session_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id257"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.stats</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id252"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.agent_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id253"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.app_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id254"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.error_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id255"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.estimated_cost_usd</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id256"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.invocation_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id257"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.session_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id258"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.stats</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultReport.to_dict"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id258"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.user_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id259"><code class="docutils literal notranslate"><span class="pre">ModelConsultReport.user_id</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats</span></code></a><ul>
@@ -2491,23 +2547,23 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.wall_clock_ms"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.wall_clock_ms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.advisor_usage"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_usage</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.executor_usage"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.executor_usage</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id259"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_latency_ms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id260"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_latency_ms</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.advisor_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id260"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_usage</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id261"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.advisor_usage</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.escalation_rate"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.escalation_rate</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.executor_calls"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.executor_calls</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.executor_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.executor_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id261"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.executor_usage</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id262"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.failed_consults</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id263"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.failed_invocations</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id264"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.invalid_consults</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id265"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.invocations</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id266"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.limited_consults</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id267"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.successful_consults</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id262"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.executor_usage</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id263"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.failed_consults</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id264"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.failed_invocations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id265"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.invalid_consults</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id266"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.invocations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id267"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.limited_consults</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id268"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.successful_consults</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.to_dict"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id268"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.tool_calls</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id269"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.tool_calls</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultStats.total_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.total_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id269"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.wall_clock_ms</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id270"><code class="docutils literal notranslate"><span class="pre">ModelConsultStats.wall_clock_ms</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultTool"><code class="docutils literal notranslate"><span class="pre">ModelConsultTool</span></code></a><ul>
@@ -2528,13 +2584,13 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultUsage.thoughts_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.thoughts_tokens</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultUsage.cached_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.cached_tokens</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultUsage.total_tokens"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.total_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id275"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.cached_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id276"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.calls</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id277"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.output_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id278"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.prompt_tokens</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id279"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.thoughts_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id276"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.cached_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id277"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.calls</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id278"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.output_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id279"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.prompt_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id280"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.thoughts_tokens</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.model_consult.ModelConsultUsage.to_dict"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id280"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.total_tokens</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id281"><code class="docutils literal notranslate"><span class="pre">ModelConsultUsage.total_tokens</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -2634,11 +2690,11 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.skill_toolset.SkillLifecycleConfig.max_active_skills"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.max_active_skills</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.skill_toolset.SkillLifecycleConfig.skill_overrides"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.skill_overrides</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.skill_toolset.SkillLifecycleConfig.revalidate_skills"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.revalidate_skills</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id281"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.default_mode</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id282"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.enabled</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id283"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.max_active_skills</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id284"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.revalidate_skills</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id285"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.skill_overrides</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id282"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.default_mode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id283"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.enabled</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id284"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.max_active_skills</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id285"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.revalidate_skills</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id286"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleConfig.skill_overrides</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.skill_toolset.SkillLifecycleMode"><code class="docutils literal notranslate"><span class="pre">SkillLifecycleMode</span></code></a><ul>
@@ -2681,6 +2737,46 @@
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.spanner.SpannerToolset.get_tools"><code class="docutils literal notranslate"><span class="pre">SpannerToolset.get_tools()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-args-matcher-module">google.adk.tools.tool_args_matcher module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ArgMatchResult"><code class="docutils literal notranslate"><span class="pre">ArgMatchResult</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ArgMatchResult.matched"><code class="docutils literal notranslate"><span class="pre">ArgMatchResult.matched</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ArgMatchResult.reason"><code class="docutils literal notranslate"><span class="pre">ArgMatchResult.reason</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ArgMatchResult.score"><code class="docutils literal notranslate"><span class="pre">ArgMatchResult.score</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.BaseArgMatcher"><code class="docutils literal notranslate"><span class="pre">BaseArgMatcher</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.BaseArgMatcher.type"><code class="docutils literal notranslate"><span class="pre">BaseArgMatcher.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.BaseArgMatcher.match"><code class="docutils literal notranslate"><span class="pre">BaseArgMatcher.match()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.BaseArgMatcher.is_deterministic"><code class="docutils literal notranslate"><span class="pre">BaseArgMatcher.is_deterministic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.criteria"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.criteria</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.generate_content_config"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.generate_content_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.model"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.model</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.timeout_seconds"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.timeout_seconds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.type"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.match"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.match()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.model_post_init"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.model_post_init()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.SemanticArgMatcher.is_deterministic"><code class="docutils literal notranslate"><span class="pre">SemanticArgMatcher.is_deterministic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatchResult"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatchResult</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatchResult.matched"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatchResult.matched</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatchResult.per_arg"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatchResult.per_arg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatchResult.score"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatchResult.score</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatcher"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatcher</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatcher.allow_extra_args"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatcher.allow_extra_args</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatcher.default_matcher"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatcher.default_matcher</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatcher.per_arg_matchers"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatcher.per_arg_matchers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.ToolArgsMatcher.match"><code class="docutils literal notranslate"><span class="pre">ToolArgsMatcher.match()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.tools.tool_args_matcher.register_arg_matcher"><code class="docutils literal notranslate"><span class="pre">register_arg_matcher()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-tool-configs-module">google.adk.tools.tool_configs module</a><ul>
@@ -2778,8 +2874,8 @@
 <li class="toctree-l2"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node.parallel_worker"><code class="docutils literal notranslate"><span class="pre">Node.parallel_worker</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node.max_parallel_workers"><code class="docutils literal notranslate"><span class="pre">Node.max_parallel_workers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id330"><code class="docutils literal notranslate"><span class="pre">Node.max_parallel_workers</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id331"><code class="docutils literal notranslate"><span class="pre">Node.parallel_worker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id336"><code class="docutils literal notranslate"><span class="pre">Node.max_parallel_workers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="google-adk.html#id337"><code class="docutils literal notranslate"><span class="pre">Node.parallel_worker</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node.model_copy"><code class="docutils literal notranslate"><span class="pre">Node.model_copy()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node.model_post_init"><code class="docutils literal notranslate"><span class="pre">Node.model_post_init()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="google-adk.html#google.adk.workflow.Node.run_node_impl"><code class="docutils literal notranslate"><span class="pre">Node.run_node_impl()</span></code></a></li>
@@ -2849,7 +2945,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=f5edd4dd"></script>
+</div><script src="_static/documentation_options.js?v=7bb62513"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
