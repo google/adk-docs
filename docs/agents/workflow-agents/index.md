@@ -10,20 +10,14 @@ sub-agents. Template workflow agents are specialized components designed for
 orchestrating the execution flow of sub-agents. Their primary role is to manage
 how and when other agents run, defining the control flow of a process.
 
-!!! note "Alternative: graph-based workflows"
+!!! note "Deprecated: Use graph-based workflows"
 
-    Starting in ADK 2.0 for Python and Go, template workflows have been superseded
-
-    by more flexible workflow structures, including
+    In ADK Python, TypeScript, Go, and Kotlin, template workflows have been 
+    superseded by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
     These workflow architectures provide more control, flexibility
     and capability to evolve your agent workflows over time.
-
-    In Python and TypeScript, `SequentialAgent`, `ParallelAgent`, and
-    `LoopAgent` are deprecated in favor of `Workflow`: constructing one emits a
-    deprecation warning, and the classes will be removed in a future release.
-    A `Workflow` cannot be used as an `LlmAgent` sub-agent.
 
 <img src="/assets/template_workflows.svg" alt="Template agent workflows in ADK">
 
