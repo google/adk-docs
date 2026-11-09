@@ -51,11 +51,6 @@ root_agent = Agent(
 )
 ```
 
-The `EnvironmentToolset` constructor also takes an optional
-`max_output_chars` parameter, which limits the number of characters returned
-from file reads or command executions. Use it to prevent large file contents or
-command outputs from exceeding the agent's context window limit.
-
 For a full implementation example, see the
 [Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/local_environment).
 
