@@ -309,7 +309,7 @@ Choose your connection type based on your scaling and infrastructure needs.
 Follow these core guidelines when deploying agents with MCP tools to production environments.
 
 ### Connection lifecycle
-*   Clean up MCP connections properly using standard exit stack patterns.
+*   Close the `Runner` (`await runner.close()`) to clean up every `McpToolset` on its agent tree.
 *   Configure appropriate timeouts for connection establishment and requests.
 *   Implement retry logic to handle transient connection failures gracefully.
 
@@ -321,6 +321,7 @@ Follow these core guidelines when deploying agents with MCP tools to production 
 ### Security
 !!! important "Security Best Practices"
     *   Use strict authentication headers for all remote MCP connections.
+    *   Prefer `header_provider` or `auth_credential` over a static `headers` dict for per-user or refreshable credentials.
     *   Restrict network access tightly between ADK agents and MCP servers.
     *   Filter MCP tools using `tool_filter` to strictly limit exposed functionality.
     *   Validate all MCP tool inputs to prevent prompt or command injection attacks.

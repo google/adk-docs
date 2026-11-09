@@ -19,7 +19,7 @@ In Go, you expose an agent by using the A2A launcher, which dynamically generate
 └─────────────────┘                             └───────────────────────────────┘
 ```
 
-The sample consists of :
+The sample consists of:
 
 - **Remote Prime Agent** (`remote_a2a/check_prime_agent/main.go`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that handles prime number checking. It becomes exposed using the A2A launcher.
 - **Root Agent** (`main.go`): A simple agent that is just calling the remote prime agent.

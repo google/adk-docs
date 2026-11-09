@@ -1,7 +1,7 @@
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
 </div>
 
 Graph-based workflows in ADK define agent logic as a graph of execution nodes
@@ -80,6 +80,18 @@ agents.
     })
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    val rootAgent = workflow("routing_workflow") {
+        chain(Start, processMessage, router).route {
+            "output-1" then response1
+            "output-2" then response2
+            "output-3" then response3
+        }
+    }
+    ```
+
 The advantage of using a graph-based agent workflow is the significant increase
 in control, predictability, and reliability over prompt-based agents. By
 defining the overall process workflow in code, you gain more control over how
@@ -134,6 +146,19 @@ objects.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:function-node"
+    ```
+
+=== "Kotlin"
+
+    In ADK Kotlin, the `node()` factory creates a `FunctionNode` from a
+    suspending block that takes `(context, input)` and returns the node's
+    output. The type arguments set the input and output port types, and the
+    successor node receives the returned value as its typed input. The
+    workflow APIs are experimental, so the file opts in with
+    `@file:OptIn(ExperimentalWorkflowApi::class)`:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/FunctionNode.kt:function-node"
     ```
 
 For more information about transferring data between nodes, see
@@ -195,6 +220,17 @@ A sequential route runs each node once, in the listed order.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:sequential-nodes"
+    ```
+
+=== "Kotlin"
+
+    Inside a `workflow { }` block, `chain(Start, taskANode, taskBNode,
+    taskCNode)` connects the nodes in order, and `Start.then(taskANode)` runs
+    a single node. Each node's return value is delivered to the next node as
+    its input:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/Sequence.kt:sequence"
     ```
 
 ### Route branches and conditional execution
@@ -313,6 +349,19 @@ A sequential route runs each node once, in the listed order.
         with an `Escalate`-based exit — see the
         [loop and escalation example](#loop-and-escalation-exit) below.
 
+=== "Kotlin"
+
+    A node selects a route by setting `context.routes`, and a `route { }`
+    block maps each route value to the node that handles it. Route values
+    can be strings (`Route.Tag`), integers (`Route.Num`), or booleans
+    (`Route.Flag`). An `otherwise(node)` entry matches when no other route on
+    the same source node matches. A branch target can be any node: in this
+    example, `taskBNode` is an `LlmAgent` and `taskCNode` is a function node.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/Branches.kt:branches"
+    ```
+
 ## Parallel tasks: fan out and join paths
 
 You can create graphs that split execution across multiple, parallel nodes, and
@@ -389,11 +438,22 @@ before passing results to the next step.
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"
     ```
 
+=== "Kotlin"
+
+    `then(a, b, c)` fans out to nodes that run concurrently, and `joinTo`
+    connects them to a `JoinNode`. The join waits for every predecessor to
+    complete, and then passes its successor a map keyed by predecessor node
+    name:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/FanOutJoin.kt:fan-out-join"
+    ```
+
 !!! warning "Caution: nodes that feed a JoinNode must produce output"
 
     A `JoinNode` releases only after all of its predecessor nodes finish.
     Make sure that every node that feeds a join has an output of its own, and attach a
-    retry configuration to any node that can fail. A predecessor that
+    [retry configuration](/graphs/retry/) to any node that can fail. A predecessor that
     finishes without an output leaves the join with no value for that
     branch, and the resulting failure appears downstream, away from the node
     that caused it.
@@ -486,6 +546,17 @@ accomplish this goal.
     --8<-- "examples/go/snippets/graphs/routes/main.go:nested-workflows"
     ```
 
+=== "Kotlin"
+
+    A `Workflow` is itself a node, so you can use one inside another
+    workflow's edges to encapsulate a reusable sub-process. When the inner
+    workflow finishes, the output of its terminal node becomes the output of
+    the nested-workflow node:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/NestedWorkflow.kt:nested-workflow"
+    ```
+
 ## Loop and escalation exit
 
 A loop repeats a set of steps until a termination condition is met. In Python
@@ -544,6 +615,17 @@ lifecycle on each iteration.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
+    ```
+
+=== "Kotlin"
+
+    A loop is a back-edge: `refine.then(critic)` routes a downstream node back
+    to an earlier one, and the engine re-activates that node with a fresh
+    lifecycle on each iteration. The loop exits when the critic selects the
+    `DONE` route:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/routes/LoopEscalation.kt:loop-escalation"
     ```
 
 !!! warning "Caution: unbounded graph cycles"
