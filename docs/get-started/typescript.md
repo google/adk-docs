@@ -1,3 +1,7 @@
+---
+languages: [typescript]
+---
+
 # TypeScript Quickstart for ADK
 
 This guide shows you how to get up and running with Agent Development Kit

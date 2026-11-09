@@ -102,6 +102,143 @@ when using compatible AI coding tools in this repo.
     This command starts a local docs server, typically at
     `http://127.0.0.1:8000/`.
 
+## Language-Scoped Documentation
+
+The site is built from one source tree into a separate view per SDK:
+`/python/`, `/typescript/`, `/go/`, `/java/` and `/kotlin/`. Each view keeps
+only the content for its language. Never create these directories or
+per-language files by hand; the build generates them
+(`hooks/language_scope.py`, with the logic in `langscope/`).
+
+**Which pages a language gets**
+
+- A page is built for the languages in its *page banner*: the
+  `<div class="language-support-tag">` before the page's second heading.
+  Attributes such as `title="..."` are fine. A page with no page banner is
+  built for all five languages.
+- A page written for one SDK that has no banner, such as a quickstart, must
+  say so in its frontmatter:
+
+    ```yaml
+    ---
+    languages: [go]
+    ---
+    ```
+
+  `languages:` overrides the banner. Unknown names fail the build.
+
+**What each view keeps**
+
+The rules below only ever remove content that is clearly marked as
+language-specific. When in doubt the build keeps content, so plain prose or
+untabbed code for one language is shown in every view the page is built
+for. To scope such content, put it in a tab or mark it as described below.
+
+- Content tabs named after a language (`=== "Python"`) keep only the
+  reader's language. A label that starts with a language also counts:
+  `"Python - adk CLI"`, `"Python (Telegram)"`, `"JavaScript / TypeScript"`.
+  When several tabs remain for a language, they stay tabs, named by the rest
+  of the label (`"adk CLI"`). Tabs for anything else (`"Maven"`,
+  `"API Testing (curl)"`) are kept, and language tabs inside them are scoped.
+- Tab content is indented four spaces past its `=== "..."` marker. The
+  first line after a tab group indented less than that, such as a list item
+  indented two spaces, ends the group and is shown in every view. Start text
+  that follows a tab group at the marker's own indentation, so it's clear
+  the text is not part of the last tab.
+- If a tab group has no tab for a language the page supports, that view
+  leaves the group out. If the sentence before the group ends with a colon
+  and every tab in the group is a language tab, a "Not yet available for
+  <Language>" note takes its place. Add the missing tab rather than relying
+  on the note.
+- Tabs for a language the page is not built for (not in its banner, or in a
+  section banner that omits it) appear in no view at all. The build reports
+  this as a warning, which fails `mkdocs build --strict` and CI (see below):
+  add the language to the banner or remove the tab.
+- A banner directly under a heading (a *section banner*) scopes that
+  heading's section. In other languages the section is removed. A section
+  runs from its heading to the next heading of the same or a higher level,
+  so everything under the heading goes with it, including closing remarks
+  that apply to all SDKs: put those under their own heading. A banner that
+  is not directly under a heading scopes nothing. To keep a section banner
+  as a version badge only, add the `langscope-all` class:
+  `<div class="language-support-tag langscope-all">`.
+- A heading below the page title scopes its section when its text is only
+  language names (`## Python`, `## Java and Kotlin`) or ends in a
+  parenthesis holding only language names (`### Log levels (Python)`).
+  Headings that merely mention a language (`## ADK for Java`,
+  `### Configure in Python`) are not scoped.
+- An admonition titled only languages plus "only" (`"Python only"`,
+  `"Go-only"`, `"Only Python and TypeScript"`) appears only in those
+  languages. If it comes directly after a heading, it scopes that heading's
+  whole section. Other titles that name a language (`"Go: API path
+  prefix"`, `"Requires ADK Python 2.4 or higher"`) are not scoped.
+- To scope something explicitly, add a `langscope-<language>` class
+  (repeat it for several languages):
+    - On a heading, with attribute list syntax, it scopes the section:
+      `## Kotlin programmatic setup { .langscope-kotlin }`.
+    - On an admonition, as an extra type word, it scopes the admonition:
+      `!!! note langscope-go "API path prefix"`.
+- To stop the heading and admonition rules from scoping something, add
+  the `langscope-all` class to it the same way. To turn them off for a whole
+  page, set `language_heuristics: false` in its frontmatter. Banners, tabs
+  and `langscope-<language>` classes still apply.
+- No rule removes content that would then appear in no view: on a
+  Kotlin-only page, `## Java` is kept.
+- The banner that remains shows only the reader's language and version.
+- The build log lists, at INFO level, every tab group, section and
+  admonition left out of a view and every rule skipped because it names
+  none of the page's languages. Source lines that reach no view are
+  WARNINGs, so they fail `--strict`. The log ends with a summary count:
+
+    ```text
+    language_scope: tools/limitations.md: line 210: section banner 'Workaround #2: bypass_multi_tools_limit' (marker, for Python, Java, Kotlin) left out of the TypeScript view
+    language_scope: generated 572 pages ... 0 source spans reach no view
+    ```
+
+**Links**
+
+- Write links as usual, relative (`../agents/index.md`) or root-absolute
+  (`/agents/`). The build points them at the reader's language, or at
+  another language's view when the target page doesn't exist in it. Links
+  to retired URLs in the `redirects` plugin map go straight to the new page.
+- An in-page link (`#section`) to a section that this language's view
+  removed points at a language view that has the section.
+- Old flat URLs (`/agents/llm-agents/`) redirect to the reader's last-used
+  SDK if that SDK has the page, else to the first SDK that has it, in the
+  order Python, TypeScript, Go, Java, Kotlin (`/runtime/cancel/` has no
+  Python page, so it goes to TypeScript). A tab anchor such as `#go` picks
+  that SDK.
+- Anchor validation is on (`validation: anchors: warn` in `mkdocs.yml`), so
+  a link to a heading anchor that doesn't exist fails `mkdocs build
+  --strict` and CI. This catches links into sections a view removed.
+
+**Search, Markdown views and llms.txt**
+
+- Search returns results from the SDK of the current page, plus shared
+  pages such as the homepage and the API reference. This follows the page,
+  not the saved preference: on `/python/live/models/`, reached through a
+  link from the Go docs, search covers Python. On shared pages, search
+  covers the last SDK the reader chose, or Python.
+- Every page has a Markdown version at `<page URL>index.md`.
+  `/<lang>/llms.txt` and `/<lang>/llms-full.txt` index each SDK.
+  The root `/llms.txt` links to them and lists each page in its default
+  language.
+
+**Local preview and testing**
+
+- To build only some languages, which is faster, set
+  `MKDOCS_LANGSCOPE_LANGUAGES`, for example
+  `MKDOCS_LANGSCOPE_LANGUAGES=python,go mkdocs serve`.
+  `MKDOCS_LANGSCOPE_SKIP=1` builds only Python.
+- Run the tooling tests (CI runs them on every pull request):
+
+    ```shell
+    pip install -r requirements-dev.txt
+    python -m pytest tests/langscope -q
+    ```
+
+- The supported languages are defined once, in `langscope/config.py`.
+
 ## Create Your Contribution
 
 | Type | Description |

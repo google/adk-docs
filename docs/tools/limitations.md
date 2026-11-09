@@ -78,7 +78,7 @@ other tools, within a single agent, is ***not supported***:
 ### Workaround #1: AgentTool.create() method
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
@@ -141,6 +141,93 @@ to use built-in tools with other tools by using multiple agents:
       description: 'Root Agent',
       tools: [new AgentTool({agent: searchAgent}), new AgentTool({agent: codingAgent})],
     });
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"context"
+    	"log"
+    	"os"
+    	"strings"
+
+    	"google.golang.org/genai"
+
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model/gemini"
+    	"google.golang.org/adk/v2/tool"
+    	"google.golang.org/adk/v2/tool/agenttool"
+    	"google.golang.org/adk/v2/tool/functiontool"
+    	"google.golang.org/adk/v2/tool/geminitool"
+    )
+
+    func main() {
+    	ctx := context.Background()
+    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
+    		APIKey: os.Getenv("GOOGLE_API_KEY"),
+    	})
+    	if err != nil {
+    		log.Fatalf("Failed to create model: %v", err)
+    	}
+
+    	// An agent that only uses the built-in Google Search tool.
+    	searchAgent, err := llmagent.New(llmagent.Config{
+    		Name:        "search_agent",
+    		Model:       model,
+    		Description: "Does google search.",
+    		Instruction: "You're a specialist in Google Search.",
+    		Tools:       []tool.Tool{geminitool.GoogleSearch{}},
+    	})
+    	if err != nil {
+    		log.Fatalf("Failed to create agent: %v", err)
+    	}
+
+    	// An agent that only uses a custom function tool.
+    	type Input struct {
+    		LineCount int `json:"lineCount"`
+    	}
+    	type Output struct {
+    		Poem string `json:"poem"`
+    	}
+    	poemTool, err := functiontool.New(functiontool.Config{
+    		Name:        "poem",
+    		Description: "Returns poem",
+    	}, func(ctx agent.Context, input Input) (Output, error) {
+    		return Output{Poem: strings.Repeat("A line of a poem,", input.LineCount) + "\n"}, nil
+    	})
+    	if err != nil {
+    		log.Fatalf("Failed to create tool: %v", err)
+    	}
+    	poemAgent, err := llmagent.New(llmagent.Config{
+    		Name:        "poem_agent",
+    		Model:       model,
+    		Description: "returns poem",
+    		Instruction: "You return poems.",
+    		Tools:       []tool.Tool{poemTool},
+    	})
+    	if err != nil {
+    		log.Fatalf("Failed to create agent: %v", err)
+    	}
+
+    	// The root agent wraps each agent with agenttool.New.
+    	rootAgent, err := llmagent.New(llmagent.Config{
+    		Name:        "root_agent",
+    		Model:       model,
+    		Description: "You can do a google search and generate poems.",
+    		Instruction: "Answer questions based on google search unless asked for a poem," +
+    			" for a poem generate it with a tool.",
+    		Tools: []tool.Tool{
+    			agenttool.New(searchAgent, nil),
+    			agenttool.New(poemAgent, nil),
+    		},
+    	})
+    	if err != nil {
+    		log.Fatalf("Failed to create agent: %v", err)
+    	}
+    	log.Printf("Root agent defined: %s", rootAgent.Name())
+    }
     ```
 
 === "Java"
@@ -218,6 +305,8 @@ ADK Python has a built-in workaround which bypasses this limitation for
 as shown in the
 [built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools).
 sample agent.
+
+### Built-in tools in sub-agents
 
 !!! warning
 

@@ -1,0 +1,44 @@
+site_name: Fixture
+site_url: https://example.com/
+repo_url: https://github.com/example/docs
+edit_uri: edit/main/docs/
+docs_dir: docs
+exclude_docs: |
+  drafts/*
+nav:
+  - Home: index.md
+  - Guide:
+    - Get started: get-started/index.md
+    - Agents: agents.md
+    - Neutral: neutral.md
+    - Go quickstart: quick-go.md
+  - Reference: api-reference/index.md
+plugins:
+  - redirects:
+      redirect_maps:
+        old.md: neutral.md
+        moved.md: agents.md#tools
+  - llmstxt:
+      full_output: llms-full.txt
+      sections:
+        Guide:
+          - get-started/index.md
+          - agents.md
+          - neutral.md
+          - quick-go.md
+        Reference:
+          - api-reference/index.md
+validation:
+  absolute_links: ignore
+  anchors: warn
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.details
+  - pymdownx.highlight:
+      use_pygments: false
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+hooks:
+  - ../../../hooks/language_scope.py

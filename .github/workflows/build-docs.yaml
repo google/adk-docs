@@ -37,5 +37,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements-dev.txt
+      # Unit and fixture-build tests for the language-scoping hook (langscope/).
+      - run: python -m pytest tests/langscope -q
       - run: mkdocs build --strict

@@ -1,7 +1,7 @@
 # Google Gemma models for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v1.1.0</span>
 </div>
 
 ADK agents can use the [Google Gemma](https://ai.google.dev/gemma/docs) family of generative AI models that offer a

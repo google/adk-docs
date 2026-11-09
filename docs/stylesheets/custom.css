@@ -599,3 +599,23 @@ body {
     display: none !important;
   }
 }
+/* Per-SDK language switcher in the header */
+.adk-lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0.6rem;
+}
+.adk-lang-switcher__label {
+  font-size: 0.7rem;
+  color: var(--md-primary-bg-color, #fff);
+  opacity: 0.8;
+}
+.adk-lang-switcher__select {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+}
