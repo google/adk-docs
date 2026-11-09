@@ -250,7 +250,7 @@ You can use the ***Runner*** class to run your agent workflow using the
                         newMessage = Content.fromText(Role.USER, "Hello there!"),
                     ).collect { event ->
                         if (event.isFinalResponse && event.content != null) {
-                            println("Response: ${event.content?.text()}")
+                            println("Response: ${event.contentText()}")
                         }
                     }
             } catch (e: Exception) {
