@@ -13,7 +13,12 @@
 # Usage: bash tools/python-api-docs/generate.sh <version>
 # Example: bash tools/python-api-docs/generate.sh 2.0.0
 
-set -e
+# `pipefail` matters as much as `-e` here. The Sphinx build used to be piped
+# into `tail`, so `set -e` saw the exit status of `tail` - always zero - and a
+# failed build carried on to the copy below, which deletes the published docs
+# before replacing them. The result was an empty docs/api-reference/python/
+# and an exit status of 0.
+set -eo pipefail
 
 # Configuration
 
@@ -104,14 +109,41 @@ echo "Discovering modules..."
 python3 "$SCRIPT_DIR/discover_modules.py" sphinx_project/source/google-adk.rst
 
 # Build HTML
+#
+# Logged to a file rather than piped, so the exit status is the build's own.
+# On failure the workspace is kept: twenty lines of Sphinx output is rarely
+# the twenty that say why, and the log is the only copy.
 echo "Building HTML..."
-sphinx-build -b html sphinx_project/source sphinx_project/build/html 2>&1 | tail -20
+BUILD_LOG="$WORK_DIR/sphinx-build.log"
+if ! sphinx-build -b html sphinx_project/source sphinx_project/build/html \
+     > "$BUILD_LOG" 2>&1; then
+  echo "Error: sphinx-build failed. The last 40 lines:" >&2
+  tail -40 "$BUILD_LOG" >&2
+  trap - EXIT
+  echo >&2
+  echo "Full log: $BUILD_LOG" >&2
+  echo "Workspace kept for inspection: $WORK_DIR" >&2
+  echo "$TARGET_DIR was not touched." >&2
+  exit 1
+fi
+tail -20 "$BUILD_LOG"
 
 popd > /dev/null || exit 1
 
+# Nothing is deleted until there is something to put in its place. The copy
+# below removes the published reference first, so a build that produced no
+# output - or stopped half way - would otherwise leave the directory empty
+# and the script reporting success.
+BUILT_HTML="$WORK_DIR/sphinx_project/build/html"
+if [[ ! -s "$BUILT_HTML/index.html" ]]; then
+  echo "Error: the build produced no index.html, so there is nothing to" >&2
+  echo "publish. $TARGET_DIR has been left as it was." >&2
+  exit 1
+fi
+
 # Copy to output directory
 echo "Copying to $TARGET_DIR..."
-rm -rf "$TARGET_DIR"/*
-cp -r "$WORK_DIR/sphinx_project/build/html"/* "$TARGET_DIR/"
+rm -rf "${TARGET_DIR:?}"/*
+cp -r "$BUILT_HTML"/* "$TARGET_DIR/"
 
 echo "Done."

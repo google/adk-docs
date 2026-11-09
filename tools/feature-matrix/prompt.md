@@ -6,7 +6,7 @@ Currently there are two runtimes: python (adk-python) which is the primary, and 
 
 A good metric for figuring out if a feature is supported per runtime is if the sample code associated with a given feature in adk-docs includes samples in a given language.
 
-For each matrix item showing support, please link to the code sample where you use to say that this feature is supported in the language. Use https://adk.dev/ as the base link. Also mkae sure to include path and page so the links will work.
+For each matrix item showing support, please link to the code sample where you use to say that this feature is supported in the language. Use https://adk.dev/ as the base link. Also make sure to include path and page so the links will work.
 
 Output the content in markdown.
 

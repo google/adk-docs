@@ -11,7 +11,11 @@ catalog_tags: ["observability"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[W&B Weave](https://weave-docs.wandb.ai/) provides a powerful platform for logging and visualizing model calls. By integrating Google ADK with Weave, you can track and analyze your agent's performance and behavior using OpenTelemetry (OTEL) traces.
+[W&B Weave](https://docs.coreweave.com/products/wandb/weave) provides a powerful platform for logging and visualizing model calls. By integrating Google ADK with Weave, you can track and analyze your agent's performance and behavior using OpenTelemetry (OTEL) traces.
+
+For grouped agent conversations, turns, and tool details, use the
+[CoreWeave Agent Lens integration](https://docs.coreweave.com/products/agent-lens/integrations/google-adk). The guide below
+keeps the classic Weave Calls exporter and its existing workflow.
 
 ## Prerequisites
 
@@ -131,8 +135,8 @@ By following these steps, you can effectively integrate Google ADK with Weave, e
 
 ## Resources
 
-- **[Send OpenTelemetry Traces to Weave](https://weave-docs.wandb.ai/guides/tracking/otel)** - Comprehensive guide on configuring OTEL with Weave, including authentication and advanced configuration options.
+- **[Send OpenTelemetry Traces to Weave](https://docs.coreweave.com/products/wandb/weave/guides/tracking/otel)** - Comprehensive guide on configuring OTEL with Weave, including authentication and advanced configuration options.
 
-- **[Navigate the Trace View](https://weave-docs.wandb.ai/guides/tracking/trace-tree)** - Learn how to effectively analyze and debug your traces in the Weave UI, including understanding trace hierarchies and span details.
+- **[Navigate the Trace View](https://docs.coreweave.com/products/wandb/weave/guides/tracking/trace-tree)** - Learn how to effectively analyze and debug your traces in the Weave UI, including understanding trace hierarchies and span details.
 
-- **[Weave Integrations](https://weave-docs.wandb.ai/guides/integrations/)** - Explore other framework integrations and see how Weave can work with your entire AI stack.
+- **[Weave Integrations](https://docs.coreweave.com/products/wandb/weave/guides/integrations/)** - Explore other framework integrations and see how Weave can work with your entire AI stack.

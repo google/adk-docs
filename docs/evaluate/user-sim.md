@@ -217,11 +217,11 @@ The below `EvalConfig` shows the default user simulator configuration:
     placeholders using
     [Jinja](https://jinja.palletsprojects.com/en/stable/templates/#) syntax (*do
     not substitute values in advance!*):
-    *   `{{ stop_signal }}` : text to be generated when the user simulator
+    *   `{{ stop_signal }}`: text to be generated when the user simulator
         decides that the conversation is over.
-    *   `{{ conversation_plan }}` : the overall plan for the conversation that
+    *   `{{ conversation_plan }}`: the overall plan for the conversation that
         the user simulator must follow.
-    *   `{{ conversation_history }}` : the conversation between the user and the
+    *   `{{ conversation_history }}`: the conversation between the user and the
         agent so far.
     *   You can also access the `UserPersona` object through the `{{ persona }}`
         placeholder.
@@ -358,5 +358,5 @@ Key fields:
     in the `google-adk[eval]` extra) and access to the Cloud Text-to-Speech API.
 
 See the sample at
-[`contributing/samples/live/live_non_blocking_tool_agent`](https://github.com/google/adk-python/tree/main/contributing/samples/live/live_non_blocking_tool_agent)
+[`contributing/samples/live/non_blocking_tool_agent`](https://github.com/google/adk-python/tree/main/contributing/samples/live/non_blocking_tool_agent)
 for a complete, runnable live eval configuration.

@@ -1,0 +1,307 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>EdgesBuilder</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">1.5.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-core/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-core/commonMain" data-filter=":google-adk-kotlin-core/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.workflow/EdgesBuilder///PointingToDeclaration//-1855338903">
+  <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.workflow</a><span class="delimiter">/</span><span class="current">EdgesBuilder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Edges</span><wbr><span><span>Builder</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="../../com.google.adk.kt.annotations/-experimental-workflow-api/index.html"><span class="token annotation builtin">ExperimentalWorkflowApi</span></a></div></div><span class="token keyword">class </span><a href="index.html">EdgesBuilder</a></div><p class="paragraph">The receiver that collects the edges declared in an <a href="../edges.html">edges</a> or <a href="../workflow.html">workflow</a> block. A node is identified by its instance, so create each node once and reuse it. To add a tool as a step, convert it once with <a href="../as-node.html">asNode</a> and reuse that node.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1166664620%2FFunctions%2F-1855338903" anchor-label="anyOf" id="1166664620%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="any-of.html"><span>any</span><wbr><span><span>Of</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1166664620%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="any-of.html"><span class="token function">anyOf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-route/index.html">Route</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="../-route/index.html">Route</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-route/index.html">Route</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-route-set/index.html">RouteSet</a></div><div class="brief "><p class="paragraph">Groups routes for <a href="on.html">on</a>, so one edge fires on any of them.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="any-of.html"><span class="token function">anyOf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-route-set/index.html">RouteSet</a></div><div class="brief "><p class="paragraph">Groups number routes for <a href="on.html">on</a>, so one edge fires on any of them.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="any-of.html"><span class="token function">anyOf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-route-set/index.html">RouteSet</a></div><div class="brief "><p class="paragraph">Groups string routes for <a href="on.html">on</a>, so one edge fires on any of them.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="333059318%2FFunctions%2F-1855338903" anchor-label="chain" id="333059318%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="chain.html"><span><span>chain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="333059318%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">fun </span><a href="chain.html"><span class="token function">chain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Connects <a href="chain.html">first</a>, <a href="chain.html">second</a>, and each node in <a href="chain.html">rest</a> in order by adding an edge from each node to the next. Returns the last node so the chain can continue from it: <code class="lang-kotlin">chain(Start, a, b)</code> is short for <code class="lang-kotlin">Start.then(a).then(b)</code>.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="chain.html"><span class="token function">chain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Connects this node to <a href="chain.html">first</a>, <a href="chain.html">second</a>, and each node in <a href="chain.html">rest</a> in order by adding an edge from each node to the next, and returns the last node. <code class="lang-kotlin">a.chain(b, c)</code> is short for <code class="lang-kotlin">a.then(b).then(c)</code>. Unlike the <code class="lang-kotlin">chain</code> overload that takes the first node as an argument, this form can continue a fluent chain, such as after <a href="join-to.html">joinTo</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="780963663%2FFunctions%2F-1855338903" anchor-label="from" id="780963663%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from.html"><span><span>from</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="780963663%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="from.html"><span class="token function">from</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-edge-chain/index.html">EdgeChain</a></div><div class="brief "><p class="paragraph">Starts a chain of edges at <a href="from.html">node</a> for Java callers. Its calls add the same edges as the Kotlin calls of the same names: <code class="lang-kotlin">g.from(a).then(b).then(c)</code>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="from.html"><span class="token function">from</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">group<span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group-chain/index.html">NodeGroupChain</a></div><div class="brief "><p class="paragraph">Starts a chain of edges at <a href="from.html">group</a> (such as one built with <a href="nodes.html">nodes</a>) for Java callers so the group can join without a fan-out.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="from.html"><span class="token function">from</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">nodes<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../-node/index.html">Node</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group-chain/index.html">NodeGroupChain</a></div><div class="brief "><p class="paragraph">Starts a chain of edges at <a href="from.html">nodes</a> (such as a computed list) for Java callers so the nodes can join without a fan-out. For a fixed set of nodes, the <code class="lang-kotlin">g.from(a, b)</code> overload is shorter.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="from.html"><span class="token function">from</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group-chain/index.html">NodeGroupChain</a></div><div class="brief "><p class="paragraph">Starts a chain of edges at <a href="from.html">first</a>, <a href="from.html">second</a>, and each node in <a href="from.html">rest</a> for Java callers so they can join without a fan-out: <code class="lang-kotlin">g.from(a, b).joinTo(join)</code>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1150952790%2FFunctions%2F-1855338903" anchor-label="fromStart" id="1150952790%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="from-start.html"><span>from</span><wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1150952790%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="from-start.html"><span class="token function">fromStart</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-edge-chain/index.html">EdgeChain</a></div><div class="brief "><p class="paragraph">Starts a chain of edges at <a href="../-start/index.html">Start</a> for Java callers: <code class="lang-kotlin">g.fromStart().then(a)</code> instead of <code class="lang-kotlin">g.from(Start.INSTANCE).then(a)</code>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1385222523%2FFunctions%2F-1855338903" anchor-label="joinFrom" id="1385222523%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="join-from.html"><span>join</span><wbr><span><span>From</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1385222523%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">fun </span><a href="../-join-node/index.html">JoinNode</a><span class="token punctuation">.</span><a href="join-from.html"><span class="token function">joinFrom</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Fans in: connects <a href="join-from.html">first</a> and each of <a href="join-from.html">rest</a> to this join, which runs once all of them complete. Returns the join, so a chain continues from it.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1731019171%2FFunctions%2F-1855338903" anchor-label="joinTo" id="1731019171%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="join-to.html"><span>join</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1731019171%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node-group/index.html">NodeGroup</a><span class="token punctuation">.</span><a href="join-to.html"><span class="token function">joinTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">join<span class="token operator">: </span><a href="../-join-node/index.html">JoinNode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Fans in by connecting each node of this group to <a href="join-to.html">join</a>, which runs once all of them complete. Returns <a href="join-to.html">join</a> so the chain continues from it: <code class="lang-kotlin">a.then(b, c).joinTo(join).then(d)</code>.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../-node/index.html">Node</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="join-to.html"><span class="token function">joinTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">join<span class="token operator">: </span><a href="../-join-node/index.html">JoinNode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Fans in by connecting each node in this collection, such as a computed list, to <a href="join-to.html">join</a>, like <code class="lang-kotlin">nodes(...).joinTo(join)</code>. Returns <a href="join-to.html">join</a> so the chain continues from it. An empty collection adds no edges.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1908812605%2FFunctions%2F-1855338903" anchor-label="nodes" id="1908812605%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="nodes.html"><span><span>nodes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1908812605%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="nodes.html"><span class="token function">nodes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>nodes<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></div><div class="brief "><p class="paragraph">Groups <a href="nodes.html">nodes</a> without connecting them, as in <code class="lang-kotlin">a then nodes(b, c)</code> for an infix fan-out or <code class="lang-kotlin">nodes(b, c).joinTo(join)</code> for a join. Prefer this over <code class="lang-kotlin">listOf(b, c)</code> for fan-outs and joins because <code class="lang-kotlin">listOf</code> infers the nodes' closest common supertype. For some built-in nodes of different types, such as a <a href="../-workflow/index.html">Workflow</a> and a <a href="../-join-node/index.html">JoinNode</a>, that supertype is the framework-internal <code class="lang-kotlin">BaseNode</code>, so the call fails to compile.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1477186322%2FFunctions%2F-1855338903" anchor-label="on" id="-1477186322%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on.html"><span><span>on</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1477186322%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">route<span class="token operator">: </span><a href="../-route/index.html">Route</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-pending-edge/index.html">PendingEdge</a></div><div class="brief "><p class="paragraph">Starts an edge that fires when this node emits <a href="on.html">route</a>; <a href="then.html">then</a> completes it.</p></div><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">routes<span class="token operator">: </span><a href="../-route-set/index.html">RouteSet</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-pending-edge/index.html">PendingEdge</a></div><div class="brief "><p class="paragraph">Starts one edge that fires once when this node emits any of <a href="on.html">routes</a> (built with <a href="any-of.html">anyOf</a>); <a href="then.html">then</a> completes it.</p></div><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">route<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-pending-edge/index.html">PendingEdge</a></div><div class="brief "><p class="paragraph">Starts an edge that fires when this node emits <a href="on.html">route</a> as a <a href="../-route/-flag/index.html">Route.Flag</a>; <a href="then.html">then</a> completes it.</p></div><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">route<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-pending-edge/index.html">PendingEdge</a></div><div class="brief "><p class="paragraph">Starts an edge that fires when this node emits <a href="on.html">route</a> as a <a href="../-route/-num/index.html">Route.Num</a>; <a href="then.html">then</a> completes it.</p></div><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">route<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-pending-edge/index.html">PendingEdge</a></div><div class="brief "><p class="paragraph">Starts an edge that fires when this node emits <a href="on.html">route</a> as a <a href="../-route/-tag/index.html">Route.Tag</a>; <a href="then.html">then</a> completes it.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-779973007%2FFunctions%2F-1855338903" anchor-label="route" id="-779973007%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="route.html"><span><span>route</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-779973007%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="route.html"><span class="token function">route</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">routeMapDefinition<span class="token operator">: </span><a href="../-edges-dsl-block/index.html">EdgesDslBlock</a><span class="token operator">&lt;</span><a href="../-route-map-builder/index.html">RouteMapBuilder</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adds this node's routing map, with an edge for each route <a href="route.html">routeMapDefinition</a> maps to a node. A routing map ends the statement; connect its targets onward in separate statements. An empty map throws <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-illegal-argument-exception/index.html">IllegalArgumentException</a>, and an entry not completed with <code class="lang-kotlin">then</code> throws <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-illegal-state-exception/index.html">IllegalStateException</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1267015472%2FFunctions%2F-1855338903" anchor-label="then" id="1267015472%2FFunctions%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="then.html"><span><span>then</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1267015472%2FFunctions%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="then.html"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Connects this node to <a href="then.html">node</a> and returns <a href="then.html">node</a>, so a chain continues from it.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="then.html"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targets<span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></div><div class="brief "><p class="paragraph">Fans out to each node in <a href="then.html">targets</a> so they run concurrently, as in <code class="lang-kotlin">a then nodes(b, c)</code>. Returns <a href="then.html">targets</a>, which <a href="join-to.html">joinTo</a> connects to a <a href="../-join-node/index.html">JoinNode</a> to continue once they all complete.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="then.html"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">targets<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../-node/index.html">Node</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></div><div class="brief "><p class="paragraph">Fans out by connecting this node to each of <a href="then.html">targets</a>, such as a computed list, and returns them as a <a href="../-node-group/index.html">NodeGroup</a>, like <code class="lang-kotlin">then(nodes(...))</code>. An empty collection adds no edges.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-pending-edge/index.html">PendingEdge</a><span class="token punctuation">.</span><a href="then.html"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">node<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node/index.html">Node</a></div><div class="brief "><p class="paragraph">Completes this routed edge at <a href="then.html">node</a> and returns <a href="then.html">node</a>, so a chain continues from it.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://javadoc.io/doc/com.google.errorprone/error_prone_annotations/latest/com/google/errorprone/annotations/CanIgnoreReturnValue.html"><span class="token annotation builtin">CanIgnoreReturnValue</span></a></div></div><span class="token keyword">fun </span><a href="../-node/index.html">Node</a><span class="token punctuation">.</span><a href="then.html"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">first<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter ">second<span class="token operator">: </span><a href="../-node/index.html">Node</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">vararg </span>rest<span class="token operator">: </span><a href="../-node/index.html">Node</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-node-group/index.html">NodeGroup</a></div><div class="brief "><p class="paragraph">Fans out by connecting this node to <a href="then.html">first</a>, <a href="then.html">second</a>, and each node in <a href="then.html">rest</a> so they run concurrently, as in <code class="lang-kotlin">a.then(b, c)</code>. Returns them as a <a href="../-node-group/index.html">NodeGroup</a> for <a href="join-to.html">joinTo</a>. Infix chains still need <code class="lang-kotlin">a then nodes(b, c)</code> because an infix call takes one argument.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

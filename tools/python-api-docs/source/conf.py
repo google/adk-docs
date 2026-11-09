@@ -117,3 +117,113 @@ html_theme_options = {
 
 autodoc_pydantic_model_show_json = True
 autodoc_pydantic_model_show_config_summary = False
+
+
+# -- Models holding types JSON Schema cannot describe -------------------------
+#
+# Some ADK models reach, through `google.genai`'s `HttpOptions`, a field that
+# can hold a live `aiohttp.ClientSession`. Pydantic validates that by
+# `isinstance`, and there is no way to say "an instance of this class" in JSON
+# Schema, so generating the schema raises `PydanticInvalidForJsonSchema`.
+#
+# autodoc_pydantic catches that and retries through a sanitised copy of the
+# model, built with `create_model` in its own module's namespace. adk-python
+# uses `from __future__ import annotations`, so the copy's annotations are
+# strings that no longer resolve there, and the retry dies with
+# `PydanticUserError: 'LlmAgentConfig' is not fully defined`. That one is not
+# caught, and it fails the whole build - which is how 2.11.0 became
+# undocumentable while 2.6.0 built fine.
+#
+# `show-json-error-strategy` does not help: `add_collapsable_schema` reads
+# `schema.sanitized` after the strategy branch, whatever the strategy said.
+#
+# So the first attempt is made to succeed instead. `is_instance_schema` is
+# pydantic's documented override point for exactly this - "unless overridden
+# in a subclass, this raises an error" - and the override says what the field
+# is rather than pretending it is absent. The alternative was turning off
+# `autodoc_pydantic_model_show_json`, which would drop the JSON schema from
+# every model page in the reference to accommodate one field.
+#
+# Patched onto the class rather than passed as a subclass because
+# autodoc_pydantic calls `model_json_schema()` with no `schema_generator`,
+# taking pydantic's default - which is this class.
+from pydantic.json_schema import GenerateJsonSchema as _GenerateJsonSchema
+
+
+def _is_instance_schema(self, schema):
+  """Describe an isinstance-validated field instead of refusing to."""
+  cls = schema.get('cls')
+  name = getattr(cls, '__qualname__', None) or str(cls)
+  module = getattr(cls, '__module__', None)
+  full = f'{module}.{name}' if module else name
+  return {
+      'title': name,
+      'description': (
+          f'An instance of {full}. This type has no JSON Schema '
+          'representation, so only its name is shown here.'
+      ),
+  }
+
+
+def _callable_schema(self, schema):
+  """As above, for a field holding a callable.
+
+  The same problem and the same answer. Without this, `AntigravityAgent` and
+  `RemoteMcpServer` take the retry path below - which happens to survive for
+  them today, and is one annotation away from not.
+  """
+  return {
+      'title': 'Callable',
+      'description': (
+          'A callable. This type has no JSON Schema representation, so only '
+          'its kind is shown here.'
+      ),
+  }
+
+
+_GenerateJsonSchema.is_instance_schema = _is_instance_schema
+_GenerateJsonSchema.callable_schema = _callable_schema
+
+
+# A backstop under the above, because the retry path is broken in general.
+#
+# `SchemaInspector.sanitized` tries the model's own schema and, on any
+# failure, retries through `create_sanitized_model`. That retry rebuilds the
+# model with `create_model` inside autodoc_pydantic's module namespace, which
+# cannot work for any package using `from __future__ import annotations`: the
+# annotations are strings and no longer resolve there. So the retry does not
+# recover, it replaces a specific error with `PydanticUserError` - and that
+# one escapes and ends the build.
+#
+# One model whose schema cannot be rendered should cost that model's schema,
+# not the entire reference. Here it costs a stub saying so, and a warning
+# naming the model and the real reason, so the underlying problem stays
+# visible instead of being papered over.
+import sphinx.util.logging as _sphinx_logging
+from sphinxcontrib.autodoc_pydantic.inspection import (
+    SchemaInspector as _SchemaInspector,
+)
+
+_sanitized_schema = _SchemaInspector.sanitized.fget
+
+
+def _sanitized_or_stub(self):
+  try:
+    return _sanitized_schema(self)
+  except Exception as exc:  # noqa: BLE001 - one model must not fail the build
+    name = getattr(self.model, '__name__', 'this model')
+    _sphinx_logging.getLogger(__name__).warning(
+        f'JSON schema for {name} could not be generated, so the model is '
+        f'documented without one: {type(exc).__name__}: {exc}',
+        location='autodoc_pydantic',
+    )
+    return {
+        'title': name,
+        'description': (
+            'A JSON schema could not be generated for this model. The rest '
+            'of its documentation below is unaffected.'
+        ),
+    }
+
+
+_SchemaInspector.sanitized = property(_sanitized_or_stub)
