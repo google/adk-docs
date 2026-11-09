@@ -174,6 +174,10 @@ plugin = EnvironmentSimulationFactory.create_plugin(config)
 | `cancel_order()` | Raises `UnmockedToolCallError`: no simulation configuration exists. |
 | `get_test_clock()` | Continues to normal execution because the name is explicitly allowed. |
 
+For unconfigured tools allowed to run, enable `DEBUG` on
+`environment_simulation_logger` to see passthrough diagnostics. These messages
+include the tool name without logging call arguments.
+
 `allowed_real_tools` uses exact, case-sensitive names. It does not support
 wildcards or argument constraints, and a name applies to every intercepted
 agent's tool with that name. There are no implicit exceptions for framework
