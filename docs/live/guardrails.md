@@ -150,7 +150,8 @@ def block_output(
 Returning an `LlmResponse` from an output callback immediately halts model generation and
 delivers your replacement message to the user. For spoken turns where the model already
 began processing the input, ADK clears the current turn so refused content does not remain
-in conversational context.
+in conversational context. In a [cascaded architecture](architectures/cascade.md#custom-speech-transforms),
+you can also filter or redact streamed text before speech synthesis runs.
 
 ## Tool guardrails
 

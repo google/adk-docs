@@ -50,7 +50,7 @@ After:
 └────────────────┘
 ```
 
-The sample consists of :
+The sample consists of:
 
 - **Remote Hello World Agent** (`remote_a2a/hello_world/agent.py`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that handles dice rolling and prime number checking. It becomes exposed using the `to_a2a()` function and is served using `uvicorn`.
 - **Root Agent** (`agent.py`): A simple agent that is just calling the remote Hello World agent.

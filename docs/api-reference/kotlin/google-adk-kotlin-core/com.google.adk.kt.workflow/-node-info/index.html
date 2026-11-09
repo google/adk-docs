@@ -47,7 +47,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.3.1
+        <div class="library-version" id="library-version">1.5.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -187,6 +187,23 @@
               </div>
             </div>
           </div>
+<a data-name="-420536276%2FProperties%2F-1855338903" anchor-label="name" id="-420536276%2FProperties%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="name.html"><span><span>name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-420536276%2FProperties%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The emitting node's name: the last segment of <a href="../../../google-adk-kotlin-core/com.google.adk.kt.workflow/-node-info/--root--.html">path</a> without its run ID, such as <code class="lang-kotlin">a</code> for <code class="lang-kotlin">wf@1/a@2</code>, or null when <a href="../../../google-adk-kotlin-core/com.google.adk.kt.workflow/-node-info/--root--.html">path</a> is empty. Mirrors ADK Python's <code class="lang-kotlin">NodeInfo.name</code>, which returns an empty string instead of null.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="133671003%2FProperties%2F-1855338903" anchor-label="outputFor" id="133671003%2FProperties%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
           <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
             <div class="main-subrow keyValue ">
@@ -199,7 +216,24 @@
                 <div class="title">
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="output-for.html">outputFor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The node paths this event's output counts for, currently the emitter's own path. It is set on an event that carries the node's output, either in the event's <code class="lang-kotlin">output</code> field or as a message-as-output event whose content is the output, and the output then counts for each listed path in the same invocation.</p></div></div>                  </div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="output-for.html">outputFor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The node paths this event's output counts for within its invocation: the emitter's own path, then each ancestor linked to it by <code class="lang-kotlin">useAsOutput</code> (a <code class="lang-kotlin">runNode</code> caller, or the workflow of a terminal node). Set on an event carrying the node's output, in <code class="lang-kotlin">output</code> or as message-as-output content.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="490234599%2FProperties%2F-1855338903" anchor-label="parentRunId" id="490234599%2FProperties%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="parent-run-id.html"><span>parent</span><wbr><span>Run</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="490234599%2FProperties%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="parent-run-id.html">parentRunId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The run ID of the emitting node's parent: the part of <a href="../../../google-adk-kotlin-core/com.google.adk.kt.workflow/-node-info/--root--.html">path</a>'s second-to-last segment after <code class="lang-kotlin">@</code>, such as <code class="lang-kotlin">1</code> for <code class="lang-kotlin">wf@1/a@2</code>. Returns null when <a href="../../../google-adk-kotlin-core/com.google.adk.kt.workflow/-node-info/--root--.html">path</a> has no parent segment or the segment has no run ID. Mirrors ADK Python's <code class="lang-kotlin">NodeInfo.parent_run_id</code>.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
@@ -217,6 +251,23 @@
                   <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
                     <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
 <div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="path.html">path</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">The emitting node's path. Segments are <code class="lang-kotlin">/</code>-separated and each is <code class="lang-kotlin">name@runId</code>, so a node of workflow <code class="lang-kotlin">wf</code> reads <code class="lang-kotlin">wf@1/a@1</code>. An empty path denotes the workflow's top-level node.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="561506333%2FProperties%2F-1855338903" anchor-label="runId" id="561506333%2FProperties%2F-1855338903" data-filterable-set=":google-adk-kotlin-core/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-id.html"><span>run</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="561506333%2FProperties%2F-1855338903"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core/commonMain" data-filterable-set=":google-adk-kotlin-core/commonMain" data-active="" data-toggle=":google-adk-kotlin-core/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="run-id.html">runId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">The emitting node's run ID: the part of <a href="../../../google-adk-kotlin-core/com.google.adk.kt.workflow/-node-info/--root--.html">path</a>'s last segment after <code class="lang-kotlin">@</code>, such as <code class="lang-kotlin">2</code> for <code class="lang-kotlin">wf@1/a@2</code>, or null when the segment has none. Mirrors ADK Python's <code class="lang-kotlin">NodeInfo.run_id</code>, which returns an empty string instead of null.</p></div></div>                  </div>
                 </div>
               </div>
             </div>
