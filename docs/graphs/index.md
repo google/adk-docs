@@ -81,8 +81,9 @@ function, and the final agent reports the information.
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-        instruction="""Output following line:
-        It is {CityTime.time_info} in {CityTime.city} right now.""",
+        instruction="""You receive a CityTime with time_info and city fields.
+        Output a single line stating that it is that time in that city right
+        now.""",
     )
 
     def completed_message_function(node_input: str):
@@ -235,6 +236,15 @@ define a graph with routes between a set of *nodes*, which are discrete tasks
 that can include agents, Tools, your code, and even additional workflow agents.
 For information about building advanced pipelines, see
 [Build graph routes for workflow agents](/graphs/routes/).
+
+!!! tip "Global instructions for all agents"
+
+    Apply consistent rules across your workflow using the `GlobalInstructionPlugin` 
+    on your `App` ([Python](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py), 
+    [TypeScript](https://github.com/google/adk-js/blob/main/core/src/plugins/global_instruction_plugin.ts), 
+    [Java](https://github.com/google/adk-java/blob/main/core/src/main/java/com/google/adk/plugins/GlobalInstructionPlugin.java)) 
+    or the `GlobalInstruction` parameter on your agent 
+    ([Go](https://github.com/google/adk-go/blob/main/agent/llmagent/llmagent.go)).
 
 ## Known limitations {#known-limitations}
 

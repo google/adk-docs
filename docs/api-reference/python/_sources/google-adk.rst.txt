@@ -169,6 +169,14 @@ google.adk.integrations.e2b module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.eleven\_labs module
+------------------------------------------
+
+.. automodule:: google.adk.integrations.eleven_labs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.eventarc module
 ---------------------------------------
 
@@ -181,6 +189,14 @@ google.adk.integrations.firestore module
 ----------------------------------------
 
 .. automodule:: google.adk.integrations.firestore
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.fsspec module
+-------------------------------------
+
+.. automodule:: google.adk.integrations.fsspec
     :members:
     :undoc-members:
     :show-inheritance:
@@ -241,6 +257,14 @@ google.adk.integrations.openai module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.opensandbox module
+------------------------------------------
+
+.. automodule:: google.adk.integrations.opensandbox
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.parameter\_manager module
 ------------------------------------------------
 
@@ -281,6 +305,22 @@ google.adk.integrations.slack module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.teams module
+------------------------------------
+
+.. automodule:: google.adk.integrations.teams
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.typesafe module
+---------------------------------------
+
+.. automodule:: google.adk.integrations.typesafe
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.vmaas module
 ------------------------------------
 
@@ -293,6 +333,14 @@ google.adk.labs.antigravity module
 ----------------------------------
 
 .. automodule:: google.adk.labs.antigravity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.labs.classifiers module
+----------------------------------
+
+.. automodule:: google.adk.labs.classifiers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -741,6 +789,14 @@ google.adk.tools.spanner module
 -------------------------------
 
 .. automodule:: google.adk.tools.spanner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.tool\_args\_matcher module
+-----------------------------------------
+
+.. automodule:: google.adk.tools.tool_args_matcher
     :members:
     :undoc-members:
     :show-inheritance:
