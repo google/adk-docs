@@ -1,0 +1,424 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    google-adk-kotlin
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">1.5.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":google-adk-kotlin-integrations-bigquery/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":google-adk-kotlin-integrations-bigquery/main" data-filter=":google-adk-kotlin-integrations-bigquery/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    google-adk-kotlin
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-integrations-bigquery::com.google.adk.kt.plugins.agentanalytics/BigQueryLoggerConfig.Builder///PointingToDeclaration//917069105">
+  <div class="breadcrumbs"><a href="../../../index.html">google-adk-kotlin-integrations-bigquery</a><span class="delimiter">/</span><a href="../../index.html">com.google.adk.kt.plugins.agentanalytics</a><span class="delimiter">/</span><a href="../index.html">BigQueryLoggerConfig</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Builder</a></div><p class="paragraph">Fluent builder for <a href="../index.html">BigQueryLoggerConfig</a>, provided primarily for Java callers. Any property left unset falls back to the same default as the constructor.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-1705113375%2FConstructors%2F917069105" anchor-label="Builder" id="-1705113375%2FConstructors%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1705113375%2FConstructors%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1812955701%2FFunctions%2F917069105" anchor-label="autoSchemaUpgrade" id="1812955701%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="auto-schema-upgrade.html"><span>auto</span><wbr><span>Schema</span><wbr><span><span>Upgrade</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1812955701%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="auto-schema-upgrade.html"><span class="token function">autoSchemaUpgrade</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">autoSchemaUpgrade<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-736987890%2FFunctions%2F917069105" anchor-label="build" id="-736987890%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-736987890%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">BigQueryLoggerConfig</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="480558855%2FFunctions%2F917069105" anchor-label="clusteringFields" id="480558855%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clustering-fields.html"><span>clustering</span><wbr><span><span>Fields</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="480558855%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="clustering-fields.html"><span class="token function">clusteringFields</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clusteringFields<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1805679840%2FFunctions%2F917069105" anchor-label="contentFormatter" id="1805679840%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content-formatter.html"><span>content</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1805679840%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="content-formatter.html"><span class="token function">contentFormatter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">contentFormatter<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="47511471%2FFunctions%2F917069105" anchor-label="createViews" id="47511471%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-views.html"><span>create</span><wbr><span><span>Views</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="47511471%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-views.html"><span class="token function">createViews</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">createViews<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1046370463%2FFunctions%2F917069105" anchor-label="credentials" id="1046370463%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="credentials.html"><span><span>credentials</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1046370463%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="credentials.html"><span class="token function">credentials</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">credentials<span class="token operator">: </span><a href="https://javadoc.io/doc/com.google.auth/google-auth-library-credentials/1.48.0/com/google/auth/Credentials.html">Credentials</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1312394210%2FFunctions%2F917069105" anchor-label="customTags" id="-1312394210%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="custom-tags.html"><span>custom</span><wbr><span><span>Tags</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1312394210%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="custom-tags.html"><span class="token function">customTags</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">customTags<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1741994053%2FFunctions%2F917069105" anchor-label="datasetId" id="-1741994053%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dataset-id.html"><span>dataset</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1741994053%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="dataset-id.html"><span class="token function">datasetId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">datasetId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="595344352%2FFunctions%2F917069105" anchor-label="enabled" id="595344352%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enabled.html"><span><span>enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="595344352%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="enabled.html"><span class="token function">enabled</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">enabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="487295635%2FFunctions%2F917069105" anchor-label="eventAllowlist" id="487295635%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="event-allowlist.html"><span>event</span><wbr><span><span>Allowlist</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="487295635%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="event-allowlist.html"><span class="token function">eventAllowlist</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">eventAllowlist<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1195704428%2FFunctions%2F917069105" anchor-label="eventDenylist" id="1195704428%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="event-denylist.html"><span>event</span><wbr><span><span>Denylist</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1195704428%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="event-denylist.html"><span class="token function">eventDenylist</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">eventDenylist<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1863148965%2FFunctions%2F917069105" anchor-label="location" id="-1863148965%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="location.html"><span><span>location</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1863148965%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="location.html"><span class="token function">location</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">location<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1314984834%2FFunctions%2F917069105" anchor-label="logMultiModalContent" id="1314984834%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="log-multi-modal-content.html"><span>log</span><wbr><span>Multi</span><wbr><span>Modal</span><wbr><span><span>Content</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1314984834%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="log-multi-modal-content.html"><span class="token function">logMultiModalContent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logMultiModalContent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1300269630%2FFunctions%2F917069105" anchor-label="logSessionMetadata" id="-1300269630%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="log-session-metadata.html"><span>log</span><wbr><span>Session</span><wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1300269630%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="log-session-metadata.html"><span class="token function">logSessionMetadata</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">logSessionMetadata<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1952562913%2FFunctions%2F917069105" anchor-label="maxContentLength" id="1952562913%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-content-length.html"><span>max</span><wbr><span>Content</span><wbr><span><span>Length</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1952562913%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="max-content-length.html"><span class="token function">maxContentLength</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxContentLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1482495652%2FFunctions%2F917069105" anchor-label="projectId" id="-1482495652%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="project-id.html"><span>project</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1482495652%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="project-id.html"><span class="token function">projectId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">projectId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-699377919%2FFunctions%2F917069105" anchor-label="tableName" id="-699377919%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="table-name.html"><span>table</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-699377919%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="table-name.html"><span class="token function">tableName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tableName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-343963907%2FFunctions%2F917069105" anchor-label="viewPrefix" id="-343963907%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="view-prefix.html"><span>view</span><wbr><span><span>Prefix</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-343963907%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="view-prefix.html"><span class="token function">viewPrefix</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">viewPrefix<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">BigQueryLoggerConfig.Builder</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
