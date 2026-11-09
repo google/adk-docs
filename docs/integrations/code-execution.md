@@ -11,17 +11,20 @@ catalog_tags: ["code", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `BuiltInCodeExecutor` in ADK Python and `BuiltInCodeExecutionTool` in ADK
-Java enable the agent to execute code when using Gemini 2 and higher models.
-This allows the model to perform tasks like calculations, data manipulation, or
-running small scripts. In ADK Python, set the executor on the agent's
-`code_executor` field rather than in its `tools` list.
+The Code execution functionality in the Gemini API allows the model to perform
+tasks like calculations, data manipulation, or running small scripts. This
+function is available using Gemini 2 and higher models. 
 
 !!! warning "Warning: Single tool per agent limitation"
 
     This tool can only be used ***by itself*** within an agent instance.
     For more information about this limitation and workarounds, see
     [Limitations for ADK tools](/tools/limitations/#one-tool-one-agent).
+
+## Get started
+
+The following code examples show the basic implementation of this functionality
+in an ADK agent:
 
 === "Python"
 
