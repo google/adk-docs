@@ -12,11 +12,11 @@ function that calculates a specific financial metric. ADK also supports
 long-running functions, so if that calculation takes a while, the agent can
 continue working on other tasks.
 
-ADK offers several ways to create functions tools, each suited to different
-levels of complexity and control:
+ADK supports the following tool patterns:
 
 - [Function tools](#function-tool)
 - [Long running function tools](#long-run-tool)
+- [Few-shot examples in Go](#few-shot-examples-in-go)
 - [Agent-as-a-Tool](#agent-tool)
 
 ## Function tools {#function-tool}
@@ -836,6 +836,38 @@ it's None) into the content of the `FunctionResponse` sent back to the LLM.
   function call with no second model call. Returning `Unit` suppresses the
   placeholder response entirely, ending the turn on the function call in either
   mode.
+
+## Few-shot examples in Go
+
+Use `exampletool.New` to give a Go agent examples of user inputs and expected
+model outputs. Configure `ExampleToolConfig.Examples` with a slice of
+`*exampletool.Example`. Each example pairs an input `*genai.Content` with an
+output slice of `*genai.Content`.
+
+Unlike a function tool, the example tool does not expose a function for the
+model to call. Register it in `llmagent.Config.Tools`; it appends all configured
+examples to the system instruction on model requests where the first part of
+the invocation's user content contains non-empty text. A non-text first part
+prevents example insertion, even if a later part has text. The tool does not
+select examples based on the user's query.
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools/example-tool/main.go:examples"
+    ```
+
+    The complete example is `snippets/tools/example-tool/main.go` in the
+    [Go examples](https://github.com/google/adk-docs/tree/main/examples/go).
+    [Configure a Gemini API key](/get-started/go/#set-your-api-key), then run
+    from `examples/go`:
+
+    ```shell
+    go run ./snippets/tools/example-tool
+    ```
+
+    Try: `The service was excellent.` The examples guide the model's response;
+    they do not enforce an output schema or guarantee a particular answer.
 
 ## Agent-as-a-Tool {#agent-tool}
 
