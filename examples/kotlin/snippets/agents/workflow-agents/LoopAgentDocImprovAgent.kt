@@ -179,7 +179,7 @@ val refinementLoop =
     )
 
 // STEP 3: Overall Sequential Pipeline
-val rootAgent =
+private val rootAgent =
     SequentialAgent(
         name = "IterativeWritingPipeline",
         subAgents =
