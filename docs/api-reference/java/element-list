@@ -3,6 +3,8 @@ com.example.a2a_basic
 com.example.contextcaching
 com.example.helloworld
 com.example.mcpfilesystem
+com.example.springchat
+com.example.springchat.advanced
 com.google.adk
 com.google.adk.a2a.agent
 com.google.adk.a2a.common
