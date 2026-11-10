@@ -167,14 +167,16 @@ duration, count turns, watch `usage_metadata` on model events
 `save_live_blob=True` saves the session's audio and the user's image frames (ADK Python
 2.14 or higher) to the [artifact service](../artifacts/index.md) as files, and to the
 [session service](../sessions/index.md) as references. Despite the name, **only audio and
-the user's image frames are persisted** today, not the video chunks of an avatar's responses.
+the user's image frames are persisted** today, not model-generated video output.
 
 Enable it to debug what the agent heard and saw, or for audit trails in regulated
 environments. Leave it off otherwise: for audio, 16 kHz PCM input runs about **1.92 MB per
-minute per session**; for image frames sent at 1 FPS, 100 KB JPEG frames add another **6 MB
+minute per session**; for example, image frames of about 100 KB sent at 1 FPS add about **6 MB
 per minute**. That accumulates fast on a voice or video workload. If you need it in
 production, sample a fraction of sessions rather than all of them, and set a retention policy
-on the artifact service — ADK does not expire these for you.
+on the artifact service — ADK does not expire these for you. Saved audio and image frames
+can contain personal information, so tell users they are being recorded and handle the
+stored data according to your privacy obligations.
 
 !!! warning "`save_live_audio` is deprecated"
 

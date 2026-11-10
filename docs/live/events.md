@@ -93,7 +93,8 @@ async for event in runner.run_live(...):
 `inline_data` is ephemeral and never persisted. Set
 [`save_live_blob=True`](configuration.md#save_live_blob) and ADK aggregates audio into files
 in the artifact service, delivering a `file_data` reference in addition to the raw bytes so
-you can retrieve the audio later. For formats and playback, see
+you can retrieve the audio (and, in ADK Python 2.14 or higher, the user's image frames)
+later. The session stores only the references. For formats and playback, see
 [Audio and video](audio-video.md).
 
 ### Transcription
