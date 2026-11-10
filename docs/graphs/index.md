@@ -16,6 +16,10 @@ deterministic tools and code.
 nodes of different types, including Functions, human input, Tools, and LLM
 capabilities.
 
+!!! example "Experimental in Kotlin"
+
+    The Graph-based agent workflow feature is experimental in ADK Kotlin. It may have limitations and its behavior may change.
+
 Prebuilt ADK [template workflows](/agents/workflow-agents/),
 such as [Sequential Agents](/agents/workflow-agents/sequential-agents/),
 provide a defined process flow control only across a set of agents. You can continue to
