@@ -1,7 +1,7 @@
 # Deferred scheduling with Gemini models
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span>
 </div>
 
 Agent workloads have different latency needs. An interactive assistant must
@@ -16,13 +16,6 @@ You can request deferred scheduling per run, using the `service_tier` setting
 of `RunConfig`. The setting is part of the run configuration rather than the
 model or the agent, so one agent definition can serve both interactive requests
 and batch workloads.
-
-!!! example "Preview: Deferred capacity requires allowlisted access"
-
-    This Google Cloud feature is a Preview capability,
-    and running requests on deferred capacity requires an allowlist for
-    your Google Cloud project. For more information, see
-    [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling).
 
 ## Get started
 
@@ -258,8 +251,6 @@ HTTP connection open for it.
 
 The following limitations apply to deferred scheduling:
 
-*   **Allowlisted access:** Deferred capacity requires an allowlist for your
-    Google Cloud project.
 *   **Gemini and the Interactions API only:** Deferred scheduling works only
     with a `Gemini` model that sets `use_interactions_api=True`. Any other
     model, including a custom `BaseLlm` subclass, ignores the tier.
@@ -307,4 +298,5 @@ other.
 
 *   [Gemini Interactions API](index.md#interactions-api)
 *   [Runtime Configuration](/runtime/runconfig/)
+*   [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling)
 *   [Interactions API code sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api)
