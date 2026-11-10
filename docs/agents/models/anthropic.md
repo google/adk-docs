@@ -436,7 +436,7 @@ is active, ADK doesn't send `temperature`, `top_p`, or `top_k` to Claude.
     ```
 
 ADK returns Claude's reasoning as thought parts in the response, and preserves
-thinking blocks and their signatures across tool calls and conversation turns,
+thinking blocks and their signatures across tool calls within a turn,
 as the Anthropic API requires.
 
 ## Advanced applications
