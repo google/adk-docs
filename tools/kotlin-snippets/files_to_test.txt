@@ -47,4 +47,5 @@ snippets/tools/confirmation/dynamic/ReimbursementTools.kt
 snippets/skills/SkillsExample.kt
 snippets/integrations/BigQueryAnalyticsExample.kt
 snippets/agents/workflow-agents/LoopAgentDocImprovAgent.kt
+snippets/agents/workflow-agents/SequentialAgentExample.kt
 snippets/agents/workflow-agents/ParallelAgentWebResearch.kt
