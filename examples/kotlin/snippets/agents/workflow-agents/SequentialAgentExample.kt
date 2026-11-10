@@ -23,7 +23,7 @@ import com.google.adk.kt.agents.SequentialAgent
 import com.google.adk.kt.models.Gemini
 
 // --- Constants ---
-const val GEMINI_MODEL = "gemini-2.5-flash"
+private const val GEMINI_MODEL = "gemini-flash-latest"
 
 // --- 1. Define Sub-Agents for Each Pipeline Stage ---
 
