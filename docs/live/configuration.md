@@ -29,7 +29,7 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | [Details](sessions.md#context-window-compression) |
 | **history_config** | HistoryConfig | Control how prior conversation history is replayed to the Live server | [Details](#history_config) |
 | **max_llm_calls** | int | Limit total LLM calls per session | [Details](#max_llm_calls) |
-| **save_live_blob** | bool | Persist audio and the user's image frames | [Details](#save_live_blob) |
+| **save_live_blob** | bool | Persist audio (and, in ADK Python 2.14 or higher, the user's image frames) | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | [Details](#custom_metadata) |
 | **speech_config** | SpeechConfig | Voice and language configuration | [Voice and language](#voice-and-language) |
 | **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | [Audio transcription](#audio-transcription) |
@@ -135,7 +135,7 @@ language-specific configuration.
 
 ## Miscellaneous Controls
 
-ADK provides additional RunConfig options to control session behavior, manage costs, and persist audio and image frames for debugging and compliance purposes.
+ADK provides additional RunConfig options to control session behavior, manage costs, and persist audio data for debugging and compliance purposes.
 
 ```python
 run_config = RunConfig(
@@ -143,7 +143,7 @@ run_config = RunConfig(
     max_llm_calls=500,  # Default: 500 (prevents runaway loops)
                         # 0 or negative = unlimited (use with caution)
 
-    # Save audio and image frames as artifacts for debugging/compliance
+    # Save audio (and image frames in ADK Python 2.14+) for debugging/compliance
     save_live_blob=True,  # Default: False
 
     # Attach custom metadata to events
@@ -164,19 +164,22 @@ duration, count turns, watch `usage_metadata` on model events
 
 ### save_live_blob
 
-`save_live_blob=True` saves the session's audio and the user's image frames (ADK Python
-2.14 or higher) to the [artifact service](../artifacts/index.md) as files, and to the
-[session service](../sessions/index.md) as references. Despite the name, **only audio and
-the user's image frames are persisted** today, not model-generated video output.
+`save_live_blob=True` persists the session's audio to the
+[session service](../sessions/index.md) as references and to the
+[artifact service](../artifacts/index.md) as files. In ADK Python 2.14 or higher, it also
+persists the image frames the user sends, such as camera or screen-share frames; in ADK
+Python 2.13 and earlier, **only audio is persisted**. Despite the name, model-generated
+video output is not persisted in any version.
 
 Enable it to debug what the agent heard and saw, or for audit trails in regulated
 environments. Leave it off otherwise: for audio, 16 kHz PCM input runs about **1.92 MB per
-minute per session**; for example, image frames of about 100 KB sent at 1 FPS add about **6 MB
-per minute**. That accumulates fast on a voice or video workload. If you need it in
-production, sample a fraction of sessions rather than all of them, and set a retention policy
-on the artifact service — ADK does not expire these for you. Saved audio and image frames
-can contain personal information, so tell users they are being recorded and handle the
-stored data according to your privacy obligations.
+minute per session**. In ADK Python 2.14 or higher, image frames add to that; for example,
+frames of about 100 KB sent at 1 FPS add about **6 MB per minute**. That accumulates fast on
+a voice or video workload. If you need it in production, sample a fraction of sessions
+rather than all of them, and set a retention policy on the artifact service — ADK does not
+expire these for you. Saved audio and image frames can contain personal information, so tell
+users they are being recorded and handle the stored data according to your privacy
+obligations.
 
 !!! warning "`save_live_audio` is deprecated"
 
