@@ -19,13 +19,12 @@
 // the matching handler(s). Because the classifier may return more than one
 // category, the router selects a LIST of routes and every matching branch fires.
 
+// --8<-- [start:process-pipeline]
 @file:OptIn(ExperimentalWorkflowApi::class)
 
 package com.google.adk.kt.examples.graphs.index.processpipeline
 
 import com.google.adk.kt.annotations.ExperimentalWorkflowApi
-
-// --8<-- [start:process-pipeline]
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.models.Gemini
