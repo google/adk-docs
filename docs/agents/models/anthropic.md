@@ -441,8 +441,8 @@ as the Anthropic API requires.
 
 ## Advanced applications
 
-ADK supports some advanced uses of Anthropic models, including cache
-prompts and accessing models through the LiteLLM library.
+ADK supports some advanced uses of Anthropic models, including prompt caching
+and accessing models through the LiteLLM library.
 
 ### Cache prompts
 
