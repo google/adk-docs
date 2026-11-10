@@ -497,6 +497,7 @@ usually more than 5 minutes apart.
     selects the 1-hour cache.
 
     ```kotlin
+    @OptIn(ExperimentalContextCachingFeature::class)
     import com.google.adk.kt.agents.ContextCacheConfig
     import com.google.adk.kt.apps.App
     import kotlin.time.Duration.Companion.minutes
