@@ -79,8 +79,9 @@ val cityReportAgent =
         instruction =
             Instruction(
                 """
-                Output following line:
-                It is {CityTime.time_info} in {CityTime.city} right now.
+                You receive a CityTime with time_info and city fields.
+                Output a single line stating that it is that time in that city right
+                now.
                 """.trimIndent(),
             ),
     )
