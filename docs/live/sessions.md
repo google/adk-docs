@@ -202,7 +202,7 @@ update survives a [reconnect](#session-resumption) of the current `run_live()` c
     )
     ```
 
-`send_context_update()` requires `google-genai` 2.32.0 or later and is supported on
+`send_context_update()` requires ADK Python vX.Y.Z or later and `google-genai` 2.32.0 or later, and is supported on
 Vertex AI (Gemini Enterprise Agent Platform).
 
 ## The run_live() loop
