@@ -10,9 +10,9 @@ You can use OpenAI models with ADK. How you connect depends on the language:
 - **Python — via LiteLLM:** ADK Python accesses OpenAI models (and many other providers) through the LiteLLM connector. See [LiteLLM](/agents/models/litellm/).
 - **Kotlin — native support:** ADK Kotlin provides a `ChatCompletions` model in `com.google.adk.kt.models.openai` that targets the OpenAI Chat Completions API. [Get started](#get-started).
 
-!!! example "Experimental"
+!!! example "Experimental in Go"
 
-    The OpenAI model support feature is experimental. It may have limitations and its behavior may change.
+    The OpenAI model support feature is experimental in ADK Go. It may have limitations and its behavior may change.
 
 ## Get started
 
