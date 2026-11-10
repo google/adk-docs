@@ -123,5 +123,5 @@ val codePipelineAgent =
         description = "Executes a sequence of code writing, reviewing, and refactoring.",
     )
 
-val rootAgent = codePipelineAgent
+private val rootAgent = codePipelineAgent
 // --8<-- [end:init]
