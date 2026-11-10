@@ -33,6 +33,7 @@ snippets/runtime/RunnerLoop.kt
 snippets/integrations/RagEngine.kt
 snippets/plugins/CountInvocationPlugin.kt
 snippets/context/CacheMetadataExample.kt
+snippets/context/ContextExamples.kt
 snippets/a2a/A2AConsumer.kt
 snippets/tools/overview/ToolsetExample.kt
 snippets/tools/overview/WeatherSentiment.kt
@@ -46,3 +47,4 @@ snippets/tools/confirmation/dynamic/ReimbursementTools.kt
 snippets/skills/SkillsExample.kt
 snippets/integrations/BigQueryAnalyticsExample.kt
 snippets/agents/workflow-agents/SequentialAgentExample.kt
+snippets/agents/workflow-agents/ParallelAgentWebResearch.kt

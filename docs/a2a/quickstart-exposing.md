@@ -1,7 +1,7 @@
 # Quickstart: Exposing a remote agent via A2A
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 This quickstart covers the most common starting point for any developer: **"I have an agent. How do I expose it so that other agents can use my agent via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
@@ -50,7 +50,7 @@ After:
 └────────────────┘
 ```
 
-The sample consists of :
+The sample consists of:
 
 - **Remote Hello World Agent** (`remote_a2a/hello_world/agent.py`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that handles dice rolling and prime number checking. It becomes exposed using the `to_a2a()` function and is served using `uvicorn`.
 - **Root Agent** (`agent.py`): A simple agent that is just calling the remote Hello World agent.
@@ -290,14 +290,6 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 *   **`before_agent`**: Executed before the agent starts processing the request. It allows you to inspect or modify the incoming `RequestContext`.
 *   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
 *   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
-
-!!! tip "Suppress experimental warnings"
-
-    ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
-
-    ```bash
-    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
-    ```
 
 ### Manage the application lifecycle
 
