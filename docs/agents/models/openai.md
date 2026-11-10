@@ -1,7 +1,7 @@
 # OpenAI models for ADK agents
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span>
 </div>
 
 You can use OpenAI models with ADK. How you connect depends on the language:
