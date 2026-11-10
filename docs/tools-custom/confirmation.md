@@ -23,8 +23,6 @@ an ADK Tool in the following ways:
     The Tool Confirmation feature is experimental in ADK TypeScript, ADK Go,
     and ADK Kotlin. For all languages, see the
     [known limitations](#known-limitations).
-    We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=tool%20confirmation)!
 
 You can configure how a request is communicated to a user, and the system can
 also use [remote responses](#remote-response) sent via the ADK
