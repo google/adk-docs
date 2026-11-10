@@ -1,7 +1,7 @@
 # Choose a voice architecture
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.14.0</span><span class="lst-java">Java v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.13.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 ADK supports two voice architectures under `Runner.run_live()`:
