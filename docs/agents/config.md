@@ -26,7 +26,7 @@ see the
 !!! example "Experimental in Java"
     The Agent Config feature is experimental in ADK Java. For all languages,
     see the [known limitations](#known-limitations). We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=agent%20config)!
+    [feedback](https://github.com/google/adk-java/issues/new?template=feature_request.md&labels=agent%20config)!
 
 ## Get started
 
