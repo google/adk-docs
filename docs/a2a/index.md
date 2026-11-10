@@ -1,4 +1,4 @@
-# ADK with Agent2Agent (A2A) Protocol
+# Agent2Agent (A2A) Protocol for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
