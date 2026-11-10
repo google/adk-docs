@@ -35,6 +35,15 @@ They are packaged in the toolset `BigQueryToolset`.
     that matches your dataset; leaving it unset lets BigQuery determine
     the location.
 
+## Installation
+
+The BigQuery tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
 ## Authentication
 
 The `BigQueryToolset` supports several authentication mechanisms through `BigQueryCredentialsConfig`.
