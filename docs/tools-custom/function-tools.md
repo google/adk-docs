@@ -311,13 +311,6 @@ LLM.
 
 ADK for Python generates JSON schemas from your function signatures using Pydantic for model function declarations. This feature (`JSON_SCHEMA_FOR_FUNC_DECL`) is **enabled by default**.
 
-!!! example "Experimental"
-    
-    JSON schema tool declarations (`JSON_SCHEMA_FOR_FUNC_DECL`) are an
-    experimental feature of ADK for Python. The feature is enabled by default,
-    but its behavior and API may change, and ADK emits an `[EXPERIMENTAL]`
-    warning while it is active.
-
 ###### Option 1: Configure via Command Line
 
 Set the appropriate environment variable in your terminal before launching your agent process:

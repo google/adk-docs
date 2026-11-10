@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
@@ -23,9 +23,9 @@ information on the syntax and settings supported by the Agent Config format,
 see the
 [Agent Config syntax reference](/api-reference/agentconfig/).
 
-!!! example "Experimental"
-    The Agent Config feature is experimental and has some
-    [known limitations](#known-limitations). We welcome your
+!!! example "Experimental in Java"
+    The Agent Config feature is experimental in ADK Java. For all languages,
+    see the [known limitations](#known-limitations). We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=agent%20config)!
 
 ## Get started
@@ -272,8 +272,7 @@ deployment guides.
 
 ## Known limitations {#known-limitations}
 
-The Agent Config feature is experimental and includes the following
-limitations:
+The Agent Config feature has the following limitations:
 
 -   **Model support:** Only Gemini models are currently supported.
     Integration with third-party models is in progress.
