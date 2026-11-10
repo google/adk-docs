@@ -18,13 +18,12 @@
 // code: an agent names a random city, a code function looks up the time there,
 // a second agent reports it, and a final function appends a completion message.
 
+// --8<-- [start:get-started]
 @file:OptIn(ExperimentalWorkflowApi::class)
 
 package com.google.adk.kt.examples.graphs.index.getstarted
 
 import com.google.adk.kt.annotations.ExperimentalWorkflowApi
-
-// --8<-- [start:get-started]
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.models.Gemini
