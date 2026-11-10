@@ -29,7 +29,7 @@ import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.tools.ToolContext
 
 // --- Constants ---
-const val GEMINI_MODEL = "gemini-2.5-flash"
+private const val GEMINI_MODEL = "gemini-flash-latest"
 
 // --- State Keys ---
 const val STATE_CURRENT_DOC = "current_document"
