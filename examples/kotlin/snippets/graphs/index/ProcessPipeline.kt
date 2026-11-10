@@ -52,8 +52,7 @@ val processMessage =
 
 val router =
     node<String, Unit>("router") { context, nodeInput ->
-        val routes = nodeInput.split(",").map { route -> route.trim() }
-        context.routes = routes.map { Route.Tag(it) }
+        context.routes = nodeInput.split(",").map { Route.Tag(it.trim()) }
     }
 
 val response1Bug =
