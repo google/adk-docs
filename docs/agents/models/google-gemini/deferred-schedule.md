@@ -296,7 +296,7 @@ other.
 
 ## Additional resources
 
+*   [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling)
 *   [Gemini Interactions API](index.md#interactions-api)
 *   [Runtime Configuration](/runtime/runconfig/)
-*   [Autonomous agent scheduling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale/efficiency/autonomous-scheduling)
 *   [Interactions API code sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api)
