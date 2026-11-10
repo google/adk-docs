@@ -111,7 +111,7 @@ class LiveRequest(BaseModel):
 
 | Method | Sends | Mode |
 |--------|-------|------|
-| `send_content(content)` | Text, as a discrete turn | Turn-by-turn; triggers a response |
+| `send_content(content, partial=False)` | Text, as a discrete turn | Turn-by-turn; triggers a response unless `partial=True` |
 | `send_realtime(blob)` | Audio, image, or video bytes | Continuous streaming |
 | `send_activity_start()` / `send_activity_end()` | Manual turn boundaries | Only when automatic VAD is disabled |
 | `send_context_update(system_instruction=, tools=)` | A new system instruction and/or tool set | Rare phase transitions; see [below](#update-the-instruction-or-tools-mid-session) |
