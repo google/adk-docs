@@ -12,8 +12,7 @@ You can use OpenAI models with ADK. How you connect depends on the language:
 
 !!! example "Experimental"
 
-    The `openaimodel` package is experimental and its behavior may change or be removed in the future. We welcome your
-		[feedback](https://github.com/google/adk-go/issues/new?template=feature_request.md)!
+    The OpenAI model support feature is experimental. It may have limitations and its behavior may change.
 
 ## Get started
 
