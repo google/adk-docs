@@ -8,7 +8,7 @@ catalog_tags: ["code", "google"]
 # Environment Toolsets for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span>
 </div>
 
 Some types of tasks, particularly coding and file operations, require an agent
@@ -19,11 +19,6 @@ and execute shell commands. The Environment Toolset is designed as a general
 framework for configuring and using local or remote execution environments with
 ADK agents. ADK provides a [***LocalEnvironment***](#local-environment)
 implementation for use with the Environment Toolset framework.
-
-!!! example "Experimental"
-    The Environment Toolset feature is experimental and may be updated.
-    We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
 
 ## Get started
 
