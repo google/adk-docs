@@ -112,7 +112,7 @@ session_service = VertexAiSessionService(agent_engine_id=APP_ID)
 
 ## Manage Memory with `VertexAiMemoryBankService` {#memory-bank}
 
-[`VertexAiMemoryBankService`](/sessions/memory/#memory-bank)
+The [`VertexAiMemoryBankService`](/sessions/memory/#memory-bank) class
 is compatible with Agent Platform express mode API Keys. You can instead initialize
 the memory object without any project or location.
 
