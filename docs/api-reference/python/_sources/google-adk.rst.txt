@@ -193,6 +193,14 @@ google.adk.integrations.firestore module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.fsspec module
+-------------------------------------
+
+.. automodule:: google.adk.integrations.fsspec
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.gcs module
 ----------------------------------
 
@@ -293,6 +301,14 @@ google.adk.integrations.slack module
 ------------------------------------
 
 .. automodule:: google.adk.integrations.slack
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.teams module
+------------------------------------
+
+.. automodule:: google.adk.integrations.teams
     :members:
     :undoc-members:
     :show-inheritance:
@@ -773,6 +789,14 @@ google.adk.tools.spanner module
 -------------------------------
 
 .. automodule:: google.adk.tools.spanner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.tool\_args\_matcher module
+-----------------------------------------
+
+.. automodule:: google.adk.tools.tool_args_matcher
     :members:
     :undoc-members:
     :show-inheritance:
