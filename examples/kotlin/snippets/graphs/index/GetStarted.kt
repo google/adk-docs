@@ -78,8 +78,10 @@ val cityReportAgent =
         inputSchema = cityTimeSchema,
         instruction =
             Instruction(
-                """Output following line, using the time_info and city from the input:
-                It is <time_info> in <city> right now.""",
+                """
+                Output the following line, using the time_info and city from the input:
+                It is <time_info> in <city> right now.
+                """.trimIndent(),
             ),
     )
 
