@@ -42,8 +42,10 @@ val cityGeneratorAgent =
         model = Gemini(name = "gemini-flash-latest"),
         instruction =
             Instruction(
-                """Return the name of a random city.
-                  Return only the name, nothing else.""",
+                """
+                Return the name of a random city.
+                Return only the name, nothing else.
+                """.trimIndent(),
             ),
     )
 
