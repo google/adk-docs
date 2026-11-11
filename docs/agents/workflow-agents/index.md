@@ -16,6 +16,8 @@ how and when other agents run, defining the control flow of a process.
     superseded by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
+    In Python and TypeScript, a `Workflow` cannot yet be used as an `LlmAgent`
+    sub-agent.
     These workflow architectures provide more control, flexibility
     and capability to evolve your agent workflows over time.
 
