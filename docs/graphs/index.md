@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
@@ -15,6 +15,10 @@ deterministic tools and code.
 **Figure 1.** A graph-based agent design for flight upgrades, combining workflow
 nodes of different types, including Functions, human input, Tools, and LLM
 capabilities.
+
+!!! example "Experimental in Kotlin"
+
+    The Graph-based agent workflow feature is experimental in ADK Kotlin. It may have limitations and its behavior may change.
 
 Prebuilt ADK [template workflows](/agents/workflow-agents/),
 such as [Sequential Agents](/agents/workflow-agents/sequential-agents/),
@@ -81,8 +85,9 @@ function, and the final agent reports the information.
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-        instruction="""Output following line:
-        It is {CityTime.time_info} in {CityTime.city} right now.""",
+        instruction="""You receive a CityTime with time_info and city fields.
+        Output a single line stating that it is that time in that city right
+        now.""",
     )
 
     def completed_message_function(node_input: str):
@@ -101,7 +106,7 @@ function, and the final agent reports the information.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array. Each row
+    In ADK TypeScript, a `Workflow` takes an `edges` array. Each row
     lists the nodes to run in order. The `node()` function wraps a function,
     an agent, a tool, or another `Workflow` as a graph node, and sets the
     node's name and its `inputSchema` and `outputSchema` contracts. Schemas
@@ -115,7 +120,7 @@ function, and the final agent reports the information.
 
 === "Go"
 
-    In ADK Go v2.0.0, sequential workflows use the graph engine:
+    In ADK Go, sequential workflows use the graph engine:
     `workflow.NewFunctionNode` wraps each step, and `workflow.Chain` wires
     the nodes into a sequential `edges` slice. The framework automatically
     passes each node's typed return value to the next node via
@@ -124,6 +129,19 @@ function, and the final agent reports the information.
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:sequential-get-started"
+    ```
+
+=== "Kotlin"
+
+    In ADK Kotlin, the `workflow` builder declares the graph's edges,
+    and `chain` connects `Start` and each node in order. An `LlmAgent` is a
+    node, so it goes straight into the graph. The `node()` function wraps a
+    code step as a typed node and can set its `inputSchema` and
+    `outputSchema` contracts. Each node's output is passed to the next node
+    as its input, so you do not need to write to session state.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/index/GetStarted.kt:get-started"
     ```
 
 This sample code demonstrates how you can assemble a simple, sequential
@@ -207,7 +225,7 @@ translated into a graph-based agent:
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a router node returns an event carrying a
+    In ADK TypeScript, a router node returns an event carrying a
     `route` value, created with `createEvent({route})`. A second edge row
     maps each route value to the node that handles it. Setting `route` to an
     array dispatches to every matching branch, which lets the classifier in
@@ -220,7 +238,7 @@ translated into a graph-based agent:
 
 === "Go"
 
-    In ADK Go v2.0.0, conditional routing uses `workflow.NewEmittingFunctionNode`
+    In ADK Go, conditional routing uses `workflow.NewEmittingFunctionNode`
     to set `event.Routes` and `workflow.StringRoute` edges to dispatch to the
     matching handler — the direct equivalent of Python's `router` function and
     dict dispatch. `workflow.Concat` merges the chain and the conditional edges
@@ -228,6 +246,18 @@ translated into a graph-based agent:
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:process-pipeline"
+    ```
+
+=== "Kotlin"
+
+    In ADK Kotlin, a router node selects its routes by setting
+    `context.routes`, and a `route { }` block maps each route value to the
+    node that handles it. Selecting more than one route dispatches to every
+    matching branch, which lets the classifier in this example return more
+    than one category.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/graphs/index/ProcessPipeline.kt:process-pipeline"
     ```
 
 This sample code demonstrates how you can compose a sequence of agents to
@@ -256,7 +286,7 @@ are *not compatible* with the following ADK features:
 
 !!! note "Go: graph workflow API"
 
-    The `workflow` package in ADK Go v2.0.0 is the direct equivalent of the
+    The `workflow` package in ADK Go is the direct equivalent of the
     Python `Workflow` class. Use `workflow.NewFunctionNode` and
     `workflow.NewAgentNode` to define nodes, `workflow.Chain` or
     `workflow.Concat` with `[]workflow.Edge` to wire them, and
@@ -265,7 +295,9 @@ are *not compatible* with the following ADK features:
     `workflow.BoolRoute` matched against `event.Routes`. Fan-in is handled by
     `workflow.NewJoinNode`.
 
-    For advanced routing patterns and fan-out/join examples, see
-    [Build graph routes for workflow agents](/graphs/routes/). For prebuilt
-    higher-level alternatives (sequential, parallel, loop), see
-    [Prebuilt workflow agents](/agents/workflow-agents/).
+## Next steps
+
+For advanced routing patterns and fan-out/join examples, see
+[Build graph routes for workflow agents](/graphs/routes/). For prebuilt
+higher-level alternatives (sequential, parallel, loop), see
+[Prebuilt workflow agents](/agents/workflow-agents/).
