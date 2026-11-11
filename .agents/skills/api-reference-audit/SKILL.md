@@ -126,11 +126,12 @@ process.
   adk-js `adk-v<version>` tag, adds the version to the page title via TypeDoc's
   `--includeVersion`, and injects the Google Analytics tag into every HTML file
   (awk post-processing).
-- **Java**: two separate PRs per release. The adk-java team pushes the built
-  Javadoc assets (title `chore: update ADK Java doc to version <X>`); the docs
-  maintainer bumps the hardcoded dependency versions and `pom.xml` values (title
-  `Update ADK Java dependency versions to <X>`). The two can lag each other; the
-  assets PR is not self-serve, the dependency bump is.
+- **Java**: self-serve. Run `bash tools/java-api-docs/generate.sh <version>` to
+  regenerate the Javadoc assets under `docs/api-reference/java/` (the GA tag is
+  auto-injected into every HTML file), and bump the hardcoded dependency
+  versions and `pom.xml` values. These can ship as two separate PRs (`chore:
+  update ADK Java doc to version <X>` for the Javadoc assets and `Update ADK
+  Java dependency versions to <X>` for the dependency pins) or bundled together.
 - **Kotlin**: self-serve, one PR. Run `bash tools/kotlin-api-docs/generate.sh
   <version>`, then open a PR that bundles the generated assets and the hardcoded
   Kotlin refs (`installation.md`, `get-started/kotlin.md`, `litert-lm.md`). The
@@ -253,12 +254,12 @@ When the user asks you to proceed, output concrete next actions per stale
 surface:
 
 - The exact command to run, when self-serve, for example:
+    - `bash tools/python-api-docs/generate.sh <new-version>`
     - `bash tools/python-cli-docs/generate.sh <new-version>`
     - `bash tools/python-rest-api-docs/generate.sh <new-version>`
+    - `bash tools/java-api-docs/generate.sh <new-version>`
     - `bash tools/kotlin-api-docs/generate.sh <new-version>`
     - `bash tools/typescript-api-docs/generate.sh <new-version>`
-- For team-owned surfaces (Java), state that the update is blocked on the owning
-  team's asset PR and what to request or wait for.
 - For hardcoded versions, the precise `file:line` edits (old -> new), including
   `examples/java/**/pom.xml`.
 - Which surfaces move together (Python API, CLI, and REST share one `adk-python`
@@ -279,6 +280,7 @@ Match the established titles so history stays searchable:
 - Python CLI: `Update CLI reference docs for ADK Python <X.Y.Z>`
 - Python REST API: `Update REST API reference docs for ADK Python <X.Y.Z>`
 - TypeScript: `Update API reference docs for ADK TypeScript <X.Y.Z>`
+- Java API: `chore: update ADK Java doc to version <X.Y.Z>`
 - Java dependency bump: `Update ADK Java dependency versions to <X.Y.Z>`
 - Kotlin: `Update ADK Kotlin to <X.Y.Z>`
 

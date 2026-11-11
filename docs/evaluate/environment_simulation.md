@@ -25,11 +25,6 @@ The Environment Simulation integrates with ADK's tool execution pipeline via the
 hook or the [plugin system](/plugins/), so no
 changes to your agent code are required.
 
-```
-The Environment Simulation is an experimental feature. Its API may change in future
-releases.
-```
-
 ## How it works
 
 While [User Simulation](/evaluate/user-sim/)

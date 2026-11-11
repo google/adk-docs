@@ -25,7 +25,7 @@ applications with ADK. Explore our collection below and happy building:
 
     ---
 
-    Build an multi-agent workflow including agent delegation,
+    Build a multi-agent workflow including agent delegation,
     session management, and safety callbacks.
 
     [:octicons-arrow-right-24: Build an agent team](/tutorials/agent-team/)

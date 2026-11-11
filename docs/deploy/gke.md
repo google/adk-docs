@@ -717,7 +717,7 @@ You'll need the service URL provided after deployment.
 
     If you deployed your agent with the UI enabled:
 
-    You can test your agent by simply navigating to the kubernetes service URL in your web browser.
+    You can test your agent by simply navigating to the Kubernetes service URL in your web browser.
 
     The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
 
