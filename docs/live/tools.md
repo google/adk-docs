@@ -303,11 +303,3 @@ Two fields come up most in live tools:
 | :---- | :---- |
 | `tool_context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, limits |
 | `tool_context.state` | Session state; mutate it directly and ADK persists the change |
-
-!!! warning "A tool cannot end the session"
-
-    `end_invocation` lives on the `InvocationContext`, and
-    `tool_context.get_invocation_context()` hands back a copy, so setting the flag there is a
-    silent no-op. To stop a live session early, set `ctx.end_invocation = True` inside a
-    custom agent's own `_run_live_impl()`, or return content from a `before_agent_callback`
-    and let ADK set the flag for you.
