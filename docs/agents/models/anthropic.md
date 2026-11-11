@@ -457,12 +457,10 @@ tool declarations, the system instruction, and the latest conversation
 content.
 
 Anthropic supports a 5-minute cache lifetime, which is the default, and a 1-hour
-cache lifetime; see
-[Anthropic's prompt caching documentation](https://docs.claude.com/en/docs/build-with-claude/prompt-caching#1-hour-cache-duration).
-Use the 1-hour lifetime when requests to the same agent are usually more than
-5 minutes apart.
 cache lifetime. Use the 1-hour lifetime when requests to the same agent are
-usually more than 5 minutes apart.
+usually more than 5 minutes apart. For more information, see Anthropic's 
+[prompt caching](https://docs.claude.com/en/docs/build-with-claude/prompt-caching)
+documentation.
 
 === "Python"
 
