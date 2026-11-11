@@ -42,10 +42,11 @@ val processMessage =
         model = Gemini(name = "gemini-flash-latest"),
         instruction =
             Instruction(
-                """Classify user message into either "BUG", "CUSTOMER_SUPPORT",
-                  or "LOGISTICS". If you think a message applies to more than one category,
-                  reply with a comma separated list of categories.
-               """,
+                """
+                Classify user message into either "BUG", "CUSTOMER_SUPPORT",
+                or "LOGISTICS". If you think a message applies to more than one category,
+                reply with a comma separated list of categories.
+                """.trimIndent(),
             ),
     )
 
