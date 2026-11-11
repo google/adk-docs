@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
