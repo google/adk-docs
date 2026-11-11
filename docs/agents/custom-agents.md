@@ -69,7 +69,7 @@ The core of any custom agent is the method where you define its unique asynchron
       * **Signature:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
       * **Asynchronous Generator:** It must be an `async def` function and return an `AsyncGenerator`. This allows it to `yield` events produced by sub-agents or its own logic back to the runner.
       * **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
-      * **Live audio and video runs:** The `_run_async_impl` method only covers text-based runs. To support `run_live()`, also override `_run_live_impl`, which has the same signature. Without that override, live runs raise `NotImplementedError`.
+      * **Live audio and video runs:** The `_run_async_impl` method only covers non-live runs (`run_async()`). To support `run_live()`, also override `_run_live_impl`, which has the same signature. Without that override, live runs raise `NotImplementedError`.
 
 === "TypeScript"
 
