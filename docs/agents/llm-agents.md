@@ -234,10 +234,11 @@ calculations, fetch real-time data, or execute specific actions.
       `FunctionTool` at compile-time.
     - An instance of a class inheriting from `BaseTool`.
     - An `AgentTool` wrapping another agent, enabling agent-to-agent
-      delegation - see [Custom agent
-      workflows](/agents/custom-agents/#delegation). In Python, wrap the agent
-      In Python, prefer setting `mode='single_turn'` on the agent and adding it to `sub_agents`, which exposes it as an inline tool automatically. Avoid direct use of `AgentTool(agent=...)` syntax.
-      a tool.
+      delegation. For more information, see
+      [Custom agent workflows](/agents/custom-agents/#delegation).
+      In Python, prefer setting `mode='single_turn'` on the agent and adding it
+      to `sub_agents`, which exposes it as an inline tool automatically, and
+      avoid using the `AgentTool(agent=...)` syntax directly.
 
 The LLM uses the function/tool names, descriptions (from docstrings or the
 `description` field), and parameter schemas to decide which tool to call based
