@@ -14,11 +14,10 @@ sequential execution set may or may not utilize AI models, but the overall
 execution of those sub-agents is ultimately managed by the ***SequentialAgent***
 object you define.
 
-!!! note "Alternative: graph-based workflows"
+!!! warning "Deprecated: Use graph-based workflows"
 
-    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
-
-    by more flexible workflow structures, including
+    In ADK Python, TypeScript, Go, and Kotlin, template workflows have been 
+    superseded by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
@@ -56,7 +55,7 @@ Using a `SequentialAgent` makes it simple to define this execution flow, as show
 in the following code snippet:
 
 ```py
-SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
+SequentialAgent(name="CodePipelineAgent", sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
 This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](/agents/llm-agents/#data-handling)**.
