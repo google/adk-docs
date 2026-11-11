@@ -176,7 +176,7 @@ environments. Leave it off otherwise: for audio, 16 kHz PCM input runs about **1
 minute per session**. In ADK Python 2.14 or higher, image frames add to that; for example,
 frames of about 100 KB sent at 1 FPS add about **6 MB per minute**. That accumulates fast on
 a voice or video workload. If you need it in production, sample a fraction of sessions
-rather than all of them, and set a retention policy on the artifact service — ADK does not
+rather than all of them, and set a retention policy on the artifact service. ADK agents do not
 expire these for you. Saved audio and image frames can contain personal information, so tell
 users they are being recorded and handle the stored data according to your privacy
 obligations.
