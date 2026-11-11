@@ -101,7 +101,7 @@ function, and the final agent reports the information.
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a `Workflow` takes an `edges` array. Each row
+    In ADK TypeScript, a `Workflow` takes an `edges` array. Each row
     lists the nodes to run in order. The `node()` function wraps a function,
     an agent, a tool, or another `Workflow` as a graph node, and sets the
     node's name and its `inputSchema` and `outputSchema` contracts. Schemas
@@ -115,7 +115,7 @@ function, and the final agent reports the information.
 
 === "Go"
 
-    In ADK Go v2.0.0, sequential workflows use the graph engine:
+    In ADK Go, sequential workflows use the graph engine:
     `workflow.NewFunctionNode` wraps each step, and `workflow.Chain` wires
     the nodes into a sequential `edges` slice. The framework automatically
     passes each node's typed return value to the next node via
@@ -219,7 +219,7 @@ translated into a graph-based agent:
 
 === "TypeScript"
 
-    In ADK TypeScript v2.0.0, a router node returns an event carrying a
+    In ADK TypeScript, a router node returns an event carrying a
     `route` value, created with `createEvent({route})`. A second edge row
     maps each route value to the node that handles it. Setting `route` to an
     array dispatches to every matching branch, which lets the classifier in
@@ -232,7 +232,7 @@ translated into a graph-based agent:
 
 === "Go"
 
-    In ADK Go v2.0.0, conditional routing uses `workflow.NewEmittingFunctionNode`
+    In ADK Go, conditional routing uses `workflow.NewEmittingFunctionNode`
     to set `event.Routes` and `workflow.StringRoute` edges to dispatch to the
     matching handler — the direct equivalent of Python's `router` function and
     dict dispatch. `workflow.Concat` merges the chain and the conditional edges
