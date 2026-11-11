@@ -34,7 +34,8 @@ back into your ADK flow. Managed agents provide several built-in advantages:
   provision or secure.
 - **No client-side function declarations:** Server-side tools are configured on
   the managed agent, so you don't declare or execute them locally.
-- **Composable as an inline tool:** Set `mode='single_turn'` to expose the
+- **Composable as an inline tool:** Set `mode='single_turn'` and add the managed agent to a parent `LlmAgent`'s `sub_agents`. ADK then exposes it as an inline single-turn tool automatically, which is the recommended alternative to wrapping it in `AgentTool`.
+- ```
   managed agent to a parent `LlmAgent` as an inline single-turn tool, which is
   the recommended alternative to wrapping it in `AgentTool`.
 
