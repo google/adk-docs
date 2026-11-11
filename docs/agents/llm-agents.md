@@ -497,7 +497,7 @@ schema definitions.
     In Python, ADK supports `output_schema` and `tools` on the same agent: the
     tools stay available while the agent works, and the schema applies only to
     the final response. Some models accept both in one request, such as Gemini
-    models on Vertex AI and `LiteLlm` models whose provider supports response
+    models on Google Cloud and `LiteLlm` models whose provider supports response
     schemas, and ADK passes them through directly. For other models, ADK adds a
     [`set_model_response` function
     tool](https://github.com/google/adk-python/blob/main/src/google/adk/tools/set_model_response_tool.py)
