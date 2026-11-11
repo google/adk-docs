@@ -236,7 +236,7 @@ calculations, fetch real-time data, or execute specific actions.
     - An `AgentTool` wrapping another agent, enabling agent-to-agent
       delegation - see [Custom agent
       workflows](/agents/custom-agents/#delegation). In Python, wrap the agent
-      as `AgentTool(agent=...)`, or add it to `sub_agents` to delegate without
+      In Python, prefer setting `mode='single_turn'` on the agent and adding it to `sub_agents`, which exposes it as an inline tool automatically. Avoid direct use of `AgentTool(agent=...)` syntax.
       a tool.
 
 The LLM uses the function/tool names, descriptions (from docstrings or the
