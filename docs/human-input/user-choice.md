@@ -16,7 +16,7 @@ should decide between them, for example:
     agent should act on.
 -   Selecting a plan, size, or configuration before the agent places an order.
 
-The tool is a built-in [long-running function
+This tool is a [long-running function
 tool](/tools-custom/function-tools/#long-run-tool). It returns no result of its
 own, so the agent run stops on the tool call and waits until your client
 provides the user's choice.
