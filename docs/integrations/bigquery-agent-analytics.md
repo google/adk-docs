@@ -457,7 +457,7 @@ LIMIT 20;
         from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
         from google.adk.agents import Agent
         from google.adk.models.google_llm import Gemini
-        from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+        from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 
         # --- OpenTelemetry note (no setup required for BQAA) ---
@@ -1358,7 +1358,7 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
     | `EnableOTelCorrelation` | `bool` | `false` | Capture ambient OpenTelemetry `span_id` and `trace_id` under `attributes.otel` |
     | `GCSBucketName` | `string` | `""` | Offload inline text larger than `MaxInlineTextSize` and binary blobs to this GCS bucket |
     | `GCSClientOptions` | `[]option.ClientOption` | `nil` | Custom client options for the default GCS client (falls back to `ClientOptions` when empty) |
-    | `GCSPathPrefix` | `string` | `""` | Optional object-name prefix, followed by `/`, for offloaded GCS objects (leading and trailing `/` are trimmed). A valid UTF-8 prefix of at most 750 bytes with no `~`, control characters, or Unicode line or paragraph separators, and not starting with the reserved `.well-known/acme-challenge` segments, is used verbatim. Any other prefix is rewritten to `<base>~<sha256>` (at most 467 bytes, so object folders fit the 512-byte limit of hierarchical-namespace buckets and object names stay within 1,024 bytes), and a warning that omits the prefix text is logged |
+    | `GCSPathPrefix` | `string` | `""` | Optional object-name prefix, followed by `/`, for offloaded GCS objects (leading and trailing `/` are trimmed). In v1.0.0 and later, when the trimmed prefix is valid UTF-8 of at most 750 bytes with no `~`, control characters, or Unicode line or paragraph separators, and does not start with the reserved `.well-known/acme-challenge` segments, it is used verbatim; any other prefix is rewritten to `<base>~<sha256>` (at most 467 bytes, so object folders fit the 512-byte limit of hierarchical-namespace buckets and object names stay within 1,024 bytes), and a warning that omits the prefix text is logged |
     | `ConnectionID` | `string` | `""` | BigQuery connection ID (`"location.connection_id"`) stored as `object_ref.authorizer` for Object Tables / signed URLs |
     | `MaxInlineTextSize` | `int` | `32 * 1024` | Byte threshold (`32 KiB` default) above which text parts are offloaded to GCS when offloading is configured |
     | `GCSMaxConcurrentUploads` | `int` | `8` | Maximum concurrent GCS uploads during a batch flush |
@@ -2199,10 +2199,15 @@ longer than `max_content_length` (`MaxContentLen` in Go) is cut, which sets
 code as `Executable code (<language>): <code>` and code execution results as
 `Code execution result (<outcome>): <output>`, redacts common credential
 patterns in text, code, and output, and ends cut values with `...[TRUNCATED]`;
-redaction also sets `is_truncated`. When `custom_metadata_allowlist`
-(`CustomMetadataAllowlist` in Go) is set, the final (non-partial) `LLM_RESPONSE`
-row captures allowlisted keys from `llm_response.custom_metadata` into
-`attributes.custom_metadata`.
+redaction also sets `is_truncated`. In Go plugin v1.0.0 and later, Go also
+applies credential-pattern redaction to function call and response names in the
+summary (unless `DisableSensitiveKeyRedaction` is `true`), and when
+`MaxContentLen` sets a limit (`MaxContentLen >= 0` and
+`CaptureFullMessageContent` is `false`), caps those names at 256 runes and the
+joined summary at `MaxContentLen + 4096` runes before `...[TRUNCATED]`. When
+`custom_metadata_allowlist` (`CustomMetadataAllowlist` in Go) is set, the final
+(non-partial) `LLM_RESPONSE` row captures allowlisted keys from
+`llm_response.custom_metadata` into `attributes.custom_metadata`.
 
 **3. LLM_ERROR**
 
@@ -2325,10 +2330,10 @@ updated by tools).
 
     Python replaces `temp:` state values with `[REDACTED]`. Go removes top-level
     lowercase `temp:` entries (after trimming leading whitespace) from
-    `state_delta` before logging and emits no
-    `STATE_DELTA` row if nothing remains. Other `temp:` values in structured
-    content and attributes are replaced with `[REDACTED]`. See [Built-in
-    redaction](#built-in-redaction) for details.
+    `state_delta` before logging and emits no `STATE_DELTA` row if nothing
+    remains. Other `temp:` values in structured content and attributes are
+    replaced with `[REDACTED]`. See [Built-in redaction](#built-in-redaction)
+    for details on redacted key names and state scopes.
 
 ```json
 {
@@ -2851,7 +2856,7 @@ feature.
 | `AGENT_RESPONSE` for final events with function responses | Written when the event also carries visible answer text, such as the final event of an `agenttool` call with `SkipSummarization`. | Not written for events that carry function responses. |
 | `LLM_RESPONSE` text offloaded to GCS | Left out of `content.response`: a single text response above `MaxInlineTextSize` (32 KiB) is written as `{"response": ""}`, with the preview and `object_ref` in `content_parts`. If the upload fails, the inline text (up to `MaxContentLen`) is restored. | Kept inline in `content.response`, up to `max_content_length`. |
 | Invocation rows under an ambient OpenTelemetry span | The invocation span is a child of the caller's span, so its rows have the caller's span ID as `parent_span_id`. That ID matches no row's `span_id`, so `parent_span_id IS NULL` doesn't find these rows. | The caller's span is reused as the invocation span, so its rows have a `NULL` `parent_span_id`. |
-| `temp:` keys in `STATE_DELTA` | Removed from `state_delta`; a delta with only `temp:` keys writes no row. | Kept with `[REDACTED]` values, and every non-empty delta writes a row. |
+| `temp:` keys in `STATE_DELTA` | Top-level lowercase `temp:` keys (after trimming leading whitespace) are removed from `state_delta`; a delta with only those keys writes no row. | Keys starting with `temp:` (case-insensitive, without trimming leading whitespace) are kept with `[REDACTED]` values, and every non-empty delta writes a row. |
 | `"EVENT"` in event filters | An alias for every row derived from session events, such as `STATE_DELTA` and `AGENT_RESPONSE`. | Matched literally, so `event_denylist=["EVENT"]` suppresses nothing. |
 | Partial events | Ignored for every row derived from session events. | Ignored only for `NODE_*` and `AGENT_RESPONSE` rows, so a partial event can also write `STATE_DELTA`, `TOOL_PAUSED`, or `HITL_*` rows. |
 | `HITL_INPUT_REQUEST` | Also written from `Event.RequestedInput` when the event has no `adk_request_input` call. | Written only from function-call parts. |
@@ -2873,6 +2878,7 @@ feature.
 | `LLM_ERROR` latency | Includes `time_to_first_token_ms` when a streamed chunk arrived before the error. | `total_ms` only. |
 | Batching and retry defaults | `BatchSize: 100` and `RetryConfig.InitialDelay: 100ms`. Rows are the same, but write cadence and retry timing differ. | `batch_size=1` and `initial_delay=1.0` seconds. |
 | Drop statistics | The typed `DropStats` struct (see [Dropped-event observability](#dropped-event-observability)). | `get_drop_stats()`, a dict of per-reason counts. |
+| Response summary and function-name bounds | Applies credential-pattern redaction to function call and response names in response summaries (when redaction is enabled), and when `MaxContentLen >= 0` and `CaptureFullMessageContent` is `false`, caps those names at 256 runes and joined summaries at `MaxContentLen + 4096` runes before `...[TRUNCATED]` (`LLM_RESPONSE` writes that summary directly to `content.response`; `AGENT_RESPONSE` and `EVENT_COMPACTION` also apply column-level `MaxContentLen` truncation; `CaptureFullMessageContent: true` or `MaxContentLen: -1` lifts both length caps while keeping redaction when enabled). | Interpolates function names verbatim and adds no cap of its own after joining part summaries, while column-level `max_content_length` truncation still cuts `content.response` on `LLM_RESPONSE` and `AGENT_RESPONSE` rows (and `content.compacted_content` on `EVENT_COMPACTION` rows), so with the same limit a Go `LLM_RESPONSE` summary can be up to 4,096 runes longer. |
 
 ## Query recipes
 
@@ -3185,7 +3191,7 @@ from google.adk.plugins.bigquery_agent_analytics_plugin import (
     BigQueryAgentAnalyticsPlugin,
     BigQueryLoggerConfig,
 )
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+from google.adk.integrations.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
@@ -3425,12 +3431,13 @@ wherever they appear in structured `content` or `attributes`:
 `x_goog_security_token`, `x_goog_signature`
 
 Python replaces **`temp:`** state values with `[REDACTED]`. Go removes top-level
-lowercase **`temp:`** entries from `state_delta` before logging and emits no
-`STATE_DELTA` row if nothing remains. Other **`temp:`** values in structured
-content and attributes are replaced with `[REDACTED]`. A `secret:` prefix has no
-special meaning. Use `temp:` for invocation-local sensitive state, or sanitize
-application-specific state values before they reach logging. Custom content
-formatters do not redact state attributes.
+lowercase **`temp:`** entries (after trimming leading whitespace) from
+`state_delta` before logging and emits no `STATE_DELTA` row if nothing remains.
+Other **`temp:`** values in structured content and attributes are replaced with
+`[REDACTED]`. A `secret:` prefix has no special meaning. Use `temp:` for
+invocation-local sensitive state, or sanitize application-specific state values
+before they reach logging. Custom content formatters do not redact state
+attributes.
 
 !!! warning "Correction to earlier guidance"
 
@@ -3487,11 +3494,11 @@ safely rewritten fail closed.
 
     In addition, the Go plugin:
 
-    - Removes top-level lowercase **`temp:`** entries from `state_delta` before
-      logging and emits no `STATE_DELTA` row if nothing remains; replaces other
-      **`temp:`** values in structured content and attributes with
-      `"[REDACTED]"`; and redacts whole credential-container envelopes under
-      `credential` or `credentials`.
+    - Removes top-level lowercase **`temp:`** entries (after trimming leading
+      whitespace) from `state_delta` before logging and emits no `STATE_DELTA`
+      row if nothing remains; replaces other **`temp:`** values in structured
+      content and attributes with `"[REDACTED]"`; and redacts whole
+      credential-container envelopes under `credential` or `credentials`.
     - Scrubs credential userinfo and sensitive query parameters from external
       URIs (failing closed to `"[REDACTED_SENSITIVE_URI]"` when a sensitive
       query value cannot be safely rewritten), and scrubs `Authorization`
