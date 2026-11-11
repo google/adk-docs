@@ -299,16 +299,21 @@ in and out of frame.
 
 ## Tool execution context
 
-A tool or callback receives an `InvocationContext` for state, history, and artifacts. It
-works the same as in any ADK agent — see [Agent context](../context/index.md) — with one
-difference that matters live: **one `InvocationContext` spans the entire `run_live()` loop**,
-created when you call `run_live()` and living across every agent and every turn until the
-session ends. In a request/response agent an invocation is a single turn; in a live session
-it is the whole conversation.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+</div>
+
+A tool receives a `ToolContext`, and a callback a `CallbackContext`, for state, history, and
+artifacts. Both work the same as in any ADK agent — see
+[Agent context](../context/index.md) — with one difference that matters live: **the
+underlying `InvocationContext` spans the entire `run_live()` loop**, created when you call
+`run_live()` and living across every agent and every turn until the session ends. In a
+request/response agent an invocation is a single turn; in a live session it is the whole
+conversation.
 
 Two fields come up most in live tools:
 
 | Field | What it gives you |
 | :---- | :---- |
-| `context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, limits |
-| `context.end_invocation` | Set to `True` to terminate the whole streaming session immediately |
+| `tool_context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, limits |
+| `tool_context.state` | Session state; mutate it directly and ADK persists the change |
