@@ -15,7 +15,7 @@ the same way you build them with Gemini, allowing you to:
     the model for each agent based on its task.
 -   Give Claude more reasoning time on complex tasks with extended thinking.
 
-You can reach Claude through two backends: the **Anthropic API**, using an
+You can reach Claude through the **Anthropic API**, using an
 Anthropic API key, or **Google Cloud Agent Platform**, using your Google Cloud
 project and credentials. For help choosing, see [Choose a backend](#choose-a-backend).
 
