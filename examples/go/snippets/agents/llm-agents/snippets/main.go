@@ -140,7 +140,8 @@ func _snippet_schema_example(model model.LLM) {
 		Instruction:  `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
 		OutputSchema: capitalOutput,
 		OutputKey:    "found_capital",
-		// Cannot use the capitalTool tool effectively here
+		// Tools can still be added. ADK injects a set_model_response tool when
+		// the model can't combine tools with OutputSchema natively.
 	})
 	// --8<-- [end:schema_example]
 	if err != nil {

@@ -75,6 +75,19 @@ Use the following command to start the ADK web interface:
     and `webui` are required to use the web interface together; either can be
     omitted if you only need the API or UI independently.
 
+    The `AgentLoader` field of `launcher.Config` sets which agents the
+    launcher serves. To serve several agents from one launcher, create it with
+    `agent.NewMultiLoader`. Each agent is listed as a separate app that you can
+    select in the web interface. Agent names must be unique:
+
+    ```go
+    loader, err := agent.NewMultiLoader(rootAgent, otherAgent)
+    if err != nil {
+        log.Fatalf("Failed to create agent loader: %v", err)
+    }
+    config := &launcher.Config{AgentLoader: loader}
+    ```
+
 === "Java"
 
     Make sure to update the port number.

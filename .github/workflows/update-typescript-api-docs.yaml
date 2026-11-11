@@ -1,0 +1,209 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Regenerates docs/api-reference/typescript/ for a released @google/adk version
+# and opens the pull request for it.
+#
+# Why this runs in CI rather than on a maintainer's machine:
+# tools/typescript-api-docs/README.md. The short version is that the build
+# installs the entire adk-js dependency tree and runs TypeDoc over it, so the
+# output depends on the toolchain it was built with. One pinned, disposable
+# environment makes it reproducible; a maintainer's laptop does not.
+#
+# Two triggers, doing different jobs:
+#   workflow_dispatch - the real thing. Builds and opens a pull request.
+#   pull_request      - a smoke test, only when the generator or this file
+#                       changes. Builds and checks the output, opens nothing.
+#                       It is what stops this rotting unnoticed between
+#                       releases, which is the usual fate of a job that only
+#                       runs when someone remembers to press it.
+
+name: Update ADK TypeScript API Reference
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '@google/adk version, e.g. 2.3.0. Empty means npm latest.'
+        required: false
+        type: string
+
+  pull_request:
+    paths:
+      - 'tools/typescript-api-docs/**'
+      - '.github/workflows/update-typescript-api-docs.yaml'
+
+# Nothing here needs the default GITHUB_TOKEN. The pull request is opened with
+# the adk-bot token instead, the same way feature-matrix-updater.yaml does it.
+permissions: {}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # A cold npm ci over the adk-js tree plus TypeDoc is minutes, not seconds.
+    # This is a ceiling to catch a hang, not a target.
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout adk-docs repo
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      # npm's dist-tag is the authority for which TypeScript version is current
+      # -- not the GitHub release. adk-js is a release-please monorepo whose
+      # tags are package-prefixed, so `releases/latest` regularly names some
+      # other package, and the two can be hours apart even when it does not.
+      - name: Resolve the version
+        id: resolve
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${INPUT_VERSION}" ]]; then
+            version="${INPUT_VERSION}"
+            echo "Using the version given to the workflow: ${version}"
+          else
+            version="$(curl -fsSL https://registry.npmjs.org/@google/adk \
+                       | jq -r '."dist-tags".latest')"
+            echo "Using npm dist-tags.latest: ${version}"
+          fi
+          if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version must be X.Y.Z, got '${version}'"
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      # Fail before the build rather than after it. A tag that does not exist
+      # is the single most likely input mistake, and generate.sh would only
+      # discover it after setting up a workspace.
+      - name: Check the release tag exists
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          if ! git ls-remote --exit-code --tags \
+               https://github.com/google/adk-js "refs/tags/adk-v${VERSION}" >/dev/null; then
+            echo "::error::google/adk-js has no tag adk-v${VERSION}"
+            exit 1
+          fi
+          echo "Found adk-v${VERSION}."
+
+      # generate.sh asks for node 18+. It redirects npm_config_cache into its
+      # own temp workspace, so nothing it installs is shared with this runner
+      # or cached between runs.
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '22'
+
+      - name: Record what we are building against
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+        run: |
+          {
+            echo "### TypeScript API reference"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Target version | \`${VERSION}\` |"
+            echo "| node | \`$(node --version)\` |"
+            echo "| npm | \`$(npm --version)\` |"
+            echo "| Trigger | \`${{ github.event_name }}\` |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Generate the TypeScript API reference
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+        run: bash tools/typescript-api-docs/generate.sh "${VERSION}"
+
+      # "The script exited 0" is weaker than it looks: it ends with a find/awk
+      # loop over the generated files, and an empty output directory would
+      # satisfy that happily. Check the things a reader of the docs would
+      # notice, so a silently empty or unversioned build fails here rather
+      # than in review.
+      - name: Check the output is real
+        env:
+          VERSION: ${{ steps.resolve.outputs.version }}
+          TARGET: docs/api-reference/typescript
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+
+          [[ -f "${TARGET}/index.html" ]] || fail "no ${TARGET}/index.html was produced"
+
+          pages="$(find "${TARGET}" -name '*.html' | wc -l)"
+          echo "Generated ${pages} HTML pages."
+          # The reference has been in the hundreds for every release so far; a
+          # handful of pages means TypeDoc resolved almost nothing.
+          [[ "${pages}" -ge 100 ]] || fail "only ${pages} HTML pages generated, expected hundreds"
+
+          # --includeVersion puts the version in the title. This is also the
+          # string the release automation reads back to decide whether the
+          # docs are current, so it has to be right.
+          grep -q "v${VERSION}" "${TARGET}/index.html" \
+            || fail "index.html does not mention v${VERSION}; --includeVersion may have stopped working"
+
+          # The analytics tag is injected after TypeDoc runs, by a separate
+          # loop that is easy to break without failing.
+          missing_ga="$(grep -L 'googletagmanager.com/gtag/js' $(find "${TARGET}" -name '*.html') | wc -l)"
+          [[ "${missing_ga}" -eq 0 ]] || fail "${missing_ga} HTML files have no analytics tag"
+
+          echo "Output looks right: ${pages} pages, versioned, analytics tag present."
+
+      # Lets a reviewer open the built docs without running anything locally,
+      # and gives the smoke test something to show for itself.
+      - name: Upload the generated reference
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: typescript-api-reference-${{ steps.resolve.outputs.version }}
+          path: docs/api-reference/typescript
+          retention-days: 7
+
+      - name: Check whether anything changed
+        id: diff
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- docs/api-reference/typescript; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The reference already matches this version; nothing to open." \
+              >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- docs/api-reference/typescript | tail -1 >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Only the dispatched run publishes. On a pull request everything above
+      # has already done its job: the build ran and the output was checked.
+      - name: Create Pull Request
+        if: github.event_name == 'workflow_dispatch' && steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+          commit-message: "docs: update API reference for ADK TypeScript ${{ steps.resolve.outputs.version }}"
+          title: "Update API reference docs for ADK TypeScript ${{ steps.resolve.outputs.version }}"
+          body: |
+            Regenerated `docs/api-reference/typescript/` with
+            `tools/typescript-api-docs/generate.sh ${{ steps.resolve.outputs.version }}`,
+            run by [this workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+            Upstream release:
+            https://github.com/google/adk-js/releases/tag/adk-v${{ steps.resolve.outputs.version }}
+
+            Generated output only. No `language-support-tag` spans and no code
+            samples were touched; those say which release a feature arrived in
+            rather than which one is current.
+          branch: "update-typescript-api-reference-${{ steps.resolve.outputs.version }}"
+          delete-branch: true
+          add-paths: docs/api-reference/typescript

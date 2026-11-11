@@ -7,13 +7,15 @@
 `RunConfig` is where you shape a live session: how the agent sounds, how it transcribes
 speech, when it decides a turn is over, how much history it keeps, and what limits it runs
 under. You pass it to
-[`Runner.run_live()`](https://google.github.io/adk-docs/api-reference/python/), and it
+[`Runner.run_live()`](../api-reference/python/google-adk.html#google.adk.runners.Runner.run_live), and it
 applies to that session only. Two users of the same agent can run with completely
 different configurations.
 
 `RunConfig` is not live-specific; [Runtime configuration](../runtime/runconfig.md) documents
 the full class and the fields that apply to `run_async()`. What follows is the subset that
-matters under `run_live()`, plus the voice-facing settings that only exist in a live session.
+matters under `run_live()` for native audio models. For agents using the
+[cascaded architecture](architectures/cascade.md#configure-a-cascaded-agent), configure voice and
+turn detection on the speech providers instead.
 
 ## RunConfig Parameter Quick Reference
 
@@ -21,7 +23,7 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 
 | Parameter | Type | Purpose | Reference |
 |-----------|------|---------|-----------|
-| **response_modalities** | list[str] | Output format. Live agents must use `AUDIO` — Live models do not accept `TEXT` | [Details](#response-modes) |
+| **response_modalities** | list[Modality] | Output format. Live agents must use `AUDIO` — Live models do not accept `TEXT` | [Details](#response-modes) |
 | **streaming_mode** | StreamingMode | Chunked or single-shot delivery on the `run_async()` path; not read by `run_live()` | [Details](#streamingmode-bidi-or-sse) |
 | **session_resumption** | SessionResumptionConfig | Enable automatic reconnection | [Details](sessions.md#session-resumption) |
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | [Details](sessions.md#context-window-compression) |
@@ -67,7 +69,8 @@ The `response_modalities` setting controls the output format, and a session gets
 agents the value is always `["AUDIO"]`**, because every
 [Live model](models.md#live-models) ADK supports accepts no other modality.
 ADK fills this in for you when you leave it unset, so most live applications never touch the
-field.
+field. The field is typed `list[Modality]` and also accepts the plain strings used
+throughout these examples.
 
 !!! warning "Migrating from `response_modalities=["TEXT"]`"
 
@@ -422,7 +425,8 @@ run_config = RunConfig(
 Both behaviors are probabilistic and make responses less predictable, so leave them off for
 formal or high-precision contexts and while debugging.
 
-Both settings are model-dependent: Gemini 2.5 Flash Live supports them, Gemini 3.1 Flash
-Live does not, and leaving them set is the most common failure when moving to 3.1. See
+Both settings are model-dependent: Gemini 2.5 Flash Live supports them, but the Gemini 3.1
+Flash Live and Gemini 3.8 Live models do not. ADK doesn't send these settings to Gemini 3.x
+Live models, so leaving them set has no effect. See
 [Per-model feature support](models.md#per-model-feature-support).
 
