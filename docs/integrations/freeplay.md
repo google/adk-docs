@@ -38,7 +38,7 @@ your team can contribute.
 ## Getting Started
 
 Below is a guide for getting started with Freeplay and ADK. You can also find the
-[full sample ADK agent repo](https://github.com/228Labs/freeplay-google-demo).
+complete [code sample](https://github.com/228Labs/freeplay-google-demo) in the ADK agent repo.
 
 ### Create a Freeplay Account
 
@@ -191,9 +191,9 @@ experiments) at both the
 This allows you to compare multiple different models or prompt changes and
 quantify changes head to head across your full agent execution.
 
-See the [batch test code example](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
+For a complete implementation, see the batch test [code example](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
 for executing a batch test on Freeplay with ADK.
 
 ## Sign up now
 
-Go to [Freeplay](https://app.freeplay.ai/signup) to sign up for an account, and check out the [full Freeplay <> ADK integration](https://github.com/freeplayai/freeplay-google-demo/tree/main).
+Go to [Freeplay](https://app.freeplay.ai/signup) to sign up for an account, and check out the full [Freeplay <> ADK integration](https://github.com/freeplayai/freeplay-google-demo/tree/main) demo.
