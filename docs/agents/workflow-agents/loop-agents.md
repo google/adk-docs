@@ -1,7 +1,7 @@
 # Loop template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ***LoopAgent*** class is a [template workflow](/agents/workflow-agents/) agent
@@ -14,11 +14,10 @@ its sub-agents. The sub-agents within the defined loop may or may not utilize AI
 models, but the overall execution of those sub-agents is ultimately managed by
 the ***LoopAgent*** object you define.
 
-!!! note "Alternative: graph-based workflows"
+!!! warning "Deprecated: Use graph-based workflows"
 
-    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
-
-    by more flexible workflow structures, including
+    In ADK Python, TypeScript, Go, and Kotlin, template workflows have been 
+    superseded by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
     [dynamic workflows](/graphs/dynamic/).
 
@@ -41,8 +40,8 @@ When the `LoopAgent`'s `Run Async` method is called, it performs the following a
 
     _Crucially_, the `LoopAgent` itself does _not_ inherently decide when to stop looping. You _must_ implement a termination mechanism to prevent infinite loops.  Common strategies include:
 
-    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**.
-    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent can signal termination (e.g., by raising a custom event, setting a flag in a shared context, or returning a specific value).
+    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**. In Python, `max_iterations` defaults to `None`, which means the loop only stops on escalation.
+    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent signals termination by emitting an event whose actions set `escalate` to true. In Python, a custom agent yields an `Event` with `actions=EventActions(escalate=True)`, while a callback sets `callback_context.actions.escalate = True` and a tool sets `tool_context.actions.escalate = True`. The built-in `exit_loop` tool sets that flag for you.
 
 ![Loop Agent](/assets/loop-agent.png)
 
@@ -54,10 +53,10 @@ Imagine a scenario where you want to iteratively improve a document:
 * **Critic Agent:** An `LlmAgent` that critiques the draft, identifying areas for improvement.
 
     ```py
-    LoopAgent(sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
+    LoopAgent(name="RefinementLoop", sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
     ```
 
-In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **designed to return a "STOP" signal when the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
+In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **given an escalation tool such as `exit_loop`, which it calls once the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max_iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
 
 ???+ "Full Code"
 
@@ -79,6 +78,11 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/LoopAgentExample.java:init"
+        ```
+
+    === "Kotlin"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/agents/workflow-agents/LoopAgentDocImprovAgent.kt:init"
         ```
 
 !!! tip "Global instructions for all agents"
