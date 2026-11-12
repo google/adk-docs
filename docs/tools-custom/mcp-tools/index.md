@@ -88,7 +88,7 @@ the other implementations are covered in their specific pages.
    
 ### Direct MCP Tool integration (McpToolset)
 
-The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
+The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. `McpToolset` manages the connection to the MCP server. Constructing the toolset does not connect; it opens the session the first time it is used, such as when the agent asks it for its tools. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
 
 #### Example: Local Stdio Transport (FileSystem MCP)
