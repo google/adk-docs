@@ -395,9 +395,9 @@ Sessions store the state and event history for a specific user's interaction wit
 
 Updates an existing session.
 
-ADK Go serves this endpoint in v2.4.0 and higher, and its `stateDelta` can only
-change session-scoped keys. It returns HTTP 400 when `stateDelta` changes a key
-with the `app:`, `user:` or `temp:` prefix.
+ADK Go serves this endpoint in v2.4.0 and higher. The `stateDelta` field in the request body can only
+change session-scoped keys; the server returns HTTP 400 if `stateDelta` changes a key
+with the `app:`, `user:`, or `temp:` prefix.
 
 *   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
