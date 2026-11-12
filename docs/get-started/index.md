@@ -56,4 +56,4 @@ set up and running a simple agent in less than 20 minutes.
     [:octicons-arrow-right-24: Migrate to ADK](migrate.md) <br>
 </div>
 
-To get started with a technical overview check this [link](about.md).
+To get started, see the [Technical Overview](about.md).
