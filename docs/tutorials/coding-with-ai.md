@@ -8,6 +8,9 @@ server.
 - [**Agents CLI in Agent Platform**](#agents-cli): Command-line tool and coding skills for ADK development.
 - [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
   ADK documentation through an MCP server.
+- [**Google Developer Knowledge MCP Server**](#developer-knowledge-mcp-server):
+  Search ADK documentation alongside other official Google developer docs
+  through a remote MCP server and agent skill.
 - [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
   following the `llms.txt` standard.
 
@@ -122,6 +125,32 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
 Any coding tool that supports MCP servers can use the same server configuration
 shown above. Adapt the JSON example from the Antigravity or Cursor sections for
 your tool's MCP settings.
+
+## Google Developer Knowledge MCP Server {#developer-knowledge-mcp-server}
+
+The
+[Developer Knowledge MCP server](https://developers.google.com/knowledge/mcp)
+is a remote MCP server that searches the live, official documentation for
+Google developer products, including ADK (`adk.dev`), Gemini API, Google Cloud,
+and Firebase. Because ADK agents often combine these products, connecting your
+coding tool to this server helps it answer questions and generate code from
+current docs rather than relying only on training data. The server provides the
+`search_documents`, `get_documents`, and `answer_query` tools and complements
+the Agents CLI skills and the ADK Docs MCP server.
+
+To add it to your coding tool, follow
+[Configure your IDE or coding agent](https://developers.google.com/knowledge/mcp#configure-ide)
+and select your client. To teach your coding assistant when and how to use
+these tools, also install the
+[`retrieving-developer-knowledge` agent skill](https://developers.google.com/knowledge/mcp#agent-skill).
+
+With the server and skill in place, you can ask your coding assistant to ground
+ADK tasks in the docs, for example:
+
+```text
+Look up how to add an MCP toolset to an ADK agent, then add a toolset for a
+remote MCP server to my root agent.
+```
 
 ## ADK Docs Index
 
