@@ -172,9 +172,9 @@ persists the image frames the user sends, such as camera or screen-share frames;
 Python 2.13 and earlier, *only audio is saved*. Despite the name, model-generated
 video output is not persisted in any version.
 
-Enable it to debug what the agent heard and saw, or for audit trails in regulated
-environments. Leave it off otherwise: for audio, 16 kHz PCM input runs about **1.92 MB per
-minute per session**. In ADK Python 2.14 or higher, image frames add to that; for example,
+Enable this feature to debug the audio and visual data handling, or for audit trails in regulated
+environments, and disable it otherwise. For audio, 16 kHz PCM input runs about **1.92 MB per
+minute per session**. In ADK Python 2.14 or higher, image frames add to the data load. For example,
 frames of about 100 KB sent at 1 FPS add about 6 MB per minute. This data accumulates quickly for
 a voice or video workload. If you need this data for production use, sample a fraction of sessions
 rather than all of them, and set a retention policy on the artifact service. ADK agents do not
