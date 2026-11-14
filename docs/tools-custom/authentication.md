@@ -814,7 +814,7 @@ if exchanged_credential:
 If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the tool needs to start the OAuth flow. Define the AuthScheme and initial AuthCredential and call `tool_context.request_credential()`. Return a response indicating authorization is needed.
 
 ```py
-  # Use auth_scheme and auth_credential configured in the tool.
+# Use auth_scheme and auth_credential configured in the tool.
 
 def my_authenticated_tool_function(tool_context: ToolContext) -> dict:
     tool_context.request_credential(AuthConfig(
@@ -823,7 +823,7 @@ def my_authenticated_tool_function(tool_context: ToolContext) -> dict:
     ))
     return {'pending': True, 'message': 'Awaiting user authentication.'}
 
-  # By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
+# By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
 ```
 
 **Step 4: Exchange Authorization Code for Tokens**
