@@ -55,7 +55,7 @@ runs. ADK gives you two ways to do that, plus plain blocking for the fast case:
 | Your situation | Use | How |
 |---|---|---|
 | Tool returns in under a second | **Blocking** (the default) | A normal `return` tool |
-| Long wait with nothing to narrate | **[Non-blocking tool](#non-blocking-tools)** | Set `response_scheduling` on the tool |
+| Long wait with nothing to narrate | **[Non-blocking tool](#non-blocking-tools)** | Set `response_scheduling` or `behavior` on the tool |
 | Long wait worth narrating | **[Streaming tool](#streaming-tools)** | `yield` progress from an async generator |
 
 ## Non-blocking tools
@@ -94,6 +94,20 @@ the result in when it is ready. A runnable example ships as the
 | `WHEN_IDLE` | Waits for a natural pause | Reports and lookups, the usual choice |
 | `INTERRUPT` | Delivers immediately | Alarms, failures, "the transfer failed" |
 | `SILENT` | Enters context, announced only if relevant | Background info the model may use later |
+
+### Setting `behavior` explicitly
+
+You can also mark a tool non-blocking with the `behavior` field. When set, it takes
+precedence over `response_scheduling`:
+
+```python
+report_tool = FunctionTool(export_report)
+report_tool.behavior = types.Behavior.NON_BLOCKING
+```
+
+!!! note "Requires ADK Python 2.10 or higher"
+
+    The `behavior` field was added in adk-python 2.10.
 
 ## Streaming tools
 
@@ -285,16 +299,21 @@ in and out of frame.
 
 ## Tool execution context
 
-A tool or callback receives an `InvocationContext` for state, history, and artifacts. It
-works the same as in any ADK agent — see [Agent context](../context/index.md) — with one
-difference that matters live: **one `InvocationContext` spans the entire `run_live()` loop**,
-created when you call `run_live()` and living across every agent and every turn until the
-session ends. In a request/response agent an invocation is a single turn; in a live session
-it is the whole conversation.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+</div>
+
+A tool receives a `ToolContext`, and a callback a `CallbackContext`, for state, history, and
+artifacts. Both work the same as in any ADK agent — see
+[Agent context](../context/index.md) — with one difference that matters live: **the
+underlying `InvocationContext` spans the entire `run_live()` loop**, created when you call
+`run_live()` and living across every agent and every turn until the session ends. In a
+request/response agent an invocation is a single turn; in a live session it is the whole
+conversation.
 
 Two fields come up most in live tools:
 
 | Field | What it gives you |
 | :---- | :---- |
-| `context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, limits |
-| `context.end_invocation` | Set to `True` to terminate the whole streaming session immediately |
+| `tool_context.run_config` | The session's [configuration](configuration.md) — response modalities, transcription, limits |
+| `tool_context.state` | Session state; mutate it directly and ADK persists the change |

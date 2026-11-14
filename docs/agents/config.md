@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
@@ -23,10 +23,10 @@ information on the syntax and settings supported by the Agent Config format,
 see the
 [Agent Config syntax reference](/api-reference/agentconfig/).
 
-!!! example "Experimental"
-    The Agent Config feature is experimental and has some
-    [known limitations](#known-limitations). We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=agent%20config)!
+!!! example "Experimental in Java"
+    The Agent Config feature is experimental in ADK Java. For all languages,
+    see the [known limitations](#known-limitations). We welcome your
+    [feedback](https://github.com/google/adk-java/issues/new?template=feature_request.md&labels=agent%20config)!
 
 ## Get started
 
@@ -42,9 +42,11 @@ details on what you must install and configure before you can run agents with
 the Agent Config files.
 
 !!! note
-    The Agent Config feature currently only supports Gemini models. For more
-    information about additional; functional restrictions, see
-    [Known limitations](#known-limitations).
+    The `model:` key of an Agent Config takes a model name string, such as a
+    Gemini model name. To use a model that needs constructor arguments, such as
+    `LiteLlm`, construct a `BaseLlm` instance in Python and reference it from
+    the `model_code:` key. For more information about additional functional
+    restrictions, see [Known limitations](#known-limitations).
 
 To set up ADK for use with Agent Config:
 
@@ -272,11 +274,17 @@ deployment guides.
 
 ## Known limitations {#known-limitations}
 
-The Agent Config feature is experimental and includes the following
-limitations:
+The Agent Config feature has the following limitations:
 
--   **Model support:** Only Gemini models are currently supported.
-    Integration with third-party models is in progress.
+-   **Model support:** The `model:` key only accepts a model name string. To use
+    a model that needs constructor arguments, such as `LiteLlm`, construct it in
+    Python and reference it from the `model_code:` key, which takes a mapping whose `name:` sub-key is
+    the fully qualified name of the `BaseLlm` instance:
+
+        model_code:
+          name: my_library.clients.my_litellm
+
+    The `model:` and `model_code:` keys cannot both be set.
 -   **Programming language:** The Agent Config feature currently supports
     Python and Java code for tools and other functionality requiring programming code.
 -   **ADK Tool support:** The following ADK tools are supported by the Agent
@@ -303,7 +311,7 @@ limitations:
 ## Next steps
 
 For ideas on what to build, see the
-[sample agent configs](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
+[sample agent configs](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C/.*%5C/root_agent%5C.yaml$/&type=code)
 in the `adk-python` repository. For detailed information on the syntax and settings supported by
 the Agent Config format, see the
 [Agent Config syntax reference](/api-reference/agentconfig/).

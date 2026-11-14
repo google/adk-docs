@@ -37,8 +37,7 @@ in the LiteRT-LM GitHub repository.
 
 Before you start the server, you need to download a model. You'll need a
 _Hugging Face_ user access token to download a LiteRT-LM model using `lit`. You
-can get a token for your _Hugging Face_ account
-[here](https://huggingface.co/settings/tokens).
+can get an [access token](https://huggingface.co/settings/tokens) on the _Hugging Face_ website.
 
 To see a list of models available for download, use the `lit list` command:
 
@@ -184,8 +183,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:1.4.0")
-    implementation("com.google.adk:google-adk-kotlin-litertlm:1.4.0")
+    implementation("com.google.adk:google-adk-kotlin-core:1.5.0")
+    implementation("com.google.adk:google-adk-kotlin-litertlm:1.5.0")
     implementation("com.google.ai.edge.litertlm:litertlm-jvm:0.13.1")
     // other dependencies...
 }
