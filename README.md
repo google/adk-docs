@@ -7,6 +7,8 @@
 [![Maven Central Java](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
 [![Maven Central Kotlin](https://img.shields.io/maven-central/v/com.google.adk/google-adk-kotlin-core)](https://search.maven.org/artifact/com.google.adk/google-adk-kotlin-core)
 
+[ English | [简体中文](README.zh.md) ]
+
 <html>
   <h2 align="center">
     <img src="docs/assets/agent-development-kit.png" width="150"/>
