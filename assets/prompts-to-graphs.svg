@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="760"
+   height="360"
+   viewBox="0 0 760 360.00001"
+   version="1.1"
+   id="svg16"
+   sodipodi:docname="diagram.svg"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   inkscape:export-filename="diagram.png"
+   inkscape:export-xdpi="245.11"
+   inkscape:export-ydpi="245.11"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview16"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="1.4933333"
+     inkscape:cx="333.14732"
+     inkscape:cy="308.37054"
+     inkscape:window-width="1894"
+     inkscape:window-height="1244"
+     inkscape:window-x="1554"
+     inkscape:window-y="215"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg16">
+    <sodipodi:guide
+       position="339.9939,342.23216"
+       orientation="0,-1"
+       id="guide28"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="639.50894,370.04465"
+       orientation="1,0"
+       id="guide29"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       id="arrowhead"
+       markerWidth="10"
+       markerHeight="7"
+       refX="0"
+       refY="3.5"
+       orient="auto">
+      <polygon
+         points="0,7 0,0 10,3.5 "
+         fill="#ffffff"
+         id="polygon1" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-5" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-6-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-5-2" />
+    </marker>
+  </defs>
+  <text
+     x="106.93143"
+     y="35.491062"
+     font-family="Monospace, sans-serif"
+     font-size="20px"
+     fill="white"
+     text-anchor="middle"
+     font-weight="bold"
+     id="text2"
+     style="font-size:21.3333px;font-family:Monospace, sans-serif;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">PROMPT AGENT</text>
+  <text
+     x="37.984959"
+     y="97.321396"
+     font-family="Monospace, sans-serif"
+     font-size="16px"
+     fill="white"
+     text-anchor="middle"
+     id="text5"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;text-anchor:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1"><tspan
+       x="37.984959"
+       y="97.321396"
+       sodipodi:role="line"
+       id="tspan27">Instructions:</tspan><tspan
+       x="37.984959"
+       y="117.3214"
+       sodipodi:role="line"
+       id="tspan26" /><tspan
+       id="tspan19"
+       x="37.984959"
+       y="137.3214"
+       sodipodi:role="line"
+       dx="0 0">- Process Message</tspan><tspan
+       x="37.984959"
+       y="157.3214"
+       sodipodi:role="line"
+       id="tspan28"
+       dx="0 0 0 0 0 0 0 0 0 0 0">- Route to:</tspan><tspan
+       x="37.984959"
+       y="177.3214"
+       sodipodi:role="line"
+       id="tspan21">- Response 1</tspan><tspan
+       x="37.984959"
+       y="197.3214"
+       sodipodi:role="line"
+       id="tspan23">- Response 2</tspan><tspan
+       x="37.984959"
+       y="217.3214"
+       sodipodi:role="line"
+       dx="0 0 0 0 0 0 0 0 0 -1.3392857"
+       id="tspan24">- Response 3</tspan></text>
+  <line
+     x1="238.83318"
+     y1="18.75"
+     x2="238.83318"
+     y2="326.69641"
+     stroke="#ffffff"
+     stroke-width="0.847287"
+     stroke-dasharray="5, 5"
+     id="line7"
+     style="fill:#999999;stroke:#004880;stroke-width:1.31837;stroke-dasharray:7.77995, 7.77995;stroke-dashoffset:0;stroke-opacity:1" />
+  <text
+     x="500.26175"
+     y="36.160709"
+     font-family="Monospace, sans-serif"
+     font-size="20"
+     fill="white"
+     text-anchor="middle"
+     font-weight="bold"
+     id="text8"
+     style="font-weight:bold;font-size:21.3333px;font-family:Monospace, sans-serif;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1"
+     dx="0 0 0 0 0 0 0 0 0 1.3392857">GRAPH-BASED WORKFLOW AGENT</text>
+  <rect
+     x="415.26175"
+     y="56.160709"
+     width="170.72318"
+     height="49.999996"
+     rx="10"
+     ry="10"
+     stroke="white"
+     stroke-width="2"
+     fill="none"
+     id="rect8"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <rect
+     x="26.434031"
+     y="65.201889"
+     width="184.70337"
+     height="244.748"
+     rx="11.242128"
+     ry="9.9763851"
+     stroke="white"
+     stroke-width="2.11807"
+     fill="none"
+     id="rect8-1"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <text
+     x="500.26175"
+     y="86.160706"
+     font-family="Monospace, sans-serif"
+     font-size="16px"
+     fill="white"
+     text-anchor="middle"
+     id="text9"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">Process Message</text>
+  <text
+     x="641.62878"
+     y="78.666298"
+     font-family="Monospace, sans-serif"
+     font-size="16px"
+     fill="white"
+     text-anchor="middle"
+     id="text9-8"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;text-anchor:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1;opacity:0.5"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace, sans-serif;-inkscape-font-specification:'Monospace, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+       id="tspan29">LlmAgent</tspan></text>
+  <text
+     x="641.62946"
+     y="188.54129"
+     font-family="Monospace, sans-serif"
+     font-size="16px"
+     fill="white"
+     text-anchor="middle"
+     id="text9-8-6"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace, sans-serif;-inkscape-font-specification:'Monospace, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-anchor:start;opacity:0.5;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1"
+     dx="0 0.66964287">function</text>
+  <line
+     x1="500.26175"
+     y1="106.16071"
+     x2="500.26175"
+     y2="149.12445"
+     stroke="white"
+     stroke-width="1.85394"
+     marker-end="url(#arrowhead)"
+     id="line9"
+     style="fill:none;stroke:#004c80;stroke-width:2.66667;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)" />
+  <rect
+     x="425.44644"
+     y="156.77679"
+     width="150"
+     height="50"
+     stroke="white"
+     stroke-width="2"
+     fill="none"
+     id="rect14-6"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <text
+     x="500.26175"
+     y="186.16071"
+     font-family="Monospace, sans-serif"
+     font-size="16"
+     fill="white"
+     text-anchor="middle"
+     id="text10"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">Router</text>
+  <line
+     x1="502.94034"
+     y1="206.78571"
+     x2="502.94034"
+     y2="263.71216"
+     stroke="white"
+     stroke-width="1.80359"
+     marker-end="url(#arrowhead)"
+     id="line13"
+     style="fill:none;stroke:#004c80;stroke-width:2.66667;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)" />
+  <line
+     x1="532.23309"
+     y1="206.77734"
+     x2="601.14343"
+     y2="266.46658"
+     stroke="white"
+     stroke-width="2.11454"
+     marker-end="url(#arrowhead)"
+     id="line13-8"
+     style="fill:none;stroke:#004c80;stroke-width:2.78704;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle-6)" />
+  <line
+     x1="472.3595"
+     y1="206.34714"
+     x2="403.44916"
+     y2="266.03638"
+     stroke="white"
+     stroke-width="2.11454"
+     marker-end="url(#arrowhead)"
+     id="line13-8-6"
+     style="fill:none;stroke:#004c80;stroke-width:2.78704;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle-6-1)" />
+  <rect
+     x="267.26175"
+     y="274.16071"
+     width="150"
+     height="50"
+     stroke="white"
+     stroke-width="2"
+     fill="none"
+     id="rect14"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <text
+     x="342.26175"
+     y="304.16071"
+     font-family="Monospace, sans-serif"
+     font-size="16"
+     fill="white"
+     text-anchor="middle"
+     id="text14"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">Response 1</text>
+  <rect
+     x="425.26175"
+     y="274.16071"
+     width="150"
+     height="50"
+     stroke="white"
+     stroke-width="2"
+     fill="none"
+     id="rect15"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <text
+     x="500.26175"
+     y="304.16071"
+     font-family="Monospace, sans-serif"
+     font-size="16"
+     fill="white"
+     text-anchor="middle"
+     id="text15"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">Response 2</text>
+  <rect
+     x="583.26172"
+     y="274.16071"
+     width="150"
+     height="50"
+     stroke="white"
+     stroke-width="2"
+     fill="none"
+     id="rect16"
+     style="fill:none;stroke:#004c80;stroke-opacity:1" />
+  <text
+     x="658.26172"
+     y="304.16071"
+     font-family="Monospace, sans-serif"
+     font-size="16"
+     fill="white"
+     text-anchor="middle"
+     id="text16"
+     style="font-size:16px;font-family:Monospace, sans-serif;text-align:start;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">Response 3</text>
+  <path
+     style="opacity:0.5;fill:none;fill-opacity:1;stroke:#004c80;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 639.50284,74.093602 597.98214,74.330357 586.59821,84.375"
+     id="path29"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="opacity:0.5;fill:none;fill-opacity:1;stroke:#004c80;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 639.7951,185.32143 h -52.83036 l -11.38393,10.04464"
+     id="path29-3"
+     sodipodi:nodetypes="ccc" />
+  <text
+     x="642.62946"
+     y="253.95607"
+     font-family="Monospace, sans-serif"
+     font-size="16px"
+     fill="white"
+     text-anchor="middle"
+     id="text9-8-6-5"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace, sans-serif;-inkscape-font-specification:'Monospace, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-anchor:start;opacity:0.5;fill:#004c80;fill-opacity:1;stroke:none;stroke-opacity:1">functions</text>
+  <path
+     style="opacity:0.5;fill:none;fill-opacity:1;stroke:#004c80;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 639.16862,246.03487 -256.57888,0.0812 -36.16072,27.46831"
+     id="path29-3-1"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="opacity:0.5;fill:none;fill-opacity:1;stroke:#004c80;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 639.37871,250.53689 H 473.27344 l -24.77679,22.15178"
+     id="path29-3-1-9"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="opacity:0.5;fill:none;fill-opacity:1;stroke:#004c80;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 639.33417,254.90296 h -10.34645 l -20.08929,20.11607"
+     id="path29-3-1-9-4"
+     sodipodi:nodetypes="ccc" />
+</svg>

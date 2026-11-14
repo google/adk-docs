@@ -1,0 +1,327 @@
+# Limitations for ADK tools
+
+Some ADK tools have limitations that can impact how you implement them within an agent workflow. This page lists these tool limitations and workarounds, if available.
+
+## One tool per agent limitation
+
+ADK Python: the built-in Search workaround is opt-in
+
+ADK Python v1.16.0 and higher can bypass this limitation for the Google Search and Agent Search tools, but not by default. You must construct the tool yourself with `bypass_multi_tools_limit=True`; the shared `google_search` instance exported from `google.adk.tools` leaves the flag off. See Workaround #2 below.
+
+In general, you can use more than one tool in an agent, but use of specific tools within an agent excludes the use of any other tools in that agent. The following ADK Tools can only be used by themselves, without any other tools, in a single agent object:
+
+- [Code Execution](/integrations/code-execution/) with Gemini API (Note: in TypeScript, this requires Gemini 2.0+ and does not have this limitation)
+- [Google Search](/integrations/google-search/) with Gemini API (Note: limitation only applies to Gemini 1.x models in TypeScript)
+- [Agent Search](/integrations/agent-search/) (Note: currently unavailable in TypeScript)
+
+For example, the following approach that uses one of these tools along with other tools, within a single agent, is ***not supported***:
+
+```py
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-flash-latest",
+    description="Code Agent",
+    tools=[custom_function],
+    code_executor=BuiltInCodeExecutor() # <-- NOT supported when used with tools
+)
+```
+
+```typescript
+import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+const rootAgent = new Agent({
+  name: 'RootAgent',
+  model: 'gemini-flash-latest',
+  description: 'Code Agent',
+  tools: [myCustomTool], // Assume myCustomTool is defined
+  codeExecutor: new BuiltInCodeExecutor(), // <-- NOT supported when used with tools
+});
+```
+
+```java
+ LlmAgent searchAgent =
+        LlmAgent.builder()
+            .model(MODEL_ID)
+            .name("SearchAgent")
+            .instruction("You're a specialist in Google Search")
+            .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- NOT supported
+            .build();
+```
+
+```kotlin
+val searchAgent = LlmAgent(
+    name = "SearchAgent",
+    model = Gemini(name = "gemini-flash-latest"),
+    instruction = Instruction("You're a specialist in Google Search"),
+    tools = listOf(GoogleSearchTool(), YourCustomTool()) // <-- NOT supported
+)
+```
+
+### Workaround #1: wrap the agent in an AgentTool
+
+Supported in ADKPythonTypeScript (v0.6.1+)JavaKotlin v0.1.0
+
+The following code sample demonstrates how to use multiple built-in tools or how to use built-in tools with other tools by using multiple agents:
+
+```py
+from google.adk.tools.agent_tool import AgentTool
+from google.adk.agents import Agent
+from google.adk.tools import google_search
+from google.adk.code_executors import BuiltInCodeExecutor
+
+search_agent = Agent(
+    model='gemini-flash-latest',
+    name='SearchAgent',
+    instruction="""
+    You're a specialist in Google Search
+    """,
+    tools=[google_search],
+)
+coding_agent = Agent(
+    model='gemini-flash-latest',
+    name='CodeAgent',
+    instruction="""
+    You're a specialist in Code Execution
+    """,
+    code_executor=BuiltInCodeExecutor(),
+)
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-flash-latest",
+    description="Root Agent",
+    tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
+)
+```
+
+```typescript
+import {Agent, AgentTool, BuiltInCodeExecutor, GOOGLE_SEARCH} from '@google/adk';
+
+const searchAgent = new Agent({
+  model: 'gemini-flash-latest',
+  name: 'SearchAgent',
+  instruction: "You're a specialist in Google Search",
+  tools: [GOOGLE_SEARCH],
+});
+
+const codingAgent = new Agent({
+  model: 'gemini-flash-latest', // Built-in code execution requires Gemini 2.0+ in ADK JS
+  name: 'CodeAgent',
+  instruction: "You're a specialist in Code Execution",
+  codeExecutor: new BuiltInCodeExecutor(),
+});
+
+const rootAgent = new Agent({
+  name: 'RootAgent',
+  model: 'gemini-flash-latest',
+  description: 'Root Agent',
+  tools: [new AgentTool({agent: searchAgent}), new AgentTool({agent: codingAgent})],
+});
+```
+
+```java
+import com.google.adk.agents.BaseAgent;
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.tools.AgentTool;
+import com.google.adk.tools.BuiltInCodeExecutionTool;
+import com.google.adk.tools.GoogleSearchTool;
+import com.google.common.collect.ImmutableList;
+
+public class NestedAgentApp {
+
+  private static final String MODEL_ID = "gemini-flash-latest";
+
+  public static void main(String[] args) {
+
+    // Define the SearchAgent
+    LlmAgent searchAgent =
+        LlmAgent.builder()
+            .model(MODEL_ID)
+            .name("SearchAgent")
+            .instruction("You're a specialist in Google Search")
+            .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
+            .build();
+
+
+    // Define the CodingAgent
+    LlmAgent codingAgent =
+        LlmAgent.builder()
+            .model(MODEL_ID)
+            .name("CodeAgent")
+            .instruction("You're a specialist in Code Execution")
+            .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
+            .build();
+
+    // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
+    BaseAgent rootAgent =
+        LlmAgent.builder()
+            .name("RootAgent")
+            .model(MODEL_ID)
+            .description("Root Agent")
+            .tools(
+                AgentTool.create(searchAgent), // Use create method
+                AgentTool.create(codingAgent)   // Use create method
+             )
+            .build();
+
+    // Note: This sample only demonstrates the agent definitions.
+    // To run these agents, you'd need to integrate them with a Runner and SessionService,
+    // similar to the previous examples.
+    System.out.println("Agents defined successfully:");
+    System.out.println("  Root Agent: " + rootAgent.name());
+    System.out.println("  Search Agent (nested): " + searchAgent.name());
+    System.out.println("  Code Agent (nested): " + codingAgent.name());
+  }
+}
+```
+
+```kotlin
+// Define the SearchAgent
+val searchAgent =
+    LlmAgent(
+        name = "SearchAgent",
+        model = Gemini(name = modelId),
+        instruction = Instruction("You're a specialist in Google Search"),
+        tools = listOf(GoogleSearchTool()),
+    )
+
+// Define another agent (e.g., for specialized tasks)
+val taskAgent =
+    LlmAgent(
+        name = "TaskAgent",
+        model = Gemini(name = modelId),
+        instruction = Instruction("You're a specialist in performing specific tasks."),
+    )
+
+// Define the RootAgent, which uses AgentTool to wrap SearchAgent and TaskAgent
+val rootAgent =
+    LlmAgent(
+        name = "RootAgent",
+        model = Gemini(name = modelId),
+        description = "Root Agent",
+        tools =
+            listOf(
+                AgentTool(agent = searchAgent),
+                AgentTool(agent = taskAgent),
+            ),
+    )
+```
+
+In ADK Python, an `AgentTool` does not pass the wrapped agent's grounding metadata back to the calling agent. Set `propagate_grounding_metadata=True` on the `AgentTool` to store that metadata in session state under the `temp:_adk_grounding_metadata` key. ADK attaches it to the parent agent's own response only when the parent has a tool named `google_search_agent`, which is the tool that Workaround #2 below creates for you.
+
+### Workaround #2: bypass_multi_tools_limit
+
+Supported in ADKPythonJavaKotlin v0.1.0
+
+ADK Python has a built-in workaround which bypasses this limitation for `GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it), as shown in the [built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools). sample agent.
+
+Set the flag on a tool instance you construct yourself, for example `GoogleSearchTool(bypass_multi_tools_limit=True)` imported from `google.adk.tools.google_search_tool`. The shared `google_search` instance exported from `google.adk.tools` leaves the flag off. The bypass takes effect when the agent has more than one entry in its `tools` list, or can transfer control to another agent.
+
+Warning
+
+Built-in tools cannot be used within a sub-agent. In ADK Python, `GoogleSearchTool` and `VertexAiSearchTool` are an exception only when the sub-agent constructs the tool with `bypass_multi_tools_limit=True`.
+
+For example, the following approach that uses built-in tools within sub-agents is **not supported**:
+
+```py
+url_context_agent = Agent(
+    model='gemini-flash-latest',
+    name='UrlContextAgent',
+    instruction="""
+    You're a specialist in URL Context
+    """,
+    tools=[url_context],
+)
+coding_agent = Agent(
+    model='gemini-flash-latest',
+    name='CodeAgent',
+    instruction="""
+    You're a specialist in Code Execution
+    """,
+    code_executor=BuiltInCodeExecutor(),
+)
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-flash-latest",
+    description="Root Agent",
+    sub_agents=[
+        url_context_agent,
+        coding_agent
+    ],
+)
+```
+
+```typescript
+import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+const urlContextAgent = new Agent({
+  model: 'gemini-flash-latest',
+  name: 'UrlContextAgent',
+  instruction: "You're a specialist in URL Context",
+  tools: [myCustomTool], // Assume myCustomTool is defined
+});
+
+const codingAgent = new Agent({
+  model: 'gemini-flash-latest',
+  name: 'CodeAgent',
+  instruction: "You're a specialist in Code Execution",
+  codeExecutor: new BuiltInCodeExecutor(),
+});
+
+const rootAgent = new Agent({
+  name: 'RootAgent',
+  model: 'gemini-flash-latest',
+  description: 'Root Agent',
+  subAgents: [urlContextAgent, codingAgent], // NOT supported when sub-agents use built-in tools
+});
+```
+
+```java
+LlmAgent searchAgent =
+    LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("SearchAgent")
+        .instruction("You're a specialist in Google Search")
+        .tools(new GoogleSearchTool())
+        .build();
+
+LlmAgent codingAgent =
+    LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("CodeAgent")
+        .instruction("You're a specialist in Code Execution")
+        .tools(new BuiltInCodeExecutionTool())
+        .build();
+
+
+LlmAgent rootAgent =
+    LlmAgent.builder()
+        .name("RootAgent")
+        .model("gemini-flash-latest")
+        .description("Root Agent")
+        .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
+        .build();
+```
+
+```kotlin
+val searchAgent = LlmAgent(
+    model = Gemini(name = "gemini-flash-latest"),
+    name = "SearchAgent",
+    instruction = Instruction("You're a specialist in Google Search"),
+    tools = listOf(GoogleSearchTool())
+)
+
+val codingAgent = LlmAgent(
+    model = Gemini(name = "gemini-flash-latest"),
+    name = "CodeAgent",
+    instruction = Instruction("You're a specialist in Code Execution")
+    // Kotlin currently doesn't have a BuiltInCodeExecutionTool in core
+)
+
+
+val rootAgent = LlmAgent(
+    name = "RootAgent",
+    model = Gemini(name = "gemini-flash-latest"),
+    description = "Root Agent",
+    subAgents = listOf(searchAgent, codingAgent) // Not supported when sub-agents use built-in tools
+)
+```
