@@ -385,12 +385,18 @@ nav:
 
   - Components:
     - Technical Overview: get-started/about.md
+    - Skills for Agents:
+      - skills/index.md
+    - Artifacts:
+      - artifacts/index.md
+    - Human input:
+      - User choice: human-input/user-choice.md
+      - Action confirmations: tools-custom/confirmation.md
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
         - Overview: tools-custom/function-tools.md
         - Tool performance: tools-custom/performance.md
-        - Action confirmations: tools-custom/confirmation.md
       - MCP tools: 
         - tools-custom/mcp-tools/index.md
         - Advanced configuration: tools-custom/mcp-tools/advanced.md
@@ -400,12 +406,6 @@ nav:
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
-    - Human input:
-      - User choice: human-input/user-choice.md
-    - Artifacts:
-      - artifacts/index.md
-    - Skills for Agents:
-      - skills/index.md
     - App management:
       - apps/index.md
       - Callbacks:
