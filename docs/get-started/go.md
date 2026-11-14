@@ -20,12 +20,21 @@ Create an agent project with the following files and directory structure:
 ```none
 my_agent/
     agent.go    # main agent code
-    .env        # API keys or project IDs
+    .env        # macOS/Linux settings; Command Prompt uses env.bat
 ```
+
+PowerShell users set the API key in the current terminal instead of a file.
 
 ??? tip "Create this project structure using the command line"
 
-    === "Windows"
+    === "Windows PowerShell"
+
+        ```powershell
+        New-Item -ItemType Directory -Path my_agent
+        New-Item -ItemType File -Path my_agent\agent.go
+        ```
+
+    === "Windows Command Prompt"
 
         ```console
         mkdir my_agent\
@@ -106,6 +115,7 @@ tidy` resolve the remaining packages based on the `import` statements in your
 agent code file:
 
 ```console
+cd my_agent
 go mod init my-agent/main
 go get google.golang.org/adk/v2
 go mod tidy
@@ -117,26 +127,35 @@ This project uses the Gemini API, which requires an API key. If you
 don't already have Gemini API key, create a key in Google AI Studio on the
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
-In a terminal window, write your API key into the `.env` or `env.bat` file of
-your project to set environment variables:
+From the `my_agent` directory, set your API key using the instructions for
+your terminal. Run the agent from the same terminal so it inherits the key.
 
 === "MacOS / Linux"
 
     ```bash title="Update: my_agent/.env"
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    source .env
     ```
 
 === "Windows PowerShell"
 
-    ```console title="Update: my_agent/env.bat"
-    echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
+    ```powershell
+    $env:GOOGLE_API_KEY = "YOUR_API_KEY"
     ```
+
+    Set the variable directly in PowerShell. Running `env.bat` starts a
+    separate process and does not set the variable in your PowerShell session.
 
 === "Windows Command Prompt"
 
     ```console title="Update: my_agent/env.bat"
-    echo set GOOGLE_API_KEY="YOUR_API_KEY" > env.bat
+    echo set "GOOGLE_API_KEY=YOUR_API_KEY" > env.bat
+    call env.bat
     ```
+
+If you open a new terminal, load the key again: run `source .env` in
+macOS/Linux, repeat the assignment in PowerShell, or run `env.bat` in Command
+Prompt from the `my_agent` directory.
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
@@ -156,7 +175,6 @@ interact with your agent.
 Run your agent using the following Go command:
 
 ```console title="Run from: my_agent/ directory"
-# Remember to load keys and settings: source .env OR env.bat
 go run agent.go
 ```
 
@@ -167,7 +185,6 @@ go run agent.go
 Run your agent with the ADK web interface using the following Go command:
 
 ```console title="Run from: my_agent/ directory"
-# Remember to load keys and settings: source .env OR env.bat
 go run agent.go web api webui
 ```
 
