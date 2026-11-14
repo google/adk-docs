@@ -16,9 +16,14 @@ ADK provides the `TeamsRunner` class to run your agents as bots in
 ADK `Runner` to an `AgentApplication` from the
 [Microsoft 365 Agents SDK](https://learn.microsoft.com/microsoft-365/agents-sdk/),
 the successor to the Bot Framework SDK. Teams delivers each message to an HTTPS
-endpoint that you host. `TeamsRunner` serves that endpoint, passes the message
+endpoint that you host. The runner serves that endpoint, passes the message
 text to your agent, and posts the agent's text responses back to the same
 conversation.
+
+To send one-way notifications to a channel, a Teams Workflows webhook is
+simpler and does not need a bot registration. The
+[`teams_notification_agent` sample](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/teams_notification_agent)
+shows that approach.
 
 !!! example "Experimental"
     This feature is experimental and may be updated in future releases.
@@ -119,11 +124,11 @@ export CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTSECRET="{client secret}"
 export CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID="{tenant id}"
 ```
 
-The client secret lets anyone send messages as the bot, so load it from a
+Anyone with the client secret can send messages as the bot, so load it from a
 secret store such as [Secret Manager](/integrations/secret-manager/) in
 production.
 
-`TeamsRunner` takes two keyword arguments:
+The `TeamsRunner` class takes two keyword arguments:
 
 | Option | Type | Description |
 | :--- | :--- | :--- |
@@ -176,7 +181,7 @@ register in Azure is `https://{your host}/teams/api/messages`.
   thread has its own. The user ID is the sender's Microsoft Entra object ID, so
   two people in the same channel thread each get their own session.
 - **Background replies**: Teams retries any request that takes longer than
-  15 seconds. `TeamsRunner` acknowledges each message right away, runs the
+  15 seconds. The runner acknowledges each message right away, runs the
   agent in the background, and shows a typing indicator while it works.
   Messages for the same session run one at a time, in order.
 - **Responses**: Each non-thought text part of a final event is posted as its
