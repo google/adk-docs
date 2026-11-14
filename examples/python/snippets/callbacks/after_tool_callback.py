@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
+
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
 from typing import Optional
@@ -26,7 +28,7 @@ from copy import deepcopy
 GEMINI_2_FLASH="gemini-2.0-flash"
 
 # --- Define a Simple Tool Function (Same as before) ---
-def get_capital_city(country: str) -> str:
+def get_capital_city(country: str) -> dict:
     """Retrieves the capital city of a given country."""
     print(f"--- Tool 'get_capital_city' executing with country: {country} ---")
     country_capitals = {
@@ -51,9 +53,11 @@ def simple_after_tool_modifier(
     print(f"[Callback] Args used: {args}")
     print(f"[Callback] Original tool_response: {tool_response}")
 
-    # Default structure for function tool results is {"result": <return_value>}
+    # The `tool_response` argument contains the raw value returned by the tool function. 
+    # ADK wraps non-dict returns in {"result": ...} only when building the function
+    # response event. This tool returns a dict with its own "result" key
+    # so read that key directly.
     original_result_value = tool_response.get("result", "")
-    # original_result_value = tool_response
 
     # --- Modification Example ---
     # If the tool was 'get_capital_city' and result is 'Washington, D.C.'
@@ -102,10 +106,13 @@ async def call_agent_async(query):
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("united states")
+async def main():
+    await call_agent_async("united states")
+
+# Note: In Colab, you can directly 'await call_agent_async(...)' at the top level.
+if __name__ == "__main__":
+    asyncio.run(main())

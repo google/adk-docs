@@ -60,6 +60,8 @@ root_agent = youtube_shorts_agent
 
 
 # Code required to make the agent programmatically runnable.
+import asyncio
+
 from google.genai import types
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
@@ -91,8 +93,12 @@ async def call_agent_async(query):
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-call_agent_async("I want to write a short on how to build AI Agents")
+async def main():
+    await call_agent_async("I want to write a short on how to build AI Agents")
+
+if __name__ == "__main__":
+    asyncio.run(main())
