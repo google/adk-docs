@@ -187,6 +187,16 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
       <p>A 40+ module, hands-on ADK 2.0 curriculum (Python) built around real challenge labs — theory, a lab you actually have to solve, then a hidden solution. From your first agent to distributed, enterprise-grade multi-agent systems with full observability.</p>
     </div>
   </a>
+  <a href="https://github.com/himanshu231204/google-adk" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-google-adk-visual-notes.jpg" alt="Google ADK 2.x Visual Notes">
+    </div>
+    <div class="card-content">
+      <div class="type">PDF Guide</div>
+      <h3>🎓 Google ADK 2.x: Production AI Agents (Visual Notes)</h3>
+      <p>A free 96-page illustrated guide, one concept per page, from your first agent to graph workflows, multi-agent systems, memory, safety, evaluation and deployment.</p>
+    </div>
+  </a>
 </div>
 
 ## Agent Tutorials and Demos
