@@ -19,10 +19,6 @@ in SingleFlow via the `CompactionRequestProcessor`, and again in the `Runner`
 after each invocation. Sliding-window compaction runs in the `Runner` after each
 invocation completes.
 
-!!! example "Experimental"
-    The `EventsCompactionConfig` class is experimental and its API or behavior
-    may change in future releases. In Python, constructing one emits a warning.
-
 ## Choose your strategy
 
 You can manage your session's data using the following strategies within `EventsCompactionConfig`:
