@@ -62,7 +62,7 @@ Grounding is the process that connects your agent to real-time information from 
 
 This diagram illustrates the step-by-step process of how a user query results in a grounded response.
 
-![](../assets/google_search_grd_dataflow.png)
+![Google Search grounding data flow](../assets/google_search_grd_dataflow.png)
 
 ### Detailed Description
 

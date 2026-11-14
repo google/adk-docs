@@ -24,7 +24,7 @@ model that extends `LlmResponse`. Live sessions use these fields:
 |-------|---------------|
 | `content.parts[].text` | Text parts — in a live session, thought summaries and other non-spoken content |
 | `content.parts[].inline_data` | Raw audio bytes for playback (ephemeral) |
-| `content.parts[].file_data` | Reference to audio saved in artifacts (when `save_live_blob=True`) |
+| `content.parts[].file_data` | Reference to audio saved in artifacts (when `save_live_blob=True`); in ADK Python 2.14 or higher, also to the user's image frames |
 | `content.parts[].function_call` / `function_response` | Tool invocations and results (ADK executes these for you) |
 | `input_transcription` / `output_transcription` | User and model speech as text |
 | `partial` | `True` for an incremental chunk, `False` for the merged result |
@@ -92,8 +92,9 @@ async for event in runner.run_live(...):
 
 `inline_data` is ephemeral and never persisted. Set
 [`save_live_blob=True`](configuration.md#save_live_blob) and ADK aggregates audio into files
-in the artifact service, delivering a `file_data` reference instead of (not in addition to)
-raw bytes so you can retrieve the audio later. For formats and playback, see
+in the artifact service, delivering a `file_data` reference in addition to the raw bytes so
+you can retrieve the audio (and, in ADK Python 2.14 or higher, the user's image frames)
+later. The session stores only the references. For formats and playback, see
 [Audio and video](audio-video.md).
 
 ### Transcription
@@ -132,15 +133,19 @@ The `partial` flag distinguishes an incremental chunk from the merged result:
 - `partial=True`: only the new text since the last event.
 - `partial=False`: the full merged text for this segment.
 
-ADK accumulates the chunks for you (`StreamingResponseAggregator`), so a `partial=False`
-event already holds the sum of the preceding `partial=True` chunks. If you do not need a
-live typing effect, ignore the partials and act only on `partial=False`.
+ADK accumulates the chunks for you inside the live connection
+([`GeminiLlmConnection.receive()`](https://github.com/google/adk-python/blob/main/src/google/adk/models/gemini_llm_connection.py)),
+so a `partial=False` event already holds the sum of the preceding `partial=True` chunks. If
+you do not need a live typing effect, ignore the partials and act only on `partial=False`.
+
+Each of these flags is `Optional[bool]` and defaults to `None`, so test whether the flag is
+truthy rather than comparing it to `False`:
 
 ```text
-Event 1: partial=True,  text="Hello",       turn_complete=False
-Event 2: partial=True,  text=" world",      turn_complete=False
-Event 3: partial=False, text="Hello world", turn_complete=False
-Event 4: partial=False, text="",            turn_complete=True
+Event 1: partial=True,  text="Hello",       turn_complete=None
+Event 2: partial=True,  text=" world",      turn_complete=None
+Event 3: partial=False, text="Hello world", turn_complete=None
+Event 4: partial=None,  content=None,       turn_complete=True
 ```
 
 A `partial=False` condition can occur several times per turn (once per sentence, for example), and
@@ -165,6 +170,27 @@ async for event in runner.run_live(...):
 ```
 
 Without handling `interrupted`, already-buffered audio keeps playing over the user.
+
+### Interaction status
+
+Some models send `turn_complete` more than once per request. For those models,
+`event.interaction_status` (`interactionStatus` over `/run_live`) is `IN_PROGRESS` until the
+model finishes, then `IDLE`. It's `None` for other models, so fall back to `turn_complete`:
+
+```python
+from google.genai import types
+
+async for event in runner.run_live(...):
+    if event.turn_complete and event.interaction_status in (
+        None,
+        types.InteractionStatus.IDLE,
+    ):
+        enable_microphone()     # the model has finished the request
+```
+
+!!! note "Requires ADK Python 2.8 or higher"
+
+    The `interaction_status` field was added in adk-python 2.8.
 
 ## Handling errors
 

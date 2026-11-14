@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
@@ -19,11 +19,10 @@ an ADK Tool in the following ways:
     structured data responses, you can configure a tool with a text
     prompt to explain the confirmation and an expected response.
 
-!!! example "Experimental"
-    The Tool Confirmation feature is experimental and has some
+!!! example "Experimental in TypeScript, Go, and Kotlin"
+    The Tool Confirmation feature is experimental in ADK TypeScript, ADK Go,
+    and ADK Kotlin. For all languages, see the
     [known limitations](#known-limitations).
-    We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=tool%20confirmation)!
 
 You can configure how a request is communicated to a user, and the system can
 also use [remote responses](#remote-response) sent via the ADK
@@ -408,17 +407,17 @@ requirements:
 
     !!! note "Note: Confirmation with Resume feature"
 
-    If your ADK agent workflow is configured with the
-    [Resume](/runtime/resume/) feature, you also must include
-    the Invocation ID (`invocation_id`) parameter with the confirmation
-    response. The Invocation ID you provide must be the same invocation
-    that generated the confirmation request, otherwise the system
-    starts a new invocation with the confirmation response. If your
-    agent uses the Resume feature, consider including the Invocation ID
-    as a parameter with your confirmation request, so it can be
-    included with the response. For more details on using the Resume
-    feature, see
-    [Resume stopped agents](/runtime/resume/).
+        If your ADK agent workflow is configured with the
+        [Resume](/runtime/resume/) feature, you also must include
+        the Invocation ID (`invocation_id`) parameter with the confirmation
+        response. The Invocation ID you provide must be the same invocation
+        that generated the confirmation request, otherwise the system
+        starts a new invocation with the confirmation response. If your
+        agent uses the Resume feature, consider including the Invocation ID
+        as a parameter with your confirmation request, so it can be
+        included with the response. For more details on using the Resume
+        feature, see
+        [Resume stopped agents](/runtime/resume/).
 
 ## Known limitations {#known-limitations}
 

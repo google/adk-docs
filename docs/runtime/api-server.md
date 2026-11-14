@@ -152,9 +152,9 @@ The output should appear similar to:
     
     !!! note "Go: default port and path prefix"
 
-    The Go API server defaults to port **8080** (not 8000) and serves all
-    REST endpoints under the **`/api`** path prefix by default. Adjust all
-    example `curl` commands below accordingly:
+        The Go API server defaults to port **8080** (not 8000) and serves all
+        REST endpoints under the **`/api`** path prefix by default. Adjust all
+        example `curl` commands below accordingly:
 
     | Python/TypeScript/Java | Go |
     |---|---|
@@ -393,13 +393,11 @@ Sessions store the state and event history for a specific user's interaction wit
 
 #### Update a session
 
-!!! note "Not available in Go"
-
-    The `PATCH` session update endpoint is not implemented in the Go ADK REST
-    API server. To modify session state in Go, pass a `stateDelta` field in
-    your `/run` or `/run_sse` request body instead.
-
 Updates an existing session.
+
+ADK Go serves this endpoint in v2.4.0 and higher. The `stateDelta` field in the request body can only
+change session-scoped keys; the server returns HTTP 400 if `stateDelta` changes a key
+with the `app:`, `user:`, or `temp:` prefix.
 
 *   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`

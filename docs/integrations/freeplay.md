@@ -11,7 +11,7 @@ catalog_tags: ["observability", "evaluation"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Freeplay](https://freeplay.ai/) provides an end-to-end workflow for building
+[Freeplay](https://app.freeplay.ai/) provides an end-to-end workflow for building
 and optimizing AI agents, and it can be integrated with ADK. With Freeplay your
 whole team can easily collaborate to iterate on agent instructions (prompts),
 experiment with and compare different models and agent changes, run evals both
@@ -37,13 +37,12 @@ your team can contribute.
 
 ## Getting Started
 
-Below is a guide for getting started with Freeplay and ADK. You can also find a
-full sample ADK agent repo
-[here](https://github.com/228Labs/freeplay-google-demo).
+Below is a guide for getting started with Freeplay and ADK. You can also find the
+complete [code sample](https://github.com/228Labs/freeplay-google-demo) in the ADK agent repo.
 
 ### Create a Freeplay Account
 
-Sign up for a free [Freeplay account](https://freeplay.ai/signup).
+Sign up for a free [Freeplay account](https://app.freeplay.ai/signup).
 
 After creating an account, you can define the following environment variables:
 
@@ -192,9 +191,9 @@ experiments) at both the
 This allows you to compare multiple different models or prompt changes and
 quantify changes head to head across your full agent execution.
 
-[Here](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
-is a code example for executing a batch test on Freeplay with ADK.
+For a complete implementation, see the batch test [code example](https://github.com/freeplayai/freeplay-google-demo/blob/main/examples/example_test_run.py)
+for executing a batch test on Freeplay with ADK.
 
 ## Sign up now
 
-Go to [Freeplay](https://freeplay.ai/) to sign up for an account, and check out a full Freeplay <> ADK Integration [here](https://github.com/freeplayai/freeplay-google-demo/tree/main)
+Go to [Freeplay](https://app.freeplay.ai/signup) to sign up for an account, and check out the full [Freeplay <> ADK integration](https://github.com/freeplayai/freeplay-google-demo/tree/main) demo.
