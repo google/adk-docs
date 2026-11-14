@@ -215,16 +215,17 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     )
 
     func createFilesystemAgent(ctx context.Context) (agent.Agent, error) {
-        // 1. Initialize MCP Toolset with CommandTransport and AllowedToolsPredicate
+        // 1. Initialize MCP Toolset with CommandTransport
         mcpTools, err := mcptoolset.New(mcptoolset.Config{
             Transport: &mcp.CommandTransport{
                 Command: exec.Command("npx", "-y", "@modelcontextprotocol/server-filesystem", "./accessible_files"),
             },
-            ToolFilter: tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}),
         })
         if err != nil {
             return nil, fmt.Errorf("failed to create mcp toolset: %w", err)
         }
+        // Expose only the tools the agent needs
+        mcpTools = tool.FilterToolset(mcpTools, tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}))
 
         // 2. Initialize Gemini model.LLM instance
         llm, err := gemini.NewModel(ctx, "gemini-2.0-flash", nil)
