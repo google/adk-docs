@@ -470,7 +470,7 @@ gcloud projects add-iam-policy-binding projects/${PROJECT_ID} \
 Create a Kubernetes deployment manifest file named `deployment.yaml` in your
 project directory. This file defines how to deploy your application on GKE.
 
-```yaml title="deployment.yaml"
+```bash title="deployment.yaml"
 cat <<  EOF > deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
