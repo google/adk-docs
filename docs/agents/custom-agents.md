@@ -319,8 +319,8 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
     ```typescript
     // Conceptual Example: Defining Hierarchy
-    import { LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEventActions } from '@google/adk';
+    import { LlmAgent, BaseAgent, InvocationContext, createEventActions } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     class TaskExecutorAgent extends BaseAgent {
       async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
@@ -334,7 +334,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
         };
       }
       async *runLiveImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
-        this.runAsyncImpl(context);
+        // This agent doesn't have a live implementation.
       }
     }
 
@@ -589,8 +589,8 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```typescript
     // Conceptual Example: Loop with Condition
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEventActions, EventActions } from '@google/adk';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, createEvent, createEventActions } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     class CheckConditionAgent extends BaseAgent { // Custom agent to check state
         async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
@@ -926,8 +926,9 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```typescript
     // Conceptual Setup: Agent as a Tool
-    import { LlmAgent, BaseAgent, AgentTool, InvocationContext } from '@google/adk';
-    import type { Part, createEvent, Event } from '@google/genai';
+    import { LlmAgent, BaseAgent, AgentTool, InvocationContext, createEvent } from '@google/adk';
+    import type { Event } from '@google/adk';
+    import type { Part } from '@google/genai';
 
     // Define a target agent (could be LlmAgent or custom BaseAgent)
     class ImageGeneratorAgent extends BaseAgent { // Example custom agent
