@@ -130,11 +130,6 @@ all agents within your app.
     it fails and the request proceeds without caching. Available in Python and
     Kotlin; defaults to none.
 
-!!! note
-    Gemini enforces its own minimum cacheable size on top of `min_tokens`:
-    2048 tokens for Gemini 2.5 models and 4096 tokens for Gemini 3 models.
-    Short sessions therefore never use the cache.
-
 ## Check whether the cache is being used
 
 <div class="language-support-tag">
