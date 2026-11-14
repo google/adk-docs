@@ -210,7 +210,8 @@ When `run_live()` exits, only some events persist to the ADK `Session`:
 
 - **Saved:** final (non-partial) transcriptions, usage metadata, function calls and
   responses, and most control events. Audio files are saved only when
-  [`save_live_blob`](configuration.md#save_live_blob) is `True`.
+  [`save_live_blob`](configuration.md#save_live_blob) is `True`, as are the user's image
+  frames in ADK Python 2.14 or higher.
 - **Ephemeral:** raw audio bytes (`inline_data`) and partial transcriptions, yielded for
   real-time playback and display but not stored.
 

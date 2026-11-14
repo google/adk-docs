@@ -40,6 +40,8 @@ APP_NAME = "guardrail_app"
 USER_ID = "user_1"
 SESSION_ID = "session_001"
 
+import asyncio
+
 from google.adk.runners import Runner
 from google.genai import types 
 from google.adk.sessions import InMemorySessionService
@@ -58,10 +60,13 @@ async def call_agent_async(query):
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("write a short joke")
+async def main():
+    await call_agent_async("write a short joke")
+
+# Note: In Colab, you can directly 'await call_agent_async(...)' at the top level.
+if __name__ == "__main__":
+    asyncio.run(main())
