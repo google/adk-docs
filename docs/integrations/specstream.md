@@ -40,7 +40,7 @@ charges per matching row, up to a maximum you approve before anything runs.
 ## Prerequisites
 
 - Create a [SpecStream account](https://specstream.ai/workspace). New accounts
-  start with $10 of work free for 30 days, no card required.
+  start with $10 of credit, no card required.
 - Create an API key under **Agents & API** in the workspace. Give it only the
   permissions the task needs (read, prepare, or execute), the projects it may
   use, an expiry, and a spending limit.
