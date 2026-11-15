@@ -161,16 +161,17 @@ Tool | Description
 
 ## Configuration
 
-- **Tool selection**: `tool_filter` in Python, or the second `MCPToolset`
-  argument in TypeScript, takes a list of tool names. Leave it out to load
-  every tool.
+- **Tool selection**: The `tool_filter` argument in Python, or the second
+  `MCPToolset` argument in TypeScript, takes a list of tool names. Leave it
+  out to load every tool.
 
-- **Tools that write**: Most tools only read data. `CreateMyPortfolio`,
-  `DeleteMyPortfolio`, `AddPortfolioLot`, `UpdatePortfolioLot`,
-  `ClosePortfolioLot`, `RemovePortfolioLot`, `WatchInstrument`,
-  `UnwatchInstrument`, `ReportProblem` and `SuggestToolImprovement` write to the
-  Equibles account that owns the API key. Leave them out of the filter unless
-  the agent should manage that account's portfolios or watchlists.
+- **Tools that write**: Most tools only read data. The exceptions are
+  `CreateMyPortfolio`, `DeleteMyPortfolio`, `AddPortfolioLot`,
+  `UpdatePortfolioLot`, `ClosePortfolioLot`, `RemovePortfolioLot`,
+  `WatchInstrument`, `UnwatchInstrument`, `ReportProblem` and
+  `SuggestToolImprovement`, which write to the Equibles account that owns the
+  API key. Leave them out of the filter unless the agent should manage that
+  account's portfolios or watchlists.
 
 - **Usage limits**: Each tool call counts against the daily request allowance
   of the key's plan, which resets at 00:00 UTC. See
