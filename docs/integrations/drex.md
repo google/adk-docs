@@ -14,7 +14,7 @@ catalog_icon: /integrations/assets/drex.svg
 question, a choice, or a score. The
 [adk-nace](https://github.com/nace-ai/adk-nace) plugin is published by Nace, not
 by the ADK project. It calls `NaceClient.system_one` from
-[nace-sdk](https://pypi.org/project/nace-sdk/) 0.4.0 and blocks the call when
+[nace-sdk](https://pypi.org/project/nace-sdk/) and blocks the call when
 your `fail_if` function returns true.
 
 ## Use cases
