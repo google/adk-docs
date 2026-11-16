@@ -29,7 +29,7 @@ This table provides a quick reference for the `RunConfig` parameters that matter
 | **context_window_compression** | ContextWindowCompressionConfig | Unlimited session duration | [Details](sessions.md#context-window-compression) |
 | **history_config** | HistoryConfig | Control how prior conversation history is replayed to the Live server | [Details](#history_config) |
 | **max_llm_calls** | int | Limit total LLM calls per session | [Details](#max_llm_calls) |
-| **save_live_blob** | bool | Persist audio/video streams | [Details](#save_live_blob) |
+| **save_live_blob** | bool | Persist audio (and, in ADK Python 2.14 or higher, the user's image frames) | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | [Details](#custom_metadata) |
 | **speech_config** | SpeechConfig | Voice and language configuration | [Voice and language](#voice-and-language) |
 | **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | [Audio transcription](#audio-transcription) |
@@ -144,7 +144,7 @@ run_config = RunConfig(
     max_llm_calls=500,  # Default: 500 (prevents runaway loops)
                         # 0 or negative = unlimited (use with caution)
 
-    # Save audio/video artifacts for debugging/compliance
+    # Save audio (and image frames in ADK Python 2.14+) for debugging/compliance
     save_live_blob=True,  # Default: False
 
     # Attach custom metadata to events
@@ -167,14 +167,20 @@ duration, count turns, watch `usage_metadata` on model events
 
 `save_live_blob=True` persists the session's audio to the
 [session service](../sessions/index.md) as references and to the
-[artifact service](../artifacts/index.md) as files. Despite the name, **only audio is
-persisted** today, not video.
+[artifact service](../artifacts/index.md) as files. In ADK Python 2.14 or higher, it also
+persists the image frames the user sends, such as camera or screen-share frames; in ADK
+Python 2.13 and earlier, *only audio is saved*. Despite the name, model-generated
+video output is not persisted in any version.
 
-Enable it for debugging voice behavior, or for audit trails in regulated environments. Leave
-it off otherwise: 16 kHz PCM input runs about **1.92 MB per minute per session**, written to
-two services, and that accumulates fast on a voice workload. If you need it in production,
-sample a fraction of sessions rather than all of them, and set a retention policy on the
-artifact service — ADK does not expire these for you.
+Enable this feature to debug the audio and visual data handling, or for audit trails in regulated
+environments, and disable it otherwise. For audio, 16 kHz PCM input runs about **1.92 MB per
+minute per session**. In ADK Python 2.14 or higher, image frames add to the data load. For example,
+frames of about 100 KB sent at 1 FPS add about 6 MB per minute. This data accumulates quickly for
+a voice or video workload. If you need this data for production use, sample a fraction of sessions
+rather than all of them, and set a retention policy on the artifact service. ADK agents do not
+expire these for you. Saved audio and image frames can contain personal information, so tell
+users they are being recorded and handle the stored data according to your privacy
+obligations.
 
 !!! warning "`save_live_audio` is deprecated"
 
