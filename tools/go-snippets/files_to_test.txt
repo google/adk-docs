@@ -51,4 +51,5 @@ snippets/graphs/index/main.go
 snippets/graphs/routes/main.go
 snippets/graphs/data-handling/main.go
 snippets/graphs/dynamic/main.go
+snippets/graphs/retry/main.go
 snippets/workflows/collaboration/main.go
