@@ -36,7 +36,7 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 - **`token_threshold`**: The safety limit of tokens that automatically triggers tail-retention compaction once reached.
 - **`event_retention_size`**: The number of recent events/interactions kept in "raw" un-compacted format when compaction is triggered. This maintains immediate conversational context and pronoun resolution.
 
-To implement this in your project, use the following configuration:
+To implement token-based compaction in your project, use the following configuration:
 
 === "Python"
 
@@ -205,7 +205,7 @@ in the following sample code:
     ```
 
 Once configured, the ADK `Runner` handles the compaction process each time the
-session reaches the interval.
+session reaches the configured interval or token threshold.
 
 ## Example of context compaction
 
