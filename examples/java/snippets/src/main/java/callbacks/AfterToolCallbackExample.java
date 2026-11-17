@@ -24,7 +24,7 @@ public class AfterToolCallbackExample {
   private static final String APP_NAME = "AfterToolCallbackAgentApp";
   private static final String USER_ID = "user_1";
   private static final String SESSION_ID = "session_001";
-  private static final String MODEL_NAME = "gemini-2.0-flash";
+  private static final String MODEL_NAME = "gemini-3-flash-preview";
 
   public static void main(String[] args) {
     AfterToolCallbackExample example = new AfterToolCallbackExample();
