@@ -106,4 +106,4 @@ Tool | Description
 
 - [Embarko Quickstart](https://embarko.ai/docs/quickstart)
 - [GitHub Repository](https://github.com/walkover-mcp/embarko)
-- [MCP Registry listing](https://registry.mcp.so/server/io.github.swayammaheshwari/embarko-mcp)
+- [MCP Registry listing](https://registry.modelcontextprotocol.io/?q=embarko)
