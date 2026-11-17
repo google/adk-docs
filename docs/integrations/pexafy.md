@@ -1,21 +1,22 @@
 ---
-catalog_title: Pexafy
+catalog_title: Pexafy Stock Photos
 catalog_description: Find free stock photos by description, with license and credit
 catalog_icon: /integrations/assets/pexafy.png
 catalog_tags: ["mcp", "search"]
 ---
 
-# Pexafy MCP tool for ADK
+# Pexafy Stock Photos MCP tool for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [Pexafy MCP Server](https://github.com/Pexafy/pexafy-mcp) connects your ADK
-agent to [Pexafy](https://pexafy.com), a semantic search engine for free-to-use
-stock photos from Unsplash, Pexels, Pixabay and other libraries. Your agent
-describes the photo it needs in plain language and gets back real photographs,
-each with its license and the credit line to display.
+The [Pexafy Stock Photos MCP Server](https://github.com/Pexafy/pexafy-mcp)
+connects your ADK agent to [Pexafy Stock Photos](https://pexafy.com), a semantic
+search engine for free-to-use stock photos from Unsplash, Pexels, Pixabay and
+other libraries. Your agent describes the photo it needs in plain language and
+gets back real photographs, each with its license and the credit line to
+display.
 
 ## Use cases
 
@@ -121,6 +122,6 @@ Tool | Description
 
 ## Additional resources
 
-- [Pexafy MCP Server Documentation](https://docs.pexafy.com/mcp)
-- [Pexafy MCP Server Repository](https://github.com/Pexafy/pexafy-mcp)
-- [Pexafy API Documentation](https://docs.pexafy.com)
+- [Pexafy Stock Photos MCP Server Documentation](https://docs.pexafy.com/mcp)
+- [Pexafy Stock Photos MCP Server Repository](https://github.com/Pexafy/pexafy-mcp)
+- [Pexafy Stock Photos API Documentation](https://docs.pexafy.com)
