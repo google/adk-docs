@@ -8,7 +8,7 @@ catalog_tags: ["code", "google"]
 # Environment Toolsets for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span>
 </div>
 
 Some types of tasks, particularly coding and file operations, require an agent
@@ -19,11 +19,6 @@ and execute shell commands. The Environment Toolset is designed as a general
 framework for configuring and using local or remote execution environments with
 ADK agents. ADK provides a [***LocalEnvironment***](#local-environment)
 implementation for use with the Environment Toolset framework.
-
-!!! example "Experimental"
-    The Environment Toolset feature is experimental and may be updated.
-    We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
 
 ## Get started
 
@@ -98,7 +93,7 @@ The ***LocalEnvironment*** class supports the following parameters:
     more details, see [File persistence](#file-persistence).
 -   **env_vars**: (optional) A dictionary of environment variables to be set
     for the execution context.
-- **max_output chars**: (optional) A parameter to use with `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
+-   **max_output chars**: (optional) A parameter to use with `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
 
 The following code sample shows how to set these options for a
 ***LocalEnvironment*** object:
