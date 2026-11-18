@@ -39,6 +39,9 @@ owner.
 
 - A free [Sealgraf](https://sealgraf.com) account and an agent API key
   (sign up, set your spending limits, create an agent key)
+- The ADK MCP support packages: `pip install "google-adk[mcp]"`
+  (Python) or `npm install @google/adk @modelcontextprotocol/sdk`
+  (TypeScript)
 
 ## Use with agent
 
