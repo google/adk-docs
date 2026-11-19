@@ -55,5 +55,7 @@ Depending on what programming language you use, additional libraries may be incl
 
 === "Go"
 
-    The deployment with Go *does* include the dedicated ADK API server.
+    The deployment with Go includes the ADK `agentengine` launcher, which serves
+    the Agent Runtime `:query` and `:streamQuery` methods. It *does not* include
+    the ADK API server or the ADK web user interface.
 
