@@ -226,25 +226,25 @@ browser to use the web interface:
 
     | Flag | Description | Default |
     |------|-------------|---------|
-    | `-host` | Host binding address. Use `0.0.0.0` to listen on all interfaces, for example inside a container. ADK Go v2.5.0 and higher. Earlier releases listen on all interfaces | `127.0.0.1` |
+    | `-host` | Host binding address. Use `0.0.0.0` to listen on all interfaces, such as inside a container (ADK Go v2.5.0 and higher; earlier releases listen on all interfaces). | `127.0.0.1` |
     | `-port` | Port for the HTTP server | `8080` |
     | `-write-timeout` | Timeout for writing HTTP responses | `15s` |
     | `-read-timeout` | Timeout for reading HTTP requests | `15s` |
     | `-idle-timeout` | Keep-alive idle connection timeout | `60s` |
     | `-shutdown-timeout` | Graceful shutdown wait time | `15s` |
     | `-otel_to_cloud` | Export OpenTelemetry data to GCP | `false` |
-    | `-h2c` | Serve cleartext HTTP/2 with prior knowledge. Don't expose it to untrusted networks. ADK Go v2.2.0 and higher | `false` |
-    | `-max_request_body_size` | Maximum request body size in bytes. ADK Go v2.5.0 and higher | `10 MiB` |
+    | `-h2c` | Serve cleartext HTTP/2 with prior knowledge. Don't expose it to untrusted networks (ADK Go v2.2.0 and higher). | `false` |
+    | `-max_request_body_size` | Maximum request body size in bytes (ADK Go v2.5.0 and higher). | 10 MiB |
 
     **`api` subcommand flags** (passed after `api`):
 
     | Flag | Description | Default |
     |------|-------------|---------|
-    | `-webui_address` | Origin of the ADK web interface as seen from the browser, allowed for CORS. In ADK Go v2.5.0 and higher, the REST API also refuses other cross-origin browser requests with HTTP 403. The value `*` allows any origin and turns off this check and the DNS rebinding check, so don't use it on a publicly accessible service | `localhost:8080` |
+    | `-webui_address` | Origin of the ADK web interface as seen from the browser, allowed for CORS. In ADK Go v2.5.0 and higher, the REST API also refuses other cross-origin browser requests with HTTP 403. The value `*` allows any origin and turns off this check and the DNS rebinding check, so don't use it on a publicly accessible service. | `localhost:8080` |
     | `-path_prefix` | URL path prefix for the REST API | `/api` |
     | `-sse-write-timeout` | Timeout for SSE (streaming) responses | `120s` |
     | `-trace_capacity` | Max in-memory traces to retain | `10000` |
-    | `-include_debug_api` | Serve the debug trace and agent graph endpoints that the Traces and agent structure panels in ADK Web need. Don't enable it in production. ADK Go v2.3.0 and higher | `false` |
+    | `-include_debug_api` | Serve the debug trace and agent graph endpoints that the Traces and agent structure panels in the web interface need. Don't enable it in production (ADK Go v2.3.0 and higher). | `false` |
 
     In ADK Go v2.5.0 and higher, the `-host` and `-webui_address` values also
     help mitigate DNS rebinding for the REST API. When `-host` is a loopback
