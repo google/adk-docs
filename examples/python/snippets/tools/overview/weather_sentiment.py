@@ -89,7 +89,7 @@ async def main():
     events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response:", final_response)
 
