@@ -1,18 +1,18 @@
 # OpenAI models for ADK agents
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span>
 </div>
-
-!!! example "Experimental"
-
-    The `openaimodel` package is experimental and its behavior may change or be removed in the future. We welcome your
-		[feedback](https://github.com/google/adk-go/issues/new?template=feature_request.md)!
 
 You can use OpenAI models with ADK. How you connect depends on the language:
 
 - **Go — native support:** ADK Go provides a direct `openaimodel` package that implements the `model.LLM` interface, targeting the OpenAI Responses API or the [Chat Completions API](#chat-completions-api). [Get started](#get-started).
 - **Python — via LiteLLM:** ADK Python accesses OpenAI models (and many other providers) through the LiteLLM connector. See [LiteLLM](/agents/models/litellm/).
+- **Kotlin — native support:** ADK Kotlin provides a `ChatCompletions` model in `com.google.adk.kt.models.openai` that targets the OpenAI Chat Completions API. [Get started](#get-started).
+
+!!! example "Experimental in Go"
+
+    The OpenAI model support feature is experimental in ADK Go. It may have limitations and its behavior may change.
 
 ## Get started
 
@@ -89,10 +89,31 @@ The following code example shows a basic implementation for using OpenAI models 
 
         For a complete, runnable sample, see [examples/openai/completions/](https://github.com/google/adk-go/tree/main/examples/openai/completions) in the ADK Go repository.
 
+=== "Kotlin"
+
+	```kotlin
+	import com.google.adk.kt.agents.Instruction
+	import com.google.adk.kt.agents.LlmAgent
+	import com.google.adk.kt.models.openai.ChatCompletions
+
+	// Instantiate the model on the Chat Completions API
+	val llm = ChatCompletions(name = "gpt-4o-mini", apiKey = System.getenv("OPENAI_API_KEY"))
+
+	// Create the agent
+	val agent =
+	  LlmAgent(
+		name = "openai_agent",
+		model = llm,
+		instruction = Instruction("You are a helpful AI assistant."),
+	  )
+	```
+
+	For a complete, runnable sample, see [examples/.../chatcompletions/](https://github.com/google/adk-kotlin/tree/v1.5.0/examples/src/main/kotlin/com/google/adk/kt/examples/chatcompletions) in the ADK Kotlin repository.
+
 ## Chat Completions API {#chat-completions-api}
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 By default, `openaimodel` sends requests to the OpenAI
@@ -124,13 +145,18 @@ The two APIs support the same features, with these differences:
 - Structured output via `OutputSchema` (JSON schema)
 - Reasoning models (e.g. o-series), including reasoning-token accounting
 - Token logprobs
+- Tool choice via `ToolConfig.FunctionCallingConfig`: the `AUTO`, `NONE`, and `ANY` modes
+- Processing tier via `ServiceTier`, in ADK Go v2.4.0 and higher
+- Request timeout via `HTTPOptions.Timeout`, in ADK Go v2.4.0 and higher
 
 ## Limitations
 
-- **Text only** — multimodal input (images, audio, files) is not supported.
+* **No audio or video input** — ADK Go returns an error for these media types.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
-- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports.
+- **Function tools don't use strict mode** — In ADK Go v2.5.0 and higher, ADK sends function tools with OpenAI strict schema validation off. Optional parameters stay optional, but the model's tool-call arguments might not match the declared schema. Validate tool arguments before acting on them.
+- **Reasoning isn't carried across turns** — In ADK Go v2.5.0 and higher, ADK doesn't send reasoning from earlier turns back to the model on either API, so reasoning informs only the turn that produced it.
+- Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports. In ADK Go v2.4.0 and higher, other settings that have no OpenAI equivalent also return an error. The [Go API reference](https://pkg.go.dev/google.golang.org/adk/v2/model/openaimodel) lists which settings are sent, rejected, or ignored.
 
 ## Configuration options
 

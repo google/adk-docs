@@ -38,9 +38,9 @@ async def process_document(
     )
     memory_context = "\n".join(
         [
-            m.events[0].content.parts[0].text
+            m.content.parts[0].text
             for m in memory_response.memories
-            if m.events and m.events[0].content
+            if m.content and m.content.parts
         ]
     )  # Simplified extraction
     print(f"Tool: Found memory context: {memory_context[:100]}...")
