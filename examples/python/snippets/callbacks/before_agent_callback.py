@@ -26,6 +26,8 @@
 # # https://adk.dev/agents/models/
 
 # ADK Imports
+import asyncio
+
 from google.adk.agents import LlmAgent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.runners import InMemoryRunner  # Use InMemoryRunner
@@ -127,12 +129,12 @@ async def main():
         ),
     ):
         # Print final output (either from LLM or callback override)
-        if event.is_final_response() and event.content:
+        if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"
             )
-        elif event.is_error():
-            print(f"Error Event: {event.error_details}")
+        elif event.error_code:
+            print(f"Error Event: {event.error_code} - {event.error_message}")
 
     # --- Scenario 2: Run where callback intercepts and skips agent ---
     print(
@@ -149,21 +151,18 @@ async def main():
         ),
     ):
         # Print final output (either from LLM or callback override)
-        if event.is_final_response() and event.content:
+        if event.is_final_response() and event.content and event.content.parts:
             print(
                 f"Final Output: [{event.author}] {event.content.parts[0].text.strip()}"
             )
-        elif event.is_error():
-            print(f"Error Event: {event.error_details}")
+        elif event.error_code:
+            print(f"Error Event: {event.error_code} - {event.error_message}")
 
 
 # --- 4. Execute ---
-# In a Python script:
-# import asyncio
-# if __name__ == "__main__":
-#     # Make sure GOOGLE_API_KEY environment variable is set if not using Agent Platform auth
-#     # Or ensure Application Default Credentials (ADC) are configured for Agent Platform
-#     asyncio.run(main())
-
-# In a Jupyter Notebook or similar environment:
-await main()
+# In a Jupyter Notebook or similar environment you can `await main()` directly.
+# As a script:
+if __name__ == "__main__":
+    # Make sure GOOGLE_API_KEY environment variable is set if not using Agent Platform auth
+    # Or ensure Application Default Credentials (ADC) are configured for Agent Platform
+    asyncio.run(main())

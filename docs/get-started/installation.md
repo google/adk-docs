@@ -56,7 +56,8 @@ across supported languages. For a guided introduction, start with the
 
 === "Go"
 
-    **Prerequisites:** Go 1.25 or later is required for ADK Go v2.0.0.
+    **Prerequisites:** Go 1.26.10 or higher is required for ADK Go v2.7.0 and
+    higher.
 
     **Create a new Go module**
 
@@ -125,13 +126,13 @@ across supported languages. For a guided introduction, start with the
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>1.12.0</version>
+                <version>1.14.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>1.12.0</version>
+                <version>1.14.0</version>
             </dependency>
         </dependencies>
 
@@ -146,8 +147,8 @@ across supported languages. For a guided introduction, start with the
 
     ```title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:1.12.0'
-        implementation 'com.google.adk:google-adk-dev:1.12.0'
+        implementation 'com.google.adk:google-adk:1.14.0'
+        implementation 'com.google.adk:google-adk-dev:1.14.0'
     }
     ```
 
