@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.13.0"
+    "version": "2.14.0"
   },
   "paths": {
     "/health": {
@@ -520,6 +520,74 @@
                   }
                 ],
                 "title": "Req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/rewind": {
+      "post": {
+        "summary": "Rewind Session",
+        "description": "Rewinds a session to before the specified invocation.\n\nArgs:\n    app_name: The name of the application.\n    user_id: The ID of the user.\n    session_id: The ID of the session to rewind.\n    req: The rewind request identifying the invocation to rewind to.\n\nReturns:\n    The rewound session.\n\nRaises:\n    HTTPException: If the session or invocation is not found, or if the\n        session was modified concurrently.",
+        "operationId": "rewind_session_apps__app_name__users__user_id__sessions__session_id__rewind_post",
+        "parameters": [
+          {
+            "name": "app_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Name"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewindSessionRequest"
               }
             }
           }
@@ -1843,7 +1911,7 @@
           "contents_count"
         ],
         "title": "CacheMetadata",
-        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the count of the cacheable content prefix used for fingerprinting.\n    created_at: Unix timestamp when the cache was created. None when\n        no active cache exists."
+        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication. Cache-creation (write)\ntoken counts, when reported by the provider, are available on\nLlmResponse.cache_creation_token_count.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the count of the cacheable content prefix used for fingerprinting.\n    created_at: Unix timestamp when the cache was created. None when\n        no active cache exists."
       },
       "Citation": {
         "properties": {
@@ -2370,6 +2438,17 @@
               }
             ]
           },
+          "cacheCreationTokenCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cachecreationtokencount"
+          },
           "liveSessionResumptionUpdate": {
             "anyOf": [
               {
@@ -2568,7 +2647,7 @@
         },
         "type": "object",
         "title": "Event",
-        "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc."
+        "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc.\n\nWhen a function-call event invokes tools that declare a non-empty\n``BaseTool.title``, ``custom_metadata[TOOL_DISPLAY_NAMES_METADATA_KEY]``\ncarries ``{function_call_name: title}``."
       },
       "Event-Output": {
         "properties": {
@@ -2709,6 +2788,17 @@
                 "type": "null"
               }
             ]
+          },
+          "cacheCreationTokenCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cachecreationtokencount"
           },
           "liveSessionResumptionUpdate": {
             "anyOf": [
@@ -2907,7 +2997,7 @@
         },
         "type": "object",
         "title": "Event",
-        "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc."
+        "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc.\n\nWhen a function-call event invokes tools that declare a non-empty\n``BaseTool.title``, ``custom_metadata[TOOL_DISPLAY_NAMES_METADATA_KEY]``\ncarries ``{function_call_name: title}``."
       },
       "EventActions-Input": {
         "properties": {
@@ -3878,7 +3968,7 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. Display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled. This field is not supported in Gemini API."
+            "description": "Optional. Display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled."
           }
         },
         "additionalProperties": false,
@@ -3928,7 +4018,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponseFileData",
-        "description": "URI based data for function response.\n\nThis data type is not supported in Gemini API."
+        "description": "URI based data for function response."
       },
       "FunctionResponsePart": {
         "properties": {
@@ -3952,7 +4042,18 @@
                 "type": "null"
               }
             ],
-            "description": "URI based data. This field is not supported in Gemini API."
+            "description": "URI based data."
+          },
+          "mediaProcessing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MediaProcessing"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional. How the model processes this part's media for understanding. Only meaningful for video parts (`inline_data` or `file_data` with video mime). Non-video parts ignore this field. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -5523,7 +5624,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "McpServer",
-        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 7. This data type is\nnot supported in Vertex AI."
+        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. This data type is not\nsupported in Vertex AI."
       },
       "MediaModality": {
         "type": "string",
@@ -6314,6 +6415,20 @@
         "title": "RetrievalMetadata",
         "description": "Metadata returned to client when grounding is enabled."
       },
+      "RewindSessionRequest": {
+        "properties": {
+          "rewindBeforeInvocationId": {
+            "type": "string",
+            "title": "Rewindbeforeinvocationid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rewindBeforeInvocationId"
+        ],
+        "title": "RewindSessionRequest",
+        "description": "Request to rewind a session to before a given invocation."
+      },
       "RunAgentRequest": {
         "properties": {
           "appName": {
@@ -7082,7 +7197,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "StreamableHttpTransport",
-        "description": "A transport that can stream HTTP requests and responses.\n\nNext ID: 6. This data type is not supported in Vertex AI."
+        "description": "A transport that can stream HTTP requests and responses.\n\nThis data type is not supported in Vertex AI."
       },
       "Tool": {
         "properties": {
