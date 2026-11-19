@@ -204,6 +204,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     import (
         "context"
         "fmt"
+        "io"
         "os/exec"
 
         "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -214,7 +215,9 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         "google.golang.org/adk/v2/tool/mcptoolset"
     )
 
-    func createFilesystemAgent(ctx context.Context) (agent.Agent, error) {
+    // createFilesystemAgent also returns the MCP toolset, which the caller must
+    // close once the agent is no longer in use.
+    func createFilesystemAgent(ctx context.Context) (agent.Agent, io.Closer, error) {
         // 1. Initialize MCP Toolset with CommandTransport and AllowedToolsPredicate
         mcpTools, err := mcptoolset.New(mcptoolset.Config{
             Transport: &mcp.CommandTransport{
@@ -223,33 +226,49 @@ This example sets up an ADK agent that connects to a local MCP file system serve
             ToolFilter: tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}),
         })
         if err != nil {
-            return nil, fmt.Errorf("failed to create mcp toolset: %w", err)
+            return nil, nil, fmt.Errorf("failed to create mcp toolset: %w", err)
         }
+        closer := mcpTools.(io.Closer)
 
         // 2. Initialize Gemini model.LLM instance
         llm, err := gemini.NewModel(ctx, "gemini-2.0-flash", nil)
         if err != nil {
-            return nil, fmt.Errorf("failed to create gemini model: %w", err)
+            closer.Close()
+            return nil, nil, fmt.Errorf("failed to create gemini model: %w", err)
         }
 
         // 3. Create the LLM agent returning agent.Agent
-        return llmagent.New(llmagent.Config{
+        ag, err := llmagent.New(llmagent.Config{
             Name:        "filesystem_assistant",
             Model:       llm,
             Instruction: "Help users manage local files.",
             Toolsets:    []tool.Toolset{mcpTools},
         })
+        if err != nil {
+            closer.Close()
+            return nil, nil, err
+        }
+        return ag, closer, nil
     }
 
     func main() {
         ctx := context.Background()
-        ag, err := createFilesystemAgent(ctx)
+        ag, mcpTools, err := createFilesystemAgent(ctx)
         if err != nil {
             panic(err)
         }
+        // Keep the toolset open while the agent is in use, then release the MCP
+        // connection and the server subprocess.
+        defer mcpTools.Close()
         fmt.Printf("Successfully created agent: %s\n", ag.Name())
     }
     ```
+
+    In Go, the toolset returned by `mcptoolset.New` implements `io.Closer`.
+    Close it when the agent is no longer in use, not when the function that
+    creates the agent returns. If you wrap it with `tool.FilterToolset`, keep
+    the original toolset to close it: the filtered wrapper does not implement
+    `io.Closer`.
     
 ---
 
