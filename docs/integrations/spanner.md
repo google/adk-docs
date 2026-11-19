@@ -8,16 +8,13 @@ catalog_tags: ["data","google"]
 # Google Cloud Spanner tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
 </div>
 
 [Google Cloud Spanner](https://cloud.google.com/spanner) is a fully managed,
 distributed database with support for SQL and vector search. The ADK Spanner
 tools let your agent explore database schemas, run SQL queries, and perform
 vector similarity search against your Spanner data.
-
-!!! example "Experimental"
-    This feature is experimental and may be updated in future releases.
 
 ## Available tools
 
@@ -39,6 +36,15 @@ The `SpannerToolset` provides the following tools:
   `google.adk.tools.spanner.settings`.
 - **`similarity_search`**: Similarity search in Spanner using a text query.
 
+## Installation
+
+The Spanner tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
 ## Use with agent
 
 ```py
@@ -59,6 +65,7 @@ The following example configures a Spanner table as a vector store and wires the
 `vector_store_similarity_search` tool into a RAG agent:
 
 ```py
+import google.auth
 from google.adk.agents import LlmAgent
 from google.adk.tools.spanner import SpannerCredentialsConfig, SpannerToolset
 from google.adk.tools.spanner.settings import (
@@ -89,8 +96,10 @@ my_tool_settings = SpannerToolSettings(
     vector_store_settings=my_vector_store_settings,
 )
 
-# 2. Initialize the Spanner toolset
-credentials_config = SpannerCredentialsConfig()
+# 2. Initialize the Spanner toolset. SpannerCredentialsConfig requires
+# credentials, an external access token key, or a client ID and secret.
+credentials, _ = google.auth.default()
+credentials_config = SpannerCredentialsConfig(credentials=credentials)
 my_spanner_toolset = SpannerToolset(
     credentials_config=credentials_config,
     spanner_tool_settings=my_tool_settings,
