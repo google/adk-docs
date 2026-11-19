@@ -8,6 +8,12 @@ links, and catalog conventions.
 
 **Audience:** Contributors and maintainers.
 
+This is the integration-specific review in the ADK docs review family. It uses
+the same risk tiers and the same 100-point scoring model as the general ADK docs
+reviews, so an integration page can be compared against any other docs change.
+Run it instead of the information architecture review when the primary file is
+under `docs/integrations/`.
+
 ## How to invoke
 
 Ask the agent naturally, for example:
@@ -18,12 +24,18 @@ Ask the agent naturally, for example:
 
 ## What you get back
 
-- A prioritized report with all four tiers listed (🔴 Critical, 🟠 Quality,
-  🟡 Style, 🔵 Nits), each finding tagged with `file:line`.
+- A **review score** out of 100: 100 minus 20 per ❌ Critical Risk item, 10 per
+  🔴 High Risk, 2 per 🟡 Medium Risk, and 1 per 🟢 Low Risk.
+- An overall assessment, summary reasoning, recommended action, and the change
+  size in files and lines.
+- All four risk sections printed in order (❌ Critical, 🔴 High, 🟡 Medium,
+  🟢 Low), each finding tagged with `file:line` and a github.com link, and
+  `None` under any section with no findings.
 - A developer value and maturity assessment.
 - A recommended decision: approve, request changes, or close PR.
 - A top-level review response.
-- Draft line-anchored comments, one per finding.
+- Draft line-anchored comments, one per finding, prefixed
+  `INTEGRATION REVIEW (Critical | High | Medium | Low):`.
 
 Everything is a draft. Nothing is posted to GitHub and no files are changed
 unless you explicitly ask.
