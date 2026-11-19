@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
+
 from google.adk.agents import LlmAgent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmResponse, LlmRequest
@@ -99,10 +101,13 @@ async def call_agent_async(query):
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("write a joke on BLOCK")
+async def main():
+    await call_agent_async("write a joke on BLOCK")
+
+# Note: In Colab, you can directly 'await call_agent_async(...)' at the top level.
+if __name__ == "__main__":
+    asyncio.run(main())
