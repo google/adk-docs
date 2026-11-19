@@ -8,16 +8,13 @@ catalog_tags: ["data","google"]
 # Google Cloud Spanner tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
 </div>
 
 [Google Cloud Spanner](https://cloud.google.com/spanner) is a fully managed,
 distributed database with support for SQL and vector search. The ADK Spanner
 tools let your agent explore database schemas, run SQL queries, and perform
 vector similarity search against your Spanner data.
-
-!!! example "Experimental"
-    This feature is experimental and may be updated in future releases.
 
 ## Available tools
 
