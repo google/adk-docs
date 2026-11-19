@@ -14,9 +14,9 @@ catalog_tags: ["mcp"]
 The [BrewPage MCP server](https://github.com/kochetkov-ma/brewpage-openapi)
 connects your ADK agent to [BrewPage](https://brewpage.app), a hosting service
 for HTML pages, Markdown, JSON documents, key-value data and files. Each
-publication gets a shareable HTTPS link. The remote server needs no account or
-API key, so an agent can publish the reports, pages and data it produces and
-return a link to the user.
+publication gets a shareable HTTPS link. Connect ADK to `https://brewpage.app/mcp`
+over Streamable HTTP. The hosted server supports anonymous publication and
+optional OAuth for a BrewPage profile.
 
 ## Use cases
 
@@ -30,8 +30,9 @@ return a link to the user.
 ## Prerequisites
 
 - A [Gemini API key](https://aistudio.google.com/apikey) for the agent's model.
-- No BrewPage account or API key is needed. Publications are private (unlisted)
-  unless the agent sends `namespace="public"`.
+- Anonymous publishing requires no BrewPage account or API key. An ordinary
+  publication is unlisted and anyone with its link can open it. Set `public: true`
+  when the user asks to list the publication publicly.
 
 ## Installation
 
@@ -63,7 +64,7 @@ npm install @google/adk @modelcontextprotocol/sdk
             name="brewpage_agent",
             instruction=(
                 "Publish the content the user asks for to BrewPage and reply with the "
-                "page link. Keep pages private unless the user asks for a public page."
+                "page link. Keep pages unlisted unless the user asks for public listing."
             ),
             tools=[
                 McpToolset(
@@ -87,7 +88,7 @@ npm install @google/adk @modelcontextprotocol/sdk
             name: "brewpage_agent",
             instruction:
                 "Publish the content the user asks for to BrewPage and reply with the " +
-                "page link. Keep pages private unless the user asks for a public page.",
+                "page link. Keep pages unlisted unless the user asks for public listing.",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
@@ -105,31 +106,15 @@ publication later.
 
 ## Available tools
 
-Tool | Description
----- | -----------
-`publish_html` | Publish HTML, Markdown, code or JSON as a page
-`update_html` | Update an existing page with its owner token
-`get_page` | Fetch the stored content of a page
-`publish_site` | Publish a multi-file HTML site
-`republish_site` | Replace the files of an existing site at the same link
-`publish_file` | Upload a file from a URL
-`publish_json` | Publish a JSON document
-`get_json` | Fetch a JSON document
-`update_json` | Update a JSON document with its owner token
-`publish_kv` | Create a key-value store with its first entry
-`set_kv` | Set or update a key in a key-value store
-`get_kv` | Fetch a value from a key-value store
-`delete_resource` | Delete a page, site, file, JSON document or key-value store
-`set_title` | Rename a page or site
-`set_visibility` | Hide or show a public publication in the gallery
-`update_hosting` | Change the delivery mode of a publication
-`search_gallery` | Search the public gallery
-`get_limits` | Read the current size, count and expiry limits
-`get_stats` | Read platform-wide usage statistics
+BrewPage MCP 3.0.0 advertises 13 tools over the hosted connection.
 
-The server also exposes profile and custom-domain tools (`bind_token`,
-`mint_token`, `set_domain`, `list_domains`, `check_domain`, `remove_domain`)
-for users with a BrewPage profile.
+Tools | Purpose
+----- | -------
+`publish`, `list_publications`, `read_publication` | Publish content, list publications and read content or statistics
+`update_publication`, `publication_settings`, `delete_publication` | Revise content, change settings or delete a publication
+`read_page_data`, `write_page_data`, `delete_page_data` | Work with saved Page data, including visitor responses
+`domains`, `account`, `notifications` | Manage custom domains, account access and publication notifications
+`get_guide` | Read instructions and examples for a specific operation
 
 ## Additional resources
 
