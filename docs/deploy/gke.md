@@ -381,13 +381,16 @@ Use the `capital_agent` example defined on the [LLM agents](../agents/llm-agents
         CMD ["/app/capital_agent", "web", "-host", "0.0.0.0", "-port", "8080", "api", "webui"]
         ```
 
-        The `-host 0.0.0.0` flag makes the server listen on all network
-        interfaces so that the Kubernetes Service can reach it. In ADK Go
-        v2.5.0 and higher, the web launcher listens only on `127.0.0.1` by
-        default. ADK Go v2.0.0 through v2.4.0 listen on all interfaces and don't
-        accept the `-host` flag, so remove it if you use one of those versions.
-        The ADK web interface that the `webui` sublauncher serves is intended
-        for development, not for public production endpoints.
+!!! note
+    The `-host 0.0.0.0` flag makes the server listen on all network
+    interfaces so that the Kubernetes Service can reach it. In ADK Go
+    v2.5.0 and higher, the web launcher listens only on `127.0.0.1` by
+    default. ADK Go v2.0.0 through v2.4.0 listen on all interfaces and don't
+    accept the `-host` flag, so remove it if you use one of those versions.
+
+    **Security:** The ADK web interface served by the `webui` sublauncher
+    is intended for development, not for public production endpoints.
+
 
 ### Build the container image
 
