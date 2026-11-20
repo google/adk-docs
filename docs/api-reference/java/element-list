@@ -3,8 +3,10 @@ com.example.a2a_basic
 com.example.contextcaching
 com.example.helloworld
 com.example.mcpfilesystem
+com.example.mcpfullresult
 com.example.springchat
 com.example.springchat.advanced
+com.example.workflows
 com.google.adk
 com.google.adk.a2a.agent
 com.google.adk.a2a.common
@@ -14,6 +16,7 @@ com.google.adk.agents
 com.google.adk.annotations
 com.google.adk.apps
 com.google.adk.artifacts
+com.google.adk.classifiers
 com.google.adk.codeexecutors
 com.google.adk.deploy
 com.google.adk.events
