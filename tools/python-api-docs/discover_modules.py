@@ -50,6 +50,7 @@ DEPTH_2_PREFIXES = [
     "google.adk.tools.",
     "google.adk.integrations.",
     "google.adk.labs.",
+    "google.adk.plugins.",
 ]
 
 # --- Discovery logic ---
