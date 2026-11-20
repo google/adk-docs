@@ -1,13 +1,13 @@
 # OpenAI models for ADK agents
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span><span class="lst-go">Go v2.1.0</span><span class="lst-kotlin">Kotlin v1.4.0</span>
 </div>
 
 You can use OpenAI models with ADK. How you connect depends on the language:
 
 - **Go — native support:** ADK Go provides a direct `openaimodel` package that implements the `model.LLM` interface, targeting the OpenAI Responses API or the [Chat Completions API](#chat-completions-api). [Get started](#get-started).
-- **Python — via LiteLLM:** ADK Python accesses OpenAI models (and many other providers) through the LiteLLM connector. See [LiteLLM](/agents/models/litellm/).
+- **Python — native support:** ADK Python provides `OpenAIResponsesLlm` and `OpenAILlm` in `google.adk.integrations.openai`, which target the OpenAI Responses API and the [Chat Completions API](#chat-completions-api). [Get started](#get-started). You can also reach OpenAI models through the LiteLLM connector; see [LiteLLM](/agents/models/litellm/).
 - **Kotlin — native support:** ADK Kotlin provides a `ChatCompletions` model in `com.google.adk.kt.models.openai` that targets the OpenAI Chat Completions API. [Get started](#get-started).
 
 !!! example "Experimental in Go"
@@ -18,6 +18,48 @@ You can use OpenAI models with ADK. How you connect depends on the language:
 
 The `openaimodel` package provides a client for interacting with OpenAI's API. It implements the `model.LLM` interface and uses the OpenAI Responses API by default, or the [Chat Completions API](#chat-completions-api) when `ClientConfig.API` selects it.
 The following code example shows a basic implementation for using OpenAI models in your agents:
+
+=== "Python"
+
+    Requires the `openai` extra: `pip install "google-adk[openai]"`.
+
+    === "Responses API"
+
+        ```python
+        from google.adk.agents import LlmAgent
+        from google.adk.integrations.openai import OpenAIResponsesLlm
+
+        # Instantiate the model
+        llm = OpenAIResponsesLlm(model="gpt-4o-mini")
+
+        # Create the agent
+        agent = LlmAgent(
+            name="openai_agent",
+            model=llm,
+            instruction="You are a helpful AI assistant.",
+        )
+        ```
+
+    === "Chat Completions API"
+
+        ```python
+        import os
+
+        from google.adk.agents import LlmAgent
+        from google.adk.integrations.openai import OpenAILlm
+
+        # Instantiate the model on the Chat Completions API
+        llm = OpenAILlm(model="gpt-4o-mini", api_key=os.getenv("OPENAI_API_KEY"))
+
+        # Create the agent
+        agent = LlmAgent(
+            name="openai_agent",
+            model=llm,
+            instruction="You are a helpful AI assistant.",
+        )
+        ```
+
+        For a complete, runnable sample, see [contributing/samples/models/hello_world_openai/](https://github.com/google/adk-python/tree/v2.14.0/contributing/samples/models/hello_world_openai) in the ADK Python repository.
 
 === "Go"
 
@@ -113,7 +155,7 @@ The following code example shows a basic implementation for using OpenAI models 
 ## Chat Completions API {#chat-completions-api}
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.5.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.10.0</span><span class="lst-go">Go v2.5.0</span><span class="lst-kotlin">Kotlin v1.4.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 By default, `openaimodel` sends requests to the OpenAI
@@ -148,7 +190,10 @@ The two APIs support the same features, with these differences:
 
 ## Limitations
 
-- **Text only** — multimodal input (images, audio, files) is not supported.
+- **Limited multimodal input** — audio and video input is not supported. Other media support depends on the language and API:
+    - **Python:** `OpenAIResponsesLlm` accepts images and files. `OpenAILlm` (Chat Completions) accepts images only, as inline data or an `http(s)` URL.
+    - **Go:** v2.7.0 and later accept images and files on both APIs. On the Chat Completions API, an image cannot be an uploaded file ID and a file cannot be a URL. Earlier versions accept text only.
+    - **Kotlin:** `ChatCompletions` accepts images only, as inline data or a URL. Audio or a non-image file in a user turn fails with `IllegalArgumentException`.
 - **Function tools only** — built-in tools (Google Search, code execution, etc.) are not supported.
 - **Structured output uses OpenAI strict mode** — every field declared in an `OutputSchema` is treated as required.
 - Some `GenerateContentConfig` options return an error rather than being silently ignored: `TopK`, multiple candidates, request labels, and safety settings. The Responses API also rejects stop sequences, frequency/presence penalties, and seed, which the [Chat Completions API](#chat-completions-api) supports.
