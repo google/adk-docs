@@ -968,11 +968,11 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```go
     import (
-        "fmt"
         "iter"
         "google.golang.org/adk/v2/agent"
         "google.golang.org/adk/v2/agent/llmagent"
-        "google.golang.org/adk/v2/model"
+        "google.golang.org/adk/v2/artifact"
+        "google.golang.org/adk/v2/runner"
         "google.golang.org/adk/v2/session"
         "google.golang.org/adk/v2/tool"
         "google.golang.org/adk/v2/tool/agenttool"
@@ -981,6 +981,9 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:agent-as-tool"
     ```
+
+    Requires ADK Go v2.5.0 or later. Replace the placeholder image bytes with
+    your image generation code. See [Artifacts](/artifacts/) for loading saved files.
 
 === "Java"
 
