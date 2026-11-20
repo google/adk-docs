@@ -373,6 +373,7 @@ nav:
       - Logging: observability/logging.md
       - Metrics: observability/metrics.md
       - Traces: observability/traces.md
+    - Test agents: testing/index.md
     - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
