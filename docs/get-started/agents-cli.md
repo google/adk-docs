@@ -89,7 +89,7 @@ Open your coding agent and confirm it can see the skills:
 === "Antigravity"
 
     ```shell
-    antigravity            # launch from your IDE or terminal
+    agy            # launch from your IDE or terminal
     # then verify the Agents CLI skills are listed in your environment
     ```
 
