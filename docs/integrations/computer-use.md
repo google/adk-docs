@@ -8,7 +8,7 @@ catalog_tags: ["google"]
 # Gemini API Computer Use tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-java">Java v0.7.0</span><span class="lst-preview">Preview</span>
 </div>
 
 The Computer Use Toolset allows an agent to operate a user interface
@@ -85,25 +85,50 @@ You can find the code for this implementation in `playwright.py` file of the
 [computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/multimodal/computer_use/playwright.py)
 agent sample project.
 
-```python
-from google.adk import Agent
-from google.adk.tools.computer_use.computer_use_toolset import ComputerUseToolset
+=== "Python"
 
-from .playwright import PlaywrightComputer
+    ```python
+    from google.adk import Agent
+    from google.adk.tools.computer_use.computer_use_toolset import ComputerUseToolset
 
-root_agent = Agent(
-    model='gemini-2.5-computer-use-preview-10-2025',
-    name='hello_world_agent',
-    description=(
-        'computer use agent that can operate a browser on a computer to finish'
-        ' user tasks'
-    ),
-    instruction='you are a computer use agent',
-    tools=[
-        ComputerUseToolset(computer=PlaywrightComputer(screen_size=(1280, 936)))
-    ],
-)
-```
+    from .playwright import PlaywrightComputer
+
+    root_agent = Agent(
+        model='gemini-2.5-computer-use-preview-10-2025',
+        name='hello_world_agent',
+        description=(
+            'computer use agent that can operate a browser on a computer to finish'
+            ' user tasks'
+        ),
+        instruction='you are a computer use agent',
+        tools=[
+            ComputerUseToolset(computer=PlaywrightComputer(screen_size=(1280, 936)))
+        ],
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.BaseAgent;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.computeruse.BaseComputer;
+    import com.google.adk.tools.computeruse.ComputerUseToolset;
+
+    // Provide your own BaseComputer implementation (for example, backed by Playwright).
+    BaseComputer computer = new PlaywrightComputer(new int[] {1280, 936});
+
+    BaseAgent rootAgent =
+        LlmAgent.builder()
+            .model("gemini-2.5-computer-use-preview-10-2025")
+            .name("hello_world_agent")
+            .description(
+                "computer use agent that can operate a browser on a computer to finish"
+                    + " user tasks")
+            .instruction("you are a computer use agent")
+            .tools(new ComputerUseToolset(computer))
+            .build();
+    ```
 
 For a complete code example, see the
 [computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/multimodal/computer_use)
