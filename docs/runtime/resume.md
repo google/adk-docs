@@ -1,7 +1,7 @@
 # Resume stopped agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v1.11.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An ADK agent's execution can be interrupted by various factors including
@@ -34,6 +34,27 @@ code example:
             is_resumable=True,
         ),
     )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.apps.App;
+    import com.google.adk.apps.ResumabilityConfig;
+    import com.google.adk.runner.Runner;
+
+    App app =
+        App.builder()
+            .name("my_resumable_agent")
+            .rootAgent(rootAgent)
+            // Set the resumability config to enable resumability.
+            .resumabilityConfig(
+                ResumabilityConfig.builder()
+                    .resumable(true)
+                    .build())
+            .build();
+
+    Runner runner = Runner.builder().app(app).build();
     ```
 
 === "Kotlin"
@@ -94,6 +115,28 @@ shown below:
 
     # When new_message is set to a function response,
     # we are trying to resume a long running function.
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.adk.events.Event;
+    import io.reactivex.rxjava3.core.Flowable;
+
+    Flowable<Event> events =
+        runner.runAsync(
+            "u_123",
+            "s_abc",
+            "invocation-123",
+            /* newMessage= */ null,
+            RunConfig.builder().build(),
+            /* stateDelta= */ null);
+
+    events.blockingForEach(System.out::println);
+
+    // When newMessage is set to a Content containing a FunctionResponse,
+    // the runner resumes a paused long-running function call.
     ```
 
 === "Kotlin"
