@@ -64,7 +64,7 @@ you plan to use: obtain credentials and an `agent_id`.
 - **Agent ID:** You need an `agent_id` to connect to. You can either:
     - Create a new agent by following the [Gemini API Agents
       documentation](https://ai.google.dev/gemini-api/docs/agents).
-    - Use an out-of-the-box agent ID, such as `antigravity-preview-05-2026`,
+    - Use an out-of-the-box agent ID, such as `antigravity-preview-09-2026`,
       which is used in the examples below.
 
 ### Agent Platform backend
@@ -98,7 +98,7 @@ server-side. Both run their tools in the managed environment
     from google.genai import types
 
     # Ensure you have the MANAGED_AGENT_ID and the proper environment config
-    _AGENT_ID = os.environ.get('MANAGED_AGENT_ID', 'antigravity-preview-05-2026')
+    _AGENT_ID = os.environ.get('MANAGED_AGENT_ID', 'antigravity-preview-09-2026')
 
     managed_search_agent = ManagedAgent(
         name='managed_search_agent',
@@ -153,6 +153,134 @@ the local session, is the source of truth for continuing a conversation.
 Response text appears in both the local ADK events and the remote interaction
 history, but ADK stores only the IDs it needs to recover and reuse the remote
 state; it never re-sends prior turns.
+
+## Connect to a remote MCP server
+
+!!! note "When to use `RemoteMcpServer` vs. `McpToolset`"
+
+    Use `RemoteMcpServer` with `ManagedAgent` when you want the Managed Agents
+    backend to connect to and execute tools on a remotely hosted MCP server over
+    HTTPS. If you are using `LlmAgent`, or if you need to connect to a local MCP
+    server (such as `stdio` or `localhost`), use `LlmAgent` with `McpToolset`
+    instead.
+
+In ADK Python, you connect a `ManagedAgent` to a remote Model Context Protocol
+(MCP) server using the `RemoteMcpServer` class. Unlike `McpToolset` for
+`LlmAgent`, which connects and executes tools from your local ADK process,
+`RemoteMcpServer` delegates execution to the Managed Agents backend. ADK Python
+resolves any headers and sends the server URL, headers, and optional tool
+allowlist to the backend, which opens the MCP session over Streamable HTTP and
+runs the tools remotely.
+
+### Requirements
+
+- **Gemini API backend:** Server-side remote MCP requires the Gemini API
+  backend with `GEMINI_API_KEY` configured (and without
+  `GOOGLE_GENAI_USE_VERTEXAI` or `GOOGLE_GENAI_USE_ENTERPRISE` enabled). The
+  Agent Platform backend does not currently support server-side remote MCP.
+  Complete the [Gemini API backend](#gemini-api-backend) prerequisites before
+  running the example below.
+- **Remotely reachable HTTPS endpoint:** The Managed Agents backend must reach
+  your MCP server over HTTPS. The backend cannot connect to local `stdio`
+  commands, such as `npx` or `python3`, or to `localhost` URLs.
+
+### Configure `RemoteMcpServer` with dynamic headers
+
+Pass one or more `RemoteMcpServer` instances in the `tools` list of a
+`ManagedAgent`. Set `name` to a unique server label matching `^[a-z0-9_-]+$`
+(lowercase alphanumeric characters, underscores, and hyphens), as required by
+the Gemini API backend. Use `header_provider` to generate authentication
+headers at runtime rather than hardcoding credentials at startup.
+
+ADK Python invokes the `header_provider` callback once per turn during tool
+resolution. The callback accepts a `ReadonlyContext` object (for reading
+per-user credentials from `ctx.state`), and it can also read from environment
+variables or a secret manager before returning a dictionary of headers
+synchronously or asynchronously. This callback follows the same contract as
+`McpToolset.header_provider`.
+
+This example connects a `ManagedAgent` to Maps Experience agent tools (formerly
+Maps Grounding Lite) and injects an API key on every turn:
+
+=== "Python"
+
+    ```python
+    import os
+    from google.adk.agents import ManagedAgent
+    from google.adk.agents.readonly_context import ReadonlyContext
+    from google.adk.tools import RemoteMcpServer
+
+    MAPS_MCP_URL = 'https://mapstools.googleapis.com/mcp'
+
+
+    def get_maps_headers(ctx: ReadonlyContext) -> dict[str, str]:
+      """Mint authentication headers at request time."""
+      api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+      if not api_key:
+        raise ValueError('Set GOOGLE_MAPS_API_KEY before running the agent.')
+      return {'X-Goog-Api-Key': api_key}
+
+
+    root_agent = ManagedAgent(
+        name='managed_maps_agent',
+        agent_id=os.environ.get(
+            'MANAGED_AGENT_ID', 'antigravity-preview-09-2026'
+        ),
+        tools=[
+            RemoteMcpServer(
+                name='maps_grounding_lite',
+                url=MAPS_MCP_URL,
+                header_provider=get_maps_headers,
+                allowed_tools=['search_places', 'lookup_weather'],
+            )
+        ],
+    )
+    ```
+
+!!! tip "Static headers and tool scoping"
+
+    Set the `headers` field for static HTTP headers that do not rotate between
+    turns. If you configure both `headers` and `header_provider`, ADK Python
+    merges both dictionaries on every turn, and `header_provider` overrides
+    matching keys in `headers`. Set the `allowed_tools` field to expose only
+    specific tools from the remote server. For full field definitions, see the
+    [`RemoteMcpServer` API
+    reference](https://adk.dev/api-reference/python/google-adk.html#google.adk.tools.RemoteMcpServer).
+
+### Run the example
+
+1. Enable [Maps Experience agent
+   tools](https://developers.google.com/maps/ai/maps-experience-agent-tools)
+   (formerly Maps Grounding Lite) on your Google Cloud project and obtain an
+   API key.
+2. Save the code above in a new agent folder, such as
+   `./managed_maps_agent/agent.py`, alongside a
+   `./managed_maps_agent/__init__.py` file containing:
+
+    ```python
+    from . import agent
+    ```
+
+3. Export the required environment variables (optionally set
+   `MANAGED_AGENT_ID` to override the default `antigravity-preview-09-2026`
+   agent ID):
+
+    ```bash
+    export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+    export GOOGLE_MAPS_API_KEY="YOUR_MAPS_API_KEY"
+    ```
+
+4. From the parent directory of `managed_maps_agent/`, start ADK Web:
+
+    ```bash
+    adk web
+    ```
+
+5. Select `managed_maps_agent` and send a prompt that calls the remote MCP
+   server, such as *"Find a few coffee shops near Golden Gate Park."*
+
+For a complete runnable example, see the [Managed Agent Remote MCP
+sample](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/remote_mcp).
 
 ## Limitations
 
