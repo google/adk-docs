@@ -187,22 +187,24 @@ With the API server still running, open a new terminal window or tab and create
 a new session with the agent using:
 
 ```shell
-curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
+curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions \
   -H "Content-Type: application/json" \
-  -d '{"key1": "value1", "key2": 42}'
+  -d '{"sessionId": "s_123", "state": {"key1": "value1", "key2": 42}}'
 ```
 
 Let's break down what's happening:
 
-* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
+* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions`: This
   creates a new session for your agent `my_sample_agent`, which is the name of
-  the agent folder, for a user ID (`u_123`) and for a session ID (`s_123`). You
-  can replace `my_sample_agent` with the name of your agent folder. You can
-  replace `u_123` with a specific user ID, and `s_123` with a specific session
-  ID.
-* `{"key1": "value1", "key2": 42}`: This is optional. You can use
-  this to customize the agent's pre-existing state (dict) when creating the
-  session.
+  the agent folder, for a user ID (`u_123`). You can replace `my_sample_agent`
+  with the name of your agent folder and `u_123` with a specific user ID.
+* `{"sessionId": "s_123", "state": {"key1": "value1", "key2": 42}}`: This specifies
+  the `sessionId` (optional; if omitted, a random UUID is generated) and the
+  agent's pre-existing `state` (optional). You can also include an `events` array
+  to initialize the session with a history. Note that any client-supplied events
+  claiming to be ADK-generated (e.g., containing long-running tool IDs,
+  non-default actions, or ADK reserved function calls) will be rejected with
+  a 400 Bad Request error.
 
 This should return the session information if it was created successfully. The
 output should appear similar to:
