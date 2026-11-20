@@ -31,6 +31,12 @@ for setting it up.
     --8<-- "examples/python/snippets/tools/built-in-tools/rag_engine.py"
     ```
 
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/RagEngineAgent.java:full_code"
+    ```
+
 === "Kotlin"
 
     ```kotlin
