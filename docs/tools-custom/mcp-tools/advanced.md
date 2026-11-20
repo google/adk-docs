@@ -89,6 +89,12 @@ root_agent = LlmAgent(
 )
 ```
 
+Tools in an `McpToolset` use the same confirmation flow as function tools.
+For more information about the confirmation request and response, see
+[Get action confirmation for ADK tools](/tools-custom/confirmation/). For more
+information about the limitations of tool confirmation, see
+[Known limitations](/tools-custom/confirmation/#known-limitations).
+
 ---
 
 ## Real-time progress tracking (`progress_callback`)
