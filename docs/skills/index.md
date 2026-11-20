@@ -62,6 +62,23 @@ You can define [skills in code](#inline-skills) or load
     )
     ```
 
+    The matching `skills/weather-skill/SKILL.md` must list the tool under
+    `metadata.adk_additional_tools`. `additional_tools` is only a pool of
+    candidates; the model sees a listed tool after `load_skill`. Names that
+    match nothing in the pool are skipped without a warning.
+
+    ```text title="skills/weather-skill/SKILL.md"
+    ---
+    name: weather-skill
+    description: Provides weather information for a city.
+    metadata:
+      adk_additional_tools:
+        - get_weather_tool
+    ---
+
+    Use `get_weather_tool` with the city name, then report the weather.
+    ```
+
     For a complete code example of an ADK agent with a Skill, including both
     file-based and in-line Skill definitions, see the code sample
     [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/skills_agent).
