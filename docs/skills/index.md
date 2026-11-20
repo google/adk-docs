@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-java">Java v1.4.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -106,6 +106,12 @@ You can define [skills in code](#inline-skills) or load
 
     For a complete example, see the code sample in
     [skills](https://github.com/google/adk-go/tree/main/examples/skills).
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/skills/SkillsGetStarted.java:full_example"
+    ```
 
 === "Kotlin"
 
@@ -310,6 +316,12 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/skills/InlineSkillExample.java:full_example"
+    ```
+
 === "Kotlin"
 
     !!! note
@@ -374,6 +386,12 @@ You can define Skills within the code of your agent, as shown below.
     if err != nil {
         // handle error
     }
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/skills/FilesystemSkillExample.java:full_example"
     ```
 
 === "Kotlin"
