@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.14.0"
+    "version": "2.14.1"
   },
   "paths": {
     "/health": {
