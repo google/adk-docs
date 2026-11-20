@@ -355,6 +355,15 @@ Understanding artifacts involves grasping a few key components: the service that
 
 * **Listing behavior:** In Python, listing artifacts from within a session returns the session-scoped filenames *and* that user's user-scoped filenames, with the `"user:"` prefix retained, for example `["summary.txt", "user:settings.json"]`.
 
+* **Local file storage (Python):** `FileArtifactService` reserves the path
+  component `versions` for its internal storage. Saving an artifact with this
+  component anywhere in its filename, such as `project/versions/readme.txt`,
+  raises `InputValidationError`, regardless of casing or whether `/` or `\`
+  separates the components. This also applies after a `user:` prefix. Use a
+  name such as `project/releases/readme.txt` instead. Ordinary nested artifact
+  names remain supported, and deleting `project` preserves a separately saved
+  `project/releases/readme.txt` artifact.
+
 
 === "Python"
 
