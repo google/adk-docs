@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-java">Java v1.13.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
@@ -131,6 +131,19 @@ function, and the final agent reports the information.
     --8<-- "examples/go/snippets/graphs/index/main.go:sequential-get-started"
     ```
 
+=== "Java"
+
+    In ADK Java, `Workflow.builder()` builds the graph using an `EdgesBuilder`
+    lambda where `fromStart().chain(...)` connects the nodes in order. Code
+    steps implement `Node`, and `ToolNodes.asNode(AgentTool.create(...))` wraps
+    an `LlmAgent` as a node so its input and output flow directly to the next
+    node without session state writes. The workflow APIs are annotated
+    `@Experimental`.
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/index/GetStarted.java:get-started"
+    ```
+
 === "Kotlin"
 
     In ADK Kotlin, the `workflow` builder declares the graph's edges,
@@ -246,6 +259,19 @@ translated into a graph-based agent:
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:process-pipeline"
+    ```
+
+=== "Java"
+
+    In ADK Java, a router node selects outgoing branches by calling
+    `context.routes(...)` with a list of `Route.Tag` values, and
+    `route(r -> ...)` on `EdgesBuilder` maps each route value to its handler
+    node with `r.on(...).then(...)`. Selecting more than one route dispatches
+    to every matching branch, which lets the classifier return multiple
+    categories.
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/index/ProcessPipeline.java:process-pipeline"
     ```
 
 === "Kotlin"
