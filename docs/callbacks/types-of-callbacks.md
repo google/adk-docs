@@ -81,6 +81,15 @@ log the start of the agent's run, or return content to skip the agent's core
 logic. In ADK Python, changes made through `callback_context.state` are tracked in
 `callback_context.actions.state_delta`.
 
+In Go, a `BeforeAgentCallback` returns `(*genai.Content, error)`. Non-nil
+content with a nil error is yielded as an event and skips the remaining
+before-agent callbacks, the agent's run, and the after-agent callbacks. An
+error takes precedence over content: it skips the remaining before-agent
+callbacks and is yielded with a nil event, but it does not end the invocation.
+If the caller keeps iterating after that error, the agent and its after-agent
+callbacks can still run, so stop iterating when you want the error to stop the
+agent.
+
 
 ??? "Code"
     === "Python"
