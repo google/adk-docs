@@ -64,41 +64,86 @@ You can also configure trace export programmatically in your application code.
 
 To enable tracing and export spans to an OpenTelemetry Collector programmatically:
 
-```python
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
+=== "Python"
 
-os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = "http://your-collector:4318/v1/traces"
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers()
-```
+    ```python
+    from google.adk.telemetry.setup import maybe_set_otel_providers
+    import os
+
+    os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = "http://your-collector:4318/v1/traces"
+    os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+    os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+    maybe_set_otel_providers()
+    ```
+
+=== "Go"
+
+    If you run your agent with the ADK Go launcher, you don't need this setup. The launcher registers the providers from the same environment variables, and its `-otel_to_cloud` flag enables Google Cloud export.
+
+    Otherwise, set the standard OTel environment variables before you call `telemetry.New`:
+
+    ```go
+    package main
+
+    import (
+    	"context"
+    	"log"
+    	"os"
+
+    	"google.golang.org/adk/v2/telemetry"
+    )
+
+    func main() {
+    	ctx := context.Background()
+
+    	os.Setenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://your-collector:4318/v1/traces")
+    	os.Setenv("OTEL_SERVICE_NAME", "your-adk-agent")
+    	os.Setenv("OTEL_RESOURCE_ATTRIBUTES", "key1=value1,key2=value2")
+
+    	providers, err := telemetry.New(ctx)
+    	if err != nil {
+    		log.Fatal(err)
+    	}
+    	defer providers.Shutdown(ctx)
+    	providers.SetGlobalOtelProviders()
+
+    	// Create and run your agent here.
+    }
+    ```
+
+=== "Kotlin"
+
+    In Kotlin, ADK automatically uses the `GlobalOpenTelemetry` instance to export traces. You should configure your OpenTelemetry SDK before starting the agent.
+
+    To enable tracing and export spans to an OpenTelemetry Collector, configure the OpenTelemetry SDK and register it globally:
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
+    ```
 
 #### GCP export setup
 
-To export traces to Google Cloud Trace programmatically, use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
+To export traces to Google Cloud Trace programmatically:
 
-```python
-from google.adk.telemetry.google_cloud import get_gcp_exporters
-from google.adk.telemetry.setup import maybe_set_otel_providers
-import os
+=== "Python"
 
-gcp_exporters = get_gcp_exporters(
-  enable_cloud_tracing = True,
-)
-os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
-os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers([gcp_exporters])
-```
+    Use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
 
-### Kotlin programmatic setup
+    ```python
+    from google.adk.telemetry.google_cloud import get_gcp_exporters
+    from google.adk.telemetry.setup import maybe_set_otel_providers
+    import os
 
-In Kotlin, ADK automatically uses the `GlobalOpenTelemetry` instance to export traces. You should configure your OpenTelemetry SDK before starting the agent.
+    gcp_exporters = get_gcp_exporters(
+      enable_cloud_tracing = True,
+    )
+    os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+    os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+    maybe_set_otel_providers([gcp_exporters])
+    ```
 
-#### OTLP export setup
+=== "Go"
 
-To enable tracing and export spans to an OpenTelemetry Collector, configure the OpenTelemetry SDK and register it globally:
+    To export traces to Cloud Trace, pass `telemetry.WithOtelToCloud(true)` to `telemetry.New`. For a complete example, see [Cloud Trace](/integrations/cloud-trace/).
 
-```kotlin
---8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
-```
+> **Note:** If you enable `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`, exported spans can include prompt and response content, which may contain sensitive data or PII. For details, see [Capture prompt content](/observability/logging/#capture-prompt-content-in-adk-web).
