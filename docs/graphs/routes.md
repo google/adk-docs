@@ -1,7 +1,7 @@
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-typescript">TypeScript v2.0.0</span><span class="lst-go">Go v2.0.0</span><span class="lst-java">Java v1.13.0</span><span class="lst-kotlin">Kotlin v1.5.0</span>
 </div>
 
 Graph-based workflows in ADK define agent logic as a graph of execution nodes
@@ -80,6 +80,25 @@ agents.
     })
     ```
 
+=== "Java"
+
+    ```java
+    Workflow rootAgent =
+        Workflow.builder()
+            .name("routing_workflow")
+            .edges(
+                g ->
+                    g.fromStart()
+                        .chain(processMessage, router)
+                        .route(
+                            r -> {
+                              r.on("output-1").then(response1);
+                              r.on("output-2").then(response2);
+                              r.on("output-3").then(response3);
+                            }))
+            .build();
+    ```
+
 === "Kotlin"
 
     ```kotlin
@@ -146,6 +165,17 @@ objects.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:function-node"
+    ```
+
+=== "Java"
+
+    In ADK Java, you write a custom node by implementing `Node` and
+    overriding `name()` and `runNode(Context, Object)`. Any non-`Event`
+    value emitted by the returned `Flowable` becomes the node's output and
+    is delivered to the successor node as `nodeInput`:
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/FunctionNodeExample.java:function-node"
     ```
 
 === "Kotlin"
@@ -220,6 +250,17 @@ A sequential route runs each node once, in the listed order.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:sequential-nodes"
+    ```
+
+=== "Java"
+
+    Inside `.edges(g -> ...)`, `g.fromStart().chain(taskANode, taskBNode,
+    taskCNode)` connects the nodes in order, and
+    `g.fromStart().then(taskANode)` runs a single node. Each node's emitted
+    output is delivered to the next node as `nodeInput`:
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/SequenceExample.java:sequence"
     ```
 
 === "Kotlin"
@@ -349,6 +390,20 @@ A sequential route runs each node once, in the listed order.
         with an `Escalate`-based exit — see the
         [loop and escalation example](#loop-and-escalation-exit) below.
 
+=== "Java"
+
+    A node selects a route by calling `context.routes(...)`, and a
+    `route(r -> ...)` block maps each route value to the node that handles
+    it. Route values can be strings (`Route.Tag`), integers (`Route.Num`),
+    or booleans (`Route.Flag`). An `r.otherwise(node)` entry matches when
+    no other route on the same source node matches. A branch target can be
+    any `Node`: in this example, `taskBNode` is an `LlmAgent` and
+    `taskCNode` is a custom node.
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/BranchesExample.java:branches"
+    ```
+
 === "Kotlin"
 
     A node selects a route by setting `context.routes`, and a `route { }`
@@ -436,6 +491,17 @@ before passing results to the next step.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"
+    ```
+
+=== "Java"
+
+    `then(a, b, c)` fans out to nodes that run concurrently, and `joinTo`
+    connects them to a `JoinNode`. The join waits for every predecessor to
+    complete, and then passes its successor a `Map<String, Object>` keyed
+    by predecessor node name:
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/FanOutJoinExample.java:fan-out-join"
     ```
 
 === "Kotlin"
@@ -546,6 +612,17 @@ accomplish this goal.
     --8<-- "examples/go/snippets/graphs/routes/main.go:nested-workflows"
     ```
 
+=== "Java"
+
+    A `Workflow` implements `Node`, so you can use one inside another
+    workflow's edges to encapsulate a reusable sub-process. When the inner
+    workflow finishes, the output of its terminal node becomes the output
+    of the nested-workflow node:
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/NestedWorkflowExample.java:nested-workflow"
+    ```
+
 === "Kotlin"
 
     A `Workflow` is itself a node, so you can use one inside another
@@ -615,6 +692,17 @@ lifecycle on each iteration.
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
+    ```
+
+=== "Java"
+
+    A loop is a back-edge: `g.from(refine).then(critic)` routes a
+    downstream node back to an earlier one, and the engine re-activates
+    that node with a fresh lifecycle on each iteration. The loop exits when
+    the critic selects the `DONE` route:
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/graphs/routes/LoopEscalationExample.java:loop-escalation"
     ```
 
 === "Kotlin"
