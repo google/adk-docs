@@ -251,8 +251,9 @@ Load your environment variables and start `AdkDevServer` from the
     ADK Web is ***not meant for use in production deployments***. Use
     `AdkDevServer` and ADK Web for development and debugging purposes only.
 
-Open `http://localhost:8080/dev-ui` directly in your browser. This connection
-stays on your local machine. Select `basic_search_agent` from the agent menu.
+Open `http://localhost:8080/dev-ui` or `http://127.0.0.1:8080/dev-ui` directly
+in your browser. This connection stays on your local machine. Select
+`basic_search_agent` from the agent menu.
 
 ### Try with voice and video
 
@@ -287,7 +288,7 @@ To build a custom live streaming application in ADK Kotlin, call
 your `LiveRunConfig` settings (`RunConfig(live = LiveRunConfig(...))`, opted in
 with `@OptIn(ExperimentalLiveApi::class)`). For a complete Kotlin microphone
 and speaker example, see
-[`LiveAgentDemo.kt`](https://github.com/google/adk-kotlin/blob/main/examples/src/main/kotlin/com/google/adk/kt/examples/live/LiveAgentDemo.kt)
+[`LiveAgentDemo.kt`](https://github.com/google/adk-kotlin/blob/v1.6.0/examples/src/main/kotlin/com/google/adk/kt/examples/live/LiveAgentDemo.kt)
 in the `google/adk-kotlin` repository.
 
 To learn more about live agent concepts and server design, see the following
