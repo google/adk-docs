@@ -162,6 +162,25 @@ func newGraphHITLHandoffWorkflow() (agent.Agent, error) {
 
 // --8<-- [end:graph-hitl-handoff]
 
+// --8<-- [start:graph-hitl-client-reply]
+// reviewReply builds the next user message from a pending workflow request.
+// Send it back through the runner in the same authenticated session.
+func reviewReply(call *genai.FunctionCall, approved bool) (*genai.Content, error) {
+	if call == nil || call.Name != workflow.WorkflowInputFunctionCallName || call.ID == "" {
+		return nil, fmt.Errorf("missing workflow input request")
+	}
+	return &genai.Content{
+		Role: genai.RoleUser,
+		Parts: []*genai.Part{{FunctionResponse: &genai.FunctionResponse{
+			ID:       call.ID,
+			Name:     call.Name,
+			Response: map[string]any{"response": map[string]any{"approved": approved}},
+		}}},
+	}, nil
+}
+
+// --8<-- [end:graph-hitl-client-reply]
+
 // --8<-- [start:graph-hitl-with-payload]
 // ItineraryItem represents a single activity in a travel plan.
 type ItineraryItem struct {
