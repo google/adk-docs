@@ -480,6 +480,51 @@ operations through a two-tiered locking architecture:
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
 
+### `BufferedSessionService`
+
+In ADK Python v2.15.0, the experimental `BufferedSessionService` wraps an
+existing session service and writes events to it in the background. Appending
+an event updates the current session and queues the write. Events for each
+session are persisted in order. Reads through the wrapper wait for the pending
+writes they would observe.
+
+Install `google-adk[db]` to use `DatabaseSessionService`. Wrap it and pass
+the wrapper as the runner's `session_service`:
+
+```python
+from datetime import timedelta
+
+from google.adk.sessions import (
+    BufferedSessionService,
+    BufferedSessionServiceConfig,
+    DatabaseSessionService,
+)
+
+database = DatabaseSessionService(db_url="sqlite+aiosqlite:///./agent_sessions.db")
+session_service = BufferedSessionService(
+    delegate=database,
+    config=BufferedSessionServiceConfig(
+        max_batch_events=20,
+        max_write_delay=timedelta(milliseconds=25),
+    ),
+)
+```
+
+The optional `config` controls how the wrapper writes events:
+
+- `max_batch_events` limits the number of events sent in one batch.
+- `max_write_delay` sets how long the first queued event can wait for others
+  to join its batch. Batching applies to delegates that override
+  `append_events`.
+- `retry_config` sets the write retry policy. Retries are off by default
+  because retrying after an ambiguous failure can store an event twice.
+
+Use `await session_service.flush_session(...)` to wait for one session's writes,
+or `await session_service.flush()` to wait for all pending writes. These methods
+can raise `SessionPersistenceError` if a background write fails. Use one wrapper
+per event loop and call `await session_service.aclose()` during shutdown to flush
+pending writes and stop its writers. Manage the delegate's lifecycle separately.
+
 ## Troubleshoot session errors
 
 During execution, ADK can raise specific exceptions to help you identify
