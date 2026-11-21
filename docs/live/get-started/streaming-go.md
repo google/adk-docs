@@ -1,4 +1,4 @@
-# Build live streaming agent with Go
+# Build a live streaming agent with Go
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.0.0</span>
@@ -7,7 +7,7 @@
 With this quickstart, you learn how to build a Go agent using Agent Development Kit (ADK) for bidirectional voice and video communication over the Gemini Live API. You install ADK Go, create a Google Search agent, and test live streaming in the ADK web interface.
 
 !!! note "Prerequisites"
-    Make sure you have Go 1.26.10 or higher installed and experience using a terminal on macOS, Linux, or Windows.
+    Make sure you have Go 1.26.10 or later installed and experience using a terminal on macOS, Linux, or Windows.
 
 ## Supported models for voice and video streaming {#supported-models}
 
@@ -48,7 +48,7 @@ adk-streaming/          # Project folder
     └── agent.go        # Agent definition and web launcher
 ```
 
-### `agent.go`
+### Create the `agent.go` file
 
 Add the following code to `adk-streaming/app/agent.go`.
 
@@ -129,7 +129,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control) and add the following variables. On Windows, set these variables in PowerShell in the next section instead.
+    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/` and add the following variables. Do not commit `.env` to source control. On Windows, set these variables in PowerShell in the next section instead.
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
@@ -139,12 +139,12 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual API key.
 
 === "Gemini - Google Cloud Agent Platform"
-    1. Set up an existing [Google Cloud](https://cloud.google.com/) account and project:
+    1. Use an existing [Google Cloud](https://cloud.google.com/) account and project, or create a new one:
         * Set up a [Google Cloud project](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
         * Install the [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
         * Authenticate using Application Default Credentials by running `gcloud auth application-default login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control), add the following variables, and update the project ID and regional location. On Windows, set these variables in PowerShell in the next section instead.
+    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/`, add the following variables, and update the project ID and regional location. Do not commit `.env` to source control. On Windows, set these variables in PowerShell in the next section instead.
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
@@ -180,9 +180,9 @@ Load your environment variables and launch ADK Web from the `adk-streaming/app/`
 
 !!! warning "Caution: ADK Web for development only"
 
-    ADK Web is ***not meant for use in production deployments***. Use ADK Web for development and debugging purposes only.
+    Do not use ADK Web in production deployments. Use ADK Web for development and debugging only.
 
-Open the URL printed in your terminal (`http://localhost:8080`, which redirects to `http://localhost:8080/ui/`) directly in your browser. The ADK Web server runs locally on `localhost`. Select `basic_search_agent`.
+Open the URL printed in your terminal, `http://localhost:8080`, directly in your browser. It redirects to `http://localhost:8080/ui/`. The ADK Web server runs locally on `localhost`. Select `basic_search_agent`.
 
 ### Try with voice and video
 
@@ -193,11 +193,10 @@ To try with voice, reload the browser tab, click the microphone button to enable
 * What is the weather in Paris?
 * What is the time in Paris?
 
-To try with video, reload the browser tab, click the camera button to enable video input, and ask questions such as "What do you see?". The agent describes what appears in the video stream.
+To try with video, reload the browser tab, click the camera button to enable video input, and ask a question such as "What do you see?" The agent describes what appears in the video stream.
 
-#### Caveat
-
-- You cannot use text chat with native-audio models. Entering text messages in ADK Web returns errors when a native-audio model is configured.
+!!! note "Text chat with native-audio models"
+    You cannot use text chat with native-audio models. Entering text messages in ADK Web returns an error when you configure a native-audio model.
 
 ### Stop the server
 
