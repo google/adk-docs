@@ -1,7 +1,7 @@
 # Build a live streaming agent with ADK TypeScript
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.2.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 !!! example "Experimental:"
@@ -115,7 +115,7 @@ Choose either Google AI Studio or Google Cloud Agent Platform to run the agent:
         -   Install and initialize the
             [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
         -   Authenticate to Google Cloud from your terminal by running
-            `gcloud auth login`.
+            `gcloud auth application-default login`.
         -   [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
     2.  Open the `.env` file in the `adk-streaming/` directory, add the
         following variables, and update the project ID and location:
@@ -177,15 +177,19 @@ Stop `npx adk web` by pressing `Ctrl-C` in the terminal.
 Model callbacks, `beforeModelCallback` and `afterModelCallback`, do not run on
 the streaming path; ADK TypeScript runs them only on the `runAsync` path. Agent
 callbacks, `beforeAgentCallback` and `afterAgentCallback`, and tool callbacks,
-`beforeToolCallback` and `afterToolCallback`, run while streaming, as do
-`LongRunningFunctionTool` and `ExampleTool`. Among the workflow agents,
-`SequentialAgent` and `LoopAgent` support streaming through `runLive`, while
-`ParallelAgent` throws an error.
+`beforeToolCallback` and `afterToolCallback`, run while streaming, as does
+`LongRunningFunctionTool`. The `ExampleTool` class relies on initial
+`userContent` and does not inject few-shot examples on the `runLive` path.
+Among workflow agents, `SequentialAgent` and `LoopAgent`, both deprecated in
+`@google/adk`, support streaming through `runLive`, while `ParallelAgent` and
+`Workflow` roots throw an error.
 
 ## Next steps
 
-Explore the rest of the live agent guides to configure streaming behavior and
-build a production server:
+Explore the rest of the live agent guides for live streaming concepts and
+architecture. These guides currently show Python examples; ADK TypeScript uses
+camelCase equivalents on `RunConfig`, `LiveRequestQueue`, and
+`Runner.runLive()`:
 
 -   [Configuration](../configuration.md) covers voice selection, transcription,
     and turn detection.
