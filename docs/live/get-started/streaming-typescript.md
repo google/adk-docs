@@ -32,12 +32,32 @@ Before you start, make sure you have the following installed:
 -   Node.js 24.13.0 or later
 -   Node Package Manager (npm) 11.8.0 or later
 
-Create a project directory, initialize an ES module package, and install the
-ADK TypeScript packages:
+Create a project directory and navigate into it:
+
+=== "macOS / Linux"
+
+    ```bash
+    mkdir -p adk-streaming/google_search_agent
+    cd adk-streaming
+    ```
+
+=== "Windows CMD"
+
+    ```console
+    mkdir adk-streaming\google_search_agent
+    cd adk-streaming
+    ```
+
+=== "Windows PowerShell"
+
+    ```powershell
+    New-Item -ItemType Directory -Force -Path adk-streaming/google_search_agent
+    cd adk-streaming
+    ```
+
+Initialize an ES module package and install the ADK TypeScript packages:
 
 ```bash
-mkdir -p adk-streaming/google_search_agent
-cd adk-streaming
 npm init --yes
 npm pkg set type="module"
 npm install @google/adk
@@ -175,9 +195,10 @@ Stop `npx adk web` by pressing `Ctrl-C` in the terminal.
 ## Next steps
 
 Explore the rest of the live agent guides for live streaming concepts and
-architecture. These guides currently show Python examples; ADK TypeScript uses
-camelCase equivalents on `RunConfig`, `LiveRequestQueue`, and
-`Runner.runLive()`:
+architecture. These guides currently show Python examples; see the
+[TypeScript API reference](https://adk.dev/api-reference/typescript/) for the
+`LiveRequestQueue`, `Runner.runLive()`, and `RunConfig` options supported in
+ADK TypeScript:
 
 -   [Configuration](../configuration.md) covers voice selection, transcription,
     and turn detection.
