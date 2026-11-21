@@ -6,8 +6,8 @@
 
 !!! example "Experimental:"
     The live streaming API in Agent Development Kit (ADK) Kotlin is an
-    experimental release. It may change without notice and is not recommended
-    for production use.
+    experimental release. It may change without notice; do not use it in
+    production.
 
 In this quickstart, you build a live streaming agent with ADK Kotlin and hold
 a real-time, bidirectional voice and video conversation with it. You set up a
@@ -248,8 +248,8 @@ Load your environment variables and start `AdkDevServer` from the
 
 !!! warning "Caution: ADK Web for development only"
 
-    ADK Web is ***not meant for use in production deployments***. Use
-    `AdkDevServer` and ADK Web for development and debugging purposes only.
+    Do not use ADK Web in production deployments. Use `AdkDevServer` and ADK
+    Web for development and debugging only.
 
 Open `http://localhost:8080/dev-ui` or `http://127.0.0.1:8080/dev-ui` directly
 in your browser. This connection stays on your local machine. Select
@@ -283,11 +283,11 @@ Stop the server by pressing `Ctrl-C` in the terminal.
 
 ## Next steps: build a custom streaming application
 
-To build a custom live streaming application in ADK Kotlin, call
-`runner.runLive()` with a `LiveRequestQueue` and a `RunConfig` that carries
-your `LiveRunConfig` settings (`RunConfig(live = LiveRunConfig(...))`, opted in
-with `@OptIn(ExperimentalLiveApi::class)`). For a complete Kotlin microphone
-and speaker example, see
+To build a custom live streaming application in ADK Kotlin, opt in with
+`@OptIn(ExperimentalLiveApi::class)` and call `runner.runLive()` with a
+`LiveRequestQueue` and a `RunConfig` that carries your `LiveRunConfig`
+settings, such as `RunConfig(live = LiveRunConfig(...))`. For a complete Kotlin
+microphone and speaker example, see
 [`LiveAgentDemo.kt`](https://github.com/google/adk-kotlin/blob/v1.6.0/examples/src/main/kotlin/com/google/adk/kt/examples/live/LiveAgentDemo.kt)
 in the `google/adk-kotlin` repository.
 
@@ -296,6 +296,6 @@ guides, which show Python examples for the same runner and lifecycle patterns:
 
 - [Sessions](../sessions.md) covers the live application lifecycle and session
   resumption.
-- [Events](../events.md) describes the events returned by live runs.
+- [Events](../events.md) describes the events that live runs return.
 - [Build a custom server](../custom-server.md) walks through bridging a
   WebSocket client to a live agent runner.
