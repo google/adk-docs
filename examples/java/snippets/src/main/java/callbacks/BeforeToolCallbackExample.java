@@ -24,7 +24,7 @@ public class BeforeToolCallbackExample {
   private static final String APP_NAME = "ToolCallbackAgentApp";
   private static final String USER_ID = "user_1";
   private static final String SESSION_ID = "session_001";
-  private static final String MODEL_NAME = "gemini-2.0-flash";
+  private static final String MODEL_NAME = "gemini-3-flash-preview";
 
   public static void main(String[] args) {
     BeforeToolCallbackExample example = new BeforeToolCallbackExample();

@@ -28,7 +28,7 @@ public class AgentWithBeforeModelCallback {
     LlmAgent myAgent =
         LlmAgent.builder()
             .name("MyCallbackAgent")
-            .model("gemini-2.0-flash") // Or your desired model
+            .model("gemini-3-flash-preview") // Or your desired model
             .instruction("Be helpful.")
             // Other agent parameters...
             .beforeModelCallbackSync(myBeforeModelLogic) // Pass the callback implementation here

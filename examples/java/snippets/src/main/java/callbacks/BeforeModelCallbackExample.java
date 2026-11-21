@@ -23,7 +23,7 @@ public class BeforeModelCallbackExample {
 
   // --- Define Constants ---
   private static final String AGENT_NAME = "ModelCallbackAgent";
-  private static final String MODEL_NAME = "gemini-2.0-flash";
+  private static final String MODEL_NAME = "gemini-3-flash-preview";
   private static final String AGENT_INSTRUCTION = "You are a helpful assistant.";
   private static final String AGENT_DESCRIPTION =
       "An LLM agent demonstrating before_model_callback";
@@ -39,11 +39,14 @@ public class BeforeModelCallbackExample {
 
   // --- 1. Define the Callback Function ---
   // Inspects/modifies the LLM request or skips the actual LLM call.
+  // The ADK passes an LlmRequest.Builder so the callback can change the request
+  // that will be sent to the model.
   public Maybe<LlmResponse> simpleBeforeModelModifier(
-      CallbackContext callbackContext, LlmRequest llmRequest) {
+      CallbackContext callbackContext, LlmRequest.Builder requestBuilder) {
+    LlmRequest llmRequest = requestBuilder.build();
     String agentName = callbackContext.agentName();
     System.out.printf("%n[Callback] Before model call for agent: %s%n", agentName);
-    
+
     String lastUserMessage = "";
     if (llmRequest.contents() != null && !llmRequest.contents().isEmpty()) {
       Content lastContentItem = Iterables.getLast(llmRequest.contents());
@@ -57,16 +60,11 @@ public class BeforeModelCallbackExample {
 
     // --- Modification Example ---
     // Add a prefix to the system instruction
-    Content systemInstructionFromRequest = Content.builder().parts(ImmutableList.of()).build();
-    // Ensure system_instruction is Content and parts list exists
-    if (llmRequest.config().isPresent()) {
-      systemInstructionFromRequest =
-          llmRequest
-              .config()
-              .get()
-              .systemInstruction()
-              .orElseGet(() -> Content.builder().role("system").parts(ImmutableList.of()).build());
-    }
+    Content systemInstructionFromRequest =
+        llmRequest
+            .config()
+            .flatMap(GenerateContentConfig::systemInstruction)
+            .orElseGet(() -> Content.builder().role("system").parts(ImmutableList.of()).build());
     List<Part> currentSystemParts =
         new ArrayList<>(systemInstructionFromRequest.parts().orElse(ImmutableList.of()));
     // Ensure a part exists for modification
@@ -76,18 +74,20 @@ public class BeforeModelCallbackExample {
     // Modify the text of the first part
     String prefix = "[Modified by Callback] ";
     String conceptuallyModifiedText = prefix + currentSystemParts.get(0).text().orElse("");
-    llmRequest =
-        llmRequest.toBuilder()
-            .config(
-                GenerateContentConfig.builder()
-                    .systemInstruction(
-                        Content.builder()
-                            .parts(List.of(Part.fromText(conceptuallyModifiedText)))
-                            .build())
+    GenerateContentConfig updatedConfig =
+        llmRequest
+            .config()
+            .orElseGet(() -> GenerateContentConfig.builder().build())
+            .toBuilder()
+            .systemInstruction(
+                Content.builder()
+                    .parts(List.of(Part.fromText(conceptuallyModifiedText)))
                     .build())
             .build();
+    // Mutate the builder ADK passed in: Maybe.empty() forwards this modified request to the LLM.
+    requestBuilder.config(updatedConfig);
     System.out.printf(
-        "Modified System Instruction %s", llmRequest.config().get().systemInstruction());
+        "Modified System Instruction %s%n", updatedConfig.systemInstruction());
 
     // --- Skip Example ---
     // Check if the last user message contains "BLOCK"
@@ -107,7 +107,7 @@ public class BeforeModelCallbackExample {
     }
 
     // Return Empty response to allow the (modified) request to go to the LLM
-    System.out.println("[Callback] Proceeding with LLM call (using the original LlmRequest).");
+    System.out.println("[Callback] Proceeding with LLM call (using the modified LlmRequest).");
     return Maybe.empty();
   }
 

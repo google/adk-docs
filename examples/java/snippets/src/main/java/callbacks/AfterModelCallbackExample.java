@@ -23,7 +23,7 @@ public class AfterModelCallbackExample {
 
   // --- Define Constants ---
   private static final String AGENT_NAME = "AfterModelCallbackAgent";
-  private static final String MODEL_NAME = "gemini-2.0-flash";
+  private static final String MODEL_NAME = "gemini-3-flash-preview";
   private static final String AGENT_INSTRUCTION = "You are a helpful assistant.";
   private static final String AGENT_DESCRIPTION = "An LLM agent demonstrating after_model_callback";
 
@@ -122,14 +122,19 @@ public class AfterModelCallbackExample {
       modifiedPartsList.add(Part.fromText(modifiedText));
     }
 
-    LlmResponse.Builder newResponseBuilder =
-        LlmResponse.builder()
+    // Create a modified response, preserving all other LlmResponse fields
+    LlmResponse modifiedResponse =
+        llmResponse
+            .toBuilder()
             .content(
-                originalContent.toBuilder().parts(ImmutableList.copyOf(modifiedPartsList)).build())
-            .groundingMetadata(llmResponse.groundingMetadata());
+                originalContent
+                    .toBuilder()
+                    .parts(ImmutableList.copyOf(modifiedPartsList))
+                    .build())
+            .build();
 
     System.out.println("[Callback] Returning modified response.");
-    return Maybe.just(newResponseBuilder.build());
+    return Maybe.just(modifiedResponse);
   }
 
   // --- 2. Define Agent and Run Scenarios ---
