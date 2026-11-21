@@ -17,6 +17,9 @@ Voice and video streaming requires a Gemini model that supports the Gemini Live 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
+!!! note "Model support versions"
+    Gemini 3.8 Live and Gemini 3.x Live models on Agent Platform require `google.golang.org/adk/v2` v2.8.0 or later. Running `go get google.golang.org/adk/v2` installs the latest release.
+
 ## Set up your environment and install ADK Go {#setup-environment-install-adk}
 
 Create a project directory and initialize a Go module:
@@ -126,7 +129,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. Create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control) and add the following variables:
+    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control) and add the following variables. On Windows, set these variables in PowerShell in the next section instead.
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
@@ -141,7 +144,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         * Install the [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
         * Authenticate using Application Default Credentials by running `gcloud auth application-default login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control), add the following variables, and update the project ID and regional location:
+    2. On macOS or Linux, create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control), add the following variables, and update the project ID and regional location. On Windows, set these variables in PowerShell in the next section instead.
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
@@ -163,8 +166,15 @@ Load your environment variables and launch ADK Web from the `adk-streaming/app/`
 
 === "Windows PowerShell"
     ```powershell
+    # Google AI Studio:
     $env:GOOGLE_GENAI_USE_ENTERPRISE = "FALSE"
     $env:GOOGLE_API_KEY = "PASTE_YOUR_ACTUAL_API_KEY_HERE"
+
+    # Or Google Cloud Agent Platform:
+    # $env:GOOGLE_GENAI_USE_ENTERPRISE = "TRUE"
+    # $env:GOOGLE_CLOUD_PROJECT = "PASTE_YOUR_ACTUAL_PROJECT_ID"
+    # $env:GOOGLE_CLOUD_LOCATION = "us-central1"
+
     go run agent.go web api webui
     ```
 
@@ -197,4 +207,4 @@ You have built and run your first live streaming agent with ADK Go.
 
 ## Next steps: build a custom streaming app
 
-To build a custom Go web server that connects WebSocket clients to your live agent with `controllers.RuntimeAPIController` and `RunLiveHandler` or `runner.RunLive`, see the [ADK Go bidirectional streaming example](https://github.com/google/adk-go/tree/main/examples/bidi). To learn more about live agent concepts, see [Sessions](../sessions.md), [Events](../events.md), and [Build a custom server](../custom-server.md).
+To build a custom Go web server that connects WebSocket clients to your live agent with `controllers.RuntimeAPIController` and `RunLiveHandler` or `Runner.RunLive`, see the [ADK Go bidirectional streaming example](https://github.com/google/adk-go/tree/main/examples/bidi). To learn more about live agent concepts, see [Sessions](../sessions.md), [Events](../events.md), and [Build a custom server](../custom-server.md).
