@@ -33,15 +33,10 @@ Before you start, verify that you have the following tools installed:
 - Java 17 or later
 - Gradle 8.0 or later
 
-An ADK Kotlin live streaming project requires the ADK core library and the ADK
-web server artifact in your `build.gradle.kts` file:
-
-```kotlin title="build.gradle.kts (dependencies)"
-dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:1.6.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:1.6.0")
-}
-```
+Gradle downloads the required ADK Kotlin dependencies,
+`com.google.adk:google-adk-kotlin-core` and
+`com.google.adk:google-adk-kotlin-webserver`, when you configure
+`build.gradle.kts` in the next section.
 
 ## Project structure {#project-structure}
 
@@ -285,16 +280,6 @@ what appears in the video feed.
 
 Stop the server by pressing `Ctrl-C` in the terminal.
 
-### Note on ADK live streaming in Kotlin
-
-In an `LlmAgent` live session, agent callbacks (`beforeAgentCallbacks`,
-`afterAgentCallbacks`), tool callbacks (`beforeToolCallbacks`,
-`afterToolCallbacks`), and model callbacks (`beforeModelCallbacks` for
-screening user input and `afterModelCallbacks` for screening model output
-transcriptions) run during live streaming. Of the workflow agents,
-`SequentialAgent` supports live runs; `LoopAgent` and `ParallelAgent` throw
-`UnsupportedOperationException`.
-
 ## Next steps: build a custom streaming application
 
 To build a custom live streaming application in ADK Kotlin, call
@@ -305,7 +290,8 @@ and speaker example, see
 [`LiveAgentDemo.kt`](https://github.com/google/adk-kotlin/blob/main/examples/src/main/kotlin/com/google/adk/kt/examples/live/LiveAgentDemo.kt)
 in the `google/adk-kotlin` repository.
 
-To learn more about live agent concepts and server design:
+To learn more about live agent concepts and server design, see the following
+guides, which show Python examples for the same runner and lifecycle patterns:
 
 - [Sessions](../sessions.md) covers the live application lifecycle and session
   resumption.
