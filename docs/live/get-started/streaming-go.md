@@ -193,10 +193,6 @@ To try with video, reload the browser tab, click the camera button to enable vid
 
 Stop ADK Web by pressing `Ctrl-C` in the terminal.
 
-### Note on ADK Go streaming
-
-On the `RunLive` streaming path in ADK Go, model callbacks (`BeforeModelCallbacks` and `AfterModelCallbacks`) and agent callbacks (`BeforeAgentCallbacks` and `AfterAgentCallbacks`) are not invoked; ADK Go runs those callbacks only on the standard `Run` path. Tool callbacks (`BeforeToolCallbacks` and `AfterToolCallbacks`), `geminitool.GoogleSearch`, and streaming function tools (`functiontool.NewStreaming`) run during live streaming. Among workflow agents, `sequentialagent` supports live streaming; `loopagent` and `parallelagent` do not implement `RunLive`.
-
 You have built and run your first live streaming agent with ADK Go.
 
 ## Next steps: build a custom streaming app
