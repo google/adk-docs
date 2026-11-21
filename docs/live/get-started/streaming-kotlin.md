@@ -9,7 +9,7 @@
     change without notice and is not recommended for production use.
 
 In this quickstart, you build a live streaming agent with Agent Development Kit
-(ADK) Kotlin and hold a low-latency, bidirectional voice and video conversation
+(ADK) Kotlin and hold a real-time, bidirectional voice and video conversation
 with it. You set up a Gradle project, define a Google Search agent with
 `GoogleSearchTool`, and run the agent in the ADK web interface with
 `AdkDevServer`.
@@ -172,8 +172,9 @@ Choose either Google AI Studio or Google Cloud Agent Platform to run the agent:
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. Open the **`.env`** file in `adk-streaming/` and add the following
-       environment variables:
+    2. Open the **`.env`** file, or create **`.env.ps1`** on Windows
+       PowerShell, in `adk-streaming/` and add the following environment
+       variables. Do not commit this file to source control:
 
         === "macOS / Linux"
 
@@ -202,8 +203,10 @@ Choose either Google AI Studio or Google Cloud Agent Platform to run the agent:
         * Authenticate using Application Default Credentials from the terminal
           by running `gcloud auth application-default login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Open the **`.env`** file in `adk-streaming/`, add the following
-       environment variables, and update the project ID and regional location:
+    2. Open the **`.env`** file, or create **`.env.ps1`** on Windows
+       PowerShell, in `adk-streaming/`, add the following environment
+       variables, and update the project ID and regional location. Do not commit
+       this file to source control:
 
         === "macOS / Linux"
 
@@ -284,16 +287,19 @@ Stop the server by pressing `Ctrl-C` in the terminal.
 
 ### Note on ADK live streaming in Kotlin
 
-Agent callbacks (`beforeAgentCallbacks`, `afterAgentCallbacks`), tool callbacks
-(`beforeToolCallbacks`, `afterToolCallbacks`), and model callbacks
-(`beforeModelCallbacks`, `afterModelCallbacks`) run during live sessions in ADK
-Kotlin. Of the workflow agents, `SequentialAgent` supports live runs;
-`LoopAgent` and `ParallelAgent` throw `UnsupportedOperationException`.
+In an `LlmAgent` live session, agent callbacks (`beforeAgentCallbacks`,
+`afterAgentCallbacks`), tool callbacks (`beforeToolCallbacks`,
+`afterToolCallbacks`), and model callbacks (`beforeModelCallbacks` for
+screening user input and `afterModelCallbacks` for screening model output
+transcriptions) run during live streaming. Of the workflow agents,
+`SequentialAgent` supports live runs; `LoopAgent` and `ParallelAgent` throw
+`UnsupportedOperationException`.
 
 ## Next steps: build a custom streaming application
 
 To build a custom live streaming application in ADK Kotlin, call
-`runner.runLive()` with a `LiveRequestQueue` and `LiveRunConfig` (annotated
+`runner.runLive()` with a `LiveRequestQueue` and a `RunConfig` that carries
+your `LiveRunConfig` settings (`RunConfig(live = LiveRunConfig(...))`, opted in
 with `@OptIn(ExperimentalLiveApi::class)`). For a complete Kotlin microphone
 and speaker example, see
 [`LiveAgentDemo.kt`](https://github.com/google/adk-kotlin/blob/main/examples/src/main/kotlin/com/google/adk/kt/examples/live/LiveAgentDemo.kt)
