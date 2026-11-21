@@ -22,6 +22,14 @@ Your agent needs a model that can hold a two-way streaming connection. See
 
     [:octicons-arrow-right-24: Python quickstart](streaming-python.md)
 
+-   :fontawesome-brands-js:{ .lg .middle } **TypeScript**
+
+    ---
+
+    Set up ADK TypeScript, build a voice agent, and talk to it in `adk web`.
+
+    [:octicons-arrow-right-24: TypeScript quickstart](streaming-typescript.md)
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java**
 
     ---

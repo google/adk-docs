@@ -441,6 +441,7 @@ nav:
       - Get started:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
+        - TypeScript: live/get-started/streaming-typescript.md
         - Java: live/get-started/streaming-java.md
       - Architectures:
         - Choose an architecture: live/architectures/index.md
