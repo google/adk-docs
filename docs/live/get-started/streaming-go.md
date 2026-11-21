@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
-With this quickstart, you learn how to build a Go agent using Agent Development Kit (ADK) and enable low-latency, bidirectional voice and video communication over the Gemini Live API. You install ADK Go, create a Google Search agent, and test live streaming in the ADK web interface.
+With this quickstart, you learn how to build a Go agent using Agent Development Kit (ADK) for bidirectional voice and video communication over the Gemini Live API. You install ADK Go, create a Google Search agent, and test live streaming in the ADK web interface.
 
 !!! note "Prerequisites"
     Make sure you have Go 1.26.10 or higher installed and experience using a terminal on macOS, Linux, or Windows.
@@ -126,7 +126,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. Create an `.env` file in `adk-streaming/app/` and add the following variables:
+    2. Create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control) and add the following variables:
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
@@ -141,7 +141,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         * Install the [gcloud CLI](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
         * Authenticate using Application Default Credentials by running `gcloud auth application-default login`.
         * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Create an `.env` file in `adk-streaming/app/`, add the following variables, and update the project ID and regional location:
+    2. Create an `.env` file in `adk-streaming/app/` (do not commit `.env` to source control), add the following variables, and update the project ID and regional location:
 
         ```bash title="app/.env"
         export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
@@ -172,11 +172,11 @@ Load your environment variables and launch ADK Web from the `adk-streaming/app/`
 
     ADK Web is ***not meant for use in production deployments***. Use ADK Web for development and debugging purposes only.
 
-Open the URL printed in your terminal (`http://localhost:8080`, which redirects to `http://localhost:8080/ui/`) directly in your browser. This connection stays on your local machine. Select `basic_search_agent`.
+Open the URL printed in your terminal (`http://localhost:8080`, which redirects to `http://localhost:8080/ui/`) directly in your browser. The ADK Web server runs locally on `localhost`. Select `basic_search_agent`.
 
 ### Try with voice and video
 
-To try with voice, reload the browser tab, click the microphone button to enable voice input, and ask the following questions aloud. The agent calls the `geminitool.GoogleSearch` tool to retrieve current information and responds in real-time voice.
+To try with voice, reload the browser tab, click the microphone button to enable voice input, and ask the following questions aloud. The agent calls the `geminitool.GoogleSearch` tool to retrieve current information and responds with streaming voice audio.
 
 * What is the weather in New York?
 * What is the time in New York?
