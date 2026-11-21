@@ -161,6 +161,14 @@ google.adk.integrations.daytona module
     :undoc-members:
     :show-inheritance:
 
+google.adk.integrations.discovery\_engine module
+-----------------------------------------------
+
+.. automodule:: google.adk.integrations.discovery_engine
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.integrations.e2b module
 ----------------------------------
 
@@ -205,6 +213,14 @@ google.adk.integrations.gcs module
 ----------------------------------
 
 .. automodule:: google.adk.integrations.gcs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.integrations.google\_maps module
+------------------------------------------
+
+.. automodule:: google.adk.integrations.google_maps
     :members:
     :undoc-members:
     :show-inheritance:

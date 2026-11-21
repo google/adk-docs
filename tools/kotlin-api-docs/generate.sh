@@ -88,6 +88,7 @@ cd adk-kotlin
 #
 # Deliberately excluded:
 #   -examples, -examples-android, -examples-java,
+#   -examples-spring-boot-java,
 #   -examples-spring-boot-kotlin                  sample apps, not API surface.
 #                                                 -examples also declares a JDK 21
 #                                                 toolchain, which fails to

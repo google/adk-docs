@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.14.0"
+    "version": "2.15.0"
   },
   "paths": {
     "/health": {
@@ -1901,7 +1901,7 @@
               }
             ],
             "title": "Created At",
-            "description": "Unix timestamp when cache was created (None if no active cache)"
+            "description": "Unix timestamp when ADK created the cache (None if no active cache or the cache was created outside ADK)"
           }
         },
         "additionalProperties": false,
@@ -1911,7 +1911,7 @@
           "contents_count"
         ],
         "title": "CacheMetadata",
-        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication. Cache-creation (write)\ntoken counts, when reported by the provider, are available on\nLlmResponse.cache_creation_token_count.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the count of the cacheable content prefix used for fingerprinting.\n    created_at: Unix timestamp when the cache was created. None when\n        no active cache exists."
+        "description": "Metadata for context cache associated with LLM responses.\n\nThis class stores cache identification, usage tracking, and lifecycle\ninformation for a particular cache instance. It can be in two states:\n\n1. Active cache state: cache_name is set, all fields populated, except\n   created_at when ADK did not create the cache\n2. Fingerprint-only state: cache_name is None, only fingerprint and\n   contents_count are set for prefix matching\n\nToken counts (cached and total) are available in the LlmResponse.usage_metadata\nand should be accessed from there to avoid duplication. Cache-creation (write)\ntoken counts, when reported by the provider, are available on\nLlmResponse.cache_creation_token_count.\n\nAttributes:\n    cache_name: The full resource name of the cached content (e.g.,\n        'projects/123/locations/us-central1/cachedContents/456').\n        None when no active cache exists (fingerprint-only state).\n    expire_time: Unix timestamp when the cache expires. None when no\n        active cache exists.\n    fingerprint: Hash of cacheable contents (instruction + tools + contents).\n        Always present for prefix matching.\n    invocations_used: Number of invocations this cache has been used for.\n        None when no active cache exists.\n    contents_count: Number of contents. When active cache exists, this is\n        the count of cached contents. When no active cache exists, this is\n        the count of the cacheable content prefix used for fingerprinting.\n    created_at: Unix timestamp when ADK created the cache. None when no\n        active cache exists, or when the active cache was created outside\n        ADK. ADK only deletes caches it created."
       },
       "Citation": {
         "properties": {
