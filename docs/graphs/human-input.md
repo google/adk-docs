@@ -71,6 +71,21 @@ the input process more predictable and reliable.
     calls `workflow.ResumeOrRequestInput` instead. For more information, see
     [human input in dynamic workflows](/graphs/dynamic/#human-input).
 
+    **Resume from a custom client.** When the workflow pauses, its event carries
+    an `adk_request_input` function call. Capture that call and present the
+    request to the user. Build the next user message with a `FunctionResponse`
+    that copies the function call's name and ID. Send it to `runner.Run` with
+    the same user ID and session ID as the paused run.
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-client-reply"
+    ```
+
+    In this example the reply includes the user's decision as a boolean. A
+    decline also resumes the workflow, so use the value of `approved` when
+    deciding what to do next. Match the reply payload to the request's response
+    schema when one is provided.
+
 ## Configuration options
 
 === "Python"
