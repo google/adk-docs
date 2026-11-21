@@ -442,6 +442,7 @@ nav:
         - live/get-started/index.md
         - Python: live/get-started/streaming-python.md
         - Java: live/get-started/streaming-java.md
+        - Kotlin: live/get-started/streaming-kotlin.md
       - Architectures:
         - Choose an architecture: live/architectures/index.md
         - Speech-to-speech: live/architectures/speech-to-speech.md
