@@ -35,8 +35,8 @@ endpoint.
 
 - Create a [NestDaddy account](https://nestdaddy.com/register)
 - Copy your API key from the
-  [NestDaddy Dashboard](https://nestdaddy.com/dashboard). The free plan
-  includes 1,000 credits a month.
+  [NestDaddy Dashboard](https://nestdaddy.com/dashboard). New accounts
+  get 1,000 free credits, with no card.
 
 ## Use with agent
 
