@@ -4,17 +4,18 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-!!! example "Experimental:"
+!!! example "Experimental"
     Live streaming in ADK TypeScript is an experimental release.
-    It may have limitations and is not recommended for production use.
+    It might have limitations, so do not use it in production.
 
 In this quickstart, you create an agent with Agent Development Kit (ADK) and
 enable bidirectional voice and video streaming in ADK TypeScript. You install
 ADK TypeScript, define a Google Search agent, and test live audio and video
 interactions with the `adk web` command.
 
-**Note:** This guide assumes you have experience using a terminal on macOS,
-Linux, or Windows.
+!!! note
+    This guide assumes you have experience using a terminal on macOS, Linux, or
+    Windows.
 
 ## Supported models for voice and video streaming { #supported-models }
 
@@ -30,7 +31,7 @@ lists to find the model ID for your backend:
 Before you start, make sure you have the following installed:
 
 -   Node.js 24.13.0 or later
--   Node Package Manager (npm) 11.8.0 or later
+-   npm 11.8.0 or later
 
 Create a project directory and navigate into it:
 
@@ -89,7 +90,7 @@ import {GOOGLE_SEARCH, LlmAgent} from '@google/adk';
 export const rootAgent = new LlmAgent({
   // A unique name for the agent.
   name: 'basic_search_agent',
-  // The Large Language Model (LLM) that the agent uses.
+  // The LLM that the agent uses.
   // Fill in a model ID that supports the Live API from
   // https://adk.dev/live/get-started/streaming-typescript/#supported-models
   model: '...',
@@ -160,12 +161,12 @@ npx adk web
 
 !!! warning "Caution: ADK Web for development only"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    Do not use ADK Web in production deployments. Use ADK Web for development
+    and debugging only.
 
 Open `http://localhost:8000` directly in your browser. Your browser connects to
 the local server on your machine. Select `google_search_agent` from the agent
-dropdown.
+menu.
 
 ### Try with voice and video
 
@@ -180,17 +181,17 @@ time:
 -   What is the time in Paris?
 
 To test video streaming, reload the browser tab, click the camera button to
-enable video input, and ask a question such as "What do you see?". The agent
-describes what it sees in the video stream.
+enable video input, and ask "What do you see?" to test the video stream. The
+agent describes what it sees in the video stream.
 
 #### Caveat
 
--   You cannot use text chat with native audio models. Sending text messages in
-    ADK Web with a native audio model returns an error.
+You cannot use text chat with native audio models. Sending text messages in
+ADK Web with a native audio model returns an error.
 
 ### Stop ADK Web
 
-Stop `npx adk web` by pressing `Ctrl-C` in the terminal.
+Stop `npx adk web` by pressing `Ctrl+C` in the terminal.
 
 ## Next steps
 
