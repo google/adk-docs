@@ -1,0 +1,21 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Perseus Vault">
+  <defs>
+    <linearGradient id="pv" x1="64" y1="18" x2="64" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#17141F"/>
+  <!-- winged sandals motif: two swept wings flanking the blade of Perseus -->
+  <g fill="url(#pv)">
+    <path d="M59 46C45 41 31 43 19 53c13-2 20-1 28 4-11 1-17 5-22 13 12-4 21-3 29 1l5-13z" opacity="0.95"/>
+    <path d="M69 46c14-5 28-3 40 7-13-2-20-1-28 4 11 1 17 5 22 13-12-4-21-3-29 1l-5-13z" opacity="0.95"/>
+  </g>
+  <!-- sword, point down (the blade that took Medusa) -->
+  <g fill="url(#pv)">
+    <circle cx="64" cy="29" r="5.5"/>
+    <rect x="61" y="33" width="6" height="13" rx="3"/>
+    <rect x="47" y="45" width="34" height="6.5" rx="3.25"/>
+    <path d="M57.5 51.5h13v37l-6.5 15-6.5-15z"/>
+  </g>
+</svg>
