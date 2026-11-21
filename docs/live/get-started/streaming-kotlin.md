@@ -5,14 +5,14 @@
 </div>
 
 !!! example "Experimental:"
-    The live streaming API in ADK Kotlin is an experimental release. It may
-    change without notice and is not recommended for production use.
+    The live streaming API in Agent Development Kit (ADK) Kotlin is an
+    experimental release. It may change without notice and is not recommended
+    for production use.
 
-In this quickstart, you build a live streaming agent with Agent Development Kit
-(ADK) Kotlin and hold a real-time, bidirectional voice and video conversation
-with it. You set up a Gradle project, define a Google Search agent with
-`GoogleSearchTool`, and run the agent in the ADK web interface with
-`AdkDevServer`.
+In this quickstart, you build a live streaming agent with ADK Kotlin and hold
+a real-time, bidirectional voice and video conversation with it. You set up a
+Gradle project, define a Google Search agent with `GoogleSearchTool`, and run
+the agent in the ADK web interface with `AdkDevServer`.
 
 **Note:** This guide assumes you have experience using a terminal in Windows,
 macOS, or Linux environments.
@@ -146,7 +146,7 @@ so you can focus on the agent's purpose and instructions.
 ### Main.kt
 
 Copy the following code into `Main.kt` to serve the agent and the bundled ADK
-Web interface on localhost:
+web interface on localhost:
 
 ```kotlin title="adk-streaming/src/main/kotlin/com/example/streaming/Main.kt"
 package com.example.streaming
