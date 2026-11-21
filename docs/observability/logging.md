@@ -410,6 +410,28 @@ To record complete interaction data as human-readable YAML appended to
     )
     ```
 
+    In ADK Python v2.15.0 and later, pass `tool_result_classifier` to log
+    application-specific tool failures as `tool_error` entries. The
+    synchronous callback receives `tool`, `tool_args`, `tool_context`, and
+    `result` as keyword arguments. Return `None` to use the built-in
+    classification for that result.
+
+    For example, if your tools use `{"status": "failed"}` to report a failure,
+    use this plugin in `App.plugins`:
+
+    ```python
+    from google.adk.plugins import DebugLoggingPlugin, ToolResultClassification
+
+    def classify_result(*, tool, tool_args, tool_context, result):
+        if isinstance(result, dict) and result.get("status") == "failed":
+            return ToolResultClassification(
+                status="ERROR", error_message="The tool reported a failure."
+            )
+        return None
+
+    plugin = DebugLoggingPlugin(tool_result_classifier=classify_result)
+    ```
+
 === "Kotlin"
 
     ```kotlin
