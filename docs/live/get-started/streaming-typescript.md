@@ -172,18 +172,6 @@ describes what it sees in the video stream.
 
 Stop `npx adk web` by pressing `Ctrl-C` in the terminal.
 
-### Note on ADK Streaming
-
-Model callbacks, `beforeModelCallback` and `afterModelCallback`, do not run on
-the streaming path; ADK TypeScript runs them only on the `runAsync` path. Agent
-callbacks, `beforeAgentCallback` and `afterAgentCallback`, and tool callbacks,
-`beforeToolCallback` and `afterToolCallback`, run while streaming, as does
-`LongRunningFunctionTool`. The `ExampleTool` class relies on initial
-`userContent` and does not inject few-shot examples on the `runLive` path.
-Among workflow agents, `SequentialAgent` and `LoopAgent`, both deprecated in
-`@google/adk`, support streaming through `runLive`, while `ParallelAgent` and
-`Workflow` roots throw an error.
-
 ## Next steps
 
 Explore the rest of the live agent guides for live streaming concepts and
