@@ -10,6 +10,7 @@ performance, including tool use trajectory, response quality, and safety.
 Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge | Supports [User Simulation](./user-sim.md)
 :--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :------------- | :----------------------------------------
 `tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
+`tool_parameter_match`                   | Match of arguments in expected tool calls                 | Yes             | No               | Optional       | No
 `response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
 `response_evaluation_score`              | Vertex AI coherence score for the agent response          | Yes             | No               | Yes            | No
 `final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
@@ -167,6 +168,46 @@ between actual and expected tool trajectories for all invocations, and 0.0
 indicates a complete mismatch for all invocations. Higher scores are better. A
 score below 1.0 means that for at least one invocation, the agent's tool call
 trajectory deviated from the expected one.
+
+## tool_parameter_match
+
+Use this criterion to evaluate how closely an agent's tool arguments match a
+reference. It is available in ADK Python v2.15.0 and uses the experimental
+`ToolArgsMatcher`, which is enabled by default.
+
+`ToolParameterMatchCriterion` accepts a minimum passing `threshold` and a
+`match_type` that controls how ADK pairs expected and actual calls:
+
+- **`IN_ORDER`** (default) pairs each expected call with the next actual call
+  with the same name, skipping unrelated calls. For retries, the first
+  eligible call is scored.
+- **`EXACT`** pairs calls at the same position.
+- **`ANY_ORDER`** pairs calls with the same name to maximize the total score,
+  regardless of call order. Each actual call can be paired only once.
+
+For a pair with matching names, the call score is the mean of the scores for
+the expected arguments. A missing expected argument scores zero. An unpaired
+expected call or a pair with different names also scores zero. ADK averages
+call scores within each invocation, then averages the scored invocations.
+Invocations with no expected tool calls are skipped.
+
+By default, each argument must equal the expected value. Set `args_matcher`
+to configure different matching rules. A semantic matcher uses a model to
+compare argument values, while the default equality matcher needs no model.
+
+For example, require a score of at least 0.75 while allowing tool calls to
+appear out of order:
+
+```json
+{
+  "criteria": {
+    "tool_parameter_match": {
+      "threshold": 0.75,
+      "match_type": "ANY_ORDER"
+    }
+  }
+}
+```
 
 ## response_match_score
 
