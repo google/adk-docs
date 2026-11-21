@@ -30,7 +30,7 @@ cd adk-streaming/app
 go mod init adk-streaming
 ```
 
-Add ADK Go v2 as a dependency:
+Add ADK Go 2.0 as a dependency:
 
 ```bash
 go get google.golang.org/adk/v2
