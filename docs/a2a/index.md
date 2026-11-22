@@ -1,10 +1,13 @@
-# ADK with Agent2Agent (A2A) Protocol
+# Agent2Agent (A2A) Protocol for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
 With Agent Development Kit (ADK), you can build complex multi-agent systems where different agents need to collaborate and interact using [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/)! This section provides a comprehensive guide to building powerful multi-agent systems where agents can communicate and collaborate securely and efficiently.
+
+!!! example "Experimental in Go and Java"
+    A2A support is experimental in ADK Go, ADK Java, and ADK Kotlin.
 
 Navigate through the guides below to learn about ADK's A2A capabilities:
 

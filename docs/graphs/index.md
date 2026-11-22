@@ -16,6 +16,10 @@ deterministic tools and code.
 nodes of different types, including Functions, human input, Tools, and LLM
 capabilities.
 
+!!! example "Experimental in Kotlin"
+
+    The Graph-based agent workflow feature is experimental in ADK Kotlin. It may have limitations and its behavior may change.
+
 Prebuilt ADK [template workflows](/agents/workflow-agents/),
 such as [Sequential Agents](/agents/workflow-agents/sequential-agents/),
 provide a defined process flow control only across a set of agents. You can continue to
@@ -81,8 +85,9 @@ function, and the final agent reports the information.
         name="city_report_agent",
         model="gemini-flash-latest",
         input_schema=CityTime,
-        instruction="""Output following line:
-        It is {CityTime.time_info} in {CityTime.city} right now.""",
+        instruction="""You receive a CityTime with time_info and city fields.
+        Output a single line stating that it is that time in that city right
+        now.""",
     )
 
     def completed_message_function(node_input: str):
@@ -280,7 +285,7 @@ are *not compatible* with the following ADK features:
 
 !!! note "Go: graph workflow API"
 
-    The `workflow` package in ADK Go v2.0.0 is the direct equivalent of the
+    The `workflow` package in ADK Go is the direct equivalent of the
     Python `Workflow` class. Use `workflow.NewFunctionNode` and
     `workflow.NewAgentNode` to define nodes, `workflow.Chain` or
     `workflow.Concat` with `[]workflow.Edge` to wire them, and
@@ -289,7 +294,9 @@ are *not compatible* with the following ADK features:
     `workflow.BoolRoute` matched against `event.Routes`. Fan-in is handled by
     `workflow.NewJoinNode`.
 
-    For advanced routing patterns and fan-out/join examples, see
-    [Build graph routes for workflow agents](/graphs/routes/). For prebuilt
-    higher-level alternatives (sequential, parallel, loop), see
-    [Prebuilt workflow agents](/agents/workflow-agents/).
+## Next steps
+
+For advanced routing patterns and fan-out/join examples, see
+[Build graph routes for workflow agents](/graphs/routes/). For prebuilt
+higher-level alternatives (sequential, parallel, loop), see
+[Prebuilt workflow agents](/agents/workflow-agents/).

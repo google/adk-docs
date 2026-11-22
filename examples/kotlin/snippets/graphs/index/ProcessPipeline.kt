@@ -22,11 +22,11 @@
 // --8<-- [start:process-pipeline]
 @file:OptIn(ExperimentalWorkflowApi::class)
 
-package com.google.adk.kt.examples.graphs.processpipeline
+package com.google.adk.kt.examples.graphs.index.processpipeline
 
+import com.google.adk.kt.annotations.ExperimentalWorkflowApi
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
-import com.google.adk.kt.annotations.ExperimentalWorkflowApi
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.Role
