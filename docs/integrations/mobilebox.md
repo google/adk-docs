@@ -1,6 +1,6 @@
 ---
 catalog_title: Mobilebox
-catalog_description: Drive cloud Android phones, install APKs and read the screen
+catalog_description: Drive cloud Android phones and iPhone simulators, install apps and read the screen
 catalog_icon: /integrations/assets/mobilebox.png
 catalog_tags: ["mcp"]
 ---
@@ -12,18 +12,20 @@ catalog_tags: ["mcp"]
 </div>
 
 The [Mobilebox MCP server](https://mobilebox.dev/android-mcp-server) connects
-your ADK agent to cloud Android phones. The agent creates a phone, reads the
-screen as a numbered list of elements, taps, types and swipes, installs apps
-from an APK URL, and parks or deletes the phone when it is done. The server is
-hosted, so there is no emulator or ADB setup on your machine.
+your ADK agent to cloud Android phones and iPhone simulators. The agent creates
+a phone, reads the screen as a numbered list of elements, taps, types and
+swipes, installs apps from a URL, and parks or deletes the phone when it is
+done. The server is hosted, so there is no emulator, ADB or Xcode setup on your
+machine.
 
 ## Use cases
 
-- **Test your Android app**: Install a build from an APK URL, walk a flow such
-  as sign-up, and check what is on the screen after each step.
+- **Test your mobile app**: Install an Android build from an APK URL, or an iOS
+  simulator build, walk a flow such as sign-up, and check what is on the screen
+  after each step.
 - **Run tasks in Android apps**: Let the agent operate apps that have no web
   version or API, on a fresh phone for each task.
-- **Keep app state between runs**: Park a phone to stop it while keeping its
+- **Keep app state between runs**: Park an Android phone to stop it while keeping its
   apps, data and logins, then start it again in a later session.
 
 ## Prerequisites
@@ -75,7 +77,7 @@ instruction asks the agent to delete its phone when the task is done.
 
 Tool | Description
 ---- | -----------
-`create_phone` | Create a phone, wait until it is ready and return its first screen
+`create_phone` | Create an Android phone or an iPhone simulator (`platform: "ios"`), wait until it is ready and return its first screen
 `list_phones` | List the project's phones with their status
 `start_phone` | Resume a parked phone with its apps, data and logins
 `park_phone` | Stop a phone and keep its apps, data and logins
@@ -83,11 +85,15 @@ Tool | Description
 `observe` | Read the current screen as a numbered element list
 `act` | Run 1 to 20 actions in order: tap, type, swipe, scroll, keys, open or close apps, waits
 `screenshot` | Take a PNG screenshot
-`install_app` | Install an app from a public APK or split-bundle URL
+`install_app` | Install an app from a public download URL (APK, split bundle, or a zipped iOS simulator `.app`)
 `list_apps` | List the apps installed on the phone
 `uninstall_app` | Uninstall an app and delete its data
+`app_logs` | Read an installed app's own log lines, crash reports included
+`push_file` | Put a file on the phone for an app to import
+`pull_file` | Read a file an app wrote to the phone's shared storage
 `set_device` | Set country, city, timezone, locale, GPS and network
 `watch_phone` | Get a link to watch the phone live
+`record_screen` | Record the phone's screen as a video
 `publish_proof` | Publish a run summary with screenshots as Markdown for a pull request
 `request_capability` | Report something the agent needed that Mobilebox does not offer
 
