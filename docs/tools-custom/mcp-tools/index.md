@@ -381,7 +381,7 @@ Unlike the previous local process example, this pattern connects your agent to a
     import com.google.adk.kt.tools.mcp.McpToolset
     import java.time.Duration
 
-    val API_KEY: String = System.getenv("GOOGLE_MAPS_API_KEY") ?: ""
+    val API_KEY: String = System.getenv("GOOGLE_MAPS_API_KEY") ?: error("Set GOOGLE_MAPS_API_KEY")
 
     val rootAgent =
         LlmAgent(
@@ -473,6 +473,9 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
     // Configure Bearer Token Authentication via headers
     val toolset =
         McpToolset.McpToolsetConfig(
+            // Use Sse for servers on the older protocol; prefer StreamableHttp. 
+            // For tokens that expire, use toToolset(headerProvider = { ... }) 
+            // instead of fixed headers.
             sseConnectionParams =
                 McpConnectionParameters.Sse(
                     url = "https://mcp-server.example.com",
