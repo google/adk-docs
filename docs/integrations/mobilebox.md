@@ -96,4 +96,4 @@ Tool | Description
 - [Mobilebox Android MCP server](https://mobilebox.dev/android-mcp-server)
 - [Agent guide: observe, act, verify, park](https://mobilebox.dev/docs/agents)
 - [API reference](https://mobilebox.dev/docs/reference)
-- [Examples on GitHub](https://github.com/fifteenA/mobilebox)
+- [Examples on GitHub](https://github.com/mobilebox-dev/mobilebox)
