@@ -84,7 +84,7 @@ async def call_agent_async(runner, query):
 
     print("USER:", query)
     async for event in events:
-        if event.is_final_response():
+        if event.is_final_response() and event.content and event.content.parts:
             final_response = event.content.parts[0].text
             print("AGENT:", final_response)
 
