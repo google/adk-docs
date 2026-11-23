@@ -58,7 +58,7 @@ The sample defines the remote prime-checking agent in `remote_a2a/check_prime_ag
 --8<-- "examples/typescript/snippets/a2a/a2a_basic/remote_a2a/check_prime_agent.ts"
 ```
 
-Start the ADK API server with the `--a2a` flag on port `8001` (using a separate port from `8000`, which `adk web` uses by default):
+Start the ADK API server with the `--a2a` flag on port `8001` to avoid conflicting with port `8000`, which `adk web` uses by default:
 
 ```bash
 npx adk api_server --a2a --port 8001 remote_a2a
@@ -70,7 +70,7 @@ npx adk api_server --a2a --port 8001 remote_a2a
 
 ### Verify the remote agent card
 
-The A2A protocol requires each remote agent to publish an **agent card** describing its identity, capabilities, and RPC endpoints at `/.well-known/agent-card.json`. When you run `npx adk api_server --a2a`, ADK generates and serves this card automatically at `/a2a/<app_name>/.well-known/agent-card.json` (where `<app_name>` is the agent file or directory name, here `check_prime_agent`).
+The A2A protocol requires each remote agent to publish an **agent card** describing its identity, capabilities, and RPC endpoints at `/.well-known/agent-card.json`. When you run `npx adk api_server --a2a`, ADK generates and serves this card automatically at `/a2a/<app_name>/.well-known/agent-card.json`, where `<app_name>` is the agent file or directory name, such as `check_prime_agent`.
 
 Verify that the card is reachable:
 
@@ -80,11 +80,11 @@ curl http://localhost:8001/a2a/check_prime_agent/.well-known/agent-card.json
 
 !!! note "A2A protocol version"
 
-    ADK TypeScript uses `@a2a-js/sdk` 0.3.x, which expects A2A 0.3 agent cards (with top-level `url` and `preferredTransport` fields).
+    ADK TypeScript uses `@a2a-js/sdk` 0.3.x, which expects A2A 0.3 agent cards that include top-level `url` and `preferredTransport` fields.
 
 ## Connect to the remote agent
 
-Import `RemoteA2AAgent` from `@google/adk/a2a` (or from the top-level `@google/adk` package) and pass the remote agent's `name`, `description`, and `agentCard`:
+Import `RemoteA2AAgent` from `@google/adk/a2a`, or from the top-level `@google/adk` package, and pass the remote agent's `name`, `description`, and `agentCard`:
 
 ```typescript title="a2a_basic/agent.ts"
 --8<-- "examples/typescript/snippets/a2a/a2a_basic/agent.ts:remote_agent"
@@ -98,7 +98,7 @@ Pass `primeAgent` into `subAgents` on your local `LlmAgent` just like any local 
 
 The `agentCard` property accepts three forms:
 
-- **HTTP or HTTPS URL:** `RemoteA2AAgent` resolves the agent card lazily on first invocation. By default, fetched cards must serve RPC endpoints over HTTPS (or HTTP on loopback hosts such as `localhost`) and share the same origin as the card URL. You can relax these checks for trusted internal deployments with `resolveAgentCardOptions`.
+- **HTTP or HTTPS URL:** Resolves the agent card lazily on first invocation using `RemoteA2AAgent`. By default, fetched cards must serve RPC endpoints over HTTPS, or HTTP on loopback hosts such as `localhost`, and share the same origin as the card URL. You can relax these checks for trusted internal deployments with `resolveAgentCardOptions`.
 - **Local file path or `file://` URL:** Reads the agent card JSON from disk.
 - **Pre-loaded `AgentCard` object:** Uses an in-memory card object directly without making a network fetch.
 
@@ -114,21 +114,21 @@ npx adk web
 
 Open `http://localhost:8000` in your browser, select `agent` from the agent selector, and try these prompts:
 
-**Local dice rolling (uses `roll_agent`):**
+**Local dice rolling using `roll_agent`:**
 
 ```text
 User: Roll a 6-sided die
 Agent: I rolled a 6-sided die and got 4.
 ```
 
-**Remote prime checking (delegates to `prime_agent` over A2A):**
+**Remote prime checking delegated to `prime_agent` over A2A:**
 
 ```text
 User: Is 7 a prime number?
 Agent: Yes, 7 is a prime number.
 ```
 
-**Combined workflow (local `roll_agent` followed by remote `prime_agent`):**
+**Combined workflow using local `roll_agent` followed by remote `prime_agent`:**
 
 ```text
 User: Roll a 10-sided die and check if the result is prime.
@@ -143,7 +143,7 @@ You can inspect or modify outgoing A2A requests and incoming A2A stream events u
 --8<-- "examples/typescript/snippets/a2a/a2a_basic/callbacks.ts:callbacks"
 ```
 
-- **`beforeRequestCallbacks`**: Runs before each request is sent to the remote agent. Mutate `params` in place to adjust metadata or message configuration, or return a rejected `Promise` to abort the request.
+- **`beforeRequestCallbacks`**: Runs before sending each request to the remote agent. Mutate `params` in place to adjust metadata or message configuration, or return a rejected `Promise` to abort the request.
 - **`afterRequestCallbacks`**: Runs after each A2A response event arrives and before ADK converts it to an ADK `Event`. Return a rejected `Promise` to stop further processing.
 
 For all configuration options—including custom `client` and `clientFactory` overrides, `messageSendConfig`, and `resolveAgentCardOptions`—see the [`RemoteA2AAgentConfig` API reference](../api-reference/typescript/interfaces/RemoteA2AAgentConfig.html).
