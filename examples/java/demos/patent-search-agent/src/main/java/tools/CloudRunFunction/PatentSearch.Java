@@ -48,7 +48,9 @@ public class PatentSearch implements HttpFunction {
     JsonArray jsonArray = new JsonArray(); // Create a JSON array
      try (Connection connection = dataSource.getConnection()) {
        //Retrieve Vector Search by text (converted to embeddings) using "Cosine Similarity" method
-      try (PreparedStatement statement = connection.prepareStatement("SELECT id || ' - ' || title as title, abstract FROM patents_data ORDER BY abstract_embeddings <=> embedding('text-embedding-005', '" + searchText + "' )::vector LIMIT 10")) {
+       //The search text is bound as a parameter (?). Never concatenate request data into SQL.
+      try (PreparedStatement statement = connection.prepareStatement("SELECT id || ' - ' || title as title, abstract FROM patents_data ORDER BY abstract_embeddings <=> embedding('text-embedding-005', ?)::vector LIMIT 10")) {
+        statement.setString(1, searchText);
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
             String title = resultSet.getString("title");
