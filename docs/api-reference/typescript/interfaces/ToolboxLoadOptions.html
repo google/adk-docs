@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ToolboxLoadOptions | ADK for TypeScript: API Reference - v2.4.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ToolboxLoadOptions | ADK for TypeScript: API Reference - v2.5.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
 /* typedoc-theme-fresh */
 
 /* @view-transition {
@@ -377,7 +377,7 @@ code.tsd-tag {
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">ToolboxLoadOptions</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#authtokengetters">authTokenGetters</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#boundparams">boundParams</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/toolbox_toolset.ts#L45">core/src/tools/toolbox_toolset.ts:45</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/b1b94c0d501c3d1eb028aa413d783d6573f6c785/core/src/tools/toolbox_toolset.ts#L45">core/src/tools/toolbox_toolset.ts:45</a></li></ul></aside>
 <div style="margin-top: 64px"></div>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -385,26 +385,26 @@ code.tsd-tag {
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="authtokengetters"><code class="tsd-tag">Optional</code><span>auth<wbr/>Token<wbr/>Getters</span><a href="#authtokengetters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">authTokenGetters</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
-<div class="tsd-comment tsd-typography"><p>Mapping of authentication service names to callables that return the
+<div class="tsd-comment tsd-typography"><p>Mapping of authentication service names to functions that return the
 corresponding authentication token.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/toolbox_toolset.ts#L50">core/src/tools/toolbox_toolset.ts:50</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/b1b94c0d501c3d1eb028aa413d783d6573f6c785/core/src/tools/toolbox_toolset.ts#L50">core/src/tools/toolbox_toolset.ts:50</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="boundparams"><code class="tsd-tag">Optional</code><span>bound<wbr/>Params</span><a href="#boundparams" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">boundParams</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div>
-<div class="tsd-comment tsd-typography"><p>Mapping of parameter names to bind to fixed values or callables that
+<div class="tsd-comment tsd-typography"><p>Mapping of parameter names to bind to fixed values or functions that
 produce values as needed.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/tools/toolbox_toolset.ts#L56">core/src/tools/toolbox_toolset.ts:56</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/b1b94c0d501c3d1eb028aa413d783d6573f6c785/core/src/tools/toolbox_toolset.ts#L56">core/src/tools/toolbox_toolset.ts:56</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-page-navigation">
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#authtokengetters"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>auth<wbr/>Token<wbr/>Getters</span></a><a href="#boundparams"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>bound<wbr/>Params</span></a></div></details></div></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.4.0</a>
+<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.5.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>
