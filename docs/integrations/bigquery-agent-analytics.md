@@ -396,7 +396,7 @@ per-event-type views. The three HITL completion events have no dedicated views.
     core, so add the integrations artifact:
 
     ```kotlin title="build.gradle.kts"
-    implementation("com.google.adk:google-adk-kotlin-integrations:1.5.0")
+    implementation("com.google.adk:google-adk-kotlin-integrations:1.6.0")
     ```
 
     ```kotlin title="BigQueryAnalyticsExample.kt"

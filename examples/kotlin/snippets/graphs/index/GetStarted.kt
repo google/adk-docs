@@ -21,11 +21,11 @@
 // --8<-- [start:get-started]
 @file:OptIn(ExperimentalWorkflowApi::class)
 
-package com.google.adk.kt.examples.graphs.index.getstarted
+package com.google.adk.kt.examples.graphs.getstarted
 
-import com.google.adk.kt.annotations.ExperimentalWorkflowApi
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
+import com.google.adk.kt.annotations.ExperimentalWorkflowApi
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.Role
@@ -61,7 +61,7 @@ val cityTimeSchema =
         required = listOf("time_info", "city"),
     )
 
-// Simulates returning the current time in the specified city.
+// Simulate returning the current time in the specified city.
 val lookupTimeFunction =
     node<String, Map<String, String>>(
         name = "lookup_time_function",
@@ -70,6 +70,7 @@ val lookupTimeFunction =
         mapOf("time_info" to "10:10 AM", "city" to nodeInput.trim())
     }
 
+// The lookup result arrives as this agent's input, as JSON text.
 val cityReportAgent =
     LlmAgent(
         name = "city_report_agent",
@@ -78,9 +79,8 @@ val cityReportAgent =
         instruction =
             Instruction(
                 """
-                You receive a CityTime with time_info and city fields.
-                Output a single line stating that it is that time in that city right
-                now.
+                Output the following line, using the time_info and city from the input:
+                It is <time_info> in <city> right now.
                 """.trimIndent(),
             ),
     )

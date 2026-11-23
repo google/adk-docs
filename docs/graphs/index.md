@@ -133,12 +133,11 @@ function, and the final agent reports the information.
 
 === "Kotlin"
 
-    In ADK Kotlin, the `workflow` builder declares the graph's edges,
-    and `chain` connects `Start` and each node in order. An `LlmAgent` is a
-    node, so it goes straight into the graph. The `node()` function wraps a
-    code step as a typed node and can set its `inputSchema` and
-    `outputSchema` contracts. Each node's output is passed to the next node
-    as its input, so you do not need to write to session state.
+    In ADK Kotlin, the `workflow` function builds a `Workflow` from the edges
+    its block declares, and `chain` connects `Start` and each node in order.
+    An `LlmAgent` is a node, and `node` wraps a function as a node with a
+    typed input and output. Each node's output is passed to the next node as
+    its input; an agent node receives its input as a user message.
 
     ```kotlin
     --8<-- "examples/kotlin/snippets/graphs/index/GetStarted.kt:get-started"
@@ -250,11 +249,11 @@ translated into a graph-based agent:
 
 === "Kotlin"
 
-    In ADK Kotlin, a router node selects its routes by setting
+    In ADK Kotlin, a router node selects its outgoing edges by setting
     `context.routes`, and a `route { }` block maps each route value to the
-    node that handles it. Selecting more than one route dispatches to every
-    matching branch, which lets the classifier in this example return more
-    than one category.
+    node that handles it. Setting more than one route runs every matching
+    branch, which lets the classifier in this example return more than one
+    category.
 
     ```kotlin
     --8<-- "examples/kotlin/snippets/graphs/index/ProcessPipeline.kt:process-pipeline"
