@@ -52,7 +52,6 @@ executing local tool code.
   [Google Cloud Agent Platform](/get-started/google-cloud/), by setting
   `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`, `GOOGLE_CLOUD_PROJECT`, and
   `GOOGLE_CLOUD_LOCATION`, or the
-  [Gemini API](/agents/models/google-gemini/).
 - ADK installed for your target language. See the
   [ADK quickstart](/get-started/) for installation instructions.
 
