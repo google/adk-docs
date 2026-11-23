@@ -228,7 +228,7 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         mcpTools = tool.FilterToolset(mcpTools, tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}))
 
         // 2. Initialize Gemini model.LLM instance
-        llm, err := gemini.NewModel(ctx, "gemini-2.0-flash", nil)
+        llm, err := gemini.NewModel(ctx, "gemini-flash-latest", nil)
         if err != nil {
             return nil, fmt.Errorf("failed to create gemini model: %w", err)
         }
