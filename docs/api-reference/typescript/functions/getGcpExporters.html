@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>getGcpExporters | ADK for TypeScript: API Reference - v2.4.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>getGcpExporters | ADK for TypeScript: API Reference - v2.5.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
 /* typedoc-theme-fresh */
 
 /* @view-transition {
@@ -377,17 +377,29 @@ code.tsd-tag {
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="getgcpexporters"><span class="tsd-kind-call-signature">getGcpExporters</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/OtelExportersConfig.html" class="tsd-signature-type tsd-kind-interface">OtelExportersConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/OTelHooks.html" class="tsd-signature-type tsd-kind-interface">OTelHooks</a><span class="tsd-signature-symbol">&gt;</span><a href="#getgcpexporters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns OTel processors and readers configured for export to Google Cloud.</p>
+<p>Sends traces, metrics, and logs via OTLP over HTTP to <a href="http://telemetry.googleapis.com">telemetry.googleapis.com</a>.
+On Agent Runtime (<code>GOOGLE_CLOUD_AGENT_ENGINE_ID</code> set) the metric reader is
+request-driven and starts no background timer. Custom servers calling
+<code>getGcpExporters</code> with <a href="maybeSetOtelProviders.html" class="tsd-kind-function">maybeSetOtelProviders</a> on Agent Runtime must
+wrap each request with <a href="agentRuntimeRequestHooks.html" class="tsd-kind-function">agentRuntimeRequestHooks</a> to drive the metric
+reader and flush the span and log processors; without those hooks, the reader
+never collects except on <code>forceFlush()</code> or <code>shutdown()</code>.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/OtelExportersConfig.html" class="tsd-signature-type tsd-kind-interface">OtelExportersConfig</a><span class="tsd-signature-symbol"> = {}</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/OTelHooks.html" class="tsd-signature-type tsd-kind-interface">OTelHooks</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/OtelExportersConfig.html" class="tsd-signature-type tsd-kind-interface">OtelExportersConfig</a><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>Configuration options for enabled signals and project.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/OTelHooks.html" class="tsd-signature-type tsd-kind-interface">OTelHooks</a><span class="tsd-signature-symbol">&gt;</span></h4><p>OTelHooks containing configured processors and readers.</p>
+<aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/telemetry/google_cloud.ts#L63">core/src/telemetry/google_cloud.ts:63</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/b1b94c0d501c3d1eb028aa413d783d6573f6c785/core/src/telemetry/export/google_cloud.ts#L926">core/src/telemetry/export/google_cloud.ts:926</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu"></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.4.0</a>
+<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.5.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>

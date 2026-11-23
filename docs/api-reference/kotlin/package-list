@@ -12,6 +12,7 @@ com.google.adk.kt.apps
 com.google.adk.kt.artifacts
 com.google.adk.kt.auth
 com.google.adk.kt.callbacks
+com.google.adk.kt.classifiers
 com.google.adk.kt.collections
 com.google.adk.kt.environment
 com.google.adk.kt.events

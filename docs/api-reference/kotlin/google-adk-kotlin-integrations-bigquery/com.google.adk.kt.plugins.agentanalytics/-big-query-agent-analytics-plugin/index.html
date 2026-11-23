@@ -47,7 +47,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">1.5.0
+        <div class="library-version" id="library-version">1.6.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -102,7 +102,7 @@
   <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-integrations-bigquery</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.plugins.agentanalytics</a><span class="delimiter">/</span><span class="current">BigQueryAgentAnalyticsPlugin</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Big</span><wbr><span>Query</span><wbr><span>Agent</span><wbr><span>Analytics</span><wbr><span><span>Plugin</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">BigQueryAgentAnalyticsPlugin</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">config<span class="token operator">: </span><a href="../-big-query-logger-config/index.html">BigQueryLoggerConfig</a><span class="token punctuation">, </span></span><span class="parameter ">bigQuery<span class="token operator">: </span><a href="https://javadoc.io/doc/com.google.cloud/google-cloud-bigquery/2.68.0/com/google/cloud/bigquery/BigQuery.html">BigQuery</a><span class="token operator"> = </span>createBigQuery(config)<span class="token punctuation">, </span></span><span class="parameter ">ioContext<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines/-coroutine-context/index.html">CoroutineContext</a><span class="token operator"> = </span>Dispatchers.IO<span class="token punctuation">, </span></span><span class="parameter ">timeSource<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-time-source/index.html">TimeSource</a><span class="token operator"> = </span>TimeSource.Monotonic</span></span><span class="token punctuation">)</span> : <a href="../../../google-adk-kotlin-core/com.google.adk.kt.plugins/-plugin/index.html">Plugin</a></div><p class="paragraph">An ADK <a href="../../../google-adk-kotlin-core/com.google.adk.kt.plugins/-plugin/index.html">Plugin</a> that records agent execution events to a BigQuery table. If the destination table does not exist, the plugin automatically creates and configures the partitioned table on first use. Row inserts currently execute synchronously on the invocation path, blocking until the BigQuery write completes, so partial streaming responses are not logged.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">BigQueryAgentAnalyticsPlugin</a> : <a href="../../../google-adk-kotlin-core/com.google.adk.kt.plugins/-plugin/index.html">Plugin</a></div><p class="paragraph">An ADK <a href="../../../google-adk-kotlin-core/com.google.adk.kt.plugins/-plugin/index.html">Plugin</a> that records agent execution events to a BigQuery table. If the destination table does not exist, the plugin automatically creates and configures the partitioned table on first use. Rows are queued and written in the background in batches with the BigQuery Storage Write API; call <a href="close.html">close</a> when done to write the rows still queued.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -119,7 +119,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">config<span class="token operator">: </span><a href="../-big-query-logger-config/index.html">BigQueryLoggerConfig</a><span class="token punctuation">, </span></span><span class="parameter ">bigQuery<span class="token operator">: </span><a href="https://javadoc.io/doc/com.google.cloud/google-cloud-bigquery/2.68.0/com/google/cloud/bigquery/BigQuery.html">BigQuery</a><span class="token operator"> = </span>createBigQuery(config)<span class="token punctuation">, </span></span><span class="parameter ">ioContext<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines/-coroutine-context/index.html">CoroutineContext</a><span class="token operator"> = </span>Dispatchers.IO<span class="token punctuation">, </span></span><span class="parameter ">timeSource<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-time-source/index.html">TimeSource</a><span class="token operator"> = </span>TimeSource.Monotonic</span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">config<span class="token operator">: </span><a href="../-big-query-logger-config/index.html">BigQueryLoggerConfig</a><span class="token punctuation">, </span></span><span class="parameter ">bigQuery<span class="token operator">: </span><a href="https://javadoc.io/doc/com.google.cloud/google-cloud-bigquery/2.68.0/com/google/cloud/bigquery/BigQuery.html">BigQuery</a><span class="token operator"> = </span>createBigQuery(config)<span class="token punctuation">, </span></span><span class="parameter ">ioContext<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.coroutines/-coroutine-context/index.html">CoroutineContext</a><span class="token operator"> = </span>Dispatchers.IO<span class="token punctuation">, </span></span><span class="parameter ">timeSource<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.time/-time-source/index.html">TimeSource</a><span class="token operator"> = </span>TimeSource.Monotonic</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates a plugin that logs to the table <a href="../../../google-adk-kotlin-integrations-bigquery/com.google.adk.kt.plugins.agentanalytics/-big-query-agent-analytics-plugin/--root--.html">config</a> names.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -311,7 +311,37 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Writes the rows still queued, waiting up to <a href="../-big-query-logger-config/shutdown-timeout.html">BigQueryLoggerConfig.shutdownTimeout</a>, and releases the write client. The next row logged starts a new one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2094986109%2FFunctions%2F917069105" anchor-label="flush" id="-2094986109%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flush.html"><span><span>flush</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2094986109%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="flush.html"><span class="token function">flush</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Waits until every row logged before the call is written to BigQuery or dropped.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="520160825%2FFunctions%2F917069105" anchor-label="getDropStats" id="520160825%2FFunctions%2F917069105" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":google-adk-kotlin-integrations-bigquery/main" data-filterable-set=":google-adk-kotlin-integrations-bigquery/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-drop-stats.html"><span>get</span><wbr><span>Drop</span><wbr><span><span>Stats</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="520160825%2FFunctions%2F917069105"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-integrations-bigquery/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-drop-stats.html"><span class="token function">getDropStats</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns how many rows were dropped so far for each reason, such as <code class="lang-kotlin">queue_full</code> or <code class="lang-kotlin">retry_exhausted</code>. Every reason is listed, even one with no drops.</p></div></div></div>
                 </div>
               </div>
             </div>
