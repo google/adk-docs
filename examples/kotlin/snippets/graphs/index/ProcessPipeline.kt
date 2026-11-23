@@ -15,9 +15,9 @@
  */
 
 // A prompt-based agent turned into a graph: one agent classifies the message,
-// a router node selects the categories as routes, and the graph dispatches to
-// the matching handler(s). Because the classifier may return more than one
-// category, the router selects a LIST of routes and every matching branch fires.
+// a router node emits the categories as routes, and the graph dispatches to the
+// matching handler(s). Because the classifier may return more than one
+// category, the router emits a list of routes, and every matching branch runs.
 
 // --8<-- [start:process-pipeline]
 @file:OptIn(ExperimentalWorkflowApi::class)

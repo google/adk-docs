@@ -153,7 +153,7 @@ export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
     JVM-only.
 
     ```kotlin
-    implementation("com.google.adk:google-adk-kotlin-integrations-anthropic:1.5.0")
+    implementation("com.google.adk:google-adk-kotlin-integrations-anthropic:1.6.0")
     ```
 
     Create a `Claude` instance and pass it to your agent. When you omit

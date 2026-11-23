@@ -49,6 +49,8 @@ snippets/integrations/BigQueryAnalyticsExample.kt
 snippets/agents/workflow-agents/LoopAgentDocImprovAgent.kt
 snippets/agents/workflow-agents/SequentialAgentExample.kt
 snippets/agents/workflow-agents/ParallelAgentWebResearch.kt
+snippets/graphs/index/GetStarted.kt
+snippets/graphs/index/ProcessPipeline.kt
 snippets/graphs/RetryExample.kt
 snippets/graphs/routes/Branches.kt
 snippets/graphs/routes/FanOutJoin.kt
