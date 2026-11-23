@@ -70,7 +70,7 @@ npx adk api_server --a2a --port 8001 remote_a2a
 
 ### Verify the remote agent card
 
-The A2A protocol requires each remote agent to publish an **agent card** describing its identity, capabilities, and RPC endpoints at `/.well-known/agent-card.json`. When you run `npx adk api_server --a2a`, ADK generates and serves this card automatically at `/a2a/<agent_name>/.well-known/agent-card.json`.
+The A2A protocol requires each remote agent to publish an **agent card** describing its identity, capabilities, and RPC endpoints at `/.well-known/agent-card.json`. When you run `npx adk api_server --a2a`, ADK generates and serves this card automatically at `/a2a/<app_name>/.well-known/agent-card.json` (where `<app_name>` is the agent file or directory name, here `check_prime_agent`).
 
 Verify that the card is reachable:
 
@@ -112,7 +112,7 @@ In a separate terminal from the `a2a_basic/` directory, start the ADK web interf
 npx adk web
 ```
 
-Open `http://localhost:8000` in your browser, select `agent` (or `root_agent`), and try these prompts:
+Open `http://localhost:8000` in your browser, select `agent` from the agent selector, and try these prompts:
 
 **Local dice rolling (uses `roll_agent`):**
 
