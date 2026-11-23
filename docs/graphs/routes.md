@@ -552,7 +552,8 @@ accomplish this goal.
 
     To nest a graph without wrapping it in an agent, create the node directly
     with `workflow.NewWorkflowNode`. Its output is the output of the inner
-    graph's terminal node:
+    graph's single terminal node (if multiple terminal nodes produce output,
+    the workflow fails with `workflow.ErrMultipleOutputs`):
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:workflow-node"
