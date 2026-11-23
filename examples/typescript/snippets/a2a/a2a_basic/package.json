@@ -17,12 +17,12 @@
   "license": "Apache-2.0",
   "type": "module",
   "devDependencies": {
-    "@google/adk-devtools": "^2.4.0",
+    "@google/adk-devtools": "^2.5.0",
     "@types/node": "^20.14.2",
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@google/adk": "^2.4.0",
-    "zod": "^4.2.1"
+    "@google/adk": "^2.5.0",
+    "zod": "^4.6.7"
   }
 }

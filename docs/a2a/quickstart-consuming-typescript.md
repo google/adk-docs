@@ -1,7 +1,7 @@
 # Quickstart: Consuming a remote agent via A2A
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.5.0</span>
 </div>
 
 This quickstart shows you how to consume a remote agent from an ADK TypeScript agent using the [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/). You use `RemoteA2AAgent` to treat a remote A2A service as a standard sub-agent inside your local ADK agent tree.
@@ -168,7 +168,7 @@ In addition to standard `BaseAgentConfig` fields (`name`, `description`, `subAge
 | `agentCard` | `AgentCard \| string` | `undefined` | Pre-loaded `AgentCard` object, HTTP(S) URL, `file://` URL, or local filesystem path. Either `agentCard` or `client` is required. |
 | `resolveAgentCardOptions` | `ResolveAgentCardOptions` | `{ allowInsecureRpc: false, allowCrossOriginRpc: false }` | Controls validation of RPC URLs declared inside a fetched card. |
 | `client` | `Client` | `undefined` | Pre-initialized `@a2a-js/sdk` `Client` instance for custom transport or connection pooling. |
-| `clientFactory` | `ClientFactory` | Default trace-propagating factory | Custom factory used to construct the A2A `Client` from the resolved `AgentCard`. |
+| `clientFactory` | `ClientFactory` | Trace-propagating `ClientFactory` (`v2.5.0+`; plain `new ClientFactory()` in earlier versions) | Custom factory used to construct the A2A `Client` from the resolved `AgentCard`. |
 | `messageSendConfig` | `MessageSendConfiguration` | `undefined` | Default A2A message send configuration (such as accepted output modes or blocking behavior). |
 | `beforeRequestCallbacks` | `BeforeA2ARequestCallback[]` | `undefined` | Callbacks invoked before sending each A2A request. |
 | `afterRequestCallbacks` | `AfterA2ARequestCallback[]` | `undefined` | Callbacks invoked after receiving each raw A2A stream event. |
