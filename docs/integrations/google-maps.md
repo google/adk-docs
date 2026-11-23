@@ -48,10 +48,10 @@ executing local tool code.
   or
   [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-with-google-maps#supported-models)
   documentation.
-- Credentials configured for either
+- Credentials configured for 
   [Google Cloud Agent Platform](/get-started/google-cloud/), by setting
   `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`, `GOOGLE_CLOUD_PROJECT`, and
-  `GOOGLE_CLOUD_LOCATION`, or the
+  `GOOGLE_CLOUD_LOCATION`.
 - ADK installed for your target language. See the
   [ADK quickstart](/get-started/) for installation instructions.
 
