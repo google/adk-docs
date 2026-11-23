@@ -27,45 +27,32 @@ The sample consists of three agents:
 
 ## Set up the project
 
-Before you start, make sure you have the following installed:
+A2A client support is built into `@google/adk`, so you do not need to install a separate A2A package. If you have not set up an ADK TypeScript environment yet, follow the [TypeScript Quickstart for ADK](../get-started/typescript.md) to install Node.js, initialize your project, and configure `GEMINI_API_KEY` in a `.env` file.
 
-- Node.js 24.13.0 or later
-- npm 11.8.0 or later
-
-A2A client support is built into `@google/adk` (you do not need to install a separate A2A package). Create a project directory and install the ADK libraries:
+Clone the repository and navigate to the [`a2a_basic` sample](https://github.com/google/adk-docs/tree/main/examples/typescript/snippets/a2a/a2a_basic), then install dependencies:
 
 ```bash
-mkdir -p a2a_basic/remote_a2a
-cd a2a_basic
-npm init --yes
-npm pkg set type="module"
-npm pkg set main="agent.ts"
-npm install @google/adk zod
-npm install -D @google/adk-devtools
+cd examples/typescript/snippets/a2a/a2a_basic
+npm install
 ```
 
-Set your Gemini API key in a `.env` file in the `a2a_basic/` directory:
-
-```bash
-echo 'GEMINI_API_KEY="YOUR_API_KEY"' > .env
-```
-
-The complete sample files live in [`examples/typescript/snippets/a2a/a2a_basic`](https://github.com/google/adk-docs/tree/main/examples/typescript/snippets/a2a/a2a_basic):
+The sample directory contains the following files:
 
 ```text
 a2a_basic/
 ├── remote_a2a/
 │   └── check_prime_agent.ts   # remote agent exposed over A2A
 ├── agent.ts                   # local root agent consuming the remote agent
+├── callbacks.ts               # request callback and metadata example
 ├── package.json
-└── .env
+└── tsconfig.json
 ```
 
 ## Expose and start the remote agent server
 
 To test consuming a remote agent locally, start a separate A2A server that hosts `check_prime_agent`. Because A2A is a wire protocol, the remote server can run in any ADK language or any A2A-compatible framework.
 
-Create `remote_a2a/check_prime_agent.ts` with the prime-checking agent:
+The sample defines the remote prime-checking agent in `remote_a2a/check_prime_agent.ts`:
 
 ```typescript title="a2a_basic/remote_a2a/check_prime_agent.ts"
 --8<-- "examples/typescript/snippets/a2a/a2a_basic/remote_a2a/check_prime_agent.ts"
@@ -77,9 +64,9 @@ Start the ADK API server with the `--a2a` flag on port `8001` (using a separate 
 npx adk api_server --a2a --port 8001 remote_a2a
 ```
 
-!!! warning "Local development authentication"
+!!! note "Local development only"
 
-    When you omit `--a2a_auth_token` (and `ADK_A2A_AUTH_TOKEN`), `adk api_server --a2a` serves the A2A endpoints without authentication for local development. Always configure authentication before exposing an A2A server beyond localhost.
+    This command starts an unauthenticated local server on `localhost` for testing. Configure authentication before exposing an A2A server beyond your local machine.
 
 ### Verify the remote agent card
 
@@ -159,20 +146,7 @@ You can inspect or modify outgoing A2A requests and incoming A2A stream events u
 - **`beforeRequestCallbacks`**: Runs before each request is sent to the remote agent. Mutate `params` in place to adjust metadata or message configuration, or return a rejected `Promise` to abort the request.
 - **`afterRequestCallbacks`**: Runs after each A2A response event arrives and before ADK converts it to an ADK `Event`. Return a rejected `Promise` to stop further processing.
 
-### Configuration options (`RemoteA2AAgentConfig`)
-
-In addition to standard `BaseAgentConfig` fields (`name`, `description`, `subAgents`, `beforeAgentCallback`, `afterAgentCallback`), `RemoteA2AAgent` accepts the following options:
-
-| Option | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `agentCard` | `AgentCard \| string` | `undefined` | Pre-loaded `AgentCard` object, HTTP(S) URL, `file://` URL, or local filesystem path. Either `agentCard` or `client` is required. |
-| `resolveAgentCardOptions` | `ResolveAgentCardOptions` | `{ allowInsecureRpc: false, allowCrossOriginRpc: false }` | Controls validation of RPC URLs declared inside a fetched card. |
-| `client` | `Client` | `undefined` | Pre-initialized `@a2a-js/sdk` `Client` instance for custom transport or connection pooling. |
-| `clientFactory` | `ClientFactory` | Trace-propagating `ClientFactory` (`v2.5.0+`; plain `new ClientFactory()` in earlier versions) | Custom factory used to construct the A2A `Client` from the resolved `AgentCard`. |
-| `messageSendConfig` | `MessageSendConfiguration` | `undefined` | Default A2A message send configuration (such as accepted output modes or blocking behavior). |
-| `beforeRequestCallbacks` | `BeforeA2ARequestCallback[]` | `undefined` | Callbacks invoked before sending each A2A request. |
-| `afterRequestCallbacks` | `AfterA2ARequestCallback[]` | `undefined` | Callbacks invoked after receiving each raw A2A stream event. |
-| `metadata` | `Record<string, unknown>` | `context.a2aMetadata` | Request-level metadata attached to outgoing A2A requests. |
+For all configuration options—including custom `client` and `clientFactory` overrides, `messageSendConfig`, and `resolveAgentCardOptions`—see the [`RemoteA2AAgentConfig` API reference](../api-reference/typescript/interfaces/RemoteA2AAgentConfig.html).
 
 ## Next steps
 
