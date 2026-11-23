@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v2.5.0</span>
 </div>
 
-This quickstart shows you how to consume a remote agent from an ADK TypeScript agent using the [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/). You use `RemoteA2AAgent` to treat a remote A2A service as a standard sub-agent inside your local ADK agent tree.
+This quickstart shows you how to consume a remote agent from an Agent Development Kit (ADK) TypeScript agent using the [Agent2Agent (A2A) protocol](https://a2a-protocol.org/). You use `RemoteA2AAgent` to treat a remote A2A service as a standard sub-agent inside your local ADK agent tree.
 
 ## Overview
 
@@ -50,7 +50,7 @@ a2a_basic/
 
 ## Expose and start the remote agent server
 
-To test consuming a remote agent locally, start a separate A2A server that hosts `check_prime_agent`. Because A2A is a wire protocol, the remote server can run in any ADK language or any A2A-compatible framework.
+To test consuming a remote agent locally, start a separate A2A server that hosts `check_prime_agent`. Because A2A is a wire protocol, the remote server can run in ADK Python, ADK TypeScript, ADK Go, ADK Java, or any A2A-compatible framework.
 
 The sample defines the remote prime-checking agent in `remote_a2a/check_prime_agent.ts`:
 
@@ -80,7 +80,7 @@ curl http://localhost:8001/a2a/check_prime_agent/.well-known/agent-card.json
 
 !!! note "A2A protocol version"
 
-    ADK for TypeScript uses `@a2a-js/sdk` 0.3.x, which expects A2A 0.3 agent cards (with top-level `url` and `preferredTransport` fields).
+    ADK TypeScript uses `@a2a-js/sdk` 0.3.x, which expects A2A 0.3 agent cards (with top-level `url` and `preferredTransport` fields).
 
 ## Connect to the remote agent
 
@@ -151,5 +151,5 @@ For all configuration options—including custom `client` and `clientFactory` ov
 ## Next steps
 
 - [**Introduction to A2A**](./intro.md): Learn how A2A agent cards, tasks, and message exchange work in ADK.
-- [**A2A Protocol overview**](./index.md): Explore exposing and consuming quickstarts across all supported ADK languages.
+- [**A2A protocol overview**](./index.md): Explore exposing and consuming quickstarts across all supported ADK languages.
 - [**TypeScript Quickstart for ADK**](../get-started/typescript.md): Review project setup, CLI commands, and local debugging for ADK TypeScript.
