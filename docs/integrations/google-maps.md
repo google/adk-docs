@@ -349,7 +349,11 @@ required citations and links:
 ```
 
 Use the `title` and `uri` values from each Maps grounding chunk to display
-attributed Google Maps links immediately after the generated answer.
+Google Maps source links in accordance with the display and attribution
+requirements for the
+[Gemini API](https://ai.google.dev/gemini-api/docs/maps-grounding#service-usage-requirements)
+or
+[Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-with-google-maps#service-usage-requirements).
 
 ## Available tools
 
