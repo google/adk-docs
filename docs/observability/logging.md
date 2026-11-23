@@ -95,7 +95,8 @@ response content.
     full content of user prompts and agent responses in logs and, depending on
     the value and ADK language, in exported trace spans. This is useful for
     debugging but may capture sensitive data or PII. In production, set this to
-    false or ensure you have appropriate data handling policies in place.
+    debugging but may capture sensitive data or PII. In production, set this to
+    `NO_CONTENT` or ensure you have appropriate data handling policies in place.
 
 ### OTLP export in ADK Web
 
