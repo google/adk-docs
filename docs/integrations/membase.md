@@ -146,5 +146,5 @@ words.
 ## Additional resources
 
 - [`membase-google-adk` on PyPI](https://pypi.org/project/membase-google-adk/)
-- [Source and full options](https://github.com/unibaseio/membase/tree/main/integrations/google-adk)
+- [Source and full options](https://github.com/membaseai/membase/tree/main/integrations/google-adk)
 - [Membase documentation](https://docs.membase.com)
