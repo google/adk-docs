@@ -935,6 +935,26 @@ artifact in a later turn.
     Make sure the `runner.Config` for this agent includes an
     `ArtifactService`; otherwise artifact listing and loading will fail.
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.LoadArtifactsTool;
+
+    LlmAgent rootAgent =
+        LlmAgent.builder()
+            .name("artifact_reader")
+            .model("gemini-flash-latest")
+            .instruction(
+                "Answer questions about available user files. "
+                    + "Call load_artifacts before answering when you need file contents.")
+            .tools(LoadArtifactsTool.INSTANCE)
+            .build();
+    ```
+
+    Make sure the `Runner` for this agent is configured with an
+    `artifactService`; otherwise artifact listing and loading will fail.
+
 === "Kotlin"
 
     ```kotlin
