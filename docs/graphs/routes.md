@@ -340,9 +340,9 @@ A sequential route runs each node once, in the listed order.
     ```
 
     For complete, runnable routing examples see:
-    [string routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/string),
-    [int / multi-value routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/int),
-    and [LLM-driven routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/llm).
+    [string routing](https://github.com/google/adk-go/tree/main/examples/workflow/routing/string),
+    [int / multi-value routing](https://github.com/google/adk-go/tree/main/examples/workflow/routing/int),
+    and [LLM-driven routing](https://github.com/google/adk-go/tree/main/examples/workflow/routing/llm).
 
     !!! note "Prebuilt agents: encoding routing in state"
 
@@ -418,7 +418,7 @@ before passing results to the next step.
 
     `workflow.EdgeBuilder` makes the fan-out / fan-in wiring concise with its
     dedicated `AddFanOut` and `AddFanIn` helpers (as shown in the
-    [complex workflow example](https://github.com/google/adk-go/tree/v2/examples/workflow/complex)):
+    [complex workflow example](https://github.com/google/adk-go/tree/main/examples/workflow/complex)):
 
     ```go
     gatherNode := workflow.NewJoinNode("gather")
