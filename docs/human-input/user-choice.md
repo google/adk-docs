@@ -358,10 +358,11 @@ Keep the following in mind when you implement the response:
     the result of the tool call. A simple payload such as `{"choice":
     "Aisle seat"}` is enough for the model to continue.
 
-If your app uses the [Resume](/runtime/resume/) feature, the function
-response must also target the invocation that made the `get_user_choice` call.
-For details, see the note on long-running function responses in [Long running
-function tools](/tools-custom/function-tools/#long-run-tool).
+If your app uses the [Resume](/runtime/resume/) feature, in Python and
+TypeScript the function response must also target the invocation that made
+the `get_user_choice` call. Kotlin resolves the invocation from the function
+call ID. For details, see the note on long-running function responses in
+[Long running function tools](/tools-custom/function-tools/#long-run-tool).
 
 ## Configuration options
 
