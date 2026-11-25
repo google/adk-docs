@@ -72,6 +72,22 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     )
     ```
 
+??? note "Go: lists of callbacks"
+
+    In Go, every callback field is a slice, such as
+    `agent.Config.BeforeAgentCallbacks` or `llmagent.Config.BeforeModelCallbacks`.
+    ADK runs the callbacks in the order listed and stops at the first one that
+    returns a non-nil result (content, an `*model.LLMResponse` or a tool result
+    map) or a non-nil error, skipping the remaining callbacks in that list. This
+    applies to all eight lists, including `OnModelErrorCallbacks` and
+    `OnToolErrorCallbacks`. What the result or error then does depends on the
+    callback, as described in the sections below.
+
+    The test is `nil`, not truthiness as in Python. A callback that returns an
+    empty but non-nil value, such as `&genai.Content{}` or `map[string]any{}`,
+    ends the chain, where an empty value from a Python callback lets the next
+    one run. Return `nil, nil` to pass control to the next callback.
+
 ### Before Agent Callback
 
 **When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
