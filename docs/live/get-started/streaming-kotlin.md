@@ -252,7 +252,7 @@ Load your environment variables and start `AdkDevServer` from the
     Web for development and debugging only.
 
 Open `http://localhost:8080/dev-ui` or `http://127.0.0.1:8080/dev-ui` directly
-in your browser. This connection stays on your local machine. Select
+in your browser. The browser connection to `AdkDevServer` stays on your local machine. Select
 `basic_search_agent` from the agent menu.
 
 ### Try with voice and video
