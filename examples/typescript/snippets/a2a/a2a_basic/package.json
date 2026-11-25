@@ -1,0 +1,28 @@
+{
+  "name": "adk-docs-examples-a2a-basic",
+  "version": "1.0.0",
+  "description": "TypeScript A2A consuming agent example for ADK documentation",
+  "main": "agent.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "adk",
+    "google",
+    "agent",
+    "typescript",
+    "a2a"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "devDependencies": {
+    "@google/adk-devtools": "^2.5.0",
+    "@types/node": "^20.14.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@google/adk": "^2.5.0",
+    "zod": "^4.6.7"
+  }
+}
