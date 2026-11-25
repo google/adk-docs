@@ -201,12 +201,12 @@ agent's reply:
 
     ```typescript
     import {
-      Event,
+      type Event,
       InMemoryRunner,
       getFunctionCalls,
       stringifyContent,
     } from '@google/adk';
-    import {FunctionCall, createUserContent} from '@google/genai';
+    import {type FunctionCall, createUserContent} from '@google/genai';
 
     const APP_NAME = 'trip_planner_app';
     const USER_ID = 'user_1';
