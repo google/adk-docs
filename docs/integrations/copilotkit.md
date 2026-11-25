@@ -33,6 +33,8 @@ CopilotKit to an existing ADK project.
   rejects a proposed action, then resume with the answer.
 - **Messaging channels**: Run the same agent in Slack with the open source
   Channels SDK.
+- **Agent workspace**: Run the same agent as an AI coworker in
+  [OpenBot](https://open.bot), an open source, self-hostable workspace.
 
 ## Prerequisites
 
@@ -280,10 +282,22 @@ and Block Kit rendering, interactions, and approvals are handled by the
 adapter. See the [Channels documentation](https://docs.copilotkit.ai/slack)
 for Slack app settings and self-hosted deployment.
 
+## Agent workspace
+
+[OpenBot](https://open.bot) is an open source, self-hostable workspace for AI
+coworkers that connects to agents over AG-UI. The endpoint from
+[step 1](#1-expose-the-agent-over-ag-ui) is all it needs: in OpenBot, create a
+Bot, choose to bring your own agent, select Google ADK as the framework, and
+enter the endpoint's address. The Bot can then run on a schedule and use the
+workspace's connected apps, under its tool permissions, approvals, and audit
+log. See the [OpenBot repository](https://github.com/CopilotKit/OpenBot) for
+setup.
+
 ## Additional resources
 
 - [CopilotKit documentation for ADK](https://docs.copilotkit.ai/adk)
 - [CopilotKit on GitHub](https://github.com/CopilotKit/CopilotKit)
+- [OpenBot](https://open.bot), an open source workspace for AG-UI agents
 - [ADK middleware for AG-UI (`ag-ui-adk`) on PyPI](https://pypi.org/project/ag-ui-adk/)
 - [ADK middleware source](https://github.com/ag-ui-protocol/ag-ui/tree/main/integrations/adk-middleware)
 - [AG-UI Dojo](https://dojo.ag-ui.com) with live ADK examples
