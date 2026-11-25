@@ -1257,13 +1257,43 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         ```kotlin
         --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:gcs_service"
         ```
+
+### FsspecArtifactService
+
+In ADK Python v2.15.0, the experimental `FsspecArtifactService` stores
+versioned artifacts on an `fsspec`-compatible filesystem. Set `base_url` to the
+root for your artifacts. For example, use a `file://` URL for local files,
+`memory://` for tests, `s3://my-bucket/artifacts` for Amazon S3, or
+`gs://my-bucket/artifacts` for Google Cloud Storage.
+
+Install the ADK extra:
+
+```shell
+pip install "google-adk[fsspec]"
+```
+
+For cloud storage, also install and configure the backend for your protocol,
+such as `s3fs` for S3 or `gcsfs` for Cloud Storage.
+
+Set the environment variable `ADK_ENABLE_FSSPEC_ARTIFACT_SERVICE=1` before
+starting your application to enable the experimental service.
+
+This example uses the in-memory filesystem. Pass the service as the runner's
+`artifact_service`:
+
+```python
+from google.adk.integrations.fsspec import FsspecArtifactService
+
+artifact_service = FsspecArtifactService(base_url="memory://adk-artifacts")
+```
+
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
 ## Best Practices
 
 To use artifacts effectively and maintainably:
 
-* **Choose the Right Service:** Use `InMemoryArtifactService` for rapid prototyping, testing, and scenarios where persistence isn't needed. Use `GcsArtifactService` (or implement your own `BaseArtifactService` for other backends) for production environments requiring data persistence and scalability.
+* **Choose the Right Service:** Use `InMemoryArtifactService` for rapid prototyping and tests. For persistent storage, choose `GcsArtifactService`, `FsspecArtifactService` with a persistent backend, or a custom `BaseArtifactService`.
 * **Meaningful Filenames:** Use clear, descriptive filenames. Including relevant extensions (`.pdf`, `.png`, `.wav`) helps humans understand the content, even though the `mime_type` dictates programmatic handling. Establish conventions for temporary vs. persistent artifact names.
 * **Specify Correct MIME Types:** Always provide an accurate `mime_type` when creating the `types.Part` for `save_artifact`. This is critical for applications or tools that later `load_artifact` to interpret the `bytes` data correctly. Use standard IANA MIME types where possible.
 * **Understand Versioning:** Remember that `load_artifact()` without a specific `version` argument retrieves the *latest* version. If your logic depends on a specific historical version of an artifact, be sure to provide the integer version number when loading.
