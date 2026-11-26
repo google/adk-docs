@@ -1,7 +1,7 @@
 # Build a live streaming agent with Go
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-go">Go v2.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 With this quickstart, you learn how to build a Go agent using Agent Development Kit (ADK) for bidirectional voice and video communication over the Gemini Live API. You install ADK Go, create a Google Search agent, and test live streaming in the ADK web interface.
@@ -18,7 +18,7 @@ Voice and video streaming requires a Gemini model that supports the Gemini Live 
 - [Agent Platform: Gemini Live API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/live-api)
 
 !!! note "Model support versions"
-    Gemini 3.8 Live and Gemini 3.x Live models on Agent Platform require `google.golang.org/adk/v2` v2.8.0 or later. Running `go get google.golang.org/adk/v2` installs the latest release.
+    Gemini 3.8 Live on Agent Platform requires `google.golang.org/adk/v2` v2.8.0 or later. Running `go get google.golang.org/adk/v2` installs the latest release.
 
 ## Set up your environment and install ADK Go {#setup-environment-install-adk}
 
