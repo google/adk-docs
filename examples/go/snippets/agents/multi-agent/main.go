@@ -24,8 +24,10 @@ import (
 	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
 	"google.golang.org/adk/v2/agent/workflowagents/parallelagent"
 	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/v2/artifact"
 	"google.golang.org/adk/v2/model"
 	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
 	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/tool"
 	"google.golang.org/adk/v2/tool/agenttool"
@@ -141,24 +143,23 @@ func agentInteractionSnippets(m model.LLM) {
 	fmt.Println("Coordinator agent created:", coordinator.Name())
 
 	// --8<-- [start:agent-as-tool]
-	// Conceptual Setup: Agent as a Tool
+	// Conceptual Setup: Agent as a Tool (requires ADK Go v2.5.0 or later)
 	// Define a target agent (could be LlmAgent or custom BaseAgent)
 	imageAgent, _ := agent.New(agent.Config{
 		Name:        "ImageGen",
 		Description: "Generates an image based on a prompt.",
 		Run: func(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
 			return func(yield func(*session.Event, error) bool) {
-				prompt, _ := ctx.Session().State().Get("image_prompt")
-				fmt.Printf("Generating image for prompt: %v\n", prompt)
-				imageBytes := []byte("...") // Simulate image bytes
-				yield(&session.Event{
-					Author: "ImageGen",
-					LLMResponse: model.LLMResponse{
-						Content: &genai.Content{
-							Parts: []*genai.Part{genai.NewPartFromBytes(imageBytes, "image/png")},
-						},
-					},
-				}, nil)
+				// Replace these placeholder bytes with an image generated from ctx.UserContent().
+				imageBytes := []byte("...")
+				event := session.NewEvent(ctx, ctx.InvocationID())
+				callbackCtx := agent.NewCallbackContextWithArtifactTracking(ctx, &event.Actions)
+				if _, err := callbackCtx.Artifacts().Save(ctx, "generated_image.png", genai.NewPartFromBytes(imageBytes, "image/png")); err != nil {
+					yield(nil, err)
+					return
+				}
+				event.Content = genai.NewContentFromText("Saved generated_image.png.", genai.RoleModel)
+				yield(event, nil)
 			}
 		},
 	})
@@ -172,15 +173,23 @@ func agentInteractionSnippets(m model.LLM) {
 	artistAgent, _ := llmagent.New(llmagent.Config{
 		Name:        "Artist",
 		Model:       m,
-		Instruction: "Create a prompt and use the ImageGen tool to generate the image.",
+		Instruction: "Create a prompt and use the ImageGen tool to generate the image. Return the saved filename to the user.",
 		Tools:       []tool.Tool{imageTool}, // Include the AgentTool
 	})
+
+	// Pass this configuration to runner.New when running the parent agent.
+	artistConfig := runner.Config{
+		AppName:         "image_app",
+		Agent:           artistAgent,
+		SessionService:  session.InMemoryService(),
+		ArtifactService: artifact.InMemoryService(),
+	}
 	// Artist LLM generates a prompt, then calls:
-	// FunctionCall{Name: "ImageGen", Args: map[string]any{"image_prompt": "a cat wearing a hat"}}
-	// Framework calls imageTool.Run(...), which runs ImageGeneratorAgent.
-	// The resulting image Part is returned to the Artist agent as the tool result.
+	// FunctionCall{Name: "ImageGen", Args: map[string]any{"request": "a cat wearing a hat"}}
+	// AgentTool passes request as the child agent's user message.
+	// The tool result contains the filename; the image is stored in the parent's artifact scope.
 	// --8<-- [end:agent-as-tool]
-	_ = artistAgent // Avoid unused variable error
+	_ = artistConfig // Avoid unused variable error
 }
 
 func advancedPatternSnippets(m model.LLM) {
