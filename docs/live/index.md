@@ -1,7 +1,7 @@
 # Live and voice agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v2.3.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 ADK is the framework for building live and voice agents. A live agent holds an open, two-way
@@ -40,7 +40,8 @@ model, or chain speech-to-text, any text LLM, and text-to-speech in a [cascaded 
     Build your first live agent and talk to it in the browser.
 
     - [Start here](get-started/index.md) — pick a language and build one
-    - Jump straight to [Python](get-started/streaming-python.md) or
+    - Jump straight to [Python](get-started/streaming-python.md),
+      [TypeScript](get-started/streaming-typescript.md), or
       [Java](get-started/streaming-java.md)
     - [Choose an architecture](architectures/index.md): [speech-to-speech](architectures/speech-to-speech.md) or [cascade](architectures/cascade.md)
 
