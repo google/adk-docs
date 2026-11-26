@@ -104,6 +104,36 @@ compaction_config = EventsCompactionConfig(
 )
 ```
 
+### Finish a Python turn before its summary is ready
+
+If your client enables input when the response stream closes, an inline
+summary can leave the user waiting after the answer has appeared. To queue
+the summary, configure the Python app with
+`EventsCompactionConfig(compaction_interval=5, overlap_size=0, defer_sliding_window=True)`.
+This mode uses a schema v1 `DatabaseSessionService` on PostgreSQL or a shared
+SQLite file. Run a worker with the same app configuration and database.
+
+```python
+async def worker(runner):
+    import asyncio
+    import logging
+
+    while True:
+        try:
+            if await runner.compact_next_session():
+                continue
+        except Exception:
+            logging.exception("Compaction failed")
+        await asyncio.sleep(0.5)
+```
+
+The worker can run in another process. The next request can use the full
+history while the summary is pending, which can increase input tokens.
+If a worker exits, a replacement can claim its work after the lease expires.
+To wait for a session's queue to drain and surface a failed attempt, call
+`runner.wait_for_pending_compaction(user_id=..., session_id=...)` with
+`await` and an application-level timeout.
+
 ## Configure context compaction
 
 Add context compaction to your agent workflow by adding an Events Compaction
