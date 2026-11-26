@@ -22,6 +22,14 @@ Your agent needs a model that can hold a two-way streaming connection. See
 
     [:octicons-arrow-right-24: Python quickstart](streaming-python.md)
 
+-   :fontawesome-brands-golang:{ .lg .middle } **Go**
+
+    ---
+
+    Set up a Go module, build a voice agent, and talk to it in ADK Web.
+
+    [:octicons-arrow-right-24: Go quickstart](streaming-go.md)
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java**
 
     ---
