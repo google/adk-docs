@@ -30,6 +30,14 @@ Your agent needs a model that can hold a two-way streaming connection. See
 
     [:octicons-arrow-right-24: Java quickstart](streaming-java.md)
 
+-   :simple-kotlin:{ .lg .middle } **Kotlin**
+
+    ---
+
+    Set up Gradle, build a voice agent, and talk to it in ADK Web with `AdkDevServer`.
+
+    [:octicons-arrow-right-24: Kotlin quickstart](streaming-kotlin.md)
+
 </div>
 
 ## Next steps

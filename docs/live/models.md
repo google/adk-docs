@@ -108,7 +108,7 @@ you switch with environment variables, so you can develop on one and deploy on t
 
 Switch with the `GOOGLE_GENAI_USE_ENTERPRISE` environment variable (`FALSE` for AI Studio,
 `TRUE` for Agent Platform); no code changes. See the
-[quickstarts](get-started/streaming-python.md) for setup.
+[quickstarts](get-started/index.md) for setup.
 
 !!! note "Agent Platform: the `global` location is not supported for Live API models"
 
