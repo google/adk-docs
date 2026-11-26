@@ -389,6 +389,61 @@ to interact with them. This process includes a system-level instruction for
 how to use skills, a defined format for how skills are represented, and a set
 of validation rules for skill definitions.
 
+## Load the skill for a turn with a classifier
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.15.0</span><span class="lst-preview">Preview</span>
+</div>
+
+When a skill applies to the user's request, the agent's model spends a whole
+model call choosing the skill and calling `load_skill`, and reads the skill's
+instructions only in the next call. If the model first calls `list_skills` to
+see which skills exist, the turn costs one more call. You can hand that choice
+to a classifier, which is typically a smaller and faster model than the agent's,
+by passing a `SkillClassificationConfig` to the `SkillToolset`:
+
+=== "Python"
+
+    ```python
+    from google.adk.labs.classifiers import LlmClassifier
+    from google.adk.tools.skill_toolset import SkillClassificationConfig
+    from google.adk.tools.skill_toolset import SkillToolset
+
+    my_skill_toolset = SkillToolset(
+        skills=[weather_skill],
+        additional_tools=[get_weather_tool],
+        classification_config=SkillClassificationConfig(
+            classifier=LlmClassifier(model="gemini-flash-lite-latest"),
+            threshold=0.7,
+        ),
+    )
+    ```
+
+Before the agent's first model call of each turn, the classifier chooses among
+the skills of the toolset, using their descriptions, or decides that no skill
+applies. When it picks a skill with at least the `threshold` probability, the
+toolset loads that skill itself, so the agent's first model call already has the
+skill's instructions and its additional tools. Otherwise, the turn runs as it
+would without a classifier, and the model decides as usual.
+
+The toolset loads the skill through its own `load_skill` tool, so the call and
+its response appear in the session like a load that the model made, and tool
+callbacks and plugins see it too. The call event records the classifier's choice
+and probability under the `adk_skill_classification` key of its
+`custom_metadata`, which you can use to evaluate the classifier.
+
+!!! tip "Tune the threshold with evaluations"
+
+    A wrong but confident choice gives the model the instructions of a skill
+    that does not apply, and the classifier call adds its latency to every
+    turn, including turns that need no skill. An `LlmClassifier` reports the
+    probabilities that its model states, not calibrated ones, so check the
+    `threshold` against your own evaluations.
+
+The classifier sees only the user's latest message and only the skills passed
+to the toolset. Skills from a skill registry are still found through the
+`search_skills` tool.
+
 ## Next steps
 
 Check out these resources for building agents with Skills:
