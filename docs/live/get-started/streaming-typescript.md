@@ -129,7 +129,7 @@ Choose either Google AI Studio or Google Cloud Agent Platform to run the agent:
     3.  Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual API key.
 
 === "Gemini - Google Cloud Agent Platform"
-    1.  Prepare an existing [Google Cloud](https://cloud.google.com/?e=48754805&hl=en)
+    1.  Prepare an existing [Google Cloud](https://cloud.google.com/)
         account and project:
         -   Set up a
             [Google Cloud project](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start).
