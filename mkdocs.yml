@@ -375,6 +375,7 @@ nav:
       - Traces: observability/traces.md
     - Evaluation:
       - evaluate/index.md
+      - Unit Testing: evaluate/unit-testing.md
       - Criteria: evaluate/criteria.md
       - User Simulation: evaluate/user-sim.md
       - Environment Simulation: evaluate/environment_simulation.md
