@@ -141,7 +141,7 @@ plugins:
         'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
         'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
         'tutorials/ag-ui.md': 'integrations/ag-ui.md'
-        'tools/third-party/langchain.md': 'integrations/index.md'
+        'tools/third-party/langchain.md': 'integrations/langchain-tool.md'
         'tools/third-party/crewai.md': 'integrations/index.md'
         'get-started/testing.md': 'runtime/api-server.md'
         'tools/authentication.md': 'tools-custom/authentication.md'
