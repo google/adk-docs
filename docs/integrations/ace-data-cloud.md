@@ -87,7 +87,7 @@ task may have no output yet.
 | Search and recognition | [Google Search](https://pypi.org/project/mcp-serp/), [Image to Text](https://pypi.org/project/mcp-image2text/) |
 | Text and multimodal chat | [AI Chat](https://pypi.org/project/mcp-aichat/), [Grok](https://pypi.org/project/mcp-grok/), [GLM](https://pypi.org/project/mcp-glm/) |
 | Music and speech | [Suno](https://pypi.org/project/mcp-suno/), [ACE Music](https://pypi.org/project/mcp-acemusic/), [Fish Audio](https://pypi.org/project/mcp-fish/), [Producer](https://pypi.org/project/mcp-producer/) |
-| Image creation and editing | [Nano Banana](https://pypi.org/project/mcp-nanobanana-pro/), [GPT Image](https://pypi.org/project/mcp-openai-pro/), [Seedream](https://pypi.org/project/mcp-seedream-pro/), [FLUX](https://pypi.org/project/mcp-flux-pro/), [Midjourney](https://pypi.org/project/mcp-midjourney/), [Qwen Image](https://pypi.org/project/mcp-qwen-image/) |
+| Image creation and editing | [Nano Banana](https://pypi.org/project/mcp-nanobanana-pro/), [GPT Image](https://pypi.org/project/mcp-openai-pro/), [Seedream](https://pypi.org/project/mcp-seedream-pro/), [FLUX](https://pypi.org/project/mcp-flux-pro/), [Qwen Image](https://pypi.org/project/mcp-qwen-image/) |
 | Video | [Seedance](https://pypi.org/project/mcp-seedance/), [Kling](https://pypi.org/project/mcp-kling/), [Veo](https://pypi.org/project/mcp-veo/), [HappyHorse](https://pypi.org/project/mcp-happyhorse/), [Wan](https://pypi.org/project/mcp-wan/), [MiniMax](https://pypi.org/project/mcp-minimax/), [Hailuo](https://pypi.org/project/mcp-hailuo/), [Luma](https://pypi.org/project/mcp-luma/) |
 | 3D models | [Tripo](https://pypi.org/project/mcp-tripo/) |
 
