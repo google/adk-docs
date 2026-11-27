@@ -111,8 +111,9 @@ list:
 
 ## Available tools
 
-This integration wraps any LangChain tool you provide rather than exposing a
-fixed catalog of endpoints. In ADK Python, wrap any
+This integration wraps supported LangChain tools you provide rather than
+exposing a fixed catalog of endpoints. For tool requirements and constraints,
+see [Limitations](#limitations). In ADK Python, wrap any
 `langchain_core.tools.BaseTool` instance, including `StructuredTool` and
 `@tool`-decorated functions, or any object implementing a `run` or `_run`
 method. In ADK TypeScript, wrap any object that satisfies the
