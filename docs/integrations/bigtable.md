@@ -8,7 +8,7 @@ catalog_tags: ["data", "google"]
 # Bigtable tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.12.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.12.0</span>
 </div>
 
 These are a set of tools aimed to provide integration with Bigtable, namely:
@@ -23,8 +23,16 @@ These are a set of tools aimed to provide integration with Bigtable, namely:
 
 They are packaged in the toolset `BigtableToolset`.
 
-!!! example "Experimental"
-    This feature is experimental and may be updated in future releases.
+## Installation
+
+The Bigtable tools depend on Google Cloud client libraries that are not part of
+the base `google-adk` install. Install them with the `gcp` extra:
+
+```bash
+pip install "google-adk[gcp]"
+```
+
+## Use with agent
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"

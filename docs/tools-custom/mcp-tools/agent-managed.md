@@ -76,9 +76,9 @@ connection modes depending on deployment architecture:
   must be instantiated synchronously in `agent.py` rather than inside an async 
   factory function.
 * **Session Persistence and restoration:** `McpToolset` supports serialization 
-  via `getstate` and `setstate`. While session state is preserved across 
+  via `__getstate__` and `__setstate__`. While session state is preserved across 
   lifecycle events, MCP socket/stdio connections are re-initialized dynamically 
   when the agent process restores.
 * **Cleanup Management:** When running outside `adk web` in custom runtimes, 
-  explicit teardown via `toolset.close()` or an exit stack ensures that 
+  explicit teardown via `await toolset.close()` or `await runner.close()` ensures that 
   background server subprocesses and network connections are terminated cleanly.

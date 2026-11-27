@@ -88,7 +88,7 @@ the other implementations are covered in their specific pages.
    
 ### Direct MCP Tool integration (McpToolset)
 
-The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. On initialization, `McpToolset` establishes and manages the connection to the MCP server. It also handles graceful connection shutdown when the agent or process terminates.
+The `McpToolset` class can be directly added to your agent's tools list; this class enables seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. `McpToolset` manages the connection to the MCP server. Constructing the toolset does not connect; it opens the session the first time it is used, such as when the agent asks it for its tools. It also handles graceful connection shutdown when the agent or process terminates.
 Use `McpToolset` to import tools from an external MCP server into your ADK `LlmAgent`.
 
 #### Example: Local Stdio Transport (FileSystem MCP)
@@ -215,19 +215,20 @@ This example sets up an ADK agent that connects to a local MCP file system serve
     )
 
     func createFilesystemAgent(ctx context.Context) (agent.Agent, error) {
-        // 1. Initialize MCP Toolset with CommandTransport and AllowedToolsPredicate
+        // 1. Initialize MCP Toolset with CommandTransport
         mcpTools, err := mcptoolset.New(mcptoolset.Config{
             Transport: &mcp.CommandTransport{
                 Command: exec.Command("npx", "-y", "@modelcontextprotocol/server-filesystem", "./accessible_files"),
             },
-            ToolFilter: tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}),
         })
         if err != nil {
             return nil, fmt.Errorf("failed to create mcp toolset: %w", err)
         }
+        // Expose only the tools the agent needs
+        mcpTools = tool.FilterToolset(mcpTools, tool.AllowedToolsPredicate([]string{"list_directory", "read_file"}))
 
         // 2. Initialize Gemini model.LLM instance
-        llm, err := gemini.NewModel(ctx, "gemini-2.0-flash", nil)
+        llm, err := gemini.NewModel(ctx, "gemini-flash-latest", nil)
         if err != nil {
             return nil, fmt.Errorf("failed to create gemini model: %w", err)
         }
@@ -249,6 +250,44 @@ This example sets up an ADK agent that connects to a local MCP file system serve
         }
         fmt.Printf("Successfully created agent: %s\n", ag.Name())
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.ToolFilter
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    // ServerParameters is part of the MCP Java SDK. Add io.modelcontextprotocol.sdk:mcp
+    // as a dependency, because ADK Kotlin does not expose it at compile time.
+    import io.modelcontextprotocol.client.transport.ServerParameters
+    import java.io.File
+
+    val TARGET_FOLDER: String = File("./accessible_files").absolutePath
+
+    val rootAgent =
+        LlmAgent(
+            name = "filesystem_assistant",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction = Instruction("Help users manage local files."),
+            toolsets =
+                listOf(
+                    McpToolset.McpToolsetConfig(
+                        stdioConnectionParams =
+                            McpConnectionParameters.Stdio(
+                                serverParameters =
+                                    ServerParameters.builder("npx")
+                                        .args("-y", "@modelcontextprotocol/server-filesystem", TARGET_FOLDER)
+                                        .build(),
+                            ),
+                        // Optional: Select specific tools exposed to the agent
+                        toolFilter = ToolFilter.allowList("list_directory", "read_file"),
+                    ).toToolset(),
+                ),
+        )
     ```
     
 ---
@@ -332,6 +371,39 @@ Unlike the previous local process example, this pattern connects your agent to a
         ],
     });
     ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    import java.time.Duration
+
+    val API_KEY: String = System.getenv("GOOGLE_MAPS_API_KEY") ?: error("Set GOOGLE_MAPS_API_KEY")
+
+    val rootAgent =
+        LlmAgent(
+            name = "travel_planner",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction = Instruction("Plan travel routes and search locations using Google Maps."),
+            toolsets =
+                listOf(
+                    McpToolset.McpToolsetConfig(
+                        streamableHttpConnectionParams =
+                            McpConnectionParameters.StreamableHttp(
+                                url = "https://mapstools.googleapis.com/mcp",
+                                // The transport sets the Content-Type and Accept headers itself.
+                                headers = mapOf("X-Goog-Api-Key" to API_KEY),
+                                timeout = Duration.ofSeconds(5),
+                                readTimeout = Duration.ofSeconds(300),
+                            ),
+                    ).toToolset(),
+                ),
+        )
+    ```
      
 ---
 
@@ -390,6 +462,29 @@ When an MCP server requires authentication, `McpToolset` handles credential inje
         timeout: 5,
     });
     
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.tools.mcp.McpConnectionParameters
+    import com.google.adk.kt.tools.mcp.McpToolset
+    import java.time.Duration
+
+    // Configure Bearer Token Authentication via headers
+    val toolset =
+        McpToolset.McpToolsetConfig(
+            // Use Sse for servers on the older protocol; prefer StreamableHttp. 
+            // For tokens that expire, use toToolset(headerProvider = { ... }) 
+            // instead of fixed headers.
+            sseConnectionParams =
+                McpConnectionParameters.Sse(
+                    url = "https://mcp-server.example.com",
+                    sseEndpoint = "/sse",
+                    headers = mapOf("Authorization" to "Bearer ${System.getenv("MCP_AUTH_TOKEN")}"),
+                    timeout = Duration.ofSeconds(5),
+                ),
+        ).toToolset()
     ```
     
 ---

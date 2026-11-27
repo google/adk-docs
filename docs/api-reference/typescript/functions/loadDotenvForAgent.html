@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>loadDotenvForAgent | ADK for TypeScript: API Reference - v2.4.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>loadDotenvForAgent | ADK for TypeScript: API Reference - v2.5.0</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
 /* typedoc-theme-fresh */
 
 /* @view-transition {
@@ -379,26 +379,38 @@ code.tsd-tag {
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Walks up from the agent directory to the root directory and loads the first
 <code>.env</code> file found into <code>process.env</code> with override semantics.</p>
+<p>When <code>agentParentFolder</code> is given, <code>agentName</code> must be a single path segment
+that resolves inside it. When <code>agentParentFolder</code> is omitted, <code>agentName</code> may
+be a path, but it must not be <code>.</code> or contain a <code>..</code> segment. These checks
+are lexical: they do not follow symlinks.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">agentName</span>: <span class="tsd-signature-type">string</span></span>
-<div class="tsd-comment tsd-typography"><p>The name or path of the agent.</p>
+<div class="tsd-comment tsd-typography"><p>The name of the agent, or a path to it when
+<code>agentParentFolder</code> is omitted.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">agentParentFolder</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;.&#39;</span></span>
-<div class="tsd-comment tsd-typography"><p>The parent directory containing the agent. Defaults to <code>'.'</code>.</p>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">agentParentFolder</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The directory that contains the agent. Optional.</p>
 </div></li>
 <li><span><span class="tsd-kind-parameter">filename</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;.env&#39;</span></span>
-<div class="tsd-comment tsd-typography"><p>The dotenv filename to search for. Defaults to <code>'.env'</code>.</p>
+<div class="tsd-comment tsd-typography"><p>The dotenv file name to search for. Must be a single path
+segment. Defaults to <code>'.env'</code>.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If <code>agentName</code>, <code>agentParentFolder</code> or
+<code>filename</code> is invalid, or if <code>agentName</code> resolves outside
+<code>agentParentFolder</code>.</p>
+</div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/google/adk-js/blob/96154a6e19c53ed91de683820f7fc541a3e5302e/core/src/cli/utils/envs.ts#L94">core/src/cli/utils/envs.ts:94</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/google/adk-js/blob/b1b94c0d501c3d1eb028aa413d783d6573f6c785/core/src/cli/utils/envs.ts#L107">core/src/cli/utils/envs.ts:107</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu"></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.4.0</a>
+<nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference - v2.5.0</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="overlay"></div></body></html>

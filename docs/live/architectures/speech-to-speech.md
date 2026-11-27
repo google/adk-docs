@@ -4,7 +4,7 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-In a speech-to-speech architecture, a single multimodal model processes incoming audio, executes reasoning and tool calls, and generates spoken audio directly over a persistent [Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api) connection, without converting the speech to text between the input and output..
+In a speech-to-speech architecture, a single multimodal model processes incoming audio, executes reasoning and tool calls, and generates spoken audio directly over a persistent [Gemini Live API](https://ai.google.dev/gemini-api/docs/live-api) connection, without converting the speech to text between the input and output.
 
 For a comparison with chained STT-LLM-TTS pipelines, see [Choose a voice architecture](index.md).
 
