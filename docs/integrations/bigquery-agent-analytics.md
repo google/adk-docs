@@ -1277,11 +1277,60 @@ configured on `agentanalytics.Config`, so setting `Logger` is recommended.
       `HITL_CONFIRMATION_REQUEST_COMPLETED`, `HITL_INPUT_REQUEST_COMPLETED`,
       `AGENT_RESPONSE`, and `INVOCATION_COMPLETED`.
 
-    Because the views aggregate across the table by `session_id` /
-    `invocation_id`, filtering on `session_start_timestamp` or
-    `turn_start_timestamp` does not prune the base table's `timestamp`
-    partitions; for large tables, materialize a date-filtered slice before
-    running evaluation jobs.
+    Filtering a view on `session_start_timestamp` or `turn_start_timestamp`
+    does not prune the events table's `timestamp` partitions. To constrain the
+    raw scan on a large table, use the direct query builders.
+
+    #### Generate evaluation queries without creating views
+
+    With `google-adk[bigquery-analytics]` v2.15.0 or later, use
+    `build_eval_session_query_sql` or `build_eval_turn_query_sql` to generate
+    a GoogleSQL `WITH ... SELECT` query with the corresponding view's output
+    schema. The builders don't run a BigQuery job or create a view.
+
+    Pass the table ID and use keywords for the optional arguments:
+
+    - `full_table_id`: The events table as `project.dataset.table`.
+    - `where_clause`: An optional condition on the reconstructed rows, such
+      as `eval_ready = TRUE`.
+    - `raw_where_clause`: An optional condition on raw events, such as a
+      `timestamp` predicate to prune partitions before reconstructing traces.
+    - `denied_columns`: The payload columns already excluded from the
+      events table. If the logger has a `payload_column_denylist`, pass it
+      here. The events table must retain `content` to reconstruct traces.
+
+    ```python
+    from google.adk.plugins.bigquery_agent_analytics_plugin import (
+        build_eval_session_query_sql,
+        build_eval_turn_query_sql,
+    )
+
+    table = "your-gcp-project-id.adk_agent_logs.agent_events"
+    session_sql = build_eval_session_query_sql(
+        table,
+        where_clause="eval_ready = TRUE",
+        raw_where_clause="timestamp >= @lookback_start",
+    )
+    turn_sql = build_eval_turn_query_sql(
+        table,
+        where_clause="eval_ready = TRUE",
+        raw_where_clause="timestamp >= @lookback_start",
+    )
+    ```
+
+    Use trusted SQL for the conditions. When running either query, bind
+    `lookback_start` as a BigQuery `TIMESTAMP` parameter rather than
+    interpolating a value into the SQL.
+
+    Keep every event needed to reconstruct the sessions, even for turn
+    queries. Start the raw lookback at or before the earliest event of those
+    sessions. Don't filter raw events by fields that can vary within a
+    session, such as `event_type` or `agent`. Use `where_clause` for the
+    output time window; its end may cut off a session if used as a raw
+    upper bound. If you do set a raw upper bound, allow for both the last
+    event and the delay before all events are readable. A partial session can
+    produce misleading traces or readiness flags. If you can't prune safely,
+    omit `raw_where_clause`.
 
 === "Go"
 
