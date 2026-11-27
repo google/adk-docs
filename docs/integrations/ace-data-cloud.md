@@ -21,7 +21,7 @@ new jobs.
 
 Install [ADK for Python](../get-started/python.md), its MCP extra
 (`pip install "google-adk[mcp]"`), and [uv](https://docs.astral.sh/uv/).
-In [Ace Data Cloud Applications](https://platform.acedata.cloud/console/applications?utm_source=opensource&utm_medium=referral&utm_campaign=evergreen),
+In [Ace Data Cloud Applications](https://platform.acedata.cloud/console/applications?utm_source=google-adk&utm_medium=referral&utm_campaign=evergreen),
 create application keys with access to the services you intend to use.
 For the example, set `SUNO_ACE_TOKEN` and `SEEDANCE_ACE_TOKEN` to keys with
 the corresponding task lookup permission.
