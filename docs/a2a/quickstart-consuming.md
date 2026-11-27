@@ -268,6 +268,46 @@ prime_agent = RemoteA2aAgent(
 ```
 
 
+## Delegate a task to a remote agent
+
+In ADK Python v2.15.0 and later, set `mode="task"` on a `RemoteA2aAgent`
+registered in an `LlmAgent`'s `sub_agents`. The parent delegates through a
+tool call instead of transferring control as it does in the default mode.
+The remote agent handles the delegated task across turns and can ask the
+user for clarification before returning control to the parent.
+
+The quickstart's `prime_agent` uses the default mode. For task mode, point
+the proxy at a separate task-capable server, such as an ADK task agent
+served on port 8002:
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
+
+remote_task = RemoteA2aAgent(
+    name="prime_task",
+    description="Check whether the supplied numbers are prime.",
+    agent_card="http://localhost:8002/.well-known/agent-card.json",
+    mode="task",
+)
+
+coordinator = LlmAgent(
+    name="coordinator",
+    model="gemini-flash-latest",
+    instruction="Delegate primality checks to prime_task.",
+    sub_agents=[remote_task],
+)
+```
+
+The remote agent must call `finish_task` to complete the delegated task
+normally. ADK supplies this tool on a remote `LlmAgent(mode="task")`.
+If the remote agent uses a custom `output_schema`, use the same schema on
+the local proxy so ADK can unwrap the result. If the task fails, is canceled,
+or the remote agent is unreachable, the parent's tool call receives an error
+and the parent resumes. See the
+[task mode guide](https://github.com/google/adk-python/blob/v2.15.0/docs/guides/agents/remote_a2a_agent/task.md)
+for server configuration and the completion contract for custom servers.
+
 ## Example Interactions
 
 Once both your main and remote agents are running, you can interact with the root agent to see how it calls the remote agent via A2A:
